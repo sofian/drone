@@ -70,11 +70,11 @@ public:
 
     void allocate(int sizex, int sizey);
     
-    unsigned int toTexture();
+    unsigned int toTexture(int bpp=32);
     
 private:
     
-    void generateTexture();
+    void generateTexture(int bpp);
 
     int _sizeX, _sizeY;
     

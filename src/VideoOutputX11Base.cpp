@@ -1,3 +1,5 @@
+/* Inspired from the xvvideowindow class of jenskamenik@web.de Copyright (c) 2001, Jens Kamenik */
+
 #include "VideoOutputX11Base.h"
 
 
@@ -90,59 +92,29 @@ bool VideoOutputX11Base::createXWindow(int xRes, int yRes)
 {
     std::cout << "- XWindow create -" << std::endl;
     
+    if (_display==NULL)
+    {
+        std::cout << "FAIL! no display" << std::endl;        
+        return false;
+    }
+
     _xRes=xRes;
     _yRes=yRes;
 
     int screen = DefaultScreen(_display);
     
-    std::cout << "finding highest bpp...";
-
-    XVisualInfo_fixed vTfixed;
-    XVisualInfo visualInfoTemplate;
+    std::cout << "selecting visual info with highest depth...";
     
-    if (sizeof(XVisualInfo_fixed) != sizeof(XVisualInfo) )
+    if (!findHighestDepthVisual(_visualInfo))
     {
-        std::cout << "FAIL!" << std::endl;
+        std::cout << "FAIL! no truecolor mode" << std::endl;        
         return false;
     }
-    
-    vTfixed.visual=visualInfoTemplate.visual;
-    vTfixed.visualid=visualInfoTemplate.visualid;
-    vTfixed.screen=visualInfoTemplate.screen;
-    vTfixed.depth=visualInfoTemplate.depth;
-    vTfixed.red_mask=visualInfoTemplate.red_mask;
-    vTfixed.green_mask= visualInfoTemplate.green_mask;
-    vTfixed.blue_mask= visualInfoTemplate.blue_mask;
-    vTfixed.colormap_size= visualInfoTemplate.colormap_size;
-    vTfixed.bits_per_rgb=  visualInfoTemplate.bits_per_rgb;    
-    vTfixed.class_fixed=TrueColor;
-    
-    memcpy((void*)&visualInfoTemplate,(void*)&vTfixed,sizeof(XVisualInfo));
-    
-    visualInfoTemplate.screen = screen;
+    _bpp = _visualInfo.depth;
 
-    int nbVisualInfo=0;
-    XVisualInfo *visualInfoTable = XGetVisualInfo ((Display*)_display, VisualScreenMask | VisualClassMask, &visualInfoTemplate, &nbVisualInfo);
-
-    if (visualInfoTable == NULL)
-    {
-        std::cout << "FAIL! no truecolor mode available" << std::endl;
-        return false;
-    }
-
-    // find the visual with the highest depth
-    XVisualInfo* tmpVisualInfo = visualInfoTable;
-    for (int i = 1; i < nbVisualInfo; i++)
-        if (visualInfoTable[i].depth > tmpVisualInfo->depth)
-            tmpVisualInfo = visualInfoTable + i;
+    std::cout << "done (" << _bpp << ")" << std::endl;;
     
-    //keep the selected visualinfo before freeing the table
-    _visualInfo = *tmpVisualInfo;
-    XFree(visualInfoTable);
-
-    std::cout << _visualInfo.depth << std::endl;
-    
-
+       
     //now build window attributes
     XSetWindowAttributes windowAttributes;
     windowAttributes.background_pixmap = None;
@@ -351,4 +323,50 @@ void VideoOutputX11Base::resizeWindow(int sizeX, int sizeY)
     windowChanges.width = sizeX;
     windowChanges.height = sizeY;
     XConfigureWindow((Display*)_display, _window, CWWidth | CWHeight, &windowChanges);
+}
+
+
+bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo)
+{
+    if (_display==NULL)
+        return false;
+
+    int screen = DefaultScreen(_display);
+        
+    XVisualInfo_fixed vTfixed;
+    XVisualInfo visualInfoTemplate;
+    
+    if (sizeof(XVisualInfo_fixed) != sizeof(XVisualInfo) )
+        return false;
+    
+    vTfixed.visual=visualInfoTemplate.visual;
+    vTfixed.visualid=visualInfoTemplate.visualid;
+    vTfixed.screen=visualInfoTemplate.screen;
+    vTfixed.depth=visualInfoTemplate.depth;
+    vTfixed.red_mask=visualInfoTemplate.red_mask;
+    vTfixed.green_mask= visualInfoTemplate.green_mask;
+    vTfixed.blue_mask= visualInfoTemplate.blue_mask;
+    vTfixed.colormap_size= visualInfoTemplate.colormap_size;
+    vTfixed.bits_per_rgb=  visualInfoTemplate.bits_per_rgb;    
+    vTfixed.class_fixed=TrueColor;
+    
+    memcpy((void*)&visualInfoTemplate,(void*)&vTfixed,sizeof(XVisualInfo));
+    
+    visualInfoTemplate.screen = screen;
+
+    int nbVisualInfo=0;
+    XVisualInfo *visualInfoTable = XGetVisualInfo ((Display*)_display, VisualScreenMask | VisualClassMask, &visualInfoTemplate, &nbVisualInfo);
+
+    if (visualInfoTable == NULL)
+        return false;
+
+    // find the visual with the highest depth
+    XVisualInfo* tmpVisualInfo = visualInfoTable;
+    for (int i = 1; i < nbVisualInfo; i++)
+        if (visualInfoTable[i].depth > tmpVisualInfo->depth)
+            tmpVisualInfo = visualInfoTable + i;
+    
+    //keep the selected visualinfo before freeing the table
+    visualInfo = *tmpVisualInfo;
+    XFree(visualInfoTable);
 }

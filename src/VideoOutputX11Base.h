@@ -62,7 +62,8 @@ protected:
     virtual void onResize(int , int ){}
     void resizeWindow(int sizeX, int sizeY);
     
-    
+    bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo);
+        
     void* _display;//! handle on the X11 display
     Window _window;//! handle on the X11 window
     XF86VidModeModeInfo _desktopMode;//! The Desktop videomode

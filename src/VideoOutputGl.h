@@ -19,17 +19,18 @@ public:
 
     void fullscreen(bool fs);
     void destroy();
-    bool init(int xRes, int yRes, int bpp, bool fullscreen);
+    bool init(int xRes, int yRes, bool fullscreen);
     void render(Canvas &canvas);
     
 
 protected:
     
     void onResize(int sizeX, int sizeY);
-    bool createGLXContext();
+    bool createGLXContext();               
     int initGl(int xRes, int yRes);
     void resizeGl(int sizeX, int sizeY);
     void destroyGLXContext();
+        
 
 private:
                       

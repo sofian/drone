@@ -79,7 +79,7 @@ void Canvas::fromRGB24(unsigned char *bufferRGB24)
     }
 }
 
-void Canvas::generateTexture()
+void Canvas::generateTexture(int bpp)
 {
     glGenTextures(1, &_texture);		
     glBindTexture(GL_TEXTURE_2D, _texture);
@@ -93,16 +93,19 @@ void Canvas::generateTexture()
           
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    //32bit textures
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _textureSizeX, _textureSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    
+    if (bpp==16)        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB5, _textureSizeX, _textureSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _textureSizeX, _textureSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 }
 
 
-GLuint Canvas::toTexture()
+GLuint Canvas::toTexture(int bpp)
 {
     
     if (!_texture)
-        generateTexture();
+        generateTexture(bpp);
     
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _sizeX, _sizeY, GL_RGBA, GL_UNSIGNED_BYTE, _data);
 

@@ -26,17 +26,16 @@ public:
 private:
     static const std::string SETTING_XRES;
     static const std::string SETTING_YRES;
-    static const std::string SETTING_BPP;
     static const std::string SETTING_FULLSCREEN;
     
     static const int DEFAULT_XRES;
-    static const int DEFAULT_YRES;
-    static const int DEFAULT_BPP;    
+    static const int DEFAULT_YRES;    
     static const bool DEFAULT_FULLSCREEN; 
     
     PlugVideoIn *_VIDEO_IN;
 
     VideoOutput *_videoOutput;
+    std::vector<std::string> _allOutputs;
 
 };
 

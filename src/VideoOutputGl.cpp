@@ -61,7 +61,7 @@ void VideoOutputGl::render(Canvas &canvas)
     _texSizeX = (float)_frameSizeX / (float)canvas.textureSizeX();
     _texSizeY = (float)_frameSizeY / (float)canvas.textureSizeY();
 
-    glBindTexture(GL_TEXTURE_2D, canvas.toTexture());
+    glBindTexture(GL_TEXTURE_2D, canvas.toTexture(_bpp));
     glEnable(GL_TEXTURE_2D);        
 
     glBegin(GL_QUADS);
@@ -84,7 +84,7 @@ void VideoOutputGl::render(Canvas &canvas)
     glXSwapBuffers((Display*)_display, _window);        
 }
 
-bool VideoOutputGl::init(int xRes, int yRes, int bpp, bool fullscreen)
+bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)
 {            
     std::cout << "--==|| Gl output initialization ||==--" << std::endl;
     
@@ -100,7 +100,6 @@ bool VideoOutputGl::init(int xRes, int yRes, int bpp, bool fullscreen)
 
     if (!createGLXContext())
         return false;
-
     
     return true;
 }
@@ -181,3 +180,4 @@ void VideoOutputGl::resizeGl(int sizeX, int sizeY)
     glLoadIdentity();
 
 }
+

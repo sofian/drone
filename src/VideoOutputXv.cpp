@@ -1,3 +1,5 @@
+/* Inspired from the xvvideowindow class of jenskamenik@web.de Copyright (c) 2001, Jens Kamenik */
+
 #include "VideoOutputXv.h"
 #include "VideoOutputMaker.h"
 
@@ -68,7 +70,7 @@ void VideoOutputXv::render(Canvas &canvas)
     XFlush((Display*)_display);
 }
 
-bool VideoOutputXv::init(int xRes, int yRes, int bpp, bool fullscreen)
+bool VideoOutputXv::init(int xRes, int yRes, bool fullscreen)
 {            
     std::cout << "--==|| Xv output initialization ||==--" << std::endl;
     

@@ -17,7 +17,7 @@ public:
 
     void fullscreen(bool fs);
     void destroy();
-    bool init(int xRes, int yRes, int bpp, bool fullscreen);
+    bool init(int xRes, int yRes, bool fullscreen);
     void render(Canvas &canvas);
 
 protected:

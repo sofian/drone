@@ -48,23 +48,41 @@ void VideoOutputShm::render(Canvas &canvas)
         resizeWindow(_frameSizeX, _frameSizeY);
     }
 
-    unsigned char *xData = (unsigned char*)_xImage->data;
-    unsigned char *data = (unsigned char*)canvas._data;
-    for (int i=0;i<_frameSize;++i)    
-    {
-        *xData++ = *(data+2);
-        *xData++ = *(data+1);
-        *xData++ = *(data);
-        *xData++;
-        data+=4;
-    }
     
+    unsigned char *data = (unsigned char*)canvas._data;
+    
+    if (_bpp == 24 || _bpp == 32)
+    {    
+        unsigned char *xData = (unsigned char*)_xImage->data;
+        for (int i=0;i<_frameSize;++i)    
+        {
+            *xData++ = *(data+2);
+            *xData++ = *(data+1);
+            *xData++ = *(data);
+            *xData++;
+            data+=4;
+        }
+    }
+    else//16bit  5-6-5 todo: handle with mask
+    {
+        unsigned short *xData = (unsigned short*)_xImage->data;
+        unsigned short r,g,b;
+        for (int i=0;i<_frameSize;++i)    
+        {
+            b = *(data+2)>>3;
+            g = *(data+1)>>2;
+            r = (*data)>>3;
+            *xData++ = (r << 11) | (g << 5) | b;
+            data+=4;
+        }
+    }
+
     XShmPutImage((Display*)_display, _window, _gc, _xImage, 0, 0, 0, 0, _frameSizeX, _frameSizeY, False);
     
     XFlush((Display*)_display);
 }
 
-bool VideoOutputShm::init(int xRes, int yRes, int bpp, bool fullscreen)
+bool VideoOutputShm::init(int xRes, int yRes, bool fullscreen)
 {            
     std::cout << "--==|| Shm output initialization ||==--" << std::endl;
     
