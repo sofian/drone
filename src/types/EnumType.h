@@ -42,10 +42,10 @@ public:
     _value = value;
   }
   int value() const { return _value; }
-  operator int () const { return _value; }
-
+  //operator int () const { return _value; }
+  
   const std::string& label() const { return operator[](_value); }
-    
+  
   void setLabel(int value, const std::string& label) { operator[](value) = label; }
   const std::string& label(int value) const { return operator[](value); }
   
