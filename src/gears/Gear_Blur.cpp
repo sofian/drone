@@ -61,7 +61,7 @@ void Gear_Blur::runVideo()
     ASSERT_ERROR(_image->data());
 
     // Compute the summed area table.
-    _table->buildTable((unsigned char*)_image->data(), _sizeX, _sizeY);
+    _table->reset((unsigned char*)_image->data(), _sizeX, _sizeY);
         
     _outData = (unsigned char*)_outImage->data();
 

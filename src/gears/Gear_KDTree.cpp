@@ -53,7 +53,7 @@ void Gear_KDTree::runVideo()
   _rasterer->setImage(_outImage);
 
   // build accumulation buffer
-  _table->buildTable((unsigned char*)_image->data(), _image->width(), _image->height());
+  _table->reset((unsigned char*)_image->data(), _image->width(), _image->height());
 
   // create splits
   split(0, _sizeX-1, 0, _sizeY-1, 0);
