@@ -78,9 +78,9 @@ bool VideoOutputX11Base::togglefullscreen(bool fs, int xRes, int yRes)
   std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
   //XSetWindowBorderWidth((Display*)_display, _window, 0);
 
-  XineramaScreenInfo *xineramaScreenInfo;
-  int numberOfScreens=0;
-  xineramaScreenInfo = XineramaQueryScreens((Display*) _display, &numberOfScreens);
+//   XineramaScreenInfo *xineramaScreenInfo;
+//   int numberOfScreens=0;
+//   xineramaScreenInfo = XineramaQueryScreens((Display*) _display, &numberOfScreens);
 
 
    PropMotifWmHints motif_hints;

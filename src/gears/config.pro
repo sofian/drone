@@ -1,4 +1,4 @@
-CONFIG+=release
+include(../../flags.pro)
 
 # Debug settings
 debug {
@@ -17,6 +17,9 @@ release {
   
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
+  }
+  p3 {
+    QMAKE_CXXFLAGS += -march=pentium3
   }
   athlon {
     QMAKE_CXXFLAGS += -march=athlon    

@@ -3,7 +3,7 @@
 ######################################################################
 
 CONFIG = qt warn_on thread 
-include (config.pro)
+ include (../../flags.pro)
 
 unix:!macx:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
@@ -28,6 +28,9 @@ release {
   
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
+  }
+  p3 {
+    QMAKE_CXXFLAGS += -march=pentium3
   }
   athlon {
     QMAKE_CXXFLAGS += -march=athlon    

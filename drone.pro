@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = src/core src/drone src/gears 
+SUBDIRS = src/gears src/core src/drone
 
