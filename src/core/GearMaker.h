@@ -61,6 +61,7 @@ public:
   static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
   static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
+  static void parseFrei0rPlugins();
 private:
   static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
   static GearMaker _registerMyself;  

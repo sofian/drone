@@ -346,7 +346,7 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
 }
 
 Gear* Schema::addGear(std::string geartype)
-{  
+{
   return addGear(geartype, getUniqueGearName(geartype));
 }
 

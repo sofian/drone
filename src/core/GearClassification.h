@@ -173,6 +173,13 @@ public:
     };    
     GearClassification_Vectorial vectorial(){return GearClassification_Vectorial();}
 
+    // Frei0r
+    class GearClassification_Frei0r: public GearClassificationT<GearClassification_Frei0r, GearClassification_Video>
+    {
+	public: std::string toString(){return "Frei0r";} 
+    };    
+    GearClassification_Frei0r frei0r(){return GearClassification_Frei0r();}
+
   };
   
   //SIGNAL

@@ -138,11 +138,6 @@ void GearMaker::parseGears()
     
     //open file
     void *handle = dlopen(fileInfo->filePath(), RTLD_LAZY);
-//     if (handle == _frei0rHandle)
-//     {
-//       ++it;//next file
-//       continue;
-//     }
     
     if (!(error = dlerror()))    
     {          
@@ -172,41 +167,8 @@ void GearMaker::parseGears()
       }
       else // might be a frei0r plugin
       {
-        //check if it is a frei0r plugin
-        void (*frei0rTest)();
-        *(void**) (&frei0rTest) = dlsym(handle, "f0r_init");
-        if (!(error = dlerror()))
-        {
-          std::cout << "this is a frei0r plugin with path = " << fileInfo->filePath() << std::endl;
-          
-          // get gear info
-
-          // set frei0r lib (XXX pourrait etre une fonction statique)
-          GearFrei0r::setGlobalFrei0rLib(fileInfo->filePath());
-    
-          GearInfo gearInfo = GearFrei0r::getGearInfo();
-          std::cout << "got info" <<std::endl;
-          
-          // XXX TODO: should be a handle to Gear_Frei0r
-          if ((error = dlerror()))
-          {
-            warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
-            std::cout << error << std::endl;
-          }
-
-          std::cout<< "making def" << std::endl;
-          GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,
-                                                                                FREI0R_PLUGIN,
-                                                                                0, &GearFrei0r::makeGear);
-          
-          //add geardefintion to the registry
-          (*_registry)[gearInfo.name]=gearPluginDefinition;//todo check for duplicates
-        }
-        else
-        {
-          warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
-          std::cout << error << std::endl;      
-        }
+        warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
+        std::cout << error << std::endl;      
       }
     }
     else
@@ -217,5 +179,81 @@ void GearMaker::parseGears()
 
     ++it;//next file
   }
+
+  parseFrei0rPlugins();
 }
 
+void GearMaker::parseFrei0rPlugins()
+{
+  std::cout << "--- loading frei0r plugins ---" << std::endl;
+#if defined(Q_OS_MACX)
+	//on osx we have to first find the bundle full path
+	CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+  CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef, kCFURLPOSIXPathStyle);
+	//gears are in /Contents/PlugIns
+	QString qstrMacPath = QString(CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding())) + "/Contents/PlugIns/frei0r";
+	QDir dir(qstrMacPath);
+#else
+	QDir dir("gears/frei0r");
+#endif
+  if (!dir.exists())
+  {
+    warningmsg("no gears path");
+    return;
+  }
+    
+  dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+
+#if defined(Q_OS_MACX)
+  dir.setNameFilter("*.dylib*");
+#else
+  dir.setNameFilter("*.so*");
+#endif  
+  
+  const QFileInfoList *files = dir.entryInfoList();
+  QFileInfoListIterator it(*files);
+  QFileInfo *fileInfo;
+  const char* error;
+
+  while ((fileInfo = it.current()) != 0 )
+  {
+    std::cout << fileInfo->fileName() << std::endl;
+    
+    //reset error
+    dlerror();
+    
+    //open file
+    dlopen(fileInfo->filePath(), RTLD_LAZY);
+    
+    if (!(error = dlerror()))
+    {
+      // get gear info
+      
+      // set frei0r lib (XXX pourrait etre une fonction statique)
+      GearFrei0r::setGlobalFrei0rLib(fileInfo->filePath());
+      
+      GearInfo gearInfo = GearFrei0r::getGearInfo();
+      
+      // XXX TODO: should be a handle to Gear_Frei0r
+      if ((error = dlerror()))
+      {
+        warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
+        std::cout << error << std::endl;
+      }
+      
+      GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,
+                                                                            FREI0R_PLUGIN,
+                                                                            0, &GearFrei0r::makeGear);
+      
+      //add geardefintion to the registry
+      (*_registry)[gearInfo.name]=gearPluginDefinition;//todo check for duplicates
+    }
+    else
+    {
+      warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
+      std::cout << error << std::endl;      
+    }
+    
+    ++it;//next file
+  }
+}
