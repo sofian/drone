@@ -12,7 +12,7 @@ Gear_MedianFilter::Gear_MedianFilter(Engine *engine, std::string name) : Gear(en
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 7)));
 }
 
 Gear_MedianFilter::~Gear_MedianFilter()
@@ -36,7 +36,7 @@ void Gear_MedianFilter::runVideo()
   _data = (unsigned char*)_image->data();    
   _outData = (unsigned char*)_outImage->data();
 
-  _medianSize = (int) _AMOUNT_IN->type()->value();
+  _medianSize = (int) CLAMP((int)_AMOUNT_IN->type()->value(), 0, 7);
 
   ////////////////////////////
 
@@ -49,15 +49,20 @@ void Gear_MedianFilter::runVideo()
       _y1 = y - _medianSize;
       _y2 = y + _medianSize;
 
-      if (_x1 < 0)_x1 = 0;
-      if (_x2 < 0)_x2 = 0;
-      if (_y1 < 0)_y1 = 0;
-      if (_y2 < 0)_y2 = 0;
+      _x1 = CLAMP(_x1,0,_sizeX-1);
+      _x2 = CLAMP(_x2,0,_sizeX-1);
+      _y1 = CLAMP(_y1,0,_sizeY-1);
+      _y2 = CLAMP(_y2,0,_sizeY-1);
+      
+//       if (_x1 < 0)_x1 = 0;
+//       if (_x2 < 0)_x2 = 0;
+//       if (_y1 < 0)_y1 = 0;
+//       if (_y2 < 0)_y2 = 0;
 
-      if (_x1 >= _sizeX)_x1 = _sizeX-1;
-      if (_x2 >= _sizeX)_x2 = _sizeX-1;
-      if (_y1 >= _sizeY)_y1 = _sizeY-1;
-      if (_y2 >= _sizeY)_y2 = _sizeY-1;
+//       if (_x1 >= _sizeX)_x1 = _sizeX-1;
+//       if (_x2 >= _sizeX)_x2 = _sizeX-1;
+//       if (_y1 >= _sizeY)_y1 = _sizeY-1;
+//       if (_y2 >= _sizeY)_y2 = _sizeY-1;
 
       int nCols = _y2-_y1+1;
       int nRows = _x2-_x1+1;
@@ -67,7 +72,7 @@ void Gear_MedianFilter::runVideo()
       for (int z=0; z<4; ++z)
       {
         _iterMedianSelect = _medianSelect;
-        {
+        //{
           _iterData = startIterData + z;
           for (int ySub=_y1; ySub<=_y2; ++ySub)
           {
@@ -78,7 +83,7 @@ void Gear_MedianFilter::runVideo()
             }
             _iterData += nextRow;
           }
-        }
+          //}
         *_outData++ = quickSelect(_medianSelect, nRows*nCols);
       }
 
