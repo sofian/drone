@@ -8,7 +8,7 @@
 Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither")
 
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
-  : Gear(engine, "ClusteredDither", name)
+  : Gear(engine, "ClusteredDither", name), _threshold(0), _order(0)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
@@ -17,6 +17,15 @@ Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
 {
+  free(_threshold);
+  free(_order);
+}
+
+void Gear_ClusteredDither::init()
+{
+  _clusterSize = (int)_AMOUNT_IN->buffer()[0];
+  _width = _clusterSize * 3;
+  computeThreshold();
 }
 
 bool Gear_ClusteredDither::ready()
@@ -24,26 +33,17 @@ bool Gear_ClusteredDither::ready()
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
-#define SPOT_ROUND(x, y) 1-x*x-y*y
-#define BARTLETT(x,y)	((2-abs(x)) * (2-abs(y)))
-#define BOUNDS(a,x,y)	((a < x) ? x : ((a > y) ? y : a))
-#define ISNEG(x)	(((x) < 0)? 1 : 0)
-
 void Gear_ClusteredDither::runVideo()
 {
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
   _outImage->allocate(_image->sizeX(), _image->sizeY());
 
-  _clusterSize = (int)_AMOUNT_IN->buffer()[0];
-  
   _sizeX = _image->sizeX();
   _sizeY = _image->sizeY();
   
   _data = _image->_data;    
   _outData = _outImage->_data;
-
-  //int clusterSize2 = _clusterSize*_clusterSize;
   
   unsigned char *iterData = (unsigned char*)_data;
   unsigned char *iterOutData = (unsigned char*)_outData;
@@ -51,15 +51,15 @@ void Gear_ClusteredDither::runVideo()
   int maxClusterSizeY;
   int maxClusterSizeX;
 
-  int width = _clusterSize * 3;
-  int width2 = width*width;
+  // If cluster size has changed, recompute threshold matrix.
+  if (_clusterSize != (int)_AMOUNT_IN->buffer()[0])
+  {
+    _clusterSize = (int)_AMOUNT_IN->buffer()[0];
+    _width = _clusterSize * 3;
+    computeThreshold();
+  }
 
-  unsigned char *threshold = (unsigned char*)malloc(width2*sizeof(unsigned char));
-  order_t *order = (order_t*)malloc(width2*sizeof(order_t));
-
-  /* Bartlett window matrix optimisation */
-  int w002 = BARTLETT(0,0) * BARTLETT(0,0);
-
+  // *** OPTIM : les modulo et les MIN...
   for (int y=0; y<_sizeY; y += _clusterSize - (y % _clusterSize))
   {
     maxClusterSizeY = _clusterSize - ( y % _clusterSize);
@@ -70,46 +70,18 @@ void Gear_ClusteredDither::runVideo()
       maxClusterSizeX = _clusterSize - ( x % _clusterSize);
       maxClusterSizeX = MIN( maxClusterSizeX, _sizeX-x );
 
-      int i=0;
-      // inside cell
-      for (int yCell=0; yCell<width; ++yCell)
-      {
-        double sy = 2*(double)yCell / (width-1) - 1;
-        for (int xCell=0; xCell<width; ++xCell)
-        {
-          double sx = 2*(double)xCell / (width-1) - 1;
-          double val = SPOT_ROUND(sx, sy);
-          val = BOUNDS(val, -1, 1);
-          
-          order[i].index = i;
-          order[i].value = val;
-          ++i; 
-        }
-      }
-
-      /* now sort array of (point, value) pairs in ascending order */
-      //      qsort(order, width2, sizeof(order_t), order_cmp);
-
-      for (i=0; i < width2; i++)
-      {
-        /* thresh[] contains values from 0 .. 254.  The reason for not
-         * including 255 is so that an image value of 255 remains
-         * unmolested.  It would be bad to filter a completely white
-         * image and end up with black speckles.  */
-        threshold[order[i].index] = i * 0xff / width2; // *** pas besoin de .value dans c'cas là...
-      }
-
       for (int yCell=0; yCell<maxClusterSizeY; ++yCell)
       {
+        // *** OPTIM : y'aurait  moyen de faire ca un peu mieux...
         iterData    = (unsigned char*)&_data[(y+yCell)*_sizeX + x];
         iterOutData = (unsigned char*)&_outData[(y+yCell)*_sizeX + x];
         
         for (int xCell=0; xCell<maxClusterSizeX; ++xCell)
         {
-
+          
           int ry = (y + yCell) * 3;
           int rx = (x + xCell) * 3;
-          
+
 			    /* Make sure rx and ry are positive and within
 			     * the range 0 .. width-1 (incl).  Can't use %
 			     * operator, since its definition on negative
@@ -117,8 +89,9 @@ void Gear_ClusteredDither::runVideo()
 			     * since that would cause reflection about the
 			     * x- and y-axes.  Relies on integer division
 			     * rounding towards zero. */
-			    rx -= ((rx - ISNEG(rx)*(width-1)) / width) * width;
-			    ry -= ((ry - ISNEG(ry)*(width-1)) / width) * width;
+          // *** OPTIM ici...
+			    rx -= ((rx - ISNEG(rx)*(_width-1)) / _width) * _width;
+			    ry -= ((ry - ISNEG(ry)*(_width-1)) / _width) * _width;
 
           // Grayscale.
           int total = *iterData++;
@@ -128,26 +101,28 @@ void Gear_ClusteredDither::runVideo()
           iterData++;
           total >>=2;
 
+          // *** OPTIM : unroll loop
           int sum = 0;
-          
+
           for(int sy=-1; sy<=1; sy++)
           {
 				    for(int sx=-1; sx<=1; sx++)
 				    {
               int ty = ry + sy;
               int tx = rx + sx;
+             
+//               if (tx < 0) tx += _width;
+//               else if (tx >= _width) tx -= _width;
+//               if (ty < 0) ty += _width;
+//               else if (ty >= _width) ty -= _width;
               
-              while (tx < 0)  tx += width;
-              while (ty < 0)  ty += width;
-              while (tx >= width)  tx -= width;
-              while (ty >= width)  ty -= width;
-              
-              if (total > threshold[ty*width + tx])
-                sum += 0xff * BARTLETT(sx, sy);
+              // *** OPTIM : precalculer les BARTLETT (en fait on se debarasse de cette macro tout simplement)
+              if (total > _threshold[ty*_width + tx])
+                sum += BARTLETT[sx+1][sy+1];
             }
           }
 
-          sum /= w002;
+          sum >>= 4;
           
           *iterOutData++ = sum;
           *iterOutData++ = sum;
@@ -161,7 +136,5 @@ void Gear_ClusteredDither::runVideo()
     }
   }
 
-  free(threshold);
-  free(order);
 }
 
