@@ -3,8 +3,10 @@
 CONFIG = release
 
 # Architecture
-CONFIG += athlon 
+# CONFIG += athlon 
 CONFIG += p4
+
+CONFIG += qt warn_on thread
 
 # User-dependent includes
 INCLUDEPATH += src/gears/js
