@@ -14,8 +14,8 @@ Gear_Rescale::Gear_Rescale(Engine *engine, std::string name) : Gear(engine, "Res
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(320, 0, 640)));
-  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", new ValueType(280, 0, 560)));
+  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(352, 1, 1024)));
+  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", new ValueType(288, 1, 768)));
 }
 
 Gear_Rescale::~Gear_Rescale()
@@ -32,8 +32,8 @@ void Gear_Rescale::runVideo()
 {
   _image = _VIDEO_IN->type();
   _outImage = _VIDEO_OUT->type();
-  _newWidth = (int) MAX((int)_WIDTH_IN->type()->value(), 0);
-  _newHeight = (int) MAX((int)_HEIGHT_IN->type()->value(), 0);
+  _newWidth = (int) MAX((int)_WIDTH_IN->type()->value(), 1);
+  _newHeight = (int) MAX((int)_HEIGHT_IN->type()->value(), 1);
   _outImage->resize(_newWidth, _newHeight);
 
   rescale_image(_outImage->data(), _image->data(), _newWidth, _newHeight, _image->width(), _image->height());
