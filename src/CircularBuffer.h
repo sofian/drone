@@ -1,7 +1,7 @@
 #ifndef CircBuf_included
 #define CircBuf_included
 
-#include "assert.h"
+#include "error.h"
 #include <list>
 #include <string>
 
@@ -70,7 +70,7 @@ public:
       _numBlocks = numBlocks;
 
       // LOG something maybe?
-      // we don't enable down-sizing the CircularBuffer for now 
+      // we don't enable down-sizing the CircularBuffer for now
       if (newsize<_bufSize)
       {
         WARNING("CircularBuffer: Downsizing is not yet implemented");
@@ -172,15 +172,13 @@ public:
       sample_from--;
       sample_to--;
       // sample_from/to are [-x to -1] since 0 would mean getting t
-      assert(sample_from < 0 && sample_to < 0);
+      ASSERT_ERROR(sample_from < 0 && sample_to < 0);
       
       int samplesWanted = sample_to - sample_from + 1;
       
       // check if we need dynamic resizing
-      if (samplesWanted > _bufSize)
-          // some kind of log/error
-          WARNING("getBounds::ah non...  samplesWanted (%i)> taille du circularBuffer(%i)",samplesWanted,_bufSize);
-
+      ASSERT_WARNING(samplesWanted > _bufSize);
+      
       samplesWanted=CLAMP(samplesWanted,0,_bufSize);
 
       T *bt1 = _current + sample_from;
