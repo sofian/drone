@@ -1,10 +1,9 @@
 TEMPLATE=lib
-SOURCES+=MY_FREI0R_PLUGIN.c
-INCLUDEPATH+=../../
+SOURCES+=PLUGINNAME.c
+INCLUDEPATH+=../../../spec/
 
 #linux
-unix:!macx:TARGET=../../../../../gears/frei0r/MY_FREI0R_PLUGIN
+unix:!macx:TARGET=../../../../../../gears/frei0r/PLUGINNAME
 
 #osx
-macx:TARGET=../../../../../drone.app/Contents/PlugIns/frei0r/MY_FREI0R_PLUGIN
-
+macx:TARGET=../../../../../../drone.app/Contents/PlugIns/frei0r/PLUGINNAME
