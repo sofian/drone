@@ -92,10 +92,10 @@ void Gear_VideoOutput::runVideo()
   if (_videoOutput==NULL)
     return;
 
-  if (_VIDEO_IN->type().image().width()==0 || _VIDEO_IN->type().image().height()==0)
+  if (_VIDEO_IN->type()->image()->width()==0 || _VIDEO_IN->type()->image()->height()==0)
     return;
 
-  _videoOutput->render(_VIDEO_IN->type().image());
+  _videoOutput->render(*(_VIDEO_IN->type()->image()));
 }
 
 

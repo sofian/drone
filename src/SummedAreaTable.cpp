@@ -4,7 +4,7 @@
 const RGBAint SummedAreaTable::ZERO = { 0, 0, 0, 0};
 
 SummedAreaTable::SummedAreaTable()
-: _acc(0), _accSquares(0), _canvas(0), _canvasData(0), _sizeX(0), _sizeY(0), _size(0)
+: _acc(0), _accSquares(0), _image(0), _imageData(0), _width(0), _height(0), _size(0)
 {
 }
 
@@ -14,45 +14,45 @@ SummedAreaTable::~SummedAreaTable()
   free(_accSquares);
 }
 
-void SummedAreaTable::setCanvas(Canvas *canvas)
+void SummedAreaTable::setImage(MatrixType<RGBA> &image)
 {
-  _canvas = canvas;
-  if (_canvas)
+  _image = &image;
+  if (_image)
   {
-    _canvasData = _canvas->_data;
-    _sizeX = _canvas->sizeX();
-    _sizeY = _canvas->sizeY();
-    _size = _sizeX * _sizeY;
+    _imageData = _image->data();
+    _width = _image->width();
+    _height = _image->height();
+    _size = _width * _height;
   }
 }
 
 void SummedAreaTable::buildTable()
 {
-  if (!_canvas)
+  if (!_image)
     return;
 
   // check if we need to resize
-  if (_canvas->sizeX() * _canvas->sizeY() != _size) // there was a change
+  if (_image->width() * _image->height() != _size) // there was a change
   {
     // resize
-    _sizeX = _canvas->sizeX();
-    _sizeY = _canvas->sizeY();
-    _size = _sizeX * _sizeY;
+    _width = _image->width();
+    _height = _image->height();
+    _size = _width * _height;
   }
 
   // reallocate
   _acc = (RGBAint*)realloc(_acc, _size*sizeof(RGBAint));
 
-  _canvasData = _canvas->_data;
+  _imageData = _image->data();
 
-  register unsigned char *iterData = (unsigned char*) _canvasData;
+  register unsigned char *iterData = (unsigned char*) _imageData;
   register int *iterAcc = (int*) _acc;
 
-  int rowWidth = _sizeX * 4;
+  int rowWidth = _width * 4;
 
   // upper row
   _accR = _accG = _accB = _accA = 0;
-  for (int x=0; x<_sizeX; ++x)
+  for (int x=0; x<_width; ++x)
   {
     _accR += (int)*(iterData++);
     _accG += (int)*(iterData++);
@@ -65,12 +65,12 @@ void SummedAreaTable::buildTable()
   }
 
   // other rows
-  for (int y=1; y<_sizeY; ++y)
+  for (int y=1; y<_height; ++y)
   {
     // copy upper line
     memcpy(iterAcc, iterAcc - rowWidth, rowWidth * sizeof(int));
     _accR = _accG = _accB = _accA = 0;
-    for (int x=0; x<_sizeX; ++x)
+    for (int x=0; x<_width; ++x)
     {
       _accR += (int)*(iterData++);
       _accG += (int)*(iterData++);
@@ -86,31 +86,31 @@ void SummedAreaTable::buildTable()
 
 void SummedAreaTable::buildTableOfSquares()
 {
-  if (!_canvas)
+  if (!_image)
     return;
 
   // check if we need to resize
-  if (_canvas->sizeX() * _canvas->sizeY() != _size) // there was a change
+  if (_image->width() * _image->height() != _size) // there was a change
   {
     // resize
-    _sizeX = _canvas->sizeX();
-    _sizeY = _canvas->sizeY();
-    _size = _sizeX * _sizeY;
+    _width = _image->width();
+    _height = _image->height();
+    _size = _width * _height;
   }
 
   // reallocate
   _accSquares = (RGBAint*)realloc(_accSquares, _size*sizeof(RGBAint));
 
-  _canvasData = _canvas->_data;
+  _imageData = _image->data();
 
-  register unsigned char *iterData = (unsigned char*) _canvasData;
+  register unsigned char *iterData = (unsigned char*) _imageData;
   register int *iterAcc = (int*) _acc;
 
-  int rowWidth = _sizeX * 4;
+  int rowWidth = _width * 4;
 
   // upper row
   _accR = _accG = _accB = _accA = 0;
-  for (int x=0; x<_sizeX; ++x)
+  for (int x=0; x<_width; ++x)
   {
     _accR += SQR( (int)*(iterData++) );
     _accG += SQR( (int)*(iterData++) );
@@ -123,12 +123,12 @@ void SummedAreaTable::buildTableOfSquares()
   }
 
   // other rows
-  for (int y=1; y<_sizeY; ++y)
+  for (int y=1; y<_height; ++y)
   {
     // copy upper line
     memcpy(iterAcc, iterAcc - rowWidth, rowWidth * sizeof(int));
     _accR = _accG = _accB = _accA = 0;
-    for (int x=0; x<_sizeX; ++x)
+    for (int x=0; x<_width; ++x)
     {
       _accR += SQR( (int)*(iterData++) );
       _accG += SQR( (int)*(iterData++) );

@@ -51,17 +51,17 @@ private:
   ValueType _width;
 };
 
-template<>
-std::string MatrixType<float>::name() const;
-
-template<>
-QColor MatrixType<float>::color() const;
-
-template<>
-std::string MatrixType<char>::name() const;
-
-template<>
-QColor MatrixType<char>::color() const;
+/* template<>                                   */
+/* std::string MatrixType<float>::name() const; */
+/*                                              */
+/* template<>                                   */
+/* QColor MatrixType<float>::color() const;     */
+/*                                              */
+/* template<>                                   */
+/* std::string MatrixType<char>::name() const;  */
+/*                                              */
+/* template<>                                   */
+/* QColor MatrixType<char>::color() const;      */
 
 
 #endif //__MATRIXTYPE_INCLUDED

@@ -2,7 +2,6 @@
 #include "VideoOutputMaker.h"
 
 #include <iostream>
-#include "Canvas.h"
 
 using namespace X11;
 

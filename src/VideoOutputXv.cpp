@@ -4,7 +4,6 @@
 #include "VideoOutputMaker.h"
 
 #include <iostream>
-#include "Canvas.h"
 using namespace X11;
 
 Register_VideoOutput(MAKERVideoOutputXv, VideoOutputXv, "Xv")

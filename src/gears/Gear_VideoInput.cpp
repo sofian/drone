@@ -216,13 +216,13 @@ void Gear_VideoInput::initInputDevice()
   _vidMMap.width  = _sizeX;
   _vidMMap.height = _sizeY;
 
-  _VIDEO_OUT->type().image().resize(_sizeY, _sizeX);
+  _VIDEO_OUT->type()->image()->resize(_sizeY, _sizeX);
   _data = (unsigned char*)malloc(_sizeX*_sizeY*4);
 }
 
 void Gear_VideoInput::runVideo()
 {
-  _outData = (unsigned char*) _VIDEO_OUT->type().image().data();
+  _outData = (unsigned char*) _VIDEO_OUT->type()->image()->data();
 
   //read(_device, _data, _sizeX*_sizeY*4);
   if (ioctl(_device, VIDIOCMCAPTURE, &(_vidMMap))<0)

@@ -80,7 +80,7 @@ HEADERS += config.h \
            src/PropertyControlFilename.h \
            src/PropertyControlString.h \
 	   src/PropertyControlBool.h \
-           src/Rasterer.h \
+#           src/Rasterer.h \
            src/SummedAreaTable.h \
            src/SchemaEditor.h \
            src/Signal.h \
@@ -161,7 +161,7 @@ SOURCES +=     src/ConnectionItem.cpp \
            src/PropertyControlFilename.cpp \
            src/PropertyControlString.cpp \
 	   src/PropertyControlBool.cpp \
-           src/Rasterer.cpp \
+#           src/Rasterer.cpp \
            src/SchemaEditor.cpp \
 #           src/SignalCircularBuffer.cpp \
            src/SignalInfo.cpp \
