@@ -1,16 +1,16 @@
-#include "CircBuf.h"
+#include "CircularBufferSignal.h"
 #include <string.h>
 #include "Engine.h"
 
 // initsize : size at first initialisation
-CircBufSignal::CircBufSignal(Signal_T def, int initsize)
+CircularBufferSignal::CircularBufferSignal(Signal_T def, int initsize)
   :_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
 {
   resize(initsize);
   setDynamicResizingMaximumSize(_DYN_RESIZE_MAX);
 }
 
-void CircBufSignal::setStat(Stats stat, bool computed)
+void CircularBufferSignal::setStat(Stats stat, bool computed)
 {
   if(stat==STAT_SUM)
   {
@@ -34,16 +34,16 @@ void CircBufSignal::setStat(Stats stat, bool computed)
 }
 
 // set to -1 to disable dyn. resizing
-void CircBufSignal::setDynamicResizingMaximumSize(int sz)
+void CircularBufferSignal::setDynamicResizingMaximumSize(int sz)
 {
   _maxDynSize=sz;
 }
 
 
-void CircBufSignal::resize(int newsize)
+void CircularBufferSignal::resize(int newsize)
 {
   // LOG something maybe?
-  // we don't enable down-sizing the CircBuf for now 
+  // we don't enable down-sizing the CircularBuffer for now 
   if(newsize<_bufSize)
     return;
 
@@ -110,7 +110,7 @@ void CircBufSignal::resize(int newsize)
 
 // appends data to the circular buffer
 // if append size is too big, we resize the buffer.
-void CircBufSignal::append(Signal_T * ptr, int size)
+void CircularBufferSignal::append(Signal_T * ptr, int size)
 {
   if(size > _bufSize)
     resize(size);
@@ -145,7 +145,7 @@ void CircBufSignal::append(Signal_T * ptr, int size)
 //   - go from pa1 to pa2 inclusively, then from pb1 to pb2 inclusively, while processing your samples along the way
 //
 // which stat specifies which buffer to use  
-void CircBufSignal::getBounds(int sample_from, int sample_to, Signal_T_ptr& pa1, Signal_T_ptr& pa2, Signal_T_ptr& pb1, Signal_T_ptr& pb2, Stats which_stat)
+void CircularBufferSignal::getBounds(int sample_from, int sample_to, Signal_T_ptr& pa1, Signal_T_ptr& pa2, Signal_T_ptr& pb1, Signal_T_ptr& pb2, Stats which_stat)
 {
   // sample_from/to can are [-x to -1] since 0 would mean getting t
   assert(sample_from < 0 && sample_to < 0);

@@ -10,6 +10,7 @@ CONFIG += thread debug
 # Input
 HEADERS += config.h \
            src/Canvas.h \
+           src/CircularBufferSignal.h \
            src/ConnectionItem.h \
            src/Engine.h \
            src/FrequencyAnalyzer.h \
@@ -81,6 +82,7 @@ HEADERS += config.h \
 	   src/splash.xpm \
 	   COPYING	   
 SOURCES += src/Canvas.cpp \
+           src/CircularBufferSignal.cpp \
            src/ConnectionItem.cpp \
            src/drone.cpp \
            src/Engine.cpp \

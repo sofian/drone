@@ -7,8 +7,8 @@
 #include <string>
 
 // this define code to cycle over samples from 'from' to 'to' 
-// (relative to _current) of CircBufSignal object 'obj'
-// the variable cbptr points on the actual sample
+// (relative to _current) of CircularBufferSignal object 'obj
+// the variable pcur points on the actual sample
 
 // e.g : 
 // CIRCBUF_SIGNAL_T_LOOPDATA_FOR(b,-10,-1)  <- no semicolon
@@ -49,14 +49,14 @@
 
 const int _DYN_RESIZE_MAX=65536;
 
-class CircBufSignal
+class CircularBufferSignal
 {
 
 public:
 
   enum Stats {STAT_NONE, STAT_SUM,STAT_SUMSQUARE};
 
-  CircBufSignal(Signal_T def, int initsize=1024);
+  CircularBufferSignal(Signal_T def, int initsize=1024);
   void resize(int size);
   // returns 2 Signal_T_ptr pairs : a1-a2 b1-b2 that covers the time span specified by t1,t2
   // where t1<=0 and t2<=0, specifying bounds of a sample window in the past ( e.g : t1= -512, t2= -256 ) 
