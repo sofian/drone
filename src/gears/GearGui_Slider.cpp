@@ -54,10 +54,10 @@ void GearGui_Slider::drawShape(QPainter &painter)
 
 }
 
-void GearGui_Slider::mouseEvent(const QPoint& p, Qt::ButtonState button)
+bool GearGui_Slider::mouseEvent(const QPoint& p, Qt::ButtonState button)
 {
   if (button != Qt::LeftButton)
-    return;
+    return false;
 
   int sliderStartX, sliderStartY, sizeX, sizeY;
   getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
@@ -66,9 +66,11 @@ void GearGui_Slider::mouseEvent(const QPoint& p, Qt::ButtonState button)
   if ((p.y() < sliderStartY)
       || (p.x() > sliderStartX + sizeX - SLIDER_THICKNESS)
       || (p.x() < sliderStartX))
-    return;
+    return false;
 
   moveSlider((int)p.x() - (sliderStartX));
+  
+  return true;
 }
 
 void GearGui_Slider::moveSlider(int sliderPos)

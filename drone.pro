@@ -31,6 +31,7 @@ src/types/VideoType.h \
 src/types/SignalType.h \
 src/types/DisplaceGrid.h \
 src/types/MatrixType.h \
+src/gears/Gear_AffineTransform.h \
 src/gears/Gear_AudioInput.h \
 src/gears/Gear_AudioOutput.h \
 src/gears/Gear_AudioSource.h \
@@ -58,6 +59,7 @@ src/gears/Gear_NGone.h \
 src/gears/Gear_Osc.h \
 src/gears/Gear_Oscilloscope.h \
 src/gears/Gear_PatternGen.h \
+src/gears/Gear_PushButton.cpp \
 src/gears/Gear_Saturation.h \
 src/gears/Gear_SignalStat.h \
 src/gears/Gear_SimpleDelay.h \
@@ -74,6 +76,7 @@ src/gears/Gear_VideoOutput.h \
 src/gears/Gear_VideoSource.h \
 src/GearGui.h \
 src/GearConverter.h \
+src/gears/GearGui_PushButton.h \
 src/gears/GearGui_Slider.h \
 src/gears/GearGui_TV.h \
 src/GearMaker.h \
@@ -112,6 +115,7 @@ src/drone.cpp \
 src/Engine.cpp \
 src/FrequencyAnalyzer.cpp \
 src/Gear.cpp \
+src/gears/Gear_AffineTransform.cpp \
 src/gears/Gear_ApplyDisplaceGrid.cpp \
 src/gears/Gear_AudioInput.cpp \
 src/gears/Gear_AudioOutput.cpp \
@@ -138,6 +142,7 @@ src/gears/Gear_MedianFilter.cpp \
 src/gears/Gear_NGone.cpp \
 src/gears/Gear_Osc.cpp \
 src/gears/Gear_Oscilloscope.cpp \
+src/gears/Gear_PushButton.cpp \
 src/gears/Gear_PatternGen.cpp \
 src/gears/Gear_Saturation.cpp \
 src/gears/Gear_SignalStat.cpp \
@@ -154,6 +159,7 @@ src/gears/Gear_VideoMix.cpp \
 src/gears/Gear_VideoOutput.cpp \
 src/gears/Gear_VideoSource.cpp \
 src/GearGui.cpp \
+src/gears/GearGui_PushButton.cpp \
 src/gears/GearGui_Slider.cpp \
 src/gears/GearGui_TV.cpp \
 src/GearMaker.cpp \

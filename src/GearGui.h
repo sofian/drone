@@ -45,7 +45,8 @@ public:
   virtual void save(QDomDocument &doc, QDomElement &gearElem);
   virtual void load(QDomElement &gearElem);
 
-  virtual void mouseEvent(const QPoint&, Qt::ButtonState){}
+  //! returns true if the function eats up the event
+  virtual bool mouseEvent(const QPoint&, Qt::ButtonState){return false;}
 
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);

@@ -21,7 +21,7 @@ public:
 
   GearGui_Slider(Gear_Slider *gear, QCanvas *canvas);
 
-  void mouseEvent(const QPoint& p, Qt::ButtonState button);
+  bool mouseEvent(const QPoint& p, Qt::ButtonState button);
   void moveSlider(int sliderPos);
 
 protected:

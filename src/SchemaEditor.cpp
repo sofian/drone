@@ -92,7 +92,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = testForGearCollision(p);
   PlugBox *selectedPlugBox;
-
+  
   if (gearGui!=NULL)
   {
     //send mouse events
@@ -228,9 +228,15 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
 
 void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
 {
-  GearGui *gearGui;
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
+  GearGui *gearGui = testForGearCollision(p);
+  PlugBox *selectedPlugBox;
 
+  if (gearGui!=NULL)
+  {
+    //send mouse events
+    gearGui->mouseEvent(p, mouseEvent->stateAfter());
+  }
   switch (_state)
   {
   case IDLE:
@@ -239,8 +245,7 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
     _state=IDLE;
     break;
   case CONNECTING:
-    gearGui = testForGearCollision(p);   
-
+  
     if (gearGui!=NULL)
     {
       if (!_activeConnection->createConnection(gearGui->plugHitted(p)))
@@ -278,7 +283,8 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
 
     if (gearGui!=NULL)
     {
-      slotGearProperties();
+      if(!gearGui->mouseEvent(p, mouseEvent->button()))
+        slotGearProperties();
     }
     break;
   default:
