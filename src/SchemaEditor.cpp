@@ -444,7 +444,7 @@ void SchemaEditor::slotGearProperties()
 
   GearPropertiesDialog *gearPropertiesDialog;
 
-  gearPropertiesDialog = new GearPropertiesDialog(this, _contextGear->gear());
+  gearPropertiesDialog = new GearPropertiesDialog(this, _contextGear->gear(), _engine);
   gearPropertiesDialog->exec();
   delete gearPropertiesDialog;
 

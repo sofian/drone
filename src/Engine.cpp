@@ -104,6 +104,10 @@ Gear* Engine::addGear(std::string geartype, std::string name)
   else
   {
     gear->internalInit();
+    
+    if (_playing)
+      gear->prePlay();
+    
     _gears.push_back(gear);
   }
 
@@ -197,6 +201,7 @@ void *Engine::playThread(void *parent)
 
     engine->performScheduledConnectDisconnect();
     engine->performScheduledGearDeletion();
+    engine->performScheduledGearUpdateSettings();
 
     engine->synchGraph();
 
@@ -380,7 +385,6 @@ void Engine::scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB)
   //peform now if not playing
   if (!_playing)
     performScheduledConnectDisconnect();
-
 }
 
 void Engine::scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB)
@@ -390,7 +394,6 @@ void Engine::scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB)
   //peform now if not playing
   if (!_playing)
     performScheduledConnectDisconnect();
-
 }
 
 
@@ -400,8 +403,16 @@ void Engine::scheduleGearDeletion(Gear *gear)
 
   if (!_playing)
     performScheduledGearDeletion();
-
 }
+
+void Engine::scheduleGearUpdateSettings(Gear *gear)
+{
+  _scheduledsGearUpdateSettings.push_back(gear);
+
+  if (!_playing)
+    performScheduledGearUpdateSettings();
+}
+
 
 void Engine::performScheduledGearDeletion()
 {
@@ -426,6 +437,15 @@ void Engine::performScheduledConnectDisconnect()
 
   _scheduledsConnectDisconnect.clear();
 }
+
+void Engine::performScheduledGearUpdateSettings()
+{
+  for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)  
+    (*it)->updateSettings();
+      
+  _scheduledsGearUpdateSettings.clear();
+}
+
 
 void Engine::getAllConnections(std::list<Connection*> &connections)
 {

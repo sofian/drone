@@ -79,32 +79,6 @@ void Gear_Contrast::runVideo()
       _imageOut++;
       _imageIn++;
       
-//       if (_r>255)
-//         *_imageOut = 255;
-//       else
-//         if (_r<0)
-//         *_imageOut = 0;
-//       else
-//         *_imageOut = _r;
-
-//       if (_g>255)
-//         *(_imageOut+1) = 255;
-//       else
-//         if (_g<0)
-//         *(_imageOut+1) = 0;
-//       else
-//         *(_imageOut+1) = _g;
-
-//       if (_b>255)
-//         *(_imageOut+2) = 255;
-//       else
-//         if (_b<0)
-//         *(_imageOut+2) = 0;
-//       else
-//         *(_imageOut+2) = _b;
-
-//       _imageIn+=4;
-//       _imageOut+=4;
     }
   }
 }

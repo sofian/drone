@@ -30,25 +30,25 @@
 #include <string>
 #include <iostream>
 
-/* #include </usr/src/linux/drivers/media/video/zoran.h> */
-/*                                                       */
-/* extern "C" {                                          */
-/* #include <jpegutils.h>                                */
-/*                                                       */
-/* }                                                     */
-
+#include "Timing.h"
 
 #include "Gear_VideoInput.h"
 #include "Engine.h"
 
 #include "GearMaker.h"
 
+#include "ThreadUtil.h"
+
 
 
 Register_Gear(MAKERGear_VideoInput, Gear_VideoInput, "VideoInput");
 
 const std::string Gear_VideoInput::SETTING_DEVICE = "Device";
-const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video0";
+const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video1";
+const std::string Gear_VideoInput::SETTING_WIDTH = "width";
+const std::string Gear_VideoInput::SETTING_HEIGHT = "height";
+const int Gear_VideoInput::DEFAULT_WIDTH = 320;
+const int Gear_VideoInput::DEFAULT_HEIGHT = 240;
 
 unsigned char *Gear_VideoInput::_data=NULL;
 
@@ -61,12 +61,20 @@ _bufferBGRA(NULL)
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
 
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
+  _settings.add(Property::INT, SETTING_WIDTH)->valueInt(DEFAULT_WIDTH);    
+  _settings.add(Property::INT, SETTING_HEIGHT)->valueInt(DEFAULT_HEIGHT);    
+
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
 
   resetInputDevice();
 }
 
 Gear_VideoInput::~Gear_VideoInput()
 {
+  resetInputDevice();
+  pthread_mutex_destroy(_mutex);
+  delete _mutex;
 }
 
 bool Gear_VideoInput::ready()
@@ -89,12 +97,9 @@ void Gear_VideoInput::resetInputDevice()
     if (_device!=0)
         close(_device);
     
-    _sizeX=0;
-    _sizeY=0;
-
     if (_bufferBGRA!=NULL)
     {
-        free(_bufferBGRA);
+         munmap(_bufferBGRA, _sizeX*_sizeY*VIDEO_PALETTE_RGB32);
         _bufferBGRA=NULL;
     }
 
@@ -105,81 +110,128 @@ void Gear_VideoInput::resetInputDevice()
 
 void Gear_VideoInput::initInputDevice()
 {
-    resetInputDevice();
+  ScopedLock scopedLock(_mutex);
 
-    _device = open(_settings.get(SETTING_DEVICE)->valueStr().c_str(), O_RDWR | O_NONBLOCK);
+  resetInputDevice();
 
-    if (_device<=0)
-    {
-        std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
-        return;
+  _device = open(_settings.get(SETTING_DEVICE)->valueStr().c_str(), O_RDWR | O_NONBLOCK);
+
+  if (_device<=0)
+  {
+      std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
+      return;
+  }
+
+  //get info
+  ioctl(_device, VIDIOCGCAP, &_vidCap);
+  ioctl(_device, VIDIOCGPICT, &_vidPic);
+  
+  std::cout << "palette : " << _vidPic.palette << std::endl;
+
+  _vidPic.palette = VIDEO_PALETTE_RGB32;    
+  ioctl(_device, VIDIOCSPICT, &_vidPic);
+
+  //get and adjust resolution settings
+  _sizeX = CLAMP(_settings.get(SETTING_WIDTH)->valueInt(), _vidCap.minwidth, _vidCap.maxwidth);
+  _sizeY = CLAMP(_settings.get(SETTING_HEIGHT)->valueInt(), _vidCap.minheight, _vidCap.maxheight);
+  //give back clamped value to propertie
+  _settings.get(SETTING_WIDTH)->valueInt(_sizeX);
+  _settings.get(SETTING_HEIGHT)->valueInt(_sizeY);
+
+  //show info
+  std::cout << "-- device info --" << std::endl;
+  std::cout << "name   : " << _vidCap.name << std::endl;
+  std::cout << "type   : " << _vidCap.type << std::endl;
+  std::cout << "size X : " << _sizeX << std::endl;
+  std::cout << "size Y : " << _sizeY << std::endl;
+  std::cout << "bpp    : " << _vidPic.depth << std::endl;
+
+
+  //prepare and allocate mmap
+  ioctl(_device, VIDIOCGMBUF, &_vidMBuf);
+
+  std::cout << "buffer size :" << _vidMBuf.size << std::endl;
+  
+  _vidMMap.format = VIDEO_PALETTE_RGB32;
+  _vidMMap.frame  = 0;
+  _vidMMap.width  = _sizeX;
+  _vidMMap.height = _sizeY;
+
+  _bufferBGRA = (unsigned char*) mmap(0, _vidMBuf.size, PROT_READ|PROT_WRITE, MAP_SHARED, _device, 0);
+
+
+  _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
+}
+
+void Gear_VideoInput::prePlay()
+{
+  _playing=true;
+  _frameGrabbed=false;
+  pthread_create(&_playThreadHandle, NULL, playThread, this);
+}
+
+void Gear_VideoInput::postPlay()
+{
+  _playing=false;
+  pthread_join(_playThreadHandle, NULL);
+}
+
+void *Gear_VideoInput::playThread(void *parent)
+{
+  Gear_VideoInput *videoInput = (Gear_VideoInput*)parent;
+
+  while(videoInput->_playing)
+  {  
+    if (!videoInput->_frameGrabbed)
+    {      
+      pthread_mutex_lock(videoInput->_mutex);
+
+      if (ioctl(videoInput->_device, VIDIOCMCAPTURE, &(videoInput->_vidMMap))<0)
+        perror("VIDIOCMCAPTURE");
+      
+    
+      if (ioctl(videoInput->_device, VIDIOCSYNC, &(videoInput->_vidMMap.frame))<0)      
+        perror("VIDIOCSYNC");
+      
+      videoInput->_frameGrabbed=true;      
+      
+      pthread_mutex_unlock(videoInput->_mutex);
     }
+    else
+      Timing::sleep(5);
+  }
 
-    //get info
-    ioctl(_device, VIDIOCGCAP, &_vidCap);
-    ioctl(_device, VIDIOCGWIN, &_vidWin);
-    ioctl(_device, VIDIOCGPICT, &_vidPic);
-    
-    std::cout << "palette : " << _vidPic.palette << std::endl;
-
-    _vidPic.palette = VIDEO_PALETTE_RGB32;    
-    ioctl(_device, VIDIOCSPICT, &_vidPic);
-
-    
-    _vidWin.clips = _vidClips;
-    _vidWin.clipcount = 0;
-    _sizeX = _vidCap.maxwidth;
-    _sizeY = _vidCap.maxheight;
-
-    //show info
-    std::cout << "-- device info --" << std::endl;
-    std::cout << "name   : " << _vidCap.name << std::endl;
-    std::cout << "type   : " << _vidCap.type << std::endl;
-    std::cout << "size X : " << _sizeX << std::endl;
-    std::cout << "size Y : " << _sizeY << std::endl;
-    std::cout << "bpp    : " << _vidPic.depth << std::endl;
-
-    //prepare and allocate mmap
-/*     ioctl(_device, VIDIOCGMBUF, &_vidMBuf);                                                       */
-/*                                                                                                   */
-/*     _bufferRGB24 = (unsigned char*) mmap(NULL, _vidMBuf.size, PROT_READ, MAP_SHARED, _device, 0); */
-/*                                                                                                   */
-/*     _vidMMap.format = VIDEO_PALETTE_RGB24;                                                        */
-/*     _vidMMap.frame  = 0;                                                                          */
-/*     _vidMMap.width  = _sizeX;                                                                     */
-/*     _vidMMap.height = _sizeY;                                                                     */
-
-
-    _bufferBGRA = (unsigned char*)malloc(_sizeX * _sizeY * 4);
-    _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
 }
 
 void Gear_VideoInput::runVideo()
 {
-    _outData = (unsigned char*) _VIDEO_OUT->type()->data();
+  if (!_frameGrabbed)
+    return;
+
+  _outData = (unsigned char*) _VIDEO_OUT->type()->data();
                    
-    int len=0;
-          
-    len = read(_device, _bufferBGRA, _sizeX * _sizeY * 4);
-    
-    //convert BGRA -> RGBA
-    //need optimisation
-    if (len)
-    {                
-        int imgSize=_sizeX*_sizeY;
-        _tempOutData = _outData;
-        _tempInData = _bufferBGRA;
-        for (int i=0;i<imgSize;i++)
-        {
-            *(_tempOutData) = *(_tempInData+2);
-            *(_tempOutData+1) = *(_tempInData+1);
-            *(_tempOutData+2) = *(_tempInData);
+  int len=_sizeX*_sizeY;      
+            
+  //convert BGRA -> RGBA
+  //need optimisation
+  if (len)
+  {                
+      int imgSize=_sizeX*_sizeY;
+      _tempOutData = _outData;
+      _tempInData = _bufferBGRA;
+      for (int i=0;i<imgSize;i++)
+      {
+          *(_tempOutData) = *(_tempInData+2);
+          *(_tempOutData+1) = *(_tempInData+1);
+          *(_tempOutData+2) = *(_tempInData);
 
-            _tempOutData+=4;
-            _tempInData+=4;
-        }
+          _tempOutData+=4;
+          _tempInData+=4;
+      }
+  }
 
-    }
+  _frameGrabbed=false;
+
 }
 
 

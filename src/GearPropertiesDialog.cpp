@@ -20,6 +20,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 
+#include "Engine.h"
 #include "GearPropertiesDialog.h"
 #include "Gear.h"
 #include "PropertyControl.h"
@@ -29,9 +30,10 @@
 
 
 
-GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear) :
+GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *engine) :
   QDialog(parent, "Properties", true),
-  _gear(gear)
+  _gear(gear),
+  _engine(engine)
 {
   setCaption("Properties");
   _verticalLayout = new QVBoxLayout(this, 12, 12, "layout");
@@ -69,9 +71,9 @@ void GearPropertiesDialog::slotOK()
     (*it)->save();
   }
 
-  //tell the gear to update his settings
-  _gear->updateSettings();
-
+  //schedule an updateSettings for this gear
+  _engine->scheduleGearUpdateSettings(_gear);
+  
   accept();
 }
 

@@ -143,13 +143,15 @@ public:
   void scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB);
   void scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB);
   void scheduleGearDeletion(Gear *gear);
-
+  void scheduleGearUpdateSettings(Gear *gear);
 
 
 protected:
 
   void performScheduledConnectDisconnect();
   void performScheduledGearDeletion();
+  void performScheduledGearUpdateSettings();
+
   int _hWnd;
 
   float _averageLoad;
@@ -176,6 +178,7 @@ private:
 
   std::vector<ScheduledConnectDisconnect> _scheduledsConnectDisconnect;
   std::vector<Gear*> _scheduledsGearDeletion;
+  std::vector<Gear*> _scheduledsGearUpdateSettings;
 
 };
 

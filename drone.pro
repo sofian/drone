@@ -123,6 +123,7 @@ src/Rasterer.h \
 src/SummedAreaTable.h \
 src/SchemaEditor.h \
 src/SignalInfo.h \
+src/ThreadUtil.h \
 src/Timing.h \
 src/Typedefs.h \
 src/VideoInfo.h \	   

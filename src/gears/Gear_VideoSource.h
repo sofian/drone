@@ -55,9 +55,7 @@ private:
   
   float *_audioBuffer;
   RGBA *_frame[1024];
-  RGBA *_outData;
-
-  pthread_mutex_t *_mutex;
+  RGBA *_outData;  
 
   //mmx
 //  unsigned long long int *_mmxImageIn;

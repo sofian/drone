@@ -1,13 +1,13 @@
 <!DOCTYPE DroneSchema>
 <Schema>
     <Gears>
-        <Gear PosX="90" PosY="69" Type="VideoInput" Name="VideoInput1" >
+        <Gear PosX="107" PosY="22" Type="VideoInput" Name="VideoInput1" >
             <Properties Device="/dev/video0" />
         </Gear>
         <Gear PosX="910" PosY="94" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="260" PosY="35" Type="Slider" SliderPos="9.32927" Name="Slider5" >
+        <Gear PosX="260" PosY="35" Type="Slider" SliderPos="217.683" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
         <Gear PosX="400" PosY="73" Type="VideoBlend" Name="VideoBlend1" >
@@ -25,8 +25,8 @@
         <Gear PosX="109" PosY="272" Type="Slider" SliderPos="1" Name="Slider6" >
             <Properties Lower_Bound="0" Higher_Bound="1" />
         </Gear>
-        <Gear PosX="2" PosY="355" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/foogy/movies/Mainline1957.mpg" />
+        <Gear PosX="95" PosY="132" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/foogy/movies/The White Stripes - HBTB.mpg" />
         </Gear>
         <Gear PosX="131" PosY="379" Type="AudioInput" Name="AudioInput1" >
             <Properties FramesPerBuffer="512" NbBuffers="8" />
@@ -69,8 +69,6 @@
         </Gear>
     </Gears>
     <Connections>
-        <Connection GearA="VideoInput1" GearB="VideoBlend1" Input="ImgA" Output="Out" />
-        <Connection GearA="VideoInput1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="Out" />
         <Connection GearA="Slider5" GearB="VideoBlend1" Input="Alpha" Output="Value" />
         <Connection GearA="VideoBlend1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="VideoBlend1" GearB="VideoBlend2" Input="ImgA" Output="ImgOUT" />
@@ -78,6 +76,8 @@
         <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
         <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
         <Connection GearA="Slider6" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
+        <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgA" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
         <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
         <Connection GearA="AffineTransform1" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Out" />

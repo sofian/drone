@@ -36,8 +36,10 @@ public:
 
 private:
   PlugIn<ValueType> *_PARAM_FREQ, *_PARAM_AMP;
-  PlugOut<SignalType> *_AUDIO_OUT;
+  PlugOut<ValueType> *_VALUE_OUT;
   Time_T _currentTime;
+  float _oldFreq;
+  float _phaseCorrection;
 
 };
 

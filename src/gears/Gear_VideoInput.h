@@ -22,6 +22,7 @@
 
 
 #include "Gear.h"
+#include <pthread.h>
 
 #include "VideoRGBAType.h"
 
@@ -39,16 +40,26 @@ public:
   static const std::string SETTING_DEVICE;
   static const std::string DEFAULT_DEVICE;
 
+  static const std::string SETTING_WIDTH;
+  static const std::string SETTING_HEIGHT;
+  static const int DEFAULT_WIDTH;
+  static const int DEFAULT_HEIGHT;
+
+
   Gear_VideoInput(Engine *engine, std::string name);
   virtual ~Gear_VideoInput();
 
   void runVideo();
   void init();
+  void prePlay();
+  void postPlay();
   
 
   PlugOut<VideoRGBAType> *VIDEO_OUT(){return _VIDEO_OUT;};
 
   bool ready();
+
+  static void *playThread(void *parent);
 
 protected:
   void onUpdateSettings();
@@ -69,6 +80,7 @@ private:
   struct video_window _vidWin;
   struct video_picture _vidPic;
   struct video_clip _vidClips[32];
+  struct video_capture _vidCapture;
 
   //mmap
   struct video_mbuf _vidMBuf;    
@@ -89,6 +101,11 @@ private:
 
   //lavrec_t *_lavrecInfo;
   static unsigned char *_data;
+
+  pthread_t _playThreadHandle;
+  pthread_mutex_t *_mutex;
+  bool _frameGrabbed;
+  bool _playing;
 
 };
 

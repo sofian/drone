@@ -28,13 +28,14 @@ class Gear;
 class QVBoxLayout;
 class PropertyControl;
 class Property;
+class Engine;
 
 class GearPropertiesDialog : public QDialog
 {
   Q_OBJECT
   public:
 
-  GearPropertiesDialog(QWidget *parent, Gear *gear);
+  GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *engine);
   ~GearPropertiesDialog();
 
 public slots:
@@ -45,6 +46,8 @@ private:
   void addControl(Property *property);
 
   Gear* _gear;
+  Engine* _engine;
+
   QVBoxLayout* _verticalLayout;
   std::vector<PropertyControl*> _propertyControls;
 
