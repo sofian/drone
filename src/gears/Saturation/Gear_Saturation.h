@@ -33,7 +33,13 @@ public:
   Gear_Saturation(Schema *schema, std::string uniqueName);
   virtual ~Gear_Saturation();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  void init();
+  bool ready();
+
+private:
+  // Recompute look-up-table based on saturation level #amount#.
+  void computeLookUpTable(float amount);
 
 private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
@@ -50,6 +56,7 @@ private:
   int _g;
   int _b;
 
+  float _amount; // whished amount of saturation
   int _lut[256]; // look-up table for amout*value
 
   const unsigned char *_imageIn;
