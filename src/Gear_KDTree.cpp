@@ -12,7 +12,7 @@ Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  //  _AMOUNT_IN = addPlugSignalIn("Depth", DEFAULT_N_COLORS);
+  _AMOUNT_IN = addPlugSignalIn("Depth", 6);
   _rasterer = new Rasterer();
   _table = new SummedAreaTable();
 }
@@ -39,6 +39,7 @@ bool Gear_KDTree::ready()
 void Gear_KDTree::runVideo()
 {
   // initialize
+  _maxDepth = (int)_AMOUNT_IN->buffer()[0];
   
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
@@ -64,7 +65,7 @@ void Gear_KDTree::runVideo()
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
 
-  if (depth > MAX_DEPTH)
+  if (depth > _maxDepth)
     return;
 
   if (x1 == x0 || y1 == y0) // *** threshold to set

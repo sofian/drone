@@ -7,8 +7,6 @@
 #include "Rasterer.h"
 #include "SummedAreaTable.h"
 
-#define MAX_DEPTH 4
-
 class Gear_KDTree : public Gear  
 {
   
@@ -20,7 +18,7 @@ public:
 
   PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
   PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-  //    PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
+  PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
 
   bool ready();
 
@@ -28,7 +26,7 @@ private:
 
   PlugVideoIn *_VIDEO_IN;
   PlugVideoOut *_VIDEO_OUT;
-  //    PlugSignalIn *_AMOUNT_IN;
+  PlugSignalIn *_AMOUNT_IN;
 
   //local var
   Video_T *_image; 
@@ -50,6 +48,8 @@ private:
   unsigned char *_imageOut;
 
   Rasterer *_rasterer;
+
+  int _maxDepth;
 
   void init();
   
