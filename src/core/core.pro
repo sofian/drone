@@ -51,13 +51,15 @@ macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS += -lz
-macx:LIBS += -framework OpenGL
+macx:LIBS += -framework OpenGL -framework CoreMidi
 macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
+macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 
 #linux
-unix:!macx:LIBS += -L/usr/X11R6/lib -lGL
+unix:!macx:LIBS += -L/usr/X11R6/lib -lGL -lasound -lpthread
 unix:!macx:TARGET = ../../lib/droneCore
+unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
 
 
 HEADERS += config.h \
@@ -103,7 +105,9 @@ Timing.h \
 Typedefs.h \
 Utils.h \
 VideoInfo.h \
-XMLHelper.h
+XMLHelper.h \
+RtMidi/RtMidi.h \
+RtMidi/RtError.h
 
 SOURCES += error.cpp \
 ConnectionItem.cpp \
@@ -123,6 +127,7 @@ SchemaGui.cpp \
 SignalInfo.cpp \
 Timing.cpp \
 VideoInfo.cpp \
-XMLHelper.cpp 
+XMLHelper.cpp  \
+RtMidi/RtMidi.cpp
 
 
