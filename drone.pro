@@ -184,7 +184,6 @@ src/PropertyControlBool.cpp \
 src/Rasterer.cpp \
 src/SchemaEditor.cpp \
 src/SignalInfo.cpp \
-src/SummedAreaTable.cpp \
 src/Timing.cpp \
 src/VideoInfo.cpp \	   
 src/VideoOutputMaker.cpp \
