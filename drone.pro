@@ -26,6 +26,8 @@ CONFIG += thread
 
 HEADERS += config.h \
 src/error.h \
+src/Array.h \
+src/Array2D.h \
 src/CircularBuffer.h \
 src/ColorSpace.h \
 src/ConnectionItem.h \
@@ -37,6 +39,7 @@ src/types/ValueType.h \
 src/types/VideoRGBAType.h \
 src/types/SignalType.h \
 src/types/DisplaceGrid.h \
+src/types/ArrayType.h \
 src/types/Array2DType.h \
 src/types/VideoChannelType.h \
 src/types/VideoBinaryType.h \
