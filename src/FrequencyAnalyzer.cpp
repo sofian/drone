@@ -57,7 +57,7 @@ void FrequencyAnalyser::prepare(int bufferSize)
 /*                                                                                            */
 }
 
-void FrequencyAnalyser::frequencyToTime(float *inputBuffer, float *outputBuffer)
+void FrequencyAnalyser::frequencyToTime(const float *inputBuffer, float *outputBuffer)
 {
 /*     //multiply with hamming window and assign to _inputComplex;   */
 /*     for (int i=0;i<_bufferSize;i++)                               */
@@ -73,7 +73,7 @@ void FrequencyAnalyser::frequencyToTime(float *inputBuffer, float *outputBuffer)
 /*         outputBuffer[i] = _outputComplex[i];                      */
 }
 
-void FrequencyAnalyser::timeToFrequency(float *inputBuffer, float *outputBuffer)
+void FrequencyAnalyser::timeToFrequency(const float *inputBuffer, float *outputBuffer)
 {                
 /*     //multiply with hamming window and assign to _inputComplex;                                                                                      */
 /*     for (int i=0;i<_bufferSize;i++)                                                                                                                  */
@@ -100,7 +100,7 @@ void FrequencyAnalyser::timeToFrequency(float *inputBuffer, float *outputBuffer)
 
 }
 
-void FrequencyAnalyser::filter(float *inputBuffer, float *outputBuffer)
+void FrequencyAnalyser::filter(const float *inputBuffer, float *outputBuffer)
 {
 /*     //multiply with hamming window and assign to _inputComplex;                                              */
 /*     for (int i=0;i<_bufferSize;i++)                                                                          */

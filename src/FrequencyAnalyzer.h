@@ -13,9 +13,9 @@ public:
 
   void prepare(int bufferSize);
 
-  void frequencyToTime(float *inputBuffer, float *outputBuffer);
-  void timeToFrequency(float *inputBuffer, float *outputBuffer);
-  void filter(float *inputBuffer, float *outputBuffer);
+  void frequencyToTime(const float *inputBuffer, float *outputBuffer);
+  void timeToFrequency(const float *inputBuffer, float *outputBuffer);
+  void filter(const float *inputBuffer, float *outputBuffer);
 
   //int getMasterFrequency();
   //float getBand(int lowerFreq, int higherFreq);
