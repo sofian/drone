@@ -6,17 +6,14 @@
 #include <string>
 #include <pthread.h>
 
-
 #include "SignalInfo.h"
 #include "VideoInfo.h"
+#include "Math.h"
 
 class Gear;
 class Plug;
 class QDomDocument;
 class QDomElement;
-
-#define MAX(a,b) (((a) > (b)) ? a : b)
-#define MIN(a,b) (((a) < (b)) ? a : b)
 
 class Engine  
 {
