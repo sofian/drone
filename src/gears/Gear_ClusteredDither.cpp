@@ -244,10 +244,11 @@ void Gear_ClusteredDither::computePolarCoordinates()
 {
   _r.resize(_sizeX, _sizeY);
   _theta.resize(_sizeX, _sizeY);
+  MatrixType<double>::iterator rIt = _r.begin(), tIt = _theta.begin();
   for (int y=0; y<_sizeY; ++y)
     for (int x=0; x<_sizeX; ++x)
     {
-      _r(x,y)     = fastDist(x,y);
-      _theta(x,y) = fastAngle(x,y);
+      *rIt++     = fastDist(x,y);
+      *tIt++ = fastAngle(x,y);
     }
 }
