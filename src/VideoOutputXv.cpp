@@ -48,6 +48,7 @@ void VideoOutputXv::render(Canvas &canvas)
         _frameSizeY=canvas.sizeY();
         _frameSize=_frameSizeX*_frameSizeY;
         createXvImage(_frameSizeX, _frameSizeY);
+        resizeWindow(_frameSizeX, _frameSizeY);
     }
 
     //todo rendering for other rgb formats..

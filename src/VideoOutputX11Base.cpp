@@ -88,11 +88,13 @@ bool VideoOutputX11Base::checkXShmExtension()
 
 bool VideoOutputX11Base::createXWindow(int xRes, int yRes)
 {
-    int screen = DefaultScreen(_display);
-
     std::cout << "- XWindow create -" << std::endl;
+    
+    _xRes=xRes;
+    _yRes=yRes;
 
-
+    int screen = DefaultScreen(_display);
+    
     std::cout << "finding highest bpp...";
 
     XVisualInfo_fixed vTfixed;
@@ -163,7 +165,7 @@ bool VideoOutputX11Base::createXWindow(int xRes, int yRes)
     }
     
     XSelectInput((Display*)_display, _window, StructureNotifyMask);
-    XSetStandardProperties((Display*)_display, _window, "Drone Xv video output", "Drone Xv video output", None, NULL, 0, NULL);            
+    XSetStandardProperties((Display*)_display, _window, "Drone video output", "Drone video output", None, NULL, 0, NULL);            
     //XGrabPointer((Display*)_display, _window, True, ButtonPressMask, GrabModeAsync, GrabModeAsync, _window, None, CurrentTime);        
     //XMapRaised((Display*)_display, _window);
     //XGrabKeyboard((Display*)_display, _window, True, GrabModeAsync, GrabModeAsync, CurrentTime);   
@@ -297,6 +299,8 @@ bool VideoOutputX11Base::createGC()
     _gc = XCreateGC((Display*)_display, _window, 0, &gcValues);
 
     std::cout << "done" << std::endl;
+    
+    return true;
 }
 
 void VideoOutputX11Base::destroyShm()
@@ -320,7 +324,7 @@ void VideoOutputX11Base::destroyShm()
 void VideoOutputX11Base::processX11Events()
 {
     XEvent event;
-
+    
     while (XPending((Display*)_display) > 0)
     {
         XNextEvent((Display*)_display, &event);
@@ -341,6 +345,8 @@ void VideoOutputX11Base::processX11Events()
 
 void VideoOutputX11Base::resizeWindow(int sizeX, int sizeY)    
 {
+    _xRes=sizeX;
+    _yRes=sizeY;
     XWindowChanges windowChanges;
     windowChanges.width = sizeX;
     windowChanges.height = sizeY;

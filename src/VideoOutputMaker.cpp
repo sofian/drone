@@ -28,8 +28,10 @@ VideoOutput* VideoOutputMaker::makeVideoOutput(std::string type)
 {    
     VideoOutputMaker *VideoOutputmaker= _Registry->find(type)->second;
 
-    //VideoOutput non trouve dans le registry
-    assert(VideoOutputmaker != NULL);
+    
+    if (VideoOutputmaker == NULL)
+        return NULL;
+    
 
     return VideoOutputmaker->internalMakeVideoOutput();
 }

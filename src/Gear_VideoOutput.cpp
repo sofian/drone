@@ -9,8 +9,8 @@
 
 Register_Gear(MAKERGear_VideoOutput, Gear_VideoOutput, "VideoOutput")
 
-const int Gear_VideoOutput::DEFAULT_XRES = 640;
-const int Gear_VideoOutput::DEFAULT_YRES = 480;
+const int Gear_VideoOutput::DEFAULT_XRES = 352;
+const int Gear_VideoOutput::DEFAULT_YRES = 240;
 const int Gear_VideoOutput::DEFAULT_BPP = 32; 
 const bool Gear_VideoOutput::DEFAULT_FULLSCREEN = false; 
 
@@ -24,15 +24,13 @@ Gear_VideoOutput::Gear_VideoOutput(Engine *engine, std::string name) :
     Gear(engine, "VideoOutput", name),
     _videoOutput(NULL)
 {
-    _videoOutput = VideoOutputMaker::makeVideoOutput("Gl");
-    
+   
     _VIDEO_IN = addPlugVideoIn(name);
 
     _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
     _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
     _settings.add(Property::INT, SETTING_BPP)->valueInt(DEFAULT_BPP);
     _settings.add(Property::BOOL, SETTING_FULLSCREEN)->valueBool(DEFAULT_FULLSCREEN);
-
 
 }
 
@@ -49,8 +47,17 @@ bool Gear_VideoOutput::ready()
 
 void Gear_VideoOutput::init()
 {    	
-    _videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(),
-                       _settings.get(SETTING_BPP)->valueInt(), false);    
+    _videoOutput = VideoOutputMaker::makeVideoOutput("Gl");
+    
+    if (_videoOutput==NULL)
+        return;
+    
+    if (!_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(),
+                            _settings.get(SETTING_BPP)->valueInt(), false))
+    {
+        delete _videoOutput;
+        _videoOutput=NULL;
+    }
 }
 
 void Gear_VideoOutput::prePlay()
@@ -68,8 +75,10 @@ void Gear_VideoOutput::runVideo()
     if (!_VIDEO_IN->connected() || _videoOutput==NULL)
         return;
                 
+    if (_videoOutput==NULL)
+        return;
+        
     _videoOutput->render(*(_VIDEO_IN->canvas()));
-
 }
 
 

@@ -56,7 +56,10 @@ public:
     
     int sizeX() const {return _sizeX;};
     int sizeY() const {return _sizeY;};
-    
+
+    int textureSizeX() const {return _textureSizeX;}
+    int textureSizeY() const {return _textureSizeY;}
+        
     void fill(unsigned char value=0);
     void fromRGB24(unsigned char *bufferRGB24);
 
@@ -77,6 +80,8 @@ private:
     
     
     unsigned int _texture;
+    int _textureSizeX;
+    int _textureSizeY;
 };
 
 #endif 

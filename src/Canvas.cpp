@@ -16,7 +16,13 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Canvas::Canvas() : _data(NULL), _sizeX(0), _sizeY(0), _texture(0)
+Canvas::Canvas() : 
+    _data(NULL), 
+    _sizeX(0), 
+    _sizeY(0), 
+    _texture(0),
+    _textureSizeX(512),
+    _textureSizeY(512)
 {
 }
 
@@ -88,7 +94,7 @@ void Canvas::generateTexture()
     glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     //32bit textures
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _textureSizeX, _textureSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 }
 
 

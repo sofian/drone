@@ -45,6 +45,7 @@ void VideoOutputShm::render(Canvas &canvas)
         _frameSizeY=canvas.sizeY();
         _frameSize=_frameSizeX*_frameSizeY;
         createXImage(_frameSizeX, _frameSizeY);
+        resizeWindow(_frameSizeX, _frameSizeY);
     }
 
     unsigned char *xData = (unsigned char*)_xImage->data;
@@ -65,7 +66,7 @@ void VideoOutputShm::render(Canvas &canvas)
 
 bool VideoOutputShm::init(int xRes, int yRes, int bpp, bool fullscreen)
 {            
-    std::cout << "--==|| Xv output initialization ||==--" << std::endl;
+    std::cout << "--==|| Shm output initialization ||==--" << std::endl;
     
     _xRes = xRes;
     _yRes = yRes;
@@ -103,8 +104,7 @@ XImage* VideoOutputShm::createXImage(int sizeX, int sizeY)
     _xImage=XShmCreateImage((Display*)_display, _visualInfo.visual, _visualInfo.depth, ZPixmap, NULL, shmInfo, sizeX, sizeY);
     _xImage->data = shmInfo->shmaddr;    
 
-    resizeWindow(sizeX, sizeY);
-
+    
     return _xImage;
 }
 

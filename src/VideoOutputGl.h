@@ -27,7 +27,9 @@ protected:
     
     void onResize(int sizeX, int sizeY);
     bool createGLXContext();
-    int initGl(int xRes, int yRes);    
+    int initGl(int xRes, int yRes);
+    void resizeGl(int sizeX, int sizeY);
+    void destroyGLXContext();
 
 private:
                       

@@ -6,48 +6,9 @@
 
 Register_VideoOutput(MAKERVideoOutputGL, VideoOutputGl, "Gl")
 
-/* static int attrListSgl16[] = {GLX_RGBA, GLX_RED_SIZE, 5,   */
-/*     GLX_GREEN_SIZE, 5,                                     */
-/*     GLX_BLUE_SIZE, 5,                                      */
-/*     GLX_DEPTH_SIZE, 16,                                    */
-/*     None};                                                 */
-/*                                                            */
-/* static int attrListDbl16[] = { GLX_RGBA, GLX_DOUBLEBUFFER, */
-/*     GLX_RED_SIZE, 5,                                       */
-/*     GLX_GREEN_SIZE, 5,                                     */
-/*     GLX_BLUE_SIZE, 5,                                      */
-/*     GLX_DEPTH_SIZE, 16,                                    */
-/*     None};                                                 */
-/*                                                            */
-/* static int attrListSgl24[] = {GLX_RGBA, GLX_RED_SIZE, 6,   */
-/*     GLX_GREEN_SIZE, 6,                                     */
-/*     GLX_BLUE_SIZE, 6,                                      */
-/*     GLX_DEPTH_SIZE, 24,                                    */
-/*     None};                                                 */
-/*                                                            */
-/* static int attrListDbl24[] = { GLX_RGBA, GLX_DOUBLEBUFFER, */
-/*     GLX_RED_SIZE, 6,                                       */
-/*     GLX_GREEN_SIZE, 6,                                     */
-/*     GLX_BLUE_SIZE, 6,                                      */
-/*     GLX_DEPTH_SIZE, 24,                                    */
-/*     None};                                                 */
-/*                                                            */
-/* static int attrListSgl32[] = {GLX_RGBA, GLX_RED_SIZE, 8,   */
-/*     GLX_GREEN_SIZE, 8,                                     */
-/*     GLX_BLUE_SIZE, 8,                                      */
-/*     GLX_DEPTH_SIZE, 32,                                    */
-/*     None};                                                 */
-/*                                                            */
-/* static int attrListDbl32[] = { GLX_RGBA, GLX_DOUBLEBUFFER, */
-/*     GLX_RED_SIZE, 8,                                       */
-/*     GLX_GREEN_SIZE, 8,                                     */
-/*     GLX_BLUE_SIZE, 8,                                      */
-/*     GLX_DEPTH_SIZE, 32,                                    */
-/*     None};                                                 */
-
-
 VideoOutputGl::VideoOutputGl() :
     VideoOutputX11Base(),    
+    _XGLXContext(NULL),
     _frameSizeX(0),
     _frameSizeY(0),
     _frameSize(0),
@@ -64,6 +25,7 @@ void VideoOutputGl::destroy()
 {
     destroyXWindow();    
 
+    destroyGLXContext();
 }
 
 void VideoOutputGl::fullscreen(bool fs)
@@ -74,21 +36,30 @@ void VideoOutputGl::fullscreen(bool fs)
 void VideoOutputGl::render(Canvas &canvas)
 {    
     processX11Events();
-
-    //it's important to init the context only there
-    //because the context need to be created by the rendering thread
-    //so we call initgl in preplay that is called from the playthread of the engine 
-    //each time we start playing    
-    if (!_glInitialized)
-    {
-        initGl(_xRes, _yRes);
-        _glInitialized=true;
-    }
         
-    _frameSizeX = _xRes;
-    _frameSizeY = _yRes;
-    _texSizeX = (float)canvas.sizeX() / (float)_frameSizeX;
-    _texSizeY = (float)canvas.sizeY() / (float)_frameSizeY;
+    if (_frameSizeX!=canvas.sizeX() || _frameSizeY!=canvas.sizeY())
+    {
+        _frameSizeX = canvas.sizeX();
+        _frameSizeY = canvas.sizeY();
+        
+        if (!_glInitialized)
+        {
+            //it's important to init the context only there
+            //because the context need to be created by the rendering thread
+            //so we call initgl in render that well be called from the playthread of the engine 
+            //each time we start playing                
+            initGl(_frameSizeX, _frameSizeY);
+            _glInitialized=true;
+        }
+        else
+        {
+            resizeWindow(_frameSizeX, _frameSizeY);
+            resizeGl(_frameSizeX, _frameSizeY);
+        }        
+    }
+
+    _texSizeX = (float)_frameSizeX / (float)canvas.textureSizeX();
+    _texSizeY = (float)_frameSizeY / (float)canvas.textureSizeY();
 
     glBindTexture(GL_TEXTURE_2D, canvas.toTexture());
     glEnable(GL_TEXTURE_2D);        
@@ -99,13 +70,13 @@ void VideoOutputGl::render(Canvas &canvas)
         glVertex2f(0.0f, 0.0f);
 
         glTexCoord2f(_texSizeX, 0.0f);
-        glVertex2f(_frameSizeX, 0.0f);
+        glVertex2f(_xRes, 0.0f);
 
         glTexCoord2f(_texSizeX, _texSizeY);
-        glVertex2f(_frameSizeX, _frameSizeY);
+        glVertex2f(_xRes, _yRes);
 
         glTexCoord2f(0.0f, _texSizeY);
-        glVertex2f(0.0f, _frameSizeY);
+        glVertex2f(0.0f, _yRes);
 
     glEnd();
 
@@ -115,7 +86,7 @@ void VideoOutputGl::render(Canvas &canvas)
 
 bool VideoOutputGl::init(int xRes, int yRes, int bpp, bool fullscreen)
 {            
-    std::cout << "--==|| Xv output initialization ||==--" << std::endl;
+    std::cout << "--==|| Gl output initialization ||==--" << std::endl;
     
     _glInitialized=false;
     _xRes = xRes;
@@ -160,9 +131,24 @@ bool VideoOutputGl::createGLXContext()
 
 }
 
+void VideoOutputGl::destroyGLXContext()
+{
+    std::cout << "destroying GLX context...";
+    
+    if (_XGLXContext)
+    {
+        if (!glXMakeCurrent((Display*)_display, None, NULL))
+            std::cout << "could not release GLX context";
+
+        glXDestroyContext((Display*)_display, _XGLXContext);
+        _XGLXContext = NULL;
+    }
+
+    std::cout << "done" << std::endl;
+}
+
 int VideoOutputGl::initGl(int xRes, int yRes)
-{   
-    std::cout << "Making GLX context current" << std::endl;
+{       
     glXMakeCurrent((Display*)_display, _window, _XGLXContext);
     
     glEnable(GL_TEXTURE_2D);
@@ -171,29 +157,27 @@ int VideoOutputGl::initGl(int xRes, int yRes)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_ALPHA_TEST);
-    //glDisable(GL_CULL_FACE);     
-    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);         
     glDisable(GL_DITHER);
     glDisable(GL_LIGHTING);
-    //glDisable(GL_DEPTH_TEST);
-    glViewport(0, 0, xRes, yRes);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();    
-    glOrtho(0,xRes, yRes, 0, -99999, 99999);
-    //gluPerspective(45.0f,(GLfloat)xres/(GLfloat)yres,0.1f,100.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();    
-    
+    glDisable(GL_DEPTH_TEST);
+    resizeWindow(xRes, yRes);
+    resizeGl(xRes, yRes);
     return 0;
 }
 
 void VideoOutputGl::onResize(int sizeX, int sizeY)
 {
+    resizeGl(sizeX, sizeY);
+}
+
+void VideoOutputGl::resizeGl(int sizeX, int sizeY)
+{
     glViewport(0, 0, sizeX, sizeY);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();    
+    glLoadIdentity();
     glOrtho(0, sizeX, sizeY, 0, -99999, 99999);
-    //gluPerspective(45.0f,(GLfloat)xres/(GLfloat)yres,0.1f,100.0f);
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();    
+    glLoadIdentity();
+
 }
