@@ -1,10 +1,11 @@
 #include "Gear_Contrast.h"
 #include "Engine.h"
+#include "Math.h"
 
 #include <iostream>
 
 #include "GearMaker.h"
-
+#include "Math.h"
 
 
 Register_Gear(MAKERGear_Contrast, Gear_Contrast, "Contrast")
@@ -13,8 +14,7 @@ Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "C
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f)));
-
+  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127, 0, 255)));
 }
 
 Gear_Contrast::~Gear_Contrast()
@@ -38,7 +38,7 @@ void Gear_Contrast::runVideo()
   _iterSizeX = _image->width();
   _iterSizeY = _image->height();
 
-  int contrast = (int)_CONTRAST_IN->type()->value();
+  int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), 0.0f, 255.0f);
 
   for (int y=0;y<_iterSizeY;y++)
   {
@@ -47,36 +47,42 @@ void Gear_Contrast::runVideo()
 
     for (int x=0;x<_iterSizeX;x++)
     {
-      _r = 128 + ((((contrast) * ( *(_imageIn) - 128)))>>8);
-      _g = 128 + ((((contrast) * ( *(_imageIn+1) - 128)))>>8);
-      _b = 128 + ((((contrast) * ( *(_imageIn+2) - 128)))>>8);
+      _r = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
+      _g = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
+      _b = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
 
-      if (_r>255)
-        *_imageOut = 255;
-      else
-        if (_r<0)
-        *_imageOut = 0;
-      else
-        *_imageOut = _r;
+      *_imageOut++ = CLAMP(_r, (short)0, (short)255);
+      *_imageOut++ = CLAMP(_g, (short)0, (short)255);
+      *_imageOut++ = CLAMP(_b, (short)0, (short)255);
+      _imageOut++;
+      _imageIn++;
+      
+//       if (_r>255)
+//         *_imageOut = 255;
+//       else
+//         if (_r<0)
+//         *_imageOut = 0;
+//       else
+//         *_imageOut = _r;
 
-      if (_g>255)
-        *(_imageOut+1) = 255;
-      else
-        if (_g<0)
-        *(_imageOut+1) = 0;
-      else
-        *(_imageOut+1) = _g;
+//       if (_g>255)
+//         *(_imageOut+1) = 255;
+//       else
+//         if (_g<0)
+//         *(_imageOut+1) = 0;
+//       else
+//         *(_imageOut+1) = _g;
 
-      if (_b>255)
-        *(_imageOut+2) = 255;
-      else
-        if (_b<0)
-        *(_imageOut+2) = 0;
-      else
-        *(_imageOut+2) = _b;
+//       if (_b>255)
+//         *(_imageOut+2) = 255;
+//       else
+//         if (_b<0)
+//         *(_imageOut+2) = 0;
+//       else
+//         *(_imageOut+2) = _b;
 
-      _imageIn+=4;
-      _imageOut+=4;
+//       _imageIn+=4;
+//       _imageOut+=4;
     }
   }
 }
