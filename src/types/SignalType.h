@@ -20,7 +20,7 @@
 #ifndef SIGNALTYPE_INCLUDED
 #define SIGNALTYPE_INCLUDED
 
-#include "VectorType.h"
+#include "ArrayType.h"
 #include "Engine.h"
 
 typedef float Signal_T;
@@ -30,7 +30,7 @@ typedef Signal_T* Signal_T_ptr;
 #define signalToUChar(sig) ((unsigned char)((sig+1.0f)*128.0f))
 #define signalToFrequency(sig) (sig*10000.0f)
 
-class SignalType : public VectorType<Signal_T>
+class SignalType : public ArrayType<Signal_T>
 {
 public:
   SignalType(Signal_T fillValue = 0.0f)

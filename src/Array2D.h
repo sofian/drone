@@ -21,20 +21,20 @@
 #define ARRAY2D_INCLUDED
 
 #include "error.h"
-#include <vector>
+#include "Array.h"
 
 /**
  * This class is a general-purpose structure for accessing data structured as
  * a two-dimensional array. The memory it contains is contiguous as the class
- * derives from the STL <code>vector</code> class. The main advantage of using
- * a <code>Array2D</code> over a <code>vector</code> is that it offers a nice
- * interface for accessing data in a "by-row" fashion.
+ * derives from Array, which is a subclass of the STL <code>vector</code> class.
+ * The main advantage of using a <code>Array2D</code> over an <code>Array</code>
+ * is that it offers a nice interface for accessing data in a "by-row" fashion.
  *
  * @author Jean-Sébastien Senécal, Mathieu Guindon
  * @version %I% %G%
  */
 template <class T>
-class Array2D : public std::vector<T>
+class Array2D : public Array<T>
 {
 public:
   //! Inner type definitions.
@@ -128,7 +128,7 @@ public:
     _height=1;
 
     _rows.resize(1);
-    _rows[0] = &front();
+    _rows[0] = data();
   }
 
   /**
@@ -148,7 +148,7 @@ public:
   
     // Efficient setting of the rows pointer.
     _rows.resize(height);
-    pointer iterData = &front();
+    pointer iterData = data();
     for (typename std::vector<pointer>::iterator it = _rows.begin();
           it != _rows.end(); ++it, iterData += width)
       *it = iterData;

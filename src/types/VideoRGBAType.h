@@ -28,7 +28,7 @@ class VideoRGBAType : public Array2DType<RGBA>
 public:
   VideoRGBAType(int width = 0,
                 int height = 0,
-                RGBA fillValue = BLACK_RGBA)
+                const RGBA fillValue = BLACK_RGBA)
     : Array2DType<RGBA>(width, height, fillValue),
       _isGray(false)
   {

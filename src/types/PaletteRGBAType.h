@@ -21,16 +21,16 @@
 #define PALETTERGBATYPE_INCLUDED
 
 #include "ColorSpace.h"
-#include "VectorType.h"
+#include "ArrayType.h"
 #include "Engine.h"
 
-class PaletteRGBAType : public VectorType<RGBA>
+class PaletteRGBAType : public ArrayType<RGBA>
 {
 public:
   // XXX normalement il devrait peut-être pas y avoir deux fois la même couleur...
   // XXX fonction de mapping ?
   PaletteRGBAType(int size = 0, RGBA fillValue = BLACK_RGBA)
-    : VectorType<RGBA>(size, fillValue)
+    : ArrayType<RGBA>(size, fillValue)
   {}
 
   virtual ~PaletteRGBAType(){}

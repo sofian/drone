@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __MATRIXTYPE_INCLUDED
-#define __MATRIXTYPE_INCLUDED
+#ifndef ARRAY2DTYPE_INCLUDED
+#define ARRAY2DTYPE_INCLUDED
 
 #include "Array2D.h"
 #include "ValueType.h"
@@ -52,22 +52,13 @@ public:
     _typeHeight.setValue(height);
   }
 
-  void fill(const T& fillValue)
-  {
-    std::fill(begin(), end(), fillValue);
-  }
-
-  const T* data() const {return &front();}
-  T* data() {return &front();}
-
   virtual ~Array2DType() {}
-  
 
 protected:
   ValueType _typeWidth;
   ValueType _typeHeight;  
 };
 
-#endif //__MATRIXTYPE_INCLUDED
+#endif // ARRAY2DTYPE_INCLUDED
 
 
