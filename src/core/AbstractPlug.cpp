@@ -32,7 +32,8 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const A
   _abstractInternalType(type),
   _parent(parent), 
   _inOut(inOut), 
-  _name(name)
+  _name(name),
+	_exposed(false)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);

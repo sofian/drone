@@ -73,6 +73,9 @@ public:
   std::string shortName(int nbChars) const;
   std::string name() const {return _name;};
 
+	bool exposed(){return _exposed;}
+	void exposed(bool exp){_exposed=exp;}
+	
   //virtual ePlugState plugState()=0;
 
 protected:
@@ -84,6 +87,8 @@ private:
   Gear *_parent;
   eInOut _inOut;
   std::string _name;
+	
+	bool _exposed;//! the plug is exposed outside of a metagear
 };
 
 #endif //__ABSTRACTPLUG_INCLUDED
