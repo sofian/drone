@@ -281,15 +281,25 @@ Engine::GearGraphManip::~GearGraphManip()
 
 bool Engine::GearGraphManip::hasDependencyOn(int testedGear, int dependedGear)
 { 
+  if (testedGear>=_nboxes)
+    return false;
+
   // test for direct dependency
   if (_depmat[_nboxes * testedGear + dependedGear]!=0)
     return true;
+  
+// test for indirect dependency
+/*   for (uint a=0; a < _nboxes; a++)            */
+/*     if (_depmat[_nboxes * testedGear + a]!=0) */
+/*       if (hasDependencyOn(a, dependedGear))   */
+/*         return true;                          */
+/*   return false;                               */
 
-  // test for indirect dependency
-  for (uint a=0; a < _nboxes; a++)
-    if (_depmat[_nboxes * testedGear + a]!=0)
-      if (hasDependencyOn(a, dependedGear))
-        return true;
+  testedGear++;
+  if (_depmat[_nboxes * testedGear]!=0)
+    if (hasDependencyOn(testedGear, dependedGear))
+      return true;
+  
   return false;
 }
 
@@ -314,7 +324,7 @@ void Engine::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
           if (_depmat[_nboxes*i+j]!=0)
           {
             // test if the found dependency (j) has a dependency on the current gear (i)
-            // in which case we found a cycle and we ignore the dependency
+            // in which case we found a cycle and we ignore the dependency            
             if (hasDependencyOn(j, i))
               _depmat[_nboxes*i+j]=0;
             else
@@ -352,16 +362,13 @@ void Engine::synchGraph()
       gears.push_back(*it);
   }
 
-  GearGraphManip* ggm = new GearGraphManip(gears);
-  ggm->getOrderedGears(_orderedGears);
-
-
-  std::cerr<<"HELLO!!!";
+  GearGraphManip ggm(gears);
+  ggm.getOrderedGears(_orderedGears);
+  
   for (std::list<Gear*>::iterator it=_orderedGears.begin();it!=_orderedGears.end();++it)
   {
     std::cerr << (*it)->name() << std::endl;        
   }
-
 
   _graphSynched=true;
 }
