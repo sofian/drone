@@ -42,7 +42,7 @@ public:
     _value = value;
   }
   int value() const { return _value; }
-  operator int () const {return _value;}
+  operator int () const { return _value; }
 
   const std::string& label() const { return operator[](_value); }
     
