@@ -22,6 +22,8 @@
 #include "GearGui_Slider.h"
 #include "Math.h"
 
+#include "MidiEngine.h"
+
 #include "Engine.h"
 
 #include <qdom.h>
@@ -48,6 +50,10 @@ const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 const std::string Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
 const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
 
+const std::string Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
+const std::string Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
+const std::string Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
+
 Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : Gear(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
@@ -55,6 +61,10 @@ Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : Gear(schema, 
 
   _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);
   _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);
+
+  _settings.add(Property::BOOL, SETTING_ACCEPTMIDI)->valueBool(false);
+  _settings.add(Property::INT, SETTING_MIDICHANNEL)->valueInt(0);
+  _settings.add(Property::INT, SETTING_MIDICONTROLLER)->valueInt(0);
 
   setValue(DEFAULT_VALUE);
 
@@ -123,7 +133,41 @@ void Gear_Slider::setValue(float value)
 
 void Gear_Slider::runAudio()
 {
+  bool accept_midi = _settings.get(Gear_Slider::SETTING_ACCEPTMIDI)->valueBool();
+  if(accept_midi)
+  {
+    MidiMessage* msg;
+    std::vector<MidiMessage*> messages = MidiEngine::getInstance().getMessages();
 
+    if(messages.size())
+    {
+      int channel = _settings.get(Gear_Slider::SETTING_MIDICHANNEL)->valueInt();
+      int controller = _settings.get(Gear_Slider::SETTING_MIDICONTROLLER)->valueInt();
+
+      // we only consider the LAST controller value
+      float low = _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
+      float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
+      float lastValue = -1,lastStamp;
+      for(int i=0;i<messages.size();i++)
+      {
+        msg = messages[i];
+        if(msg->isControllerChange() && msg->getChannel()==channel  && msg->getController()==controller)
+        {
+          lastValue = (float)msg->getControllerValue() / 127;
+          lastStamp = msg->getStamp();
+        }
+      }
+      static int isad=0;
+      if(lastValue!=-1)
+      {
+        //std::cout<<"set Value !! :"<<lastValue<<" "<<lastStamp<<std::endl;
+        setValue(low + (hi-low)*lastValue);
+        
+        // can't call this from here since we're in a different thread than the GUI
+        //getGearGui()->reDraw();
+      }
+    }
+  }
 }
 
 GearGui *Gear_Slider::createGearGui(QCanvas *canvas)

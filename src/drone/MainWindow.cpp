@@ -31,6 +31,8 @@
 
 #include "SchemaGui.h"
 
+#include "PreferencesDialog.h"
+
 const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
 const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
 
@@ -97,12 +99,17 @@ _menuFirstRecentSchemaId(-1)
   _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()));    
   _fileMenu->insertSeparator();
   
+  _toolsMenu = new QPopupMenu(this);
+  _menuSaveItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
+  _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
+
   //for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
   QMenuBar *menuBar = new QMenuBar(this);
   menuBar->setSeparator(QMenuBar::InWindowsStyle);
   menuBar->insertItem("&File", _fileMenu);
+  menuBar->insertItem("&Tools", _toolsMenu);
 
   //load settings
   _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
@@ -228,6 +235,13 @@ void MainWindow::slotMenuSaveAs()
     //add to recent schema
     addToRecentSchema(filename);
   }
+}
+
+void MainWindow::slotMenuPreferences()
+{
+  PreferencesDialog pd(this, _engine);
+  pd.exec();
+  
 }
 
 void MainWindow::addToRecentSchema(std::string filename)

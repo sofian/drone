@@ -15,6 +15,8 @@
 #include <iostream>
 #include <string>
 
+#undef DEBUG_WARNING
+
 class RtError
 {
 public:

@@ -58,6 +58,8 @@ public slots:
   void slotMenuSaveAs();
   void slotMenuQuit();
 
+  void slotMenuPreferences();
+
   void slotMenuItemSelected(int id);
 
 protected:
@@ -81,7 +83,9 @@ private:
   QToolButton *_playPause;
   
   int _menuSaveItemId;
+  int _menuPrefsItemId;
   QPopupMenu *_fileMenu;
+  QPopupMenu *_toolsMenu;
 
   Project* _project;
   

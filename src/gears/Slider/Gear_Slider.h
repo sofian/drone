@@ -32,6 +32,10 @@ public:
   static const std::string SETTING_LOWERBOUND;
   static const std::string SETTING_HIGHERBOUND;
 
+  static const std::string SETTING_ACCEPTMIDI;
+  static const std::string SETTING_MIDICHANNEL;
+  static const std::string SETTING_MIDICONTROLLER;
+
   Gear_Slider(Schema *schema, std::string uniqueName);
   virtual ~Gear_Slider();
 

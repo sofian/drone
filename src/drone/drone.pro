@@ -3,7 +3,10 @@
 ######################################################################
 
 CONFIG = qt warn_on thread 
- include (../../flags.pro)
+include (../../flags.pro)
+
+message(Drone : Builing Makefile with the following config flags : $$CONFIG)
+
 
 unix:!macx:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
@@ -64,6 +67,7 @@ HEADERS += config.h \
 GearListMenu.h \ 
 GearPropertiesDialog.h \
 MainWindow.h \
+PreferencesDialog.h \
 PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
@@ -81,5 +85,6 @@ PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \
 PropertyControlBool.cpp \
+PreferencesDialog.cpp \
 SchemaEditor.cpp
 

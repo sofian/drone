@@ -4,7 +4,9 @@
 
 CONFIG = qt warn_on thread 
 include (../../flags.pro)
-
+ 
+message(Core : Builing Makefile with the following config flags : $$CONFIG)
+ 
 unix:!macx:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
@@ -90,6 +92,7 @@ GearConverter.h \
 GearMaker.h \
 Math.h \
 MetaGear.h \
+MidiEngine.h \
 AbstractPlug.h \
 Plug.h \
 PlugBox.h \
@@ -117,6 +120,7 @@ types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
 MetaGear.cpp \
+MidiEngine.cpp \
 AbstractPlug.cpp \
 PlugBox.cpp \
 Properties.cpp \

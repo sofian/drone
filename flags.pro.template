@@ -1,0 +1,7 @@
+CONFIG += release p3
+
+# User-dependent includes
+
+# User-dependent libs
+
+

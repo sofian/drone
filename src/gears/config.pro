@@ -1,4 +1,9 @@
+CONFIG = qt warn_on thread 
+
 include(../../flags.pro)
+
+message(Gears : Builing Makefile with the following config flags : $$CONFIG)
+
 
 # Debug settings
 debug {
