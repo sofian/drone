@@ -71,20 +71,21 @@ GearGui::~GearGui()
   //plugboxes take care of deleting connectionItems when deleted
   //Everything is taken care of ! :)
   for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
-  {
     delete (*it);
-  }
-
 }
 
+//!create plugBoxes from the parent gear plugs
+//!plugBoxes are not created or deleted for nothing
+//!only new plugs are added has plugboxes. PlugBoxes that
+//!dont have their equivalent in plugs anymore are deleted
 void GearGui::refresh()
 {
-  //create plugboxes
-  PlugBox *plugBox;
+
+	//delete and remove inputplugboxes that we dont have anymore
+	//we also erase plugs in inputs that we already have
   std::list<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
-
-	//delete inputplugboxes that we dont have anymore
+	
 	std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
 	for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
 	{
@@ -111,10 +112,11 @@ void GearGui::refresh()
 		_inputPlugBoxes.erase(*it);
 
 	
+	//delete and remove output plugboxes that we dont have anymore
+	//we also erase plugs in outputs that we already have
 	std::list<AbstractPlug*> outputs;
   _gear->getOutputs(outputs);
 	
-	//delete outputplugboxes that we dont have anymore
 	std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
 	for (std::vector<PlugBox*>::iterator plugBoxit = _outputPlugBoxes.begin(); plugBoxit != _outputPlugBoxes.end(); ++plugBoxit)
 	{
@@ -139,10 +141,10 @@ void GearGui::refresh()
 
 	for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = outputsToRemove.begin(); it != outputsToRemove.end(); ++it)
 		_outputPlugBoxes.erase(*it);
-
 	 
 	 
-  //create new plugboxes
+  //now create missing plugboxes
+	PlugBox *plugBox;
 	for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
   {
 		plugBox = new PlugBox(*it, this);

@@ -46,7 +46,9 @@ void MetaGear::load(QDomElement &parent)
   }
   
   QDomElement schemaElem = schemaNode.toElement();  
-  _schema.load(schemaElem);  
+  _schema.load(schemaElem);
+  
+	createPlugs();
 }
 
 void MetaGear::createPlugs()

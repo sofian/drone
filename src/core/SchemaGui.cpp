@@ -73,7 +73,6 @@ void SchemaGui::setSchema(Schema *schema)
   Gear *gearA;
   Gear *gearB;
 
-  //todo : error handling
   for (std::list<Schema::Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
   {   
     gearA = _schema->getGearByName((*it)->gearA());
