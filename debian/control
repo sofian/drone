@@ -7,7 +7,7 @@ Standards-Version: 3.6.1
 
 Package: drone
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, qt3, libsndfile1, fftw3, libmpeg3, libportaudio0 (>= 18.0), libavcodec2
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt3c102-mt, libsndfile1, fftw3, libmpeg3-1, libportaudio0 (>= 18.0), libavcodec2
 Description: state-of-the art interactive VJ-ing software.
  Drone is an open source software for digital and interactive arts. It
  allows the design of realtime signal processing machines for video and
