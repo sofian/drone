@@ -56,6 +56,7 @@ void MetaGear::createPlugs()
 	//clear plugs first, we will recreate them
 	_plugs.clear();
 	
+	
 	std::list<Gear*> gears = _schema.getGears();
 	
 	std::list<AbstractPlug*> inputs;
@@ -68,7 +69,15 @@ void MetaGear::createPlugs()
 		{
 			addPlug(*plugIt);
 		}
+
+		(*gearIt)->getOutputs(outputs);
+		for(std::list<AbstractPlug*>::iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
+		{
+			addPlug(*plugIt);
+		}
 		
 	}
+	
+	getGearGui()->refresh();
 	
 }

@@ -47,6 +47,8 @@ public:
   GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
+	void refresh();
+	
   PlugBox* getInputPlugBox(std::string name) const;
   PlugBox* getOutputPlugBox(std::string name) const;
 
@@ -73,7 +75,7 @@ public:
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
 
 protected:
-
+				
   void timerEvent(QTimerEvent*);
 
   virtual void drawShape(QPainter &painter);

@@ -51,7 +51,7 @@ QCanvasRectangle(canvas),
 QObject(),
 _gear(pgear),
 _sizeX(sizeX),
-_sizeY(0),
+_sizeY(sizeY),
 _inputsInterval(0),
 _outputsInterval(0),
 _title(pgear->name()),
@@ -61,53 +61,8 @@ _boxNameColor(color)
   if (updateRate>=0)
     startTimer(updateRate);
 
-  //create plugboxes
-  PlugBox *plugBox;
-  std::list<AbstractPlug*> inputs;
-  _gear->getInputs(inputs);
-
-  for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
-  {
-    plugBox = new PlugBox(*it, this);
-    _plugBoxes.push_back(plugBox);
-    _inputPlugBoxes.push_back(plugBox);
-  }
-
-
-  std::list<AbstractPlug*> outputs;
-  _gear->getOutputs(outputs);
-
-  for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
-  {
-    plugBox = new PlugBox(*it, this);
-    _plugBoxes.push_back(plugBox);
-    _outputPlugBoxes.push_back(plugBox);
-  }
-
-
-  //calculate _sizeY for plugboxes fitting
-  int maxPlugs = _inputPlugBoxes.size() > _outputPlugBoxes.size() ? _inputPlugBoxes.size() : _outputPlugBoxes.size();
-
-  _sizeY = ((maxPlugs+1) * PLUGBOXES_NOMINAL_INTERVAL) + NAME_SIZEY;
-
-  //fit to desired sizeY
-  if (_sizeY < sizeY)
-    _sizeY = sizeY;
-
-  if (_inputPlugBoxes.size())
-    _inputsInterval = (_sizeY - NAME_SIZEY) / (_inputPlugBoxes.size()+1);
-  else
-    _inputsInterval = 0;
-
-  if (_outputPlugBoxes.size())
-    _outputsInterval = (_sizeY - NAME_SIZEY) / (_outputPlugBoxes.size()+1);
-  else
-    _outputsInterval = 0;
-
-  //now set the size for this QCanvasItem
-  setSize(_sizeX + SHADOW_OFFSET, _sizeY + SHADOW_OFFSET);
-  
-
+	refresh();
+	
 }
 
 GearGui::~GearGui()
@@ -120,6 +75,111 @@ GearGui::~GearGui()
     delete (*it);
   }
 
+}
+
+void GearGui::refresh()
+{
+  //create plugboxes
+  PlugBox *plugBox;
+  std::list<AbstractPlug*> inputs;
+  _gear->getInputs(inputs);
+
+	//delete inputplugboxes that we dont have anymore
+	std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
+	for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
+	{
+		bool found=false;
+		std::list<AbstractPlug*>::iterator it;
+		for (it = inputs.begin(); it != inputs.end(); ++it)
+		{
+				if ((*plugBoxit)->plug() == (*it))
+				{
+					found=true;
+					inputs.erase(it);
+					break;
+				}
+		}	
+		
+		if (!found)
+		{
+			inputsToRemove.push_back(plugBoxit);
+			delete (*it);
+		}
+	}
+
+	for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = inputsToRemove.begin(); it != inputsToRemove.end(); ++it)
+		_inputPlugBoxes.erase(*it);
+
+	
+	std::list<AbstractPlug*> outputs;
+  _gear->getOutputs(outputs);
+	
+	//delete outputplugboxes that we dont have anymore
+	std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
+	for (std::vector<PlugBox*>::iterator plugBoxit = _outputPlugBoxes.begin(); plugBoxit != _outputPlugBoxes.end(); ++plugBoxit)
+	{
+		bool found=false;
+		std::list<AbstractPlug*>::iterator it;
+		for (it = outputs.begin(); it != outputs.end(); ++it)
+		{
+			if ((*plugBoxit)->plug() == (*it))
+			{
+				found=true;
+				outputs.erase(it);
+				break;
+			}
+		}	
+		
+		if (!found)
+		{
+			outputsToRemove.push_back(plugBoxit);
+			delete (*it);
+		}
+	}
+
+	for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = outputsToRemove.begin(); it != outputsToRemove.end(); ++it)
+		_outputPlugBoxes.erase(*it);
+
+	 
+	 
+  //create new plugboxes
+	for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
+  {
+		plugBox = new PlugBox(*it, this);
+    _plugBoxes.push_back(plugBox);
+    _inputPlugBoxes.push_back(plugBox);
+  }
+		
+  for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
+  {
+    plugBox = new PlugBox(*it, this);
+    _plugBoxes.push_back(plugBox);
+    _outputPlugBoxes.push_back(plugBox);
+  }
+	
+	
+  //calculate _sizeY for plugboxes fitting
+  int maxPlugs = _inputPlugBoxes.size() > _outputPlugBoxes.size() ? _inputPlugBoxes.size() : _outputPlugBoxes.size();
+	
+  int newSizeY = ((maxPlugs+1) * PLUGBOXES_NOMINAL_INTERVAL) + NAME_SIZEY;
+	
+  //fit to desired sizeY
+  if (newSizeY > _sizeY)
+    _sizeY = newSizeY;
+	
+  if (_inputPlugBoxes.size())
+    _inputsInterval = (_sizeY - NAME_SIZEY) / (_inputPlugBoxes.size()+1);
+  else
+    _inputsInterval = 0;
+	
+  if (_outputPlugBoxes.size())
+    _outputsInterval = (_sizeY - NAME_SIZEY) / (_outputPlugBoxes.size()+1);
+  else
+    _outputsInterval = 0;
+	
+  //now set the size for this QCanvasItem
+  setSize(_sizeX + SHADOW_OFFSET, _sizeY + SHADOW_OFFSET);
+	
 }
 
 void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)

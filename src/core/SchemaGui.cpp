@@ -59,11 +59,11 @@ void SchemaGui::setSchema(Schema *schema)
   GearGui *gearGui=NULL;
   for (std::list<Gear*>::iterator it=gears.begin();it!=gears.end();++it)
   {
-    gearGui=(*it)->getGearGui();
-    gearGui->setCanvas(this);
+		gearGui=(*it)->getGearGui();
+		gearGui->setCanvas(this);
     gearGui->show();
   }
-
+	
   //add connectionItems
   std::list<Schema::Connection*> connections;
   _schema->getAllConnections(connections);
@@ -77,13 +77,15 @@ void SchemaGui::setSchema(Schema *schema)
   for (std::list<Schema::Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
   {   
     gearA = _schema->getGearByName((*it)->gearA());
-    sourcePlugBox = gearA->getGearGui()->getOutputPlugBox((*it)->output());
+		gearB = _schema->getGearByName((*it)->gearB());
 
-    gearB = _schema->getGearByName((*it)->gearB());
-    destPlugBox = gearB->getGearGui()->getInputPlugBox((*it)->input());
-
-    sourcePlugBox->connect(destPlugBox);
-
+    if (gearA && gearB)
+		{
+			sourcePlugBox = gearA->getGearGui()->getOutputPlugBox((*it)->output());
+			destPlugBox = gearB->getGearGui()->getInputPlugBox((*it)->input());
+			sourcePlugBox->connect(destPlugBox);
+		}
+		
     delete (*it);//free temporary Connection
   }
 

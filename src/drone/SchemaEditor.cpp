@@ -302,7 +302,10 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
       wnd->setCentralWidget(schemaEditor); 
       wnd->show();
-	  ((MetaGear*)(gearGui->gear()))->createPlugs();
+	  
+			//todo : temp...
+			((MetaGear*)(gearGui->gear()))->createPlugs();
+			
     }
     break;
   }  
