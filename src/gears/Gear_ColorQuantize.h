@@ -6,30 +6,39 @@
 #include "VideoType.h"
 #include <stdio.h>
 
-#define MAX_COLOR 256
-#define	RED	2
-#define	GREEN	1
-#define BLUE	0
-
-class PlugSignal;
-
+/**
+ * This class implements Xialin Wu's color quantizer. The code was taken from his website
+ * (see http://www.ece.mcmaster.ca/~xwu/cq.c).
+ *
+ * @author Jean-Sébastien Senécal
+ * @version %I% %G%
+ */
 class Gear_ColorQuantize : public Gear  
 {
+  static const int MAX_COLOR;
+  enum { BLUE=0, GREEN=1, RED=2 };
+
 public:
+  //! Default constructor.
   Gear_ColorQuantize(Engine *engine, std::string name);
+
+  //! Destructor.
   virtual ~Gear_ColorQuantize();
 
   void runVideo();
   bool ready();
 
 private:
-
-
+  //! Video input.
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+
+  //! Video output.
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+
+  //! Number of colors.
   PlugIn<ValueType> *_AMOUNT_IN;
 
-  //local var
+  // Internal use.
   const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
   const RGBA *_data;
@@ -39,6 +48,31 @@ private:
   unsigned char *_imageOut;
 
   int _nColors;
+
+  
+  // Begin Wu' code.
+  
+  /**********************************************************************
+	    C Implementation of Wu's Color Quantizer (v. 2)
+	    (see Graphics Gems vol. II, pp. 126-133)
+
+  Author:	Xiaolin Wu
+	Dept. of Computer Science
+	Univ. of Western Ontario
+	London, Ontario N6A 5B7
+	wu@csd.uwo.ca
+
+  Algorithm: Greedy orthogonal bipartition of RGB space for variance
+	   minimization aided by inclusion-exclusion tricks.
+	   For speed no nearest neighbor search is done. Slightly
+	   better performance can be expected by more sophisticated
+	   but more expensive versions.
+
+  The author thanks Tom Lane at Tom_Lane@G.GP.CS.CMU.EDU for much of
+  additional documentation and a cure to a previous bug.
+
+  Free to distribute, comments and suggestions are appreciated.
+  **********************************************************************/	
 
   struct box
   {
@@ -361,7 +395,6 @@ private:
     return 1;
   }
 
-
   void Mark(struct box *cube,
             int label,
             unsigned char *tag)
@@ -374,6 +407,7 @@ private:
           tag[(r<<10) + (r<<6) + r + (g<<5) + g + b] = label;
   }
 
+  // End of Wu's code.
 };
 
 #endif 

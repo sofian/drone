@@ -7,6 +7,8 @@
 
 Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
 
+const int Gear_ColorQuantize::MAX_COLOR = 256;
+
 Gear_ColorQuantize::Gear_ColorQuantize(Engine *engine, std::string name)
   : Gear(engine, "ColorQuantize", name), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
@@ -132,13 +134,6 @@ void Gear_ColorQuantize::runVideo()
     }
   }
 
-//   for (k=0; k<_nColors; ++k)
-//   {
-//     printf("(%d,%d,%d) ",lut_r[k], lut_g[k], lut_b[k]);
-//   }
-//   printf("\n");
-
-  //	for(i=0; i<size; ++i) Qadd[i] = tag[Qadd[i]];
   _imageOut = (unsigned char*)_outData;
   for (i=0; i<size; ++i)
   {
