@@ -23,9 +23,6 @@ struct RGBA
   unsigned char r, g, b, a;
 };
 
-const RGBA BLACK_RGBA = { 0, 0, 0, 0 };
-const RGBA WHITE_RGBA = { 255, 255, 255, 0 };
-
 struct RGBAint
 {
   int r, g, b, a;
@@ -35,6 +32,13 @@ struct RGBAfloat
 {
   float r, g, b, a;
 };
+
+const RGBA BLACK_RGBA = { 0, 0, 0, 0 };
+const RGBA WHITE_RGBA = { 255, 255, 255, 0 };
+const RGBAint BLACK_RGBAint = { 0, 0, 0, 0 };
+const RGBAint WHITE_RGBAint = { 255, 255, 255, 0 };
+const RGBAfloat BLACK_RGBAfloat = { 0, 0, 0, 0 };
+const RGBAfloat WHITE_RGBAfloat = { 255, 255, 255, 0 };
 
 // HSVA
 
