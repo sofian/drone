@@ -21,14 +21,14 @@
 #define ENUMTYPE_INCLUDED
 
 #include "AbstractType.h"
-#include <vector>
+#include "ArrayType.h"
 
-class EnumType : public AbstractType
+class EnumType : public ArrayType<std::string>
 {
 public:
   EnumType(int size = 1, int defaultValue=0)
+    : ArrayType<std::string>(size)
   {
-    _labels.resize(size);
     setValue(defaultValue);
   }
   
@@ -38,22 +38,19 @@ public:
   virtual QColor color() const { return QColor(238,19,19); }
   
   void setValue(int value) {
-    ASSERT_ERROR(_labels.empty() || (0 <= value && value < (int)_labels.size()));
+    ASSERT_ERROR(empty() || (0 <= value && value < (int)size()));
     _value = value;
   }
   int value() const { return _value; }
-  const std::string& label() const { return _labels[_value]; }
-  size_t size() const { return _labels.size(); }
-  void resize(size_t size) { _labels.resize(size); }
-
   operator int () const {return _value;}
-  
-  void setLabel(int value, const std::string& label) { _labels[value] = label; }
-  const std::string& label(int value) const { return _labels[value]; }
+
+  const std::string& label() const { return operator[](_value); }
+    
+  void setLabel(int value, const std::string& label) { operator[](value) = label; }
+  const std::string& label(int value) const { return operator[](value); }
   
 private:
   int _value;
-  std::vector<std::string> _labels;
 };
 
 #endif
