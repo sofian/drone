@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include <libmpeg3/mpeg3private.h>
+#include "mpeg3private.h"
 
 
 /* Supported color models for mpeg3_read_frame */

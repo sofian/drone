@@ -3,4 +3,5 @@ SUBDIRS= VideoSource \
 VideoOutput \
 Blur \
 Osc \
-Slider
+Slider \
+AudioInput

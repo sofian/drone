@@ -22,7 +22,19 @@
 #include "GearMaker.h"
 #include "Engine.h"
 
-Register_Gear(MAKERGear_AudioInput, Gear_AudioInput, "AudioInput")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_AudioInput(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "AudioInput";
+  return gearInfo;
+}
+}
 
 const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=512;
 const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
