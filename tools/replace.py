@@ -1,5 +1,4 @@
-## Adds a preamble to the listed files. Please make a copy before, since
-## there is no reversion mechanism.
+## Replaces some search string by another string in given files.
 
 import sys
 import re
