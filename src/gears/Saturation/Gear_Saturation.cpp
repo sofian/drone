@@ -71,7 +71,11 @@ void Gear_Saturation::runVideo()
   _size = (int) _image->size();
   
   float amount = _AMOUNT_IN->type()->value();
-    
+
+  // Compute lookup table.
+  for (int i=0; i<256; ++i)
+    _lut[i] = (int) (i*amount);
+  
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
 
@@ -92,9 +96,9 @@ void Gear_Saturation::runVideo()
       
       bw = (_r*rwgt + _g*gwgt + _b*bwgt) >> 16;
       
-      _imageOut[0] = (unsigned char) (bw + _r*amount);
-      _imageOut[1] = (unsigned char) (bw + _g*amount);
-      _imageOut[2] = (unsigned char) (bw + _b*amount);
+      _imageOut[0] = (unsigned char) (bw + _lut[_r]);
+      _imageOut[1] = (unsigned char) (bw + _lut[_g]);
+      _imageOut[2] = (unsigned char) (bw + _lut[_b]);
       
       _imageIn+=SIZE_RGBA;
       _imageOut+=SIZE_RGBA;
@@ -109,14 +113,10 @@ void Gear_Saturation::runVideo()
       _b = _imageIn[2];
     
       bw = (_r*rwgt + _g*gwgt + _b*bwgt) >> 16;
-    
-      _r = (int) (bw + _r*amount);
-      _g = (int) (bw + _g*amount);
-      _b = (int) (bw + _b*amount);
-    
-      _imageOut[0] = (unsigned char) CLAMP0255(_r);
-      _imageOut[1] = (unsigned char) CLAMP0255(_g);
-      _imageOut[2] = (unsigned char) CLAMP0255(_b);
+
+      _imageOut[0] = (unsigned char) CLAMP0255(bw + _lut[_r]);
+      _imageOut[1] = (unsigned char) CLAMP0255(bw + _lut[_g]);
+      _imageOut[2] = (unsigned char) CLAMP0255(bw + _lut[_b]);
     
       _imageIn+=SIZE_RGBA;
       _imageOut+=SIZE_RGBA;

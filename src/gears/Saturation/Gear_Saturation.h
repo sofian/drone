@@ -50,6 +50,8 @@ private:
   int _g;
   int _b;
 
+  int _lut[256]; // look-up table for amout*value
+
   const unsigned char *_imageIn;
   unsigned char *_imageOut;
 
