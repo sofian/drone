@@ -4,6 +4,9 @@
 
 include (config.pro)
 
+SUBDIRS += test
+
+QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -36,7 +39,7 @@ release {
 
 TEMPLATE = app
 DEPENDPATH += src
-INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3
+INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/contrib/frei0r
 
 HEADERS += config.h \
 src/error.h \
@@ -79,6 +82,7 @@ src/gears/Gear_AffineTransform.h \
 #src/gears/Gear_Enveloppe.h \
 #src/gears/Gear_FaceTrack.h \
 #src/gears/Gear_FFT.h \
+src/gears/Gear_Frei0r.h \
 #src/gears/Gear_Gain.h \
 #src/gears/Gear_Gamma.h \
 #src/gears/Gear_GenDisplaceGrid.h \
@@ -98,7 +102,7 @@ src/gears/Gear_AffineTransform.h \
 #src/gears/Gear_Saturation.h \
 #src/gears/Gear_SignalStat.h \
 #src/gears/Gear_SimpleDelay.h \
-#src/gears/Gear_Slider.h \
+src/gears/Gear_Slider.h \
 #src/gears/Gear_SmearGrid.h \
 #src/gears/Gear_TouchPad.h \
 #src/gears/Gear_TV.h \
@@ -179,6 +183,7 @@ src/gears/Gear_AffineTransform.cpp \
 #src/gears/Gear_Enveloppe.cpp \
 #src/gears/Gear_FaceTrack.cpp \
 #src/gears/Gear_FFT.cpp \
+src/gears/Gear_Frei0r.cpp \
 #src/gears/Gear_Gain.cpp \
 #src/gears/Gear_Gamma.cpp \
 #src/gears/Gear_GenDisplaceGrid.cpp \
@@ -189,7 +194,7 @@ src/gears/Gear_AffineTransform.cpp \
 #src/gears/Gear_ListBox.cpp \
 #src/gears/Gear_MedianFilter.cpp \
 ##src/gears/Gear_MotionTrack.cpp \
-#src/gears/Gear_Osc.cpp \
+src/gears/Gear_Osc.cpp \
 #src/gears/Gear_Oscilloscope.cpp \
 #src/gears/Gear_PlaceArea.cpp \
 #src/gears/Gear_PushButton.cpp \
@@ -197,7 +202,7 @@ src/gears/Gear_AffineTransform.cpp \
 #src/gears/Gear_Saturation.cpp \
 #src/gears/Gear_SignalStat.cpp \
 #src/gears/Gear_SimpleDelay.cpp \
-#src/gears/Gear_Slider.cpp \
+src/gears/Gear_Slider.cpp \
 #src/gears/Gear_SmearGrid.cpp \
 #src/gears/Gear_Spectrogram.cpp \
 #src/gears/Gear_TV.cpp \
@@ -209,14 +214,15 @@ src/gears/Gear_AffineTransform.cpp \
 #src/gears/Gear_VideoDelay.cpp \
 #src/gears/Gear_VideoLoop.cpp \
 #src/gears/Gear_VideoMix.cpp \
-#src/gears/Gear_VideoOutput.cpp \
-#src/gears/Gear_VideoSource.cpp \
+src/gears/Gear_VideoOutput.cpp \
+src/gears/Gear_VideoSource.cpp \
 ##src/gears/Gear_VideoSymmetry.cpp \
 #src/gears/Gear_VideoSwitch.cpp \
+src/types/VideoRGBAType.cpp \
 src/GearGui.cpp \
 #src/gears/GearGui_ListBox.cpp \
 #src/gears/GearGui_PushButton.cpp \
-#src/gears/GearGui_Slider.cpp \
+src/gears/GearGui_Slider.cpp \
 #src/gears/GearGui_TV.cpp \
 #src/gears/GearGui_TouchPad.cpp \
 src/GearMaker.cpp \
@@ -241,5 +247,6 @@ src/VideoOutputMaker.cpp \
 src/VideoOutputX11Base.cpp \
 src/VideoOutputXv.cpp \
 src/VideoOutputGl.cpp \
-src/VideoOutputShm.cpp
+src/VideoOutputShm.cpp 
+
 

@@ -60,7 +60,7 @@ void VideoOutputXv::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputXv::render(const Array2DType<RGBA> &image)
+void VideoOutputXv::render(const VideoRGBAType &image)
 {    
   processX11Events();
 

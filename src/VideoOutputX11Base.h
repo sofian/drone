@@ -61,8 +61,6 @@ struct XVisualInfo_fixed
   int bits_per_rgb;
 };
 
-class Canvas;
-
 class VideoOutputX11Base : public VideoOutput
 {
 public:

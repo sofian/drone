@@ -30,7 +30,10 @@ public:
                 int height = 0,
                 const RGBA fillValue = BLACK_RGBA)
     : Array2DType<RGBA>(width, height, fillValue),
-      _isGray(false)
+      _isGray(false),
+      _texture(0),
+      _textureSizeX(512),
+      _textureSizeY(512)
   {
   }
 
@@ -45,6 +48,10 @@ public:
   void setIsGray(bool isGray) { _isGray = isGray; }
   bool isNull() const {return  (width()<=0 || height()<=0);} 
   
+  unsigned int toTexture() const;
+  unsigned int textureSizeX() const {return _textureSizeX;}
+  unsigned int textureSizeY() const {return _textureSizeY;}
+  
   
 protected:
   // GetAAPixel related functions ////////////////////
@@ -54,6 +61,10 @@ protected:
   // pixels #1 and #3 for getAAPixel
   mutable RGBA* _p1,_p2,_p3,_p4;
   bool _isGray;
+  unsigned int _texture;
+  unsigned int _textureSizeX;
+  unsigned int _textureSizeY;
+ 
   ////////////////////////////////////////////////
 };
 

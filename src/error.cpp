@@ -28,7 +28,7 @@ char xxpetit_message_pour_melanie[10000];
 #if DEBUG_ERROR
 void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...)
 {
-  if (expr)
+  if (!expr)
   {
     va_list ap;
     va_start(ap, msg);
@@ -41,7 +41,7 @@ void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...)
 #if DEBUG_WARNING
 void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...)
 {
-  if (expr)
+  if (!expr)
   {
     va_list ap;
     va_start(ap, msg);
@@ -54,7 +54,7 @@ void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...)
 #if DEBUG_NOTICE
 void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...)
 {
-  if (expr)
+  if (!expr)
   {
     va_list ap;
     va_start(ap, msg);
