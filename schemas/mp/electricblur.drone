@@ -10,16 +10,16 @@
         <Gear PosX="724" PosY="322" Type="Edge" Name="Edge1" >
             <Properties/>
         </Gear>
-        <Gear PosX="597" PosY="508" Type="Slider" SliderPos="-0.682927" Name="Slider1" >
+        <Gear PosX="597" PosY="508" Type="Slider" SliderPos="-0.414634" Name="Slider1" >
             <Properties Lower_Bound="-1" Higher_Bound="1" />
         </Gear>
         <Gear PosX="1136" PosY="362" Type="VideoOutput" Name="VideoOutput1" >
-            <Properties YRes="240" XRes="352" FullScreen="0" />
+            <Properties YRes="240" XRes="352" FullScreen="1" />
         </Gear>
         <Gear PosX="319" PosY="251" Type="Slider" SliderPos="0" Name="Slider2" >
             <Properties Lower_Bound="0" Higher_Bound="1" />
         </Gear>
-        <Gear PosX="170" PosY="99" Type="AudioInput" Name="AudioInput1" >
+        <Gear PosX="53" PosY="40" Type="AudioInput" Name="AudioInput1" >
             <Properties FramesPerBuffer="512" NbBuffers="2" />
         </Gear>
         <Gear PosX="593" PosY="174" Type="SignalStat" Name="SignalStat1" >
@@ -31,13 +31,10 @@
         <Gear PosX="321" PosY="310" Type="Slider" SliderPos="0.00146341" Name="Slider3" >
             <Properties Lower_Bound="0" Higher_Bound="0.03" />
         </Gear>
-        <Gear PosX="317" PosY="176" Type="Gain" Name="Gain1" >
-            <Properties/>
+        <Gear PosX="44" PosY="210" Type="Slider" SliderPos="0" Name="Slider4" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
         </Gear>
-        <Gear PosX="44" PosY="210" Type="Slider" SliderPos="54.8781" Name="Slider4" >
-            <Properties Lower_Bound="0" Higher_Bound="100" />
-        </Gear>
-        <Gear PosX="174" PosY="210" Type="FlatSignal" Name="FlatSignal1" >
+        <Gear PosX="179" PosY="182" Type="FlatSignal" Name="FlatSignal1" >
             <Properties/>
         </Gear>
         <Gear PosX="725" PosY="173" Type="Contrast" Name="Contrast1" >
@@ -49,14 +46,17 @@
         <Gear PosX="1004" PosY="264" Type="Blur" Name="Blur1" >
             <Properties/>
         </Gear>
-        <Gear PosX="866" PosY="237" Type="Slider" SliderPos="1.46341" Name="Slider6" >
+        <Gear PosX="855" PosY="216" Type="Slider" SliderPos="1.46341" Name="Slider6" >
             <Properties Lower_Bound="0" Higher_Bound="5" />
         </Gear>
         <Gear PosX="1005" PosY="363" Type="VideoBlend" Name="VideoBlend2" >
             <Properties/>
         </Gear>
-        <Gear PosX="870" PosY="419" Type="Slider" SliderPos="214.573" Name="Slider7" >
+        <Gear PosX="870" PosY="419" Type="Slider" SliderPos="65.3049" Name="Slider7" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="323" PosY="135" Type="Gain" Name="Gain1" >
+            <Properties/>
         </Gear>
     </Gears>
     <Connections>
@@ -71,7 +71,6 @@
         <Connection GearA="SignalStat1" GearB="Contrast1" Input="Amount" Output="Out" />
         <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
         <Connection GearA="Slider3" GearB="Enveloppe1" Input="Att" Output="Value" />
-        <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
         <Connection GearA="Slider4" GearB="FlatSignal1" Input="In" Output="Value" />
         <Connection GearA="FlatSignal1" GearB="Gain1" Input="Gain" Output="Out" />
         <Connection GearA="Contrast1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
@@ -80,5 +79,6 @@
         <Connection GearA="Slider6" GearB="Blur1" Input="Amount" Output="Value" />
         <Connection GearA="VideoBlend2" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
         <Connection GearA="Slider7" GearB="VideoBlend2" Input="Alpha" Output="Value" />
+        <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
     </Connections>
 </Schema>
