@@ -7,7 +7,7 @@
 #include "Rasterer.h"
 #include "SummedAreaTable.h"
 
-#define MAX_DEPTH 12
+#define MAX_DEPTH 10
 //class PlugSignal;
 
 class Gear_KDTree : public Gear  
@@ -45,6 +45,8 @@ private:
     RGBA *_data;
     RGBA *_outData;
 
+  SummedAreaTable *_table;
+  
     int _sizeX;
     int _sizeY;
     int _size;
@@ -56,10 +58,6 @@ private:
     unsigned char *_imageIn;
     unsigned char *_imageOut;
 
-    int *_accumbuf;
-    int *_tempAccumbuf;
-    int _acc;
-  
     int _x1,_y1,_x2,_y2;
 
     Rasterer *_rasterer;

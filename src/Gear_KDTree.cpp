@@ -14,19 +14,20 @@ Register_Gear(MAKERGear_KDTree, Gear_KDTree, "KDTree")
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
   //  _AMOUNT_IN = addPlugSignalIn("Depth", DEFAULT_N_COLORS);
   _rasterer = new Rasterer();
-
-  _accumbuf = NULL;  
+  _table = new SummedAreaTable();
 }
 
 Gear_KDTree::~Gear_KDTree()
 {
   delete _rasterer;
+  delete _table;
 }
 
 void Gear_KDTree::init()
 {
   _rasterer->setCanvas(_VIDEO_OUT->canvas());
   _rasterer->setColor(0, 0, 0); // black lines only
+  _table->setCanvas(_VIDEO_IN->canvas());
 }
 
 
@@ -37,65 +38,27 @@ bool Gear_KDTree::ready()
 
 void Gear_KDTree::runVideo()
 {
-  int  *accumptrpred;
   // initialize
   
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
   _outImage->allocate(_image->sizeX(), _image->sizeY());
-
-  _rasterer->setCanvas(_outImage);
+  //_image->allocate(_image->sizeX(), _image->sizeY());
 
   _sizeX = _image->sizeX();
   _sizeY = _image->sizeY();
   _size = _sizeX * _sizeY;
 
-  if(_accumbuf == NULL) 
-    _accumbuf = new int[_size];
-  
-   memset(_accumbuf, 0, _size * sizeof(int));
-  
   _data = _image->_data;
   _outData = _outImage->_data;
 
-  _imageIn = (unsigned char*)_data;
+  _rasterer->setCanvas(_outImage);
+  _table->setCanvas(_image);
 
   // build accumulation buffer
-    
-  _tempAccumbuf = _accumbuf;
+  _table->buildTable();
   
-  for(int y=0;y<_sizeY;y++)
-  {
-    _acc = 0;
-    if (y == 0)
-      for(int x=0;x<_sizeX;x++)
-      {
-        _acc += *(_imageIn++);
-        _acc += *(_imageIn++);
-        _acc += *(_imageIn++);
-        _imageIn++;
-        
-        *(_tempAccumbuf++) += _acc;
-      }
-    else
-    {
-      accumptrpred = _tempAccumbuf - _sizeX;
-      for(int x=0;x<_sizeX;x++)
-      {
-        _acc += *(_imageIn++);
-        _acc += *(_imageIn++);
-        _acc += *(_imageIn++);
-        _imageIn++;
-        
-        *(_tempAccumbuf++ ) += _acc + *(accumptrpred++);
-      }
-    }
-  }
-
-  _imageIn = (unsigned char*)_data;
-  _imageOut = (unsigned char*)_outData;
-  
-  memcpy(_imageOut, _imageIn, _size * 4 * sizeof(unsigned char));
+  memcpy(_outData, _data, _size * sizeof(RGBA));
   
   // create splits
   KDNode *root = new KDNode(0, _sizeX, 0, _sizeY);
@@ -108,21 +71,14 @@ void Gear_KDTree::runVideo()
 
 int Gear_KDTree::accum(int x0, int x1, int y0, int y1)
 {
-  if(x0 < 0) x0 = 0;
-  if(x1 < 0) x1 = 0;
-  if(y0 < 0) y0 = 0;
-  if(y1 < 0) y1 = 0;
-  
-  if(x0 >= _sizeX) x0 = _sizeX-1;
-  if(x1 >= _sizeX) x1 = _sizeX-1;
-  if(y0 >= _sizeY) y0 = _sizeY-1;
-  if(y1 >= _sizeY) y1 = _sizeY-1;
-
-  return
-    _accumbuf[y1 * _sizeX + x1] -
-    _accumbuf[y0 * _sizeX + x1] -
-    _accumbuf[y1 * _sizeX + x0] +
-    _accumbuf[y0 * _sizeX + x0];
+  int rgba[4];
+  _table->getSum((RGBAint*)rgba, x0, y0, x1, y1);
+//   RGBAint rgbaa;
+//   _table->getSum(&rgbaa, x0, y0, x1, y1);
+//   int *rgba = (int*) &rgbaa;
+//   std::cout << rgbaa.R << "," << rgbaa.G << "," << rgbaa.B << std::endl;
+//   std::cout << "::" "(" << x0 << "," << y0 <<")(" << x1 <<"," << y1 << ") :: "<< *(rgba) << " + " << *(rgba+1) << " + " << *(rgba+2) << "=" << ( *(rgba) + *(rgba+1) + *(rgba+2) ) << std::endl << _sizeX << "," << _sizeY << std::endl;
+  return ( *(rgba) + *(rgba+1) + *(rgba+2) );
 }
 
 void Gear_KDTree::split(Gear_KDTree::KDNode *node, int depth)
@@ -135,8 +91,6 @@ void Gear_KDTree::split(Gear_KDTree::KDNode *node, int depth)
 
   //std::cout << node->_x0 << "," <<  node->_x1 <<","<< node->_y0<<"," <<node->_y1 << std::endl;
   
-  _tempAccumbuf = _accumbuf;
-
   int total = accum(node->_x0, node->_x1, node->_y0, node->_y1);
   int cut = total / 2;
   int gray = total / ((node->_x1-node->_x0) * (node->_y1-node->_y0) * 3);
