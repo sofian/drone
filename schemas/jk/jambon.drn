@@ -1,29 +1,23 @@
 <!DOCTYPE DroneSchema>
 <Schema>
     <Gears>
-        <Gear PosX="95" PosY="73" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/julien/dev/drone/media/DateWith1950_2.mpeg" />
-        </Gear>
         <Gear PosX="465" PosY="238" Type="Blur" Name="Blur1" >
             <Properties/>
         </Gear>
-        <Gear PosX="698" PosY="144" Type="TV" Name="TV1" >
-            <Properties/>
-        </Gear>
-        <Gear PosX="176" PosY="350" Type="Slider" SliderPos="74.6341" Name="Slider1" >
+        <Gear PosX="167" PosY="386" Type="Slider" SliderPos="139.939" Name="Slider1" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
         <Gear PosX="385" PosY="58" Type="Contrast" Name="Contrast1" >
             <Properties/>
         </Gear>
-        <Gear PosX="89" PosY="268" Type="Slider" SliderPos="560.415" Name="Slider2" >
+        <Gear PosX="142" PosY="269" Type="Slider" SliderPos="523.866" Name="Slider2" >
             <Properties Lower_Bound="0" Higher_Bound="999" />
         </Gear>
         <Gear PosX="296" PosY="462" Type="SmearGrid" Name="SmearGrid1" >
             <Properties/>
         </Gear>
-        <Gear PosX="102" PosY="548" Type="Slider" SliderPos="4.78049" Name="Slider3" >
-            <Properties Lower_Bound="0" Higher_Bound="8" />
+        <Gear PosX="102" PosY="562" Type="Slider" SliderPos="6.03659" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="99" />
         </Gear>
         <Gear PosX="796" PosY="32" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
@@ -31,10 +25,10 @@
         <Gear PosX="580" PosY="35" Type="VideoMix" Name="VideoMix1" >
             <Properties/>
         </Gear>
-        <Gear PosX="454" PosY="355" Type="Slider" SliderPos="34.2073" Name="Slider4" >
+        <Gear PosX="461" PosY="362" Type="Slider" SliderPos="24.878" Name="Slider4" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
-        <Gear ListBoxPos="11" PosX="211" PosY="13" Type="ListBox" Name="ListBox1" >
+        <Gear ListBoxPos="12" PosX="694" PosY="166" Type="ListBox" Name="ListBox1" >
             <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
         </Gear>
         <Gear PosX="463" PosY="474" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
@@ -43,28 +37,39 @@
         <Gear PosX="683" PosY="492" Type="VideoBlend" Name="VideoBlend1" >
             <Properties/>
         </Gear>
-        <Gear PosX="82" PosY="457" Type="Slider" SliderPos="1.41463" Name="Slider5" >
+        <Gear PosX="77" PosY="457" Type="Slider" SliderPos="1.90244" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear PosX="657" PosY="321" Type="VideoBlend" Name="VideoBlend2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="14" PosY="314" Type="Slider" SliderPos="43.5366" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="71" PosY="55" Type="VideoSource" Name="VideoSource2" >
+            <Properties Filename="/home/julien/dev/drone/media/DateWith1950_2.mpeg" />
         </Gear>
     </Gears>
     <Connections>
-        <Connection GearA="VideoSource1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
-        <Connection GearA="VideoSource1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="Blur1" GearB="Contrast1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="Blur1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
         <Connection GearA="Slider1" GearB="Blur1" Input="Amount" Output="Value" />
         <Connection GearA="Slider1" GearB="Contrast1" Input="Bright" Output="Value" />
         <Connection GearA="Contrast1" GearB="SmearGrid1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="Slider2" GearB="Contrast1" Input="Amount" Output="Value" />
         <Connection GearA="SmearGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
         <Connection GearA="Slider3" GearB="SmearGrid1" Input="SCALE" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
         <Connection GearA="Slider4" GearB="VideoBlend1" Input="Alpha" Output="Value" />
         <Connection GearA="ListBox1" GearB="VideoMix1" Input="MixFunc" Output="Value" />
         <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
-        <Connection GearA="VideoBlend1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend2" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="VideoBlend1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
         <Connection GearA="VideoBlend1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="VideoBlend1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
         <Connection GearA="Slider5" GearB="ApplyDisplaceGrid1" Input="Mode" Output="Value" />
+        <Connection GearA="VideoBlend2" GearB="VideoBlend2" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoBlend2" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Slider6" GearB="VideoBlend2" Input="Alpha" Output="Value" />
+        <Connection GearA="VideoSource2" GearB="VideoMix1" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="VideoSource2" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
     </Connections>
 </Schema>
