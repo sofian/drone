@@ -1,4 +1,4 @@
-/* Gear_FilterSignal.h
+/* Gear_Oscilloscope.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,36 +17,36 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_FILTERSIGNAL_INCLUDED
-#define GEAR_FILTERSIGNAL_INCLUDED
+#ifndef GEAR_SPECTROGRAM_INCLUDED
+#define GEAR_SPECTROGRAM_INCLUDED
 
 #include "Gear.h"
-#include "SignalType.h"
-#include "FrequencyAnalyzer.h"
+#include "FFTType.h"
+#include "VideoRGBAType.h"
+#include "Rasterer.h"
 
-class PlugSignal;
-
-class Gear_FilterSignal : public Gear  
+class Gear_Spectrogram : public Gear
 {
 public:
-  Gear_FilterSignal(Engine *engine, std::string name);
-  virtual ~Gear_FilterSignal();
 
-  void runAudio();
-
-  PlugIn<SignalType>* AUDIO_IN(){return _AUDIO_IN;};    
-  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
+  Gear_Spectrogram(Engine *engine, std::string name);
+  virtual ~Gear_Spectrogram();
+  
+  void runVideo();
 
   bool ready();
-  void init();
 
 private:
-  PlugIn<SignalType> *_AUDIO_IN;
-  PlugOut<SignalType> *_AUDIO_OUT;
 
-  SignalType _convolutionShape;
-  FrequencyAnalyser *_freqAnalyzer;
+  PlugIn<FFTType> *_FFT_IN;  
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugIn<ValueType> *_SIZE_X;
+  PlugIn<ValueType> *_SIZE_Y;
 
+  VideoRGBAType *_outImage; 
+  RGBA *_outData;
+
+  Rasterer *_rasterer;
 };
 
-#endif 
+#endif

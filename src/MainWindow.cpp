@@ -79,7 +79,7 @@ _menuFirstRecentSchemaId(-1)
   _playPause->setIconSet(playPauseIcon);   
 
   QObject::connect(_playPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
-
+  
   //temp
   QObject::connect(zoomIn, SIGNAL(pressed()), this, SLOT(slotZoomIn()));
   QObject::connect(zoomOut, SIGNAL(pressed()), this, SLOT(slotZoomOut()));

@@ -17,10 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_VIDEOBLEND_INCLUDED
-#define GEAR_VIDEOBLEND_INCLUDED
+#ifndef GEAR_MOTIONTRACK_INCLUDED
+#define GEAR_MOTIONTRACK_INCLUDED
 
-#include <opencv/cv.hpp>
+#include <opencv/cv.h>
+#include <opencv/cvaux.hpp>
 
 #include "Gear.h"
 #include "ValueType.h"
