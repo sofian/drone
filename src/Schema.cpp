@@ -1,5 +1,6 @@
 #include "Schema.h"
 #include "Gear.h"
+#include "MetaGear.h"
 #include "GearMaker.h"
 
 #include <qdom.h>
@@ -292,6 +293,16 @@ bool Schema::removeDeepGear(Gear* gear)
       return true;
   return false;
 }
+
+Gear* Schema::addMetaGear(Engine * engine, std::string geartype, std::string name)
+{
+  MetaGear * testgear = new MetaGear(engine, geartype, name);
+  testgear->internalInit();
+  _gears.push_back(testgear);
+
+  return testgear;
+}
+
 
 Gear* Schema::addGear(Engine * engine, std::string geartype, std::string name)
 {

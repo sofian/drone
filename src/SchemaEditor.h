@@ -17,6 +17,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+
+/*
+
+The schema editor inherits QCanvasView. It handles mouse/keyboards events
+and dispatches them once they are interpreted to the schemaGui so it can
+react properly
+
+*/
+
+
+
+
 #ifndef SCHEMAEDITOR_INCLUDED
 #define SCHEMAEDITOR_INCLUDED
 
@@ -66,11 +78,6 @@ protected:
   void contentsWheelEvent(QWheelEvent *wheelEvent);    
   void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
-  void moveGearBy(GearGui *gearItem, int x, int y);
-  GearGui* testForGearCollision(const QPoint &p);
-  ConnectionItem* testForConnectionCollision(const QPoint &p);
-  void unHilightAllConnections();
-
   QPopupMenu* createGearsMenu();
 
 private:

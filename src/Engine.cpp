@@ -37,7 +37,6 @@ Engine::Engine(int hwnd) :
   _graphSynched(false)
 
 {
-
 }
 
 Engine::~Engine()

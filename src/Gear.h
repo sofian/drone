@@ -42,7 +42,12 @@ class Schema;
 class Gear  
 {
 public:
+  
+  //! is this gear a MetaGear? 
+  virtual bool isMeta() const {return false;}
 
+  //! is the gear a control gear ?
+  virtual bool isControl() const {return false;}
 
   Gear(Engine* engine, std::string type, std::string name);
   virtual ~Gear();
@@ -123,6 +128,7 @@ private:
   void internalLoad(QDomElement &gearElem);
 
   friend Gear* Schema::addGear(Engine * engine, std::string geartype, std::string name);
+  friend Gear* Schema::addMetaGear(Engine * engine, std::string geartype, std::string name);
   friend void *Engine::playThread(void *parent);
   friend void Schema::load(Engine * engine, std::string filename);
   friend void Schema::save(std::string filename);

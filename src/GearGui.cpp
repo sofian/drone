@@ -39,6 +39,7 @@ const int GearGui::SHADOW_OFFSET = 4;
 const QColor GearGui::BOX_COLOR(207,207,209);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
+const QColor GearGui::METABOXNAME_COLOR(60,31,0);
 const QFont GearGui::NAME_FONT("system", 8, QFont::Bold);
 
 
@@ -180,7 +181,11 @@ void GearGui::drawShape(QPainter &painter)
 
   //name
   painter.setPen(Qt::black);
-  painter.setBrush(BOXNAME_COLOR);
+  if(!_gear->isMeta())
+    painter.setBrush(BOXNAME_COLOR);
+  else
+    painter.setBrush(METABOXNAME_COLOR);
+
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);
   painter.setPen(Qt::white);

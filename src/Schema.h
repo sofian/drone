@@ -95,6 +95,8 @@ public:
   //! Returns all connections in this schema
   void getAllConnections(std::list<Connection*> &connections);
 
+
+  Gear* addMetaGear(Engine * engine, std::string geartype, std::string name);
   Gear* addGear(Engine * engine, std::string geartype, std::string name);
 
   //! removes the specified gear, searching recursivly in sub-schemas

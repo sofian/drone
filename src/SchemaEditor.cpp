@@ -62,7 +62,6 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _gearMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
   _gearMenu->insertItem("About");    
 
-
 }
 
 SchemaEditor::~SchemaEditor()
@@ -96,57 +95,19 @@ void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
   }
 }
 
-GearGui* SchemaEditor::testForGearCollision(const QPoint &p)
-{     
-  QCanvasItemList l=canvas()->collisions(p);
-
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
-    {
-      return(GearGui*)(*it);
-    }
-  }
-  return NULL;
-}
-
-ConnectionItem* SchemaEditor::testForConnectionCollision(const QPoint &p)
-{        
-  QCanvasItemList l=canvas()->collisions(p);
-
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
-      return(ConnectionItem*) (*it);
-  }
-  return NULL;
-}
-
-void SchemaEditor::unHilightAllConnections()
-{        
-  QCanvasItemList l=canvas()->allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
-    {
-      ((ConnectionItem*)(*it))->hiLight(false);
-    }
-  }    
-}
 
 void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 {
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
-  GearGui *gearGui = testForGearCollision(p);
+  GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox;
     
-  /*
-  QMainWindow *wnd = new QMainWindow();  
-  SchemaGui *tschemaGui = new SchemaGui(_engine->mainSchema(), _engine);
-  SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
-  wnd->setCentralWidget(schemaEditor); 
-  wnd->show();
-  */
+//   QMainWindow *wnd = new QMainWindow();  
+//   SchemaGui *tschemaGui = new SchemaGui(_engine->mainSchema(), _engine);
+//   SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
+//   wnd->setCentralWidget(schemaEditor); 
+//   wnd->show();
+  
 
   if (gearGui!=NULL)
   {    
@@ -228,8 +189,8 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   {
   case IDLE:
 
-    unHilightAllConnections();
-    connectionItem = testForConnectionCollision(p);
+    _schemaGui->unHilightAllConnections();
+    connectionItem = _schemaGui->testForConnectionCollision(p);
 
     if (connectionItem!=NULL)
     {
@@ -237,7 +198,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
     } else
     {
       //if no connection hitted test for gear collision
-      gearGui = testForGearCollision(p);   
+      gearGui = _schemaGui->testForGearCollision(p);   
 
       if (gearGui!=NULL)
       {
@@ -252,7 +213,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case MOVING_GEAR:
     if (_movingGear!=NULL)
     {
-      moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
+      _schemaGui->moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
       _movingGearStartPos = p;        
     }
     break;
@@ -260,7 +221,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case CONNECTING:
     _activeConnection->setConnectionLineEndPoint(p);
 
-    gearGui = testForGearCollision(p);   
+    gearGui = _schemaGui->testForGearCollision(p);   
 
     if (gearGui!=NULL)
     {
@@ -275,7 +236,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
 void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
 {
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
-  GearGui *gearGui = testForGearCollision(p);
+  GearGui *gearGui = _schemaGui->testForGearCollision(p);
 
   if (gearGui!=NULL)
   {
@@ -315,8 +276,8 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   {
   case IDLE:
 
-    unHilightAllConnections();
-    connectionItem = testForConnectionCollision(p);
+    _schemaGui->unHilightAllConnections();
+    connectionItem = _schemaGui->testForConnectionCollision(p);
 
     if (connectionItem!=NULL)
     {
@@ -324,7 +285,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       canvas()->update();
     }
 
-    gearGui = testForGearCollision(p);   
+    gearGui = _schemaGui->testForGearCollision(p);   
 
     if (gearGui!=NULL)
     {
@@ -335,12 +296,6 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   default:
     break;
   }
-}
-
-void SchemaEditor::moveGearBy(GearGui *gearGui, int x, int y)
-{
-  gearGui->moveBy(x, y); 
-  canvas()->update();    
 }
 
 QPopupMenu* SchemaEditor::createGearsMenu()
@@ -360,7 +315,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
   QPoint p = inverseWorldMatrix().map(contextMenuEvent->pos());
   
 
-  GearGui *gearGui = testForGearCollision(p);
+  GearGui *gearGui = _schemaGui->testForGearCollision(p);
 
   if (gearGui!=NULL)
   {
@@ -388,6 +343,7 @@ void SchemaEditor::slotMenuItemSelected(int id)
     return;
 
   _schemaGui->addGear(_allGearsName[id], _allGearsMenuPos.x(), _allGearsMenuPos.y());  
+  //_schemaGui->addMetaGear("bidon", _allGearsMenuPos.x()+100, _allGearsMenuPos.y()+100);  
 }
 
 void SchemaEditor::slotGearProperties()

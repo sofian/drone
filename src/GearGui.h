@@ -99,6 +99,7 @@ protected:
 
   //colors    
   static const QColor BOX_COLOR;
+  static const QColor METABOXNAME_COLOR;
   static const QColor BOXNAME_COLOR;
   static const QColor SHADOW_COLOR;
 
