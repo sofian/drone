@@ -34,7 +34,7 @@ const int Gear_ListBox::DEFAULT_VALUE = 0;
 
 const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
 
-Gear_ListBox::Gear_ListBox(Engine *engine, std::string name) : Gear(engine, "ListBox", name)
+Gear_ListBox::Gear_ListBox(Engine *engine, std::string name) : Gear(engine, "ListBox", name),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value"));
 
@@ -61,11 +61,12 @@ void Gear_ListBox::onUpdateSettings()
   //then we need to redraw the gearGui
   getGearGui()->reDraw();
 
+  _acceptHint = false;
 }
 
 void Gear_ListBox::onPlugConnected(AbstractPlug *plug)
 {
-  if (plug == _VALUE_OUT)
+  if (plug == _VALUE_OUT && _acceptHint)
   {
     const EnumType *tmpType = static_cast<const EnumType*>(plug->firstConnectedPlug()->abstractHintType());
     _settings.get(Gear_ListBox::SETTING_NELEMS)->valueInt((int)tmpType->size());
@@ -76,6 +77,12 @@ void Gear_ListBox::onPlugConnected(AbstractPlug *plug)
     onUpdateSettings();
   }
 }
+
+void Gear_ListBox::onPlugDisconnected(AbstractPlug* plug)
+{
+   if (plug == _VALUE_OUT)
+     _acceptHint=true;
+} 
 
 void Gear_ListBox::setValue(int value)
 {
@@ -111,5 +118,6 @@ void Gear_ListBox::save(QDomDocument &doc, QDomElement &gearElem)
 void Gear_ListBox::load(QDomElement &gearElem)
 {
   setValue(gearElem.attribute("ListBoxPos","").toInt());        
+  _acceptHint=false;
 }
 

@@ -75,6 +75,7 @@ void Gear_Slider::onUpdateSettings()
   //then we need to redraw the gearGui
   getGearGui()->reDraw();
 
+  _acceptHint = false;
 }
 
 void Gear_Slider::onPlugConnected(AbstractPlug *plug)
