@@ -327,7 +327,13 @@ void VideoOutputX11Base::processX11Events()
         switch (event.type)
         {
             case ConfigureNotify:
-                onResize(event.xconfigure.width, event.xconfigure.height);
+                if (_xRes!=event.xconfigure.width || _yRes!=event.xconfigure.height)
+                {
+                    _xRes = event.xconfigure.width;
+                    _yRes = event.xconfigure.height;
+                    onResize(_xRes, _yRes);
+                }
+                
                 break;
         }
     }
@@ -335,7 +341,6 @@ void VideoOutputX11Base::processX11Events()
 
 void VideoOutputX11Base::resizeWindow(int sizeX, int sizeY)    
 {
-    //resize the window to image size since we dont have streching with shm
     XWindowChanges windowChanges;
     windowChanges.width = sizeX;
     windowChanges.height = sizeY;

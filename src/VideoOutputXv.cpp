@@ -259,8 +259,4 @@ void VideoOutputXv::destroyXvImage()
     };
 }
 
-void VideoOutputXv::onResize(int sizeX, int sizeY)
-{
-    _xRes=sizeX;
-    _yRes=sizeY;
-}
+

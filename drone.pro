@@ -86,6 +86,7 @@ HEADERS += config.h \
 	   src/VideoOutputX11Base.h \
 	   src/VideoOutputXv.h \
 	   src/VideoOutputShm.h \
+	   src/VideoOutputGl.h \
 	   src/Play.xpm \
 	   src/Pause.xpm \
 	   src/splash.xpm \
@@ -159,5 +160,6 @@ SOURCES += src/Canvas.cpp \
 	   src/VideoOutputMaker.cpp \
 	   src/VideoOutputX11Base.cpp \
 	   src/VideoOutputXv.cpp \
+	   src/VideoOutputGl.cpp \
 	   src/VideoOutputShm.cpp
 

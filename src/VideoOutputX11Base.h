@@ -70,6 +70,7 @@ protected:
 
     XShmSegmentInfo _shmInfo;//! the current used shm segment
     GC _gc;
+    int _currentWindowWidth, _currentWindowHeight;
 
 };
 

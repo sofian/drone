@@ -24,7 +24,7 @@ Gear_VideoOutput::Gear_VideoOutput(Engine *engine, std::string name) :
     Gear(engine, "VideoOutput", name),
     _videoOutput(NULL)
 {
-    _videoOutput = VideoOutputMaker::makeVideoOutput("Shm");
+    _videoOutput = VideoOutputMaker::makeVideoOutput("Gl");
     
     _VIDEO_IN = addPlugVideoIn(name);
 

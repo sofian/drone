@@ -13,9 +13,10 @@ public:
     virtual void render(Canvas &canvas)=0;
     virtual void fullscreen(bool fs)=0;
     virtual void destroy()=0;
-
+    
 protected:
     int _xRes, _yRes;
+    
 };
 
       

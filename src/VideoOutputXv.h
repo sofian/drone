@@ -33,8 +33,7 @@ protected:
     void unGrabXvPort();
     XvImage* createXvImage(int sizeX, int sizeY);
     void destroyXvImage();
-    void onResize(int sizeX, int sizeY);
-
+    
 private:
 
     XvImageFormatValuesPortPair _selectedFormat;
