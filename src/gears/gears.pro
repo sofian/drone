@@ -22,6 +22,7 @@ Enveloppe \
 FlatSignal \
 ListBox \
 PushButton \
+Rescale \
 TouchPad \
 ColorQuantize \
 Gamma \
@@ -35,7 +36,7 @@ VideoDelay \
 VideoLoop \
 ImageShuffle \
 ImageSequence \
-#AsciiArt \
+AsciiArt \
 Invert 
 
 agg {
