@@ -32,31 +32,33 @@ void Gear_GrayScale::runVideo()
     _outImage->allocate(_image->sizeX(), _image->sizeY());
     _data = _image->_data;    
     _outData = _outImage->_data;
+    
+    _size = _image->sizeX() * _image->sizeY();
 
-    _iterSizeX = _image->sizeX();
-    _iterSizeY = _image->sizeY();
-                  
+    _imageIn  = (unsigned char*)_data;
+    _imageOut = (unsigned int*)_outData;
+    
     int total;
     
-    for (int y=0;y<_iterSizeY;y++)
-    {    
-        _imageOut = (unsigned int*)&_outData[(y*_iterSizeX)];
-        _imageIn = (unsigned char*)&_data[y*_iterSizeX];
-        for (int x=0;x<_iterSizeX;x++)
-        {
-          //          _imageIn+=4;
-          // add everything
-            total = *(_imageIn) + *(_imageIn+1) +*(_imageIn+2) + 255;
-
-            // divide by 4
-            total >>= 2;
-
-            //        R = total | G = total | B = total
-            *_imageOut++ = total | total<<8 | total <<16;
-            
-            // ***  je suis gelé mais je pense que c'est mieux de même
-            _imageIn+=4;
-        }
+    for (int p=0; p<_size; ++p)
+    {
+      //          _imageIn+=4;
+      // add everything
+      //      total = *(_imageIn) + *(_imageIn+1) +*(_imageIn+2) + 255;
+      total = 255;
+      total += *_imageIn++;
+      total += *_imageIn++;
+      total += *_imageIn++;
+      _imageIn++;
+      
+      // divide by 4
+      total >>= 2;
+      
+      //        R = total | G = total | B = total
+      *_imageOut++ = total | total<<8 | total <<16;
+      
+      // ***  je suis gelé mais je pense que c'est mieux de même
+      //      _imageIn+=4;
     }
 }
 

@@ -30,8 +30,7 @@ private:
     RGBA *_data;
     RGBA *_outData;
 
-    int _iterSizeY;
-    int _iterSizeX;    
+  int _size;
             
     unsigned int *_imageOut;
     unsigned char *_imageIn;
