@@ -22,7 +22,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_FlatSignal, Gear_FlatSignal, "FlatSignal")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_FlatSignal(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "FlatSignal";
+  gearInfo.classification = GearClassifications::signal().transform().instance();
+  return gearInfo;
+}
+}
 
 Gear_FlatSignal::Gear_FlatSignal(Engine *engine, std::string name)
   : GearConverter<ValueType, SignalType>(engine, "FlatSignal", name)

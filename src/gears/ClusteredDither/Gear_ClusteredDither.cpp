@@ -25,7 +25,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_ClusteredDither(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "ClusteredDither";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
 : Gear(engine, "ClusteredDither", name), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)

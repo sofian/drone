@@ -26,7 +26,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_TV, Gear_TV, "TV")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_TV(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "TV";
+  gearInfo.classification = GearClassifications::control().instance();
+  return gearInfo;
+}
+}
 
 Gear_TV::Gear_TV(Engine *engine, std::string name) : Gear(engine, "TV", name)
 {

@@ -25,7 +25,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_VideoMix, Gear_VideoMix, "VideoMix")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_VideoMix(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoMix";
+  gearInfo.classification = GearClassifications::video().composition().instance();
+  return gearInfo;
+}
+}
 
 Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
 {

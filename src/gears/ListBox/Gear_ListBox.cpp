@@ -28,7 +28,20 @@
 #include <iostream>
 #include <sstream>
 
-Register_Gear(MAKERGear_ListBox, Gear_ListBox, "ListBox")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_ListBox(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "ListBox";
+  gearInfo.classification = GearClassifications::control().instance();
+  return gearInfo;
+}
+}
 
 const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
 const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";

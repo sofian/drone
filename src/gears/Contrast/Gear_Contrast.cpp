@@ -27,7 +27,20 @@
 #include "Math.h"
 
 
-Register_Gear(MAKERGear_Contrast, Gear_Contrast, "Contrast")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Contrast(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Contrast";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "Contrast", name)
 {

@@ -159,6 +159,13 @@ public:
     };       
     GearClassification_FeatureExtraction featureExtraction(){return GearClassification_FeatureExtraction();}  
 
+    //VIDEO/Mask
+    class GearClassification_Mask: public GearClassificationT<GearClassification_Mask, GearClassification_Video>
+    {
+    public: std::string toString(){return "Mask";}       
+    };       
+    GearClassification_Mask mask(){return GearClassification_Mask();}  
+
   };
   
   //SIGNAL
@@ -180,6 +187,20 @@ public:
     public: std::string toString(){return "Generator";} 
     };    
     GearClassification_Generator generator(){return GearClassification_Generator();}     
+
+    //SIGNAL/Transform
+    class GearClassification_Transform: public GearClassificationT<GearClassification_Transform, GearClassification_Signal>
+    {
+    public: std::string toString(){return "Transform";} 
+    };    
+    GearClassification_Transform transform(){return GearClassification_Transform();}     
+
+    //SIGNAL/Enveloppe
+    class GearClassification_Enveloppe: public GearClassificationT<GearClassification_Enveloppe, GearClassification_Signal>
+    {
+    public: std::string toString(){return "Enveloppe";} 
+    };    
+    GearClassification_Enveloppe enveloppe(){return GearClassification_Enveloppe();}     
 
   };
 

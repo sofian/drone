@@ -28,7 +28,20 @@
 #include <iostream>
 #include <sstream>
 
-Register_Gear(MAKERGear_PushButton, Gear_PushButton, "PushButton")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_PushButton(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "PushButton";
+  gearInfo.classification = GearClassifications::control().instance();
+  return gearInfo;
+}
+}
 
 const std::string Gear_PushButton::SETTING_OFFVALUE = "Off Value";
 const std::string Gear_PushButton::SETTING_ONVALUE = "On Value";

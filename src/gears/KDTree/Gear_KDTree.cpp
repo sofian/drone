@@ -24,7 +24,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_KDTree, Gear_KDTree, "KDTree")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_KDTree(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "KDTree";
+  gearInfo.classification = GearClassifications::video().distortion().instance();
+  return gearInfo;
+}
+}
 
 Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 : Gear(engine, "KDTree", name)

@@ -25,7 +25,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_ColorAdjust, Gear_ColorAdjust, "ColorAdjust")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_ColorAdjust(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "ColorAdjust";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_ColorAdjust::Gear_ColorAdjust(Engine *engine, std::string name) : Gear(engine, "ColorAdjust", name)
 {

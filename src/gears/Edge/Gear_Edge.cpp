@@ -25,7 +25,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_Edge, Gear_Edge, "Edge")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Edge(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Edge";
+  gearInfo.classification = GearClassifications::video().featureExtraction().instance();
+  return gearInfo;
+}
+}
 
 Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", name)
 {

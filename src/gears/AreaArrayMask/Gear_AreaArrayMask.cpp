@@ -24,7 +24,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_AreaArrayMask, Gear_AreaArrayMask, "AreaArrayMask");
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_AreaArrayMask(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "AreaArrayMask";
+  gearInfo.classification = GearClassifications::video().mask().instance();
+  return gearInfo;
+}
+}
 
 Gear_AreaArrayMask::Gear_AreaArrayMask(Engine *engine, std::string name) : Gear(engine, "AreaArrayMask", name)
 {    

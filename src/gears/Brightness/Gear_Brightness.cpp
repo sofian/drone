@@ -27,7 +27,20 @@
 #include "Math.h"
 
 
-Register_Gear(MAKERGear_Brightness, Gear_Brightness, "Brightness")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Brightness(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Brightness";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_Brightness::Gear_Brightness(Engine *engine, std::string name) : Gear(engine, "Brightness", name)
 {

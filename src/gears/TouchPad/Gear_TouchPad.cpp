@@ -28,9 +28,22 @@
 #include <iostream>
 #include <sstream>
 
-Register_Gear(MAKERGear_TouchPad, Gear_TouchPad, "TouchPad")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_TouchPad(engine,name);
+}
 
-  const float  Gear_TouchPad::DEFAULT_VALUE = 0.5f;
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "TouchPad";
+  gearInfo.classification = GearClassifications::control().instance();
+  return gearInfo;
+}
+}
+
+const float  Gear_TouchPad::DEFAULT_VALUE = 0.5f;
 
 const std::string Gear_TouchPad::SETTING_HORIZONTAL_LOWERBOUND = "Horizontal lower Bound";
 const std::string Gear_TouchPad::SETTING_HORIZONTAL_HIGHERBOUND = "Horizontal higher Bound";

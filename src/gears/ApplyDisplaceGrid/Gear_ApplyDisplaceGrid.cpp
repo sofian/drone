@@ -25,7 +25,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_ApplyDisplaceGrid, Gear_ApplyDisplaceGrid, "ApplyDisplaceGrid")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_ApplyDisplaceGrid(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "ApplyDisplaceGrid";
+  gearInfo.classification = GearClassifications::video().distortion().instance();
+  return gearInfo;
+}
+}
 
 Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Engine *engine, std::string name) : Gear(engine, "ApplyDisplaceGrid", name)
 {
