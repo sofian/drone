@@ -421,9 +421,14 @@ void Schema::getAllConnections(std::list<Connection*> &connections)
 
       for (std::list<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
       {
-        connections.push_back( new Connection((*itGear)->name(), (*itOutput)->name(), 
-                                              (*itConnectedPlug)->parent()->name(), 
-                                              (*itConnectedPlug)->name()));
+        
+        //in the case of an exposed plug, 
+        //just be sure that the destination gear is really in our schema
+        if ( (!(*itOutput)->exposed()) || 
+             ((*itOutput)->exposed() && (getGearByName((*itConnectedPlug)->parent()->name()))) )
+          connections.push_back( new Connection((*itGear)->name(), (*itOutput)->name(), 
+                                                (*itConnectedPlug)->parent()->name(), 
+                                                (*itConnectedPlug)->name()));
       }            
     }
   }

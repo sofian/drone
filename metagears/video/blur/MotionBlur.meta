@@ -21,7 +21,6 @@
         </Gears>
         <Connections>
             <Connection GearA="VideoMix1" GearB="VideoMix1" Input="ImgA" Output="ImgOut" />
-            <Connection GearA="VideoMix1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
             <Connection GearA="Slider1" GearB="VideoMix1" Input="ArgA" Output="Value" />
         </Connections>
     </Schema>

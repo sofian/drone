@@ -63,11 +63,7 @@ void MetaGearMaker::parseMetaGears()
   std::cout << "--- parsing MetaGears ---" << std::endl;
   
   QDir dir("metagears");
-      
-  dir.setFilter(QDir::All | QDir::Hidden | QDir::NoSymLinks);
-  dir.setNameFilter("*.meta");
-  dir.setMatchAllDirs(true);
-  
+        
   parseSubDirs(dir);
 }
 
@@ -75,6 +71,10 @@ void MetaGearMaker::parseSubDirs(QDir dir)
 {    
   if (!dir.exists())
     return;
+  
+  dir.setFilter(QDir::All | QDir::Hidden | QDir::NoSymLinks);
+  dir.setNameFilter("*.meta");
+  dir.setMatchAllDirs(true);
   
   const QFileInfoList *files = dir.entryInfoList();
   QFileInfoListIterator it(*files);

@@ -264,8 +264,6 @@ AbstractPlug* Gear::getInput(std::string name) const
     std::string nameBlower=(*it)->name();
     transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf); 
     
-    std::cout << nameAlower << std::endl;
-    std::cout << nameBlower << std::endl;
     if (nameAlower == nameBlower)
       return(*it);
   }
