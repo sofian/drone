@@ -32,10 +32,6 @@ private:
   Video_T *_image;     
   Video_T *_outImage; 
   unsigned char *_data;
-  unsigned char *_amountMapData;
-
-  SummedAreaTable *_table;
-  int *_iterAcc;
 
   unsigned char *_outData;
 
@@ -47,14 +43,7 @@ private:
   int _medianSize;
   int _halfMedianFilterSize;
 
-  //  unsigned char *_medianSelect;
   unsigned char _medianSelect[1024];
-  
-  RGBA _acc;
-
-  Canvas _defaultAmountMapData;
-
-  void init();    
 };
 
 #endif

@@ -85,10 +85,6 @@ Gear_MedianFilter::~Gear_MedianFilter()
 {
 }
 
-void Gear_MedianFilter::init()
-{
-}
-
 bool Gear_MedianFilter::ready()
 {
   return (_VIDEO_IN->connected() && _VIDEO_OUT->connected());
