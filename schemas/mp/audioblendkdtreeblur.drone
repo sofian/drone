@@ -11,7 +11,7 @@
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
         <Gear PosX="597" PosY="322" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/mathieu/dl/videos/Radiohead - Karma Police.mpg" />
+            <Properties Filename="/home/mathieu/dl/videos/mpg/Nine Inch Nails - Closer (Uncut).mpg" />
         </Gear>
         <Gear PosX="739" PosY="64" Type="Oscilloscope" Name="Oscilloscope1" >
             <Properties/>
@@ -46,8 +46,8 @@
         <Gear PosX="172" PosY="119" Type="FlatSignal" Name="FlatSignal1" >
             <Properties/>
         </Gear>
-        <Gear PosX="35" PosY="127" Type="Slider" SliderPos="143.902" Name="Slider8" >
-            <Properties Lower_Bound="0" Higher_Bound="200" />
+        <Gear PosX="35" PosY="127" Type="Slider" SliderPos="5.18293" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="25" />
         </Gear>
         <Gear PosX="769" PosY="324" Type="KDTree" Name="KDTree1" >
             <Properties/>
@@ -78,6 +78,7 @@
         <Connection GearA="Slider3" GearB="Oscilloscope1" Input="ZoomY" Output="Value" />
         <Connection GearA="Slider4" GearB="Oscilloscope1" Input="ZoomX" Output="Value" />
         <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
+        <Connection GearA="Gain1" GearB="Oscilloscope1" Input="In" Output="Out" />
         <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
         <Connection GearA="Slider5" GearB="Enveloppe1" Input="Rel" Output="Value" />
         <Connection GearA="Slider6" GearB="Enveloppe1" Input="Att" Output="Value" />

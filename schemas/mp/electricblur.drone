@@ -2,7 +2,7 @@
 <Schema>
     <Gears>
         <Gear PosX="473" PosY="379" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/mathieu/dl/videos/Radiohead - Karma Police.mpg" />
+            <Properties Filename="/home/mathieu/dl/videos/mpg/Radiohead - Karma Police.mpg" />
         </Gear>
         <Gear PosX="730" PosY="458" Type="VideoBlend" Name="VideoBlend1" >
             <Properties/>
@@ -34,7 +34,7 @@
         <Gear PosX="317" PosY="176" Type="Gain" Name="Gain1" >
             <Properties/>
         </Gear>
-        <Gear PosX="44" PosY="210" Type="Slider" SliderPos="45.1219" Name="Slider4" >
+        <Gear PosX="44" PosY="210" Type="Slider" SliderPos="54.8781" Name="Slider4" >
             <Properties Lower_Bound="0" Higher_Bound="100" />
         </Gear>
         <Gear PosX="174" PosY="210" Type="FlatSignal" Name="FlatSignal1" >
