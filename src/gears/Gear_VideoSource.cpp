@@ -36,7 +36,13 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) :
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
-
+  addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
+  
+  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, NORMAL);
+  playbackMode->setLabel(NORMAL,"Normal");
+  playbackMode->setLabel(LOOP,"Loop");
+  addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));
+  
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
   //todo
@@ -73,7 +79,6 @@ void Gear_VideoSource::onUpdateSettings()
   
   _file = mpeg3_open(tempstr);    
 
-  
   if (_file==NULL)
   {
     std::cout << "error opening movie : " << tempstr << std::endl;
@@ -81,6 +86,8 @@ void Gear_VideoSource::onUpdateSettings()
   }
   _sizeX = mpeg3_video_width(_file, 0);
   _sizeY = mpeg3_video_height(_file, 0);
+
+  _bytes = mpeg3_get_bytes(_file);
 
   std::cout << "movie size X : " << _sizeX << std::endl;
   std::cout << "movie size Y : " << _sizeY << std::endl;
@@ -104,6 +111,11 @@ void Gear_VideoSource::runVideo()
 {
   if (_file==NULL)
     return;
+
+  if ((int)_RESET_IN->type()->value() == 1 ||
+      ((ePlaybackMode)_MODE_IN->type()->value() == LOOP &&
+       mpeg3_tell_byte(_file) == _bytes))
+    mpeg3_seek_byte(_file, 0); // reset
 
   //_image = _VIDEO_OUT->type().image();
   //_outData = _image.data();

@@ -23,13 +23,22 @@
 
 #include "Gear.h"
 #include "VideoRGBAType.h"
+#include "ValueType.h"
 #include "SignalType.h"
+#include "EnumType.h"
 
 #include <libmpeg3.h>
 
 class Gear_VideoSource : public Gear
 {
 public:
+  enum ePlaybackMode
+  {
+    NORMAL,
+    LOOP,
+    N_PLAYBACK_MODE
+  };
+  
   static const std::string SETTING_FILENAME;
 
   Gear_VideoSource(Engine *engine, std::string name);
@@ -47,6 +56,9 @@ private:
 
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
+  PlugIn<ValueType> *_RESET_IN;
+  PlugIn<EnumType> *_MODE_IN;
+  
   mpeg3_t* _file;
 
   int _sizeX, _sizeY;
@@ -57,6 +69,8 @@ private:
   RGBA *_frame[1024];
   RGBA *_outData;  
 
+  int64_t _bytes;
+  
   //mmx
 //  unsigned long long int *_mmxImageIn;
 //  unsigned long long int *_mmxImageOut;
