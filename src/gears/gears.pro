@@ -16,7 +16,7 @@ ClusteredDither \
 ColorAdjust \
 Contrast \
 Enveloppe \
-#FlatSignal \
+FlatSignal \
 ListBox \
 PushButton \
 TV \
