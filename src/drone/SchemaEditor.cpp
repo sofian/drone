@@ -25,6 +25,7 @@
 #include "GearMaker.h"
 #include "GearPropertiesDialog.h"
 #include "Gear.h"
+#include "MetaGear.h"
 #include "GearListMenu.h"
 
 #include <qmainwindow.h>
@@ -301,6 +302,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
       wnd->setCentralWidget(schemaEditor); 
       wnd->show();
+	  ((MetaGear*)(gearGui->gear()))->createPlugs();
     }
     break;
   }  

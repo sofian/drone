@@ -50,8 +50,8 @@ Gear_Enveloppe::Gear_Enveloppe(Schema *schema, std::string uniqueName) : Gear(sc
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 
-  addPlug(_PARAM_RELEASE = new PlugIn<ValueType>(this, "Rel", new ValueType(.2f,0,3)));
-  addPlug(_PARAM_ATTACK = new PlugIn<ValueType>(this, "Att", new ValueType(.2f,0,3)));
+  addPlug(_PARAM_RELEASE = new PlugIn<ValueType>(this, "Rel", new ValueType(.07f,0,1)));
+  addPlug(_PARAM_ATTACK = new PlugIn<ValueType>(this, "Att", new ValueType(.07f,0,1)));
 }
 
 Gear_Enveloppe::~Gear_Enveloppe()

@@ -13,4 +13,3 @@ unix:!macx:TARGET=../../../gears/Gear_TV
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_TV
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
-

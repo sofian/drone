@@ -19,11 +19,15 @@ public:
   
   void save(QDomDocument &doc, QDomElement &parent);
   void load(QDomElement &parent);
+  
+  void createPlugs();
 
 protected:
   GearGui* createGearGui(QCanvas *canvas);
   
   Schema _schema;
+  
+  std::string _metaGearName;
   
   static const QColor METAGEAR_COLOR;
 };

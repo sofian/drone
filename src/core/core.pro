@@ -24,7 +24,7 @@ release {
   QMAKE_CXXFLAGS_RELEASE -= -O2 -Os
   
   unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3  
-  macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -mcpu=G4 -mtune=G4  
+  macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -Os
   
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4

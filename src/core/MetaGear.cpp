@@ -7,10 +7,9 @@ const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const std::string MetaGear::TYPE="MetaGear";
 
 MetaGear::MetaGear(Schema *schema, std::string vname, std::string uniqueName) :
-Gear(schema, TYPE, uniqueName)
+Gear(schema, TYPE, uniqueName),
+_metaGearName(vname)
 {
-  //set the name of the gear to the name of the metagear
-  name(vname);
 }
 
 MetaGear::~MetaGear()
@@ -48,4 +47,28 @@ void MetaGear::load(QDomElement &parent)
   
   QDomElement schemaElem = schemaNode.toElement();  
   _schema.load(schemaElem);  
+}
+
+void MetaGear::createPlugs()
+{
+	//for now we will expose all inputs and outputs
+	
+	//clear plugs first, we will recreate them
+	_plugs.clear();
+	
+	std::list<Gear*> gears = _schema.getGears();
+	
+	std::list<AbstractPlug*> inputs;
+	std::list<AbstractPlug*> outputs;
+
+	for(std::list<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
+	{
+		(*gearIt)->getInputs(inputs);
+		for(std::list<AbstractPlug*>::iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
+		{
+			addPlug(*plugIt);
+		}
+		
+	}
+	
 }
