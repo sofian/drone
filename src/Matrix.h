@@ -12,8 +12,7 @@
  * interface for accessing data in a "by-row" fashion.
  *
  * @author Jean-Sébastien Senécal, Mathieu Guindon
- * @version %I%
- * @date %G%
+ * @version %I% %G%
  */
 template <class T>
 class Matrix : public std::vector<T>
@@ -46,6 +45,8 @@ public:
   {
     resize(width, height);
   }
+
+  //! Destructor.
   virtual ~Matrix() {}
 
   /**
