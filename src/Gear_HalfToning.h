@@ -1,29 +1,12 @@
 #ifndef GEAR_HALFTONING_INCLUDED
 #define GEAR_HALFTONING_INCLUDED
 
-/* varcoeffED.c 
-   version 1 (August 2001), as described in the article
+/*
+  Version 1 (August 2001), as described in the article
 	"A Simple and Efficient Error-Diffusion Algorithm" (SIGGRAPH'01)
    Author: Victor Ostromoukhov
    University of Montreal, http://www.iro.umontreal.ca/~ostrom/
 
-   Usage: varcoeffED
-        
-   Action:
-   - reading PGM input file "input.pgm"
-   - making halftone image of size DEFAULT_OUTPUT_DIMS_X by
-   DEFAULT_OUTPUT_DIMS_Y
-   - writing PGM output file "output.pgm"
-
-   Structrure:
-   t_image *read_PGM(char *fname)
-   void write_PGM(t_image *image, char *fname)
-   void allocate_image(t_image *image)
-   void shift_carry_buffers()
-   void distribute_error(int x, int y, t_carry diff, int dir, int input_level)
-   void distribute_error_fs(int x, int y, t_carry diff, int dir)
-   void make_output()
-   int main(argc, argv)
 *******************************************************************/
 
 
@@ -32,29 +15,19 @@
 #include <stdio.h>
 #include <math.h>
 
-/*------------------ SOME PARAMETERS, MACROS, CONSTANTS ------------------*/
-#ifndef TRUE
-#define TRUE  1
-#define FALSE  0
-#endif
-
-#define TEST_ODD(x)    (((x) & 1))
-
-#define TO_RIGHT        1    /* 2 possible directions in boustrophedon mode */
-#define TO_LEFT         -1
-
-#define BLACK		0
-#define WHITE		255
-
-typedef struct t_three_coefs {
-  int i_r;        /* right */
-  int i_dl;       /* down-left */
-  int i_d;        /* down */
-  int i_sum;      /* sum */
-} t_three_coefs;
+struct ThreeCoefficients {
+  double i_r;        /* right */
+  double i_dl;       /* down-left */
+  double i_d;        /* down */
+  double i_sum;      /* sum */
+//   int i_r;        /* right */
+//   int i_dl;       /* down-left */
+//   int i_d;        /* down */
+//   int i_sum;      /* sum */
+};
 
 /*---------------- varcoeff -----------------*/
-t_three_coefs var_coefs_tab[256] = {
+ThreeCoefficients COEFS_TABLE[256] = {
   13,     0,     5,    18,     /*    0 */
   13,     0,     5,    18,     /*    1 */
   21,     0,    10,    31,     /*    2 */
@@ -327,8 +300,6 @@ public:
   bool ready();
 
 private:
-
-  
   PlugVideoIn *_VIDEO_IN;
 	PlugVideoOut *_VIDEO_OUT;
 
@@ -344,58 +315,33 @@ private:
   unsigned char *_imageIn;
   unsigned char *_imageOut;
 
-  double *_carryLine0;       /* carry buffer; current line     */
-  double *_carryLine1;       /* carry buffer; current line + 1 */
-//   int *_xTab;
-//   int *_yTab;
+  double *_carryLine0; /* carry buffer; current line     */
+  double *_carryLine1; /* carry buffer; current line + 1 */
   
-  inline void shift_carry_buffers();
-  inline void distribute_error(int x, int y, double diff, int dir, int input_level);
-  inline void distribute_error_fs(int x, int y, double diff, int dir);
-  
+  inline void shiftCarryBuffers();
+  inline void distributeError(int x, double diff, int dir, int input_level);
 };
 
-void Gear_HalfToning::shift_carry_buffers()
+void Gear_HalfToning::shiftCarryBuffers()
 {
-  double *tmp;
-  tmp=_carryLine0;
+  double *tmp = _carryLine0;
   _carryLine0 = _carryLine1;
   _carryLine1 = tmp;
-  memset (_carryLine1, 0, _sizeX*sizeof(double));
+  memset(_carryLine1, 0, _sizeX*sizeof(double));
 }
 
-#define SET_CARRY_0(x,val) { _carryLine0[x] += (double) val; }
-#define SET_CARRY_1(x,val) { _carryLine1[x] += (double) val; }
-
-void Gear_HalfToning::distribute_error(int x, int y, double diff, int dir, int input_level)
+void Gear_HalfToning::distributeError(int x, double diff, int dir, int input_level)
 {
   double term_r, term_dl, term_d;
-  t_three_coefs coefs = var_coefs_tab[input_level];
+  ThreeCoefficients coefs = COEFS_TABLE[input_level];
   
-  term_r = (double)coefs.i_r*diff/(double)coefs.i_sum;
-  term_dl = (double)coefs.i_dl*diff/(double)coefs.i_sum;
+  term_r = coefs.i_r*diff;
+  term_dl = coefs.i_dl*diff;
   term_d = diff - (term_r+term_dl);
   
-  SET_CARRY_0(x+dir, term_r);
-  SET_CARRY_1(x-dir, term_dl);
-  SET_CARRY_1(x,     term_d);
-} /* distribute_error */
-
-/*---------------- FLOYD-STEINBERG -----------------*/
-#define SET_CARRY_7351_0(x, diff) _carryLine0[x] += (double) (diff/16.)
-#define SET_CARRY_7351_1(x, diff) _carryLine1[x] += (double) (diff/16.)
-
-void Gear_HalfToning::distribute_error_fs(int x, int y, double diff, int dir)
-{
-  double   diff_2 = diff + diff ;
-  double   diff_3 = diff + diff_2 ;
-  double   diff_5 = diff_3 + diff_2 ;
-  double   diff_7 = diff_5 + diff_2 ;
-  SET_CARRY_7351_0(x+dir, diff_7);
-  SET_CARRY_7351_1(x-dir, diff_3);
-  SET_CARRY_7351_1(x,     diff_5);
-  SET_CARRY_7351_1(x+dir, diff);
-} /* distribute_error_fs */
-/*---------------- END FLOYD-STEINBERG -----------------*/
+  _carryLine0[x+dir] += term_r;
+  _carryLine1[x-dir] += term_dl;
+  _carryLine1[x]     += term_d;
+}
 
 #endif

@@ -14,6 +14,12 @@ Gear_HalfToning::Gear_HalfToning(Engine *engine, std::string name)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
+  for (int i=0; i<256; ++i)
+    // *** en fait le mieux serait de les calculer directo... on a juste besoin d'un tableau pour r et dl (paires)
+  {
+    COEFS_TABLE[i].i_r = COEFS_TABLE[i].i_r / COEFS_TABLE[i].i_sum;
+    COEFS_TABLE[i].i_dl = COEFS_TABLE[i].i_dl / COEFS_TABLE[i].i_sum;
+  }
 }
 
 Gear_HalfToning::~Gear_HalfToning()
@@ -61,15 +67,18 @@ void Gear_HalfToning::runVideo()
 
   for (int y = 0; y < _sizeY; ++y)
   {
-    if (TEST_ODD(y))
+    if (y & 1)
     {
-      dir = TO_LEFT;
+      // odd line
+      dir = -1;
       xstart = _sizeX-1; xstop = -1; xstep = -1; iterDataStep = -4;
     }
-    else { /* even lines */
-      dir = TO_RIGHT;
+    else
+    {
+      // even line
+      dir = 1;
       xstart = 0; xstop = _sizeX; xstep = 1; iterDataStep = 4;
-    } /* if (TEST_ODD(y)) */
+    }
 
     iterData    = (unsigned char*)&_data[y*_sizeX+xstart];
     iterOutData = (unsigned char*)&_outData[y*_sizeX+xstart];
@@ -84,23 +93,23 @@ void Gear_HalfToning::runVideo()
 
       corrected_level = input + _carryLine0[x];
       if (corrected_level <= threshold)
-        intensity = BLACK; /* put black */
+        intensity = 0; /* put black */
       else
-        intensity = WHITE; /* put white */
+        intensity = 255; /* put white */
       diff = corrected_level - intensity;
-      distribute_error(x, y, diff, dir, input);
+      distributeError(x, diff, dir, input);
 
-      if (input == BLACK || intensity == BLACK) 
-        memset(iterOutData, BLACK, sizeof(RGBA));
+      if (input == 0 || intensity == 0) 
+        memset(iterOutData, 0, sizeof(RGBA));
       else
-        memset(iterOutData, WHITE, sizeof(RGBA));
+        memset(iterOutData, 255, sizeof(RGBA));
 
       iterData += iterDataStep;
       iterOutData += iterDataStep;
       
-    } /* x-cycle */
-    shift_carry_buffers();
-  } /* y-cycle */
+    }
+    shiftCarryBuffers();
+  }
   
 }
 
