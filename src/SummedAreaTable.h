@@ -30,7 +30,7 @@ public:
   SummedAreaTable()
     : _acc(), _width(0), _height(0)
   {
-    clear(_black, SIZE);
+    clear(_zero, SIZE);
   }
 
   //! Destructor.
