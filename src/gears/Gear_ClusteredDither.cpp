@@ -13,7 +13,7 @@ Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_CLUSTER_SIZE_IN = new PlugIn<ValueType>(this, "ClusterSize", new ValueType(16, 2, 32)));
+  addPlug(_CLUSTER_SIZE_IN = new PlugIn<ValueType>(this, "ClusterSize", new ValueType(2, 2, 32)));
   addPlug(_SPOT_TYPE_IN = new PlugIn<ValueType>(this, "SpotType", new ValueType(ROUND, SQUARE, LINE)));
   addPlug(_ANGLE_RED_IN = new PlugIn<ValueType>(this, "AngleRed", new ValueType(15,0,360)));
   addPlug(_ANGLE_GREEN_IN = new PlugIn<ValueType>(this, "AngleGreen", new ValueType(75,0,360)));
@@ -71,26 +71,20 @@ void Gear_ClusteredDither::runVideo()
   _sizeY = _image->height();
   
   NOTICE("Changing cluster");
-  bool valuesHaveChanged = false;
   // If cluster size has changed, recompute threshold matrix.
-  int clusterSize = _clusterSize;
+  int prevClusterSize = _clusterSize;
   _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, MAX((int)_image->height(),4));
-  if (_clusterSize != clusterSize)
-  {
+  bool clusterChanged = (prevClusterSize != _clusterSize);
+  if (clusterChanged)
     _width = _clusterSize * 3;
-    valuesHaveChanged = true;
-  }
-
+  
   // XXX computeThreshold deux fois!!!
   // Set spot type.
-  eSpotType tmpSpotType = (eSpotType)CLAMP((int)_SPOT_TYPE_IN->type()->value(), (int)SQUARE, (int)LINE);
-  if (tmpSpotType != _spotType)
-  {
-    _spotType = tmpSpotType;
-    valuesHaveChanged = true;
-  }
-
-  if (valuesHaveChanged)
+  eSpotType prevSpotType = _spotType;
+  _spotType = (eSpotType)CLAMP((int)_SPOT_TYPE_IN->type()->value(), (int)SQUARE, (int)LINE);
+  bool spotTypeChanged = (prevSpotType != _spotType);
+  
+  if (clusterChanged || spotTypeChanged)
     updateThreshold();
   NOTICE("...done");
 
@@ -118,13 +112,13 @@ void Gear_ClusteredDither::runVideo()
     double angleB = _angle[2];
     _angle[2] = DEG2RAD(CLAMP((int)_ANGLE_BLUE_IN->type()->value(), 0, 360));
 
-    if (_clusterSize != clusterSize || _angle[0] != angleR)
+    if (clusterChanged || _angle[0] != angleR)
       updateAngle(0);
     
-    if (_clusterSize != clusterSize || _angle[1] != angleG)
+    if (clusterChanged || _angle[1] != angleG)
       updateAngle(1);
     
-    if (_clusterSize != clusterSize || _angle[2] != angleB)
+    if (clusterChanged || _angle[2] != angleB)
       updateAngle(2);
     NOTICE("...done");
   }
@@ -189,62 +183,6 @@ void Gear_ClusteredDither::updateThreshold()
   iterOrder = _order;
   for (i=0; i < width2; i++, val += 0xff)
     _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas là...
-}
-
-float Gear_ClusteredDither::spot(float x, float y)
-{
-  switch (_spotType)
-  {
-  /* The following functions were derived from a peice of PostScript by
-   * Peter Fink and published in his book, "PostScript Screening: Adobe
-   * Accurate Screens" (Adobe Press, 1992).  Adobe Systems Incorporated
-   * allow its use, provided the following copyright message is present:
-   *
-   *  % Film Test Pages for Screenset Development
-   *  % Copyright (c) 1991 and 1992 Adobe Systems Incorporated
-   *  % All rights reserved.
-   *  %
-   *  % NOTICE: This code is copyrighted by Adobe Systems Incorporated, and
-   *  % may not be reproduced for sale except by permission of Adobe Systems
-   *  % Incorporated. Adobe Systems Incorporated grants permission to use
-   *  % this code for the development of screen sets for use with Adobe
-   *  % Accurate Screens software, as long as the copyright notice remains
-   *  % intact.
-   *  %
-   *  % By Peter Fink 1991/1992
-   */
-
-  /* Square (or Euclidean) dot.  Also very common. */
-  case SQUARE:
-    {
-      float ax = fabs(x);
-      float ay = fabs(y);
-
-      return(ax+ay)>1? ((ay-1)*(ay-1) + (ax-1)*(ax-1)) - 1 : 1-(ay*ay + ax*ax);
-    }
-
-    /* Diamond spot function, again from Peter Fink's PostScript
-     * original.  Copyright as for previous function. */
-  case DIAMOND:
-    {
-      float ax = fabs(x);
-      float ay = fabs(y);
-
-      return(ax+ay)<=0.75? 1-(ax*ax + ay*ay) : // dot
-      ( (ax+ay)<=1.23?  1-((ay*0.76) + ax) :  // to diamond
-        ((ay-1)*(ay-1) + (ax-1)*(ax-1)) -1);  // back to dot
-    }
-
-    /* Another commonly seen spot function is the v-shaped wedge. Tonally
-     * balanced. */
-  case LINE:
-    return fabs(y);
-
-    /* The classic growing dot spot function. */
-  case ROUND:
-  default:
-    return(1. - x*x - y*y);
-  }
 }
 
 void Gear_ClusteredDither::updatePolarCoordinates()
