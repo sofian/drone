@@ -1,5 +1,5 @@
 /* GearMaker.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,8 @@ GearMaker::~GearMaker()
 Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
 {
   std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
+
+  std::cout << "calling GearMaker::makeGear: " << type << std::endl;
   
   //be sure we have this gear
   if (it == _registry->end())

@@ -1,5 +1,5 @@
 /* GearFrei0r.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+ * Copyright (C) 2004 Mathieu Guindon, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 #include "GearMaker.h"
 
 GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib) : 
-  Gear(schema, frei0rLib, uniqueName),
+  Gear(schema, "GearFrei0r", uniqueName),
   _handle(0),
   _instance(0),
   _sizeX(0),
