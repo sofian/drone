@@ -44,9 +44,9 @@ void Gear_GrayScale::runVideo()
     {
       // add everything
       //      total = 128;
-      // 0.5 * R + 0.25 * G + 0.25 * B 
-      total = *_imageIn;
-      total += *_imageIn++;
+      // 0.25 * R + 0.5 * G + 0.25 * B 
+      total = *_imageIn++;
+      total += *_imageIn;
       total += *_imageIn++;
       total += *_imageIn++;
       _imageIn++;
