@@ -28,7 +28,7 @@ public:
   int sizeY() const { return _sizeY; }
 
   T& operator[](int i) const { return _data[i]; }
-  T operator()(int x, int y) const { return _data[y*_sizeX+x]; }
+  T& operator()(int x, int y) const { return _data[y*_sizeX+x]; }
   
   T* data() { return _data; }
   

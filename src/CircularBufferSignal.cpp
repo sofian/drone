@@ -148,16 +148,17 @@ void CircularBufferSignal::appendEnlarge(float *ptr, int size)
 // returns bounds needed to run over the specified data
 // sample_from : first sample to be read. relative to _current 
 // sample_to : last sample to be read. relative to _current
-//   - e.g : sample_from = -1000 sample_to = -1 -> read the samples between and including the one written 1000 samples ago and the most recent one.
-//           0 can't be use since it would mean reading the _current pointer for which we haven't wrote data yet.
-//           (in fact, _current points on the oldest sample of the buffer)
+//   - e.g : sample_from = -999 sample_to = 0 -> read the samples between and including the one written 1000 samples ago and the most recent one.
 // the pa1, pa2, pb1, pb2 returned are pointer that can be used like this : 
 //   - go from pa1 to pa2 inclusively, then from pb1 to pb2 inclusively, while processing your samples along the way
 //
 // which stat specifies which buffer to use  
 void CircularBufferSignal::getBounds(int sample_from, int sample_to, float*& pa1, float*& pa2, float*& pb1, float*& pb2, Stats which_stat)
 {
-  // sample_from/to can are [-x to -1] since 0 would mean getting t
+  // this simplifies computations
+  sample_from--;
+  sample_to--;
+  // sample_from/to are [-x to -1] since 0 would mean getting t
   assert(sample_from < 0 && sample_to < 0);
 
   int samplesWanted = sample_to - sample_from + 1;

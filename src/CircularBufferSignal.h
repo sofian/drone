@@ -5,12 +5,12 @@
 #include <list>
 #include <string>
 
-// this define code to cycle over samples from 'from' to 'to' 
-// (relative to _current) of CircularBufferSignal object 'obj
-// the variable pcur points on the actual sample
+// code to cycle over samples from 'from' to 'to' 
+// (relative to this->_current) of CircularBufferSignal object 'obj
+// the variable cbptr points on the actual sample
 
-// e.g : 
-// CIRCBUF_SIGNAL_T_FORBEGIN(b,-10,-1)  <- no semicolon
+// e.g : (get 10 samples)
+// CIRCBUF_SIGNAL_T_FORBEGIN(b,-9,0)  <- no semicolon
 //   std::cerr<<*(cbptr++)<<",";
 // CIRCBUF_SIGNAL_T_FOREND;
 
@@ -42,8 +42,38 @@
     }
 
 
+// same as previous but in reverse order
+// e.g : (get 10 samples, reverse order)
+// CIRCBUF_SIGNAL_T_FORBEGIN_REV(b,-9,0)  <- no semicolon
+//   std::cerr<<*(cbptr--)<<",";
+// CIRCBUF_SIGNAL_T_FOREND_REV;
+// ** Don't forget to decrease pointer
+
+#define CIRCBUF_SIGNAL_T_FORBEGIN_REV(obj,from,to)           \
+    {                                                    \
+      bool finished=false;                               \
+      float *cbptr, *ptrlim, *cb_pa1,                \
+                   *cb_pa2, *cb_pb1, *cb_pb2;               \
+      obj->getBounds(from, to,                           \
+                     cb_pa1, cb_pa2,                     \
+                     cb_pb1, cb_pb2);                    \
+      for(cbptr = cb_pb2, ptrlim = cb_pb1; !finished; )  \
+      {
 
 
+#define CIRCBUF_SIGNAL_T_FOREND_REV                      \
+        if(cbptr < ptrlim)                               \
+          if(ptrlim == cb_pa1)                           \
+            if(cb_pb1 > cb_pb2)                          \
+              finished=true;                             \
+            else                                         \
+            {                                            \
+              cbptr = cb_pb1;                            \
+              ptrlim = cb_pb2;                           \
+            }                                            \
+          else finished=true;                            \
+      }                                                  \
+    }
 
 
 const int _DYN_RESIZE_MAX=65536;

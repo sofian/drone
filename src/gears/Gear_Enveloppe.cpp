@@ -14,13 +14,12 @@ Register_Gear(MAKERGear_Enveloppe, Gear_Enveloppe, "Enveloppe")
 //////////////////////////////////////////////////////////////////////
 
 Gear_Enveloppe::Gear_Enveloppe(Engine *engine, std::string name) : Gear(engine, "Enveloppe", name)
-{
-    
-    _AUDIO_IN = addPlugSignalIn("In", 0.0f);
-    _PARAM_RELEASE = addPlugSignalIn("Rel", .1f);
-    _PARAM_ATTACK = addPlugSignalIn("Att", .1f);
+{    
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 
-    _AUDIO_OUT = addPlugSignalOut("Out");
+  addPlug(_PARAM_RELEASE = new PlugIn<ValueType>(this, "Rel", new ValueType(.2f,0,3)));
+  addPlug(_PARAM_ATTACK = new PlugIn<ValueType>(this, "Att", new ValueType(.2f,0,3)));
 }
 
 Gear_Enveloppe::~Gear_Enveloppe()
@@ -34,7 +33,6 @@ void Gear_Enveloppe::prePlay()
 
 }    
 
-
 bool Gear_Enveloppe::ready()
 {
     return (_AUDIO_IN->connected() && _AUDIO_OUT->connected());
@@ -42,32 +40,32 @@ bool Gear_Enveloppe::ready()
 
 void Gear_Enveloppe::runAudio()
 {
-    Signal_T *bufferin = _AUDIO_IN->buffer();
-    Signal_T *bufferout = _AUDIO_OUT->buffer();
-    Signal_T *bufferrel  = _PARAM_RELEASE->buffer();
-    Signal_T *bufferatt  = _PARAM_ATTACK->buffer();
+  Signal_T *bufferin = _AUDIO_IN->type()->buffer().data();
+  Signal_T *bufferout = _AUDIO_OUT->type()->buffer().data();
+  float release = _PARAM_RELEASE->type()->value();
+  float attack = _PARAM_ATTACK->type()->value();
+  
+  int samplerate = Engine::signalInfo().sampleRate();
+  int signal_blocksize = Engine::signalInfo().blockSize();
+  
+  float ga = (float) exp(-1/(samplerate* attack));
+  float gr = (float) exp(-1/(samplerate* release));
+  
+  for(int i=0;i<signal_blocksize;i++)
+  {
+    _envin = fabs(*bufferin++);
     
-    int samplerate = Engine::signalInfo().sampleRate();
-    int signal_blocksize = Engine::signalInfo().blockSize();
-    
-    float ga = (float) exp(-1/(samplerate* *bufferatt));
-    float gr = (float) exp(-1/(samplerate* *bufferrel));
- 
-    for(int i=0;i<signal_blocksize;i++)
+    if(_envel < _envin)
     {
-      _envin = abs(*bufferin++);
-      
-      if(_envel < _envin)
-      {
-        _envel *= ga;
-        _envel += (1-ga)*_envin;
-      }
-      else
-      {
-        _envel *= gr;
-        _envel += (1-gr)*_envin;
-      }
-            
-      _lastenvel = bufferout[i] = _envel;
-    }      
+      _envel *= ga;
+      _envel += (1-ga)*_envin;
+    }
+    else
+    {
+      _envel *= gr;
+      _envel += (1-gr)*_envin;
+    }
+    
+    _lastenvel = bufferout[i] = _envel;
+  }      
 }

@@ -2,6 +2,9 @@
 #define GEAR_GAIN_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "ValueType.h"
+#include "Signal.h"
 
 class PlugSignal;
 
@@ -17,8 +20,9 @@ public:
   virtual void prePlay();
 
 private:
-    PlugSignalIn *_AUDIO_IN, *_PARAM_RELEASE,*_PARAM_ATTACK;
-	PlugSignalOut *_AUDIO_OUT;
+  PlugIn<SignalType> *_AUDIO_IN;
+  PlugIn<ValueType> *_PARAM_RELEASE, *_PARAM_ATTACK;
+  PlugOut<SignalType> *_AUDIO_OUT; 
   
   Signal_T _lastenvel,_envel;
   Signal_T _envin;
