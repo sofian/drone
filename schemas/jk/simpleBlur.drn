@@ -1,0 +1,22 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="156" PosY="114" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/dev/drone/media/TrueExpe1938.mpg" />
+        </Gear>
+        <Gear PosX="505" PosY="158" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="692" PosY="219" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="297" PosY="280" Type="Slider" SliderPos="4.29268" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="8" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Blur1" GearB="TV1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider1" GearB="Blur1" Input="Amount" Output="Value" />
+    </Connections>
+</Schema>
