@@ -1,6 +1,7 @@
 #ifndef __MATRIX_INCLUDED
 #define __MATRIX_INCLUDED
 
+#include "error.h"
 #include <vector>
 
 /**
