@@ -44,6 +44,11 @@
 #define DEBUG_LEVEL DEBUG_LEVEL_ERROR
 #endif
 
+// Quick condition checkers.
+#define DEBUG_ERROR   DEBUG_LEVEL >= DEBUG_LEVEL_ERROR
+#define DEBUG_WARNING DEBUG_LEVEL >= DEBUG_LEVEL_WARNING
+#define DEBUG_NOTICE  DEBUG_LEVEL >= DEBUG_LEVEL_NOTICE
+
 // Redefine __STRING just to make sure.
 #ifndef __STRING
 #define __STRING(x) #x
@@ -51,33 +56,35 @@
 
 // This macro is absolutely NOT SAFE! NEVER USE IT ALONE!!!
 // Use ASSERT_ERROR, ASSERT_WARNING and ASSERT_NOTICE instead, below.
-#define TRIGGER_ASSERT(expr, func) \
+#define __TRIGGER_ASSERT(expr, func) \
 ((expr) ? static_cast<void>(0) : func("assertion failed : " __STRING(expr)) );
+#define __DUMMY_ASSERT (static_cast<void>(0));
 
-//! Assertion macros.
-#define ASSERT_ERROR(expr)   TRIGGER_ASSERT(expr, ERROR)
-#define ASSERT_WARNING(expr) TRIGGER_ASSERT(expr, WARNING)
-#define ASSERT_NOTICE(expr)  TRIGGER_ASSERT(expr, NOTICE)
-
-//! Error macro.
-#if DEBUG_LEVEL >= DEBUG_LEVEL_ERROR
+//! Error messages/assertion.
+#if DEBUG_ERROR
 #define ERROR errormsg
+#define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr,ERROR)
 #else
 #define ERROR dummymsg
+#define ASSERT_ERROR(expr) __DUMMY_ASSERT
 #endif
 
-//! Warning macro.
-#if DEBUG_LEVEL >= DEBUG_LEVEL_WARNING
+//! Warning messages/assertion.
+#if DEBUG_WARNING
 #define WARNING warningmsg
+#define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr,WARNING)
 #else
 #define WARNING dummymsg
+#define ASSERT_WARNING(expr) __DUMMY_ASSERT
 #endif
 
-//! Notice macro.
-#if DEBUG_LEVEL >= DEBUG_LEVEL_NOTICE
+//! Notice messages/assertion.
+#if DEBUG_NOTICE
 #define NOTICE noticemsg
+#define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr,NOTICE)
 #else
 #define NOTICE dummymsg
+#define ASSERT_NOTICE(expr) __DUMMY_ASSERT
 #endif
 
 // Dummy method (used for empty macros, see up there).
