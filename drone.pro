@@ -31,6 +31,7 @@ HEADERS += config.h \
            src/Gear_FreqBoxes.h \
            src/Gear_Gain.h \
            src/Gear_GrayScale.h \
+           src/Gear_HalfToning.h \
            src/Gear_Image.h \
            src/Gear_KDTree.h \
            src/Gear_MasterFrequency.h \
@@ -105,6 +106,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_FreqBoxes.cpp \
            src/Gear_Gain.cpp \
            src/Gear_GrayScale.cpp \
+           src/Gear_HalfToning.cpp \
            src/Gear_Image.cpp \
            src/Gear_KDTree.cpp \
            src/Gear_MasterFrequency.cpp \
