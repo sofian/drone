@@ -43,20 +43,27 @@ public:
 
 private:
 
+  // Inputs.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugIn<ValueType> *_DEPTH_IN;
+  PlugIn<ValueType> *_H_FIRST_IN;
+  PlugIn<ValueType> *_H_CELLS_IN;
+  PlugIn<ValueType> *_V_CELLS_IN;
+
+  // Outputs.
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<AreaArrayType> *_AREA_OUT;
-  PlugIn<ValueType> *_AMOUNT_IN;
 
-  //local var
+  // Internal use.
   const VideoRGBAType *_image; 
   VideoRGBAType *_outImage; 
 
   SummedAreaTable<> *_table;
+  //  SummedAreaTable<unsigned char, int, 1> *_intensitiesTable;
+  //  Array2D<unsigned char> _intensities;
 
   int _sizeX;
   int _sizeY;
-  //  int _size;
 
   int _r;
   int _g;
@@ -68,8 +75,11 @@ private:
   Rasterer *_rasterer;
 
   int _maxDepth;
+  int _minCellSize; // minimum width and/or height of a cell
+  int _nHCells, _nVCells;
+  int _cuts[1024];
 
-  void split(int x0, int x1, int y0, int y1, int depth);
+  void split(int x0, int x1, int y0, int y1, int depth, bool hSplit);
 };
 
 #endif 
