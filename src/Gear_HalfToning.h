@@ -16,10 +16,10 @@
 #include <math.h>
 
 struct ThreeCoefficients {
-  double i_r;        /* right */
-  double i_dl;       /* down-left */
-  double i_d;        /* down */
-  double i_sum;      /* sum */
+  float i_r;        /* right */
+  float i_dl;       /* down-left */
+  float i_d;        /* down */
+  float i_sum;      /* sum */
 //   int i_r;        /* right */
 //   int i_dl;       /* down-left */
 //   int i_d;        /* down */
@@ -315,24 +315,24 @@ private:
   unsigned char *_imageIn;
   unsigned char *_imageOut;
 
-  double *_carryLine0; /* carry buffer; current line     */
-  double *_carryLine1; /* carry buffer; current line + 1 */
+  float *_carryLine0; /* carry buffer; current line     */
+  float *_carryLine1; /* carry buffer; current line + 1 */
   
   inline void shiftCarryBuffers();
-  inline void distributeError(int x, double diff, int dir, int input_level);
+  inline void distributeError(int x, float diff, int dir, int input_level);
 };
 
 void Gear_HalfToning::shiftCarryBuffers()
 {
-  double *tmp = _carryLine0;
+  float *tmp = _carryLine0;
   _carryLine0 = _carryLine1;
   _carryLine1 = tmp;
-  memset(_carryLine1, 0, _sizeX*sizeof(double));
+  memset(_carryLine1, 0, _sizeX*sizeof(float));
 }
 
-void Gear_HalfToning::distributeError(int x, double diff, int dir, int input_level)
+void Gear_HalfToning::distributeError(int x, float diff, int dir, int input_level)
 {
-  double term_r, term_dl, term_d;
+  float term_r, term_dl, term_d;
   ThreeCoefficients coefs = COEFS_TABLE[input_level];
   
   term_r = coefs.i_r*diff;

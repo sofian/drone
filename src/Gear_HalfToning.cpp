@@ -51,10 +51,10 @@ void Gear_HalfToning::runVideo()
   if (_carryLine1)
     _carryLine1-=1;
   
-  _carryLine0 = (double*)realloc(_carryLine0, (_sizeX+2)*sizeof(double));
-  _carryLine1 = (double*)realloc(_carryLine1, (_sizeX+2)*sizeof(double));
-  memset(_carryLine0, 0, (_sizeX+2)*sizeof(double));
-  memset(_carryLine1, 0, (_sizeX+2)*sizeof(double));
+  _carryLine0 = (float*)realloc(_carryLine0, (_sizeX+2)*sizeof(float));
+  _carryLine1 = (float*)realloc(_carryLine1, (_sizeX+2)*sizeof(float));
+  memset(_carryLine0, 0, (_sizeX+2)*sizeof(float));
+  memset(_carryLine1, 0, (_sizeX+2)*sizeof(float));
   _carryLine0+=1;
   _carryLine1+=1;  
  
@@ -63,7 +63,7 @@ void Gear_HalfToning::runVideo()
 
   int xstart, xstop, xstep, dir, iterDataStep;
   int input, intensity;
-  double threshold = 127.5, corrected_level, diff;
+  float threshold = 127.5, corrected_level, diff;
 
   for (int y = 0; y < _sizeY; ++y)
   {
