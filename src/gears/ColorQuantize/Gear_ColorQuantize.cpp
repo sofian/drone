@@ -24,7 +24,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_ColorQuantize(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "ColorQuantize";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 const int Gear_ColorQuantize::MAX_COLOR = 256;
 

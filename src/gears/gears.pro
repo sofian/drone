@@ -21,4 +21,14 @@ Enveloppe \
 FlatSignal \
 ListBox \
 PushButton \
-TouchPad
+TouchPad \
+ColorQuantize \
+Gamma \
+GenDisplaceGrid \
+GrayScale \
+HalfToning \
+Saturation \
+SignalStat \
+SmearGrid \
+VideoDelay \
+VideoLoop

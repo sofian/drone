@@ -283,7 +283,20 @@ const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {
 0.722222222222,     0.0,                 //    254
 0.722222222222,     0.0};                //    255
 
-Register_Gear(MAKERGear_HalfToning, Gear_HalfToning, "HalfToning")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_HalfToning(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "HalfToning";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_HalfToning::Gear_HalfToning(Schema *schema, std::string uniqueName)
 : Gear(schema, "HalfToning", uniqueName), _carryLine0(0), _carryLine1(0)

@@ -25,7 +25,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_GenDisplaceGrid, Gear_GenDisplaceGrid, "GenDisplaceGrid")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_GenDisplaceGrid(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "GenDisplaceGrid";
+  gearInfo.classification = GearClassifications::video().distortion().instance();
+  return gearInfo;
+}
+}
 
 Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Schema *schema, std::string uniqueName) : Gear(schema, "GenDisplaceGrid", uniqueName)
 {

@@ -27,8 +27,22 @@
 #include "Math.h"
 #include <float.h>
 
-Register_Gear(MAKERGear_Gamma, Gear_Gamma, "Gamma")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_Gamma(schema, uniqueName);
+}
 
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Gamma";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
+                  
+                  
 Gear_Gamma::Gear_Gamma(Schema *schema, std::string uniqueName) : Gear(schema, "Gamma", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));

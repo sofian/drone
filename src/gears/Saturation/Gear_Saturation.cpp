@@ -26,7 +26,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_Saturation, Gear_Saturation, "Saturation")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_Saturation(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Saturation";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_Saturation::Gear_Saturation(Schema *schema, std::string uniqueName) : Gear(schema, "Saturation", uniqueName)
 {

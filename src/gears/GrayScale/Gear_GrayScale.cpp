@@ -27,7 +27,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_GrayScale, Gear_GrayScale, "GrayScale")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_GrayScale(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "GrayScale";
+  gearInfo.classification = GearClassifications::video().color().instance();
+  return gearInfo;
+}
+}
 
 Gear_GrayScale::Gear_GrayScale(Schema *schema, std::string uniqueName) : Gear(schema, "GrayScale", uniqueName)
 {

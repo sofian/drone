@@ -25,7 +25,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_VideoDelay, Gear_VideoDelay, "VideoDelay")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_VideoDelay(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoDelay";
+  gearInfo.classification = GearClassifications::video().time().instance();
+  return gearInfo;
+}
+}
 
 Gear_VideoDelay::Gear_VideoDelay(Schema *schema, std::string uniqueName) : Gear(schema, "VideoDelay", uniqueName)
 {

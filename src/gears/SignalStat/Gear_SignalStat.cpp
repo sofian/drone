@@ -22,7 +22,20 @@
 
 #include "GearMaker.h"
 
-Register_Gear(MAKERGear_SignalStat, Gear_SignalStat, "SignalStat")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_SignalStat(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "SignalStat";
+  gearInfo.classification = GearClassifications::signal().transform().instance();
+  return gearInfo;
+}
+}
 
 Gear_SignalStat::Gear_SignalStat(Schema *schema, std::string uniqueName)
   : GearConverter<SignalType, ValueType>(schema, "SignalStat", uniqueName)

@@ -26,7 +26,20 @@
 #include "GearMaker.h"
 
 
-Register_Gear(MAKERGear_VideoLoop, Gear_VideoLoop, "VideoLoop")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_VideoLoop(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoLoop";
+  gearInfo.classification = GearClassifications::video().time().instance();
+  return gearInfo;
+}
+}
 
 Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName),
                                                                      _recording(true),
