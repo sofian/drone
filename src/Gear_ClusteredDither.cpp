@@ -109,42 +109,9 @@ void Gear_ClusteredDither::runVideo()
           iterData++;
           total >>=2;
 
-          // *** OPTIM : unroll loop
-          // int sum = 0;
-
-//           for(int sy=-1; sy<=1; sy++)
-//           {
-// 				    for(int sx=-1; sx<=1; sx++)
-// 				    {
-//               int ty = ry + sy;
-//               int tx = rx + sx;
-              
-//               while (tx < 0) tx += _width;
-//               while (tx >= _width) tx -= _width;
-//               while (ty < 0) ty += _width;
-//               while (ty >= _width) ty -= _width;
-              
-//               // *** OPTIM : precalculer les BARTLETT (en fait on se debarasse de cette macro tout simplement)
-//               if (total > _threshold[ty*_width + tx])
-//                 sum += BARTLETT[sx+1][sy+1];
-//             }
-//           }
-
-//           sum >>= 4;
-
-//           memset(iterOutData, (unsigned char)sum, 4*sizeof(unsigned char));
+          // Compute and copy value.
           memset(iterOutData, getValue(total, rx, ry), 4*sizeof(unsigned char));
-          //  *iterOutData++ = sum;
-//            *iterOutData++ = sum;
-//            *iterOutData++ = sum;
-//            iterOutData++;          
-          
-//            if (total > _threshold[ry*_width + rx])
-//              memset(iterOutData, 0, 4*sizeof(unsigned char));
-//            else
-//              memset(iterOutData, 255, 4*sizeof(unsigned char));
-
-            iterOutData+=4;
+          iterOutData+=4;
         }
 
       }

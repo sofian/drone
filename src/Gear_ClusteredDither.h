@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <algorithm>
 
 //#define OVERSAMPLE 3
 
@@ -15,13 +16,13 @@ typedef struct {
 } order_t;
 
 /* qsort(3) compare function */
-static int
-order_cmp(const void *va, const void *vb)
+static bool
+order_cmp(const order_t& va, const order_t& vb)
 {
-    const order_t *a = (const order_t*)va;
-    const order_t *b = (const order_t*)vb;
+//     const order_t *a = (const order_t*)va;
+//     const order_t *b = (const order_t*)vb;
 
-    return (a->value < b->value)? -1 : ((a->value > b->value)? +1 : 0);
+  return (va.value < vb.value);
 }
 
 #define ISNEG(x)	(((x) < 0)? 1 : 0)
@@ -30,7 +31,10 @@ class Gear_ClusteredDither : public Gear
 {
   enum eSpotType { SQUARE = 0, DIAMOND = 1, ROUND = 2, LINE = 3 };
   static const std::string SETTING_SPOT_FUNCTION;
-  
+
+  typedef std::pair<int, float> Order;
+  static bool less(const Order& a, const Order& b) { return (a.second < b.second); }
+
 public:
 
   Gear_ClusteredDither(Engine *engine, std::string name);
@@ -70,7 +74,7 @@ private:
   unsigned char *_imageOut;
 
   unsigned char *_threshold;
-  order_t *_order;
+  Order *_order;
 
   eSpotType _spotType;
   
@@ -84,10 +88,12 @@ void Gear_ClusteredDither::computeThreshold()
   int width2 = _width*_width;
   
   _threshold = (unsigned char*)realloc(_threshold, width2*sizeof(unsigned char));
-  _order = (order_t*)realloc(_order, width2*sizeof(order_t));
+  _order = (Order*)realloc(_order, width2*sizeof(Order));
 
-  int i=0;
+  Order *iterOrder = _order;
+  
   // inside cell
+  int i=0;
   for (int yCell=0; yCell<_width; ++yCell)
   {
     float sy = 2*(float)yCell / (_width-1) - 1;
@@ -96,16 +102,13 @@ void Gear_ClusteredDither::computeThreshold()
       float sx = 2*(float)xCell / (_width-1) - 1;
       float val = spot(sx, sy);
 
-      _order[i].index = i;
-      _order[i].value = val;
-      ++i; 
+      *iterOrder++ = std::make_pair(i++,val);
     }
   }
   
   // now sort array of (point, value) pairs in ascending order
-  // *** utiliser le sort de la STL??? ou au moins order_cmp = fonction statique de classe
-  qsort(_order, width2, sizeof(order_t), order_cmp);
-
+  std::sort(_order, _order+width2, less);
+  
   /*
     _threshold[] contains values from 0 .. 254.  The reason for not
     including 255 is so that an image value of 255 remains
@@ -113,8 +116,9 @@ void Gear_ClusteredDither::computeThreshold()
     image and end up with black speckles.
   */
   int val = 0;
+  iterOrder = _order;
   for (i=0; i < width2; i++, val += 0xff)
-    _threshold[_order[i].index] = val / width2; // *** pas besoin de .value dans c'cas là...
+    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas là...
 }
 
 unsigned char Gear_ClusteredDither::getValue(int intensity, int rx, int ry)
