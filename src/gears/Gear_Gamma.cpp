@@ -25,7 +25,7 @@
 
 #include "GearMaker.h"
 #include "Math.h"
-
+#include <float.h>
 
 Register_Gear(MAKERGear_Gamma, Gear_Gamma, "Gamma")
 
@@ -33,7 +33,7 @@ Gear_Gamma::Gear_Gamma(Engine *engine, std::string name) : Gear(engine, "Gamma",
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 3)));
+  addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 10)));
 }
 
 Gear_Gamma::~Gear_Gamma()
@@ -57,16 +57,16 @@ void Gear_Gamma::runVideo()
 
   _size = (int)_image->size();
 
-  int gamma = (int) MAX(_GAMMA_IN->type()->value(), 0.0f);
+  float gamma = MAX(_GAMMA_IN->type()->value(), FLT_MIN);
 
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
 
   // Compute lookup table.
   _lut[0] = 0;
-  float invGamma = 1.0 / (float)(gamma);
+  float invGamma = 1.0 / gamma;
   for (int i=1; i<256; ++i)
-    _lut[i] = CLAMP0255( ROUND(255 * exp( invGamma * log( float(i) / 255.0f ) ) ));
+    _lut[i] = CLAMP0255( ROUND(255.0f * exp( invGamma * log( float(i) / 255.0f ) ) ));
 
   // Apply on image.
   for (int p=0; p<_size; ++p)
