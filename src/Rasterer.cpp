@@ -129,7 +129,7 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
       ellipsePoints(x0, y0, x, y);
     }
     
-    d2 = rady2 * square(x + 0.5) + ( square(y - 1) - rady2) * radx2;
+    d2 = rady2 * square(x + 0.5) + ( square(y - 1.) - rady2) * radx2;
     while (y > 0)
     {
       if (d2 < 0) {
