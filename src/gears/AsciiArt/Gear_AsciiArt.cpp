@@ -1,5 +1,6 @@
 /* Gear_AsciiArt.cpp
  * Copyright (C) 2004 Mathieu Petit-Clair
+ * Some code inspired from other gears by Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,26 +18,67 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <iostream>
+
 #include "Gear_AsciiArt.h"                       
 #include "Engine.h"
 
-#include <iostream>
-
 #include "GearMaker.h"
+#include "Math.h"
 
-
-Register_Gear(MAKERGear_AsciiArt, Gear_AsciiArt, "AsciiArt")
-
-Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) : Gear(schema, "AsciiArt", uniqueName)
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Amount", 1.0f);
+  return new Gear_AsciiArt(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "AsciiArt";
+  gearInfo.classification = GearClassifications::video().distortion().instance();
+  return gearInfo;
+}
+}
+
+Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "AsciiArt", uniqueName)
+{
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIn"));
+
+  EnumType *renderingFunc = new EnumType(N_RENDERING_TYPES, FAST);
+  renderingFunc->setLabel(FAST, "Fast"); 
+  renderingFunc->setLabel(GOOD, "Good");
+  addPlug(_RENDER_IN =  new PlugIn<EnumType>(this, "Render", renderingFunc));
+
+  EnumType *ditheringFunc = new EnumType(N_DITHERING_TYPES, NONE);
+  ditheringFunc->setLabel(NONE, "None"); 
+  ditheringFunc->setLabel(ERROR, "Error-distribution"); 
+  ditheringFunc->setLabel(FLOYD, "Floyd-Steinberg"); 
+  addPlug(_DITHER_IN =  new PlugIn<EnumType>(this, "Dither", ditheringFunc));
+
+  EnumType *charFunc = new EnumType(N_CHARSET_TYPES, BASIC);
+  charFunc->setLabel(BASIC, "7 Bit"); 
+  charFunc->setLabel(EXTENDED, "8 Bit"); 
+  addPlug(_CHAR_IN =  new PlugIn<EnumType>(this, "CharSet", charFunc));
+
+  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Contrast", new ValueType(0, 0, 255)));
+  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Brightness", new ValueType(0, 0, 255)));
+
 }
 
 Gear_AsciiArt::~Gear_AsciiArt()
 {
+  aa_close(_aaContext);
+}
 
+void Gear_AsciiArt::init() 
+{
+  _aaHDParams = aa_defparams;
+  _aaHDParams.width = 352 / 2;
+  _aaHDParams.height = 240 / 2;
+  _aaContext = aa_init(&mem_d, &_aaHDParams, NULL);
 }
 
 bool Gear_AsciiArt::ready()
@@ -44,37 +86,57 @@ bool Gear_AsciiArt::ready()
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
-
+void Gear_AsciiArt::onUpdateSettings() 
+{
+}
 
 void Gear_AsciiArt::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->width(), _image->height());
-  _data = (unsigned char*)_image->_data;
-  _outData = (unsigned char*)_outImage->_data;
-  float tresh = _AMOUNT_IN[0];
+  
+  _inImage = _VIDEO_IN->type();
+  ASSERT_ERROR(_inImage);
 
-  _sizeX = _image->width();
-  _sizeY = _image->height();
+  if (_inImage->isNull())
+    return;
 
-  int pp=0;
-  for (int y=1;y<_sizeY-2;y++)
+  _sizeX = _inImage->width();
+  _sizeY = _inImage->height();
+
+  _outImage = _VIDEO_OUT->type();
+  ASSERT_ERROR(_outImage);
+
+  //memcpy(_outImage->data(), _inImage->data(), _inImage->size()*sizeof(RGBA));
+ 
+  _inData = (unsigned char*)_inImage->data();
+  
+  for (int y=0; y<_sizeY; y++) 
   {
-    for (int x=1;x<_sizeX-2;x++)
+    for (int x=0; x<_sizeX; x++) 
     {
-      for (int z=0;z<4;z++)
-      {
-        _outData[y*_sizeX*4+x*4+z] = (4* _data[y*_sizeX*4+x*4+z] - 
-                                      _data[(y-1)*_sizeX*4+x*4+z] -
-                                      _data[(y+1)*_sizeX*4+x*4+z] -
-                                      _data[y*_sizeX*4+(x-1)*4+z] -
-                                      _data[y*_sizeX*4+(x+1)*4+z])/2;
-
-        if (_outData[y*_sizeX*4+x*4+z]<tresh)
-          _outData[y*_sizeX*4+x*4+z]=0;
-
-      }
+      aa_putpixel(_aaContext, x, y, *_inData++);
+      _inData++;
+      _inData++;
+      _inData++;
     }
   }
+  
+  //aa_fastrender(_aaContext, 0, 0, _sizeX * 2, _sizeY * 2);
+  
+  //unsigned char *current = aa_text(_aaContext);
+
+  //int width = _sizeX * ; //aa_imgwidth(_aaContext) / 2;
+  //int height = _sizeY / 4; //aa_imgheight(_aaContext) / 2;
+  
+//   for ( int y=0; y<height; y++ ) 
+//   {
+//     for (int x=0; x<width; x++ ) 
+//     {
+//       printf("%c", current[y * width + x]);
+//     }
+//     printf("\n");
+//   }
+
+  //_outImage->resize(_sizeX, _sizeY);
+
 }
+
