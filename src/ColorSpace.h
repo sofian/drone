@@ -20,16 +20,64 @@
 
 struct RGBA
 {
+  RGBA() :
+    r(0),
+    g(0),
+    b(0),
+    a(0)
+  {
+  }
+  
+  RGBA(unsigned char rr, unsigned char gg, unsigned char bb, unsigned char aa) :
+    r(rr),
+    g(gg),
+    b(bb),
+    a(aa)
+  {
+  }
+
   unsigned char r, g, b, a;
 };
 
 struct RGBAint
 {
+  RGBAint() :
+    r(0),
+    g(0),
+    b(0),
+    a(0)
+  {
+  }
+  
+  RGBAint(int rr, int gg, int bb, int aa) :
+    r(rr),
+    g(gg),
+    b(bb),
+    a(aa)
+  {
+  }
+  
   int r, g, b, a;
 };
 
 struct RGBAfloat
 {
+  RGBAfloat() :
+    r(0),
+    g(0),
+    b(0),
+    a(0)
+  {
+  }
+  
+  RGBAfloat(float rr, float gg, float bb, float aa) :
+    r(rr),
+    g(gg),
+    b(bb),
+    a(aa)
+  {
+  }
+  
   float r, g, b, a;
 };
 
