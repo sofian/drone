@@ -43,7 +43,9 @@ class Gear;
 class AbstractPlug  
 {
 public:
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
+  static const std::string XML_TAGNAME;
+
+	AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -52,6 +54,9 @@ public:
   bool connect(AbstractPlug *plug);
   bool disconnect(AbstractPlug *plug);
   void disconnectAll();
+
+	void save(QDomDocument &doc, QDomElement &parent) const;
+	void load(QDomElement &plugElem);
 
   bool connected() const { return !_connectedPlugs.empty();};
   //bool active() const { return plugState()==ACTIVE;};
@@ -74,7 +79,7 @@ public:
   std::string name() const {return _name;};
 	bool name(std::string newName);
 	
-  bool exposed(){return _exposed;}
+  bool exposed() const {return _exposed;}
   void exposed(bool exp);
   
   //virtual ePlugState plugState()=0;

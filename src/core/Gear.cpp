@@ -23,6 +23,7 @@
 #include "Schema.h"
 
 #include <qdom.h>
+#include "XMLHelper.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -207,8 +208,13 @@ void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
   _gearGui->save(doc, gearElem);
   _settings.save(doc, gearElem);
 
+  //save plugs
+  QDomElement plugElem = doc.createElement("Plugs");
+  gearElem.appendChild(plugElem);	
+	for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+		(*it)->save(doc, plugElem);
+	
   save(doc, gearElem);
-
 }
 
 void Gear::internalLoad(QDomElement &gearElem)               
@@ -222,6 +228,26 @@ void Gear::internalLoad(QDomElement &gearElem)
 
   _gearGui->load(gearElem);
 
+	//load plugs attributes
+	QDomNode plugsNode = XMLHelper::findChildNode(gearElem, "Plugs");
+
+  QDomNode plugNode = plugsNode.firstChild();
+  while (!plugNode.isNull())
+  {
+		QDomElement plugElem = plugNode.toElement();
+    if (!plugElem.isNull())
+    {
+			std::string name = plugElem.attribute("Name","").ascii();
+			//now find this plug and load is attributes
+			for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+			{
+				if ((*it)->name() == name)
+					(*it)->load(plugElem);
+			}
+		}
+		plugNode = plugNode.nextSibling();
+	}
+	
 }
 
 AbstractPlug* Gear::getInput(std::string name) const

@@ -4,6 +4,8 @@
 #include "Gear.h"
 #include "Schema.h"
 
+#include <map>
+
 class MetaGear : public Gear
 {
 public:  
@@ -25,11 +27,16 @@ public:
 protected:
   GearGui* createGearGui(QCanvas *canvas);
   
+  void onPlugConnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug);
+  void onPlugDisconnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug);
+	
   Schema _schema;
   
   std::string _metaGearName;
   
   static const QColor METAGEAR_COLOR;
+	
+	std::map<AbstractPlug*, AbstractPlug*> _plugMapping;//!mapping between our exposed cloned plug and the real internal plug
 };
 
 #endif

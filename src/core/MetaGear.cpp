@@ -63,6 +63,8 @@ void MetaGear::createPlugs()
   }
   _plugs.clear();
   
+	//clear plug mapping
+	_plugMapping.clear();
   
   std::list<Gear*> gears = _schema.getGears();
   
@@ -77,6 +79,7 @@ void MetaGear::createPlugs()
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
 			addPlug(clone);
+			_plugMapping[clone]=*plugIt;
     }
 
     (*gearIt)->getOutputs(outputs, true);
@@ -85,9 +88,29 @@ void MetaGear::createPlugs()
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
       addPlug(clone);
+			_plugMapping[clone]=*plugIt;
     }
   }
   
   getGearGui()->refresh();
   
 }
+
+void MetaGear::onPlugConnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
+{
+	std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
+  
+	ASSERT_WARNING(it!=_plugMapping.end());
+
+	otherPlug->connect(it->second);
+}
+
+void MetaGear::onPlugDisconnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
+{
+	std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
+  
+	ASSERT_WARNING(it!=_plugMapping.end());
+	
+	otherPlug->disconnect(it->second);
+}
+

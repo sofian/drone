@@ -19,13 +19,12 @@
 
 #include <assert.h>
 #include <iostream>
+#include <sstream>
 #include "AbstractPlug.h"
 
 #include "Gear.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+const std::string AbstractPlug::XML_TAGNAME = "Plug";
 
 AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type) : 
   _abstractType(type),
@@ -198,3 +197,29 @@ bool AbstractPlug::name(std::string newName)
 	_name = newName;
 	return true;
 }
+
+void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
+{
+  QDomElement plugElem = doc.createElement(XML_TAGNAME);
+  parent.appendChild(plugElem);
+
+  QDomAttr nameAttr;
+	nameAttr = doc.createAttribute("Name");
+	nameAttr.setValue(name().c_str());
+	plugElem.setAttributeNode(nameAttr);
+		
+  QDomAttr exposedAttr;
+	exposedAttr = doc.createAttribute("Exposed");
+	std::ostringstream oss;
+  oss << exposed();
+	exposedAttr.setValue(oss.str().c_str());
+	plugElem.setAttributeNode(exposedAttr);
+}
+
+void AbstractPlug::load(QDomElement &plugElem)               
+{            
+	std::string val = plugElem.attribute("Exposed","0").ascii();
+	
+	exposed(val == "1" ? true : false);
+}	
+
