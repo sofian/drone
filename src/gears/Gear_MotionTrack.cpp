@@ -33,7 +33,7 @@ Gear_MotionTrack::Gear_MotionTrack(Engine *engine, std::string name)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_THRESHOLD = new PlugIn<ValueType>(this, "Thresh", new ValueType(0,0,255)));
-  addPlug(_HISTOGRAM_BINS = new PlugIn<ValueType>(this, "HistBins", new ValueType(10,20,120)));
+  addPlug(_HISTOGRAM_BINS = new PlugIn<ValueType>(this, "HistBins", new ValueType(20,10,120)));
   addPlug(_MIN_S = new PlugIn<ValueType>(this, "MinS", new ValueType(20,0,255)));
   addPlug(_MAX_S = new PlugIn<ValueType>(this, "MaxS", new ValueType(255,0,255)));
   addPlug(_MIN_V = new PlugIn<ValueType>(this, "MinV", new ValueType(40,0,255)));
@@ -56,7 +56,7 @@ Gear_MotionTrack::~Gear_MotionTrack()
 
 void Gear_MotionTrack::init()
 {
-  _firstRun = true;
+  //  _firstRun = true;
   ASSERT_ERROR(_tracker);
 }
 
