@@ -39,8 +39,8 @@ void Gear_Oscilloscope::runAudio()
 
 void Gear_Oscilloscope::runVideo()
 {
-  int sizey = (int)CLAMP(_SIZE_Y->type()->value(),32,512);
-  int sizex = (int)CLAMP(_SIZE_X->type()->value(),32,1440);
+  int sizey = CLAMP((int)_SIZE_Y->type()->value(),32,512);
+  int sizex = CLAMP((int)_SIZE_X->type()->value(),32,1440);
   int midy = sizey>>1;
   int midym1 = midy-1;
 

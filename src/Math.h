@@ -3,53 +3,63 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <algorithm>
 
 //! Basic definitions
 
+#ifndef HALF_PI
 #define HALF_PI 0.5*M_PI
+#endif
 
+#ifndef TRUE
 #define TRUE  1
+#endif
+
+#ifndef FALSE
 #define FALSE 0
-
-#ifndef MIN
-#define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
 
-#ifndef MAX
-#define MAX(x,y) ((x)>(y)?(x):(y))
+// Use template MIN/MAX (safer).
+
+#ifdef MIN
+#undef MIN
 #endif
+
+#ifdef MAX
+#undef MAX
+#endif
+
+template <typename T>
+T MIN(T x, T y)
+{ return std::min(x,y); }
+
+template <typename T>
+T MAX(T x, T y)
+{ return std::max(x,y); }
 
 // Begin LIBGIMP
 
 // LIBGIMP - The GIMP Library
 // Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
 
-//! Clamp x at lower = l and upper = u
-#ifndef CLAMP
-#define CLAMP(x,l,u) ((x)<(l)?(l):((x)>(u)?(u):(x)))
-#endif
+//! Clamp x at lower = l and upper = u.
+template <typename T>
+inline T CLAMP(T x, T l, T u)
+{ return ( x < l ? l : ( x > u ? u : x ) ); }
 
-// /* Use RINT() instead of rint() */
-// #ifdef HAVE_RINT
-// #define RINT(x) rint(x)
-// #else
-// #define RINT(x) floor ((x) + 0.5)
-// #endif
+//! Round.
+template <typename T>
+inline int ROUND(T x)
+{ return (int)(x+0.5); }
 
-//! Round
-#ifndef ROUND
-#define ROUND(x) ((int) ((x) + 0.5))
-#endif
+//! Square.
+template <typename T>
+inline T SQR(T x)
+{ return (x*x); }
 
-//! Square
-#ifndef SQR
-#define SQR(x) ((x) * (x))
-#endif
-
-//! Limit a (0->511) int to 255
-#ifndef MAX255
-#define MAX255(a)  ((a) | (((a) & 256) - (((a) & 256) >> 8)))
-#endif
+//! Limit a (0->511) int to 255.
+inline int MAX255(int a)
+{ return (a | ((a & 256) - ((a & 256) >> 8))); }
 
 //! Clamp a int32-range int between 0 and 255 inclusive
 #ifndef CLAMP0255

@@ -53,7 +53,7 @@ void Gear_VideoMix::runVideo()
   _outData = _outImage->data();
   memset(_outData, 0, _outImage->size()*sizeof(RGBA));
 
-  int amount = (int) CLAMP(_AMOUNT_IN->type()->value(), 0, 255);
+  int amount = CLAMP((int)_AMOUNT_IN->type()->value(), 0, 255);
   switch (_mixType)
   {
   case BLEND:

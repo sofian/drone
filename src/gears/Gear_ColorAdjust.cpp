@@ -56,9 +56,9 @@ void Gear_ColorAdjust::runVideo()
     _b = (int)(*(_imageIn++) * blue);
 
     // Clamp and copy to output.
-    *_imageOut++ = MIN(_r, 255);
-    *_imageOut++ = MIN(_g, 255);
-    *_imageOut++ = MIN(_b, 255);
+    *_imageOut++ = MIN(_r, (short)255);
+    *_imageOut++ = MIN(_g, (short)255);
+    *_imageOut++ = MIN(_b, (short)255);
 
     // Skip alpha.
     _imageIn++;

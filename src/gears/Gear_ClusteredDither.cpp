@@ -26,7 +26,7 @@ Gear_ClusteredDither::~Gear_ClusteredDither()
 void Gear_ClusteredDither::init()
 {
   _clusterSize = (int)_AMOUNT_IN_A->type();
-  _spotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(), SQUARE, LINE);
+  _spotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(), (int)SQUARE, (int)LINE);
   _width = _clusterSize * 3;
   computeThreshold();
 }
@@ -71,7 +71,7 @@ void Gear_ClusteredDither::runVideo()
   }
 
   // Set spot type.
-  eSpotType tmpSpotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(),SQUARE,LINE);
+  eSpotType tmpSpotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(), (int)SQUARE, (int)LINE);
   if (tmpSpotType != _spotType)
   {
     _spotType = tmpSpotType;

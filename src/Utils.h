@@ -490,7 +490,7 @@ divide_pixels (const unsigned char *src1,
     for (b = 0; b < alpha; b++)
     {
       result = ((src1[b] * 256) / (1+src2[b]));
-      dest[b] = MIN (result, 255);
+      dest[b] = MIN (result, 255u);
     }
 
     if (has_alpha1 && has_alpha2)
@@ -587,7 +587,7 @@ dodge_pixels (const unsigned char *src1,
     {
       tmp = src1[b] << 8;
       tmp /= 256 - src2[b];
-      dest[b] = (unsigned char) MIN (tmp, 255);
+      dest[b] = (unsigned char) MIN (tmp, 255u);
     }
 
     if (has_alpha1 && has_alpha2)
@@ -660,11 +660,11 @@ hardlight_pixels (const unsigned char *src1,
       if (src2[b] > 128)
       {
         tmp = ((int)255 - src1[b]) * ((int)255 - ((src2[b] - 128) << 1));
-        dest[b] = (unsigned char) MIN (255 - (tmp >> 8), 255);
+        dest[b] = (unsigned char) MIN (255 - (tmp >> 8), 255u);
       } else
       {
         tmp = (int)src1[b] * ((int)src2[b] << 1);
-        dest[b] = (unsigned char) MIN (tmp >> 8, 255);
+        dest[b] = (unsigned char) MIN (tmp >> 8, 255u);
       }
     }
 
