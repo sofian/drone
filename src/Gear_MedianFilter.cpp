@@ -6,72 +6,6 @@
 
 #include "GearMaker.h"
 
-/* * This Quickselect routine is based on the algorithm described in
- * "Numerical recipies in C", Second Edition,
- * Cambridge University Press, 1992, Section 8.5, ISBN 0-521-43108-5 */
-
-#define ELEM_SWAP(a,b) { register unsigned char t=(a); (a)=(b); (b)=t; }
-
-unsigned char quick_select(unsigned char arr[], int n)
-{
-  int low, high ;
-  int median;
-  int middle, ll, hh;
-  low = 0 ;
-  high = n-1 ;
-  median = (low + high) / 2;
-  for (;;)
-  {
-    if (high <= low)
-      /* One element only */
-      return arr[median] ;
-
-    if (high == low + 1)
-    {
-      /* Two elements only */
-      if (arr[low] > arr[high])
-        ELEM_SWAP(arr[low], arr[high]) ;
-      return arr[median] ;
-    }
-
-    /* Find median of low, middle and high items; swap into position low */
-    middle = (low + high) / 2;
-    if (arr[middle] > arr[high])
-      ELEM_SWAP(arr[middle], arr[high]) ;
-    if (arr[low] > arr[high])
-      ELEM_SWAP(arr[low], arr[high]) ;
-    if (arr[middle] > arr[low])
-      ELEM_SWAP(arr[middle], arr[low]) ;
-
-    /* Swap low item (now in position middle) into position (low+1) */
-    ELEM_SWAP(arr[middle], arr[low+1]) ;
-
-    /* Nibble from each end towards middle, swapping items when stuck */
-    ll = low + 1;
-    hh = high;
-    for (;;)
-    {
-      do ll++; while (arr[low] > arr[ll]) ;
-      do hh--; while (arr[hh] > arr[low]) ;
-      if (hh < ll)
-        break;
-      ELEM_SWAP(arr[ll], arr[hh]) ;
-    }
-
-    /* Swap middle item (in position low) back into correct position */
-    ELEM_SWAP(arr[low], arr[hh]) ;
-
-    /* Re-set active partition */
-    if (hh <= median)
-      low = ll;
-    if (hh >= median)
-      high = hh - 1;
-  }
-}
-
-#undef ELEM_SWAP 
-
-
 Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 
 Gear_MedianFilter::Gear_MedianFilter(Engine *engine, std::string name) : Gear(engine, "MedianFilter", name)
@@ -125,13 +59,27 @@ void Gear_MedianFilter::runVideo()
       if(_y1 >= _sizeY)_y1 = _sizeY-1;
       if(_y2 >= _sizeY)_y2 = _sizeY-1;
 
+      int nCols = _y2-_y1+1;
+      int nRows = _x2-_x1+1;
+      int nextRow = (_sizeX-nCols)*4;
+      unsigned char *startIterData = _data + (_y1*_sizeX+_x1)*4;
+      
       for (int z=0; z<4; ++z)
       {
-        unsigned char *iterMedianSelect = _medianSelect;
-        for (int ySub=_y1; ySub<=_y2; ++ySub)
-          for (int xSub=_x1; xSub<=_x2; ++xSub)
-            *iterMedianSelect++ = _data[ (ySub*_sizeX*4) + (xSub*4) + z ]; // *** the * 4 can be precomputer
-        *_outData++ = quick_select(_medianSelect, (_y2-_y1+1)*(_x2-_x1+1));
+        _iterMedianSelect = _medianSelect;
+        {
+          _iterData = startIterData + z;
+          for (int ySub=_y1; ySub<=_y2; ++ySub)
+          {
+            for (int xSub=_x1; xSub<=_x2; ++xSub)
+            {
+              *_iterMedianSelect++ = *_iterData;
+              _iterData+=4;
+            }
+            _iterData += nextRow;
+          }
+        }
+        *_outData++ = quickSelect(_medianSelect, nRows*nCols);
       }
       
     }
