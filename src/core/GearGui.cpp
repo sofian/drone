@@ -72,8 +72,7 @@ GearGui::~GearGui()
   //delete all the plugBoxes
   //plugboxes take care of deleting connectionItems when deleted
   //Everything is taken care of ! :)
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
-    delete (*it);
+  removeAllPlugBoxes();
 }
 
 int GearGui::renderingStartX()
@@ -97,8 +96,9 @@ void GearGui::refresh()
   //we also erase plugs in inputs that we already have
   std::list<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
+  std::cout << "there is " << (int)inputs.size() << " inputs." << std::endl;
   
-  std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
+/*  std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
   for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
   {
     bool found=false;
@@ -122,14 +122,14 @@ void GearGui::refresh()
 
   for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = inputsToRemove.begin(); it != inputsToRemove.end(); ++it)
     _inputPlugBoxes.erase(*it);
-
+*/
   
   //delete and remove output plugboxes that we dont have anymore
   //we also erase plugs in outputs that we already have
   std::list<AbstractPlug*> outputs;
   _gear->getOutputs(outputs);
   
-  std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
+/*  std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
   for (std::vector<PlugBox*>::iterator plugBoxit = _outputPlugBoxes.begin(); plugBoxit != _outputPlugBoxes.end(); ++plugBoxit)
   {
     bool found=false;
@@ -154,6 +154,10 @@ void GearGui::refresh()
   for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = outputsToRemove.begin(); it != outputsToRemove.end(); ++it)
     _outputPlugBoxes.erase(*it);
   
+  */
+  
+  removeAllPlugBoxes();
+  std::cout << "plugboxes has " << (int)_plugBoxes.size() << " entry(ies)." << std::endl;
   
   //now create missing plugboxes
   PlugBox *plugBox;
@@ -162,6 +166,7 @@ void GearGui::refresh()
     plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _inputPlugBoxes.push_back(plugBox);
+    std::cout << "creating plug box for " << (*it)->fullName() << std::endl;
   }
     
   for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
@@ -169,6 +174,7 @@ void GearGui::refresh()
     plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _outputPlugBoxes.push_back(plugBox);
+    std::cout << "creating plug box for " << (*it)->fullName() << std::endl;
   }
   
   
@@ -196,6 +202,18 @@ void GearGui::refresh()
   //since plugs get out of the gear rect
   setSize(_sizeX + SHADOW_OFFSET + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
   
+}
+
+void GearGui::removeAllPlugBoxes()
+{
+  //delete all the plugBoxes
+  //plugboxes take care of deleting connectionItems when deleted
+  //Everything is taken care of ! :)
+  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
+    delete (*it);
+  _plugBoxes.clear();
+  _inputPlugBoxes.clear();
+  _outputPlugBoxes.clear();
 }
 
 void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)

@@ -56,6 +56,11 @@ void MetaGear::createPlugs()
   //for now we will expose all inputs and outputs
   
   //clear plugs first, we will recreate them
+  std::list<AbstractPlug*>::iterator plugIt;
+  for(plugIt = _plugs.begin(); plugIt != _plugs.end(); ++plugIt)
+  {
+    delete(*plugIt);
+  }
   _plugs.clear();
   
   

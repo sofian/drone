@@ -111,7 +111,8 @@ protected:
   int _outputsInterval;
   std::string _title;
   QColor _boxNameColor;
-
+private:
+  void removeAllPlugBoxes();
 
 };
 

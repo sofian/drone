@@ -107,11 +107,11 @@ public:
 //       }
 //     }
 
-	AbstractPlug *clone(Gear* parent)
-	{
-			return new PlugOut<T>(parent, name());
-	}
-	
+  AbstractPlug *clone(Gear* parent)
+  {
+      return new PlugIn<T>(parent, name());
+  }
+  
 protected:
   void setType(const T *type)
   {
