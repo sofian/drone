@@ -33,7 +33,8 @@ public:
   Gear_VideoBlend(Engine *engine, std::string name);
   virtual ~Gear_VideoBlend();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
 
