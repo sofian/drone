@@ -16,8 +16,8 @@ Gear_FreqBoxes::Gear_FreqBoxes(Engine *engine, std::string name) : Gear(engine, 
 _rasterer(NULL),
 _freqAnalyser(NULL)
 {    
-  _VIDEO_OUT = addPlugVideoOut("Img");
-  _SIGNAL_IN = addPlugSignalIn("Signal");
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Img"));
+  addPlug(_SIGNAL_IN = new PlugIn<SignalType>(this, "Signal"));
 
   _settings.add(Property::INT, SETTING_SIZE_X)->valueInt(256);    
   _settings.add(Property::INT, SETTING_SIZE_Y)->valueInt(256);    
@@ -38,13 +38,13 @@ void Gear_FreqBoxes::init()
 
   _freqAnalyser = new FrequencyAnalyser(Engine::signalInfo().blockSize());    
   _rasterer = new Rasterer();
-  _rasterer->setCanvas(_VIDEO_OUT->canvas());
+  _rasterer->setImage(_VIDEO_OUT->type()->image());
 
 }
 
 void Gear_FreqBoxes::onUpdateSettings()
 {    
-  _VIDEO_OUT->canvas()->allocate(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
+  _VIDEO_OUT->type()->image()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 
@@ -55,19 +55,15 @@ bool Gear_FreqBoxes::ready()
 
 void Gear_FreqBoxes::runVideo()
 {    
-  _outImage = _VIDEO_OUT->canvas();    
-  _outImage->fill();
-  _outData = _outImage->_data;
-  int sizeX = _outImage->sizeX();
-  int sizeY = _outImage->sizeY();
+  _outImage = _VIDEO_OUT->type()->image();
+  memset(_outImage->data(), 0, _outImage->size()*sizeof(RGBA));
+  _outData = _outImage->data();
+  int sizeX = _outImage->width();
+  int sizeY = _outImage->height();
 
-
-
-  //Signal_T *bufferin = _SIGNAL_IN->buffer();
+  //Signal_T *bufferin = _SIGNAL_IN->type()->buffer()->data();
 
   //_freqAnalyser->performAnalysis(bufferin);
-
-
 
   int nbBoxes = 16;
   int boxSize = (sizeX / nbBoxes) / 2;

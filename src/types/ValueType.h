@@ -11,12 +11,12 @@ public:
   
   virtual std::string name() const { return "ValueType"; }
   virtual QColor color() const { return QColor(141, 222, 46); }
-
+  
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
-  operator float () const {return _value;}  
+  operator float () const {return _value;}
+  //operator int () const {return (int) _value;}
   
-                        
 private:
   float _value;
 };

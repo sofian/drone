@@ -1,6 +1,5 @@
 #ifndef __ABSTRACTTYPE_INCLUDED
 #define __ABSTRACTTYPE_INCLUDED
-  
 
 #include <qcolor.h>
 #include <string>

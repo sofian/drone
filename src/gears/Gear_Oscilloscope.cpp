@@ -11,11 +11,8 @@ Register_Gear(MAKERGear_Oscilloscope, Gear_Oscilloscope, "Oscilloscope")
 
 Gear_Oscilloscope::Gear_Oscilloscope(Engine *engine, std::string name) : Gear(engine, "Oscilloscope", name)
 {
-  _AUDIO_IN = addPlugSignalIn("In");
-  _VIDEO_OUT = addPlugVideoOut("Out");
-  _VCOMPOSE_IN = addPlugVideoComposeIn("VComIN");
-
-  //_VIDEO_OUT->canvas()->allocate(512, 256);
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 }
 
 Gear_Oscilloscope::~Gear_Oscilloscope()
@@ -30,13 +27,12 @@ bool Gear_Oscilloscope::ready()
 
 void Gear_Oscilloscope::runVideo()
 {
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(512, 512);
+  _outData = _outImage->data();
 
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(512, 512);
-  _outData = _outImage->_data;
-
-  Signal_T *buffer = _AUDIO_IN->buffer();
-  //Video_T *image = _VIDEO_OUT->canvas();
+  MatrixType<float> buffer = _AUDIO_IN->type()->buffer();
+  //MatrixType<RGBA> *image = _VIDEO_OUT->type()->image();
   int signal_blocksize = Engine::signalInfo().blockSize();
 
   glDisable(GL_TEXTURE_2D);

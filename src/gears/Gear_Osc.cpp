@@ -9,9 +9,9 @@ Register_Gear(MAKERGear_Osc, Gear_Osc, "Oscillator")
 
 Gear_Osc::Gear_Osc(Engine *engine, std::string name) : Gear(engine, "Oscillator", name)
 {
-  _PARAM_FREQ = addPlugSignalIn("Freq", 440.0f);
-  _PARAM_AMP = addPlugSignalIn("Amp", 1.0f);
-  _AUDIO_OUT = addPlugSignalOut("Out");
+  addPlug(_PARAM_FREQ = new PlugIn<SignalType>(this, "Freq", new SignalType(440.0f)));
+  addPlug(_PARAM_AMP = new PlugIn<SignalType>(this, "Amp", new SignalType(1.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 }
 
 Gear_Osc::~Gear_Osc()
@@ -26,9 +26,9 @@ bool Gear_Osc::ready()
 
 void Gear_Osc::runAudio()
 {        
-  Signal_T *bufferfreq  = _PARAM_FREQ->buffer();
-  Signal_T *bufferamp  = _PARAM_AMP->buffer();
-  Signal_T *bufferout = _AUDIO_OUT->buffer();
+  MatrixType<float> bufferfreq  = _PARAM_FREQ->type()->buffer();
+  MatrixType<float> bufferamp  = _PARAM_AMP->type()->buffer();
+  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
 
   int signal_blocksize = Engine::signalInfo().blockSize();
 

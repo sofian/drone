@@ -3,6 +3,8 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 #include "SummedAreaTable.h"
 
 
@@ -15,22 +17,22 @@ public:
 
   void runVideo();
 
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-  PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
+  PlugIn<VideoTypeRGBA>* VIDEO_IN(){return _VIDEO_IN;};
+  PlugOut<VideoTypeRGBA>* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugIn<ValueType>* AMOUNT_IN(){return _AMOUNT_IN;};
 
   bool ready();
 
 private:
 
-  PlugVideoIn *_VIDEO_IN;
-  PlugVideoIn *_AMOUNT_MAP_IN;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoTypeRGBA> *_AMOUNT_MAP_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  Video_T *_image;     
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image;     
+  MatrixType<RGBA> *_outImage; 
   unsigned char *_data;
   unsigned char *_amountMapData;
 
@@ -50,7 +52,7 @@ private:
 
   RGBA _acc;
 
-  Canvas _defaultAmountMapData;
+  MatrixType<RGBA> _defaultAmountMapData;
 
   void init();    
 };

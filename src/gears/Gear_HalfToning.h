@@ -11,6 +11,7 @@
 
 
 #include "Gear.h"
+#include "VideoType.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -293,20 +294,15 @@ public:
   Gear_HalfToning(Engine *engine, std::string name);
   virtual ~Gear_HalfToning();
 
-  void runVideo();
-
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
-  bool ready();
+  void runVideo();  bool ready();
 
 private:
-  PlugVideoIn *_VIDEO_IN;
-  PlugVideoOut *_VIDEO_OUT;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
   //local var
-  Video_T *_image; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_data;
   RGBA *_outData;
 

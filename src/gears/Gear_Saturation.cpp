@@ -11,9 +11,9 @@ Register_Gear(MAKERGear_Saturation, Gear_Saturation, "Saturation")
 
 Gear_Saturation::Gear_Saturation(Engine *engine, std::string name) : Gear(engine, "Saturation", name)
 {
-    _VIDEO_IN = addPlugVideoIn("ImgIN");
-    _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-    _AMOUNT_IN = addPlugSignalIn("Amount", 1.0f);
+    addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+    addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+    addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f)));
 
 }
 
@@ -29,16 +29,16 @@ bool Gear_Saturation::ready()
 
 void Gear_Saturation::runVideo()
 {
-    _image = _VIDEO_IN->canvas();
-    _outImage = _VIDEO_OUT->canvas();
-    _outImage->allocate(_image->sizeX(), _image->sizeY());
-    _data = _image->_data;    
-    _outData = _outImage->_data;
+    _image = _VIDEO_IN->type()->image();
+    _outImage = _VIDEO_OUT->type()->image();
+    _outImage->resize(_image->width(), _image->height());
+    _data = _image->data();    
+    _outData = _outImage->data();
 
-    _iterSizeX = _image->sizeX();
-    _iterSizeY = _image->sizeY();
+    _iterSizeX = _image->width();
+    _iterSizeY = _image->height();
     
-    float amount = _AMOUNT_IN->buffer()[0];
+    float amount = _AMOUNT_IN->type()->value();
     int bw=0;
   
         

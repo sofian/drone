@@ -9,7 +9,7 @@ const std::string Gear_Image::SETTING_FILENAME = "Filename";
 
 Gear_Image::Gear_Image(Engine *engine, std::string name) : Gear(engine, "Image", name)
 {
-  _VIDEO_OUT = addPlugVideoOut("Out");
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }

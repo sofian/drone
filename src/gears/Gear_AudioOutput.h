@@ -2,6 +2,7 @@
 #define GEAR_AUDIOOUTPUT_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
 #include <portaudio.h>
 
 
@@ -24,8 +25,8 @@ public:
   void init();
   void runAudio();    
 
-  PlugSignalIn* AUDIO_IN_LEFT(){return _AUDIO_IN_LEFT;};
-  PlugSignalIn* AUDIO_IN_RIGHT(){return _AUDIO_IN_RIGHT;};
+  PlugIn<SignalType>* AUDIO_IN_LEFT(){return _AUDIO_IN_LEFT;};
+  PlugIn<SignalType>* AUDIO_IN_RIGHT(){return _AUDIO_IN_RIGHT;};
 
   bool ready();
 
@@ -35,8 +36,8 @@ protected:
 private:
 
 //PLUGS
-  PlugSignalIn* _AUDIO_IN_LEFT;
-  PlugSignalIn* _AUDIO_IN_RIGHT;
+  PlugIn<SignalType> *_AUDIO_IN_LEFT;
+  PlugIn<SignalType> *_AUDIO_IN_RIGHT;
 //
 
 
@@ -54,8 +55,8 @@ private:
 
   int _RingBufferSize;
 
-  Signal_T *_LBuffer;
-  Signal_T *_RBuffer;
+  MatrixType<float> _LBuffer;
+  MatrixType<float> _RBuffer;
 
   int _ReadIndex;
 

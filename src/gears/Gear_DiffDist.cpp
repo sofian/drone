@@ -17,10 +17,10 @@ unsigned long xcng(void){  // takes 60 nanosecs, passes all tests
 
 Gear_DiffDist::Gear_DiffDist(Engine *engine, std::string name) : Gear(engine, "DiffDist", name)
 {
-  _FACTOR_IN = addPlugSignalIn("Factor");
-  _VIDEO_IN_A = addPlugVideoIn("ImgA");
-  _VIDEO_IN_B = addPlugVideoIn("ImgB");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
+  addPlug(_FACTOR_IN = new PlugIn<ValueType>(this, "Factor"));
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
 }
 
 Gear_DiffDist::~Gear_DiffDist()
@@ -35,27 +35,27 @@ bool Gear_DiffDist::ready()
 
 void Gear_DiffDist::runVideo()
 {
-  _imageA = _VIDEO_IN_A->canvas();
-  _imageB = _VIDEO_IN_B->canvas();    
-  _outImage = _VIDEO_OUT->canvas();
-  float factor = _FACTOR_IN->buffer()[0];
+  _imageA = _VIDEO_IN_A->type()->image();
+  _imageB = _VIDEO_IN_B->type()->image();    
+  _outImage = _VIDEO_OUT->type()->image();
+  float factor = _FACTOR_IN->type()->value();
 
 
-  _imageASizeX = _imageA->sizeX();
-  _imageASizeY = _imageA->sizeY();
-  _imageBSizeX = _imageB->sizeX();
-  _imageBSizeY = _imageB->sizeY();
+  _imageASizeX = _imageA->width();
+  _imageASizeY = _imageA->height();
+  _imageBSizeX = _imageB->width();
+  _imageBSizeY = _imageB->height();
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 
   _imageOutSizeX = MAX(_imageASizeX, _imageBSizeX);
   _imageOutSizeY = MAX(_imageASizeY, _imageBSizeY);
-  _outImage->allocate(_imageOutSizeX, _imageOutSizeY);
-  _outImage->fill();
+  _outImage->resize(_imageOutSizeX, _imageOutSizeY);
+  memset(_outImage->data(), 0, _outImage->size()*sizeof(RGBA));
 
-  _dataA = _imageA->_data;    
-  _dataB = _imageB->_data;    
-  _outData = _outImage->_data;
+  _dataA = _imageA->data();    
+  _dataB = _imageB->data();    
+  _outData = _outImage->data();
 
   int colorIntensity=0;
   int destX=0;

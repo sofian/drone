@@ -11,9 +11,9 @@ Register_Gear(MAKERGear_Contrast, Gear_Contrast, "Contrast")
 
 Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "Contrast", name)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _CONTRAST_IN = addPlugSignalIn("Amount", 1.0f);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f)));
 
 }
 
@@ -29,16 +29,16 @@ bool Gear_Contrast::ready()
 
 void Gear_Contrast::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
-  _data = _image->_data;    
-  _outData = _outImage->_data;
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
+  _data = _image->data();    
+  _outData = _outImage->data();
 
-  _iterSizeX = _image->sizeX();
-  _iterSizeY = _image->sizeY();
+  _iterSizeX = _image->width();
+  _iterSizeY = _image->height();
 
-  int contrast = (int)_CONTRAST_IN->buffer()[0];
+  int contrast = (int)_CONTRAST_IN->type()->value();
 
   for (int y=0;y<_iterSizeY;y++)
   {

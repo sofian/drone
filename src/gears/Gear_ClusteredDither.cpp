@@ -1,5 +1,6 @@
 #include "Gear_ClusteredDither.h"
 #include "Engine.h"
+#include "Math.h"
 
 #include <iostream>
 
@@ -8,12 +9,12 @@
 Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither")
 
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
-: Gear(engine, "ClusteredDither", name), _threshold(0), _order(0),_clusterSize(0),  _spotType(ROUND)
+: Gear(engine, "ClusteredDither", name), _clusterSize(0), _threshold(0), _order(0), _spotType(ROUND)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN_A = addPlugSignalIn("ClusterIN", 16);
-  _AMOUNT_IN_B = addPlugSignalIn("SpotIN", ROUND);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN_A = new PlugIn<ValueType>(this, "ClusterIN", new ValueType(16)));
+  addPlug(_AMOUNT_IN_B = new PlugIn<ValueType>(this, "SpotIN", new ValueType(ROUND)));
 }
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
@@ -24,8 +25,8 @@ Gear_ClusteredDither::~Gear_ClusteredDither()
 
 void Gear_ClusteredDither::init()
 {
-  _clusterSize = (int)_AMOUNT_IN_A->buffer()[0];
-  _spotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->buffer()[0],SQUARE,LINE);
+  _clusterSize = (int)_AMOUNT_IN_A->type();
+  _spotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(), SQUARE, LINE);
   _width = _clusterSize * 3;
   computeThreshold();
 }
@@ -43,15 +44,15 @@ bool Gear_ClusteredDither::ready()
 
 void Gear_ClusteredDither::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
 
-  _sizeX = _image->sizeX();
-  _sizeY = _image->sizeY();
+  _sizeX = _image->width();
+  _sizeY = _image->height();
 
-  _data = _image->_data;    
-  _outData = _outImage->_data;
+  _data = _image->data();    
+  _outData = _outImage->data();
 
   unsigned char *iterData = (unsigned char*)_data;
   unsigned char *iterOutData = (unsigned char*)_outData;
@@ -62,15 +63,15 @@ void Gear_ClusteredDither::runVideo()
   int minClusterSizeY;
 
   // If cluster size has changed, recompute threshold matrix.
-  if (_clusterSize != (int)_AMOUNT_IN_A->buffer()[0])
+  if (_clusterSize != (int)_AMOUNT_IN_A->type())
   {
-    _clusterSize = (int)_AMOUNT_IN_A->buffer()[0];
+    _clusterSize = (int)_AMOUNT_IN_A->type();
     _width = _clusterSize * 3;
     computeThreshold();
   }
 
   // Set spot type.
-  eSpotType tmpSpotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->buffer()[0],SQUARE,LINE);
+  eSpotType tmpSpotType = (eSpotType)CLAMP((int)_AMOUNT_IN_B->type(),SQUARE,LINE);
   if (tmpSpotType != _spotType)
   {
     _spotType = tmpSpotType;

@@ -12,11 +12,9 @@ Register_Gear(MAKERGear_NGone, Gear_NGone, "NGone")
 
 Gear_NGone::Gear_NGone(Engine *engine, std::string name) : Gear(engine, "NGone", name)
 {
-  _VIDEO_IN = addPlugVideoIn("Img");
-  _VCOMPOSE_OUT = addPlugVideoComposeOut("VComp");
-  _VCOMPOSE_IN = addPlugVideoComposeIn("VComp");
-  _SIGNAL_X_IN = addPlugSignalIn("X", 0.0f);
-  _SIGNAL_Y_IN = addPlugSignalIn("Y", 0.0f);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "Img"));
+  addPlug(_SIGNAL_X_IN = new PlugIn<SignalType>(this, "X", new SignalType(0.0f)));
+  addPlug(_SIGNAL_Y_IN = new PlugIn<SignalType>(this, "Y", new SignalType(0.0f)));
 }
 
 Gear_NGone::~Gear_NGone()
@@ -26,19 +24,19 @@ Gear_NGone::~Gear_NGone()
 
 bool Gear_NGone::ready()
 {
-  return(_VIDEO_IN->connected() && _VCOMPOSE_OUT->connected());
+  return(_VIDEO_IN->connected());
 }
 
 void Gear_NGone::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
+  _image = _VIDEO_IN->type()->image();
   _sizeX = 512;
   _sizeY = 512;
-  _texSizeX = _image->sizeX() / _sizeX;
-  _texSizeY = _image->sizeY() / _sizeY;
+  _texSizeX = _image->width() / _sizeX;
+  _texSizeY = _image->height() / _sizeY;
 
-  _signalBufferX = _SIGNAL_X_IN->buffer();
-  _signalBufferY = _SIGNAL_Y_IN->buffer();
+  _signalBufferX = _SIGNAL_X_IN->type()->buffer();
+  _signalBufferY = _SIGNAL_Y_IN->type()->buffer();
 
   int subDivisions=64;
 
@@ -55,7 +53,7 @@ void Gear_NGone::runVideo()
   float xTexSpacing = _texSizeX / subDivisions;
   float yTexSpacing = _texSizeY / subDivisions;
 
-  glBindTexture(GL_TEXTURE_2D, _image->toTexture());
+//   glBindTexture(GL_TEXTURE_2D, _image->toTexture());
 
   glEnable(GL_TEXTURE_2D);
 

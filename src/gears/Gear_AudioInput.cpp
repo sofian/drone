@@ -12,17 +12,16 @@ const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer"
 const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 
 Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) : 
-Gear(engine, "AudioInput", name),     
-_RingBufferSize(512),
-_LBuffer(NULL),
-_RBuffer(NULL),
-_ReadIndex(0)
-
+  Gear(engine, "AudioInput", name),     
+  _RingBufferSize(512),
+  _LBuffer(),
+  _RBuffer(),
+  _ReadIndex(0)
 {
-  _category << Category::AUDIO << Category::IO;
+  //  _category << Category::AUDIO << Category::IO;
 
-  _AUDIO_OUT_LEFT = addPlugSignalOut("Left");    
-  _AUDIO_OUT_RIGHT = addPlugSignalOut("Right");    
+  addPlug(_AUDIO_OUT_LEFT = new PlugOut<SignalType>(this, "Left"));    
+  addPlug(_AUDIO_OUT_RIGHT = new PlugOut<SignalType>(this, "Right"));    
 
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
@@ -90,10 +89,9 @@ void Gear_AudioInput::onUpdateSettings()
 
 void Gear_AudioInput::runAudio()
 {
-  Signal_T *left_buffer  = _AUDIO_OUT_LEFT->buffer();
-  //Signal_T *right_buffer  = _AUDIO_OUT_RIGHT->buffer();     
+  MatrixType<float> left_buffer = _AUDIO_OUT_LEFT->type()->buffer();
+  //MatrixType<float> right_buffer  = _AUDIO_OUT_RIGHT->type()->buffer();
   int signal_blocksize = Engine::signalInfo().blockSize();
-
 
   for (int i=0; i<signal_blocksize; i++)
     left_buffer[i] = _LBuffer[_ReadIndex++];
@@ -129,11 +127,7 @@ void Gear_AudioInput::initPortAudio()
 
   _RingBufferSize = framesPerBuffer * 16;
 
-  if (_LBuffer!=NULL)
-    delete[] _LBuffer;
-
-  _LBuffer = new Signal_T[_RingBufferSize];
-
+  _LBuffer.resize(_RingBufferSize);
 
   err = Pa_OpenStream(
                      &_Stream,
@@ -180,11 +174,11 @@ int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long
   static Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
   static int lindex=0;
   //static int rindex=0;
-  Signal_T *lbuffer = parent->_LBuffer;
+  MatrixType<float>& lbuffer = parent->_LBuffer;
 
   int ringBufferSize = parent->_RingBufferSize;
 
-  //Signal_T *rbuffer = parent->_RBuffer;
+  //MatrixType<float> *rbuffer = parent->_RBuffer;
 
   float *in = (float*)input_buffer;
 

@@ -1,9 +1,6 @@
 #include "FrequencyAnalyzer.h"
+#include "Math.h"
 #include <iostream>
-
-
-#define MIN(a,b) ((a) > (b) ? (b) : (a))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 FrequencyAnalyser::FrequencyAnalyser(int bufferSize) 
 // _hammingWindow(NULL), _bufferSize(bufferSize), _windowSize(2*bufferSize),
@@ -30,7 +27,7 @@ void FrequencyAnalyser::prepare(int bufferSize)
 /*     if (_hammingWindow!=NULL)                                                              */
 /*         delete[] _hammingWindow;                                                           */
 /*                                                                                            */
-/*     _hammingWindow = new Signal_T[_bufferSize];                                            */
+/*     _hammingWindow = new float[_bufferSize];                                            */
 /*                                                                                            */
 /*     for (int i=0;i<_bufferSize;i++)                                                        */
 /*         _hammingWindow[i] = 0.54f - (0.46 * cos(6.28318f * i/_bufferSize));                */
@@ -60,7 +57,7 @@ void FrequencyAnalyser::prepare(int bufferSize)
 /*                                                                                            */
 }
 
-void FrequencyAnalyser::frequencyToTime(Signal_T *inputBuffer, Signal_T *outputBuffer)
+void FrequencyAnalyser::frequencyToTime(float *inputBuffer, float *outputBuffer)
 {
 /*     //multiply with hamming window and assign to _inputComplex;   */
 /*     for (int i=0;i<_bufferSize;i++)                               */
@@ -76,7 +73,7 @@ void FrequencyAnalyser::frequencyToTime(Signal_T *inputBuffer, Signal_T *outputB
 /*         outputBuffer[i] = _outputComplex[i];                      */
 }
 
-void FrequencyAnalyser::timeToFrequency(Signal_T *inputBuffer, Signal_T *outputBuffer)
+void FrequencyAnalyser::timeToFrequency(float *inputBuffer, float *outputBuffer)
 {                
 /*     //multiply with hamming window and assign to _inputComplex;                                                                                      */
 /*     for (int i=0;i<_bufferSize;i++)                                                                                                                  */
@@ -103,7 +100,7 @@ void FrequencyAnalyser::timeToFrequency(Signal_T *inputBuffer, Signal_T *outputB
 
 }
 
-void FrequencyAnalyser::filter(Signal_T *inputBuffer, Signal_T *outputBuffer)
+void FrequencyAnalyser::filter(float *inputBuffer, float *outputBuffer)
 {
 /*     //multiply with hamming window and assign to _inputComplex;                                              */
 /*     for (int i=0;i<_bufferSize;i++)                                                                          */

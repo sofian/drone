@@ -16,13 +16,13 @@ Register_Gear(MAKERGear_FilterSignal, Gear_FilterSignal, "FilterSignal")
 //////////////////////////////////////////////////////////////////////
 
 Gear_FilterSignal::Gear_FilterSignal(Engine *engine, std::string name) : Gear(engine, "FilterSignal", name),
-_convolutionShape(NULL)
+                                                                         _convolutionShape()
 {    
-  _AUDIO_IN = addPlugSignalIn("In", 0.0f);
-  _AUDIO_OUT = addPlugSignalOut("Out");
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 
   int blockSize = Engine::signalInfo().blockSize();
-  _convolutionShape = new Signal_T[blockSize];
+  _convolutionShape.resize(blockSize);
 
   float f=440.0f;
   float wc=2.0 * 6.28318f * f * blockSize/44100.0f;
@@ -53,10 +53,10 @@ void Gear_FilterSignal::init()
 
 void Gear_FilterSignal::runAudio()
 {
-  Signal_T *bufferin = _AUDIO_IN->buffer();
-  Signal_T *bufferout = _AUDIO_OUT->buffer();
+  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
+  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
 
-  Signal_T kernel[Engine::signalInfo().blockSize()];
+  float kernel[Engine::signalInfo().blockSize()];
 
   for (int i=0;i<Engine::signalInfo().blockSize()/2;++i)
   {
@@ -72,7 +72,7 @@ void Gear_FilterSignal::runAudio()
   //_freqAnalyzer->performAnalysis(bufferin);
   //_freqAnalyzer->backward(bufferout);
 
-  _freqAnalyzer->filter(bufferin, bufferout);
+  _freqAnalyzer->filter(bufferin.data(), bufferout.data());
   //_freqAnalyzer->frequencyToTime(kernel, bufferout);
 
 }

@@ -3,6 +3,8 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 
 class PlugVideo;
 class PlugSignal;
@@ -16,20 +18,14 @@ public:
 
   void runVideo();
 
-  PlugSignalIn* AUDIO_IN(){return _AUDIO_IN;};
-  PlugVideoComposeIn* VCOMPOSE_IN(){return _VCOMPOSE_IN;};    
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
   bool ready();
 
 private:
 
-  PlugSignalIn *_AUDIO_IN;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugVideoComposeIn *_VCOMPOSE_IN;
+  PlugIn<SignalType> *_AUDIO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
-
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_outData;
 
 

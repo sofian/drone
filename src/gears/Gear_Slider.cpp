@@ -1,7 +1,7 @@
 #include "Gear_Slider.h"
 #include "GearMaker.h"
 #include "GearGui_Slider.h"
-
+#include "Math.h"
 
 #include "Engine.h"
 
@@ -11,7 +11,7 @@
 
 Register_Gear(MAKERGear_Slider, Gear_Slider, "Slider")
 
-const Signal_T Gear_Slider::DEFAULT_VALUE = 1.0f;
+const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 
 const std::string Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
 const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
@@ -19,7 +19,7 @@ const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
 Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slider", name)
 {
 
-  _VALUE_OUT = addPlugSignalOut("Value");
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
 
   _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);    
   _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);    
@@ -59,20 +59,15 @@ void Gear_Slider::onUpdateSettings()
 
 }
 
-void Gear_Slider::setValue(Signal_T value)
+void Gear_Slider::setValue(float value)
 {
-  Signal_T *buffer = _VALUE_OUT->buffer();
-
   //clamp value to range
   float low = _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
   float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
 
-  if (value<low)
-    value=low;
-  if (value>hi)
-    value=hi;
+  value = CLAMP(value, low, hi);
 
-  std::fill(buffer, &buffer[Engine::signalInfo().blockSize()], value);        
+  _VALUE_OUT->type()->setValue(value);
 }
 
 void Gear_Slider::runAudio()

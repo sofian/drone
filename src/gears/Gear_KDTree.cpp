@@ -10,9 +10,9 @@ Register_Gear(MAKERGear_KDTree, Gear_KDTree, "KDTree")
 Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 : Gear(engine, "KDTree", name)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Depth", 6);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6)));
   _rasterer = new Rasterer();
   _table = new SummedAreaTable();
 }
@@ -30,29 +30,29 @@ bool Gear_KDTree::ready()
 
 void Gear_KDTree::init()
 {
-  _rasterer->setCanvas(_VIDEO_OUT->canvas());
+  _rasterer->setImage(_VIDEO_OUT->type()->image());
   _rasterer->setColor(0, 0, 0); // black lines only
-  _table->setCanvas(_VIDEO_IN->canvas());
+  _table->setImage(_VIDEO_IN->type()->image());
 }
 
 void Gear_KDTree::runVideo()
 {
   // initialize
-  _maxDepth = (int)_AMOUNT_IN->buffer()[0];
+  _maxDepth = (int)_AMOUNT_IN->type()->value();
 
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
 
-  _sizeX = _image->sizeX();
-  _sizeY = _image->sizeY();
+  _sizeX = _image->width();
+  _sizeY = _image->height();
   _size = _sizeX * _sizeY;
 
-  _data = _image->_data;
-  _outData = _outImage->_data;
+  _data = _image->data();
+  _outData = _outImage->data();
 
-  _rasterer->setCanvas(_outImage);
-  _table->setCanvas(_image);
+  _rasterer->setImage(_outImage);
+  _table->setImage(_image);
 
   // build accumulation buffer
   _table->buildTable();

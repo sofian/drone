@@ -10,9 +10,9 @@ Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 
 Gear_MedianFilter::Gear_MedianFilter(Engine *engine, std::string name) : Gear(engine, "MedianFilter", name)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Amount", 1);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1)));
 }
 
 Gear_MedianFilter::~Gear_MedianFilter()
@@ -26,17 +26,17 @@ bool Gear_MedianFilter::ready()
 
 void Gear_MedianFilter::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
+  _image = _VIDEO_IN->type()->image();
 
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
-  _sizeY = _image->sizeY();
-  _sizeX = _image->sizeX();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
+  _sizeY = _image->height();
+  _sizeX = _image->width();
 
-  _data = (unsigned char*)_image->_data;    
-  _outData = (unsigned char*)_outImage->_data;
+  _data = (unsigned char*)_image->data();    
+  _outData = (unsigned char*)_outImage->data();
 
-  _medianSize = (int) _AMOUNT_IN->buffer()[0];
+  _medianSize = (int) _AMOUNT_IN->type()->value();
 
   ////////////////////////////
 

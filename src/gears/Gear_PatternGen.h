@@ -3,6 +3,8 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 #include <string>
 
 class Gear_PatternGen : public Gear
@@ -17,10 +19,6 @@ public:
 
   void runVideo();
 
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
-  PlugSignalIn* PARAM_IN(){return _PARAM_IN;};
-
   bool ready();
 
 protected:
@@ -28,10 +26,10 @@ protected:
 
 private:
 
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_PARAM_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_PARAM_IN;
 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_outData;
 
   int _iterSizeY;

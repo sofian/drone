@@ -26,7 +26,7 @@ void GearGui_TV::drawShape(QPainter &painter)
 {
   GearGui::drawShape(painter);
 
-  Video_T *image;
+  MatrixType<RGBA> *image;
   RGBA *data;
 
   int x, y, sizeX, sizeY;      
@@ -39,21 +39,21 @@ void GearGui_TV::drawShape(QPainter &painter)
 
   if (((Gear_TV*)_gear)->VIDEO_IN()->connected())
   {
-    image = ((Gear_TV*)_gear)->VIDEO_IN()->canvas();
-    data = image->_data;
+    image = ((Gear_TV*)_gear)->VIDEO_IN()->type()->image();
+    data = image->data();
 
 
-    if ((image->sizeX() != _currentSizeX) || (image->sizeY() != _currentSizeY))
+    if ((image->width() != _currentSizeX) || (image->height() != _currentSizeY))
     {
-      _videoFrame.create(image->sizeX(), image->sizeY(), 32);
-      _currentSizeX = image->sizeX();
-      _currentSizeY = image->sizeY();
+      _videoFrame.create(image->width(), image->height(), 32);
+      _currentSizeX = image->width();
+      _currentSizeY = image->height();
     }
 
     unsigned char *bits = _videoFrame.bits();
 
-    int iterSizeX = image->sizeX();
-    int iterSizeY = image->sizeY();
+    int iterSizeX = image->width();
+    int iterSizeY = image->height();
 
     for (int y1=0;y1<iterSizeY;++y1)
       for (int x1=0;x1<iterSizeX;++x1)

@@ -3,6 +3,7 @@
 
 
 #include "Gear.h"
+#include "VideoType.h"
 
 
 
@@ -14,21 +15,20 @@ public:
   Gear_TV(Engine *engine, std::string name);
   virtual ~Gear_TV();
 
+  PlugIn<VideoTypeRGBA>* VIDEO_IN(){return _VIDEO_IN;};
+
   void runVideo();
-
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-
   bool ready();
 
 protected:
   GearGui *createGearGui(QCanvas *canvas);
 private:
 
-  PlugVideoIn *_VIDEO_IN;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
 
   //local var
-  Video_T *_image; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
   unsigned char *_data;
   unsigned char *_tempData;
   RGBA *_outData;

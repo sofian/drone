@@ -19,8 +19,8 @@ Gear_AverageSignal::Gear_AverageSignal(Engine *engine, std::string name) : Gear(
 _totalSignal(0.0f), _nbSamples(0), _average(0.0f)
 {
 
-  _AUDIO_IN = addPlugSignalIn("Input", 0.0f);
-  _AUDIO_OUT = addPlugSignalOut("Output");
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "Input", new SignalType(0.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Output"));
   _cbAudioIn = new CircularBufferSignal(0.0f);
 }
 
@@ -36,14 +36,14 @@ bool Gear_AverageSignal::ready()
 
 void Gear_AverageSignal::runAudio()
 {
-  Signal_T *bufferin = _AUDIO_IN->buffer();
-  Signal_T *bufferout = _AUDIO_OUT->buffer();    
+  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
+  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();    
   float sqaverage=0.0f;
 
   int signal_blocksize = Engine::signalInfo().blockSize();
 
   // we assume signal_blocksize < size of circular buffer
-  _cbAudioIn->append(bufferin, signal_blocksize);
+  _cbAudioIn->append(bufferin.data(), signal_blocksize);
 
   CIRCBUF_SIGNAL_T_FORBEGIN(_cbAudioIn,-1024,-1)
   sqaverage+=*(cbptr)*(*(cbptr++));

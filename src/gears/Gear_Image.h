@@ -3,6 +3,7 @@
 
 
 #include "Gear.h"
+#include "VideoType.h"
 
 class PlugVideo;
 
@@ -16,14 +17,11 @@ public:
 
   void onUpdateSettings();
   void runVideo();
-
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
   bool ready();
 
 private:
 
-  PlugVideoOut *_VIDEO_OUT;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
 
 

@@ -31,10 +31,10 @@ void Gear_GrayScale::runVideo()
 {
   _image = _VIDEO_IN->type()->image();
   _outImage = _VIDEO_OUT->type()->image();
-  _outImage->resize(_image->height(), _image->width());
+  _outImage->resize(_image->width(), _image->height());
   _size = _image->size();
 
-  _imageIn  = (unsigned char*)_image->data();    
+  _imageIn  = (unsigned char*)_image->data();
   _imageOut = (unsigned int*) _outImage->data();
 
   int total;

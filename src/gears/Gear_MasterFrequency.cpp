@@ -18,8 +18,8 @@ Gear_MasterFrequency::Gear_MasterFrequency(Engine *engine, std::string name) : G
 _freqAnalyser(NULL)
 {
 
-  _AUDIO_IN = addPlugSignalIn("In", 0.0f);
-  _AUDIO_OUT = addPlugSignalOut("Out");
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 }
 
 Gear_MasterFrequency::~Gear_MasterFrequency() 
@@ -42,8 +42,8 @@ void Gear_MasterFrequency::init()
 
 void Gear_MasterFrequency::runAudio()
 {
-  //   Signal_T *bufferin = _AUDIO_IN->buffer();
-  //   Signal_T *bufferout = _AUDIO_OUT->buffer();
+  //   MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
+  //   MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
 
   //_freqAnalyser->performAnalysis(bufferin);
 

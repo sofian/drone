@@ -2,6 +2,8 @@
 #define GEAR_CLUSTEREDDITHER_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 #include "Utils.h"
 
 #include <stdio.h>
@@ -27,11 +29,6 @@ public:
 
   void runVideo();
 
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-  PlugSignalIn* AMOUNT_IN_A(){return _AMOUNT_IN_A;};
-  PlugSignalIn* AMOUNT_IN_B(){return _AMOUNT_IN_B;};
-
   bool ready();
 
   void init();
@@ -40,17 +37,17 @@ protected:
   void onUpdateSettings();
 
 private:
-  PlugVideoIn *_VIDEO_IN;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN_A;
-  PlugSignalIn *_AMOUNT_IN_B;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_AMOUNT_IN_A;
+  PlugIn<ValueType> *_AMOUNT_IN_B;
 
   int _clusterSize;
   int _width; // clusterSize * 3
 
   //local var
-  Video_T *_image; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_data;
   RGBA *_outData;
 

@@ -2,6 +2,8 @@
 #define GEAR_KDTREE_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 #include <assert.h>
 #include "Timing.h"
 #include "Rasterer.h"
@@ -14,25 +16,19 @@ public:
   Gear_KDTree(Engine *engine, std::string name);
   virtual ~Gear_KDTree();
 
-  void runVideo();
-
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-  PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
-
-  bool ready();
+  void runVideo();  bool ready();
 
   void init();
 
 private:
 
-  PlugVideoIn *_VIDEO_IN;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  Video_T *_image; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_data;
   RGBA *_outData;
 

@@ -2,6 +2,8 @@
 #define GEAR_VIDEOMIX_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 #include "Utils.h"
 
 class Gear_VideoMix : public Gear
@@ -42,26 +44,22 @@ public:
 
   void runVideo();
 
-  PlugVideoIn* VIDEO_IN_A(){return _VIDEO_IN_A;}
-  PlugVideoIn* VIDEO_IN_B(){return _VIDEO_IN_B;}
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;}
-  PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
-  PlugSignalIn* MIXFUNC_IN(){return _MIXFUNC_IN;};
-
-  bool ready();
+  PlugIn<VideoTypeRGBA>* VIDEO_IN_A(){return _VIDEO_IN_A;}
+  PlugIn<VideoTypeRGBA>* VIDEO_IN_B(){return _VIDEO_IN_B;}
+  PlugOut<VideoTypeRGBA>* VIDEO_OUT(){return _VIDEO_OUT;}  bool ready();
 
 private:
 
-  PlugVideoIn *_VIDEO_IN_A;
-  PlugVideoIn *_VIDEO_IN_B;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN;
-  PlugSignalIn *_MIXFUNC_IN;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN_A;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN_B;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_AMOUNT_IN;
+  PlugIn<ValueType> *_MIXFUNC_IN;
 
   //local var
-  Video_T *_imageA; 
-  Video_T *_imageB; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_imageA; 
+  MatrixType<RGBA> *_imageB; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_dataA;
   RGBA *_dataB;
   RGBA *_outData;

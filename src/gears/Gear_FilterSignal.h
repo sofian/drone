@@ -2,6 +2,7 @@
 #define GEAR_FILTERSIGNAL_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
 #include "FrequencyAnalyzer.h"
 
 class PlugSignal;
@@ -14,17 +15,17 @@ public:
 
   void runAudio();
 
-  PlugSignalIn* AUDIO_IN(){return _AUDIO_IN;};    
-  PlugSignalOut* AUDIO_OUT(){return _AUDIO_OUT;};
+  PlugIn<SignalType>* AUDIO_IN(){return _AUDIO_IN;};    
+  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
   void init();
 
 private:
-  PlugSignalIn *_AUDIO_IN;
-  PlugSignalOut *_AUDIO_OUT;
+  PlugIn<SignalType> *_AUDIO_IN;
+  PlugOut<SignalType> *_AUDIO_OUT;
 
-  Signal_T *_convolutionShape;
+  MatrixType<float> _convolutionShape;
   FrequencyAnalyser *_freqAnalyzer;
 
 };

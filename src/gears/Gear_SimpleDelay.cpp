@@ -16,10 +16,10 @@ Register_Gear(MAKERGear_SimpleDelay, Gear_SimpleDelay, "SimpleDelay")
 
 Gear_SimpleDelay::Gear_SimpleDelay(Engine *engine, std::string name) : Gear(engine, "SimpleDelay", name)
 {
-  _PARAM_FEEDBACK = addPlugSignalIn("Feedback", 0.3f);
-  _PARAM_TIME = addPlugSignalIn("Time", 0.3f);
-  _AUDIO_IN = addPlugSignalIn("Input", 0.0f);
-  _AUDIO_OUT = addPlugSignalOut("Output");  
+  addPlug(_PARAM_FEEDBACK = new PlugIn<SignalType>(this, "Feedback", new SignalType(0.3f)));
+  addPlug(_PARAM_TIME = new PlugIn<SignalType>(this, "Time", new SignalType(0.3f)));
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "Input", new SignalType(0.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Output"));  
   _SmoothTime=false;
 }
 
@@ -44,10 +44,10 @@ float _HARDCLIP(float X, float MIN, float MAX)
 
 void Gear_SimpleDelay::runAudio()
 {    
-/*     Signal_T *bufferfeed  = _PARAM_FEEDBACK->buffer();                                                                      */
-/*     Signal_T *buffertime  = _PARAM_TIME->buffer();                                                                          */
-/*     Signal_T *bufferin = _AUDIO_IN->buffer();                                                                               */
-/*     Signal_T *bufferout = _AUDIO_OUT->buffer();                                                                             */
+/*     MatrixType<float> bufferfeed  = _PARAM_FEEDBACK->type()->buffer();                                                                      */
+/*     MatrixType<float> buffertime  = _PARAM_TIME->type()->buffer();                                                                          */
+/*     MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();                                                                               */
+/*     MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();                                                                             */
 /*                                                                                                                             */
 /*     static double t=0;                                                                                                      */
 /*     int signal_blocksize = _Engine->audioBlockSize();                                                                       */
@@ -56,7 +56,7 @@ void Gear_SimpleDelay::runAudio()
 /*     {                                                                                                                       */
 /*         int ndefaults;                                                                                                      */
 /*         Signal_T defaultval;                                                                                                */
-/*         Signal_T * block1,*block2;                                                                                          */
+/*         MatrixType<float>  block1,*block2;                                                                                          */
 /*         int block1len,block2len;                                                                                            */
 /*                                                                                                                             */
 /*         // use first value of buffertime as delay time for whole block processing (could use average)                       */

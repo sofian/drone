@@ -10,12 +10,11 @@ Register_Gear(MAKERGear_ColorAdjust, Gear_ColorAdjust, "ColorAdjust")
 
 Gear_ColorAdjust::Gear_ColorAdjust(Engine *engine, std::string name) : Gear(engine, "ColorAdjust", name)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _RED_IN = addPlugSignalIn("Red", 1.0f);
-  _GREEN_IN = addPlugSignalIn("Green", 1.0f);
-  _BLUE_IN = addPlugSignalIn("Blue", 1.0f);
-
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_RED_IN = new PlugIn<SignalType>(this, "Red", new SignalType(1.0f)));
+  addPlug(_GREEN_IN = new PlugIn<SignalType>(this, "Green", new SignalType(1.0f)));
+  addPlug(_BLUE_IN = new PlugIn<SignalType>(this, "Blue", new SignalType(1.0f)));
 }
 
 Gear_ColorAdjust::~Gear_ColorAdjust()
@@ -30,22 +29,15 @@ bool Gear_ColorAdjust::ready()
 
 void Gear_ColorAdjust::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
-  _data = _image->_data;    
-  _outData = _outImage->_data;
-
-  _iterSizeX = _image->sizeX();
-  _iterSizeY = _image->sizeY();
-
-//    register int mmxCols=_iterSizeX;
-//    register int index;    
-
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
+  _size = _image->size();
+  
   //todo : fast float to int
-  int red = (int)_RED_IN->buffer()[0];
-  int green = (int)_GREEN_IN->buffer()[0];
-  int blue = (int)_BLUE_IN->buffer()[0];
+  float red   = _RED_IN->type()->buffer()[0];
+  float green = _GREEN_IN->type()->buffer()[0];
+  float blue  = _BLUE_IN->type()->buffer()[0];
 
 /*     _mmxColor=0;        */
 /*     _mmxColor |= blue;  */
@@ -54,38 +46,24 @@ void Gear_ColorAdjust::runVideo()
 /*     _mmxColor <<= 16;   */
 /*     _mmxColor |= red;   */
 
-
-  for (int y=0;y<_iterSizeY;y++)
+  _imageIn = (unsigned char*)_image->data();
+  _imageOut = (unsigned char*)_outImage->data();
+  for (int p=0; p<_size; ++p)
   {
-    //_mmxImageIn = (int*)&_data[y*_iterSizeX];        
-    //_mmxImageOut = (int*)&_outData[y*_iterSizeX];
+    // Set temporary values.
+    _r = (int)(*(_imageIn++) * red);
+    _g = (int)(*(_imageIn++) * green);
+    _b = (int)(*(_imageIn++) * blue);
 
-    _imageIn = (unsigned char*)&_data[y*_iterSizeX];
-    _imageOut = (unsigned char*)&_outData[y*_iterSizeX];
-    for (int x=0;x<_iterSizeX;x++)
-    {
-      _r = (*(_imageIn)*red) >> 8;
-      _g = (*(_imageIn+1)*green) >> 8;
-      _b = (*(_imageIn+2)*blue) >> 8;
+    // Clamp and copy to output.
+    *_imageOut++ = MIN(_r, 255);
+    *_imageOut++ = MIN(_g, 255);
+    *_imageOut++ = MIN(_b, 255);
 
-      if (_r>255)
-        *_imageOut = 255;
-      else
-        *_imageOut = _r;
-
-      if (_g>255)
-        *(_imageOut+1) = 255;
-      else
-        *(_imageOut+1) = _g;
-
-      if (_b>255)
-        *(_imageOut+2) = 255;
-      else
-        *(_imageOut+2) = _b;
-
-      _imageIn+=4;
-      _imageOut+=4;
-    }
+    // Skip alpha.
+    _imageIn++;
+    _imageOut++;
+  }
 
     //todo : finilize mmx version
 
@@ -113,8 +91,8 @@ void Gear_ColorAdjust::runVideo()
 /*         }                                                                                                        */
 
 
-  }
-  __asm__("emms" : : );
+//   }
+//   __asm__("emms" : : );
 }
 
 
@@ -157,4 +135,5 @@ void Gear_ColorAdjust::runVideo()
 /*             _accG=0;                                               */
 /*             _accB=0;                                               */
 /*                                                                    */
+
 

@@ -10,9 +10,9 @@ Register_Gear(MAKERGear_Edge, Gear_Edge, "Edge")
 
 Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", name)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Amount", 1.0f);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f)));
 }
 
 Gear_Edge::~Gear_Edge()
@@ -29,15 +29,15 @@ bool Gear_Edge::ready()
 
 void Gear_Edge::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
-  _data = (unsigned char*)_image->_data;
-  _outData = (unsigned char*)_outImage->_data;
-  float tresh = _AMOUNT_IN->buffer()[0];
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
+  _data = (unsigned char*)_image->data();
+  _outData = (unsigned char*)_outImage->data();
+  float tresh = _AMOUNT_IN->type()->value();
 
-  _sizeX = _image->sizeX();
-  _sizeY = _image->sizeY();
+  _sizeX = _image->width();
+  _sizeY = _image->height();
 
   //register int mmxCols=(_iterSizeX-2)/2;
   //register int index;

@@ -8,31 +8,20 @@
 Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
 
 Gear_ColorQuantize::Gear_ColorQuantize(Engine *engine, std::string name)
-: Gear(engine, "ColorQuantize", name), _nColors(DEFAULT_N_COLORS), _clusters(0)
+: Gear(engine, "ColorQuantize", name), _nColors(DEFAULT_N_COLORS),
+  Ir(0), Ig(0), Ib(0), Qadd(0)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-
-  _centroids = new RGBAint[_nColors];
-
-  // create initial centroids randomly
-  srand(2732791);
-  for (int i=0;i<_nColors;++i)
-  {
-    _centroids[i].r = rand()%256;
-    _centroids[i].g = rand()%256;
-    _centroids[i].b = rand()%256;
-    _centroids[i].a = 0;
-  }
-
-  _clusterSizes = (int*)malloc(_nColors*sizeof(int));
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", new ValueType(DEFAULT_N_COLORS)));
 }
 
 Gear_ColorQuantize::~Gear_ColorQuantize()
 {
-  delete[] _centroids;
-  free(_clusters);
-  free(_clusterSizes);
+  free(Qadd);
+  free(Ig);
+  free(Ib);
+  free(Ir);
 }
 
 bool Gear_ColorQuantize::ready()
@@ -43,125 +32,122 @@ bool Gear_ColorQuantize::ready()
 void Gear_ColorQuantize::runVideo()
 {
   // initialize
+  _nColors = (int)_AMOUNT_IN->type()->value();
 
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
 
-  _iterSizeX = _image->sizeX();
-  _iterSizeY = _image->sizeY();
-  _iterSize = _iterSizeX * _iterSizeY;
+  _data = _image->data();
+  _outData = _outImage->data();
 
-  _clusters = (int*) realloc(_clusters, _iterSize * sizeof(int));
+  size = _image->size();
 
-  _data = _image->_data;
-  _outData = _outImage->_data;
+  struct box  cube[MAXCOLOR];
+  unsigned char *tag;
+  unsigned char lut_r[MAXCOLOR], lut_g[MAXCOLOR], lut_b[MAXCOLOR];
+  int   next;
+  register long int i, weight;
+  register int  k;
+  float   vv[MAXCOLOR], temp;
 
-  int *iterClusters;
-  int *iterCentroids;
-  int *iterClusterSizes;
+  Qadd = (unsigned short int *)realloc(Qadd,sizeof(short int)*size);
 
-  int minDist;
-  int diff;
-  int dist;
+  /* input R,G,B components into Ir, Ig, Ib;
+     set size to width*height */
 
-  memset(_clusterSizes, 0, _nColors*sizeof(int));
+  Ir = (unsigned char*)realloc(Ir,size*sizeof(unsigned char));
+  Ig = (unsigned char*)realloc(Ig,size*sizeof(unsigned char));
+  Ib = (unsigned char*)realloc(Ib,size*sizeof(unsigned char));
 
-  // find cluster ownership of each pixel
-  iterClusters = _clusters;
   _imageIn = (unsigned char*)_data;
-
-  for (int p=0; p<_iterSize; ++p)
+  for (i=0; i<size; ++i)
   {
-    minDist = INT_MAX; // very big number
-    iterCentroids = (int*)_centroids;
+    Ir[i] = *(_imageIn);
+    Ig[i] = *(_imageIn+1);
+    Ib[i] = *(_imageIn+2);
+    _imageIn+=4;
+  }
 
-    // get the RGB value of the pixel
-    _r = (int)*_imageIn++;
-    _g = (int)*_imageIn++;
-    _b = (int)*_imageIn;
-    _imageIn+=2;
+  memset(wt, 0, 33*33*33*sizeof(long int));
+  memset(mr, 0, 33*33*33*sizeof(long int));
+  memset(mg, 0, 33*33*33*sizeof(long int));
+  memset(mb, 0, 33*33*33*sizeof(long int));
+  memset(m2, 0, 33*33*33*sizeof(float));
 
-    // find minimum distance
-    for (int i=0; i<_nColors; ++i)
+  Hist3d((long int*)wt, (long int*)mr, (long int*)mg, (long int*)mb, (float*)m2); //printf("Histogram done\n");
+
+  M3d((long int*)wt, (long int*)mr, (long int*)mg, (long int*)mb, (float*)m2);    //printf("Moments done\n");
+
+  cube[0].r0 = cube[0].g0 = cube[0].b0 = 0;
+  cube[0].r1 = cube[0].g1 = cube[0].b1 = 32;
+  next = 0;
+  for (i=1; i<_nColors; ++i)
+  {
+    if (Cut(&cube[next], &cube[i]))
     {
-      // euclidian distance
-      diff = _r - *iterCentroids++; // r diff
-      dist = diff*diff;
-      diff = _g - *iterCentroids++; // g diff
-      dist += diff*diff;
-      diff = _b - *iterCentroids;   // b diff
-      dist += diff*diff;
-
-      iterCentroids+=2;
-
-      if (dist < minDist)
-      {
-        *iterClusters = i;
-        minDist = dist;
-      }
-    }
-
-    _clusterSizes[*iterClusters]++;
-    ++iterClusters;
-  }
-
-  // calculate new centroids
-
-  // initialize to zero
-  iterCentroids = (int*)_centroids;
-  iterClusterSizes = _clusterSizes;
-  for (int i=0; i<_nColors; ++i)
-  {
-    if (*iterClusterSizes > 0)
-      memset(iterCentroids, 0, sizeof(RGBAint));
-
-    ++iterClusterSizes;
-  }
-
-  // accumulate colors
-  iterClusters = _clusters;
-  _imageIn = (unsigned char*)_data;
-  for (int p=0; p<_iterSize; ++p)
-  {
-    iterCentroids = (int*)&_centroids[*iterClusters];
-    *iterCentroids++ += (int)*_imageIn++; // r
-    *iterCentroids++ += (int)*_imageIn++; // g
-    *iterCentroids   += (int)*_imageIn;   // b
-
-    _imageIn+=2;
-    ++iterClusters;
-  }
-
-  // take the mean
-  iterCentroids = (int*)_centroids;
-  iterClusterSizes = _clusterSizes;
-  for (int i=0; i<_nColors; ++i)
-  {
-    if (*iterClusterSizes)
-    {
-      *iterCentroids++ /= *iterClusterSizes;
-      *iterCentroids++ /= *iterClusterSizes;
-      *iterCentroids   /= *iterClusterSizes;
-
-      iterCentroids+=2;
+      /* volume test ensures we won't try to cut one-cell box */
+      vv[next] = (cube[next].vol>1) ? Var(&cube[next]) : 0.0;
+      vv[i] = (cube[i].vol>1) ? Var(&cube[i]) : 0.0;
     } else
-      iterCentroids+=4;
-
-    ++iterClusterSizes;
+    {
+      vv[next] = 0.0;   /* don't try to split this box again */
+      i--;              /* didn't create box i */
+    }
+    next = 0; temp = vv[0];
+    for (k=1; k<=i; ++k)
+      if (vv[k] > temp)
+      {
+        temp = vv[k]; next = k;
+      }
+    if (temp <= 0.0)
+    {
+      _nColors = i+1;
+      fprintf(stderr, "Only got %d boxes\n", _nColors);
+      break;
+    }
   }
+  //  printf("Partition done\n");
 
-  // remap colors
-  iterClusters = _clusters;
-  _imageOut = (unsigned char*)_outData;
-  for (int p=0; p<_iterSize; ++p)
+  /* the space for array m2 can be freed now */
+
+  tag = (unsigned char *)malloc(33*33*33);
+  if (tag==NULL)
   {
-    iterCentroids  = (int*)&_centroids[*iterClusters];
-    *_imageOut++ = (unsigned char)*iterCentroids++; // r
-    *_imageOut++ = (unsigned char)*iterCentroids++; // g
-    *_imageOut++ = (unsigned char)*iterCentroids++; // b
-    *_imageOut++ = (unsigned char)*iterCentroids;   // a
-
-    ++iterClusters;
+    printf("Not enough space\n"); exit(1);
   }
+  for (k=0; k<_nColors; ++k)
+  {
+    Mark(&cube[k], k, tag);
+    weight = Vol(&cube[k], wt);
+    if (weight)
+    {
+      lut_r[k] = Vol(&cube[k], mr) / weight;
+      lut_g[k] = Vol(&cube[k], mg) / weight;
+      lut_b[k] = Vol(&cube[k], mb) / weight;
+    } else
+    {
+      fprintf(stderr, "bogus box %d\n", k);
+      lut_r[k] = lut_g[k] = lut_b[k] = 0;   
+    }
+  }
+
+//   for (k=0; k<_nColors; ++k)
+//   {
+//     printf("(%d,%d,%d) ",lut_r[k], lut_g[k], lut_b[k]);
+//   }
+//   printf("\n");
+
+  //	for(i=0; i<size; ++i) Qadd[i] = tag[Qadd[i]];
+  _imageOut = (unsigned char*)_outData;
+  for (i=0; i<size; ++i)
+  {
+    unsigned short int k = tag[Qadd[i]];
+    *_imageOut++ = lut_r[k];
+    *_imageOut++ = lut_g[k];
+    *_imageOut++ = lut_b[k];
+    *_imageOut++ = 0;
+  }
+  free(tag);
+
 }

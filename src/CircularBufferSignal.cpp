@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 // initsize : size at first initialisation
-CircularBufferSignal::CircularBufferSignal(Signal_T def, int initsize)
-:_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
+CircularBufferSignal::CircularBufferSignal(float def, int initsize)
+  :_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
 {
   resize(initsize);
   setDynamicResizingMaximumSize(_DYN_RESIZE_MAX);
@@ -48,13 +48,13 @@ void CircularBufferSignal::resize(int newsize)
     return;
 
   // make a new buffer
-  Signal_T_ptr newbuf = new Signal_T[newsize];
+  float *newbuf = new float[newsize];
 
   // if we already had a buffer, we copy past signal
   // into the new one to avoid 'temporary amnesia'
   if (_bufSize)
   {
-    Signal_T_ptr nptr = newbuf;
+    float *nptr = newbuf;
     int newSamples = newsize-_bufSize;
 
     //fill new extra-space with default value
@@ -78,13 +78,13 @@ void CircularBufferSignal::resize(int newsize)
   if(computeSum)
   {
     // make a new buffer
-    Signal_T_ptr newbuf = new Signal_T[newsize];
+    float* newbuf = new float[newsize];
     
     // if we already had a buffer, we copy past signal
     // into the new one to avoid 'temporary amnesia'
     if(_bufSize)
     {
-      Signal_T_ptr nptr = newbuf;
+      float* nptr = newbuf;
       int newSamples = newsize-_bufSize;
       
       //fill new extra-space with default value
@@ -108,7 +108,7 @@ void CircularBufferSignal::resize(int newsize)
 
 // appends data to the circular buffer
 // no resizing is done
-void CircularBufferSignal::append(Signal_T * ptr, int size)
+void CircularBufferSignal::append(float *ptr, int size)
 {
   int toEnd = _buf + _bufSize - _current;
   int firstRun = MIN(size,toEnd);
@@ -118,7 +118,7 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
     _bufSize=_bufSize;
 
 
-  memcpy(_current, ptr, firstRun * sizeof(Signal_T));
+  memcpy(_current, ptr, firstRun * sizeof(float));
   _current += firstRun;
   size -= firstRun;
   ptr += firstRun;
@@ -126,7 +126,7 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
   if (size)
   // some samples remaining...
   {
-    memcpy(_buf, ptr, size * sizeof(Signal_T));
+    memcpy(_buf, ptr, size * sizeof(float));
     _current = _buf + size;
   }
 
@@ -137,7 +137,7 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
 
 // appends data to the circular buffer
 // if append size is too big, we resize the buffer.
-void CircularBufferSignal::appendEnlarge(Signal_T * ptr, int size)
+void CircularBufferSignal::appendEnlarge(float *ptr, int size)
 {
   if (size > _bufSize)
     resize(size);
@@ -155,7 +155,7 @@ void CircularBufferSignal::appendEnlarge(Signal_T * ptr, int size)
 //   - go from pa1 to pa2 inclusively, then from pb1 to pb2 inclusively, while processing your samples along the way
 //
 // which stat specifies which buffer to use  
-void CircularBufferSignal::getBounds(int sample_from, int sample_to, Signal_T_ptr& pa1, Signal_T_ptr& pa2, Signal_T_ptr& pb1, Signal_T_ptr& pb2, Stats which_stat)
+void CircularBufferSignal::getBounds(int sample_from, int sample_to, float*& pa1, float*& pa2, float*& pb1, float*& pb2, Stats which_stat)
 {
   // sample_from/to can are [-x to -1] since 0 would mean getting t
   assert(sample_from < 0 && sample_to < 0);
@@ -171,8 +171,8 @@ void CircularBufferSignal::getBounds(int sample_from, int sample_to, Signal_T_pt
       // some kind of log/error
       assert(0);
 
-  Signal_T_ptr bt1 = _current + sample_from;
-  Signal_T_ptr bt2 = _current + sample_to;
+  float *bt1 = _current + sample_from;
+  float *bt2 = _current + sample_to;
 
   if ( bt1 >= _buf || (bt1 < _buf && bt2 < _buf) )
   {

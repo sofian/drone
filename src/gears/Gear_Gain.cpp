@@ -16,9 +16,9 @@ Register_Gear(MAKERGear_Gain, Gear_Gain, "Gain")
 Gear_Gain::Gear_Gain(Engine *engine, std::string name) : Gear(engine, "Gain", name)
 {
 
-  _AUDIO_IN = addPlugSignalIn("In", 0.0f);
-  _PARAM_GAIN = addPlugSignalIn("Gain", 1.0f);
-  _AUDIO_OUT = addPlugSignalOut("Out");
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));
+  addPlug(_PARAM_GAIN = new PlugIn<SignalType>(this, "Gain", new SignalType(1.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
 }
 
 Gear_Gain::~Gear_Gain()
@@ -33,16 +33,16 @@ bool Gear_Gain::ready()
 
 void Gear_Gain::runAudio()
 {
-  Signal_T *bufferin = _AUDIO_IN->buffer();
-  Signal_T *bufferout = _AUDIO_OUT->buffer();
-  Signal_T *buffergain  = _PARAM_GAIN->buffer();
+  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
+  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
+  MatrixType<float> buffergain  = _PARAM_GAIN->type()->buffer();
 
 
   int signal_blocksize = Engine::signalInfo().blockSize();
   for (int i=0;i<signal_blocksize;i++)
   {
     //cout << bufferin[i] << endl;
-    bufferout[i]=bufferin[i] * buffergain[i];                
+    bufferout[i] = bufferin[i] * buffergain[i];                
   }
 
 }

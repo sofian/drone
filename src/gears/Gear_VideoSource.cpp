@@ -14,8 +14,8 @@ _File(NULL),
 _SizeX(0),
 _SizeY(0)
 {    
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOut"));       
-  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));       
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOut"));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
@@ -70,7 +70,7 @@ void Gear_VideoSource::onUpdateSettings()
   //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
   _Frame[_SizeY-1] = (RGBA*) malloc((_SizeX * sizeof(RGBA)) + 4);
 
-  _VIDEO_OUT->type()->image()->resize(_SizeY, _SizeX);
+  _VIDEO_OUT->type()->image()->resize(_SizeX, _SizeY);
 }
 
 void Gear_VideoSource::runVideo()
@@ -119,7 +119,7 @@ void Gear_VideoSource::runVideo()
 
 void Gear_VideoSource::runAudio()
 {
-//  _audioBuffer = _AUDIO_OUT->type()->buffer();
+//  _audioBuffer = _AUDIO_OUT->type()->type()->buffer()->data();
 
   //mpeg3_read_audio(_File, signal, NULL, 1, 128, 0);
 }

@@ -3,6 +3,8 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 
 
 class Gear_Saturation : public Gear
@@ -12,25 +14,18 @@ public:
   Gear_Saturation(Engine *engine, std::string name);
   virtual ~Gear_Saturation();
 
-  void runVideo();
-
-  PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
-  PlugSignalIn* CONTRAST_IN(){return _AMOUNT_IN;};
-
-  bool ready();
+  void runVideo();  bool ready();
 
 private:
 
 
-  PlugVideoIn *_VIDEO_IN;
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  Video_T *_image; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_data;
   RGBA *_outData;
 

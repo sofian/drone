@@ -10,11 +10,10 @@ Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
 
 Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", name), _amountMapData(0)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _AMOUNT_MAP_IN = addPlugVideoIn("Amount Map");
-
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Amount", 0.5f);
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_AMOUNT_MAP_IN = new PlugIn<VideoTypeRGBA>(this, "Amount Map"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(0.5f)));
   _table = new SummedAreaTable();
 }
 
@@ -25,7 +24,7 @@ Gear_Blur::~Gear_Blur()
 
 void Gear_Blur::init()
 {
-  _table->setCanvas(_VIDEO_IN->canvas());
+  _table->setImage(_VIDEO_IN->type()->image());
 }
 
 bool Gear_Blur::ready()
@@ -35,26 +34,26 @@ bool Gear_Blur::ready()
 
 void Gear_Blur::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
+  _image = _VIDEO_IN->type()->image();
 
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
   _sizeY = _image->sizeY();
   _sizeX = _image->sizeX();
 
   ////////////////////////////
 
-  _blurSize=(int) (_AMOUNT_IN->buffer()[0]);
+  _blurSize=(int) _AMOUNT_IN->type()->value();
 
   if (_blurSize <= 0)
-    memcpy(_outImage->_data, _image->_data, _sizeX*_sizeY*sizeof(RGBA));
+    memcpy(_outImage->data(), _image->data(), _image->size()*sizeof(RGBA));
   else
   {
-    _table->setCanvas(_image);
+    _table->setImage(_image);
     _table->buildTable();
 
-    _data = (unsigned char*)_image->_data;    
-    _outData = (unsigned char*)_outImage->_data;
+    _data = (unsigned char*)_image->data();    
+    _outData = (unsigned char*)_outImage->data();
 
     for (int y=0;y<_sizeY;y++)
     {
@@ -64,17 +63,17 @@ void Gear_Blur::runVideo()
         _x2 = x + _blurSize;
         _y1 = y - _blurSize - 1;
         _y2 = y + _blurSize;
-
-        if (_x2 >= _sizeX)_x2 = _sizeX-1;
-        if (_y2 >= _sizeY)_y2 = _sizeY-1;
-
+        
+        _x2 = MIN(_x2, _sizeX-1);
+        _y2 = MIN(_y2, _sizeY-1);
+        
         _table->getSum(&_sum, _x1, _y1, _x2, _y2);
-
+        
         divide((int*)&_sum, _table->getArea(_x1, _y1, _x2, _y2), SIZE_RGBA);
         copy(_outData, (int*)&_sum, SIZE_RGBA);
         _outData+=SIZE_RGBA;
       }
-    }                                    
+    }                                   
   }
 
 }

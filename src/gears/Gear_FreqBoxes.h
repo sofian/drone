@@ -3,6 +3,8 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
+#include "VideoType.h"
 
 #include "FrequencyAnalyzer.h"
 #include "Rasterer.h"
@@ -20,8 +22,8 @@ public:
   void runVideo();
 
 
-  PlugSignalIn* SIGNAL_IN(){return _SIGNAL_IN;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugIn<SignalType>* SIGNAL_IN(){return _SIGNAL_IN;};
+  PlugOut<VideoTypeRGBA>* VIDEO_OUT(){return _VIDEO_OUT;};
 
   void init();
   bool ready();
@@ -31,12 +33,12 @@ protected:
 
 private:
 
-  PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_SIGNAL_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<SignalType> *_SIGNAL_IN;
 
   //local var
 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_outData;
   Rasterer *_rasterer;
 

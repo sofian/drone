@@ -2,6 +2,7 @@
 #define GEAR_GAIN_INCLUDED
 
 #include "Gear.h"
+#include "SignalType.h"
 
 class PlugSignal;
 
@@ -13,15 +14,15 @@ public:
 
   void runAudio();
 
-  PlugSignalIn* AUDIO_IN(){return _AUDIO_IN;};
-  PlugSignalIn* PARAM_GAIN(){return _PARAM_GAIN;};
-  PlugSignalOut* AUDIO_OUT(){return _AUDIO_OUT;};
+  PlugIn<SignalType>* AUDIO_IN(){return _AUDIO_IN;};
+  PlugIn<SignalType>* PARAM_GAIN(){return _PARAM_GAIN;};
+  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
 
 private:
-  PlugSignalIn *_AUDIO_IN, *_PARAM_GAIN;
-  PlugSignalOut *_AUDIO_OUT;
+  PlugIn<SignalType> *_AUDIO_IN, *_PARAM_GAIN;
+  PlugOut<SignalType> *_AUDIO_OUT;
 
 };
 

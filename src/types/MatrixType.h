@@ -7,23 +7,26 @@ template <class T>
 class MatrixType : public AbstractType, public std::vector<T>
 {
 public:
-  MatrixType() : _height(0), _width(0)
+  MatrixType(int width = 0, int height = 0)
+    : _width(width), _height(height)
   {
-    addSubType(_height);
     addSubType(_width);
+    addSubType(_height);
   }
   
   virtual ~MatrixType() {}
 
-
-  //int size() const { return _size; }
-  const ValueType& height() const { return _height; }
   const ValueType& width() const { return _width; }
-    
-  T operator()(int row, int col) const { return operator[](row*_width.getValue()+col); }
+  const ValueType& height() const { return _height; }
+
+  int sizeX() const { return static_cast<int>(_width); }
+  int sizeY() const { return static_cast<int>(_height); }
+  
+  T operator()(int x, int y) const { return operator[](x*static_cast<int>(_width)+y); }
   
   T* data() { return &operator[](0); }
-
+  //operator T*() { return data(); }
+  
   virtual std::string name() const {return "error! UndefinedMatrixType";} 
   virtual QColor color() const {  return QColor(0,0,0); }
   
@@ -32,23 +35,30 @@ public:
     std::vector<T>::resize(size);
   }
 
-  void resize(int height, int width) 
+  void resize(int width, int height) 
   {
     _height.setValue(height);
     _width.setValue(width);
-    resize(height*width);
+    resize(width*height);
   }
   
-  void resize(const ValueType &height, const ValueType& width) 
+  void resize(const ValueType& width, const ValueType &height) 
   {
-    _height = height;
     _width = width;
+    _height = height;
     resize((int)(height.value()*width.value()));
   }
 
+  void fill(T value)
+  {
+    copy(begin(), end(), value);
+  }
+
+  
+
 private:
-  ValueType _height;  
   ValueType _width;
+  ValueType _height;  
 };
 
 /* template<>                                   */

@@ -12,8 +12,8 @@ Register_Gear(MAKERGear_HalfToning, Gear_HalfToning, "HalfToning")
 Gear_HalfToning::Gear_HalfToning(Engine *engine, std::string name)
 : Gear(engine, "HalfToning", name), _carryLine0(0), _carryLine1(0)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
+  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
   for (int i=0; i<256; ++i)
   // *** en fait le mieux serait de les calculer directo... on a juste besoin d'un tableau pour r et dl (paires)
   {
@@ -35,15 +35,15 @@ bool Gear_HalfToning::ready()
 
 void Gear_HalfToning::runVideo()
 {
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _image = _VIDEO_IN->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _outImage->resize(_image->width(), _image->height());
 
-  _sizeX = _image->sizeX();
-  _sizeY = _image->sizeY();
+  _sizeX = _image->width();
+  _sizeY = _image->height();
 
-  _data = _image->_data;    
-  _outData = _outImage->_data;
+  _data = _image->data();    
+  _outData = _outImage->data();
 
   /* allocate _carryLine0 and _carryLine1 */
 //   if (_carryLine0)

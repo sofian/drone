@@ -38,7 +38,6 @@ _sizeX(0),
 _sizeY(0),
 _device(0),
 _bufferBGRA(NULL)
-
 {      
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 

@@ -1,7 +1,8 @@
 #ifndef RASTERER_INCLUDED
 #define RASTERER_INCLUDED
 
-#include "Canvas.h"
+#include "MatrixType.h"
+#include "ColorSpace.h"
 
 class Rasterer
 {
@@ -14,8 +15,8 @@ public:
   Rasterer();
   ~Rasterer();
 
-  void setCanvas(Canvas *canvas);    
-  void setBrush(Canvas *brush){_brush=brush;};
+  void setImage(MatrixType<RGBA> *image);    
+  void setBrush(MatrixType<RGBA> *brush){_brush=brush;};
   void setColor(const RGBA &color){_color=color;};
   void setColor(unsigned char r, unsigned char g, unsigned char b);
 
@@ -28,22 +29,22 @@ public:
 
   void ellipsePoints(int x0, int y0, int relx, int rely)
   {
-    int sizeX = _canvas->sizeX();
+    int sizeX = _image->sizeX();
     int x    = x0 + relx;
     int xSym = x0 - relx;
     int y    = y0 + rely;
     int ySym = y0 - rely;
-    _canvasData[ y * sizeX + x ]       = _color;
-    _canvasData[ y * sizeX + xSym ]    = _color;
-    _canvasData[ ySym * sizeX + x ]    = _color;
-    _canvasData[ ySym * sizeX + xSym ] = _color;
+    _imageData[ y * sizeX + x ]       = _color;
+    _imageData[ y * sizeX + xSym ]    = _color;
+    _imageData[ ySym * sizeX + x ]    = _color;
+    _imageData[ ySym * sizeX + xSym ] = _color;
   }
 
 private:
 
-  Canvas *_canvas;
-  RGBA *_canvasData;
-  Canvas *_brush; //!if brush = null then color is use to raster
+  MatrixType<RGBA> *_image;
+  RGBA *_imageData;
+  MatrixType<RGBA> *_brush; //!if brush = null then color is use to raster
   RGBA _color;
 
   RasterMode _rasterMode;

@@ -3,6 +3,7 @@
 
 
 #include "Gear.h"
+#include "SignalType.h"
 #include "sndfile.h"
 
 class Gear_AudioSource : public Gear
@@ -15,7 +16,7 @@ public:
 
   void runAudio();
 
-  PlugSignalOut* AUDIO_OUT(){return _AUDIO_OUT;};
+  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
 
@@ -24,12 +25,12 @@ protected:
 
 private:
 
-  PlugSignalOut *_AUDIO_OUT;
+  PlugOut<SignalType> *_AUDIO_OUT;
   SNDFILE* _File;
   SF_INFO _SFInfo;
 
   //locals
-  Signal_T *_audioBuffer;
+  MatrixType<float> _audioBuffer;
 
 };
 

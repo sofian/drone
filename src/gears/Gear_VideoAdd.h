@@ -3,6 +3,7 @@
 
 
 #include "Gear.h"
+#include "VideoType.h"
 
 
 class Gear_VideoAdd : public Gear
@@ -12,24 +13,18 @@ public:
   Gear_VideoAdd(Engine *engine, std::string name);
   virtual ~Gear_VideoAdd();
 
-  void runVideo();
-
-  PlugVideoIn* VIDEO_IN_A(){return _VIDEO_IN_A;};
-  PlugVideoIn* VIDEO_IN_B(){return _VIDEO_IN_B;};
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-
-  bool ready();
+  void runVideo();  bool ready();
 
 private:
 
-  PlugVideoIn *_VIDEO_IN_A;
-  PlugVideoIn *_VIDEO_IN_B;
-  PlugVideoOut *_VIDEO_OUT;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN_A;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN_B;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
   //local var
-  Video_T *_imageA; 
-  Video_T *_imageB; 
-  Video_T *_outImage; 
+  MatrixType<RGBA> *_imageA; 
+  MatrixType<RGBA> *_imageB; 
+  MatrixType<RGBA> *_outImage; 
   RGBA *_dataA;
   RGBA *_dataB;
   RGBA *_outData;

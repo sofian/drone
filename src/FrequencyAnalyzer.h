@@ -1,7 +1,7 @@
 #ifndef FREQUENCYANALYZER_INCLUDED
 #define FREQUENCYANALYZER_INCLUDED
 
-#include "PlugSignal.h"
+#include "Plug.h"
 #include <fftw3.h>
 
 class FrequencyAnalyser
@@ -13,9 +13,9 @@ public:
 
   void prepare(int bufferSize);
 
-  void frequencyToTime(Signal_T *inputBuffer, Signal_T *outputBuffer);
-  void timeToFrequency(Signal_T *inputBuffer, Signal_T *outputBuffer);
-  void filter(Signal_T *inputBuffer, Signal_T *outputBuffer);
+  void frequencyToTime(float *inputBuffer, float *outputBuffer);
+  void timeToFrequency(float *inputBuffer, float *outputBuffer);
+  void filter(float *inputBuffer, float *outputBuffer);
 
   //int getMasterFrequency();
   //float getBand(int lowerFreq, int higherFreq);
@@ -25,7 +25,7 @@ public:
 private:    
 /*     rfftw_plan _fftwPlan;                                                     */
 /*     rfftw_plan _fftwPlanInvert;                                               */
-/*     Signal_T *_hammingWindow;                                                 */
+/*     float *_hammingWindow;                                                 */
 /*     int _bufferSize;                                                          */
 /*     int _windowSize;                                                          */
 /*                                                                               */

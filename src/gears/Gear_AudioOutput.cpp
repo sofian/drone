@@ -15,13 +15,13 @@ const std::string Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
 Gear_AudioOutput::Gear_AudioOutput(Engine *engine, std::string name) : 
 Gear(engine, "AudioOutput", name),     
 _RingBufferSize(512),
-_LBuffer(NULL),
-_RBuffer(NULL),
+_LBuffer(),
+_RBuffer(),
 _ReadIndex(0)
 
 {
-  _AUDIO_IN_LEFT = addPlugSignalIn("Left", 0.0f);    
-  _AUDIO_IN_RIGHT = addPlugSignalIn("Right", 0.0f);    
+  addPlug(_AUDIO_IN_LEFT = new PlugIn<SignalType>(this, "Left", new SignalType(0.0f)));    
+  addPlug(_AUDIO_IN_RIGHT = new PlugIn<SignalType>(this, "Right", new SignalType(0.0f)));    
 
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
@@ -90,12 +90,9 @@ void Gear_AudioOutput::onUpdateSettings()
 
 void Gear_AudioOutput::runAudio()
 {
-  Signal_T *left_buffer  = _AUDIO_IN_LEFT->buffer();
-  //Signal_T *right_buffer  = _AUDIO_IN_RIGHT->buffer();     
+  MatrixType<float> left_buffer  = _AUDIO_IN_LEFT->type()->buffer();
   int signal_blocksize = Engine::signalInfo().blockSize();
   static bool started = false;
-
-
 
   for (int i=0; i<signal_blocksize; i++)
     _LBuffer[_ReadIndex++] = left_buffer[i];
@@ -139,11 +136,7 @@ void Gear_AudioOutput::initPortAudio()
 
   _RingBufferSize = framesPerBuffer * 16;
 
-  if (_LBuffer!=NULL)
-    delete[] _LBuffer;
-
-  _LBuffer = new Signal_T[_RingBufferSize];
-
+  _LBuffer.resize(_RingBufferSize);
 
   err = Pa_OpenStream(
                      &_Stream,
@@ -183,7 +176,7 @@ int Gear_AudioOutput::portAudioCallback(void *, void *output_buffer, unsigned lo
   static Gear_AudioOutput *parent = (Gear_AudioOutput*)user_data;
   static int lindex=0;
   //static int rindex=0;
-  Signal_T *lbuffer = parent->_LBuffer;
+  MatrixType<float>& lbuffer = parent->_LBuffer;
 
   int ringBufferSize = parent->_RingBufferSize;
 

@@ -14,12 +14,11 @@ class Plug : public AbstractPlug
   friend PlugIn<T>::PlugIn(Gear* parent, std::string name);
   friend PlugOut<T>::PlugOut(Gear* parent, std::string name);
 
-private:
-  Plug(Gear* parent, eInOut inOut, std::string name)
-  : AbstractPlug(parent, new T(), inOut, name)
+protected:
+  Plug(Gear* parent, eInOut inOut, std::string name, T* type = new T())
+    : AbstractPlug(parent, inOut, name, type)
   {
-    _type = static_cast<T*>(abstractType());
-    _defaultType = _type;
+    _type = _defaultType = type;
   }
 
 public:
@@ -39,8 +38,8 @@ template <class T>
 class PlugOut : public Plug<T>
 {
 public:
-  PlugOut(Gear* parent, std::string name)
-  : Plug<T>(parent, OUT, name)
+  PlugOut(Gear* parent, std::string name, T* type = new T())
+  : Plug<T>(parent, OUT, name, type)
   {
   }
 
@@ -56,8 +55,8 @@ template <class T>
 class PlugIn : public Plug<T>
 {
 public:
-  PlugIn(Gear* parent, std::string name)
-  : Plug<T>(parent, IN, name)
+  PlugIn(Gear* parent, std::string name, T* type = new T())
+  : Plug<T>(parent, IN, name, type)
   {
   }
 

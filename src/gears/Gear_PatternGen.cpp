@@ -20,8 +20,8 @@ const std::string Gear_PatternGen::SETTING_SIZE_Y = "SizeY";
 
 Gear_PatternGen::Gear_PatternGen(Engine *engine, std::string name) : Gear(engine, "PatternGen", name)
 {    
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _PARAM_IN = addPlugSignalIn("Parm", 1.0f);
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_PARAM_IN = new PlugIn<ValueType>(this, "Parm", new ValueType(1.0f)));
 
   _settings.add(Property::INT, SETTING_SIZE_X)->valueInt(256);    
   _settings.add(Property::INT, SETTING_SIZE_Y)->valueInt(256);    
@@ -36,7 +36,7 @@ Gear_PatternGen::~Gear_PatternGen()
 
 void Gear_PatternGen::onUpdateSettings()
 {    
-  _VIDEO_OUT->canvas()->allocate(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
+  _VIDEO_OUT->type()->image()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 bool Gear_PatternGen::ready()
@@ -46,22 +46,22 @@ bool Gear_PatternGen::ready()
 
 void Gear_PatternGen::runVideo()
 {
-  _outImage = _VIDEO_OUT->canvas();    
-  _outData = _outImage->_data;
+  _outImage = _VIDEO_OUT->type()->image();    
+  _outData = _outImage->data();
 
-  _iterSizeX = _outImage->sizeX();
-  _iterSizeY = _outImage->sizeY();
+  _iterSizeX = _outImage->width();
+  _iterSizeY = _outImage->height();
 
-  //int PatternGen = (int)((float)((_PatternGen_IN->buffer()[0]+1.0f) * 1024.0f));    
+  //int PatternGen = (int)((float)((_PatternGen_IN->type()->value()+1.0f) * 1024.0f));    
 
   for (int y=0;y<_iterSizeY;y++)
   {
     _imageOut = (unsigned char*)&_outData[(y*_iterSizeX)];        
     for (int x=0;x<_iterSizeX;x++)
     {
-/*             *(_imageOut) = x*y*(_PARAM_IN->buffer()[0]);                */
-/*             *(_imageOut+1) = x*y*(_PARAM_IN->buffer()[0]);//rand()%256; */
-/*             *(_imageOut+2) = x*y*(_PARAM_IN->buffer()[0]);//rand()%256; */
+/*             *(_imageOut) = x*y*(_PARAM_IN->type()->value());                */
+/*             *(_imageOut+1) = x*y*(_PARAM_IN->type()->value());//rand()%256; */
+/*             *(_imageOut+2) = x*y*(_PARAM_IN->type()->value());//rand()%256; */
 /*             _imageOut+=4;                                               */
     }
   }

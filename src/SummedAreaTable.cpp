@@ -14,15 +14,15 @@ SummedAreaTable::~SummedAreaTable()
   free(_accSquares);
 }
 
-void SummedAreaTable::setImage(MatrixType<RGBA> &image)
+void SummedAreaTable::setImage(MatrixType<RGBA> *image)
 {
-  _image = &image;
+  _image = image;
   if (_image)
   {
     _imageData = _image->data();
-    _width = _image->width();
-    _height = _image->height();
-    _size = _width * _height;
+    _width = _image->sizeX();
+    _height = _image->sizeY();
+    _size = _image->size();
   }
 }
 
@@ -32,12 +32,12 @@ void SummedAreaTable::buildTable()
     return;
 
   // check if we need to resize
-  if (_image->width() * _image->height() != _size) // there was a change
+  if (_image->sizeX() * _image->sizeY() != _size) // there was a change
   {
     // resize
     _width = _image->width();
     _height = _image->height();
-    _size = _width * _height;
+    _size = _image->size();
   }
 
   // reallocate

@@ -10,10 +10,10 @@ Register_Gear(MAKERGear_VideoBlend, Gear_VideoBlend, "VideoBlend")
 
 Gear_VideoBlend::Gear_VideoBlend(Engine *engine, std::string name) : Gear(engine, "VideoBlend", name)
 {
-  _VIDEO_IN_A = addPlugVideoIn("ImgA");
-  _VIDEO_IN_B = addPlugVideoIn("ImgB");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _ALPHA_IN = addPlugSignalIn("Alpha", 0.0f);//50%
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_ALPHA_IN = new PlugIn<ValueType>(this, "Alpha", new ValueType(0.0f)));//50%
 }
 
 Gear_VideoBlend::~Gear_VideoBlend()
@@ -30,33 +30,33 @@ bool Gear_VideoBlend::ready()
 
 void Gear_VideoBlend::runVideo()
 {
-  _imageA = _VIDEO_IN_A->canvas();
-  _imageB = _VIDEO_IN_B->canvas();
+  _imageA = _VIDEO_IN_A->type()->image();
+  _imageB = _VIDEO_IN_B->type()->image();
 
-  _outImage = _VIDEO_OUT->canvas();
+  _outImage = _VIDEO_OUT->type()->image();
 
-  _imageOutSizeX = MAX(_imageA->sizeX(), _imageB->sizeX());
-  _imageOutSizeY = MAX(_imageA->sizeY(), _imageB->sizeY());
-  _outImage->allocate(_imageOutSizeX, _imageOutSizeY);
+  _imageOutSizeX = MAX(_imageA->width(), _imageB->width());
+  _imageOutSizeY = MAX(_imageA->height(), _imageB->height());
+  _outImage->resize(_imageOutSizeX, _imageOutSizeY);
 
-  //std::cout << _outImage->sizeX() << "x" << _outImage->sizeY() << std::endl;
+  //std::cout << _outImage->width() << "x" << _outImage->height() << std::endl;
 
-  _dataA = _imageA->_data;    
-  _dataB = _imageB->_data;    
-  _outData = _outImage->_data;
+  _dataA = _imageA->data();    
+  _dataB = _imageB->data();    
+  _outData = _outImage->data();
 
 
-  _imageASizeX = _imageA->sizeX();
-  _imageASizeY = _imageA->sizeY();
-  _imageBSizeX = _imageB->sizeX();
-  _imageBSizeY = _imageB->sizeY();
+  _imageASizeX = _imageA->width();
+  _imageASizeY = _imageA->height();
+  _imageBSizeX = _imageB->width();
+  _imageBSizeY = _imageB->height();
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 
 
 
   //todo fast float to int
-  _mmxAlpha = (unsigned char) _ALPHA_IN->buffer()[0];
+  _mmxAlpha = (unsigned char) _ALPHA_IN->type()->value();
   unsigned char tempAlpha[8];
   tempAlpha[0] = _mmxAlpha;
   tempAlpha[1] = 0;

@@ -11,11 +11,11 @@ const std::string Gear_VideoMix::SETTING_MIX_FUNCTION = "MIX FUNCTION : See the 
 
 Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
 {
-  _VIDEO_IN_A = addPlugVideoIn("ImgA");
-  _VIDEO_IN_B = addPlugVideoIn("ImgB");
-  _VIDEO_OUT = addPlugVideoOut("ImgO");
-  _AMOUNT_IN = addPlugSignalIn("ArgA", 127);
-  _MIXFUNC_IN = addPlugSignalIn("MixFunc", 0);
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgO"));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127)));
+  addPlug(_MIXFUNC_IN = new PlugIn<ValueType>(this, "MixFunc", new ValueType(0)));
 
   _settings.add(Property::INT, SETTING_MIX_FUNCTION)->valueInt((int)BLEND);
 }
@@ -32,35 +32,35 @@ bool Gear_VideoMix::ready()
 
 void Gear_VideoMix::runVideo()
 {
-  _imageA = _VIDEO_IN_A->canvas();
-  _imageB = _VIDEO_IN_B->canvas();
-  _outImage = _VIDEO_OUT->canvas();
-  _mixType = (eVideoMixType)_MIXFUNC_IN->buffer()[0];
+  _imageA = _VIDEO_IN_A->type()->image();
+  _imageB = _VIDEO_IN_B->type()->image();
+  _outImage = _VIDEO_OUT->type()->image();
+  _mixType = (eVideoMixType)_MIXFUNC_IN->type()->value();
 
-  if (_imageA->sizeX() != _imageB->sizeX() ||
-      _imageA->sizeY() != _imageB->sizeY())
+  if (_imageA->width() != _imageB->width() ||
+      _imageA->height() != _imageB->height())
   {
     std::cerr << "images have to be of the same size for now" << std::endl;
     exit(0);
   }
 
-  int size = _imageA->sizeX()*_imageA->sizeY();
+  int size = _imageA->size();
 
-  _outImage->allocate(_imageA->sizeX(), _imageA->sizeY());
+  _outImage->resize(_imageA->width(), _imageA->height());
 
-  _dataA = _imageA->_data;    
-  _dataB = _imageB->_data;    
-  _outData = _outImage->_data;
+  _dataA = _imageA->data();    
+  _dataB = _imageB->data();    
+  _outData = _outImage->data();
 
   switch (_mixType)
   {
   case BLEND:
     blend_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 (int) _AMOUNT_IN->buffer()[0], size, SIZE_RGB);
+                 (int) _AMOUNT_IN->type()->value(), size, SIZE_RGB);
     break;
   case SHADE:
     shade_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 (int) _AMOUNT_IN->buffer()[0], size, SIZE_RGB, 0);
+                 (int) _AMOUNT_IN->type()->value(), size, SIZE_RGB, 0);
     break;
   case DARKEN:
     darken_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,

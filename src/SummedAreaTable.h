@@ -17,7 +17,7 @@ public:
   SummedAreaTable();
   ~SummedAreaTable();
 
-  void setImage(MatrixType<RGBA> &image);
+  void setImage(MatrixType<RGBA> *image);
 
   void buildTable();
   void buildTableOfSquares();

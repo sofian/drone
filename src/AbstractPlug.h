@@ -19,7 +19,7 @@ class Gear;
 class AbstractPlug  
 {
 public:
-  AbstractPlug(Gear* parent, AbstractType* type, eInOut inOut, std::string name);
+  AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -52,8 +52,8 @@ protected:
 private:
   Gear *_parent;
   eInOut _inOut;
-  AbstractType *_abstractType;
   std::string _name;
+  AbstractType *_abstractType;
 
 };
 

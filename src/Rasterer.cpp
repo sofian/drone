@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include <iostream>
 
-Rasterer::Rasterer() : _canvas(NULL), _canvasData(NULL), _brush(NULL), _rasterMode(RASTER_REPLACE)
+Rasterer::Rasterer() : _image(NULL), _imageData(NULL), _brush(NULL), _rasterMode(RASTER_REPLACE)
 {
   _color.r=255;
   _color.g=255;
@@ -14,12 +14,12 @@ Rasterer::~Rasterer()
 {
 }
 
-void Rasterer::setCanvas(Canvas *canvas)
+void Rasterer::setImage(MatrixType<RGBA> *image)
 {
-  _canvas=canvas;
+  _image=image;
 
-  if (_canvas!=NULL)
-    _canvasData = _canvas->_data;
+  if (_image!=NULL)
+    _imageData = _image->data();
 
 }
 
@@ -36,7 +36,7 @@ void Rasterer::line(int x0, int y0, int x1, int y1)
 
 void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 {
-  int sizeX = _canvas->sizeX();
+  int sizeX = _image->sizeX();
   unsigned char *data;
   unsigned char r=_color.r;
   unsigned char g=_color.g;
@@ -45,7 +45,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
   if (filled)
     for (int y=y0;y<y1;y++)
     {
-      data = (unsigned char*)&_canvasData[y*sizeX + x0];
+      data = (unsigned char*)&_imageData[y*sizeX + x0];
       for (int x=x0;x<x1;x++)
       {
         *(data++) = r;
@@ -56,7 +56,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
     }
   else
   {
-    data = (unsigned char*)&_canvasData[y0*sizeX + x0];
+    data = (unsigned char*)&_imageData[y0*sizeX + x0];
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
@@ -67,18 +67,18 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 
     for (int y=y0; y<=y1; ++y)
     {
-      data = (unsigned char*)&_canvasData[y*sizeX + x0];
+      data = (unsigned char*)&_imageData[y*sizeX + x0];
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;       
 
-      data = (unsigned char*)&_canvasData[y*sizeX + x1];
+      data = (unsigned char*)&_imageData[y*sizeX + x1];
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;
     }
 
-    data = (unsigned char*)&_canvasData[y1*sizeX + x0];
+    data = (unsigned char*)&_imageData[y1*sizeX + x0];
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
