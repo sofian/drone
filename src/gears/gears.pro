@@ -32,7 +32,9 @@ SmearGrid \
 VideoDelay \
 VideoLoop \
 ImageShuffle \
-Invert
+ImageSequence \
+Invert \
+Noise
 
 #linux specific gears
 unix:!macx:SUBDIRS += VideoInput AudioInput
