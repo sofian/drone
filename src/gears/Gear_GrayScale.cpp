@@ -33,29 +33,35 @@ void Gear_GrayScale::runVideo()
   _outImage->resize(_image->width(), _image->height());
   _size = _image->size();
 
-  _imageIn  = (unsigned char*)_image->data();
-  _imageOut = (unsigned int*) _outImage->data();
+  if (_image->isGray()) // already gray
+    memcpy(_outImage->data(), _image->data(), _image->size() * sizeof(RGBA));
+  else
+  {
+    _imageIn  = (unsigned char*)_image->data();
+    _imageOut = (unsigned int*) _outImage->data();
 
-  int total;
-  
-  for (int p=0; p<_size; ++p)
-  {    
-    // add everything
-    // 0.25 * R + 0.5 * G + 0.25 * B 
-    total = *_imageIn++;
-    total += *_imageIn;
-    total += *_imageIn++;
-    total += *_imageIn++;
-    _imageIn++;
-
-    // divide by 4
-    total >>= 2;
-
-    //        R = total | G = total | B = total
-    *_imageOut++ = total | total<<8 | total <<16;
-
+    int total;
     
+    for (int p=0; p<_size; ++p)
+    {
+      // add everything
+      // 0.25 * R + 0.5 * G + 0.25 * B 
+      total = *_imageIn++;
+      total += *_imageIn;
+      total += *_imageIn++;
+      total += *_imageIn++;
+      _imageIn++;
+      
+      // divide by 4
+      total >>= 2;
+      
+      //        R = total | G = total | B = total
+      *_imageOut++ = total | total<<8 | total <<16;
+    }
   }
+
+  // Output image is now gray.
+  _outImage->setIsGray(true);
 }
 
 
