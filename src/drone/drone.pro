@@ -67,7 +67,7 @@ HEADERS += config.h \
 GearListMenu.h \ 
 GearPropertiesDialog.h \
 MainWindow.h \
-PreferencesDialog.h \
+#PreferencesDialog.h \
 PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
@@ -85,6 +85,6 @@ PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \
 PropertyControlBool.cpp \
-PreferencesDialog.cpp \
+#PreferencesDialog.cpp \
 SchemaEditor.cpp
 

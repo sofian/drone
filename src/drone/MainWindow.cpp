@@ -31,7 +31,7 @@
 
 #include "SchemaGui.h"
 
-#include "PreferencesDialog.h"
+//#include "PreferencesDialog.h"
 
 const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
 const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
@@ -239,8 +239,8 @@ void MainWindow::slotMenuSaveAs()
 
 void MainWindow::slotMenuPreferences()
 {
-  PreferencesDialog pd(this, _engine);
-  pd.exec();
+//  PreferencesDialog pd(this, _engine);
+//  pd.exec();
   
 }
 
