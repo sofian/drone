@@ -3,6 +3,7 @@
 
 #include "Gear.h"
 #include "SignalType.h"
+#include "ValueType.h"
 
 class PlugSignal;
 
@@ -13,10 +14,6 @@ public:
   virtual ~Gear_Gain();
 
   void runAudio();
-
-  PlugIn<SignalType>* AUDIO_IN(){return _AUDIO_IN;};
-  PlugIn<SignalType>* PARAM_GAIN(){return _PARAM_GAIN;};
-  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
 
