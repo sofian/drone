@@ -36,12 +36,12 @@
 //! Min.
 template <typename T>
 T MIN(T x, T y)
-{ return std::min(x,y); }
+{ return (x < y ? x : y); }
 
 //! Max.
 template <typename T>
 T MAX(T x, T y)
-{ return std::max(x,y); }
+{ return (x > y ? x : y); }
 
 // Begin LIBGIMP
 
@@ -245,6 +245,13 @@ inline void fill(T *dst, const U val, size_t n)
 {
   while (n--)
     *dst++ = static_cast<T>(val);
+}
+
+//! Fills #n# values of #src# with zeros.
+template <typename T>
+inline void clear(T *dst, size_t n)
+{
+  memset(dst, 0, n*sizeof(T));
 }
 
 //! Returns the sum of #n# elements of #src#.
