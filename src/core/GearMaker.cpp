@@ -19,7 +19,7 @@
 
 #include "Gear.h"
 #include "GearMaker.h"
-#include "Gear_Frei0r.h"
+#include "GearFrei0r.h"
 #include "frei0r.h"
 #include "error.h"
 #include <qdir.h>
@@ -32,8 +32,6 @@
 
 GearMaker GearMaker::_registerMyself;
 std::map<std::string, GearMaker::GearPluginDefinition*> *GearMaker::_registry;
-
-void* GearMaker::_frei0rHandle;
 
 GearMaker::GearMaker() 
 {  
@@ -73,9 +71,9 @@ Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueNa
   {
     std::cout << "building up a frei0r plugin" << std::endl;
     
-    void (*setFrei0rLib)(std::string myFrei0rLib);
-    
-    *(void**) (&setFrei0rLib) = dlsym(_frei0rHandle, "setFrei0rLib");
+    void (*setGlobalFrei0rLib)(std::string myFrei0rLib);
+    setGlobalFrei0rLib = &GearFrei0r::setGlobalFrei0rLib;
+
     if ((error = dlerror()))
     {
       std::cout<< "fuck: " <<std::endl;
@@ -83,7 +81,7 @@ Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueNa
     }
 
     std::cout << "frei0rlib path = " <<(char*)it->second->gearInfo().data << std::endl;
-    (*setFrei0rLib)((char*)it->second->gearInfo().data);
+    (*setGlobalFrei0rLib)((char*)it->second->gearInfo().data);
   }
   
   //make the gear
@@ -131,8 +129,6 @@ void GearMaker::parseGears()
   QFileInfo *fileInfo;
   const char* error;
 
-  GearMaker::initFrei0r();
-  
   while ((fileInfo = it.current()) != 0 )
   {
     std::cout << fileInfo->fileName() << std::endl;
@@ -142,11 +138,11 @@ void GearMaker::parseGears()
     
     //open file
     void *handle = dlopen(fileInfo->filePath(), RTLD_LAZY);
-    if (handle == _frei0rHandle)
-    {
-      ++it;//next file
-      continue;
-    }
+//     if (handle == _frei0rHandle)
+//     {
+//       ++it;//next file
+//       continue;
+//     }
     
     if (!(error = dlerror()))    
     {          
@@ -184,23 +180,14 @@ void GearMaker::parseGears()
           std::cout << "this is a frei0r plugin with path = " << fileInfo->filePath() << std::endl;
           
           // get gear info
-          void (*setFrei0rLib)(std::string myFrei0rLib);
-          
-          *(void**) (&setFrei0rLib) = dlsym(_frei0rHandle, "setFrei0rLib");
-          if ((error = dlerror()))
-          {
-            std::cout<< "fuck: " <<std::endl;
-            std::cout << error << std::endl;
-          }
-          
-          (*setFrei0rLib)(fileInfo->filePath());
+
+          // set frei0r lib (XXX pourrait etre une fonction statique)
+          GearFrei0r::setGlobalFrei0rLib(fileInfo->filePath());
     
-          *(void**) (&getGearInfo) = dlsym(_frei0rHandle, "getGearInfo");
-          GearInfo gearInfo = (*getGearInfo)();
+          GearInfo gearInfo = GearFrei0r::getGearInfo();
           std::cout << "got info" <<std::endl;
           
           // XXX TODO: should be a handle to Gear_Frei0r
-          *(void**) (&makeGear) = dlsym(_frei0rHandle, "makeGear");
           if ((error = dlerror()))
           {
             warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
@@ -210,7 +197,7 @@ void GearMaker::parseGears()
           std::cout<< "making def" << std::endl;
           GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,
                                                                                 FREI0R_PLUGIN,
-                                                                                _frei0rHandle, makeGear);  
+                                                                                0, &GearFrei0r::makeGear);
           
           //add geardefintion to the registry
           (*_registry)[gearInfo.name]=gearPluginDefinition;//todo check for duplicates
@@ -232,13 +219,3 @@ void GearMaker::parseGears()
   }
 }
 
-void GearMaker::initFrei0r()
-{
-  const char* error;
-  _frei0rHandle = dlopen("gears/libGear_Frei0r.so", RTLD_LAZY);
-  if ((error = dlerror()))
-  {
-    warningmsg("cannot load Gear_Frei0r! frei0r not supported");
-    std::cout << error << std::endl;      
-  }
-}

@@ -52,7 +52,7 @@ agg {
 
 TEMPLATE = app
 DEPENDPATH += src
-INCLUDEPATH += ../core ../core/types ../contrib/frei0r ../gears/Frei0r
+INCLUDEPATH += ../core ../core/types ../contrib/frei0r
 
 #mac
 macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
