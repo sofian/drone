@@ -16,6 +16,9 @@ class MainWindow : public QMainWindow
   static const int CANVAS_SIZE_X;
   static const int CANVAS_SIZE_Y;
 
+  //! loads the specified schema file
+  void load(std::string filename);
+
   MainWindow();
   ~MainWindow();
 
@@ -35,6 +38,7 @@ private:
 
 
   Engine* _engine;
+  QFrame* _frame;
   QCanvas* _schemaCanvas;
 
   SchemaEditor *_schemaEditor;    

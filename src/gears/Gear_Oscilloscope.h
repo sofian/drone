@@ -1,11 +1,12 @@
 #ifndef GEAR_OSCILLOSCOPE_INCLUDED
 #define GEAR_OSCILLOSCOPE_INCLUDED
 
-
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoType.h"
-#include "CircularBufferSignal.h"
+
+template<class T>
+class CircularBuffer;
 
 class PlugVideo;
 class PlugSignal;
@@ -35,11 +36,11 @@ private:
   VideoTypeRGBA *_outImage; 
   RGBA *_outData;
 
-  CircularBufferSignal * circbuf;
+  CircularBuffer<Signal_T> * circbuf;
   
   // contains average of samples over 1 pixel
   // must be recomputed every time zoomx or sizex is changed
-  CircularBufferSignal * pixbuf;
+  CircularBuffer<Signal_T> * pixbuf;
 };
 
 #endif

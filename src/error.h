@@ -52,7 +52,7 @@
 // This macro is absolutely NOT SAFE! NEVER USE IT ALONE!!!
 // Use ASSERT_ERROR, ASSERT_WARNING and ASSERT_NOTICE instead, below.
 #define TRIGGER_ASSERT(expr, func) \
-((expr) ? static_cast<void>(0) : func(__STRING(expr)) );
+((expr) ? static_cast<void>(0) : func(__STRING(__FILE__ __LINE : expr)) );
 
 //! Assertion macros.
 #define ASSERT_ERROR(expr)   TRIGGER_ASSERT(expr, ERROR)

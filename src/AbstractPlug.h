@@ -14,6 +14,11 @@ enum eInOut
   IN, OUT
 };
 
+enum ePlugState
+{
+  ACTIVE, SLEEPING
+};
+
 class Gear;
 
 class AbstractPlug  
@@ -30,6 +35,7 @@ public:
   void disconnectAll();
 
   bool connected() const { return !_connectedPlugs.empty();};
+  //bool active() const { return plugState()==ACTIVE;};
 
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
@@ -47,6 +53,8 @@ public:
   std::string fullName() const;
   std::string shortName(int nbChars) const;
   std::string name() const {return _name;};
+
+  //virtual ePlugState plugState()=0;
 
 protected:
   std::list<AbstractPlug*> _connectedPlugs;    

@@ -1,18 +1,20 @@
-#ifndef GEAR_BLUR_INCLUDED
-#define GEAR_BLUR_INCLUDED
+#ifndef GEAR_VIDEODELAY_INCLUDED
+#define GEAR_VIDEODELAY_INCLUDED
 
 
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoType.h"
-#include "SummedAreaTable.h"
 
-class Gear_Blur : public Gear
+template <class T>
+class CircularBuffer;
+
+class Gear_VideoDelay : public Gear
 {
 public:
 
-  Gear_Blur(Engine *engine, std::string name);
-  virtual ~Gear_Blur();
+  Gear_VideoDelay(Engine *engine, std::string name);
+  virtual ~Gear_VideoDelay();
 
   void runVideo();
 
@@ -22,27 +24,23 @@ private:
 
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
-  PlugIn<ValueType> *_AMOUNT_IN;
+  PlugIn<ValueType> *_MEMORY;
+  PlugIn<ValueType> *_DELAY;
+  PlugIn<ValueType> *_RECORD;
 
   //local var
   const VideoTypeRGBA *_image;     
   VideoTypeRGBA *_outImage; 
   unsigned char *_data;
 
-  SummedAreaTable *_table;
-  RGBAint _sum;
-
   unsigned char *_outData;
 
   int _sizeY;
   int _sizeX;
+  int _delay;
+  int _memory;
 
-  int _x1,_y1,_x2,_y2;
-
-  int _blurSize;
-  int _halfBlurSize;
-
-  RGBA _acc;
+  CircularBuffer<RGBA> * circbuf;
 
   void init();    
 };

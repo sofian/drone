@@ -21,6 +21,7 @@ public:
   
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
+  int intValue() const { return (int)_value; }
   
   operator float () const {return _value;}
   

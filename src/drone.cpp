@@ -8,8 +8,6 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "Signal.h"
-#include "CircularBufferSignal.h"
 #include "Utils.h"
 
 //#include "AllGears.h"
@@ -27,10 +25,18 @@ int main(int argc, char** argv)
   qtApp.setMainWidget(&mainWindow);
 
   //temp just because it's too fast for now
-//    Timing::sleep(500);
+  //Timing::sleep(500);
   //
 
   mainWindow.show();
+  
+  if(argc>1)
+  {
+    if(argc==2)
+      mainWindow.load(argv[1]);
+    else 
+      ERROR("Usage : drone [schema.drn]");
+  }
 
   //splash.finish(&mainWindow);
 

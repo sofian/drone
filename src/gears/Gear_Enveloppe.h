@@ -4,7 +4,6 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "ValueType.h"
-#include "Signal.h"
 
 class PlugSignal;
 

@@ -2,9 +2,7 @@
 #include "Engine.h"
 #include <iostream>
 #include "GearMaker.h"
-
-#include <GL/gl.h>              
-#include <GL/glu.h>
+#include "CircularBuffer.h"
 
 Register_Gear(MAKERGear_Oscilloscope, Gear_Oscilloscope, "Oscilloscope")
 
@@ -18,7 +16,7 @@ Gear_Oscilloscope::Gear_Oscilloscope(Engine *engine, std::string name) : Gear(en
 
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 
-  circbuf = new CircularBufferSignal(0.0f,192400);
+  circbuf = new CircularBuffer<Signal_T>(0.0f);
 }
 
 Gear_Oscilloscope::~Gear_Oscilloscope()
@@ -34,7 +32,8 @@ bool Gear_Oscilloscope::ready()
 void Gear_Oscilloscope::runAudio()
 {
   const SignalType *buffer = _AUDIO_IN->type();
-  circbuf->append(buffer->data(),buffer->size());
+  circbuf->resize(_AUDIO_IN->type()->size(), 150000 / _AUDIO_IN->type()->size());
+  circbuf->append(buffer->data());
 }
 
 void Gear_Oscilloscope::runVideo()
@@ -65,7 +64,7 @@ void Gear_Oscilloscope::runVideo()
   
   bool lines = zoomx>4096;
 
-  CIRCBUF_SIGNAL_T_FORBEGIN(circbuf,-zoomx,0)
+  CIRCBUF_FORBEGIN(Signal_T,circbuf,-zoomx+1,0)
     { 
       absavg+=fabs(*cbptr);
       avg+=*cbptr++;
@@ -82,15 +81,15 @@ void Gear_Oscilloscope::runVideo()
         }
         else
           _outImage->operator()(i,CLAMP(midy-(int)(avg/i2*midym1*zoomy),1,sizey-1))=WHITE_RGBA;
-        i++;i2=0;
-        absavg=0;avg=0;
+        i++;
+        i2=0;
+        absavg=0;
+        avg=0;
         samples_used-=samples_per_pixels;
       }
       samples_used++;
-      
-      
     }
-  CIRCBUF_SIGNAL_T_FOREND
+  CIRCBUF_FOREND
 
 }
 

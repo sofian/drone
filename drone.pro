@@ -19,7 +19,7 @@ CONFIG += thread debug
 
 HEADERS += config.h \
 src/error.h \
-src/CircularBufferSignal.h \
+src/CircularBuffer.h \
 src/ColorSpace.h \
 src/ConnectionItem.h \
 src/Engine.h \
@@ -33,7 +33,6 @@ src/types/MatrixType.h \
 src/gears/Gear_AudioInput.h \
 src/gears/Gear_AudioOutput.h \
 src/gears/Gear_AudioSource.h \
-src/gears/Gear_AverageSignal.h \
 src/gears/Gear_Blur.h \
 src/gears/Gear_ColorAdjust.h \
 src/gears/Gear_Contrast.h \
@@ -58,9 +57,6 @@ src/gears/Gear_Oscilloscope.h \
 src/gears/Gear_PatternGen.h \
 src/gears/Gear_Saturation.h \
 src/gears/Gear_SignalStat.h \
-src/gears/Gear_SignalMean.h \
-src/gears/Gear_SignalMin.h \
-src/gears/Gear_SignalMax.h \
 src/gears/Gear_SimpleDelay.h \
 src/gears/Gear_Slider.h \
 src/gears/Gear_TV.h \
@@ -68,6 +64,8 @@ src/gears/Gear_FlatSignal.h \
 src/gears/Gear_VideoAdd.h \
 src/gears/Gear_VideoBlend.h \
 src/gears/Gear_VideoInput.h \
+src/gears/Gear_VideoDelay.h \
+src/gears/Gear_VideoLoop.h \
 src/gears/Gear_VideoMix.h \
 src/gears/Gear_VideoOutput.h \
 src/gears/Gear_VideoSource.h \
@@ -90,8 +88,6 @@ src/PropertyControlBool.h \
 src/Rasterer.h \
 src/SummedAreaTable.h \
 src/SchemaEditor.h \
-src/Signal.h \
-src/SignalCircularBuffer.h \
 src/SignalInfo.h \
 src/Timing.h \
 src/Typedefs.h \
@@ -109,7 +105,6 @@ COPYING
 
 SOURCES += src/error.cpp \
 src/ConnectionItem.cpp \
-src/CircularBufferSignal.cpp \
 src/drone.cpp \
 src/Engine.cpp \
 src/FrequencyAnalyzer.cpp \
@@ -117,7 +112,6 @@ src/Gear.cpp \
 src/gears/Gear_AudioInput.cpp \
 src/gears/Gear_AudioOutput.cpp \
 src/gears/Gear_AudioSource.cpp \
-src/gears/Gear_AverageSignal.cpp \
 src/gears/Gear_Blur.cpp \
 src/gears/Gear_ColorAdjust.cpp \
 src/gears/Gear_Contrast.cpp \
@@ -142,9 +136,6 @@ src/gears/Gear_Oscilloscope.cpp \
 src/gears/Gear_PatternGen.cpp \
 src/gears/Gear_Saturation.cpp \
 src/gears/Gear_SignalStat.cpp \
-src/gears/Gear_SignalMean.cpp \
-src/gears/Gear_SignalMin.cpp \
-src/gears/Gear_SignalMax.cpp \
 src/gears/Gear_SimpleDelay.cpp \
 src/gears/Gear_Slider.cpp \
 src/gears/Gear_TV.cpp \
@@ -152,6 +143,8 @@ src/gears/Gear_FlatSignal.cpp \
 src/gears/Gear_VideoAdd.cpp \
 src/gears/Gear_VideoBlend.cpp \
 src/gears/Gear_VideoInput.cpp \
+src/gears/Gear_VideoDelay.cpp \
+src/gears/Gear_VideoLoop.cpp \
 src/gears/Gear_VideoMix.cpp \
 src/gears/Gear_VideoOutput.cpp \
 src/gears/Gear_VideoSource.cpp \
@@ -171,7 +164,6 @@ src/PropertyControlString.cpp \
 src/PropertyControlBool.cpp \
 src/Rasterer.cpp \
 src/SchemaEditor.cpp \
-src/SignalCircularBuffer.cpp \
 src/SignalInfo.cpp \
 src/SummedAreaTable.cpp \
 src/Timing.cpp \

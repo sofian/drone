@@ -16,6 +16,7 @@ const int MainWindow::CANVAS_SIZE_Y = 2048;
 MainWindow::MainWindow() : 
 QMainWindow(), 
 _engine(NULL), 
+_frame(NULL), 
 _schemaCanvas(NULL), 
 _schemaEditor(NULL)    
 {    
@@ -72,9 +73,7 @@ _schemaEditor(NULL)
 
 MainWindow::~MainWindow()
 {
-  delete _engine;
-  delete _schemaCanvas;
-  delete _schemaEditor;
+
 }
 
 void MainWindow::slotZoomIn()
@@ -111,6 +110,12 @@ void MainWindow::slotMenuLoad()
     _schemaEditor->loadSchema(filename.ascii());
     _currentSchemaFilename=filename.ascii();
   }
+}
+
+void MainWindow::load(std::string filename)
+{
+  _schemaEditor->loadSchema(filename);
+  _currentSchemaFilename=filename;
 }
 
 void MainWindow::slotMenuSave()

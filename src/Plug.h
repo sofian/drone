@@ -11,6 +11,7 @@ class PlugIn;
 template <class T>
 class Plug : public AbstractPlug
 {
+  enum {ACTIVE,INCATIVE};
   friend PlugIn<T>::PlugIn(Gear* parent, std::string name);
   friend PlugOut<T>::PlugOut(Gear* parent, std::string name);
 
@@ -51,10 +52,18 @@ public:
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
 
+//  void setPlugState(ePlugState ps){_plugState=ps;}
+//  ePlugState plugState(){return _plugState;}
+
   void init() {}
 
 private:
-   T *_type, *_internalType;
+  T *_type, *_internalType;
+  //! state of the plug : when gears don't update a plug, _plugState is == SLEEPING to tell the plug is inactive.
+  //! (e.g for a switch, all plugs other than active one are == SLEEPING) If the plug is an out, the value is 
+  //! updated by the parent gear. If its an in, the value is copied from the connected out plug.
+  ePlugState _plugState;
+
 };
 
 
@@ -89,6 +98,13 @@ public:
   const T* type() const { return _type;}
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
+
+//   ePlugState plugState()
+//     {
+//       if(connected())
+//       return {
+//       }
+//     }
 
 protected:
   void setType(const T *type)
