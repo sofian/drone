@@ -1,4 +1,4 @@
-/* Gear_Contrast.h
+/* Gear_Brightness.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_CONTRAST_INCLUDED
-#define GEAR_CONTRAST_INCLUDED
+#ifndef GEAR_BRIGHTNESS_INCLUDED
+#define GEAR_BRIGHTNESS_INCLUDED
 
 
 #include "Gear.h"
@@ -26,12 +26,12 @@
 #include "VideoRGBAType.h"
 
 
-class Gear_Contrast : public Gear
+class Gear_Brightness : public Gear
 {
 public:
 
-  Gear_Contrast(Engine *engine, std::string name);
-  virtual ~Gear_Contrast();
+  Gear_Brightness(Engine *engine, std::string name);
+  virtual ~Gear_Brightness();
 
   void runVideo();  bool ready();
 
@@ -40,14 +40,13 @@ private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
-  PlugIn<ValueType> *_CONTRAST_IN;
   PlugIn<ValueType> *_BRIGHTNESS_IN;
 
   //local var
   const VideoRGBAType *_image; 
   VideoRGBAType *_outImage; 
 
-  // Lookup table for contrast values.
+  // Lookup table for brightness values.
   unsigned char _lut[256];
 
   int _size;

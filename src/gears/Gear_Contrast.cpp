@@ -1,5 +1,5 @@
 /* Gear_Contrast.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,10 +33,7 @@ Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "C
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(255, 0, 1000)));
-  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Bright", new ValueType(0, -255, 255)));
-
-
+  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(0, -256, 256)));
 }
 
 Gear_Contrast::~Gear_Contrast()
@@ -57,33 +54,32 @@ void Gear_Contrast::runVideo()
   
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
-  _data = _image->data();    
-  _outData = _outImage->data();
 
-  _iterSizeX = _image->width();
-  _iterSizeY = _image->height();
+  _size = (int)_image->size();
 
-  int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), -1000.0f, 1000.0f);
-  int brightness = _BRIGHTNESS_IN->type()->intValue();
-  for (int y=0;y<_iterSizeY;y++)
+  int contrast = (int)_CONTRAST_IN->type()->value();
+
+  _imageIn  = (const unsigned char*) _image->data();
+  _imageOut = (unsigned char*) _outImage->data();
+
+  // Compute lookup table.
+  // XXX it seems there exists a dynamic algorithm to compute this...
+  for (int i=0; i<128; ++i)
+    _lut[i] = CLAMP0255(i - (((128 - i)*contrast)>>8));
+  for (int i=128; i<256; ++i)
+    _lut[i] = CLAMP0255(i + (((i - 128)*contrast)>>8));
+
+  // Apply on image.
+  for (int p=0; p<_size; ++p)
   {
-    _imageIn = (unsigned char*)&_data[y*_iterSizeX];
-    _imageOut = (unsigned char*)&_outData[y*_iterSizeX];
+    _imageOut[0] = _lut[_imageIn[0]];
+    _imageOut[1] = _lut[_imageIn[1]];
+    _imageOut[2] = _lut[_imageIn[2]];
 
-    for (int x=0;x<_iterSizeX;x++)
-    {
-      _r = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
-      _g = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
-      _b = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
-
-      *_imageOut++ = CLAMP(_r, (short)0, (short)255);
-      *_imageOut++ = CLAMP(_g, (short)0, (short)255);
-      *_imageOut++ = CLAMP(_b, (short)0, (short)255);
-      _imageOut++;
-      _imageIn++;
-      
-    }
+    _imageIn += SIZE_RGBA;
+    _imageOut += SIZE_RGBA;
   }
+  
 }
 
 
