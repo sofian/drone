@@ -1,7 +1,6 @@
 #ifndef __ABSTRACTPLUG_INCLUDED
 #define __ABSTRACTPLUG_INCLUDED
 
-#include "Canvas.h"
 #include "Engine.h"
 #include "AbstractType.h"
 #include <iostream> // XXX debug

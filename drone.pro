@@ -9,7 +9,6 @@ LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
 CONFIG += thread debug
 
 HEADERS += config.h \
-           src/Canvas.h \
 #           src/CircularBufferSignal.h \
            src/ColorSpace.h \
            src/ConnectionItem.h \
@@ -100,9 +99,8 @@ HEADERS += config.h \
 	   src/Pause.xpm \
 	   src/splash.xpm \
 	   COPYING	   
-SOURCES += src/Canvas.cpp \
+SOURCES +=     src/ConnectionItem.cpp \
 #           src/CircularBufferSignal.cpp \
-           src/ConnectionItem.cpp \
            src/drone.cpp \
            src/Engine.cpp \
 #           src/FrequencyAnalyzer.cpp \
