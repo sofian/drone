@@ -60,6 +60,9 @@ void Gear_KDTree::runVideo()
   _maxDepth = MAX((int)_AMOUNT_IN->type()->value(), 0);
 
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 

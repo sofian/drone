@@ -56,6 +56,9 @@ void Gear_ColorQuantize::runVideo()
   _nColors = CLAMP((int)_AMOUNT_IN->type()->value(), 2, MAX_COLOR);
 
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 

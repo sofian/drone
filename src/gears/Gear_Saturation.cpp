@@ -49,6 +49,9 @@ bool Gear_Saturation::ready()
 void Gear_Saturation::runVideo()
 {
     _image = _VIDEO_IN->type();
+    if (_image->isNull())
+      return;
+
     _outImage = _VIDEO_OUT->type();
     _outImage->resize(_image->width(), _image->height());
     _data = _image->data();    

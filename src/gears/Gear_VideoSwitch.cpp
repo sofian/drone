@@ -59,6 +59,10 @@ void Gear_VideoSwitch::runVideo()
     _image = _VIDEO_IN_A->type();
   else
     _image = _VIDEO_IN_B->type();
+
+  if (_image->isNull())
+    return;
+  
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 

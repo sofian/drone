@@ -49,8 +49,26 @@ bool Gear_VideoAdd::ready()
 void Gear_VideoAdd::runVideo()
 {
   _imageA = _VIDEO_IN_A->type();
-  _imageB = _VIDEO_IN_B->type();    
+  _imageB = _VIDEO_IN_B->type();
   _outImage = _VIDEO_OUT->type();
+
+  _imageOutSizeX = MAX(_imageA->width(), _imageB->width());
+  _imageOutSizeY = MAX(_imageA->height(), _imageB->height());
+  _outImage->resize(_imageOutSizeX, _imageOutSizeY);
+
+  if (_imageA->isNull())
+  {
+    if (_imageB->isNull())
+      return;
+      
+    memcpy(_outImage->data(), _imageB->data(), _imageA->size()*sizeof(RGBA));
+    return;
+  }
+  else if (_imageB->isNull())
+  {  
+    memcpy(_outImage->data(), _imageA->data(), _imageA->size()*sizeof(RGBA));
+    return;
+  }
 
   _imageASizeX = _imageA->width();
   _imageASizeY = _imageA->height();
@@ -58,10 +76,6 @@ void Gear_VideoAdd::runVideo()
   _imageBSizeY = _imageB->height();
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
-
-  _imageOutSizeX = MAX(_imageASizeX, _imageBSizeX);
-  _imageOutSizeY = MAX(_imageASizeY, _imageBSizeY);
-  _outImage->resize(_imageOutSizeX, _imageOutSizeY);
 
   _dataA = _imageA->data();    
   _dataB = _imageB->data();    

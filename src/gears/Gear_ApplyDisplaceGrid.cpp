@@ -51,6 +51,9 @@ bool Gear_ApplyDisplaceGrid::ready()
 void Gear_ApplyDisplaceGrid::runVideo()
 {
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   _grid = _GRID->type();
   _outImage = _VIDEO_OUT->type();
 

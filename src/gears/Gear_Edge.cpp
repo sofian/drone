@@ -50,6 +50,9 @@ bool Gear_Edge::ready()
 void Gear_Edge::runVideo()
 {
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _data = (unsigned char*)_image->data();

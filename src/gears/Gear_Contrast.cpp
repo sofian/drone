@@ -49,6 +49,9 @@ bool Gear_Contrast::ready()
 void Gear_Contrast::runVideo()
 {
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+  
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _data = _image->data();    
@@ -57,7 +60,7 @@ void Gear_Contrast::runVideo()
   _iterSizeX = _image->width();
   _iterSizeY = _image->height();
 
-  int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), 0.0f, 255.0f);
+  int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), -1000.0f, 1000.0f);
 
   for (int y=0;y<_iterSizeY;y++)
   {

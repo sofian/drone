@@ -69,6 +69,9 @@ bool Gear_VideoLoop::ready()
 void Gear_VideoLoop::runVideo()
 {
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   
   _sizeY = _image->height();
   _sizeX = _image->width();

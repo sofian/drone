@@ -43,6 +43,8 @@ public:
 
   bool isGray() const { return _isGray; }
   void setIsGray(bool isGray) { _isGray = isGray; }
+  bool isNull() const {return  (width()<=0 || height()<=0);} 
+  
   
 protected:
   // GetAAPixel related functions ////////////////////

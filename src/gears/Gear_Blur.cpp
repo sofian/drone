@@ -54,16 +54,20 @@ bool Gear_Blur::ready()
 void Gear_Blur::runVideo()
 { 
   _image = _VIDEO_IN->type();
-  ASSERT_ERROR(_image);
-    
-  _outImage = _VIDEO_OUT->type();
-  ASSERT_ERROR(_outImage);
-      
-  _outImage->resize(_image->width(), _image->height());
   
+  ASSERT_ERROR(_image);
+  
+  if (_image->isNull())
+    return;
+                  
   _sizeY = _image->height();
   _sizeX = _image->width();
   
+  _outImage = _VIDEO_OUT->type();
+  ASSERT_ERROR(_outImage);
+      
+  _outImage->resize(_sizeX, _sizeY);
+    
   ////////////////////////////
   _blurSize=(int) MAX(_AMOUNT_IN->type()->value(), 0.0f);
 
@@ -75,9 +79,6 @@ void Gear_Blur::runVideo()
   else
   {
     ASSERT_ERROR(_table);
-    ASSERT_ERROR(_sizeX >= 0);
-    ASSERT_ERROR(_sizeY >= 0);
-    ASSERT_ERROR(_image->data());
 
     // Compute the summed area table.
     _table->reset((unsigned char*)_image->data(), _sizeX, _sizeY);

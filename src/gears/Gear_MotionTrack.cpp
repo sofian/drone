@@ -71,6 +71,9 @@ void Gear_MotionTrack::runVideo()
   
   // Init.
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   

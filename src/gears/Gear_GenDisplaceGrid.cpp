@@ -62,6 +62,10 @@ void Gear_GenDisplaceGrid::runVideo()
 {
   _type = _TYPE->type()->intValue();
   _image = _VIDEO_IN->type();
+  
+  if (_image->isNull())
+    return;
+
   _data = (unsigned char*)_image->data();    
 
   _ysize = _image->height();

@@ -55,6 +55,9 @@ bool Gear_VideoDelay::ready()
 void Gear_VideoDelay::runVideo()
 {
   _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
+
 
   _sizeY = _image->height();
   _sizeX = _image->width();
