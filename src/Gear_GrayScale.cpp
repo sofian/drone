@@ -43,11 +43,19 @@ void Gear_GrayScale::runVideo()
         _imageOut = (unsigned int*)&_outData[(y*_iterSizeX)];
         _imageIn = (unsigned char*)&_data[y*_iterSizeX];
         for (int x=0;x<_iterSizeX;x++)
-        {            
-            _imageIn+=4;
+        {
+          //          _imageIn+=4;
+          // add everything
             total = *(_imageIn) + *(_imageIn+1) +*(_imageIn+2) + 255;
+
+            // divide by 4
             total >>= 2;
+
+            //        R = total | G = total | B = total
             *_imageOut++ = total | total<<8 | total <<16;
+            
+            // ***  je suis gelé mais je pense que c'est mieux de même
+            _imageIn+=4;
         }
     }
 }
