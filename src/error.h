@@ -31,17 +31,17 @@
 #define ERROR_INCLUDED
 
 //! No debug.
-#define LEVEL_NODEBUG -1
+#define DEBUG_LEVEL_NODEBUG -1
 //! Only catch errors.
-#define LEVEL_ERROR   0
+#define DEBUG_LEVEL_ERROR   0
 //! Catch both errors and warnings.
-#define LEVEL_WARNING 1
+#define DEBUG_LEVEL_WARNING 1
 //! Catch errors, warnings and notices.
-#define LEVEL_NOTICE  2
+#define DEBUG_LEVEL_NOTICE  2
 
 // Default debug level.
 #ifndef DEBUG_LEVEL
-#define DEBUG_LEVEL LEVEL_ERROR
+#define DEBUG_LEVEL DEBUG_LEVEL_ERROR
 #endif
 
 // Redefine __STRING just to make sure.
@@ -60,21 +60,21 @@
 #define ASSERT_NOTICE(expr)  TRIGGER_ASSERT(expr, NOTICE)
 
 //! Error macro.
-#if DEBUG_LEVEL >= LEVEL_ERROR
+#if DEBUG_LEVEL >= DEBUG_LEVEL_ERROR
 #define ERROR errormsg
 #else
 #define ERROR dummymsg
 #endif
 
 //! Warning macro.
-#if DEBUG_LEVEL >= LEVEL_WARNING
+#if DEBUG_LEVEL >= DEBUG_LEVEL_WARNING
 #define WARNING warningmsg
 #else
 #define WARNING dummymsg
 #endif
 
 //! Notice macro.
-#if DEBUG_LEVEL >= LEVEL_NOTICE
+#if DEBUG_LEVEL >= DEBUG_LEVEL_NOTICE
 #define NOTICE noticemsg
 #else
 #define NOTICE dummymsg
