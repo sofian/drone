@@ -12,6 +12,7 @@
 #include "Timing.h"
 #include "Plug.h"
 
+#include <map>
 
 class GearGui;
 class QDomDocument;
@@ -61,6 +62,12 @@ public:
   virtual void save(QDomDocument &, QDomElement &){};
   virtual void load(QDomElement &){};
 
+  virtual bool canConvert(const AbstractType& , const AbstractType& ,
+                          std::pair<const AbstractPlug*, const AbstractPlug*>& plugs) const
+  {
+    plugs.first = plugs.second = 0;
+    return false;
+  }
 
   Engine *engine(){return _engine;};
 
