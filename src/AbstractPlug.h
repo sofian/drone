@@ -22,7 +22,7 @@ public:
   AbstractPlug(Gear* parent, AbstractType* type, eInOut inOut, std::string name);
   virtual ~AbstractPlug();
 
-  virtual void init()=0;
+  virtual void init(){};
   bool canStartConnection();
   bool canConnect(AbstractPlug *plug, bool onlyTypeCheck=false);
   bool connect(AbstractPlug *plug);

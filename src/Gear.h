@@ -94,6 +94,7 @@ protected:
   friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
   AbstractPlug* addPlug(AbstractPlug* plug);       
+  void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
   void deletePlug(AbstractPlug *plug);
 

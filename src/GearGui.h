@@ -57,14 +57,21 @@ protected:
   virtual void drawShape(QPainter &painter);
   void drawPlugBoxes(QPainter &painter);
 
-
+  void determineMinimumSize();
 
   Gear *_gear;
   std::vector<PlugBox*> _inputPlugBoxes;
   std::vector<PlugBox*> _outputPlugBoxes;
   std::vector<PlugBox*> _plugBoxes;//!contain all inputs and outputs
+
+  // the effective Size (can be stretched by user)
   int _sizeX;
   int _sizeY;
+
+  // minimum required size for gear
+  int _minSizeX;
+  int _minSizeY;
+
   int _inputsInterval;
   int _outputsInterval;
   std::string _title;

@@ -16,6 +16,7 @@ HEADERS += config.h \
 #           src/FrequencyAnalyzer.h \
            src/Gear.h \
 	    src/types/AbstractType.h \
+	    src/types/ValueType.h \
 	    src/types/VideoType.h \
 	    src/types/SignalType.h \
 	    src/types/MatrixType.h \

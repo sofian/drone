@@ -16,11 +16,11 @@ public:
   virtual QColor color() const = 0;
 
   int nSubTypes() const { return _subTypes.size();}
-  AbstractType& getSubType(int i) { return *_subTypes[i];}
-  AbstractType& addSubType(AbstractType &subType)
+  AbstractType* getSubType(int i) { return _subTypes[i];}
+  AbstractType* addSubType(AbstractType &subType)
   {
     _subTypes.push_back(&subType);
-    return subType;
+    return &subType;
   }
 
 protected:

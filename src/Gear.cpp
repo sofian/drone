@@ -69,9 +69,33 @@ void Gear::deletePlug(AbstractPlug *plug)
  */
 AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 {    
-  _Plugs.push_back(plug);
+
+  // if plug is input, add only plug for main type
+  if(plug->inOut()==IN)
+    _Plugs.push_back(plug);
+  else
+    // add main plug and plugs for its subType
+    addPlugAndSubPlugs(plug,0);  
 
   return plug;    
+}
+
+void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
+{
+  std::string str;
+
+  for(int l=0;l<=level;l++)
+    str+="  ";
+
+  _Plugs.push_back(plug);
+  int size = plug->abstractType()->nSubTypes();
+  
+  for(int i=0;i<size;i++)
+  {
+    AbstractType* subtype = plug->abstractType()->getSubType(i);
+    addPlugAndSubPlugs(new AbstractPlug(this, subtype, plug->inOut(), str + subtype->name() ),level+1);
+  }
+
 }
 
 void Gear::getInputs(std::list<AbstractPlug*> &inputs) const

@@ -15,7 +15,7 @@ public:
   virtual ~VideoTypeRGBA(){}
   
   std::string name() const { return "VideoTypeRGBA";}
-  QColor color() const { return QColor(31,47,124);}
+  QColor color() const { return QColor(40,60,114);}
 
   MatrixType<RGBA>* image() { return &_image;}  
 
