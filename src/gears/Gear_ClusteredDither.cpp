@@ -105,20 +105,20 @@ void Gear_ClusteredDither::runVideo()
 
   iterData = (unsigned char*) _data;
   iterOutData = (unsigned char*) _outData;
+
+  MatrixType<double>::iterator
+    rIt = _r.begin(),
+    thetaIt = _theta.begin();
   
   for (int y=0; y<_sizeY; ++y)
   {
-    for (int x=0; x<_sizeX; ++x)
+    for (int x=0; x<_sizeX; ++x, ++rIt, ++thetaIt)
     {
-      /* convert rx and ry to polar (r, theta) */
-      double r = _r(x,y);
-      double theta = _theta(x,y);
-      
       for (int c=0; c<SIZE_RGB; ++c)
       {
-        double theta_c = CLAMP(theta + _angle[c], 0.0, TWICE_PI);
-        int rx = (int)rint( fastPolarToX(r,  theta_c) );
-        int ry = (int)rint( fastPolarToY(r,  theta_c) );
+        double theta_c = CLAMP(*thetaIt + _angle[c], 0.0, TWICE_PI);
+        int rx = (int)rint( fastPolarToX(*rIt,  theta_c) );
+        int ry = (int)rint( fastPolarToY(*rIt,  theta_c) );
         
         /* Make sure rx and ry are positive and within
          * the range 0 .. width-1 (incl).  Can't use %
@@ -244,11 +244,13 @@ void Gear_ClusteredDither::computePolarCoordinates()
 {
   _r.resize(_sizeX, _sizeY);
   _theta.resize(_sizeX, _sizeY);
-  MatrixType<double>::iterator rIt = _r.begin(), tIt = _theta.begin();
+
+  MatrixType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
+
   for (int y=0; y<_sizeY; ++y)
     for (int x=0; x<_sizeX; ++x)
     {
-      *rIt++     = fastDist(x,y);
-      *tIt++ = fastAngle(x,y);
+      *rIt++ = fastDist(x,y);
+      *thetaIt++ = fastAngle(x,y);
     }
 }
