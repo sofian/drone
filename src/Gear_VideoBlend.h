@@ -49,7 +49,7 @@ private:
     double *_mmxImageInA;
     double *_mmxImageInB;
     double *_mmxImageOut;
-    unsigned long long int _mmxAlpha;
+    unsigned char _mmxAlpha, _mmxAlpha2;
 };
 
 #endif

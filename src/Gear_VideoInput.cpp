@@ -91,10 +91,15 @@ void Gear_VideoInput::initInputDevice()
     ioctl(_device, VIDIOCGCAP, &_vidCap);
     ioctl(_device, VIDIOCGWIN, &_vidWin);
     ioctl(_device, VIDIOCGPICT, &_vidPic);
+    //ioctl(_device, VIDIOCGTUNER, &_vidTuner);
+    struct video_channel _vidChan;
+    ioctl(_device, VIDIOCGCHAN, &_vidChan);
+    std::cout << "channel: " << _vidChan.channel << std::endl << _vidChan.name << std::endl << _vidChan.type << std::endl;
+
     
     std::cout << "palette : " << _vidPic.palette << std::endl;
 
-    _vidPic.palette = VIDEO_PALETTE_RGB32;    
+    _vidPic.palette = VIDEO_PALETTE_RGB24;//VIDEO_PALETTE_RGB32;    
     ioctl(_device, VIDIOCSPICT, &_vidPic);
 
     

@@ -15,6 +15,7 @@ Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
     
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
   _AMOUNT_IN = addPlugSignalIn("Amount", 0.5f);
+  _HOME_WEIGHT = addPlugSignalIn("HomeW", 3.0f);
   _table = new SummedAreaTable();
 }
 
@@ -63,6 +64,8 @@ void Gear_Blur::runVideo()
   _iterAcc = (int*)_table->_acc;
             
   _blurSize=(int) (_AMOUNT_IN->buffer()[0]);
+  _homeWeight=(int) (_HOME_WEIGHT->buffer()[0]);
+
 
   if (_blurSize<2)
     _blurSize=2;
@@ -82,14 +85,14 @@ void Gear_Blur::runVideo()
       if(_x2 >= _sizeX)_x2 = _sizeX-1;        
       if(_y2 >= _sizeY)_y2 = _sizeY-1;
 
-      _dimension = (_x2-_x1)*(_y2-_y1);      
+      _dimension = (_x2-_x1)*(_y2-_y1)+_homeWeight;      
       for(int z=0;z<4;z++)
       {
 
         *(_outData++) = (_iterAcc[(_y2 * (_sizeX<<2)) + (_x2<<2) + z] - 
                          _iterAcc[(_y1) * (_sizeX<<2) + (_x2<<2) + z] -
                          _iterAcc[(_y2 * (_sizeX<<2)) + ((_x1)<<2) + z] +
-                         _iterAcc[(_y1) * (_sizeX<<2) + ((_x1)<<2) + z]) / _dimension;
+                         _iterAcc[(_y1) * (_sizeX<<2) + ((_x1)<<2) + z] + _homeWeight * (*_data++)) / _dimension;
       }
 
     }
