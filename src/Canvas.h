@@ -4,26 +4,25 @@
 
 
 
-typedef struct 
+struct RGBA
 {
     unsigned char R,G,B,A;
-}RGBA;
+};
 
-typedef struct 
+struct RGBAint
 {
     int R,G,B,A;
-}RGBAint;
+};
 
-typedef struct 
+struct RGBAshort
 {
     unsigned short R,G,B,A;
-}RGBAshort;
+};
 
-typedef struct 
+struct RGBAfloat
 {
     float R,G,B,A;
-}RGBAfloat;
-
+};
 
 class Canvas  
 {
