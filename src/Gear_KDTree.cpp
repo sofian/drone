@@ -82,7 +82,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   int cut = SummedAreaTable::total(&rgba) / 2;
 
   // Draw a rectangle around the area and paint it with the average color.
-  _rasterer->setColor(rgba.R / area, rgba.G / area, rgba.B / area);
+  _rasterer->setColor(rgba.r / area, rgba.g / area, rgba.b / area);
   _rasterer->rect(x0, y0, x1, y1, true);
   _rasterer->setColor(0,0,0);
   _rasterer->rect(x0, y0, x1, y1, false);

@@ -68,7 +68,7 @@ void Gear_DiffDist::runVideo()
         for (int x=0;x<_iterSizeX;x++) 
         {
             
-            colorIntensity = (_dataB[y*_imageBSizeX+x].R + _dataB[y*_imageBSizeX+x].G + _dataB[y*_imageBSizeX+x].B) / 3;            
+            colorIntensity = (_dataB[y*_imageBSizeX+x].r + _dataB[y*_imageBSizeX+x].g + _dataB[y*_imageBSizeX+x].b) / 3;            
             colorIntensity *= (int)fabs(factor);
                         
             
@@ -89,9 +89,9 @@ void Gear_DiffDist::runVideo()
             if (destY > _imageOutSizeY)
                 destY = _imageOutSizeY;
 
-            _outData[destY*_imageOutSizeX+destX].R = _dataA[y*_imageASizeX+x].R;
-            _outData[destY*_imageOutSizeX+destX].G = _dataA[y*_imageASizeX+x].G;
-            _outData[destY*_imageOutSizeX+destX].B = _dataA[y*_imageASizeX+x].B;
+            _outData[destY*_imageOutSizeX+destX].r = _dataA[y*_imageASizeX+x].r;
+            _outData[destY*_imageOutSizeX+destX].g = _dataA[y*_imageASizeX+x].g;
+            _outData[destY*_imageOutSizeX+destX].b = _dataA[y*_imageASizeX+x].b;
 
             if (destY != y)
             {
@@ -100,9 +100,9 @@ void Gear_DiffDist::runVideo()
                     patchY=0;
 
 
-                _outData[y*_imageOutSizeX+x].R = _dataA[patchY*_imageASizeX+x].R;
-                _outData[y*_imageOutSizeX+x].G = _dataA[patchY*_imageASizeX+x].G;
-                _outData[y*_imageOutSizeX+x].B = _dataA[patchY*_imageASizeX+x].B;
+                _outData[y*_imageOutSizeX+x].r = _dataA[patchY*_imageASizeX+x].r;
+                _outData[y*_imageOutSizeX+x].g = _dataA[patchY*_imageASizeX+x].g;
+                _outData[y*_imageOutSizeX+x].b = _dataA[patchY*_imageASizeX+x].b;
             }
 
         }

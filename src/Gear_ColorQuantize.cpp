@@ -19,10 +19,10 @@ Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
   srand(2732791);
   for (int i=0;i<_nColors;++i)
   {
-    _centroids[i].R = rand()%256;
-    _centroids[i].G = rand()%256;
-    _centroids[i].B = rand()%256;
-    _centroids[i].A = 0;
+    _centroids[i].r = rand()%256;
+    _centroids[i].g = rand()%256;
+    _centroids[i].b = rand()%256;
+    _centroids[i].a = 0;
   }
 
   _clusterSizes = (int*)malloc(_nColors*sizeof(int));
