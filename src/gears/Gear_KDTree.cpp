@@ -12,7 +12,7 @@ Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6, 1, 16)));
   _rasterer = new Rasterer();
   _table = new SummedAreaTable();
 }
@@ -38,7 +38,7 @@ void Gear_KDTree::init()
 void Gear_KDTree::runVideo()
 {
   // initialize
-  _maxDepth = (int)_AMOUNT_IN->type()->value();
+  _maxDepth = MAX((int)_AMOUNT_IN->type()->value(), 1);
 
   _image = _VIDEO_IN->type();
   _outImage = _VIDEO_OUT->type();
