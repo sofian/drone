@@ -42,8 +42,8 @@ public:
 
   void resize(int sizeX, int sizeY=1) 
   {
-    _height.setValue(sizeX);
-    _width.setValue(sizeY);
+    _width.setValue(sizeX);
+    _height.setValue(sizeY);
     _sizeX = sizeX;
     _sizeY = sizeY;
     allocate(sizeX*sizeY);
