@@ -100,8 +100,8 @@ gimp_composite_convert_any_any_any_generic (GimpCompositeContext *ctx)
 {
   int i;
   int j;
-  char *D = ctx->D;
-  char *A = ctx->A;
+  unsigned char *D = ctx->D;
+  unsigned char *A = ctx->A;
   int bpp_A = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_A];
   int bpp_D = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_D];
 

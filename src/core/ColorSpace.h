@@ -330,14 +330,14 @@ hsv_to_rgb_int (int *hue         /* returns red        */,
  * L [0, 255], S [0, 255].
  **/
 inline void
-rgb_to_hsl_int (int *red         /* returns red        */,
-                int *green       /* returns green      */,
-                int *blue        /* returns blue       */)
+rgb_to_hsl_int (unsigned int *red         /* returns red        */,
+                unsigned int *green       /* returns green      */,
+                unsigned int *blue        /* returns blue       */)
 {
-  int    r, g, b;
+  unsigned int r, g, b;
   double h, s, l;
-  int    min, max;
-  int    delta;
+  unsigned int    min, max;
+  unsigned int    delta;
 
   r = *red;
   g = *green;
@@ -427,9 +427,9 @@ hsl_value_int (double n1,
  * corresponding, with the returned values all in the range [0, 255].
  **/
 inline void
-hsl_to_rgb_int (int *hue         /* returns red        */,
-                int *saturation  /* returns green      */,
-                int *lightness   /* returns blue       */)
+hsl_to_rgb_int (unsigned int *hue         /* returns red        */,
+                unsigned int *saturation  /* returns green      */,
+                unsigned int *lightness   /* returns blue       */)
 {
   double h, s, l;
 

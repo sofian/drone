@@ -13,7 +13,7 @@ HEADERS+=Gear_VideoOutput.h VideoOutput.h VideoOutputMaker.h
 unix:!macx:SOURCES+=VideoOutputGl.cpp VideoOutputShm.cpp VideoOutputX11Base.cpp VideoOutputXv.cpp VideoOutputQT.cpp
 unix:!macx:HEADERS+=VideoOutputGl.h VideoOutputShm.h VideoOutputX11Base.h VideoOutputXv.h VideoOutputQT.h
 unix:!macx:INCLUDEPATH+=../../core/ ../../core/types /usr/X11R6/include
-unix:!macx:LIBS+= -L../../../lib/ -L/usr/X11R6/lib/ -ldroneCore -lGL -lXv -lXxf86vm 
+unix:!macx:LIBS+= -L../../../lib/ -L/usr/X11R6/lib/ -ldroneCore -lGL -lXv -lXxf86vm
 unix:!macx:TARGET=../../../gears/Gear_VideoOutput
 
 #osx

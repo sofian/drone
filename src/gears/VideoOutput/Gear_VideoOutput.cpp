@@ -62,7 +62,7 @@ _videoOutput(NULL)
   //populate available video output list in order of preference
   //the init will try them in order, until he find one that fit
 #ifndef Q_OS_MACX
-  _allOutputs.push_back("Gl");
+  _allOutputs.push_back("Xv");
   _allOutputs.push_back("Gl");
   _allOutputs.push_back("Shm");
   _allOutputs.push_back("QT");

@@ -451,8 +451,8 @@ color_only_pixels (const unsigned char *src1,
 {
   const unsigned int has_alpha1 = HAS_ALPHA (bytes1);
   const unsigned int has_alpha2 = HAS_ALPHA (bytes2);
-  int r1, g1, b1;
-  int r2, g2, b2;
+  unsigned int r1, g1, b1;
+  unsigned int r2, g2, b2;
 
   /*  assumes inputs are only 4 byte RGBA pixels  */
   while (length--)
