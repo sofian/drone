@@ -6,7 +6,7 @@ TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src /usr/include/libmpeg3
 LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL -lqt
-CONFIG += thread debug
+CONFIG += thread 
 # Input
 HEADERS += config.h \
            src/Canvas.h \
@@ -24,6 +24,7 @@ HEADERS += config.h \
            src/Gear_Contrast.h \
        	   src/Gear_ColorQuantize.h \
            src/Gear_ColorQuantizeWu.h \
+           src/Gear_ClusteredDither.h \
            src/Gear_DataOut.h \
            src/Gear_DiffDist.h \
            src/Gear_Edge.h \
@@ -99,6 +100,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_Contrast.cpp \
            src/Gear_ColorQuantize.cpp \
            src/Gear_ColorQuantizeWu.cpp \
+           src/Gear_ClusteredDither.cpp \
            src/Gear_DataOut.cpp \
            src/Gear_DiffDist.cpp \
            src/Gear_Edge.cpp \
