@@ -1,9 +1,42 @@
 include(config.pro)
 
 TEMPLATE=subdirs
-SUBDIRS= VideoOutput \
+SUBDIRS= Osc \
+TV \
+Oscilloscope \
+VideoOutput \
+Blur \
 VideoSource \
-Slider
+Slider \
+KDTree\ 
+VideoMix \
+Edge \
+AffineTransform \
+ApplyDisplaceGrid \
+AreaArrayMask \
+Brightness \
+ClusteredDither \
+ColorAdjust \
+Contrast \
+Enveloppe \
+FlatSignal \
+ListBox \
+PushButton \
+Rescale \
+TouchPad \
+ColorQuantize \
+Gamma \
+GenDisplaceGrid \
+GrayScale \
+HalfToning \
+Saturation \
+SignalStat \
+SmearGrid \
+VideoDelay \
+VideoLoop \
+ImageShuffle \
+ImageSequence \
+Invert 
 
 agg {
 SUBDIRS+=AggTest
