@@ -37,7 +37,7 @@ public:
   {
   }
 
-  virtual ~VideoRGBAType() {}
+  virtual ~VideoRGBAType();
 
   // returns an antialiased pixel. Warning: No bound checking is done!
 //  inline void getAAPixel(float x, float y ,RGBA * pix) const;
@@ -48,7 +48,7 @@ public:
   void setIsGray(bool isGray) { _isGray = isGray; }
   bool isNull() const {return  (width()<=0 || height()<=0);} 
   
-  unsigned int toTexture() const;
+  unsigned int toTexture(bool forceRecreate=false) const;
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
   

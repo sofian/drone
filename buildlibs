@@ -1,0 +1,9 @@
+#!/bin/bash 
+
+#building external libs
+cd lib/ffmpeg
+./configure --extra-cflags=-fno-common --disable-ffserver --disable-ffplay
+make
+cd ../../
+
+

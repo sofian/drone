@@ -20,25 +20,56 @@
 #ifndef VIDEOOUTPUTGL_INCLUDED
 #define VIDEOOUTPUTGL_INCLUDED
 
-#include "VideoOutputX11Base.h"
+#include <qgl.h>
+#include <qdialog.h>
+#include "VideoOutput.h"
 
-namespace X11
+class DroneQGLWidget : public QGLWidget
 {
+public:
+  DroneQGLWidget(QWidget* parent);
+  ~DroneQGLWidget();
 
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <X11/extensions/xf86vmode.h>
+  void resize(int w, int h){resizeGL(w,h);}
+  void setCurrentImage(const VideoRGBAType &image){_currentImage = &image;}
+  
+protected:
+  void	initializeGL();
+  void	paintGL();
+  void	resizeGL(int w, int h);
 
-class Canvas;
+private:  
+  const VideoRGBAType *_currentImage;
+  unsigned int _frameSizeX;
+  unsigned int _frameSizeY;
+  unsigned int _frameSize;
+  int _xRes;
+  int _yRes;
 
-class VideoOutputGl : public VideoOutputX11Base
+  float _texSizeX, _texSizeY;
+  QWidget *_parentWidget;
+
+  bool _firstDraw;
+};
+
+//we need to create our own widget for the window containing the droneqglwidget
+//to change the behavior of the close event to do nothing
+//since we dont want this window to be closed by the user
+class DroneGLWindow : public QDialog
+{
+public:  
+  DroneGLWindow(QWidget* parent) : QDialog(parent){}
+protected:
+  void closeEvent(QCloseEvent *){}  
+};
+
+class VideoOutputGl : public VideoOutput
 {
 public:
   VideoOutputGl();
   ~VideoOutputGl();
 
-  void fullscreen(bool fs);
-  void destroy();
+  //videoOutput Overloading  
   bool init(int xRes, int yRes, bool fullscreen);
   void render(const VideoRGBAType &image);
 
@@ -46,22 +77,16 @@ public:
 protected:
 
   void onResize(int sizeX, int sizeY);
-  bool createGLXContext();               
-  int initGl(int xRes, int yRes);
-  void resizeGl(int sizeX, int sizeY);
-  void destroyGLXContext();
-
-
+  
 private:
 
-  GLXContext _XGLXContext;
-  int _frameSizeX;
-  int _frameSizeY;
-  int _frameSize;
-  bool _glInitialized;
-  float _texSizeX, _texSizeY;
+  DroneQGLWidget *_droneQGLWidget;
+  DroneGLWindow *_window;
+  unsigned int _frameSizeX;
+  unsigned int _frameSizeY;
 
+  
 };
-}
+
 
 #endif

@@ -6,16 +6,27 @@ namespace GL
 #include <OpenGL/glu.h>
 #else
 #include <GL/gl.h>              
-  //#include <GL/glu.h>
 #endif
 }
 
+#include <iostream>
+
 using namespace GL;
 
-unsigned int VideoRGBAType::toTexture() const
+VideoRGBAType::~VideoRGBAType() 
 {
-  if (!_texture)
+  if (_texture)  
+    glDeleteTextures(1, (GLuint*)&_texture);
+}
+
+unsigned int VideoRGBAType::toTexture(bool forceRecreate) const
+{
+  if (!_texture || forceRecreate)
   {
+    std::cout << "create texture" << std::endl;
+    if (_texture)
+      glDeleteTextures(1, (GLuint*)&_texture);
+    
     glGenTextures(1, (GLuint*)&_texture);		
     glBindTexture(GL_TEXTURE_2D, _texture);
     

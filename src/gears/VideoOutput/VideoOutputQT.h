@@ -45,9 +45,9 @@ protected:
 	
 	QImage _videoFrame;
 	QPixmap _pixMap;
-	int _frameSizeX;
-	int _frameSizeY;
-	int _frameSize;
+	unsigned int _frameSizeX;
+	unsigned int _frameSizeY;
+	unsigned int _frameSize;
 
 };
 
@@ -56,9 +56,7 @@ class VideoOutputQT : public VideoOutput
 public:
   VideoOutputQT();
   ~VideoOutputQT();
-
-  void fullscreen(bool fs);
-  void destroy();
+  
   bool init(int xRes, int yRes, bool fullscreen);
   void render(const VideoRGBAType &image);
 

@@ -47,7 +47,7 @@ void RenderingWindow::updateVideoFrame(const VideoRGBAType &image)
 	unsigned char *bits = _videoFrame.bits();
 	RGBA *data = image.data();
 	
-	for (int i=0;i<_frameSize;++i)
+	for (unsigned int i=0;i<_frameSize;++i)
 	{
 		(*(QRgb*)bits) = qRgb(data->r, data->g, data->b); 
 		bits+=4;
@@ -61,7 +61,7 @@ void RenderingWindow::updateVideoFrame(const VideoRGBAType &image)
 	QThread::postEvent(this, new QPaintEvent( QRect(0, 0, _frameSizeX, _frameSizeY) ) );
 }
 
-void RenderingWindow::paintEvent(QPaintEvent *paintEvent)
+void RenderingWindow::paintEvent(QPaintEvent *)
 {
 	//simply use the painter to blit the pixmap to the screen
 	QPainter painter(this);
@@ -76,16 +76,7 @@ VideoOutputQT::VideoOutputQT() :
 
 VideoOutputQT::~VideoOutputQT()
 {
-  destroy();
-}
-
-void VideoOutputQT::destroy()
-{
-	delete _window;
-}
-
-void VideoOutputQT::fullscreen(bool )
-{
+  delete _window;
 }
 
 void VideoOutputQT::render(const VideoRGBAType &image)
@@ -94,7 +85,7 @@ void VideoOutputQT::render(const VideoRGBAType &image)
 	_window->updateVideoFrame(image);
 }
 
-bool VideoOutputQT::init(int xRes, int yRes, bool fullscreen)
+bool VideoOutputQT::init(int xRes, int yRes, bool)
 {
 	_window = new RenderingWindow();
 	_window->resize(xRes, yRes);

@@ -37,20 +37,8 @@ _frameSize(0)
 
 VideoOutputShm::~VideoOutputShm()
 {
-  destroy();
-}
-
-void VideoOutputShm::destroy()
-{
   destroyXWindow();    
-
   destroyXImage();
-
-}
-
-void VideoOutputShm::fullscreen(bool fs)
-{
-  togglefullscreen(fs, _xRes, _yRes);
 }
 
 void VideoOutputShm::render(const VideoRGBAType &image)

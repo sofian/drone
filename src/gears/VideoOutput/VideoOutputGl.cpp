@@ -22,66 +22,75 @@
 
 #include <iostream>
 
-using namespace X11;
+#include <GL/gl.h>
+#include <qapplication.h>
+#include <qlayout.h>
 
-Register_VideoOutput(MAKERVideoOutputGL, VideoOutputGl, "Gl")
-
-VideoOutputGl::VideoOutputGl() :
-VideoOutputX11Base(),    
-_XGLXContext(NULL),
+DroneQGLWidget::DroneQGLWidget(QWidget* parent) : QGLWidget(parent, "video out"),
+_currentImage(NULL),
 _frameSizeX(0),
 _frameSizeY(0),
 _frameSize(0),
-_glInitialized(false)
-{    
-}
-
-VideoOutputGl::~VideoOutputGl()
+_xRes(0),
+_yRes(0),
+_parentWidget(parent),
+_firstDraw(true)
 {
-  destroy();
 }
 
-void VideoOutputGl::destroy()
+DroneQGLWidget::~DroneQGLWidget()
 {
-  destroyXWindow();    
-
-  destroyGLXContext();
+  doneCurrent();
 }
 
-void VideoOutputGl::fullscreen(bool fs)
+void DroneQGLWidget::initializeGL()
 {
-  togglefullscreen(fs, _xRes, _yRes);
+  glEnable(GL_TEXTURE_2D);
+
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); 
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glDisable(GL_ALPHA_TEST);
+  glDisable(GL_CULL_FACE);         
+  glDisable(GL_DITHER);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
 }
 
-void VideoOutputGl::render(const VideoRGBAType &image)
-{    
-  processX11Events();
-
-  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
+void DroneQGLWidget::paintGL()
+{
+  
+  if (_currentImage==NULL)
   {
-    _frameSizeX = image.width();
-    _frameSizeY = image.height();
-
-    if (!_glInitialized)
-    {
-      //it's important to init the context only there
-      //because the context need to be created by the rendering thread
-      //so we call initgl in render that well be called from the playthread of the engine 
-      //each time we start playing                
-      initGl(_frameSizeX, _frameSizeY);
-      _glInitialized=true;
-    } else
-    {
-      resizeWindow(_frameSizeX, _frameSizeY);
-      resizeGl(_frameSizeX, _frameSizeY);
-    }        
+      glClear(GL_COLOR_BUFFER_BIT);//black background if no image
+      return;
+  }
+    
+  
+  if (_frameSizeX!=_currentImage->width() || _frameSizeY!=_currentImage->height())  
+  {
+    _frameSizeX = _currentImage->width();
+    _frameSizeY = _currentImage->height();
+    
+    //tell the parent to resize, it will also resize us, calling resizeGL since we will receive the event
+    //we do this here, because we cannot make this call from an external thread
+    _parentWidget->resize(_frameSizeX, _frameSizeY);    
   }
 
-  _texSizeX = (float)_frameSizeX / (float)image.textureSizeX();
-  _texSizeY = (float)_frameSizeY / (float)image.textureSizeY();
+  _texSizeX = (float)_frameSizeX / (float)_currentImage->textureSizeX();
+  _texSizeY = (float)_frameSizeY / (float)_currentImage->textureSizeY();
 
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, image.toTexture());
+  
+  //if this is the first time we draw, we have to force texture recreation since we are in
+  //a newly created gl context
+  if (_firstDraw)
+  { 
+    glBindTexture(GL_TEXTURE_2D, _currentImage->toTexture(true));
+    _firstDraw=false;   
+  }   
+  else
+    glBindTexture(GL_TEXTURE_2D, _currentImage->toTexture());
   
   glBegin(GL_QUADS);
   glColor3f(1.0f, 1.0f, 1.0f);
@@ -98,105 +107,74 @@ void VideoOutputGl::render(const VideoRGBAType &image)
   glVertex2f(0.0f, _yRes);
 
   glEnd();
+}
 
-  glXWaitGL();
-  glXSwapBuffers((Display*)_display, _window);
+void DroneQGLWidget::resizeGL(int w, int h)
+{
+  glViewport(0, 0, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, w, h, 0, -99999, 99999);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  _xRes=w;
+  _yRes=h;
+}
+
+
+Register_VideoOutput(MAKERVideoOutputGL, VideoOutputGl, "Gl")
+
+VideoOutputGl::VideoOutputGl() :
+VideoOutput(),    
+_droneQGLWidget(NULL),
+_window(NULL),
+_frameSizeX(0),
+_frameSizeY(0)
+{    
+}
+
+VideoOutputGl::~VideoOutputGl()
+{  
+  //we are not in the gui thread, so we must schedule the delete instead of processing it now
+  _window->deleteLater();
+}
+
+void VideoOutputGl::render(const VideoRGBAType &image)
+{        
+  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
+  {
+    _frameSizeX = image.width();
+    _frameSizeY = image.height();           
+  }
+  
+  _droneQGLWidget->setCurrentImage(image);
+  
+  //asynchronously tell the widget to repaint himself in a thread-safe way 
+  QApplication::postEvent(_droneQGLWidget, new QPaintEvent( QRect(0, 0, _frameSizeX, _frameSizeY) ) );  
 }
 
 bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)
 {            
-  std::cout << "--==|| Gl output initialization ||==--" << std::endl;
-
-  _glInitialized=false;
+  std::cout << "--==|| GL output initialization ||==--" << std::endl;
+  
   _xRes = xRes;
   _yRes = yRes;
 
-  if (!openXDisplay())
-    return false;
-
-  if (!createXWindow(xRes, yRes))
-    return false;
-
-  if (!createGLXContext())
-    return false;
-
-  return true;
-}
-
-bool VideoOutputGl::createGLXContext()
-{
-  std::cout << "creating GLX Context...";
-
-  _XGLXContext = glXCreateContext((Display*)_display, &_visualInfo, 0, GL_TRUE);        
-
-  int glxMajorVersion, glxMinorVersion;
-
-  if (glXQueryVersion((Display*)_display, &glxMajorVersion, &glxMinorVersion) == False)
-  {
-    std::cout << "FAIL! glx not available" << std::endl;
-    return false;
-  }
-
-  if (!glXIsDirect((Display*)_display, _XGLXContext))
-  {
-    std::cout << "FAIL! direct rendering not available" << std::endl;
-    return false;
-  }
-
-  std::cout << "GLX-Version " << glxMajorVersion << "." << glxMinorVersion << std::endl;
+  if (_window)
+    delete _window;
+    
+  _window = new DroneGLWindow(qApp->mainWidget()); 
+  _droneQGLWidget = new DroneQGLWidget(_window);  
+  QBoxLayout *l = new QHBoxLayout(_window);
+  l->addWidget(_droneQGLWidget);  
+  _window->setModal(false);
+  _window->show();
+  
 
   return true;
-
-}
-
-void VideoOutputGl::destroyGLXContext()
-{
-  std::cout << "destroying GLX context...";
-
-  if (_XGLXContext)
-  {
-    if (!glXMakeCurrent((Display*)_display, None, NULL))
-      std::cout << "could not release GLX context";
-
-    glXDestroyContext((Display*)_display, _XGLXContext);
-    _XGLXContext = NULL;
-  }
-
-  std::cout << "done" << std::endl;
-}
-
-int VideoOutputGl::initGl(int xRes, int yRes)
-{       
-  glXMakeCurrent((Display*)_display, _window, _XGLXContext);
-
-  glEnable(GL_TEXTURE_2D);
-
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); 
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-  glDisable(GL_ALPHA_TEST);
-  glDisable(GL_CULL_FACE);         
-  glDisable(GL_DITHER);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_DEPTH_TEST);
-  resizeWindow(xRes, yRes);
-  resizeGl(xRes, yRes);
-  return 0;
 }
 
 void VideoOutputGl::onResize(int sizeX, int sizeY)
-{
-  resizeGl(sizeX, sizeY);
-}
-
-void VideoOutputGl::resizeGl(int sizeX, int sizeY)
-{
-  glViewport(0, 0, sizeX, sizeY);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, sizeX, sizeY, 0, -99999, 99999);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
+{    
 }
 

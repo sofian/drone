@@ -24,7 +24,7 @@
 #include "VideoOutput.h"
 
 #if defined(Q_OS_MACX)
-#include "VideoOutputQT.h"
+#include "VideoOutputGl.h"
 #else
 #include "VideoOutputMaker.h"
 #endif
@@ -95,12 +95,12 @@ void Gear_VideoOutput::onUpdateSettings()
 
 void Gear_VideoOutput::init()
 { 
-//osx version dont use the VideoOutputMaker strategy and directly use the QT output
+//osx version dont use the VideoOutputMaker strategy and directly use the GL Output
 #if defined(Q_OS_MACX)
-	_videoOutput = new VideoOutputQT();
+	_videoOutput = new VideoOutputGL();
 	if (!_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(), false))
 	{
-		std::cout << "fail to init QT videoOutput" << std::endl;
+		std::cout << "fail to init GL videoOutput" << std::endl;
 		delete _videoOutput;
 		_videoOutput=NULL;
 	}

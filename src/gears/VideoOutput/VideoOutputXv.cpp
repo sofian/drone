@@ -42,11 +42,6 @@ _frameSize(0)
 
 VideoOutputXv::~VideoOutputXv()
 {
-  destroy();
-}
-
-void VideoOutputXv::destroy()
-{
   destroyXWindow();    
 
   unGrabXvPort();
