@@ -1,5 +1,5 @@
 /* Gear_AsciiArt.cpp
- * Copyright (C) 2003 Mathieu Petit-Clair
+ * Copyright (C) 2004 Mathieu Petit-Clair
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify

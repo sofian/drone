@@ -1,5 +1,5 @@
 /* Math.h
- * Copyright (C) 2003 Jean-Sebastien Senecal
+ * Copyright (C) 2004 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify

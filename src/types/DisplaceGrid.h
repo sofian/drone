@@ -1,5 +1,5 @@
 /* DisplaceGrid.h
- * Copyright (C) 2003 Julien Keable
+ * Copyright (C) 2004 Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify

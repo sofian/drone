@@ -1,5 +1,5 @@
 /* VideoOutputGl.cpp
- * Copyright (C) 2003 Mathieu Guindon
+ * Copyright (C) 2004 Mathieu Guindon
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify

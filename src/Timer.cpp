@@ -1,5 +1,5 @@
 /* Timer.cpp
- * Copyright (C) 2003 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// Copyright (C) 2003 Ronan Collobert (collober@idiap.ch)
+// Copyright (C) 2004 Ronan Collobert (collober@idiap.ch)
 //                
 // This file is part of Torch 3.
 //
