@@ -29,6 +29,9 @@ release {
   athlon {
     QMAKE_CXXFLAGS += -march=athlon    
   }
+  athlonxp {
+    QMAKE_CXXFLAGS += -march=athlon-xp
+  }
 
   G5 {
 	QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -fast
