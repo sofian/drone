@@ -26,6 +26,8 @@
 #include <iostream>
 #include <sstream>
 
+const std::string Gear::XML_TAGNAME = "Gear";
+
 Gear::Gear(Schema *schema, std::string type, std::string name) : 
 _parentSchema(schema), 
 _Type(type), 
@@ -173,7 +175,7 @@ GearGui* Gear::createGearGui(QCanvas *canvas)
 
 void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
 {               
-  QDomElement gearElem = doc.createElement("Gear");
+  QDomElement gearElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(gearElem);
 
   QDomAttr gearType = doc.createAttribute("Type");

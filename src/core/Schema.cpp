@@ -6,7 +6,9 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qtextstream.h>
+#include "XMLHelper.h"
 
+const std::string Schema::XML_TAGNAME = "Schema";
 
 void Schema::Connection::save(QDomDocument &doc, QDomElement &parent)
 {
@@ -482,7 +484,7 @@ bool Schema::connect(Schema::Connection &connection)
 
 bool Schema::save(QDomDocument& doc, QDomElement &parent)
 {
-  QDomElement rootElem = doc.createElement("Schema");
+  QDomElement rootElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(rootElem);
 
 
@@ -513,67 +515,64 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
 }
 
 bool Schema::load(QDomElement& parent)
-{        
-  //load gears
-  QDomNodeList gearsNode = parent.elementsByTagName("Gears");
+{          
+  QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
 
-  //be sure we have exactly one Gears tag
-  //if (gearsNode.count()==1)
+  if (gearsNode.isNull())
   {
-    //iteration on all gears
-    QDomNode gearNode = gearsNode.item(0).firstChild();
-    Gear *pgear=NULL;
-    while (!gearNode.isNull())
+    std::cout << "Bad DroneSchema : <Gears> tag not found!" << std::endl;
+    return false;
+  }
+
+  QDomNode gearNode = gearsNode.firstChild();
+  Gear *pgear=NULL;
+  while (!gearNode.isNull())
+  {
+    QDomElement gearElem = gearNode.toElement();
+    if (!gearElem.isNull())
     {
-      QDomElement gearElem = gearNode.toElement();
-      if (!gearElem.isNull())
+      std::string type = gearElem.attribute("Type","").ascii();
+      
+      if (type == MetaGear::TYPE)        
+        //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
+        pgear = addMetaGear("MetaGear", gearElem.attribute("Name","").ascii());          
+      else                   
+        pgear = addGear(type, gearElem.attribute("Name","").ascii());
+      
+      if (pgear!=NULL)
       {
-        std::string type = gearElem.attribute("Type","").ascii();
-        
-        std::cout << "loading " << type << std::endl;
+        pgear->internalLoad(gearElem);                                
+      }                                
 
-        if (type == MetaGear::TYPE)        
-          //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
-          pgear = addMetaGear("MetaGear", gearElem.attribute("Name","").ascii());          
-        else                   
-          pgear = addGear(type, gearElem.attribute("Name","").ascii());
-        
-        if (pgear!=NULL)
-        {
-          pgear->internalLoad(gearElem);                                
-        }
-
-      }
-      gearNode = gearNode.nextSibling();
-    }                
-  } 
-  //else
-    //std::cout << "Bad DroneSchema : problem with <Gears>" << std::endl;
+    }
+    gearNode = gearNode.nextSibling();
+  }                
 
 
   //load connections    
-  QDomNodeList connectionsNode = parent.elementsByTagName("Connections");
+  QDomNode connectionsNode = XMLHelper::findChildNode(parent, "Connections");
 
-  //be sure we have exactly one Connections tag
-  if (connectionsNode.count()==1)
+  if (connectionsNode.isNull())
   {
-    //iteration on all connections
-    QDomNode connectionNode = connectionsNode.item(0).firstChild();
-    Connection connection;
-    while (!connectionNode.isNull())
+    std::cout << "Bad DroneSchema : <Connections> tag not found!" << std::endl;
+    return false;
+  }
+
+  //iteration on all connections
+  QDomNode connectionNode = connectionsNode.firstChild();
+  Connection connection;
+  while (!connectionNode.isNull())
+  {
+    QDomElement connectionElem = connectionNode.toElement();
+
+    if (!connectionElem.isNull())
     {
-      QDomElement connectionElem = connectionNode.toElement();
+      connection.load(connectionElem);            
+      connect(connection);
+    }
 
-      if (!connectionElem.isNull())
-      {
-        connection.load(connectionElem);            
-        connect(connection);
-      }
-
-      connectionNode = connectionNode.nextSibling();
-    }               
-  } else
-    std::cout << "Bad DroneSchema : problem with <Connections>" << std::endl;
+    connectionNode = connectionNode.nextSibling();
+  }               
   
   return true;
 }

@@ -1,6 +1,8 @@
 #include "MetaGear.h"
 #include "GearGui.h"
 
+#include "XMLHelper.h"
+
 const QColor MetaGear::METAGEAR_COLOR(115,8,8);  
 const std::string MetaGear::TYPE="MetaGear";
 
@@ -33,6 +35,17 @@ void MetaGear::save(QDomDocument &doc, QDomElement &parent)
 }
 
 void MetaGear::load(QDomElement &parent)
-{
-  _schema.load(parent);
+{  
+  
+  //find the schema node under the metagear
+  QDomNode schemaNode = XMLHelper::findChildNode(parent, Schema::XML_TAGNAME);
+     
+  if (schemaNode.isNull())
+  {
+    std::cout << "Bad DroneSchema : <Schema> tag not found for metagear!" << std::endl;
+    return;
+  }
+  
+  QDomElement schemaElem = schemaNode.toElement();  
+  _schema.load(schemaElem);  
 }

@@ -23,10 +23,12 @@
 #include <assert.h>
 
 #include <qdom.h>
+#include "XMLHelper.h"
 
 #include "Properties.h"
 
 const char Properties::WHITESPACE_REPLACEMENT = '_';
+const std::string Properties::XML_TAGNAME = "Properties";
 
 void Property::valueFloat(float value)
 {
@@ -97,7 +99,7 @@ void Properties::getAll(std::vector<Property*> *properties)
 
 void Properties::save(QDomDocument &doc, QDomElement &parent)
 {               
-  QDomElement propertiesElem = doc.createElement("Properties");
+  QDomElement propertiesElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(propertiesElem);
 
   QDomAttr propertieAttr;
@@ -114,19 +116,21 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
 void Properties::load(QDomElement &parentElem)
 {
   //properties
-  QDomNodeList propertiesNodes = parentElem.elementsByTagName("Properties");
+  QDomNode propertiesNodes = XMLHelper::findChildNode(parentElem, XML_TAGNAME);
 
-  if (propertiesNodes.count()==1)
+  if (propertiesNodes.isNull())
   {
-    QDomElement propertiesElem = propertiesNodes.item(0).toElement();
+    std::cout << "Bad DroneSchema : <Properties> tag not found!" << std::endl;
+    return;
+  }
+  
+  QDomElement propertiesElem = propertiesNodes.toElement();
 
-    for (std::map<std::string, Property*>::iterator it = _properties.begin(); it != _properties.end(); ++it)
-    {
-      //we need to replace whitespaces with another char for xml attributes
-      it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
-    }    
+  for (std::map<std::string, Property*>::iterator it = _properties.begin(); it != _properties.end(); ++it)
+  {
+    //we need to replace whitespaces with another char for xml attributes
+    it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
+  }    
 
-  } else
-    std::cout << "Bad DroneSchema : problem with properties tag" << std::endl;
 
 }

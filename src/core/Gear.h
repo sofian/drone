@@ -57,6 +57,8 @@ class Gear
 {
 public:
   
+  static const std::string XML_TAGNAME;
+
   //! is this gear a MetaGear? 
   virtual bool isMeta() const {return false;}
 

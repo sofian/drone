@@ -15,6 +15,8 @@ class Schema
 {
 public:
 
+  static const std::string XML_TAGNAME;
+
   class GearGraphManip
   {
   public :

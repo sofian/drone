@@ -70,6 +70,7 @@ private:
 class Properties
 {
 public:
+  static const std::string XML_TAGNAME;
 
   Property* add(Property::eType type, std::string name);
 
