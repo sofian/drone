@@ -1,0 +1,46 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="489" PosY="52" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="199" PosY="66" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="5" PosY="8" Type="Slider" SliderPos="0" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="6" PosY="128" Type="Slider" SliderPos="0" Name="Slider2" >
+            <Properties Lower_Bound="-3.14159" Higher_Bound="3.14159" />
+        </Gear>
+        <Gear PosX="7" PosY="190" Type="Slider" SliderPos="2.14548" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="6.28319" />
+        </Gear>
+        <Gear PosX="6" PosY="69" Type="Slider" SliderPos="50" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="341" PosY="57" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/mathieu/dl/videos/Herbaliser.mpg" />
+        </Gear>
+        <Gear PosX="634" PosY="52" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="10" PosY="339" Type="Slider" SliderPos="288" Name="Slider5" >
+            <Properties Lower_Bound="288" Higher_Bound="384" />
+        </Gear>
+        <Gear PosX="9" PosY="270" Type="Slider" SliderPos="384" Name="Slider6" >
+            <Properties Lower_Bound="288" Higher_Bound="384" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
+        <Connection GearA="Slider1" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
+        <Connection GearA="Slider2" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Value" />
+        <Connection GearA="Slider3" GearB="GenDisplaceGrid1" Input="PARAM3" Output="Value" />
+        <Connection GearA="Slider4" GearB="GenDisplaceGrid1" Input="PARAM1" Output="Value" />
+        <Connection GearA="VideoSource1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="XSIZE" Output="..ValueType" />
+        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="YSIZE" Output="..ValueType" />
+    </Connections>
+</Schema>
