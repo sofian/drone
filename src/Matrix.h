@@ -9,6 +9,10 @@
  * derives from the STL <code>vector</code> class. The main advantage of using
  * a <code>Matrix</code> over a <code>vector</code> is that it offers a nice
  * interface for accessing data in a "by-row" fashion.
+ *
+ * @author Jean-Sébastien Senécal, Mathieu Guindon
+ * @version %I%
+ * @date %G%
  */
 template <class T>
 class Matrix : public std::vector<T>
