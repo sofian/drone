@@ -1572,4 +1572,165 @@ component_pixels (const unsigned char *src,
 
 // ##########################################################################
 
+// # Threshold operation ####################################################
+
+inline void
+threshold_pixels (const unsigned char *src,
+                  unsigned char       *dest,
+                  unsigned char        threshold,
+                  unsigned int         length,
+                  unsigned int         bytes)
+{
+  unsigned int b;
+  const unsigned int alpha = HAS_ALPHA (bytes) ? bytes - 1 : bytes;
+  
+  if (HAS_ALPHA (bytes))
+  {
+    while (length --)
+    {
+      for (b = 0; b < alpha; b++)
+        dest[b] = (src[b] > threshold ? 255 : 0);
+      
+      dest[alpha] = src[alpha];
+      dest += bytes;
+      src += bytes;
+    }
+  }
+  else
+  {
+    while (length --)
+    {
+      for (b = 0; b < alpha; b++)
+        dest[b] = (src[b] > threshold ? 255 : 0);
+      
+      dest += bytes;
+      src += bytes;
+    }
+  }
+}
+
+// # Logical operators ######################################################
+
+inline void
+invert_pixels (const unsigned char *src,
+               unsigned char       *dest,
+               unsigned int         length,
+               unsigned int         bytes)
+{
+  unsigned int b;
+  const unsigned int alpha = HAS_ALPHA (bytes) ? bytes - 1 : bytes;
+  
+  if (HAS_ALPHA (bytes))
+  {
+    while (length --)
+    {
+      for (b = 0; b < alpha; b++)
+        dest[b] = 255 - src[b];
+      
+      dest[alpha] = src[alpha];
+      dest += bytes;
+      src += bytes;
+    }
+  }
+  else
+  {
+    while (length --)
+    {
+      for (b = 0; b < alpha; b++)
+        dest[b] = 255 - src[b];
+      
+      dest += bytes;
+      src += bytes;
+    }
+  }
+}
+
+inline void
+and_pixels (const unsigned char *src1,
+            const unsigned char *src2,
+            unsigned char       *dest,
+            unsigned int         length,
+            unsigned int         bytes1,
+            unsigned int         bytes2)
+  
+{
+  unsigned int b;
+  const unsigned int has_alpha1 = HAS_ALPHA (bytes1);
+  const unsigned int has_alpha2 = HAS_ALPHA (bytes2);
+  const unsigned int alpha = (has_alpha1 || has_alpha2) ? MAX (bytes1, bytes2) - 1 : bytes1;
+  
+  while (length --)
+  {
+    for (b = 0; b < alpha; b++)
+      dest[b] = src1[b] & src2[b];
+
+    if (has_alpha1 && has_alpha2)
+      dest[alpha] = MIN (src1[alpha], src2[alpha]);
+    else if (has_alpha2)
+      dest[alpha] = src2[alpha];
+
+    src1 += bytes1;
+    src2 += bytes2;
+    dest += bytes2;
+  }
+}
+
+inline void
+or_pixels (const unsigned char *src1,
+           const unsigned char *src2,
+           unsigned char       *dest,
+           unsigned int         length,
+           unsigned int         bytes1,
+           unsigned int         bytes2)
+{
+  unsigned int b;
+  const unsigned int has_alpha1 = HAS_ALPHA (bytes1);
+  const unsigned int has_alpha2 = HAS_ALPHA (bytes2);
+  const unsigned int alpha = (has_alpha1 || has_alpha2) ? MAX (bytes1, bytes2) - 1 : bytes1;
+  
+  while (length --)
+  {
+    for (b = 0; b < alpha; b++)
+      dest[b] = src1[b] | src2[b];
+
+    if (has_alpha1 && has_alpha2)
+      dest[alpha] = MIN (src1[alpha], src2[alpha]);
+    else if (has_alpha2)
+      dest[alpha] = src2[alpha];
+
+    src1 += bytes1;
+    src2 += bytes2;
+    dest += bytes2;
+  }
+}
+
+inline void
+xor_pixels (const unsigned char *src1,
+            const unsigned char *src2,
+            unsigned char       *dest,
+            unsigned int         length,
+            unsigned int         bytes1,
+            unsigned int         bytes2)
+{
+  unsigned int b;
+  const unsigned int has_alpha1 = HAS_ALPHA (bytes1);
+  const unsigned int has_alpha2 = HAS_ALPHA (bytes2);
+  const unsigned int alpha = (has_alpha1 || has_alpha2) ? MAX (bytes1, bytes2) - 1 : bytes1;
+  
+  while (length --)
+  {
+    for (b = 0; b < alpha; b++)
+      dest[b] = src1[b] ^ src2[b];
+
+    if (has_alpha1 && has_alpha2)
+      dest[alpha] = MIN (src1[alpha], src2[alpha]);
+    else if (has_alpha2)
+      dest[alpha] = src2[alpha];
+
+    src1 += bytes1;
+    src2 += bytes2;
+    dest += bytes2;
+  }
+}
+
 #endif
