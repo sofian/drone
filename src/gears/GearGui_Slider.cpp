@@ -51,8 +51,12 @@ void GearGui_Slider::drawShape(QPainter &painter)
 
   //convert sliderpos to screen value    
   float low = _gear->settings().get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
-  float hi = _gear->settings().get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
-  float screenRatio = (((Gear_Slider*)_gear)->getValue()-low) / (hi-low);    
+  float hi = _gear->settings().get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();
+  float screenRatio;
+  if (hi == low)
+    screenRatio = 0.5f;
+  else
+    screenRatio = (((Gear_Slider*)_gear)->getValue()-low) / (hi-low);    
   int sliderPos = (int) ((float)(screenRatio * (float)(sizeX-SLIDER_THICKNESS)));
 
   //box                      
