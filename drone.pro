@@ -35,6 +35,7 @@ HEADERS += config.h \
            src/Gear_Image.h \
            src/Gear_KDTree.h \
            src/Gear_MasterFrequency.h \
+           src/Gear_MedianFilter.h \
            src/Gear_NGone.h \
            src/Gear_Osc.h \
            src/Gear_Oscilloscope.h \
@@ -108,6 +109,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_Image.cpp \
            src/Gear_KDTree.cpp \
            src/Gear_MasterFrequency.cpp \
+           src/Gear_MedianFilter.cpp \
            src/Gear_NGone.cpp \
            src/Gear_Osc.cpp \
            src/Gear_Oscilloscope.cpp \
