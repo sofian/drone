@@ -1,5 +1,7 @@
 TEMPLATE=lib
 
+CONFIG+=thread
+
 #common
 SOURCES+=Gear_VideoOutput.cpp VideoOutputMaker.cpp 
 HEADERS+=Gear_VideoOutput.h VideoOutput.h VideoOutputMaker.h  

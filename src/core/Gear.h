@@ -85,11 +85,10 @@ public:
 
   virtual Schema* getInternalSchema(){return NULL;}
 
-  void name(std::string vname){_Name=vname;}
+  void name(std::string vname){_name=vname;}
 
-  const std::string& type() const {return _Type;};
-  const std::string& name() const {return _Name;};
-  const std::string& uniqueName() const {return _uniqueName;}
+  const std::string& type() const {return _Type;};  
+  const std::string& name() const {return _name;}
     
   Properties& settings(){return _settings;};
 
@@ -132,8 +131,7 @@ protected:
 private:
 
   std::string _Type;
-  std::string _Name;
-  std::string _uniqueName;//! unique name of this gear in a schema
+  std::string _name;//! unique name of this gear in a schema
 
   GearGui *_gearGui;
 

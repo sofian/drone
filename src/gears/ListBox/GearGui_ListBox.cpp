@@ -33,7 +33,7 @@ const QColor GearGui_ListBox::SLIDER_COLOR(249, 169, 7);
 const QColor GearGui_ListBox::SLIDER_BOX_COLOR(105, 122, 125);
 
 GearGui_ListBox::GearGui_ListBox(Gear_ListBox *gear, QCanvas *canvas) : 
-GearGui(gear, canvas, SLIDER_SIZEX, SLIDER_SIZEY)    
+GearGui(gear, canvas, GearGui::BOXNAME_COLOR, SLIDER_SIZEX, SLIDER_SIZEY)    
 {        
 }
 

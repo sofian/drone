@@ -102,7 +102,7 @@ _boxNameColor(color)
 
   //now set the size for this QCanvasItem
   setSize(_sizeX + SHADOW_OFFSET, _sizeY + SHADOW_OFFSET);
-
+  
 
 }
 

@@ -32,7 +32,7 @@ const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
 const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
 GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, QCanvas *canvas) : 
-GearGui(gear, canvas, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
+GearGui(gear, canvas, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
 {        
 }
 

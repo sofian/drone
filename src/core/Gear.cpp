@@ -26,11 +26,10 @@
 #include <iostream>
 #include <sstream>
 
-Gear::Gear(Schema *schema, std::string type, std::string uniqueName) : 
+Gear::Gear(Schema *schema, std::string type, std::string name) : 
 _parentSchema(schema), 
 _Type(type), 
-_Name(type),//default name to typeName
-_uniqueName(uniqueName),
+_name(name),
 _gearGui(NULL)
 {
   ASSERT_ERROR_MESSAGE(_parentSchema!=0, "NULL schema passed to gear");
@@ -182,7 +181,7 @@ void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
   gearElem.setAttributeNode(gearType);
 
   QDomAttr gearName = doc.createAttribute("Name");
-  gearName.setValue(_Name.c_str());
+  gearName.setValue(_name.c_str());
   gearElem.setAttributeNode(gearName);
 
   _gearGui->save(doc, gearElem);
@@ -194,7 +193,7 @@ void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
 
 void Gear::internalLoad(QDomElement &gearElem)               
 {            
-  _Name = gearElem.attribute("Name","").ascii();
+  _name = gearElem.attribute("Name","").ascii();
 
   _settings.load(gearElem);
   updateSettings();

@@ -35,7 +35,7 @@ const int GearGui_TV::UPDATE_RATE_MS = 83;
 const QColor GearGui_TV::NO_SIGNAL_COLOR(2, 128, 255);
 
 GearGui_TV::GearGui_TV(Gear_TV *gear, QCanvas *canvas) : 
-GearGui(gear, canvas, TV_SIZEX, TV_SIZEY, UPDATE_RATE_MS),
+GearGui(gear, canvas, GearGui::BOXNAME_COLOR, TV_SIZEX, TV_SIZEY, UPDATE_RATE_MS),
 _currentSizeX(0),
 _currentSizeY(0)
 {            

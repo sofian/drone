@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 
 Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
-Gear(schema, "Oscillator", uniqueName),
+Gear(schema, "Osc", uniqueName),
 _phaseCorrection(0.0f)
 {
   addPlug(_PARAM_FREQ = new PlugIn<ValueType>(this, "Freq", new ValueType(440.0f,0.0f,1000.0f)));

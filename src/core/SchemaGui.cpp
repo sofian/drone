@@ -67,7 +67,7 @@ void SchemaGui::setSchema(Schema *schema)
   //add connectionItems
   std::list<Schema::Connection*> connections;
   _schema->getAllConnections(connections);
-  ConnectionItem *connectionItem=NULL;
+  
   PlugBox *sourcePlugBox;
   PlugBox *destPlugBox;
   Gear *gearA;
