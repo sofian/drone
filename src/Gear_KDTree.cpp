@@ -7,7 +7,7 @@
 
 Register_Gear(MAKERGear_KDTree, Gear_KDTree, "KDTree")
 
-  Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
+Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
     : Gear(engine, "KDTree", name)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
