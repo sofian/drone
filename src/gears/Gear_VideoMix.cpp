@@ -26,7 +26,6 @@
 
 
 Register_Gear(MAKERGear_VideoMix, Gear_VideoMix, "VideoMix")
-  const std::string Gear_VideoMix::SETTING_MIX_FUNCTION = "MIX FUNCTION : See the code or just have fun";
 
 Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
 {
@@ -34,9 +33,30 @@ Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "V
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgO"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127, 0, 255)));
-  addPlug(_MIXFUNC_IN = new PlugIn<ValueType>(this, "MixFunc", new ValueType(BLEND,BLEND,DIFFERENCE)));
 
-  _settings.add(Property::INT, SETTING_MIX_FUNCTION)->valueInt((int)BLEND);
+  EnumType *mixFunc = new EnumType(N_VIDEOMIX_TYPES, BLEND);
+  mixFunc->setLabel(BLEND,"Blend");
+  mixFunc->setLabel(SHADE,"Shade");
+  mixFunc->setLabel(DARKEN,"Darken");
+  mixFunc->setLabel(LIGHTEN,"Lighten");
+  mixFunc->setLabel(HUE_ONLY,"Hue only");
+  mixFunc->setLabel(SATURATION_ONLY,"Saturation only");
+  mixFunc->setLabel(VALUE_ONLY,"Value only");
+  mixFunc->setLabel(COLOR_ONLY,"Color only");
+  mixFunc->setLabel(MULTIPLY,"Multiply");
+  mixFunc->setLabel(DIVIDE,"Divide");
+  mixFunc->setLabel(SCREEN,"Screen");
+  mixFunc->setLabel(OVERLAY,"Overlay");
+  mixFunc->setLabel(DODGE,"Dodge");
+  mixFunc->setLabel(BURN,"Burn");
+  mixFunc->setLabel(HARDLIGHT,"Hardlight");
+  mixFunc->setLabel(SOFTLIGHT,"Softlight");
+  mixFunc->setLabel(GRAIN_EXTRACT,"Grain extract");
+  mixFunc->setLabel(GRAIN_MERGE,"Grain merge");
+  mixFunc->setLabel(ADD,"Add");
+  mixFunc->setLabel(SUBTRACT,"Subtract");
+  mixFunc->setLabel(DIFFERENCE,"Difference");
+  addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", mixFunc));
 }
 
 Gear_VideoMix::~Gear_VideoMix()

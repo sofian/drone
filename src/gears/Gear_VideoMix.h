@@ -22,6 +22,8 @@
 
 #include "Gear.h"
 #include "SignalType.h"
+#include "ValueType.h"
+#include "EnumType.h"
 #include "VideoRGBAType.h"
 #include "Utils.h"
 
@@ -54,7 +56,6 @@ class Gear_VideoMix : public Gear
     //    REPLACE,  // XXX idem
     N_VIDEOMIX_TYPES
   };
-  static const std::string SETTING_MIX_FUNCTION;
 
 public:
 
@@ -73,7 +74,7 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN_B;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
-  PlugIn<ValueType> *_MIXFUNC_IN;
+  PlugIn<EnumType> *_MIXFUNC_IN;
 
   //local var
   const VideoRGBAType *_imageA; 
