@@ -23,8 +23,18 @@
 
 #include "GearMaker.h"
 
-
-Register_Gear(MAKERGear_VideoSource, Gear_VideoSource, "VideoSource");
+extern "C" {           
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_VideoSource(engine,name);
+}  
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoSource";
+  return gearInfo;
+}
+}
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 

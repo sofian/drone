@@ -23,7 +23,19 @@
 #include <iostream>
 #include <math.h>
 
-Register_Gear(MAKERGear_Osc, Gear_Osc, "Oscillator")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Osc(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Osc";
+  return gearInfo;
+}
+}
 
 Gear_Osc::Gear_Osc(Engine *engine, std::string name) : 
 Gear(engine, "Oscillator", name),

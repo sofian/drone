@@ -28,7 +28,19 @@
 #include <iostream>
 #include <sstream>
 
-Register_Gear(MAKERGear_Slider, Gear_Slider, "Slider")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Slider(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Slider";
+  return gearInfo;
+}
+}
 
 const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 

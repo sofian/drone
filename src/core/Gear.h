@@ -39,6 +39,16 @@ class QDomElement;
 class QCanvas;
 class Schema;
 
+struct GearInfo
+{
+  std::string name;
+  std::string category;
+  std::string author;
+  std::string description;
+  int minorVersion;
+  int majorVersion;
+};
+
 class Gear  
 {
 public:
@@ -134,7 +144,10 @@ private:
   friend void Schema::save(std::string filename);
 };
 
-
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name);
+GearInfo getGearInfo();
+}
 
 
 #endif

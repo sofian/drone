@@ -26,8 +26,20 @@
 
 #include <iostream>
 
-Register_Gear(MAKERGear_VideoOutput, Gear_VideoOutput, "VideoOutput")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_VideoOutput(engine,name);
+}
 
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoOutput";
+  return gearInfo;
+}
+}
+  
 const int Gear_VideoOutput::DEFAULT_XRES = 352;
 const int Gear_VideoOutput::DEFAULT_YRES = 240;
 const bool Gear_VideoOutput::DEFAULT_FULLSCREEN = false; 
@@ -43,12 +55,12 @@ _videoOutput(NULL)
 {
   //populate available video output list in order of preference
   //the init will try them in order, until he find one that fit
-  _allOutputs.push_back("Gl");
+  _allOutputs.push_back("Xv");
   _allOutputs.push_back("Gl");
   _allOutputs.push_back("Shm");
   //
 
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, name));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "IN"));
 
   _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);

@@ -26,7 +26,19 @@
 
 #include "Math.h"
 
-Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
+extern "C" {
+Gear* makeGear(Engine *engine, std::string name)
+{
+  return new Gear_Blur(engine,name);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "Blur";
+  return gearInfo;
+}
+}
 
 Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", name)
 {

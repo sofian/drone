@@ -23,6 +23,7 @@
 #include "Gear.h"
 #include "VideoRGBAType.h"
 
+
 class VideoOutput;
 
 class Gear_VideoOutput : public Gear  
