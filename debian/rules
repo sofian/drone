@@ -59,6 +59,7 @@ install: build
 	# Add here commands to install the package into debian/drone.
 	#$(MAKE) install DESTDIR=$(CURDIR)/debian/drone
 	cp drone $(CURDIR)/debian/drone/usr/bin
+	cp lib/libdroneCore.so* $(CURDIR)/debian/drone/usr/lib
 
 # Build architecture-independent files here.
 binary-indep: build install
