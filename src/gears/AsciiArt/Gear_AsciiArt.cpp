@@ -77,7 +77,9 @@ Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) :
 
 Gear_AsciiArt::~Gear_AsciiArt()
 {
-  aa_close(_aaContext);
+  if ( _aaContext != NULL ) {
+    aa_close(_aaContext);
+  }
 }
 
 void Gear_AsciiArt::init() 
