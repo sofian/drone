@@ -76,6 +76,7 @@ src/gears/Gear_Enveloppe.h \
 src/gears/Gear_FaceTrack.h \
 src/gears/Gear_FFT.h \
 src/gears/Gear_Gain.h \
+src/gears/Gear_Gamma.h \
 src/gears/Gear_GenDisplaceGrid.h \
 src/gears/Gear_GrayScale.h \
 src/gears/Gear_HalfToning.h \
@@ -171,6 +172,7 @@ src/gears/Gear_Enveloppe.cpp \
 src/gears/Gear_FaceTrack.cpp \
 src/gears/Gear_FFT.cpp \
 src/gears/Gear_Gain.cpp \
+src/gears/Gear_Gamma.cpp \
 src/gears/Gear_GenDisplaceGrid.cpp \
 src/gears/Gear_GrayScale.cpp \
 src/gears/Gear_HalfToning.cpp \
