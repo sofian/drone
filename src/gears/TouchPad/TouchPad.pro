@@ -4,8 +4,8 @@ HEADERS+=Gear_TouchPad.h GearGui_TouchPad.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_TouchPad
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_TouchPad
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_TouchPad

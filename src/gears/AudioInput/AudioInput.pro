@@ -5,8 +5,8 @@ INCLUDEPATH+=../../core/ ../../core/types ../../../lib/portaudio/include
 QMAKE_RPATH = -Wl,-rpath,lib/portaudio,-rpath,
 
 #linux
-linux:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
-linux:TARGET=../../../gears/Gear_AudioInput
+unix:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
+unix:TARGET=../../../gears/Gear_AudioInput
 
 #osx
 #todo add portaudio

@@ -4,8 +4,8 @@ HEADERS+=Gear_FlatSignal.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_FlatSignal
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_FlatSignal
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_FlatSignal

@@ -41,27 +41,6 @@ class Engine
 
 public:
 
-  class ScheduledConnectDisconnect
-  {
-  public:
-    enum eConnectDisconnect
-      {
-        CONNECT, DISCONNECT
-      };
-
-    ScheduledConnectDisconnect(AbstractPlug *a, AbstractPlug *b, eConnectDisconnect conn) :
-      _a(a),
-      _b(b),
-      connectDisconnect(conn)
-    {
-    };
-    
-    AbstractPlug *_a;
-    AbstractPlug *_b;
-    eConnectDisconnect connectDisconnect;//connection or disconnection
-  };
-
-
   Engine(int hwnd);
   virtual ~Engine();
 
@@ -80,18 +59,12 @@ public:
 
   void needSynch() {_graphSynched=false;};
 
-  void scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB);
-  void scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB);
-  void scheduleGearDeletion(Gear *gear);
   void scheduleGearUpdateSettings(Gear *gear);
 
 
 protected:
 
-  void performScheduledConnectDisconnect();
-  void performScheduledGearDeletion();
   void performScheduledGearUpdateSettings();
-  void performAllScheduledTasks();
 
   int _hWnd;
 
@@ -117,8 +90,6 @@ private:
 
   pthread_t _playThreadHandle;
 
-  std::vector<ScheduledConnectDisconnect> _scheduledsConnectDisconnect;
-  std::vector<Gear*> _scheduledsGearDeletion;
   std::vector<Gear*> _scheduledsGearUpdateSettings;
 
 };

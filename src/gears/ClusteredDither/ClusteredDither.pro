@@ -4,8 +4,8 @@ HEADERS+=Gear_ClusteredDither.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_ClusteredDither
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_ClusteredDither
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_ClusteredDither

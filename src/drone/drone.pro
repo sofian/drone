@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-linux:QMAKE_CXXFLAGS += -rdynamic
+unix:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -20,7 +20,7 @@ debug {
 # Optimized settings
 release {
   OBJECTS_DIR = release
-  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe
+  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }
@@ -38,13 +38,19 @@ release {
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types
-linux:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
-linux:LIBS += -L../../lib -ldroneCore
-mac:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
-TARGET = ../../drone
 
+#mac
+mac:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+
+#linux
+unix:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
+unix:LIBS += -L../../lib -ldroneCore
+
+
+TARGET = ../../drone
+
 
 HEADERS += config.h \
 GearListMenu.h \ 

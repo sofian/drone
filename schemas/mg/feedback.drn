@@ -1,8 +1,8 @@
 <!DOCTYPE DroneSchema>
 <Schema>
     <Gears>
-        <Gear PosX="48" PosY="122" Type="VideoInput" Name="VideoInput1" >
-            <Properties width="352" Device="/dev/video0" height="292" />
+        <Gear PosX="173" PosY="52" Type="VideoInput" Name="VideoInput1" >
+            <Properties width="352" Device="/dev/video1" height="292" />
         </Gear>
         <Gear PosX="769" PosY="32" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />

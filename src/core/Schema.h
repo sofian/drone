@@ -71,6 +71,16 @@ public:
     std::string _output;
   };
 
+
+  class ScheduledConnection
+  {
+  public:
+    ScheduledConnection(AbstractPlug *a, AbstractPlug *b) : _a(a), _b(b) {}    
+    AbstractPlug *_a;
+    AbstractPlug *_b;    
+  };
+
+
   Schema(MetaGear * parentMetaGear=NULL);
   virtual ~Schema();
 
@@ -101,8 +111,7 @@ public:
 
   MetaGear* addMetaGear(std::string name);
   Gear* addGear(std::string geartype);
-
-  //! removes the specified gear, searching recursivly in sub-schemas
+  
   bool removeDeepGear(Gear* gear);
   
   std::string getUniqueGearName(std::string prefix);
@@ -110,6 +119,10 @@ public:
   
   void unSynch(){_needSynch=true;}  
 
+  
+  void lock(){_locked=true;}
+  void unlock();
+    
 private:
 
   Gear* addGear(std::string geartype, std::string uniqueName);
@@ -125,6 +138,13 @@ private:
   std::list<Gear*> _lastDeepOrderedReadyGears;
   
   MetaGear *_parentMetaGear;
+
+  //thread safety
+  bool _locked;
+  std::vector<ScheduledConnection> _scheduledConnections;
+  std::vector<ScheduledConnection> _scheduledDisconnections;
+  std::vector<Gear*> _scheduledDeletes;
+
     
 };
 

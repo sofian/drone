@@ -4,8 +4,8 @@ HEADERS+=Gear_AffineTransform.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_AffineTransform
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_AffineTransform
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_AffineTransform

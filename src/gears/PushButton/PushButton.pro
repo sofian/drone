@@ -4,8 +4,8 @@ HEADERS+=Gear_PushButton.h GearGui_PushButton.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_PushButton
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_PushButton
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_PushButton

@@ -151,7 +151,8 @@ Gear* Schema::getGearByName(std::string name) const
 
 Schema::Schema(MetaGear * parentMetaGear) :
 _needSynch(true),  
-_parentMetaGear(parentMetaGear)
+_parentMetaGear(parentMetaGear),
+_locked(false)
 {
 }
 
@@ -285,10 +286,26 @@ std::list<Schema*> Schema::getSubSchemas()
   return sub;
 }
 
+/**
+ * Remove a gear from the schema, searching recursivly in subschemas
+ * - ThreadSafe, if the schema is locked, operation will be performed on unlock
+ * 
+ * @param plugA
+ * @param plugB
+ * 
+ * @return 
+ */
+
 bool Schema::removeDeepGear(Gear* gear)
 {
   ASSERT_ERROR(gear!=NULL);
   
+  if (_locked)
+  {
+    _scheduledDeletes.push_back(gear);
+    return true;
+  }
+
   // if the gear to be removed is at the current schema level, remove it here
   if(find(_gears.begin(),_gears.end(),gear) != _gears.end())
   {   
@@ -375,20 +392,49 @@ void Schema::getAllConnections(std::list<Connection*> &connections)
 }
 
 
+/**
+ * Connect 2 AbstractPlugs
+ * - ThreadSafe, if the schema is locked, operation will be performed on unlock
+ * 
+ * @param plugA
+ * @param plugB
+ * 
+ * @return 
+ */
 bool Schema::connect(AbstractPlug *plugA, AbstractPlug *plugB)
 {
   if (!plugA || !plugB)
     return false;
   
-  return plugA->connect(plugB);  
+  if (_locked)
+  {
+    _scheduledConnections.push_back(ScheduledConnection(plugA, plugB));
+    return true;
+  }
+  else
+    return plugA->connect(plugB);  
 }
 
+/**
+ * Disconnect 2 AbstractPlugs
+ * - ThreadSafe, if the schema is locked, operation will be performed on unlock
+ * 
+ * @param plugA
+ * @param plugB
+ * 
+ * @return 
+ */
 void Schema::disconnect(AbstractPlug *plugA, AbstractPlug *plugB)
 {
   if (!plugA || !plugB)
     return;
   
-  plugA->disconnect(plugB);
+  if (_locked)
+  {
+    _scheduledDisconnections.push_back(ScheduledConnection(plugA, plugB));
+  }
+  else
+    plugA->disconnect(plugB);
 }
 
 void Schema::disconnectAll(AbstractPlug *plug)
@@ -531,3 +577,32 @@ bool Schema::load(QDomElement& parent)
   
   return true;
 }
+
+/**
+ * unlock the schema and perform all scheduled operations
+ */
+void Schema::unlock()
+{
+  _locked=false;
+
+  //perform all scheduled operations
+  
+  //delete
+  for (std::vector<Gear*>::iterator it=_scheduledDeletes.begin(); it!=_scheduledDeletes.end(); ++it)
+    removeDeepGear(*it);
+
+  _scheduledDeletes.clear();
+
+  //connect
+  for (std::vector<ScheduledConnection>::iterator it=_scheduledConnections.begin(); it != _scheduledConnections.end(); ++it)
+    (*it)._a->connect((*it)._b);
+  
+  _scheduledConnections.clear();
+
+  //disconnect
+  for (std::vector<ScheduledConnection>::iterator it=_scheduledDisconnections.begin(); it != _scheduledDisconnections.end(); ++it)
+    (*it)._a->disconnect((*it)._b);
+
+  _scheduledDisconnections.clear();  
+}
+

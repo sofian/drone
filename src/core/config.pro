@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread release ppc
+CONFIG = qt warn_on thread release
 
 # User-dependent includes
 

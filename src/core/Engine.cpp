@@ -96,9 +96,9 @@ void *Engine::playThread(void *parent)
   {
 #endif    
     block_starttime = Timing::time();
-
-    engine->performAllScheduledTasks();
-
+   
+    engine->_mainSchema.lock();
+    
     engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
 
     //process audio
@@ -144,44 +144,18 @@ void *Engine::playThread(void *parent)
       Timing::sleep((int)sleeptime);
 
     blockIt++;
+
+    engine->_mainSchema.unlock();
 #ifndef SINGLE_THREADED_PLAYBACK  
   }
 #endif               
 
-  engine->performAllScheduledTasks();
-
+  
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();
 
 
   return NULL;
-}
-
-void Engine::scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB)
-{
-  _scheduledsConnectDisconnect.push_back( ScheduledConnectDisconnect(plugA, plugB,  ScheduledConnectDisconnect::CONNECT));
-
-  //peform now if not playing
-  if (!_playing)
-    performScheduledConnectDisconnect();
-}
-
-void Engine::scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB)
-{
-  _scheduledsConnectDisconnect.push_back( ScheduledConnectDisconnect(plugA, plugB,  ScheduledConnectDisconnect::DISCONNECT));
-
-  //peform now if not playing
-  if (!_playing)
-    performScheduledConnectDisconnect();
-}
-
-
-void Engine::scheduleGearDeletion(Gear *gear)
-{
-  _scheduledsGearDeletion.push_back(gear);
-
-  if (!_playing)
-    performScheduledGearDeletion();
 }
 
 void Engine::scheduleGearUpdateSettings(Gear *gear)
@@ -192,31 +166,6 @@ void Engine::scheduleGearUpdateSettings(Gear *gear)
     performScheduledGearUpdateSettings();
 }
 
-
-void Engine::performScheduledGearDeletion()
-{
-  for (std::vector<Gear*>::iterator it=_scheduledsGearDeletion.begin(); it!=_scheduledsGearDeletion.end(); ++it)
-    _mainSchema.removeDeepGear(*it);
-
-  _scheduledsGearDeletion.clear();
-}
-
-void Engine::performScheduledConnectDisconnect()
-{
-  for (std::vector<ScheduledConnectDisconnect>::iterator it=_scheduledsConnectDisconnect.begin(); it != _scheduledsConnectDisconnect.end(); ++it)
-  {
-    if ((*it).connectDisconnect == ScheduledConnectDisconnect::CONNECT)
-    {
-      (*it)._a->connect((*it)._b);
-    } else
-    {
-      (*it)._a->disconnect((*it)._b);
-    }
-  }
-
-  _scheduledsConnectDisconnect.clear();
-}
-
 void Engine::performScheduledGearUpdateSettings()
 {
   for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)  
@@ -225,9 +174,3 @@ void Engine::performScheduledGearUpdateSettings()
   _scheduledsGearUpdateSettings.clear();
 }
 
-void Engine::performAllScheduledTasks()
-{
-  performScheduledGearDeletion();
-  performScheduledConnectDisconnect();
-  performScheduledGearUpdateSettings();
-}

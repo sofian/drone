@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-linux:QMAKE_CXXFLAGS += -rdynamic
+unix:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -20,7 +20,7 @@ debug {
 # Optimized settings
 release {
   OBJECTS_DIR = release
-  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe
+  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }
@@ -37,18 +37,20 @@ release {
 
 TEMPLATE = lib
 INCLUDEPATH += . types contrib/frei0r
+
+#mac
 mac:INCLUDEPATH += /Developer/Headers/FlatCarbon
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 mac:LIBS += -lz
 mac:LIBS += -framework OpenGL
 mac:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-
-linux:LIBS += -lGLU -lGL
-
-
-linux:TARGET = ../../lib/droneCore
 mac:TARGET = ../../drone.app/Contents/Frameworks/droneCore
+
+#linux
+unix:LIBS += -lGLU -lGL
+unix:TARGET = ../../lib/droneCore
+
 
 HEADERS += config.h \
 error.h \

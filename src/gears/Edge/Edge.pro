@@ -4,8 +4,8 @@ HEADERS+=Gear_Edge.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-linux:LIBS+=-L../../../lib/ -ldroneCore
-linux:TARGET=../../../gears/Gear_Edge
+unix:LIBS+=-L../../../lib/ -ldroneCore
+unix:TARGET=../../../gears/Gear_Edge
 
 #osx
 mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_Edge
