@@ -118,10 +118,10 @@ void Gear_VideoSource::runVideo()
   //_outData = _image.data();
   mpeg3_read_frame(_file, (unsigned char**)_frame, 0, 0, _sizeX, _sizeY, _sizeX, _sizeY, MPEG3_RGBA8888, 0);
 
-  _outData = _VIDEO_OUT->type()->data();
+  _imageOut = _VIDEO_OUT->type();
 
   for(int y=0;y<_sizeY;y++)
-    memcpy(&_outData[y*_sizeX], _frame[y], sizeof(RGBA) * _sizeX);
+    memcpy(_imageOut->row(y), _frame[y], sizeof(RGBA) * _sizeX);
 
 //  register int mmxCols=(_sizeX)/2;
 //  register int index;    

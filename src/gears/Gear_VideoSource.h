@@ -58,6 +58,8 @@ private:
   PlugOut<SignalType> *_AUDIO_OUT;
   PlugIn<ValueType> *_RESET_IN;
   PlugIn<EnumType> *_MODE_IN;
+
+  VideoRGBAType *_imageOut;
   
   mpeg3_t* _file;
 
@@ -67,7 +69,7 @@ private:
   
   float *_audioBuffer;
   RGBA *_frame[1024];
-  RGBA *_outData;  
+  //RGBA *_outData;  
 
   int64_t _bytes;
   
