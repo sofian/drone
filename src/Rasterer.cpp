@@ -41,16 +41,51 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
     unsigned char g=_color.G;
     unsigned char b=_color.B;
 
-    for (int y=y0;y<y1;y++)
-    {    
-        data = (unsigned char*)(_canvasData + y*sizeX);
+    if (filled)
+      for (int y=y0;y<y1;y++)
+      {    
+        data = (unsigned char*)&_canvasData[y*sizeX + x0];
         for (int x=x0;x<x1;x++)
         {
-            *(data++) = r;
-            *(data++) = g;
-            *(data++) = b;            
+          *(data++) = r;
+          *(data++) = g;
+          *(data++) = b;            
             data++;
         }
+      }
+    else
+    {
+      data = (unsigned char*)&_canvasData[y0*sizeX + x0];
+      for (int x=x0;x<=x1;x++)
+      {
+        *(data++) = r;
+        *(data++) = g;
+        *(data++) = b;
+        data++;
+      }
+
+      for (int y=y0; y<=y1; ++y)
+      {
+        data = (unsigned char*)&_canvasData[y*sizeX + x0];
+        *(data++) = r;
+        *(data++) = g;
+        *(data++) = b;       
+
+        data = (unsigned char*)&_canvasData[y*sizeX + x1];
+        *(data++) = r;
+        *(data++) = g;
+        *(data++) = b;
+      }
+      
+      data = (unsigned char*)&_canvasData[y1*sizeX + x0];
+      for (int x=x0;x<=x1;x++)
+      {
+        *(data++) = r;
+        *(data++) = g;
+        *(data++) = b;            
+        data++;
+      }
+      
     }
 }
 
