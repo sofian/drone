@@ -39,11 +39,11 @@ protected:
 private:
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
-  PlugIn<ValueType> *_AMOUNT_IN_A;
-  PlugIn<ValueType> *_AMOUNT_IN_B;
-
-  int _clusterSize;
-  int _width; // clusterSize * 3
+  PlugIn<ValueType> *_CLUSTER_SIZE_IN;
+  PlugIn<ValueType> *_SPOT_TYPE_IN;
+  PlugIn<ValueType> *_ANGLE_RED_IN;
+  PlugIn<ValueType> *_ANGLE_GREEN_IN;
+  PlugIn<ValueType> *_ANGLE_BLUE_IN;
 
   //local var
   const VideoTypeRGBA *_image; 
@@ -51,62 +51,38 @@ private:
   const RGBA *_data;
   RGBA *_outData;
 
-  int _sizeY;
   int _sizeX;    
+  int _sizeY;
 
   unsigned char *_imageIn;
   unsigned char *_imageOut;
+
+  int _clusterSize;
+  int _width; // clusterSize * 3
 
   unsigned char *_threshold;
   Order *_order;
 
   eSpotType _spotType;
 
-  inline void computeThreshold();
-  inline unsigned char getValue(int intensity, int rx, int ry);
-  inline float spot(float x, float y);
+  double _angle[SIZE_RGB];
+
+  Matrix<double> _r;     // precomputed r
+  Matrix<double> _theta; // precomputed theta
+  
+  void computeThreshold();
+  void computePolarCoordinates();
+  float spot(float x, float y);
+
+  inline unsigned char getValue(unsigned char intensity, int rx, int ry);
+  inline int isNeg(int x) { return ((x < 0)? 1 : 0); }
 };
 
-void Gear_ClusteredDither::computeThreshold()
+unsigned char Gear_ClusteredDither::getValue(unsigned char intensity, int rx, int ry)
 {
-  int width2 = _width*_width;
-
-  _threshold = (unsigned char*)realloc(_threshold, width2*sizeof(unsigned char));
-  _order = (Order*)realloc(_order, width2*sizeof(Order));
-
-  Order *iterOrder = _order;
-
-  // inside cell
-  int i=0;
-  for (int yCell=0; yCell<_width; ++yCell)
-  {
-    float sy = 2*(float)yCell / (_width-1) - 1;
-    for (int xCell=0; xCell<_width; ++xCell)
-    {
-      float sx = 2*(float)xCell / (_width-1) - 1;
-      float val = spot(sx, sy);
-
-      *iterOrder++ = std::make_pair(i++,val);
-    }
-  }
-
-  // now sort array of (point, value) pairs in ascending order
-  std::sort(_order, _order+width2, less);
-
-  /*
-    _threshold[] contains values from 0 .. 254.  The reason for not
-    including 255 is so that an image value of 255 remains
-    unmolested.  It would be bad to filter a completely white
-    image and end up with black speckles.
-  */
-  int val = 0;
-  iterOrder = _order;
-  for (i=0; i < width2; i++, val += 0xff)
-    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas là...
-}
-
-unsigned char Gear_ClusteredDither::getValue(int intensity, int rx, int ry)
-{
+  ASSERT_WARNING(rx >= 0 && rx <= _width-1);
+  ASSERT_WARNING(ry >= 0 && ry <= _width-1);
+            
   int sum = 0;
 
   int ryLow = ry-1;
@@ -141,62 +117,6 @@ unsigned char Gear_ClusteredDither::getValue(int intensity, int rx, int ry)
   sum >>= 4; // divide by 16
 
   return(unsigned char) sum;
-}
-
-float Gear_ClusteredDither::spot(float x, float y)
-{
-  switch (_spotType)
-  {
-  /* The following functions were derived from a peice of PostScript by
-   * Peter Fink and published in his book, "PostScript Screening: Adobe
-   * Accurate Screens" (Adobe Press, 1992).  Adobe Systems Incorporated
-   * allow its use, provided the following copyright message is present:
-   *
-   *  % Film Test Pages for Screenset Development
-   *  % Copyright (c) 1991 and 1992 Adobe Systems Incorporated
-   *  % All rights reserved.
-   *  %
-   *  % NOTICE: This code is copyrighted by Adobe Systems Incorporated, and
-   *  % may not be reproduced for sale except by permission of Adobe Systems
-   *  % Incorporated. Adobe Systems Incorporated grants permission to use
-   *  % this code for the development of screen sets for use with Adobe
-   *  % Accurate Screens software, as long as the copyright notice remains
-   *  % intact.
-   *  %
-   *  % By Peter Fink 1991/1992
-   */
-
-  /* Square (or Euclidean) dot.  Also very common. */
-  case SQUARE:
-    {
-      float ax = fabs(x);
-      float ay = fabs(y);
-
-      return(ax+ay)>1? ((ay-1)*(ay-1) + (ax-1)*(ax-1)) - 1 : 1-(ay*ay + ax*ax);
-    }
-
-    /* Diamond spot function, again from Peter Fink's PostScript
-     * original.  Copyright as for previous function. */
-  case DIAMOND:
-    {
-      float ax = fabs(x);
-      float ay = fabs(y);
-
-      return(ax+ay)<=0.75? 1-(ax*ax + ay*ay) : // dot
-      ( (ax+ay)<=1.23?  1-((ay*0.76) + ax) :  // to diamond
-        ((ay-1)*(ay-1) + (ax-1)*(ax-1)) -1);  // back to dot
-    }
-
-    /* Another commonly seen spot function is the v-shaped wedge. Tonally
-     * balanced. */
-  case LINE:
-    return fabs(y);
-
-    /* The classic growing dot spot function. */
-  case ROUND:
-  default:
-    return(1. - x*x - y*y);
-  }
 }
 
 #endif
