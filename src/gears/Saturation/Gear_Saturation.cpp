@@ -70,22 +70,22 @@ void Gear_Saturation::runVideo()
 
   _size = (int) _image->size();
 
-  if (_amount != _AMOUNT_IN->type()->value())
+  if (_saturation != _AMOUNT_IN->type()->value())
   {
-      _amount = _AMOUNT_IN->type()->value();
-      computeLookUpTable(_amount);
+      _saturation = _AMOUNT_IN->type()->value();
+      computeLookUpTable();
   }
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
 
-  float oneMinusAmount = 1.0f-_amount;
+  float oneMinusAmount = 1.0f-_saturation;
   int rwgt = (int)(19595 * oneMinusAmount);
   int gwgt = (int)(38470 * oneMinusAmount);
   int bwgt = (int)(7471  * oneMinusAmount);
 
   int bw=0;
 
-  if (0 <= _amount && _amount <=1) // optimisation: no clamping needed
+  if (0 <= _saturation && _saturation <=1) // optimisation: no clamping needed
   {
     for (int p=0; p<_size; ++p)
     {
@@ -126,13 +126,13 @@ void Gear_Saturation::runVideo()
 
 void Gear_Saturation::init()
 {
-  _amount = 0.0f;
-  computeLookUpTable(_amount);
+  _saturation = 0.0f;
+  computeLookUpTable();
 }
 
-void Gear_Saturation::computeLookUpTable(float amount)
+void Gear_Saturation::computeLookUpTable()
 {
   // Compute lookup table.
   for (int i=0; i<256; ++i)
-    _lut[i] = (int) (i*amount);
+    _lut[i] = (int) (i*_saturation);
 }
