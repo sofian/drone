@@ -35,6 +35,8 @@ public:
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
 
   AbstractType* abstractType() const { return _abstractType;}
+  AbstractType* abstractDefaultType() const { return _abstractInternalType;}
+  AbstractType* abstractHintType() const { return _abstractInternalType;}
   eInOut inOut() const {return _inOut;};
 
   int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
@@ -48,13 +50,13 @@ public:
 
 protected:
   std::list<AbstractPlug*> _connectedPlugs;    
+  AbstractType *_abstractType;
+  AbstractType *_abstractInternalType;
 
 private:
   Gear *_parent;
   eInOut _inOut;
   std::string _name;
-  AbstractType *_abstractType;
-
 };
 
 #endif //__ABSTRACTPLUG_INCLUDED

@@ -13,7 +13,7 @@ Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", na
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_AMOUNT_MAP_IN = new PlugIn<VideoTypeRGBA>(this, "Amount Map"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(0.5f)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(3, 0, 50)));
   _table = new SummedAreaTable();
 }
 

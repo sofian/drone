@@ -17,9 +17,7 @@ Gear_DataOut::Gear_DataOut(Engine *engine, std::string name) : Gear(engine, "Dat
 {
 
   _FileOut.open("dataout.txt");
-  addPlug(_AUDIO_IN = new PlugIn<ValueType>(this, "Input", new ValueType(0.0f)));
-
-
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "Input", new SignalType(0.0f)));
 }
 
 Gear_DataOut::~Gear_DataOut()
@@ -34,7 +32,7 @@ bool Gear_DataOut::ready()
 
 void Gear_DataOut::runAudio()
 {
-  MatrixType<float> bufferin = _AUDIO_IN->type()->value();
+  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
 
   int signal_blocksize = Engine::signalInfo().blockSize();
   for (int i=0;i<signal_blocksize;i++)

@@ -8,12 +8,12 @@
 Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
 
 Gear_ColorQuantize::Gear_ColorQuantize(Engine *engine, std::string name)
-: Gear(engine, "ColorQuantize", name), _nColors(DEFAULT_N_COLORS),
-  Ir(0), Ig(0), Ib(0), Qadd(0)
+  : Gear(engine, "ColorQuantize", name), _nColors(),
+    Ir(0), Ig(0), Ib(0), Qadd(0)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", new ValueType(DEFAULT_N_COLORS)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", new ValueType(16, 2, 32)));
 }
 
 Gear_ColorQuantize::~Gear_ColorQuantize()
@@ -32,7 +32,7 @@ bool Gear_ColorQuantize::ready()
 void Gear_ColorQuantize::runVideo()
 {
   // initialize
-  _nColors = (int)_AMOUNT_IN->type()->value();
+  _nColors = CLAMP((int)_AMOUNT_IN->type()->value(), 2, MAX_COLOR);
 
   _image = _VIDEO_IN->type()->image();
   _outImage = _VIDEO_OUT->type()->image();
@@ -43,13 +43,13 @@ void Gear_ColorQuantize::runVideo()
 
   size = _image->size();
 
-  struct box  cube[MAXCOLOR];
+  struct box  cube[MAX_COLOR];
   unsigned char *tag;
-  unsigned char lut_r[MAXCOLOR], lut_g[MAXCOLOR], lut_b[MAXCOLOR];
+  unsigned char lut_r[MAX_COLOR], lut_g[MAX_COLOR], lut_b[MAX_COLOR];
   int   next;
   register long int i, weight;
   register int  k;
-  float   vv[MAXCOLOR], temp;
+  float   vv[MAX_COLOR], temp;
 
   Qadd = (unsigned short int *)realloc(Qadd,sizeof(short int)*size);
 

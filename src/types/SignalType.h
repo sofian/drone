@@ -7,11 +7,11 @@
 class SignalType : public AbstractType
 {
 public:
-  SignalType(float def = 0.0f)
+  SignalType(float fillValue = 0.0f)
   {
     addSubType(_buffer);
     _buffer.resize(Engine::signalInfo().blockSize());
-    fill(_buffer.begin(), _buffer.end(), def);
+    _buffer.fill(fillValue);
   }
 
   virtual ~SignalType(){}

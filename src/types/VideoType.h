@@ -7,9 +7,12 @@
 class VideoTypeRGBA : public AbstractType
 {
 public:
-  VideoTypeRGBA()
+  VideoTypeRGBA(int width = 0,
+                int height = 0,
+                RGBA fillValue = BLACK_RGBA)
+    : _image(width, height, fillValue)
   {
-    addSubType(_image);  
+    addSubType(_image);
   }
 
   virtual ~VideoTypeRGBA(){}

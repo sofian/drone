@@ -21,8 +21,8 @@ Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slide
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
 
-  _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);    
-  _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);    
+  _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);
+  _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);
 
   setValue(DEFAULT_VALUE);
 
@@ -45,7 +45,7 @@ void Gear_Slider::onUpdateSettings()
   float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
   if (low>hi)
   {
-    _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(hi);    
+    _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(hi);
     _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat(low);    
   }
 
@@ -57,6 +57,18 @@ void Gear_Slider::onUpdateSettings()
   getGearGui()->reDraw();
 
 
+}
+
+void Gear_Slider::onPlugConnected(AbstractPlug *plug)
+{
+  if (plug == _VALUE_OUT)
+  {
+    ValueType *tmpType = dynamic_cast<ValueType*>(plug->firstConnectedPlug()->abstractHintType());
+    _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(tmpType->minValue()); 
+    _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat(tmpType->maxValue());
+    setValue(tmpType->value());
+    onUpdateSettings();
+  }
 }
 
 void Gear_Slider::setValue(float value)

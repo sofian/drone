@@ -6,8 +6,7 @@
 #include "VideoType.h"
 #include <stdio.h>
 
-#define DEFAULT_N_COLORS 256
-#define MAXCOLOR	256
+#define MAX_COLOR 256
 #define	RED	2
 #define	GREEN	1
 #define BLUE	0

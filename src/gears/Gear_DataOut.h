@@ -7,18 +7,19 @@
 
 class PlugSignal;
 
-class Gear_DataOut : public Gear  
+class Gear_DataOut : public Gear
 {
 public:
   Gear_DataOut(Engine *engine, std::string name);
   virtual ~Gear_DataOut();
 
-  void runAudio();  bool ready();
+  void runAudio();  
+  bool ready();
 
 private:
   std::ofstream _FileOut;
-  PlugIn<ValueType> *_AUDIO_IN;
+  PlugIn<SignalType> *_AUDIO_IN;
 
 };
 
-#endif 
+#endif

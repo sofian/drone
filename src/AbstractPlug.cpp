@@ -12,11 +12,12 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, Abstrac
   _parent(parent), 
   _inOut(inOut), 
   _name(name),
-  _abstractType(type)
+  _abstractType(type),
+  _abstractInternalType(type)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);
-}         
+}
 
 AbstractPlug::~AbstractPlug()
 {

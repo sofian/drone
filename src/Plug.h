@@ -18,7 +18,7 @@ protected:
   Plug(Gear* parent, eInOut inOut, std::string name, T* type = new T())
     : AbstractPlug(parent, inOut, name, type)
   {
-    _type = _defaultType = type;
+    _type = _internalType = type;
   }
 
 public:
@@ -28,9 +28,16 @@ public:
   }
 
   T* type() const { return _type;}
+  T* defaultType() const { return _internalType; }
+  T* hintType() const { return _internalType; }
 
 protected:
-  T *_type, *_defaultType;
+  void setType(T *type)
+  {
+    _abstractType = _type = type;
+  }
+
+  T *_type, *_internalType;
 };
 
 
@@ -65,12 +72,12 @@ public:
 
   virtual void onConnection(AbstractPlug *plug)
   {
-    _type = static_cast<T*>(plug->abstractType());
+    setType(static_cast<T*>(plug->abstractType()));
   }
 
   virtual void onDisconnection(AbstractPlug *)
   {
-    _type = _defaultType;
+    setType(_internalType);
   }
 
   void init() {}
