@@ -20,6 +20,8 @@ Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", na
 
 Gear_Blur::~Gear_Blur()
 {
+  if (_accumbuf)
+    delete _accumbuf;
 }
     
 bool Gear_Blur::ready()
@@ -107,7 +109,8 @@ void Gear_Blur::runVideo()
                 *(_tempAccumbuf+1) = _accG;
                 *(_tempAccumbuf+2) = _accB;
                 *(_tempAccumbuf+3) = _accA;
-                
+
+                _data+=4;
                 _tempAccumbuf+=4;
             }
         else
