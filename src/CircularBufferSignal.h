@@ -11,9 +11,9 @@
 // the variable pcur points on the actual sample
 
 // e.g : 
-// CIRCBUF_SIGNAL_T_LOOPDATA_FOR(b,-10,-1)  <- no semicolon
+// CIRCBUF_SIGNAL_T_LOOPDATA_FORBEGIN(b,-10,-1)  <- no semicolon
 //   std::cerr<<*(cbptr++)<<",";
-// CIRCBUF_SIGNAL_T_LOOPDATA_ENDFOR;
+// CIRCBUF_SIGNAL_T_LOOPDATA_FOREND;
 
 
 #define CIRCBUF_SIGNAL_T_FORBEGIN(obj,from,to)           \
