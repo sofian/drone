@@ -30,14 +30,24 @@
 #ifndef ERROR_INCLUDED
 #define ERROR_INCLUDED
 
+#include <stdarg.h>
+
+// # Macro definitions #####################################################
+
+// Debug levels.
+
 //! No debug.
 #define DEBUG_LEVEL_NODEBUG -1
+
 //! Only catch errors.
 #define DEBUG_LEVEL_ERROR   0
+
 //! Catch both errors and warnings.
 #define DEBUG_LEVEL_WARNING 1
+
 //! Catch errors, warnings and notices.
 #define DEBUG_LEVEL_NOTICE  2
+
 
 // Default debug level.
 #ifndef DEBUG_LEVEL
@@ -60,46 +70,63 @@
 ((expr) ? static_cast<void>(0) : func("assertion failed : " __STRING(expr)) );
 #define __DUMMY_ASSERT (static_cast<void>(0));
 
-//! Error messages/assertion.
-#if DEBUG_ERROR
-#define ERROR errormsg
-#define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr,ERROR)
-#else
-#define ERROR dummymsg
-#define ASSERT_ERROR(expr) __DUMMY_ASSERT
-#endif
+//#define dummymsg static_cast<void>(0);
 
-//! Warning messages/assertion.
-#if DEBUG_WARNING
-#define WARNING warningmsg
-#define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr,WARNING)
-#else
-#define WARNING dummymsg
-#define ASSERT_WARNING(expr) __DUMMY_ASSERT
-#endif
+// # Message functions #####################################################
 
-//! Notice messages/assertion.
-#if DEBUG_NOTICE
-#define NOTICE noticemsg
-#define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr,NOTICE)
-#else
-#define NOTICE dummymsg
-#define ASSERT_NOTICE(expr) __DUMMY_ASSERT
-#endif
-
-// Dummy method (used for empty macros, see up there).
+// Dummy methods (used for empty macros, see up there).
 inline void dummymsg(const char* , ...) {}
+inline void dummymsg(bool, const char* , ...) {}
 
 //! Prints a message.
 void message(const char* msg, ...);
+
 //! Like printf.
 void print(const char* msg, ...);
 
 //! Prints an error message. The program will exit.
 void errormsg(const char* msg, ...);
+
 //! Prints a warning message. The program will not.
 void warningmsg(const char* msg, ...);
+
 //! Prints a notice, usually intended for deep information at the programmer's intent.
 void noticemsg(const char* msg, ...);
+
+// # Assertions and messages functions #####################################
+
+//! Error messages/assertion.
+#if DEBUG_ERROR
+#define ERROR errormsg
+void IFTHEN_ERROR(bool expr, const char* msg, ...);
+#define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr, ERROR)
+#else
+#define ERROR dummymsg
+#define ASSERT_ERROR(expr) __DUMMY_ASSERT
+#define IFTHEN_ERROR dummymsg
+#endif
+
+//! Warning messages/assertion.
+#if DEBUG_WARNING
+#define WARNING warningmsg
+void IFTHEN_WARNING(bool expr, const char* msg, ...);
+#define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr, WARNING)
+#else
+#define WARNING dummymsg
+#define ASSERT_WARNING(expr) __DUMMY_ASSERT
+#define IFTHEN_WARNING dummymsg
+#endif
+
+//! Notice messages/assertion.
+#if DEBUG_NOTICE
+#define NOTICE noticemsg
+void IFTHEN_NOTICE(bool expr, const char* msg, ...);
+#define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr, NOTICE)
+#else
+#define NOTICE dummymsg
+#define ASSERT_NOTICE(expr) __DUMMY_ASSERT
+#define IFTHEN_NOTICE dummymsg
+#endif
+
 
 #endif
