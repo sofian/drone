@@ -40,13 +40,24 @@ public:
   static const int PLUGBOXES_NOMINAL_INTERVAL;
   static const int PLUGBOXES_STARTING_OFFSET;
   static const int SHADOW_OFFSET;
+	static const int RENDERING_OFFSET;
 
-
+  //colors    
+  static const QColor BOX_COLOR;  
+  static const QColor BOXNAME_COLOR;
+  static const QColor SHADOW_COLOR;
+	
+  //fonts
+  static const QFont NAME_FONT;
+	
   virtual int rtti() const;
 
   GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
+	int renderingStartX();
+	int renderingStartY();	
+	
 	void refresh();
 	
   PlugBox* getInputPlugBox(std::string name) const;
@@ -101,14 +112,6 @@ protected:
   std::string _title;
   QColor _boxNameColor;
 
-
-  //colors    
-  static const QColor BOX_COLOR;  
-  static const QColor BOXNAME_COLOR;
-  static const QColor SHADOW_COLOR;
-
-  //fonts
-  static const QFont NAME_FONT;
 
 };
 

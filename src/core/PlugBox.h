@@ -84,9 +84,15 @@ private:
   static const int CONNECTION_HANDLE_OFFSETY;
   static const int PLUG_NAME_NB_CHARS;
   static const int MAX_HILIGHTSCALING;
-
+	static const int ROUNDING_FACTOR;
+	
   //fonts
   static const QFont SHORTNAME_FONT;
+	
+	//colors
+	static const QColor EXPOSED_COLOR;  
+	
+
 };
 
 #endif

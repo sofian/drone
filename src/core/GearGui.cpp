@@ -35,10 +35,12 @@ const int GearGui::NAME_SIZEY = 20;
 const int GearGui::PLUGBOXES_NOMINAL_INTERVAL = 16;
 const int GearGui::PLUGBOXES_STARTING_OFFSET = PLUGBOXES_NOMINAL_INTERVAL / 2;
 const int GearGui::SHADOW_OFFSET = 4;
+const int GearGui::RENDERING_OFFSET = 4;
 
 const QColor GearGui::BOX_COLOR(207,207,209);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
+
 
 #if defined(Q_OS_MACX)
 const QFont GearGui::NAME_FONT("Verdana", 12, QFont::Bold);
@@ -72,6 +74,16 @@ GearGui::~GearGui()
   //Everything is taken care of ! :)
   for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
     delete (*it);
+}
+
+int GearGui::renderingStartX()
+{
+	return x() + RENDERING_OFFSET;
+}
+
+int GearGui::renderingStartY()
+{
+	return y() + RENDERING_OFFSET;
 }
 
 //!create plugBoxes from the parent gear plugs
@@ -180,15 +192,17 @@ void GearGui::refresh()
     _outputsInterval = 0;
 	
   //now set the size for this QCanvasItem
-  setSize(_sizeX + SHADOW_OFFSET, _sizeY + SHADOW_OFFSET);
+	//we want a larger rect for shadow and rendering offset
+	//since plugs get out of the gear rect
+  setSize(_sizeX + SHADOW_OFFSET + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
 	
 }
 
 void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
 {
 
-  *ox = (int)x() + PlugBox::PLUGBOX_SIZE + 4;
-  *oy = (int)y() + GearGui::NAME_SIZEY + 4;
+  *ox = (int)renderingStartX() + PlugBox::PLUGBOX_SIZE + 4;
+  *oy = (int)renderingStartY() + GearGui::NAME_SIZEY + 4;
   *sizeX = _sizeX - (PlugBox::PLUGBOX_SIZE+4)*2;
   *sizeY = _sizeY - GearGui::NAME_SIZEY - 10;            
 }
@@ -200,8 +214,8 @@ bool GearGui::titleBarHitted(const QPoint& p)
 
 void GearGui::drawPlugBoxes(QPainter &painter)
 {
-  int startX = (int)x();
-  int startY = (int)y() + NAME_SIZEY;
+  int startX = (int)renderingStartX();
+  int startY = (int)renderingStartY() + NAME_SIZEY;
   int by=0;
   int bx=0;
 
@@ -230,8 +244,8 @@ void GearGui::drawPlugBoxes(QPainter &painter)
 
 void GearGui::drawShape(QPainter &painter)
 {
-  int startX = (int)x();
-  int startY = (int)y();
+  int startX = (int)renderingStartX();
+  int startY = (int)renderingStartY();
 
 
   //shadow

@@ -38,6 +38,10 @@ const QFont PlugBox::SHORTNAME_FONT(QFont("Verdana", 8, QFont::Normal));
 
 const int PlugBox::MAX_HILIGHTSCALING = 2;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
+const int PlugBox::ROUNDING_FACTOR=100;
+
+
+const QColor PlugBox::EXPOSED_COLOR(196,8,8);
 
 PlugBox::PlugBox(AbstractPlug *plug, GearGui* gearGui) : 
 _plug(plug), 
@@ -65,16 +69,31 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
   _x = x;
   _y = y;
 
-  painter.setPen(Qt::black);
-  painter.setBrush(color());
+	painter.setPen(Qt::NoPen);
 
+	//set color of the round box according to exposition
+	if (_plug->exposed())
+		painter.setBrush(EXPOSED_COLOR);
+	else
+		painter.setBrush(GearGui::BOX_COLOR);
+		
+	//the round box around the plug
+	if (_plug->inOut() == IN)
+		painter.drawRoundRect(_x - MAX_HILIGHTSCALING*2, _y - MAX_HILIGHTSCALING, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, ROUNDING_FACTOR, ROUNDING_FACTOR);    
+	else
+		painter.drawRoundRect(_x, _y - MAX_HILIGHTSCALING, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, ROUNDING_FACTOR, ROUNDING_FACTOR);		
+			
+  painter.setPen(Qt::black);
+	painter.setBrush(color());
+	
+	//the plugbox
   if (_plug->inOut() == IN)
-    painter.drawRect(_x, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);
+    painter.drawRoundRect(_x, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2, ROUNDING_FACTOR, ROUNDING_FACTOR);
   else
-    painter.drawRect(_x - _hilightScaling*2, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);    
+    painter.drawRoundRect(_x - _hilightScaling*2, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2, ROUNDING_FACTOR, ROUNDING_FACTOR);    
   
   painter.setFont(SHORTNAME_FONT);  
-
+	
   if (_status==HILIGHTED)
     painter.setPen(Qt::blue);
   else
@@ -83,7 +102,7 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
   //align text left or right if In or Out
   if (_plug->inOut() == IN)
     painter.drawText(_x + PLUGBOX_SIZE + 5, _y - 4, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
-  else
+	else
     painter.drawText(_x - halfGearSizeX, _y - 4, halfGearSizeX - 5, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
 
 }
