@@ -21,6 +21,7 @@
 #define GEAR_MOTIONTRACK_INCLUDED
 
 #include <opencv/cv.h>
+#include <opencv/cv.hpp>
 #include <opencv/cvaux.hpp>
 
 #include "Gear.h"
