@@ -33,8 +33,7 @@ bool Gear_Blur::ready()
 }
 
 void Gear_Blur::runVideo()
-{
-  NOTICE("In runVideo");
+{ 
   _image = _VIDEO_IN->type();
   ASSERT_ERROR(_image);
     
@@ -62,9 +61,8 @@ void Gear_Blur::runVideo()
     ASSERT_ERROR(_image->data());
 
     // Compute the summed area table.
-    _table->setTable((unsigned char*)_image->data(), _sizeX, _sizeY);
-    _table->buildTable();
-    
+    _table->buildTable((unsigned char*)_image->data(), _sizeX, _sizeY);
+        
     _outData = (unsigned char*)_outImage->data();
 
     // Loop through the image's pixels.
@@ -73,10 +71,10 @@ void Gear_Blur::runVideo()
       for (int x=0;x<_sizeX;x++)
       {
         // The kernel's coordinates.
-        _x1 = x - _blurSize - 1;
-        _x2 = x + _blurSize;
-        _y1 = y - _blurSize - 1;
-        _y2 = y + _blurSize;
+        _x1 = MAX(x - _blurSize - 1,-1);
+        _x2 = MIN(x + _blurSize, _sizeX-1);
+        _y1 = MAX(y - _blurSize - 1, -1);
+        _y2 = MIN(y + _blurSize, _sizeY-1);
 
         // Get the sum in the current kernel.
         _table->getSum(_sum, _area, _x1, _y1, _x2, _y2);

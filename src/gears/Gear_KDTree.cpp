@@ -51,10 +51,9 @@ void Gear_KDTree::runVideo()
   //  _outData = _outImage->data();
 
   _rasterer->setImage(_outImage);
-  _table->setTable((unsigned char*)_image->data(), _image->width(), _image->height());
 
   // build accumulation buffer
-  _table->buildTable();
+  _table->buildTable((unsigned char*)_image->data(), _image->width(), _image->height());
 
   // create splits
   split(0, _sizeX-1, 0, _sizeY-1, 0);
@@ -62,7 +61,6 @@ void Gear_KDTree::runVideo()
 
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
-
   if (depth > _maxDepth)
     return;
 
@@ -72,10 +70,13 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   // Increment depth by one level.
   depth++;
 
+  int x0minus1 = x0-1;
+  int y0minus1 = y0-1;
+  
   // Get the total values in the area.
   int rgba[SIZE_RGBA];
   int area;
-  _table->getSum(rgba, area, x0, y0, x1, y1);
+  _table->getSum(rgba, area, x0minus1, y0minus1, x1, y1);
 
   // Useful values.
   //int area = _table->getArea(x0, y0, x1, y1);
@@ -98,7 +99,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     while (lower != upper)
     {
       mid = (lower+upper) / 2; // take the mean
-      _table->getSum(rgba, area, x0, y0, x1, mid); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+       /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+      _table->getSum(rgba, area, x0minus1, y0minus1, x1, mid);
       if (sum(rgba, SIZE_RGB) < cut)
         lower = mid+1; // look up //*** attention risque d'erreur : vérifier
       else
@@ -107,7 +109,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     // split the area in two
     split(x0, x1, y0, mid, depth);
     split(x0, x1, mid, y1, depth);
-  } else
+  }
+  else
   {
     // horizontal split
     int upper = x1;
@@ -117,7 +120,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     while (lower != upper)
     {
       mid = (lower+upper) / 2; // take the mean
-      _table->getSum(rgba, area, x0, y0, mid, y1); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+       /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+      _table->getSum(rgba, area, x0minus1, y0minus1, mid, y1);
       if (sum(rgba, SIZE_RGB) < cut)
         lower = mid+1; // look right //*** attention risque d'erreur : vérifier
       else

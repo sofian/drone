@@ -10,36 +10,68 @@
 
 #include <assert.h>
 
+/**
+ * A summed area table is a general utility for many image based algorithms. It takes in input
+ * a table of <code>width x height</code> elements, each of which is made of <code>SIZE</code> of
+ * type <code>Type</code>. Each cell <code>s(x,y)</code> of the summed area table contains the
+ * sum of all points in the rectangle <code>(0,0) , (x,y)</code> of the original image. These
+ * values are computed using a very efficient (dynamical programming) algorithm, linear in the
+ * number of cells. The resulting table allows one to calculate the sum of the values in a
+ * sub-window with only four additions.
+ * 
+ * @author Jean-Sébastien Senécal
+ * @version %I% %G%
+ */
 template <typename Type = unsigned char, typename AccType = int, size_t SIZE = SIZE_RGBA>
 class SummedAreaTable
 {
 public:
+  //! Default constructor.
   SummedAreaTable()
-    : _table(0), _acc(), _width(0), _height(0), _size(0)
+    : _acc(), _width(0), _height(0)
   {
-    NOTICE("SIZE = %d, sizeof(AccType) = %d", SIZE, sizeof(AccType));
     clear(_black, SIZE);
   }
 
+  //! Destructor.
   ~SummedAreaTable() {}
 
-  void setTable(const Type *table, size_t width, size_t height);
-  
-  void buildTable();
-  
+  /**
+   * Computes the summed area table from a source image.
+   *
+   * @param table the source image (should be a contiguous array of size <code>width*height*SIZE*sizeof(Type)</code>
+   * @param width the number of horizontal cells
+   * @param height the number of vertical cells
+   */
+  void buildTable(const Type *table, size_t width, size_t height);
+
+  /**
+   * Quickly computes the sum of the cells in a sub-window. Also computes the total area (number of cells) of the
+   * sub-window. The sub-window is specified by passing a pair of points <code>((x0,y0),(x1,y1))</code>. The method
+   * assumes that <code>x0 <= x1</code> and that <code>y0 <= y1</code>.
+   *
+   * @param sum the sum of the cells in the sub-window
+   * @param area the number of cells in the sub-window
+   * @param x0 the horizontal coordinate of the upper-left corner of the sub-window
+   * @param y0 the vertical coordinate of the upper-left corner of the sub-window
+   * @param x1 the horizontal coordinate of the bottom-right corner of the sub-window
+   * @param y1 the vertical coordinate of the bottom-right corner of the sub-window
+   * @see SummedAreaTable::buildTable(const Type*,size_t,size_t)
+   */
   inline void getSum(AccType *sum, int& area, int x0, int y0, int x1, int y1) const;
-  
+
+  /**
+   * 
+   */
   inline const AccType* getAcc(int x, int y) const;
 
   inline int getArea(int x0, int y0, int x1, int y1) const;
   
 public:
 
-  const Type *_table;
-  
   Matrix<AccType> _acc;
 
-  int _width, _height, _size;
+  int _width, _height, _rowWidth;
 
   AccType _tmpAcc[SIZE];
 
@@ -50,66 +82,41 @@ template <typename Type, typename AccType, size_t SIZE>
 inline void SummedAreaTable<Type, AccType, SIZE>::getSum(AccType *sum, int& area, int x0, int y0, int x1, int y1) const
 {
   ASSERT_ERROR(sum);
+  ASSERT_ERROR(-1 <= x0 && x0 <= x1 && x1 < _width);
+  ASSERT_ERROR(-1 <= y0 && y0 <= y1 && y1 < _height);
   
-  x0 = MAX(x0, -1);
-  y0 = MAX(y0, -1);
-  x1 = MIN(x1, _width-1);
-  y1 = MIN(y1, _height-1);
   area = (x1-x0)*(y1-y0);
-
+  
   ASSERT_ERROR(area >= 0);
   
   // it is assumed that (x0,y0) <= (x1,y1)
   memcpy(sum, _acc.row(y1) + SIZE*x1, SIZE*sizeof(AccType));
-//   sum = _acc[y1 * _width + x1];
 
   if (x0 >= 0)
     subtractAccVecVec(sum, _acc.row(y1) + SIZE*x0, SIZE);
-  //    sum -= _acc[y1 * _width + x0];
   if (y0 >= 0)
   {
     subtractAccVecVec(sum, _acc.row(y0) + SIZE*x1, SIZE);
-    //    sum -= _acc[y0 * _width + x1];
     if (x0 >= 0)
       addAccVecVec(sum, _acc.row(y0) + SIZE*x0, SIZE);
-      //sum += _acc[y0 * _width + x0];
   }
   
 }
 
-// void SummedAreaTable::getSumOfSquares(RGBAint& sumSquares, int &area, int x0, int y0, int x1, int y1) const
-// {
-// //   if (!sumSquares)
-// //     return;
-//   x0 = MAX(x0, -1);
-//   y0 = MAX(y0, -1);
-//   x1 = MIN(x1, _width-1);
-//   y1 = MIN(y1, _height-1);
-//   area = (x1-x0)*(y1-y0);
-
-//   // it is assumed that (x0,y0) <= (x1,y1)
-//   sumSquares = _accSquares[y1 * _width + x1];
-
-//   if (x0 >= 0)
-//     sumSquares -= _accSquares[y1 * _width + x0];
-//   if (y0 >= 0)
-//   {
-//     sumSquares -= _accSquares[y0 * _width + x1];
-//     if (x0 >= 0)
-//       sumSquares += _accSquares[y0 * _width + x0];
-//   }
-// }
-
 template <typename Type, typename AccType, size_t SIZE>
 inline int SummedAreaTable<Type, AccType, SIZE>::getArea(int x0, int y0, int x1, int y1) const
 {
-  ASSERT_ERROR_MESSAGE((MIN(x1,_width-1) - MAX(x0,-1))*(MIN(y1,_height-1) - MAX(y0,-1)) >= 0, "Area is negative, something is wrong.");
-  return( (MIN(x1,_width-1) - MAX(x0,-1))*(MIN(y1,_height-1) - MAX(y0,-1)) );
+  ASSERT_ERROR(-1 <= x0 && x0 <= x1 && x1 < _width);
+  ASSERT_ERROR(-1 <= y0 && y0 <= y1 && y1 < _height);
+  ASSERT_ERROR_MESSAGE((x1-x0)*(y1-y0), "Area is negative, something is wrong.");
+  return( (x1-x0)*(y1-y0) );
 }
 
 template <typename Type, typename AccType, size_t SIZE>
 inline const AccType* SummedAreaTable<Type, AccType, SIZE>::getAcc(int x, int y) const
 {
+  ASSERT_ERROR(x < _width);
+  ASSERT_ERROR(y < _height);
   if (x < 0 || y < 0)
     return _black;
   else
@@ -117,146 +124,47 @@ inline const AccType* SummedAreaTable<Type, AccType, SIZE>::getAcc(int x, int y)
 }
 
 template <typename Type, typename AccType, size_t SIZE>
-void SummedAreaTable<Type, AccType, SIZE>::setTable(const Type *table, size_t width, size_t height)
+void SummedAreaTable<Type, AccType, SIZE>::buildTable(const Type *table, size_t width, size_t height)
 {
-  _table = table;
-  if (_table)
+  if (!table)
   {
-    _width = width;
-    _height = height;
-    _size = width*height;
-  }
-}
-
-template <typename Type, typename AccType, size_t SIZE>
-void SummedAreaTable<Type, AccType, SIZE>::buildTable()
-{
-  if (!_table)
+    WARNING("Void table provided, returning without precessing.");
     return;
+  }
 
-  int rowWidth = _width * SIZE;
-
-  _acc.resize(rowWidth, _height);
+  // Resize.
+  _width = width;
+  _height = height; 
+  _rowWidth = _width * SIZE;
   
-  register Type *iterData = (Type*) _table;
+  _acc.resize(_rowWidth, _height); // Resize accumulation table
+
+  // Init iterators.
+  register Type *iterData = (Type*) table;
   register AccType *iterAcc  = (AccType*) &_acc.front();
+  register size_t i;
 
-  // upper row
-  // copy(_tmpAcc, iterData, rowWidth);
-//   copy(iterAcc, _tmpAcc,  rowWidth);
-//   iterData += rowWidth;
-//   iterAcc  += rowWidth;
-
+  // Process upper row.
   clear(_tmpAcc, SIZE);
   for (int x=0; x<_width; ++x)
   {
-    addAccVecVec(_tmpAcc, iterData, SIZE);
-    copy(iterAcc, _tmpAcc, SIZE);
-//     _accR += (int)*(iterData++);
-//     _accG += (int)*(iterData++);
-//     _accB += (int)*(iterData++);
-//     _accA += (int)*(iterData++);
-//     *(iterAcc++) = _accR;
-//     *(iterAcc++) = _accG;
-//     *(iterAcc++) = _accB;
-//     *(iterAcc++) = _accA;
-    iterData+=SIZE;
-    iterAcc +=SIZE;
+    for (i=0; i<SIZE; ++i)
+      *iterAcc++ = (_tmpAcc[i] += *iterData++);
   }
 
   // other rows
   for (int y=1; y<_height; ++y)
   {
     // copy upper line
-    memcpy(iterAcc, iterAcc - rowWidth, rowWidth * sizeof(AccType));
+    memcpy(iterAcc, iterAcc - _rowWidth, _rowWidth * sizeof(AccType));
     clear(_tmpAcc, SIZE);
-    
-//     addAccVecVec(_tmpAcc, iterData, rowWidth);
-//     addAccVecVec(iterAcc, _tmpAcc,  rowWidth);
     
     for (int x=0; x<_width; ++x)
     {
-      addAccVecVec(_tmpAcc, iterData, SIZE);
-      addAccVecVec(iterAcc, _tmpAcc,  SIZE);
-      iterData+=SIZE;
-      iterAcc +=SIZE;
-//       _accR += (int)*(iterData++);
-//       _accG += (int)*(iterData++);
-//       _accB += (int)*(iterData++);
-//       _accA += (int)*(iterData++);
-//       *(iterAcc++) += _accR;
-//       *(iterAcc++) += _accG;
-//       *(iterAcc++) += _accB;
-//       *(iterAcc++) += _accA;
+      for (i=0; i<SIZE; ++i)
+        *iterAcc++ += (_tmpAcc[i] += *iterData++);
     }
   }
 }
-
-// void SummedAreaTable::buildTableOfSquares()
-// {
-//   if (!_table)
-//     return;
-
-//   // check if we need to resize
-//   if ((int)(_table->width() * _table->height()) != _size) // there was a change
-//   {
-//     // resize
-//     _width = _table->width();
-//     _height = _table->height();
-//     _size = _width * _height;
-//   }
-
-//   // reallocate
-//   _accSquares = (RGBAint*)realloc(_accSquares, _size*sizeof(RGBAint));
-
-//   _tableData = _table->data();
-
-//   register unsigned char *iterData = (unsigned char*) _tableData;
-//   register int *iterAcc = (int*) _acc;
-
-//   int rowWidth = _width * 4;
-
-//   // upper row
-//   _accR = _accG = _accB = _accA = 0;
-//   for (int x=0; x<_width; ++x)
-//   {
-//     _accR += SQR( (int)*(iterData++) );
-//     _accG += SQR( (int)*(iterData++) );
-//     _accB += SQR( (int)*(iterData++) );
-//     _accA += SQR( (int)*(iterData++) );
-//     *(iterAcc++) = _accR;
-//     *(iterAcc++) = _accG;
-//     *(iterAcc++) = _accB;
-//     *(iterAcc++) = _accA;
-//   }
-
-//   // other rows
-//   for (int y=1; y<_height; ++y)
-//   {
-//     // copy upper line
-//     memcpy(iterAcc, iterAcc - rowWidth, rowWidth * sizeof(int));
-//     _accR = _accG = _accB = _accA = 0;
-//     for (int x=0; x<_width; ++x)
-//     {
-//       _accR += SQR( (int)*(iterData++) );
-//       _accG += SQR( (int)*(iterData++) );
-//       _accB += SQR( (int)*(iterData++) );
-//       _accA += SQR( (int)*(iterData++) );
-//       *(iterAcc++) += _accR;
-//       *(iterAcc++) += _accG;
-//       *(iterAcc++) += _accB;
-//       *(iterAcc++) += _accA;
-//     }
-//   }
-// }
-
-
-// const RGBAint& SummedAreaTable::getAccOfSquares(int x, int y) const
-// {
-//   if (x < 0 || y < 0)
-//     return BLACK_RGBAint;
-//   else
-//     return _accSquares[y * _width + x];
-// }
 
 #endif
