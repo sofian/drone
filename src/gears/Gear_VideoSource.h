@@ -34,7 +34,6 @@ private:
   mpeg3_t* _file;
 
   int _sizeX, _sizeY;
-  long _nbFrames;
 
   //locals
   
@@ -43,8 +42,8 @@ private:
   RGBA *_outData;
 
   //mmx
-  unsigned long long int *_mmxImageIn;
-  unsigned long long int *_mmxImageOut;
+//  unsigned long long int *_mmxImageIn;
+//  unsigned long long int *_mmxImageOut;
 
 };
 
