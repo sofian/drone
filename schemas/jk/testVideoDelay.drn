@@ -1,0 +1,71 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="71" PosY="253" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/dev/drone/media/ClassicT1948.mpg" />
+        </Gear>
+        <Gear PosX="337" PosY="264" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="591" PosY="208" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="727" PosY="313" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="70" PosY="-12" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="2" />
+        </Gear>
+        <Gear PosX="399" PosY="23" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="428" PosY="151" Type="Gain" Name="Gain1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="32" PosY="169" Type="Slider" SliderPos="-203.049" Name="Slider4" >
+            <Properties Lower_Bound="-222" Higher_Bound="0" />
+        </Gear>
+        <Gear PosX="196" PosY="171" Type="FlatSignal" Name="FlatSignal1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="46" PosY="97" Type="Slider" SliderPos="0.0243902" Name="Slider7" >
+            <Properties Lower_Bound="-1" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="198" PosY="48" Type="Slider" SliderPos="0.182927" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="434" PosY="385" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="577" PosY="27" Type="Oscilloscope" Name="Oscilloscope1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="767" PosY="118" Type="VideoOutput" Name="VideoOutput2" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="385" PosY="478" Type="Slider" SliderPos="152.378" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="43" PosY="379" Type="Slider" SliderPos="0.219512" Name="Slider9" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="VideoDelay1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoDelay1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="SignalStat1" GearB="VideoDelay1" Input="Delay" Output="Out" />
+        <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
+        <Connection GearA="Enveloppe1" GearB="Gain1" Input="In" Output="Out" />
+        <Connection GearA="Enveloppe1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="Gain1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="Slider4" GearB="FlatSignal1" Input="In" Output="Value" />
+        <Connection GearA="FlatSignal1" GearB="Gain1" Input="Gain" Output="Out" />
+        <Connection GearA="Slider7" GearB="Enveloppe1" Input="Att" Output="Value" />
+        <Connection GearA="Slider8" GearB="Enveloppe1" Input="Rel" Output="Value" />
+        <Connection GearA="Oscilloscope1" GearB="VideoOutput2" Input="VideoOutput2" Output="Out" />
+        <Connection GearA="Slider6" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="Slider9" GearB="VideoDelay1" Input="Rec" Output="Value" />
+    </Connections>
+</Schema>
