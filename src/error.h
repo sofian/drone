@@ -59,10 +59,29 @@
 #define ASSERT_WARNING(expr) TRIGGER_ASSERT(expr, WARNING)
 #define ASSERT_NOTICE(expr)  TRIGGER_ASSERT(expr, NOTICE)
 
-//! Error inlines.
-inline void ERROR(const char* msg, ...);
-inline void WARNING(const char* msg, ...);
-inline void NOTICE(const char* msg, ...);
+//! Error macro.
+#if DEBUG_LEVEL >= LEVEL_ERROR
+#define ERROR errormsg
+#else
+#define ERROR dummymsg
+#endif
+
+//! Warning macro.
+#if DEBUG_LEVEL >= LEVEL_WARNING
+#define WARNING warningmsg
+#else
+#define WARNING dummymsg
+#endif
+
+//! Notice macro.
+#if DEBUG_LEVEL >= LEVEL_NOTICE
+#define NOTICE noticemsg
+#else
+#define NOTICE dummymsg
+#endif
+
+// Dummy method (used for empty macros, see up there).
+inline void dummy(const char* msg, ...) {}
 
 //! Prints a message.
 void message(const char* msg, ...);
@@ -75,28 +94,5 @@ void errormsg(const char* msg, ...);
 void warningmsg(const char* msg, ...);
 //! Prints a notice, usually intended for deep information at the programmer's intent.
 void noticemsg(const char* msg, ...);
-
-// Inline functions implementation.
-
-void ERROR(const char* msg, ...)
-{
-#if DEBUG_LEVEL >= LEVEL_ERROR
-  errormsg(msg);
-#endif
-}
-
-void WARNING(const char* msg, ...)
-{
-#if DEBUG_LEVEL >= LEVEL_WARNING
-  warningmsg(msg);
-#endif
-}
-
-void NOTICE(const char* msg, ...)
-{
-#if DEBUG_LEVEL >= LEVEL_NOTICE
-  noticemsg(msg);
-#endif
-}
 
 #endif
