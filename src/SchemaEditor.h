@@ -25,15 +25,19 @@ public:
     
     void addGear(std::string type, std::string name, int x, int y);
     void addGear(std::string type, int x, int y);
+    void removeGear(GearGui* gearGui);
     void recreateSchemaFromEngine();
     void zoomIn();
     void zoomOut();
+    void clearSchema();
+    void loadSchema(std::string filename);
     //void saveSchema(std::string filename);
     //void loadSchema(std::string filename);
 
 public slots:
     void slotMenuItemSelected(int id);
     void slotGearProperties();
+    void slotGearDelete();
 
 protected:
         

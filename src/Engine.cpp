@@ -132,9 +132,14 @@ void Engine::startPlaying()
 
 void Engine::stopPlaying()
 {                        
-	_playing=false;
+	if (!_playing)
+        return;
+    
+    _playing=false;
 	
-    //destroy thread???
+    //wait for the playThread to finish
+    pthread_join(_playThreadHandle, NULL);
+    
 }
                                     
 void *Engine::playThread(void *parent)
@@ -168,6 +173,7 @@ void *Engine::playThread(void *parent)
         block_starttime = Timing::time();
         
         engine->performScheduledConnectDisconnect();
+        engine->performScheduledGearDeletion();
         
         engine->synchGraph();
 
@@ -201,12 +207,9 @@ void *Engine::playThread(void *parent)
         engine->_AverageLoad =  cumul_load / blockIt;
 
         //temp
-        // if (!(blockIt%100))
-//             std::cout << "AverageLoad " << engine->_AverageLoad << "%" << std::endl;
-
-        if (!(blockIt%10))
+        if (!(blockIt%100))
             std::cout << "AverageLoad " << engine->_AverageLoad << "%" << std::endl;
-//
+        //
 
         //to maintain real-time processing we have to sleep
         //for the difference between the time we are supposed to be at (_currentTime, the engine time)
@@ -222,6 +225,7 @@ void *Engine::playThread(void *parent)
     for(std::list<Gear*>::iterator it=engine->_Gears.begin();it!=engine->_Gears.end();++it)    
         (*it)->internalPostPlay();
 
+    
     return NULL;
 }
 
@@ -292,9 +296,6 @@ void Engine::synchGraph()
 	delete []done;
 	
 	_graphSynched=true;
-//	for(it=orderedGears.begin();it!=orderedGears.end();++it)
-//		_TRACE("@"<<(*it)->name()<<std::endl);
-	//_Gears = orderedGears;
 }
 
 void Engine::scheduleConnection(Plug *plugA, Plug *plugB)
@@ -315,6 +316,24 @@ void Engine::scheduleDisconnection(Plug *plugA, Plug *plugB)
     if (!_playing)
         performScheduledConnectDisconnect();
 
+}
+
+
+void Engine::scheduleGearDeletion(Gear *gear)
+{
+    _scheduledsGearDeletion.push_back(gear);
+
+    if (!_playing)    
+        performScheduledGearDeletion();
+    
+}
+
+void Engine::performScheduledGearDeletion()
+{
+    for (std::vector<Gear*>::iterator it=_scheduledsGearDeletion.begin(); it!=_scheduledsGearDeletion.end(); ++it)
+        removeGear(*it);
+
+    _scheduledsGearDeletion.clear();
 }
 
 void Engine::performScheduledConnectDisconnect()
@@ -396,9 +415,18 @@ void Engine::saveSchema(std::string filename)
 
 }
 
+void Engine::clearSchema()
+{
+    //stop playing first
+    stopPlaying();
+
+    removeAllGears();
+
+}
+
 
 void Engine::loadSchema(std::string filename)
-{
+{        
     QDomDocument doc("DroneSchema");
 
     QFile file(filename.c_str());
@@ -408,7 +436,8 @@ void Engine::loadSchema(std::string filename)
         std::cout << "Fail to open file " << filename << std::endl;
         return;
     }
-     
+         
+    clearSchema();
 
     QString errMsg;
     int errLine;

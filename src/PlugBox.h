@@ -18,6 +18,7 @@ public:
     static const int PLUGBOX_SIZE;
     
     PlugBox(Plug *plug, GearGui *gearItem, Engine *engine);
+    virtual ~PlugBox();
 
     const QColor& PlugBox::color();
     void draw(int x, int y, int gearSizeX, QPainter &painter);
@@ -27,7 +28,8 @@ public:
     bool connect(PlugBox *plugBox, ConnectionItem *connectionItem);
     void assignConnectionOnly(PlugBox *plugBox, ConnectionItem *connectionItem);
     bool canConnectWith(PlugBox *plugBox);    
-    void disconnect(PlugBox *plugBox, ConnectionItem *connectionItem);
+    void disconnect(ConnectionItem *connectionItem, bool deleteConnectionItem=true);
+    void disconnectAll();
     
     Plug *plug(){return _plug;};
 

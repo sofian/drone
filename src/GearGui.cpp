@@ -86,6 +86,18 @@ GearGui::GearGui(Gear *pgear, QCanvas *canvas, int sizeX, int sizeY, int updateR
 
 }
 
+GearGui::~GearGui()
+{
+    //delete all the plugBoxes
+    //plugboxes take care of deleting connectionItems when deleted
+    //Everything is taken care of ! :)
+    for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
+    {
+        delete (*it);
+    }
+    
+}
+
 void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
 {
 
@@ -94,7 +106,7 @@ void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
     *sizeX = _sizeX - (PlugBox::PLUGBOX_SIZE+4)*2;
     *sizeY = _sizeY - GearGui::NAME_SIZEY - 10;            
 }
-
+                        
 bool GearGui::titleBarHitted(const QPoint& p)
 {
     return (p.y() < y() + NAME_SIZEY);    

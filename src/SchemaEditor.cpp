@@ -37,7 +37,7 @@ SchemaEditor::SchemaEditor(QCanvas *canvas, QWidget *parent, Engine *engine) :
     _allGearsMenu->insertItem("Gears", createGearsMenu());
 
     _gearMenu = new QPopupMenu(this);
-    _gearMenu->insertItem("delete");
+    _gearMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
     _gearMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
     _gearMenu->insertItem("About");    
 }
@@ -313,6 +313,38 @@ void SchemaEditor::addGear(std::string type, std::string name, int x, int y)
     canvas()->update();
 }
 
+void SchemaEditor::removeGear(GearGui* gearGui)
+{
+    Gear* gear = gearGui->gear();
+    delete gearGui;
+    
+    _engine->scheduleGearDeletion(gear);
+    
+    canvas()->update();
+}
+
+void SchemaEditor::clearSchema()
+{
+    std::list<Gear*> allGears;
+
+    _engine->getAllGears(allGears);
+
+    for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
+    {
+        delete ((*it)->getGearGui());
+    }
+
+    _engine->clearSchema();
+    canvas()->update();
+
+}
+
+void SchemaEditor::loadSchema(std::string filename)
+{
+    _engine->loadSchema(filename);
+    recreateSchemaFromEngine();
+}
+
 QPopupMenu* SchemaEditor::createGearsMenu()
 {
     QPopupMenu *gearsMenu = new QPopupMenu(this);    
@@ -357,9 +389,6 @@ void SchemaEditor::slotMenuItemSelected(int id)
     if ((unsigned int)id > _allGearsName.size()-1)
         return;
     
-    int x = contentsX() + (visibleWidth() / 2);
-    int y = contentsY() + (visibleHeight() / 2);
-
     addGear(_allGearsName[id], _allGearsMenuPos.x(), _allGearsMenuPos.y());
 }
 
@@ -376,6 +405,14 @@ void SchemaEditor::slotGearProperties()
 
     _contextGear=NULL;
 
+}
+
+void SchemaEditor::slotGearDelete()
+{
+    if (_contextGear == NULL)
+        return;
+
+    removeGear(_contextGear);
 }
 
 void SchemaEditor::recreateSchemaFromEngine()

@@ -26,7 +26,7 @@ public:
     virtual int rtti() const;
 
     GearGui(Gear *pgear, QCanvas *canvas, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
-
+    virtual ~GearGui();
         
     PlugBox* getInputPlugBox(std::string name) const;
     PlugBox* getOutputPlugBox(std::string name) const;
@@ -62,7 +62,7 @@ protected:
     Gear *_gear;
     std::vector<PlugBox*> _inputPlugBoxes;
     std::vector<PlugBox*> _outputPlugBoxes;
-    std::vector<PlugBox*> _plugBoxes;
+    std::vector<PlugBox*> _plugBoxes;//!contain all inputs and outputs
     int _sizeX;
     int _sizeY;
     int _inputsInterval;

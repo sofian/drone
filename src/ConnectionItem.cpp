@@ -27,12 +27,11 @@ ConnectionItem::ConnectionItem(Engine *engine, QCanvas *canvas) :
 }
 
 ConnectionItem::~ConnectionItem()
-{    
-    update();
-    canvas()->update();
-    
-    if (_sourcePlugBox!=NULL && _destPlugBox!=NULL)        
-        _sourcePlugBox->disconnect(_destPlugBox, this);
+{        
+    //we disconnect but specify to not delete the connectionItem
+    //since we are currently destroying it!
+    if (_state == CONNECTED)
+        _sourcePlugBox->disconnect(this, false);
 }
 
 void ConnectionItem::drawShape(QPainter &painter)

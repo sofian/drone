@@ -100,6 +100,7 @@ void MainWindow::slotPlay(bool play)
 void MainWindow::slotMenuNew()
 {
     _currentSchemaFilename="";
+    _schemaEditor->clearSchema();
 }
 
 void MainWindow::slotMenuLoad()
@@ -107,8 +108,7 @@ void MainWindow::slotMenuLoad()
     QString filename = QFileDialog::getOpenFileName(QString::null, "*.*", this, "Load", "Load");
     if (!filename.isEmpty())
     {    
-        _engine->loadSchema(filename.ascii());
-        _schemaEditor->recreateSchemaFromEngine();
+        _schemaEditor->loadSchema(filename.ascii());
         _currentSchemaFilename=filename.ascii();
     }
 }

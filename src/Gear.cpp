@@ -29,11 +29,9 @@ Gear::Gear(Engine *engine, std::string type, std::string name) :
 }
 
 Gear::~Gear()
-{
-   for(std::list<Plug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
-	   (*it)->disconnectAll();
-
-   delete _gearGui;
+{    
+    for(std::list<Plug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+	   delete (*it);
 }
 
 
@@ -57,7 +55,7 @@ void Gear::internalInit()
 
     _gearGui = createGearGui(NULL);
 
-    //call the virtual method load
+    //call the virtual method
     init();
 }
 

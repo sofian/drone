@@ -4,6 +4,8 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <pthread.h>
+
 
 #include "SignalInfo.h"
 #include "VideoInfo.h"
@@ -70,6 +72,7 @@ public:
 	virtual ~Engine();
        
     void saveSchema(std::string filename);
+    void clearSchema();
     void loadSchema(std::string filename);
 
 	Gear* addGear(std::string geartype, std::string name);
@@ -103,10 +106,14 @@ public:
     
     void scheduleConnection(Plug *plugA, Plug *plugB);
     void scheduleDisconnection(Plug *plugA, Plug *plugB);
+    void scheduleGearDeletion(Gear *gear);
+
+
 
 protected:
 	
     void performScheduledConnectDisconnect();
+    void performScheduledGearDeletion();
     int _hWnd;
   
     float _AverageLoad;
@@ -128,12 +135,13 @@ private:
     std::list<Gear*> _Gears;
     
     // is sorted in processing order when _GraphSynched==true
-    //only containt gears->ready()    
+    //only contain gears->ready()    
     std::list<Gear*> _gearsToProcess;
 
     pthread_t _playThreadHandle;
 
     std::vector<ScheduledConnectDisconnect> _scheduledsConnectDisconnect;
+    std::vector<Gear*> _scheduledsGearDeletion;
 
 };
 

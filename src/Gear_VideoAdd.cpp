@@ -65,7 +65,7 @@ void Gear_VideoAdd::runVideo()
             __asm__ volatile (
                 "\n\t movq %1,%%mm0        \t# (u) load imageA"
                 "\n\t movq %2,%%mm1        \t# (u) load imageB"
-                "\n\t psubusb %%mm0,%%mm1   \t# (u) L2 = L0 - L2"
+                "\n\t paddusb %%mm0,%%mm1   \t# (u) L2 = L0 - L2"
                 "\n\t movq %%mm1,%0        \t# (u) store result "
                 : "=m" (_mmxImageOut[index])  // this is %0, output
                 : "m"  (_mmxImageInA[index]), // this is %1, image A

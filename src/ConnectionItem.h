@@ -16,7 +16,7 @@ public:
     enum eState {DISCONNECTED, CONNECTING, CONNECTED};
     
     ConnectionItem(Engine *engine, QCanvas *canvas);
-    ~ConnectionItem();
+    virtual ~ConnectionItem();
 
     int rtti () const {return CANVAS_RTTI_CONNECTION;};
 
@@ -58,40 +58,5 @@ protected:
     
 };
       
-/* class ConnectionItem : public DroneItem                */
-/* {                                                      */
-/* public:                                                */
-/*     enum eState {DISCONNECTED, CONNECTING, CONNECTED}; */
-/*                                                        */
-/*     ConnectionItem(Engine *engine, QCanvas *canvas);   */
-/*     ~ConnectionItem();                                 */
-/*                                                        */
-/*     void setStartingPlugBox(PlugBox *plugBox);         */
-/*     void setConnectionLineEndPoint(QPoint const &p);   */
-/*                                                        */
-/*     PlugBox *sourcePlugBox(){return _sourcePlugBox;};  */
-/*     PlugBox *destPlugBox(){return _destPlugBox;};      */
-/*                                                        */
-/*     bool createConnection(PlugBox *plugBox);           */
-/*                                                        */
-/* protected:                                             */
-/*                                                        */
-/*     void updateAreaPoints();                           */
-/*     void drawShape(QPainter &painter);                 */
-/*                                                        */
-/*                                                        */
-/*     void getOrigin(int *x, int *y);                    */
-/*     void getDest(int *x, int *y);                      */
-/*                                                        */
-/*     eState _state;                                     */
-/*                                                        */
-/*     int _destPointX,_destPointY;                       */
-/*                                                        */
-/*     QPen* _pen;                                        */
-/*                                                        */
-/*     PlugBox* _sourcePlugBox;                           */
-/*     PlugBox* _destPlugBox;                             */
-/*                                                        */
-/* };                                                     */
 
 #endif

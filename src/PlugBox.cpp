@@ -30,6 +30,11 @@ PlugBox::PlugBox(Plug *plug, GearGui* gearGui, Engine *engine) :
 {
 }
 
+PlugBox::~PlugBox()
+{
+    disconnectAll();
+}
+
 const QColor& PlugBox::color()
 {
     switch (_plug->Type())
@@ -159,14 +164,14 @@ bool PlugBox::connect(PlugBox *plugBox, ConnectionItem *connectionItem)
         //we can only have exactly one connection per Input plug, otherwise something bad is going on
         assert(_connectionItems.size() == 1);
         //destructor of ConnectionItem take care of PlugBox disconnection
-        delete _connectionItems[0];
+        disconnect(_connectionItems[0]);
     }
     else if (plugBox->_plug->In_Out() == IN && plugBox->_plug->connected())
     {
         //we can only have exactly one connection per Input plug, otherwise something bad is going on
         assert(plugBox->_connectionItems.size() == 1);
         //destructor of ConnectionItem take care of PlugBox disconnection
-        delete plugBox->_connectionItems[0];
+        disconnect(plugBox->_connectionItems[0]);
     }
 
     _connectionItems.push_back(connectionItem);
@@ -183,15 +188,30 @@ void PlugBox::assignConnectionOnly(PlugBox *plugBox, ConnectionItem *connectionI
     plugBox->_connectionItems.push_back(connectionItem);
 }
 
-void PlugBox::disconnect(PlugBox *plugBox, ConnectionItem *connectionItem)
+void PlugBox::disconnect(ConnectionItem *connectionItem, bool deleteConnectionItem)
 {
-    if (!_plug->connected())
-        return;
+    std::vector<ConnectionItem*> *srcConnectionItems = &(connectionItem->sourcePlugBox()->_connectionItems);
+    std::vector<ConnectionItem*> *dstConnectionItems = &(connectionItem->destPlugBox()->_connectionItems);
     
-    _connectionItems.erase(std::remove(_connectionItems.begin(), _connectionItems.end(), connectionItem), _connectionItems.end());
-    plugBox->_connectionItems.erase(std::remove(plugBox->_connectionItems.begin(), plugBox->_connectionItems.end(), connectionItem), plugBox->_connectionItems.end());
+    srcConnectionItems->erase(std::remove(srcConnectionItems->begin(), srcConnectionItems->end(), connectionItem), srcConnectionItems->end());
+    dstConnectionItems->erase(std::remove(dstConnectionItems->begin(), dstConnectionItems->end(), connectionItem), dstConnectionItems->end());
+
+    _engine->scheduleDisconnection(connectionItem->sourcePlugBox()->plug(), connectionItem->destPlugBox()->plug());        
     
-    _engine->scheduleDisconnection(_plug, plugBox->plug());        
+    if (deleteConnectionItem)        
+        delete connectionItem;
+                       
+}
+
+void PlugBox::disconnectAll()
+{
+    ConnectionItem *connectionItem;
+
+    while (!_connectionItems.empty())
+    {
+        connectionItem = _connectionItems.back();        
+        disconnect(connectionItem);        
+    }
 }
 
 int PlugBox::connectionHandleX()
