@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=Engine::signalInfo().blockSize();
+//const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=Engine::signalInfo().blockSize();
 const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
 
 const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
@@ -60,7 +60,7 @@ Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) :
   addPlug(_AUDIO_OUT_LEFT = new PlugOut<SignalType>(this, "Left"));    
   addPlug(_AUDIO_OUT_RIGHT = new PlugOut<SignalType>(this, "Right"));    
 
-  _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
+  _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(Engine::signalInfo().blockSize());
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
 
   std::cout << "init PortAudio..." << std::endl;
@@ -194,14 +194,11 @@ int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long
   ScopedLock scopedLock(parent->_mutex);
 
   SignalType& lbuffer = parent->_lBuffer;
-  int& lindex = parent->_lBufferIndex;
-  
+
   float *in = (float*)input_buffer;
 
-  for (unsigned int i=0; i<frames_per_buffer; i++ )
-    lbuffer[lindex++] = *in++;
-
-  lindex %= parent->_ringBufferSize;
+  memcpy( &lbuffer[parent->_lBufferIndex], in, frames_per_buffer * sizeof(float) );
+  parent->_lBufferIndex = (parent->_lBufferIndex + frames_per_buffer) % parent->_ringBufferSize;
 
   return 0;
 }
