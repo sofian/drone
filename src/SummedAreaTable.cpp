@@ -30,7 +30,7 @@ void SummedAreaTable::buildTable()
 {
   if (!_canvas)
     return;
-  
+
   // check if we need to resize
   if (_canvas->sizeX() * _canvas->sizeY() != _size) // there was a change
   {
@@ -45,8 +45,8 @@ void SummedAreaTable::buildTable()
 
   _canvasData = _canvas->_data;
   
-  unsigned char *iterData = (unsigned char*) _canvasData;
-  int *iterAcc = (int*) _acc;
+  register unsigned char *iterData = (unsigned char*) _canvasData;
+  register int *iterAcc = (int*) _acc;
 
   int rowWidth = _sizeX * 4;
   
@@ -88,7 +88,7 @@ void SummedAreaTable::buildTableOfSquares()
 {
   if (!_canvas)
     return;
-  
+
   // check if we need to resize
   if (_canvas->sizeX() * _canvas->sizeY() != _size) // there was a change
   {
@@ -103,8 +103,8 @@ void SummedAreaTable::buildTableOfSquares()
 
   _canvasData = _canvas->_data;
   
-  unsigned char *iterData = (unsigned char*) _canvasData;
-  int *iterAcc = (int*) _acc;
+  register unsigned char *iterData = (unsigned char*) _canvasData;
+  register int *iterAcc = (int*) _acc;
 
   int rowWidth = _sizeX * 4;
   
