@@ -5,7 +5,7 @@
 
 #include "GearMaker.h"
 
-/*---------------- varcoeff -----------------*/
+// Coefficient table.
 const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {
 0.722222222222,     0.0,                 //    0
 0.722222222222,     0.0,                 //    1

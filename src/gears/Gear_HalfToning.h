@@ -25,6 +25,7 @@ class Gear_HalfToning : public Gear
     float i_dl;       /* down-left */
   };
 
+  // Internal use.
   static const ThreeCoefficients COEFS_TABLE[256];
   
 public:
