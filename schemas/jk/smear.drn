@@ -1,0 +1,85 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="36" PosY="132" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/dev/drone/media/panorama_ephemera2004.mpg" />
+        </Gear>
+        <Gear PosX="368" PosY="136" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="242" PosY="378" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="415" PosY="301" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="781" PosY="151" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="444" PosY="448" Type="Slider" SliderPos="0.463415" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear PosX="83" PosY="538" Type="Slider" SliderPos="0.0292683" Name="Slider2" >
+            <Properties Lower_Bound="-0.1" Higher_Bound=".1" />
+        </Gear>
+        <Gear PosX="647" PosY="62" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="373" PosY="24" Type="Saturation" Name="Saturation1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="157" PosY="57" Type="Slider" SliderPos="-14.1463" Name="Slider4" >
+            <Properties Lower_Bound="-20" Higher_Bound="20" />
+        </Gear>
+        <Gear PosX="639" PosY="493" Type="Slider" SliderPos="4.26829" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="681" PosY="279" Type="ColorQuantize" Name="ColorQuantize1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="536" PosY="229" Type="Slider" SliderPos="12.9756" Name="Slider6" >
+            <Properties Lower_Bound="2" Higher_Bound="32" />
+        </Gear>
+        <Gear PosX="121" PosY="414" Type="PushButton" Name="PushButton1" >
+            <Properties On_Value="222" One_Shot="0" Off_Value="254" />
+        </Gear>
+        <Gear PosX="475" PosY="575" Type="Slider" SliderPos="2.73171" Name="Slider1" >
+            <Properties Lower_Bound="2" Higher_Bound="32" />
+        </Gear>
+        <Gear PosX="19" PosY="271" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="143" PosY="262" Type="Slider" SliderPos="253.659" Name="Slider7" >
+            <Properties Lower_Bound="200" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="748" PosY="388" Type="Rescale" Name="Rescale1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="597" PosY="383" Type="Slider" SliderPos="874.293" Name="Slider8" >
+            <Properties Lower_Bound="1" Higher_Bound="1024" />
+        </Gear>
+        <Gear PosX="589" PosY="429" Type="Slider" SliderPos="590.28" Name="Slider9" >
+            <Properties Lower_Bound="1" Higher_Bound="768" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoBlend1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Slider3" GearB="ApplyDisplaceGrid1" Input="Mode" Output="Value" />
+        <Connection GearA="Slider2" GearB="GenDisplaceGrid1" Input="SCALE" Output="Value" />
+        <Connection GearA="Blur1" GearB="ColorQuantize1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Saturation1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Saturation1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Saturation1" GearB="Rescale1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider4" GearB="Saturation1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider5" GearB="Blur1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider6" GearB="ColorQuantize1" Input="NColors" Output="Value" />
+        <Connection GearA="Slider7" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="Rescale1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Slider8" GearB="Rescale1" Input="Width" Output="Value" />
+        <Connection GearA="Slider9" GearB="Rescale1" Input="Height" Output="Value" />
+    </Connections>
+</Schema>
