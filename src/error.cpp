@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+// These implementations were taken from Torch 3 (http://www.torch.ch).
+
 char xxpetit_message_pour_melanie[10000];
 
 void errormsg(const char* msg, ...)

@@ -1,13 +1,52 @@
+// Copyright (C) 2004 Jean-Sébastien Senécal (senecal@iro.umontreal.ca)
+// Copyright (C) 2003 Ronan Collobert (collober@idiap.ch)
+//                
+// This file is part of Drone.
+//
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The name of the author may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 #ifndef ERROR_INCLUDED
 #define ERROR_INCLUDED
 
+//! No debug.
 #define LEVEL_NODEBUG -1
+//! Only catch errors.
 #define LEVEL_ERROR   0
+//! Catch both errors and warnings.
 #define LEVEL_WARNING 1
+//! Catch errors, warnings and notices.
 #define LEVEL_NOTICE  2
 
+// Default debug level.
 #ifndef DEBUG_LEVEL
 #define DEBUG_LEVEL LEVEL_ERROR
+#endif
+
+// Redefine __STRING just to make sure.
+#ifndef __STRING
+#define __STRING(x) #x
 #endif
 
 // This macro is absolutely NOT SAFE! NEVER USE IT ALONE!!!
@@ -15,20 +54,29 @@
 #define TRIGGER_ASSERT(expr, func) \
 ((expr) ? static_cast<void>(0) : func(__STRING(expr)) );
 
+//! Assertion macros.
 #define ASSERT_ERROR(expr)   TRIGGER_ASSERT(expr, ERROR)
 #define ASSERT_WARNING(expr) TRIGGER_ASSERT(expr, WARNING)
 #define ASSERT_NOTICE(expr)  TRIGGER_ASSERT(expr, NOTICE)
 
+//! Error inlines.
 inline void ERROR(const char* msg, ...);
 inline void WARNING(const char* msg, ...);
 inline void NOTICE(const char* msg, ...);
 
+//! Prints a message.
 void message(const char* msg, ...);
+//! Like printf.
 void print(const char* msg, ...);
 
+//! Prints an error message. The program will exit.
 void errormsg(const char* msg, ...);
+//! Prints a warning message. The program will not.
 void warningmsg(const char* msg, ...);
+//! Prints a notice, usually intended for deep information at the programmer's intent.
 void noticemsg(const char* msg, ...);
+
+// Inline functions implementation.
 
 void ERROR(const char* msg, ...)
 {
