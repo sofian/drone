@@ -81,7 +81,7 @@
 #endif
 
 // Dummy method (used for empty macros, see up there).
-inline void dummymsg(const char* msg, ...) {}
+inline void dummymsg(const char* , ...) {}
 
 //! Prints a message.
 void message(const char* msg, ...);
