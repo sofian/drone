@@ -49,6 +49,7 @@ private:
   PlugIn<ValueType> *_H_FIRST_IN;
   PlugIn<ValueType> *_H_CELLS_IN;
   PlugIn<ValueType> *_V_CELLS_IN;
+  PlugIn<ValueType> *_MIN_CELLSIZE_IN;
 
   // Outputs.
   PlugOut<VideoRGBAType> *_VIDEO_OUT;

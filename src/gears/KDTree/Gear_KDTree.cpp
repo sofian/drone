@@ -48,6 +48,7 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
   addPlug(_H_FIRST_IN = new PlugIn<ValueType>(this, "HFirst", new ValueType(0, 0, 1)));
   addPlug(_H_CELLS_IN = new PlugIn<ValueType>(this, "HCells", new ValueType(2, 2, 16)));
   addPlug(_V_CELLS_IN = new PlugIn<ValueType>(this, "VCells", new ValueType(2, 2, 16)));
+  addPlug(_MIN_CELLSIZE_IN = new PlugIn<ValueType>(this, "MinSize", new ValueType(1, 1, 16)));
 
   // Outputs.
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
@@ -75,7 +76,6 @@ void Gear_KDTree::init()
 {
   _rasterer->setImage(_VIDEO_OUT->type());
   _rasterer->setColor(0, 0, 0); // black lines only
-  _minCellSize = 2; // XXX temporaire (should be an input)
 }
 
 void Gear_KDTree::runVideo()
@@ -94,9 +94,10 @@ void Gear_KDTree::runVideo()
   _sizeY = _image->height();
 
   // initialize
-  _maxDepth = MAX(_DEPTH_IN->type()->intValue(),   0);
+  _maxDepth = MAX(_DEPTH_IN->type()->intValue(), 0);
   _nHCells  = CLAMP(_H_CELLS_IN->type()->intValue(), 2, 1024);
   _nVCells  = CLAMP(_V_CELLS_IN->type()->intValue(), 2, 1024);
+  _minCellSize = CLAMP(_MIN_CELLSIZE_IN->type()->intValue(), 1, MAX(_sizeX, _sizeY));
 
   _rasterer->setImage(_outImage);
 
@@ -122,8 +123,15 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   int area;
   _table->getSum(rgba, area, x0minus1, y0minus1, x1, y1);
   //_intensitiesTable->getSum(&intensity, area, x0minus1, y0minus1, x1, y1);
-  
-  if (depth == _maxDepth)
+
+  // Current number of cells, horizontal or vertical.
+  int currentNCells = (hSplit ?
+                       MIN(_nHCells, (x1-x0) / _minCellSize):
+                       MIN(_nVCells, (y1-y0) / _minCellSize));
+
+  if (currentNCells == 0)
+    return;
+  else if (depth == _maxDepth || currentNCells == 1)
   {
     // Draw a rectangle around the area and paint it with the average color.
     if (_VIDEO_OUT->connected())
@@ -145,17 +153,14 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
     return;
   }
 
-  if (abs(x1 - x0) < _minCellSize || abs(y1 - y0) < _minCellSize) // XXX faut faire la vérif avant (là c'est trop tard...)
-    return;
-
+  int cellValue = rgb2gray(rgba[0], rgba[1], rgba[2]) / currentNCells; // XXX should calculate luminance for better effect
+  
   // Now split.
   if (hSplit)
   {
-    int cellValue = sum(rgba, SIZE_RGB) / _nHCells; // XXX should calculate luminance for better effect
-
     // horizontal split
-    int mid;
-    for (int i=1; i<_nHCells; ++i)
+    int mid;    
+    for (int i=1; i<currentNCells; ++i)
     {
       int cut = i*cellValue;
       int upper = x1;
@@ -167,7 +172,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         mid = (lower+upper) / 2; // take the mean
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, mid, y1);
-        if (sum(rgba, SIZE_RGB) < cut)
+        if (rgb2gray(rgba[0], rgba[1], rgba[2]) < cut)
           lower = mid+1; // look right //*** attention risque d'erreur : vérifier
         else
           upper = mid;  // look left
@@ -180,12 +185,11 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   }
   else
   {
-    int cellValue = sum(rgba, SIZE_RGB) / _nVCells; // XXX should calculate luminance for better effect
 
     // vertical split
     int mid;
     
-    for (int i=1; i<_nVCells; ++i)
+    for (int i=1; i<currentNCells; ++i)
     {
       int cut = i*cellValue;
       int upper = y1;
@@ -197,7 +201,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         mid = (lower+upper) / 2; // take the mean
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, x1, mid);
-        if (sum(rgba, SIZE_RGB) < cut)
+        if (rgb2gray(rgba[0], rgba[1], rgba[2]) < cut)
           lower = mid+1; // look up //*** attention risque d'erreur : vérifier
         else
           upper = mid;  // look down
