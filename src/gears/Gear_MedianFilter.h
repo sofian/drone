@@ -5,7 +5,6 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoType.h"
-#include "SummedAreaTable.h"
 
 /**
  * A not-that-efficient median filter. The main element of the code is a quick
