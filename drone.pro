@@ -15,7 +15,7 @@ TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/stk-4.1.3/include
 LIBS += -Lsrc/stk-4.1.3/src/ -lstk -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
-CONFIG += thread debug
+CONFIG += thread
 
 HEADERS += config.h \
 src/error.h \
@@ -29,10 +29,12 @@ src/types/AbstractType.h \
 src/types/ValueType.h \
 src/types/VideoType.h \
 src/types/SignalType.h \
+src/types/DisplaceGrid.h \
 src/types/MatrixType.h \
 src/gears/Gear_AudioInput.h \
 src/gears/Gear_AudioOutput.h \
 src/gears/Gear_AudioSource.h \
+src/gears/Gear_ApplyDisplaceGrid.h \
 src/gears/Gear_Blur.h \
 src/gears/Gear_ColorAdjust.h \
 src/gears/Gear_Contrast.h \
@@ -45,6 +47,7 @@ src/gears/Gear_Enveloppe.h \
 src/gears/Gear_FilterSignal.h \
 src/gears/Gear_FreqBoxes.h \
 src/gears/Gear_Gain.h \
+src/gears/Gear_GenDisplaceGrid.h \
 src/gears/Gear_GrayScale.h \
 src/gears/Gear_HalfToning.h \
 src/gears/Gear_Image.h \
@@ -109,6 +112,7 @@ src/drone.cpp \
 src/Engine.cpp \
 src/FrequencyAnalyzer.cpp \
 src/Gear.cpp \
+src/gears/Gear_ApplyDisplaceGrid.cpp \
 src/gears/Gear_AudioInput.cpp \
 src/gears/Gear_AudioOutput.cpp \
 src/gears/Gear_AudioSource.cpp \
@@ -124,6 +128,7 @@ src/gears/Gear_Enveloppe.cpp \
 src/gears/Gear_FilterSignal.cpp \
 src/gears/Gear_FreqBoxes.cpp \
 src/gears/Gear_Gain.cpp \
+src/gears/Gear_GenDisplaceGrid.cpp \
 src/gears/Gear_GrayScale.cpp \
 src/gears/Gear_HalfToning.cpp \
 src/gears/Gear_Image.cpp \
