@@ -186,6 +186,7 @@ private:
               -mmt[cube->r0][cube->g0][cube->b0] );
 	    break;
     }
+    return 0;
   }
 
 
@@ -216,6 +217,7 @@ private:
               +mmt[cube->r0][cube->g0][pos] );
 	    break;
     }
+    return 0;
   }
 
   /* Compute the weighted variance of a box */
