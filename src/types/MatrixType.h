@@ -10,12 +10,12 @@ public:
   MatrixType(int width = 0,
              int height = 0, 
              T fillValue = T())
-    : _data(0)
+    : _data(0),_fillValue(fillValue)
     {
       addSubType(_width);
       addSubType(_height);
       resize(width, height);
-      fill(fillValue);
+      fill(_fillValue);
     }
   
   virtual ~MatrixType() {}
@@ -42,11 +42,15 @@ public:
 
   void resize(int sizeX, int sizeY=1) 
   {
+    //int oldSize = _size;
     _width.setValue(sizeX);
     _height.setValue(sizeY);
     _sizeX = sizeX;
     _sizeY = sizeY;
     allocate(sizeX*sizeY);
+    // fill only new allocated space with _fillValue
+    // for (T *it = _daeta+oldSize; it < _data+_size;)
+//       *it++ = _fillValue;
   }
   
   void fill(T value)
@@ -68,6 +72,7 @@ private:
   int _sizeX;
   int _sizeY;
   T *_data;
+  T _fillValue;
 };
 
 /* template<>                                   */

@@ -1,5 +1,3 @@
-
-
 #include <qapplication.h>
 //#include <qsplashscreen.h>
 #include "Timing.h"
@@ -13,6 +11,8 @@
 #include "Signal.h"
 #include "CircularBufferSignal.h"
 #include "Utils.h"
+
+#include "AllGears.h"
 
 int main(int argc, char** argv)
 {

@@ -23,17 +23,17 @@ public:
 
   // *** il le faut pour les grayscales aussi...
 
-  inline void getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const;
-  inline void getSumOfSquares(RGBAint *sumSquares, int x0, int y0, int x1, int y1) const;
+  inline void getSum(RGBAint& sum, int& area, int x0, int y0, int x1, int y1) const;
+  inline void getSumOfSquares(RGBAint& sumSquares, int& area, int x0, int y0, int x1, int y1) const;
 
   inline const RGBAint& getAcc(int x, int y) const;
   inline const RGBAint& getAccOfSquares(int x, int y) const;
 
   inline int getArea(int x0, int y0, int x1, int y1) const;
 
-  static inline int total(RGBAint *val)
+  static inline int total(RGBAint& val)
   {
-    return sum((int*)val, SIZE_RGB);
+    return sum((int*)&val, SIZE_RGB);
   }
 
 public:
@@ -49,50 +49,56 @@ public:
   int _width, _height, _size;
 
   int _accR, _accG, _accB, _accA;
-
 };
 
-void SummedAreaTable::getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const
+void SummedAreaTable::getSum(RGBAint& sum, int& area, int x0, int y0, int x1, int y1) const
 {
-  if (!sum)
-    return;
+  x0 = MAX(x0, -1);
+  y0 = MAX(y0, -1);
+  x1 = MIN(x1, _width-1);
+  y1 = MIN(y1, _height-1);
+  area = (x1-x0)*(y1-y0);
 
   // it is assumed that (x0,y0) <= (x1,y1)
-  *sum = _acc[y1 * _width + x1];
+  sum = _acc[y1 * _width + x1];
 
   if (x0 >= 0)
-    subtract((int*)sum, (int*)&_acc[y1 * _width + x0], SIZE_RGBA);
+    subtract((int*)&sum, (int*)&_acc[y1 * _width + x0], SIZE_RGBA);
   if (y0 >= 0)
   {
-    subtract((int*)sum, (int*)&_acc[y0 * _width + x1], SIZE_RGBA);
+    subtract((int*)&sum, (int*)&_acc[y0 * _width + x1], SIZE_RGBA);
     if (x0 >= 0)
-      add((int*)sum, (int*)&_acc[y0 * _width + x0], SIZE_RGBA);
+      add((int*)&sum, (int*)&_acc[y0 * _width + x0], SIZE_RGBA);
   }
+  
 }
 
-void SummedAreaTable::getSumOfSquares(RGBAint *sumSquares, int x0, int y0, int x1, int y1) const
+void SummedAreaTable::getSumOfSquares(RGBAint& sumSquares, int &area, int x0, int y0, int x1, int y1) const
 {
-  if (!sumSquares)
-    return;
+//   if (!sumSquares)
+//     return;
+  x0 = MAX(x0, -1);
+  y0 = MAX(y0, -1);
+  x1 = MIN(x1, _width-1);
+  y1 = MIN(y1, _height-1);
+  area = (x1-x0)*(y1-y0);
 
   // it is assumed that (x0,y0) <= (x1,y1)
-  *sumSquares = _accSquares[y1 * _width + x1];
+  sumSquares = _accSquares[y1 * _width + x1];
 
   if (x0 >= 0)
-    subtract((int*)sumSquares, (int*)&_accSquares[y1 * _width + x0], SIZE_RGBA);
+    subtract((int*)&sumSquares, (int*)&_accSquares[y1 * _width + x0], SIZE_RGBA);
   if (y0 >= 0)
   {
-    subtract((int*)sumSquares, (int*)&_accSquares[y0 * _width + x1], SIZE_RGBA);
+    subtract((int*)&sumSquares, (int*)&_accSquares[y0 * _width + x1], SIZE_RGBA);
     if (x0 >= 0)
-      add((int*)sumSquares, (int*)&_accSquares[y0 * _width + x0], SIZE_RGBA);
+      add((int*)&sumSquares, (int*)&_accSquares[y0 * _width + x0], SIZE_RGBA);
   }
 }
 
 int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
 {
-  int maxX = _width-1;
-  int maxY = _height-1;
-  return( (MIN(x1,maxX) - MAX(x0,-1))*(MIN(y1,maxY) - MAX(y0,-1)) );
+  return( (MIN(x1,_width-1) - MAX(x0,-1))*(MIN(y1,_height-1) - MAX(y0,-1)) );
 }
 
 const RGBAint& SummedAreaTable::getAcc(int x, int y) const

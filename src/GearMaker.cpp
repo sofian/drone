@@ -9,7 +9,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-std::map<std::string, GearMaker*> *GearMaker::_Registry;
+std::map<std::string, GearMaker*> *GearMaker::_registry;
 
 GearMaker::GearMaker(std::string type) 
 {
@@ -17,26 +17,26 @@ GearMaker::GearMaker(std::string type)
 
   if (!registry_instanciated)
   {
-    _Registry = new std::map<std::string, GearMaker*>();
+    _registry = new std::map<std::string, GearMaker*>();
     registry_instanciated=true;
   }
 
-  _Registry->insert(std::make_pair(type, this));
+  _registry->insert(std::make_pair(type, this));
 }
 
 Gear* GearMaker::makeGear(Engine *engine, std::string type,std::string name)
 {    
-  GearMaker *Gearmaker= _Registry->find(type)->second;
+  GearMaker *gearMaker= _registry->find(type)->second;
 
   //Gear non trouve dans le registry
-  assert(Gearmaker != NULL);
+  assert(gearMaker != NULL);
 
-  return Gearmaker->internalMakeGear(engine,name);
+  return gearMaker->internalMakeGear(engine,name);
 }
 
 void GearMaker::getAllGearsName(std::vector<std::string> &gearsName)
 {
-  for (std::map<std::string, GearMaker*>::iterator it=_Registry->begin(); it != _Registry->end(); ++it)
+  for (std::map<std::string, GearMaker*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
   {
     gearsName.push_back(it->first);
   }

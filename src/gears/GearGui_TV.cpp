@@ -28,6 +28,7 @@ void GearGui_TV::drawShape(QPainter &painter)
 
   MatrixType<RGBA> *image;
   RGBA *data;
+  bool noImage=false;
 
   int x, y, sizeX, sizeY;      
   getDrawableArea(&x, &y, &sizeX, &sizeY);
@@ -41,7 +42,6 @@ void GearGui_TV::drawShape(QPainter &painter)
   {
     image = ((Gear_TV*)_gear)->VIDEO_IN()->type()->image();
     data = image->data();
-
 
     if ((image->width() != _currentSizeX) || (image->height() != _currentSizeY))
     {
@@ -62,9 +62,14 @@ void GearGui_TV::drawShape(QPainter &painter)
         bits+=4;
         data++;
       }
+    
+    if(_currentSizeX && _currentSizeY)
+      painter.drawImage(x, y, _videoFrame.scale(sizeX, sizeY));
+    else noImage=true;
+  }
+  else noImage=true;
 
-    painter.drawImage(x, y, _videoFrame.scale(sizeX, sizeY));
-  } else
+  if(noImage)
   {
     painter.setPen(Qt::black);
     painter.setBrush(NO_SIGNAL_COLOR);

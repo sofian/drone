@@ -75,11 +75,12 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 
   // Get the total values in the area.
   RGBAint rgba;
-  _table->getSum(&rgba, x0, y0, x1, y1);
+  int area;
+  _table->getSum(rgba, area, x0, y0, x1, y1);
 
   // Useful values.
-  int area = _table->getArea(x0, y0, x1, y1);
-  int cut = SummedAreaTable::total(&rgba) / 2;
+  //int area = _table->getArea(x0, y0, x1, y1);
+  int cut = SummedAreaTable::total(rgba) / 2;
 
   // Draw a rectangle around the area and paint it with the average color.
   _rasterer->setColor(rgba.r / area, rgba.g / area, rgba.b / area);
@@ -98,8 +99,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     while (lower != upper)
     {
       mid = (lower+upper) / 2; // take the mean
-      _table->getSum(&rgba, x0, y0, x1, mid);
-      if (SummedAreaTable::total(&rgba) < cut)
+      _table->getSum(rgba, area, x0, y0, x1, mid); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+      if (SummedAreaTable::total(rgba) < cut)
         lower = mid+1; // look up //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look down
@@ -117,8 +118,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     while (lower != upper)
     {
       mid = (lower+upper) / 2; // take the mean
-      _table->getSum(&rgba, x0, y0, mid, y1);
-      if (SummedAreaTable::total(&rgba) < cut)
+      _table->getSum(rgba, area, x0, y0, mid, y1); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
+      if (SummedAreaTable::total(rgba) < cut)
         lower = mid+1; // look right //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look left

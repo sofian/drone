@@ -38,10 +38,13 @@ void Gear_Blur::runVideo()
 
   _outImage = _VIDEO_OUT->type()->image();
   _outImage->resize(_image->width(), _image->height());
+ 
   _sizeY = _image->sizeY();
   _sizeX = _image->sizeX();
 
   ////////////////////////////
+  int *iterSum;
+  int area;
 
   _blurSize=(int) _AMOUNT_IN->type()->value();
 
@@ -63,17 +66,20 @@ void Gear_Blur::runVideo()
         _x2 = x + _blurSize;
         _y1 = y - _blurSize - 1;
         _y2 = y + _blurSize;
+                
+        _table->getSum(_sum, area, _x1, _y1, _x2, _y2);
         
-        _x2 = MIN(_x2, _sizeX-1);
-        _y2 = MIN(_y2, _sizeY-1);
+        iterSum = (int*) &_sum;
+        (*_outData++)=(*iterSum++) / area;
+        (*_outData++)=(*iterSum++) / area;
+        (*_outData++)=(*iterSum++) / area;
+        (*_outData++)=(*iterSum++) / area;
         
-        _table->getSum(&_sum, _x1, _y1, _x2, _y2);
-        
-        divide((int*)&_sum, _table->getArea(_x1, _y1, _x2, _y2), SIZE_RGBA);
-        copy(_outData, (int*)&_sum, SIZE_RGBA);
-        _outData+=SIZE_RGBA;
+//         divide((int*)&_sum, area, SIZE_RGBA);
+//         copy(_outData, (int*)&_sum, SIZE_RGBA);
+//         _outData+=SIZE_RGBA;
       }
-    }                                   
+    }   
   }
 
 }

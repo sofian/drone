@@ -3,9 +3,6 @@
 
 #include "Gear.h"
 #include "SignalType.h"
-#include "SignalType.h"
-#include "SignalType.h"
-#include "SignalType.h"
 #include <portaudio.h>
 
 class PlugSignal;
@@ -18,7 +15,6 @@ public:
   static const std::string SETTING_FRAMES_PER_BUFFER;
   static const std::string SETTING_NB_BUFFERS;
 //
-
 
   Gear_AudioInput(Engine *engine, std::string name);
   virtual ~Gear_AudioInput();

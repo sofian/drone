@@ -1,0 +1,69 @@
+### libstk Makefile - for various flavors of unix
+
+LIBRARY = libstk.a
+AR = ar -rsc
+RM = /bin/rm
+OBJECT_PATH = Debug
+vpath %.o $(OBJECT_PATH)
+
+OBJECTS	=	Stk.o Noise.o SubNoise.o Envelope.o ADSR.o \
+					WvIn.o WaveLoop.o WvOut.o \
+					Filter.o OneZero.o OnePole.o PoleZero.o TwoZero.o TwoPole.o \
+					BiQuad.o FormSwep.o Delay.o DelayL.o DelayA.o \
+					Reverb.o PRCRev.o JCRev.o NRev.o \
+					Chorus.o Echo.o PitShift.o \
+					Table.o ReedTabl.o JetTabl.o BowTabl.o \
+					Modulate.o SingWave.o Voicer.o \
+					Vector3D.o Sphere.o \
+					\
+					Instrmnt.o Clarinet.o BlowHole.o Saxofony.o Flute.o Brass.o BlowBotl.o \
+					Bowed.o Plucked.o StifKarp.o Sitar.o PluckTwo.o Mandolin.o Mesh2D.o \
+					FM.o Rhodey.o Wurley.o TubeBell.o HevyMetl.o PercFlut.o BeeThree.o FMVoices.o \
+					Sampler.o Moog.o Simple.o Drummer.o Shakers.o \
+					Modal.o ModalBar.o BandedWG.o Resonate.o VoicForm.o Phonemes.o Whistle.o \
+					\
+					Messager.o SKINI.o
+
+
+INCLUDE = 
+ifeq ($(strip $(INCLUDE)),)
+	vpath %.h ../include
+	INCLUDE = -I../include
+else
+	vpath %.h ../include $(INCLUDE)
+	INCLUDE = -I../include -I
+endif
+
+CC       = g++
+DEFS     = -D__LITTLE_ENDIAN__
+DEFS    += -D_STK_DEBUG_
+CFLAGS   = -g
+CFLAGS  += -Wall -g $(INCLUDE)
+
+REALTIME = yes
+ifeq ($(REALTIME),yes)
+	OBJECTS += RtMidi.o RtAudio.o RtWvOut.o RtWvIn.o RtDuplex.o TcpWvOut.o TcpWvIn.o Thread.o Socket.o
+	DEFS    += -D__LINUX_ALSA__ 
+	DEFS    += 
+endif
+
+RAWWAVES = 
+ifeq ($(strip $(RAWWAVES)), )
+	RAWWAVES = ../rawwaves/
+endif
+DEFS    += -DRAWWAVE_PATH=\"$(RAWWAVES)\"
+
+%.o : %.cpp
+	$(CC) $(CFLAGS) $(DEFS) -c $(<) -o $(OBJECT_PATH)/$@
+
+all : $(LIBRARY)
+
+$(LIBRARY) : $(OBJECTS)
+	/bin/rm -f $(LIBRARY)
+	$(AR) $(LIBRARY) $(OBJECT_PATH)/*.o
+
+$(OBJECTS) : Stk.h
+
+clean : 
+	-rm $(OBJECT_PATH)/*.o
+	-rm $(LIBRARY)

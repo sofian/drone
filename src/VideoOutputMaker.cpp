@@ -4,12 +4,13 @@
 
 #include "VideoOutputMaker.h"
 #include <assert.h>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-std::map<std::string, VideoOutputMaker*> *VideoOutputMaker::_Registry;
+std::map<std::string, VideoOutputMaker*> *VideoOutputMaker::_Registry=NULL;
 
 VideoOutputMaker::VideoOutputMaker(std::string type) 
 {

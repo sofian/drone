@@ -66,7 +66,7 @@ protected:
   virtual void onResize(int , int ){}
   void resizeWindow(int sizeX, int sizeY);
 
-  bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo);
+  bool findHighestDepthVisual(XVisualInfo &visualInfo);
 
   void* _display;//! handle on the X11 display
   Window _window;//! handle on the X11 window

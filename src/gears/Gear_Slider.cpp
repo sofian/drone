@@ -16,7 +16,7 @@ const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 const std::string Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
 const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
 
-Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slider", name)
+Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slider", name),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
@@ -56,12 +56,11 @@ void Gear_Slider::onUpdateSettings()
   //then we need to redraw the gearGui
   getGearGui()->reDraw();
 
-
 }
 
 void Gear_Slider::onPlugConnected(AbstractPlug *plug)
 {
-  if (plug == _VALUE_OUT)
+  if (plug == _VALUE_OUT && _acceptHint)
   {
     ValueType *tmpType = dynamic_cast<ValueType*>(plug->firstConnectedPlug()->abstractHintType());
     _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(tmpType->minValue()); 
@@ -70,6 +69,13 @@ void Gear_Slider::onPlugConnected(AbstractPlug *plug)
     onUpdateSettings();
   }
 }
+
+void Gear_Slider::onPlugDisconnected(AbstractPlug* plug)
+{
+   if (plug == _VALUE_OUT)
+     _acceptHint=true;
+} 
+
 
 void Gear_Slider::setValue(float value)
 {
@@ -106,5 +112,6 @@ void Gear_Slider::save(QDomDocument &doc, QDomElement &gearElem)
 void Gear_Slider::load(QDomElement &gearElem)
 {
   setValue(gearElem.attribute("SliderPos","").toFloat());        
+  _acceptHint=false;
 }
 

@@ -1,0 +1,83 @@
+### STK examples Makefile - for various flavors of unix
+
+PROGRAMS = sine play record io tcpIn tcpOut sineosc rtsine bethree controlbee foursine threebees
+RM = /bin/rm
+SRC_PATH = ../../src
+OBJECT_PATH = Debug
+vpath %.o $(OBJECT_PATH)
+
+INCLUDE = 
+ifeq ($(strip $(INCLUDE)), )
+	INCLUDE = ../../include
+endif
+vpath %.h $(INCLUDE)
+
+CC       = g++
+DEFS     = -D__LITTLE_ENDIAN__
+DEFS    += -D_STK_DEBUG_
+CFLAGS   = -g
+CFLAGS  += -Wall -g -I$(INCLUDE)
+LIBRARY = -lasound -lpthread -lm 
+LIBRARY += 
+
+REALTIME = yes
+ifeq ($(REALTIME),yes)
+	DEFS    += -D__LINUX_ALSA__ 
+	DEFS    += 
+endif
+
+RAWWAVES = 
+ifeq ($(strip $(RAWWAVES)), )
+	RAWWAVES = ../../rawwaves/
+endif
+DEFS    += -DRAWWAVE_PATH=\"$(RAWWAVES)\"
+
+%.o : $(SRC_PATH)/%.cpp
+	$(CC) $(CFLAGS) $(DEFS) -c $(<) -o $(OBJECT_PATH)/$@
+
+all : $(PROGRAMS)
+
+$(OBJECTS) : Stk.h
+
+clean : 
+	-rm $(OBJECT_PATH)/*.o
+	-rm $(PROGRAMS)
+
+strip : 
+	strip $(PROGRAMS)
+
+play: play.cpp Stk.o WvIn.o WvOut.o RtWvOut.o RtAudio.o
+	$(CC) $(CFLAGS) $(DEFS) -o play play.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(LIBRARY)
+
+record: record.cpp Stk.o WvIn.o WvOut.o RtWvIn.o RtAudio.o
+	$(CC) $(CFLAGS) $(DEFS) -o record record.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvIn.o $(OBJECT_PATH)/RtAudio.o $(LIBRARY)
+
+sine: sine.cpp Stk.o WvIn.o WvOut.o WaveLoop.o
+	$(CC) $(CFLAGS) $(DEFS) -o sine sine.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/WaveLoop.o $(LIBRARY)
+
+io: io.cpp Stk.o RtAudio.o RtDuplex.o
+	$(CC) $(CFLAGS) $(DEFS) -o io io.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/RtAudio.o $(OBJECT_PATH)/RtDuplex.o $(LIBRARY)
+
+tcpIn: tcpIn.cpp Stk.o WvIn.o TcpWvIn.o WvOut.o RtWvOut.o RtAudio.o Socket.o Thread.o
+	$(CC) $(CFLAGS) $(DEFS) -o tcpIn tcpIn.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/Socket.o $(OBJECT_PATH)/Thread.o $(OBJECT_PATH)/TcpWvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(LIBRARY)
+
+tcpOut: tcpOut.cpp Stk.o WvIn.o WvOut.o TcpWvOut.o Socket.o Thread.o
+	$(CC) $(CFLAGS) $(DEFS) -o tcpOut tcpOut.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/Socket.o $(OBJECT_PATH)/Thread.o $(OBJECT_PATH)/TcpWvOut.o $(LIBRARY)
+
+sineosc: sineosc.cpp Stk.o WvIn.o WvOut.o WaveLoop.o
+	$(CC) $(CFLAGS) $(DEFS) -o sineosc sineosc.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/WaveLoop.o $(LIBRARY)
+
+rtsine: rtsine.cpp Stk.o WvIn.o WaveLoop.o WvOut.o RtWvOut.o RtAudio.o
+	$(CC) $(CFLAGS) $(DEFS) -o rtsine rtsine.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WaveLoop.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(LIBRARY)
+
+bethree: bethree.cpp Stk.o WvIn.o WaveLoop.o FM.o WvOut.o RtWvOut.o RtAudio.o Instrmnt.o Filter.o TwoZero.o Envelope.o ADSR.o BeeThree.o
+	$(CC) $(CFLAGS) $(DEFS) -o bethree bethree.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WaveLoop.o $(OBJECT_PATH)/FM.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(OBJECT_PATH)/Instrmnt.o $(OBJECT_PATH)/Filter.o $(OBJECT_PATH)/TwoZero.o $(OBJECT_PATH)/Envelope.o $(OBJECT_PATH)/ADSR.o $(OBJECT_PATH)/BeeThree.o $(LIBRARY)
+
+controlbee: controlbee.cpp Stk.o WvIn.o WaveLoop.o FM.o WvOut.o RtWvOut.o RtAudio.o Instrmnt.o Filter.o TwoZero.o Envelope.o ADSR.o BeeThree.o Messager.o RtMidi.o Socket.o Thread.o SKINI.o
+	$(CC) $(CFLAGS) $(DEFS) -o controlbee controlbee.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WaveLoop.o $(OBJECT_PATH)/FM.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(OBJECT_PATH)/Instrmnt.o $(OBJECT_PATH)/Filter.o $(OBJECT_PATH)/TwoZero.o $(OBJECT_PATH)/Envelope.o $(OBJECT_PATH)/ADSR.o $(OBJECT_PATH)/BeeThree.o $(OBJECT_PATH)/Messager.o $(OBJECT_PATH)/RtMidi.o $(OBJECT_PATH)/Socket.o $(OBJECT_PATH)/Thread.o $(OBJECT_PATH)/SKINI.o $(LIBRARY)
+
+foursine: foursine.cpp Stk.o WvIn.o WvOut.o WaveLoop.o
+	$(CC) $(CFLAGS) $(DEFS) -o foursine foursine.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/WaveLoop.o $(LIBRARY)
+
+threebees: threebees.cpp Stk.o WvIn.o WaveLoop.o FM.o WvOut.o RtWvOut.o RtAudio.o Instrmnt.o Filter.o TwoZero.o Envelope.o ADSR.o BeeThree.o Messager.o RtMidi.o Socket.o Thread.o SKINI.o Voicer.o
+	$(CC) $(CFLAGS) $(DEFS) -o threebees threebees.cpp $(OBJECT_PATH)/Stk.o $(OBJECT_PATH)/WvIn.o $(OBJECT_PATH)/WaveLoop.o $(OBJECT_PATH)/FM.o $(OBJECT_PATH)/WvOut.o $(OBJECT_PATH)/RtWvOut.o $(OBJECT_PATH)/RtAudio.o $(OBJECT_PATH)/Instrmnt.o $(OBJECT_PATH)/Filter.o $(OBJECT_PATH)/TwoZero.o $(OBJECT_PATH)/Envelope.o $(OBJECT_PATH)/ADSR.o $(OBJECT_PATH)/BeeThree.o $(OBJECT_PATH)/Messager.o $(OBJECT_PATH)/RtMidi.o $(OBJECT_PATH)/Socket.o $(OBJECT_PATH)/Thread.o $(OBJECT_PATH)/SKINI.o $(OBJECT_PATH)/Voicer.o $(LIBRARY)

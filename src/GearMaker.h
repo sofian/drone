@@ -16,7 +16,7 @@ public:
   static Gear* makeGear(Engine *engine, std::string type, std::string name);
   static void getAllGearsName(std::vector<std::string> &gearsName);
 private:
-  static std::map<std::string, GearMaker*> *_Registry;
+  static std::map<std::string, GearMaker*> *_registry;
   virtual Gear* internalMakeGear(Engine *engine, std::string name)=0;
 };
 
@@ -30,9 +30,9 @@ private: \
     { \
         return new MCLASSNAME(engine, name);\
     } \
-    static MMAKERNAME _RegisterThis;\
+    static MMAKERNAME _registerThis;\
 };\
-MMAKERNAME MMAKERNAME::_RegisterThis;
+MMAKERNAME MMAKERNAME::_registerThis;
 
 
 
