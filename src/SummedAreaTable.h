@@ -11,7 +11,6 @@
 
 class SummedAreaTable
 {
-  static const RGBAint ZERO;
 public:
 
   SummedAreaTable();
@@ -99,7 +98,7 @@ int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
 const RGBAint& SummedAreaTable::getAcc(int x, int y) const
 {
   if (x < 0 || y < 0)
-    return ZERO;
+    return BLACK_RGBAint;
   else
     return _acc[y * _width + x];
 }
@@ -107,7 +106,7 @@ const RGBAint& SummedAreaTable::getAcc(int x, int y) const
 const RGBAint& SummedAreaTable::getAccOfSquares(int x, int y) const
 {
   if (x < 0 || y < 0)
-    return ZERO;
+    return BLACK_RGBAint;
   else
     return _accSquares[y * _width + x];
 }

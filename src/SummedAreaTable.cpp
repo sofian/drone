@@ -1,8 +1,6 @@
 #include "SummedAreaTable.h"
 
 
-const RGBAint SummedAreaTable::ZERO = { 0, 0, 0, 0};
-
 SummedAreaTable::SummedAreaTable()
 : _acc(0), _accSquares(0), _image(0), _imageData(0), _width(0), _height(0), _size(0)
 {
