@@ -19,30 +19,15 @@ class QDomElement;
 class QCanvas;
 
 
+// struct AutoDuplicatePlugGroup
+// {
+//   int nbMin, nbMax;
+//   std::vector<AbstractPlug* > plugs;
+// };
+
 class Gear  
 {
 public:
-  class Category
-  {
-  public:
-
-    Category &operator<<(std::string s)
-    {
-      _category.push_back(s);
-      return *this;
-    }
-
-    const std::vector<std::string>& path()
-    {
-      return _category;
-    }
-
-    void clear();
-
-  private:
-    std::vector<std::string> _category;
-
-  };
 
 
   Gear(Engine* engine, std::string type, std::string name);
@@ -79,9 +64,6 @@ public:
 
   Engine *engine(){return _engine;};
 
-  const Category &category(){return _category;};
-
-
 protected:
 
   //! overload to create your own GearGui
@@ -96,6 +78,13 @@ protected:
   AbstractPlug* addPlug(AbstractPlug* plug);       
   void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
+//   template<class T>
+//   void addAutoDuplicatePlugGroup<T>(Abstract>* plug, std::vector< Plug<T>* > zeVector, int nbMin, int nbMax);
+//     {
+//       zeVector.push_back(plug);
+//       _autoDuplicatePlugsVectors.push_back(zeVector);
+//     }
+
   void deletePlug(AbstractPlug *plug);
 
   Engine *_engine;
@@ -103,9 +92,11 @@ protected:
   std::list<AbstractPlug*> _Plugs;    
 
   Properties _settings;
-  Category _category;
 
 private:
+
+//   std::vector< AutoDuplicateGroup > _autoDuplicatePlugsVectors;
+
   std::string _Type;
   std::string _Name;
 

@@ -15,15 +15,14 @@ public:
 
   void runVideo();
 
-  PlugIn<VideoTypeRGBA>* VIDEO_IN() { return _VIDEO_IN;}
-  PlugOut<VideoTypeRGBA>* VIDEO_OUT() { return _VIDEO_OUT;}
-
   bool ready();
 
 private:
 
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  
+  std::vector<PlugIn<VideoTypeRGBA>* > _SHIT;
 
   //local var
   MatrixType<RGBA> *_image; 

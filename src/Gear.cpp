@@ -85,7 +85,7 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
   std::string str;
 
   for(int l=0;l<=level;l++)
-    str+="  ";
+    str+="..";
 
   _Plugs.push_back(plug);
   int size = plug->abstractType()->nSubTypes();
@@ -95,8 +95,15 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
     AbstractType* subtype = plug->abstractType()->getSubType(i);
     addPlugAndSubPlugs(new AbstractPlug(this, subtype, plug->inOut(), str + subtype->name() ),level+1);
   }
-
 }
+
+// template<class T>
+// void Gear::addAutoDuplicatePlug<T>(Plug<T>* plug, std::vector< Plug<T>* > zeVector, int nbMin, int nbMax)
+// {
+  
+
+// }
+
 
 void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
 {

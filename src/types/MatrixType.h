@@ -27,8 +27,8 @@ public:
   T* data() { return &operator[](0); }
   //operator T*() { return data(); }
   
-  virtual std::string name() const {return "error! UndefinedMatrixType";} 
-  virtual QColor color() const {  return QColor(0,0,0); }
+  virtual std::string name() const {return "!error! UndefinedMatrixType";} 
+  virtual QColor color() const {  return QColor(91,36,59); }
   
   void resize(size_t size)
   {

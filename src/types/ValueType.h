@@ -10,7 +10,7 @@ public:
   virtual ~ValueType() {}
   
   virtual std::string name() const { return "ValueType"; }
-  virtual QColor color() const { return QColor(141, 222, 46); }
+  virtual QColor color() const { return QColor(157, 208, 50); }
   
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
