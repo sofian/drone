@@ -34,7 +34,7 @@ public:
   Gear_TV(Engine *engine, std::string name);
   virtual ~Gear_TV();
 
-  PlugIn<VideoTypeRGBA>* VIDEO_IN(){return _VIDEO_IN;};
+  PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
   void runVideo();
   bool ready();
@@ -43,11 +43,11 @@ protected:
   GearGui *createGearGui(QCanvas *canvas);
 private:
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   //local var
-  VideoTypeRGBA *_image; 
-  VideoTypeRGBA *_outImage; 
+  VideoRGBAType *_image; 
+  VideoRGBAType *_outImage; 
   unsigned char *_data;
   unsigned char *_tempData;
   RGBA *_outData;

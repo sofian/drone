@@ -170,7 +170,6 @@ src/GearMaker.cpp \
 src/GearPropertiesDialog.cpp \
 src/MainWindow.cpp \
 src/AbstractPlug.cpp \
-src/Plug.cpp \
 src/PlugBox.cpp \
 src/Properties.cpp \
 src/PropertyControl.cpp \

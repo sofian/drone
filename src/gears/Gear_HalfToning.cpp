@@ -288,8 +288,8 @@ Register_Gear(MAKERGear_HalfToning, Gear_HalfToning, "HalfToning")
 Gear_HalfToning::Gear_HalfToning(Engine *engine, std::string name)
 : Gear(engine, "HalfToning", name), _carryLine0(0), _carryLine1(0)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   NOTICE("Pour le moment les coeffs tables ne sont pas pré-calculées... à corriger un jour.");
 }
 

@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_ApplyDisplaceGrid, Gear_ApplyDisplaceGrid, "ApplyDisplac
 
 Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Engine *engine, std::string name) : Gear(engine, "ApplyDisplaceGrid", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_GRID = new PlugIn<DisplaceGrid>(this, "Grid"));
   addPlug(_MODE = new PlugIn<ValueType>(this, "Mode", new ValueType(0.0f,0.0f,1.0f)));
 }

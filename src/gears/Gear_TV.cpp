@@ -30,7 +30,7 @@ Register_Gear(MAKERGear_TV, Gear_TV, "TV")
 
 Gear_TV::Gear_TV(Engine *engine, std::string name) : Gear(engine, "TV", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
 }
 
 Gear_TV::~Gear_TV()

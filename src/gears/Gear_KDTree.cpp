@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_KDTree, Gear_KDTree, "KDTree")
 Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 : Gear(engine, "KDTree", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6, 1, 16)));
   _rasterer = new Rasterer();
   _table = new SummedAreaTable<>();

@@ -58,7 +58,7 @@ _sizeY(0),
 _device(0),
 _bufferBGRA(NULL)
 {      
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
 
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
 

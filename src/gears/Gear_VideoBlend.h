@@ -37,15 +37,15 @@ public:
 
 private:
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN_A;
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN_B;
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<VideoRGBAType> *_VIDEO_IN_A;
+  PlugIn<VideoRGBAType> *_VIDEO_IN_B;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_ALPHA_IN;
 
   //local var
-  const VideoTypeRGBA *_imageA; 
-  const VideoTypeRGBA *_imageB; 
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_imageA; 
+  const VideoRGBAType *_imageB; 
+  VideoRGBAType *_outImage; 
   const RGBA *_dataA;
   const RGBA *_dataB;
   RGBA *_outData;

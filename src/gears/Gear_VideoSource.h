@@ -38,7 +38,7 @@ public:
   void runVideo();
   void runAudio();
 
-  PlugOut<VideoTypeRGBA>* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugOut<VideoRGBAType>* VIDEO_OUT(){return _VIDEO_OUT;};
   PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
@@ -48,7 +48,7 @@ protected:
 
 private:
 
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
   mpeg3_t* _file;
 

@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 
 Gear_MedianFilter::Gear_MedianFilter(Engine *engine, std::string name) : Gear(engine, "MedianFilter", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 7)));
 }
 

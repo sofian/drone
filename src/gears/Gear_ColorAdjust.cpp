@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_ColorAdjust, Gear_ColorAdjust, "ColorAdjust")
 
 Gear_ColorAdjust::Gear_ColorAdjust(Engine *engine, std::string name) : Gear(engine, "ColorAdjust", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_RED_IN = new PlugIn<ValueType>(this, "Red", new ValueType(1.0f)));
   addPlug(_GREEN_IN = new PlugIn<ValueType>(this, "Green", new ValueType(1.0f)));
   addPlug(_BLUE_IN = new PlugIn<ValueType>(this, "Blue", new ValueType(1.0f)));

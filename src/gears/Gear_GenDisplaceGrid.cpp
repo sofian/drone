@@ -29,7 +29,7 @@ Register_Gear(MAKERGear_GenDisplaceGrid, Gear_GenDisplaceGrid, "GenDisplaceGrid"
 
 Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Engine *engine, std::string name) : Gear(engine, "GenDisplaceGrid", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID"));
   addPlug(_TYPE = new PlugIn<ValueType>(this, "TYPE", new ValueType(0,0,1)));
   addPlug(_PARAM1 = new PlugIn<ValueType>(this, "PARAM1", new ValueType(3, 0, 50)));

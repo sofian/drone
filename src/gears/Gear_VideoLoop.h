@@ -41,15 +41,15 @@ public:
 
 private:
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_PUNCH_OUT;
   PlugIn<ValueType> *_PUNCH_IN;
   PlugIn<ValueType> *_MEMORY;
 
   //local var
-  const VideoTypeRGBA *_image;     
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image;     
+  VideoRGBAType *_outImage; 
   unsigned char *_data;
 
   unsigned char *_outData;

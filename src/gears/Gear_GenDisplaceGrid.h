@@ -45,7 +45,7 @@ private:
   PlugIn<ValueType> *_PARAM2;
   PlugIn<ValueType> *_PARAM3;
   PlugIn<ValueType> *_SCALE;
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
 
   //local vars
@@ -58,7 +58,7 @@ private:
 
   XYDisp *_gridData; 
   DisplaceGrid * _gridOut;
-  const VideoTypeRGBA *_image;     
+  const VideoRGBAType *_image;     
 
   unsigned char* _data; // pointer on input image
 

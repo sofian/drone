@@ -33,7 +33,7 @@ Gear_Oscilloscope::Gear_Oscilloscope(Engine *engine, std::string name) : Gear(en
   addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", new ValueType(512,32,768)));
   addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", new ValueType(150,32,768)));
 
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
 
   circbuf = new CircularBuffer<Signal_T>(0.0f);
 }

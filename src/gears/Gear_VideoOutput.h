@@ -38,7 +38,7 @@ public:
   void runVideo();
 
 
-  PlugIn<VideoTypeRGBA>* VIDEO_IN(){return _VIDEO_IN;};
+  PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
   bool ready();
 
@@ -51,7 +51,7 @@ private:
   static const int DEFAULT_YRES;    
   static const bool DEFAULT_FULLSCREEN; 
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   VideoOutput *_videoOutput;
   std::vector<std::string> _allOutputs;

@@ -30,8 +30,8 @@ Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
 
 Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(3, 0, 50)));
   _table = new SummedAreaTable<>();
 }

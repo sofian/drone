@@ -30,9 +30,9 @@ Register_Gear(MAKERGear_VideoMix, Gear_VideoMix, "VideoMix")
 
 Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
 {
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgO"));
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgO"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127, 0, 255)));
   addPlug(_MIXFUNC_IN = new PlugIn<ValueType>(this, "MixFunc", new ValueType(BLEND,BLEND,DIFFERENCE)));
 

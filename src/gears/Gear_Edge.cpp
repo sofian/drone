@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_Edge, Gear_Edge, "Edge")
 
 Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127.0f, 0.0f, 255.0f)));
   NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
 }

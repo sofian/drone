@@ -69,10 +69,10 @@ protected:
 
 private:
   //! Video input.
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   //! Video output.
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   //! The size of the cluster.
   PlugIn<ValueType> *_CLUSTER_SIZE_IN;
@@ -90,8 +90,8 @@ private:
   PlugIn<ValueType> *_ANGLE_BLUE_IN;
 
   // Internal use.
-  const VideoTypeRGBA *_image; 
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image; 
+  VideoRGBAType *_outImage; 
   const RGBA *_data;
   RGBA *_outData;
 

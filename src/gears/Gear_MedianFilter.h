@@ -47,17 +47,17 @@ public:
 
 private:
   //! Video input.
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   //! Video output.
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   //! Radius of the kernel (e.g. 1 to use a 3x3 kernel, 2 to use a 5x5, etc.)
   PlugIn<ValueType> *_AMOUNT_IN;
 
   // Internal use.
-  const VideoTypeRGBA *_image;     
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image;     
+  VideoRGBAType *_outImage; 
   unsigned char *_data;
 
   unsigned char *_outData;

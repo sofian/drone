@@ -38,13 +38,13 @@ public:
 private:
 
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  const VideoTypeRGBA *_image; 
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image; 
+  VideoRGBAType *_outImage; 
   const RGBA *_data;
   RGBA *_outData;
 

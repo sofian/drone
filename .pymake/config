@@ -16,9 +16,9 @@
 
 # Qt Specific stuff
 
-qtdir = '/usr/qt/3/'
+qtdir = '/usr/share/qt3/'
 
-dronedir = "/home/julien/dev/drone/src/"
+dronedir = "/home/tatien/drone/trunk/src/"
 
 nice_value = '1'
 
@@ -36,7 +36,7 @@ verbose = 2;
 sourcedirs =   [dronedir,dronedir+'types/',dronedir+'gears/'] 
 
 # will be added as list of includes (-I...) to all compilations
-mandatory_includedirs = [dronedir,dronedir+'types/',dronedir+'gears/'] 
+mandatory_includedirs = [dronedir,dronedir+'types/',dronedir+'gears/',qtdir] 
 
 # The platform variable contains the type of platform from which pymake has been invoked. 
 # This is something like 'linux-i386', 'linux-alpha', 'sunos5', 'irix6', 'irix6-n32' etc...
@@ -98,7 +98,7 @@ optionalLibrary( name = 'arpack',
 
 optionalLibrary( name = 'opengl',
                  triggers = 'GL/gl.h',
-                 linkeroptions = '-lGL -lGLU -lglut'
+                 linkeroptions = '-lGL -lGLU'
                  )
 
 optionalLibrary( name = 'ncurses',
@@ -251,7 +251,7 @@ pymakeOption( name = 'safegprof',
               linkeroptions = '-pg' )
 
 lapack_linkeroptions = '-llapack'
-blas_linkeroptions = '-lblas -lg2c'
+blas_linkeroptions = '-lblas'
 
 # Jasmin : In OS X, there is a framework with blas and lapack
 #if platform=='darwin':
@@ -263,7 +263,7 @@ if platform=='darwin':
 
 pymakeOption( name = 'noblas',
               description = 'compilation and linking without BLAS',
-              linkeroptions = '-L/usr/X11R6/lib/ -lXxf86vm -lg2c -lpthread -lGL -lXv'              
+              linkeroptions = '-L/usr/X11R6/lib/ -lXxf86vm -lpthread -lGL -lXv'              
               )
 
 pymakeOption( name = 'blas',
@@ -275,21 +275,21 @@ pymakeOption( name = 'blas',
 pymakeOption( name = 'pentiumblas',
               description = 'compilation and linking BLAS for Intel Pentium processor',
               compileroptions = '-D USE_BLAS_SPECIALISATIONS',
-              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl -lvml -lpthread -lg2c')
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl -lvml -lpthread')
 
 pymakeOption( name = 'p3blas',
               description = 'compilation and linking BLAS for Intel Pentium 3 processor',
-              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p3 -lmkl_vml_p3 -lpthread -lg2c')
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p3 -lmkl_vml_p3 -lpthread')
 
 pymakeOption( name = 'athlonblas',
               description = 'compilation and linking atlas BLAS for AMD Athlon processor',
               compileroptions = '-D USE_BLAS_SPECIALISATIONS',
-              linkeroptions = '-L/u/lisa/local/linux-i386/lib/atlas_athlon256 -lcblas -lf77blas -latlas -lg2c')
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/atlas_athlon256 -lcblas -lf77blas -latlas')
 
 pymakeOption( name = 'p4blas',
               description = 'compilation and linking BLAS for Intel Pentium 4 processor',
               compileroptions = '-D USE_BLAS_SPECIALISATIONS',
-              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p4 -lmkl_vml_p4 -lpthread -lg2c')
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p4 -lmkl_vml_p4 -lpthread')
 
 pymakeOption( name = 'veclib',
               description = "Apple's vecLib library, a version of the BLAS library for the G4 and G5 under OS X",

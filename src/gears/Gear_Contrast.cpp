@@ -31,8 +31,8 @@ Register_Gear(MAKERGear_Contrast, Gear_Contrast, "Contrast")
 
 Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "Contrast", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127, 0, 255)));
 }
 

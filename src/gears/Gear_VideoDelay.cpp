@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_VideoDelay, Gear_VideoDelay, "VideoDelay")
 
 Gear_VideoDelay::Gear_VideoDelay(Engine *engine, std::string name) : Gear(engine, "VideoDelay", name)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
   addPlug(_DELAY = new PlugIn<ValueType>(this, "Delay", new ValueType(0,-124,0)));
   addPlug(_RECORD = new PlugIn<ValueType>(this, "Rec", new ValueType(1,0,1)));

@@ -37,9 +37,9 @@ unsigned long xcng(void){  // takes 60 nanosecs, passes all tests
 Gear_DiffDist::Gear_DiffDist(Engine *engine, std::string name) : Gear(engine, "DiffDist", name)
 {
   addPlug(_FACTOR_IN = new PlugIn<ValueType>(this, "Factor"));
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
 }
 
 Gear_DiffDist::~Gear_DiffDist()

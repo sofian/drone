@@ -59,14 +59,14 @@ public:
 
 private:
   //! Video input.
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   //! Video output.
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   // Internal use.
-  const VideoTypeRGBA *_image; 
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image; 
+  VideoRGBAType *_outImage; 
   const RGBA *_data;
   RGBA *_outData;
 

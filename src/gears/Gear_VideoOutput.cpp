@@ -48,7 +48,7 @@ _videoOutput(NULL)
   _allOutputs.push_back("Shm");
   //
 
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, name));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, name));
 
   _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);

@@ -46,7 +46,7 @@ public:
   void init();
   
 
-  PlugOut<VideoTypeRGBA> *VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugOut<VideoRGBAType> *VIDEO_OUT(){return _VIDEO_OUT;};
 
   bool ready();
 
@@ -59,7 +59,7 @@ private:
   void initInputDevice();
   void resetInputDevice();
 
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   int _sizeX, _sizeY;
 

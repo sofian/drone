@@ -32,8 +32,8 @@ Gear_ColorQuantize::Gear_ColorQuantize(Engine *engine, std::string name)
   : Gear(engine, "ColorQuantize", name), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", new ValueType(16, 2, 32)));
 }
 

@@ -23,10 +23,10 @@
 #include "ColorSpace.h"
 #include "MatrixType.h"
 
-class VideoTypeRGBA : public MatrixType<RGBA>
+class VideoRGBAType : public MatrixType<RGBA>
 {
 public:
-  VideoTypeRGBA(int width = 0,
+  VideoRGBAType(int width = 0,
                 int height = 0,
                 RGBA fillValue = BLACK_RGBA)
     : MatrixType<RGBA>(width, height, fillValue),
@@ -34,11 +34,11 @@ public:
   {
   }
 
-  virtual ~VideoTypeRGBA() {}
+  virtual ~VideoRGBAType() {}
 
   // returns an antialiased pixel. Warning: No bound checking is done!
 //  inline void getAAPixel(float x, float y ,RGBA * pix) const;
-  std::string name() const { return "VideoTypeRGBA";}
+  std::string name() const { return "VideoRGBAType";}
   QColor color() const { return QColor(40,60,114);}
 
   bool isGray() const { return _isGray; }

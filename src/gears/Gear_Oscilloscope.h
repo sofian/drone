@@ -50,9 +50,9 @@ private:
   PlugIn<ValueType> *_SIZE_X;
   PlugIn<ValueType> *_SIZE_Y;
   
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
-  VideoTypeRGBA *_outImage; 
+  VideoRGBAType *_outImage; 
   RGBA *_outData;
 
   CircularBuffer<Signal_T> * circbuf;

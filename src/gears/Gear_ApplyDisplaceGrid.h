@@ -39,14 +39,14 @@ public:
 
 private:
 
-  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
-  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<DisplaceGrid> *_GRID;
   PlugIn<ValueType> *_MODE;
 
   //local var
-  const VideoTypeRGBA *_image;     
-  VideoTypeRGBA *_outImage; 
+  const VideoRGBAType *_image;     
+  VideoRGBAType *_outImage; 
   const RGBA *_data;
 
   const DisplaceGrid *_grid;

@@ -33,7 +33,7 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : Gear(engi
                                                                        _sizeX(0),
                                                                        _sizeY(0)
 {    
-  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOut"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
