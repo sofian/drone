@@ -18,7 +18,7 @@
  */
 
 #include "Engine.h"
-#include "MidiEngine.h"
+// #include "MidiEngine.h"
 #include "Gear.h"
 #include "Plug.h"
 #include "GearMaker.h"
@@ -30,7 +30,7 @@ SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
 Time_T Engine::_currentTime=0.0;
 
-Engine::Engine(int hwnd) : 
+Engine::Engine(int hwnd) :
   _hWnd(hwnd),
   _averageLoad(0.0f),
   _playing(false),
@@ -55,7 +55,7 @@ void Engine::startPlaying()
 }
 
 void Engine::stopPlaying()
-{                        
+{
   if (!_playing)
     return;
 
@@ -95,26 +95,26 @@ void *Engine::playThread(void *parent)
 #ifndef SINGLE_THREADED_PLAYBACK
   for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
     (*it)->internalPrePlay();
-  
+
   while (engine->_playing)
   {
-#endif    
+#endif
     block_starttime = Timing::time();
-   
+
     engine->_mainSchema.lock();
-    
+
     engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
 
     //process audio
     for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       (*it)->runAudio();
 
-    MidiEngine::getInstance().purgeAndGetNew();
+//     MidiEngine::getInstance().purgeAndGetNew();
 
     //process video
     if (real_time >= (currentFrame*_videoInfo.timePerFrame()*1000.0f))
     {
-      
+
       for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       {
         (*it)->runVideo();
@@ -153,22 +153,22 @@ void *Engine::playThread(void *parent)
     blockIt++;
 
     engine->_mainSchema.unlock();
-	engine->performScheduledGearUpdateSettings();
-#ifndef SINGLE_THREADED_PLAYBACK  
+    engine->performScheduledGearUpdateSettings();
+#ifndef SINGLE_THREADED_PLAYBACK
   }
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();
 
-#endif               
-                                                                         
-  
+#endif
+
+
 
 
   return NULL;
 }
 
 
-#ifdef SINGLE_THREADED_PLAYBACK  
+#ifdef SINGLE_THREADED_PLAYBACK
 
 void Engine::debugStartPlay()
 {
@@ -195,10 +195,10 @@ void Engine::scheduleGearUpdateSettings(Gear *gear)
 
 void Engine::performScheduledGearUpdateSettings()
 {
-  for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)  
+  for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)
   {
-	  (*it)->updateSettings();
-  }   
+    (*it)->updateSettings();
+  }
   _scheduledsGearUpdateSettings.clear();
 }
 

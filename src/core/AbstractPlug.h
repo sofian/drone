@@ -40,12 +40,12 @@ enum ePlugState
 
 class Gear;
 
-class AbstractPlug  
+class AbstractPlug
 {
 public:
   static const std::string XML_TAGNAME;
 
-	AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
+  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -55,8 +55,8 @@ public:
   bool disconnect(AbstractPlug *plug);
   void disconnectAll();
 
-	void save(QDomDocument &doc, QDomElement &parent) const;
-	void load(QDomElement &plugElem);
+  void save(QDomDocument &doc, QDomElement &parent) const;
+  void load(QDomElement &plugElem);
 
   bool connected() const { return !_connectedPlugs.empty();};
   //bool active() const { return plugState()==ACTIVE;};
@@ -70,32 +70,36 @@ public:
   eInOut inOut() const {return _inOut;};
 
   int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
-  AbstractPlug* firstConnectedPlug(){return _connectedPlugs.front();} 
+  AbstractPlug* firstConnectedPlug(){return _connectedPlugs.front();}
   int nbConnectedPlugs() const {return _connectedPlugs.size();};
   Gear* parent() const {return _parent;};
 
   std::string fullName() const;
   std::string shortName(int nbChars) const;
   std::string name() const {return _name;};
-	bool name(std::string newName);
-	
+  bool name(std::string newName);
+
   bool exposed() const {return _exposed;}
   void exposed(bool exp);
-  
+
+  void forwardPlug(AbstractPlug * forwardPlug) { _forwardPlug = forwardPlug; }
+  AbstractPlug* forwardPlug(){ return _forwardPlug; }
+
   //virtual ePlugState plugState()=0;
-	virtual AbstractPlug* clone(Gear* parent)=0;
+  virtual AbstractPlug* clone(Gear* parent)=0;
 
 protected:
-  std::list<AbstractPlug*> _connectedPlugs;    
+  std::list<AbstractPlug*> _connectedPlugs;
   const AbstractType *_abstractType;
   const AbstractType *_abstractInternalType;
+  AbstractPlug* _forwardPlug;
 
 private:
   Gear *_parent;
   eInOut _inOut;
   std::string _name;
-	
-	bool _exposed;//! the plug is exposed outside of a metagear
+
+  bool _exposed;//! the plug is exposed outside of a metagear
 };
 
 #endif //__ABSTRACTPLUG_INCLUDED

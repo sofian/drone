@@ -3,7 +3,7 @@
 
 #include "XMLHelper.h"
 
-const QColor MetaGear::METAGEAR_COLOR(115,8,8);  
+const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const std::string MetaGear::TYPE="MetaGear";
 
 MetaGear::MetaGear(Schema *schema, std::string vname, std::string uniqueName) :
@@ -34,27 +34,27 @@ void MetaGear::save(QDomDocument &doc, QDomElement &parent)
 }
 
 void MetaGear::load(QDomElement &parent)
-{  
-  
+{
+
   //find the schema node under the metagear
   QDomNode schemaNode = XMLHelper::findChildNode(parent, Schema::XML_TAGNAME);
-    
+
   if (schemaNode.isNull())
   {
     std::cout << "Bad DroneSchema : <Schema> tag not found for metagear!" << std::endl;
     return;
   }
-  
-  QDomElement schemaElem = schemaNode.toElement();  
+
+  QDomElement schemaElem = schemaNode.toElement();
   _schema.load(schemaElem);
-  
+
   createPlugs();
 }
 
 void MetaGear::createPlugs()
 {
   //for now we will expose all inputs and outputs
-  
+
   //clear plugs first, we will recreate them
   std::list<AbstractPlug*>::iterator plugIt;
   for(plugIt = _plugs.begin(); plugIt != _plugs.end(); ++plugIt)
@@ -62,12 +62,12 @@ void MetaGear::createPlugs()
     delete(*plugIt);
   }
   _plugs.clear();
-  
-	//clear plug mapping
-	_plugMapping.clear();
-  
+
+  //clear plug mapping
+  _plugMapping.clear();
+
   std::list<Gear*> gears = _schema.getGears();
-  
+
   std::list<AbstractPlug*> inputs;
   std::list<AbstractPlug*> outputs;
 
@@ -78,8 +78,9 @@ void MetaGear::createPlugs()
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
-			addPlug(clone);
-			_plugMapping[clone]=*plugIt;
+      clone->forwardPlug(*plugIt);
+      addPlug(clone);
+//       _plugMapping[clone]=*plugIt;
     }
 
     (*gearIt)->getOutputs(outputs, true);
@@ -87,30 +88,31 @@ void MetaGear::createPlugs()
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
+      clone->forwardPlug(*plugIt);
       addPlug(clone);
-			_plugMapping[clone]=*plugIt;
+//       _plugMapping[clone]=*plugIt;
     }
   }
-  
+
   getGearGui()->refresh();
-  
+
 }
 
 void MetaGear::onPlugConnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
 {
-	std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
-  
-	ASSERT_WARNING(it!=_plugMapping.end());
+/*  std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
 
-	otherPlug->connect(it->second);
+  ASSERT_WARNING(it!=_plugMapping.end());
+
+  otherPlug->connect(it->second);*/
 }
 
 void MetaGear::onPlugDisconnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
 {
-	std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
-  
-	ASSERT_WARNING(it!=_plugMapping.end());
-	
-	otherPlug->disconnect(it->second);
+/*  std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
+
+  ASSERT_WARNING(it!=_plugMapping.end());
+
+  otherPlug->disconnect(it->second);*/
 }
 

@@ -23,7 +23,7 @@
 #include "AbstractPlug.h"
 
 /**
- * This class is a template instance of an <code>AbstractPlug</code>. 
+ * This class is a template instance of an <code>AbstractPlug</code>.
  */
 
 template <class T>
@@ -34,17 +34,19 @@ public:
   : AbstractPlug(parent, OUT, name, type)
   {
     _type = _internalType = type;
+    _forwardPlug = 0;
   }
 
   virtual ~PlugOut()
   {
   }
 
-  T* type() { return _type;}
+  T* type() { return _type; }
+
   T* defaultType() { return _internalType; }
   T* hintType() { return _internalType; }
-  
-  const T* type() const { return _type;}
+
+  const T* type() const { return _type; }
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
 
@@ -53,15 +55,15 @@ public:
 
   void init() {}
 
-	AbstractPlug *clone(Gear* parent)
-	{
-		return new PlugOut<T>(parent, name());
-	}
-	
+  AbstractPlug *clone(Gear* parent)
+  {
+    return new PlugOut<T>(parent, name());
+  }
+
 private:
   T *_type, *_internalType;
   //! state of the plug : when gears don't update a plug, _plugState is == SLEEPING to tell the plug is inactive.
-  //! (e.g for a switch, all plugs other than active one are == SLEEPING) If the plug is an out, the value is 
+  //! (e.g for a switch, all plugs other than active one are == SLEEPING) If the plug is an out, the value is
   //! updated by the parent gear. If its an in, the value is copied from the connected out plug.
   ePlugState _plugState;
 
@@ -76,19 +78,37 @@ public:
   : AbstractPlug(parent, IN, name, type)
   {
      _type = _internalType = type;
+     _forwardPlug = 0;
   }
- 
+
   virtual ~PlugIn()
   {}
 
-  virtual void onConnection(AbstractPlug *plug)
-  {
-    setType(static_cast<const T*>(plug->abstractType()));
-  }
+  virtual void onConnection(AbstractPlug *plug);
+//   {
+//     std::cout << "PlugIn::onConnection : connecting " << this->name() << " with " << plug->name();
+//     // for other plug
+//     AbstractPlug * deepestOtherPlug = 0;
+//     for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
+//
+//     // for this plug
+//     AbstractPlug * deepestPlug = 0;
+//     for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+//
+//     dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(dynamic_cast<PlugIn<T>*>(deepestOtherPlug)->abstractType()));
+//   }
 
   virtual void onDisconnection(AbstractPlug *)
   {
-    setType(_internalType);
+    AbstractPlug * deepestPlug = 0;
+    for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+
+    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(_internalType);
+
+/*    if(_forwardPlug)
+      dynamic_cast<PlugIn<T>*>(_forwardPlug)->setType(_internalType);
+    else
+      setType(_internalType);*/
   }
 
   void init() {}
@@ -109,9 +129,10 @@ public:
 
   AbstractPlug *clone(Gear* parent)
   {
-      return new PlugIn<T>(parent, name());
+    PlugIn<T>* clonePlug = new PlugIn<T>(parent, name());
+    return clonePlug;
   }
-  
+
 protected:
   void setType(const T *type)
   {
@@ -123,5 +144,20 @@ private:
   T *_internalType;
 };
 
+template<class T>
+void PlugIn<T>::onConnection(AbstractPlug *plug)
+{
+  std::cout << "PlugIn::onConnection : connecting " << this->name() << " with " << plug->name();
+
+  // for other plug
+  AbstractPlug * deepestOtherPlug = 0;
+  for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
+
+  //for this plug
+  AbstractPlug * deepestPlug = 0;
+  for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+
+  dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(deepestOtherPlug->abstractType()));
+}
 
 #endif  //  __PLUG_INCLUDED

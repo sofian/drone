@@ -26,16 +26,18 @@
 
 const std::string AbstractPlug::XML_TAGNAME = "Plug";
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type) : 
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type) :
   _abstractType(type),
   _abstractInternalType(type),
-  _parent(parent), 
-  _inOut(inOut), 
+  _parent(parent),
+  _inOut(inOut),
   _name(name),
   _exposed(false)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);
+
+  forwardPlug(0);
 }
 
 AbstractPlug::~AbstractPlug()
@@ -84,20 +86,41 @@ bool AbstractPlug::connect(AbstractPlug *plug)
 
   if (!canConnect(plug))
     return false;
-    
+
   //remove exposition
   if(this->inOut() == IN)
     exposed(false);
-    
+
   if(plug->inOut() == IN)
     plug->exposed(false);
 
   //ajouter la nouvelle plug a nos connections
-  _connectedPlugs.push_back(plug);        
-  plug->_connectedPlugs.push_back(this);    
+  _connectedPlugs.push_back(plug);
+  plug->_connectedPlugs.push_back(this);
 
   _parent->onPlugConnected(this, plug);
   plug->_parent->onPlugConnected(plug, this);
+
+  AbstractPlug * deepestPlug = 0;
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
+  if(deepestPlug != this)
+    deepestPlug->_connectedPlugs.push_back(plug);
+//   if(_forwardPlug)
+//   {
+//     _forwardPlug->_connectedPlugs.push_back(plug);
+//   }
+
+  AbstractPlug * deepestOtherPlug = 0;
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
+  if(deepestOtherPlug != plug)
+    deepestOtherPlug->_connectedPlugs.push_back(this);
+
+
+//  if(plug->_forwardPlug)
+//  {
+//    plug->_forwardPlug->_connectedPlugs.push_back(this);
+//  }
+
 
   //laisser la chance au class derive d'executer leur logique supplementaire
   onConnection(plug);
@@ -106,7 +129,10 @@ bool AbstractPlug::connect(AbstractPlug *plug)
   //tell the gear that a new connection have been created and that sync is needed
   _parent->unSynch();
 
-  return true;    
+//   if(_forwardPlug)
+//     _forwardPlug->_parent->unSynch();
+
+  return true;
 }
 
 bool AbstractPlug::disconnect(AbstractPlug *plug)
@@ -128,12 +154,34 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   plug->onDisconnection(this);
 
   //remove this plug from our connections
-  _connectedPlugs.remove(plug);    
+  _connectedPlugs.remove(plug);
   //remove ourself from the other plug connections
   plug->_connectedPlugs.remove(this);
 
+
+  AbstractPlug * deepestPlug = 0;
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
+  if(deepestPlug != this)
+    deepestPlug->_connectedPlugs.remove(plug);
+//   if(_forwardPlug)
+//   {
+//     _forwardPlug->_connectedPlugs.remove(plug);
+//   }
+
+  AbstractPlug * deepestOtherPlug = 0;
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
+  if(deepestOtherPlug != plug)
+    deepestOtherPlug->_connectedPlugs.remove(this);
+/*
+  if(plug->_forwardPlug)
+  {
+    plug->_forwardPlug->_connectedPlugs.remove(this);
+  }*/
+
   //tell the gear that disconnection have been made and that we need synch
   _parent->unSynch();
+//   if(_forwardPlug)
+//     _forwardPlug->_parent->unSynch();
 
   return true;
 }
@@ -191,11 +239,11 @@ void AbstractPlug::exposed(bool exp)
 
 bool AbstractPlug::name(std::string newName)
 {
-	if (!_parent->isPlugNameUnique(newName))
-		return false;
-	
-	_name = newName;
-	return true;
+  if (!_parent->isPlugNameUnique(newName))
+    return false;
+
+  _name = newName;
+  return true;
 }
 
 void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
@@ -204,22 +252,22 @@ void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
   parent.appendChild(plugElem);
 
   QDomAttr nameAttr;
-	nameAttr = doc.createAttribute("Name");
-	nameAttr.setValue(name().c_str());
-	plugElem.setAttributeNode(nameAttr);
-		
+  nameAttr = doc.createAttribute("Name");
+  nameAttr.setValue(name().c_str());
+  plugElem.setAttributeNode(nameAttr);
+
   QDomAttr exposedAttr;
-	exposedAttr = doc.createAttribute("Exposed");
-	std::ostringstream oss;
+  exposedAttr = doc.createAttribute("Exposed");
+  std::ostringstream oss;
   oss << exposed();
-	exposedAttr.setValue(oss.str().c_str());
-	plugElem.setAttributeNode(exposedAttr);
+  exposedAttr.setValue(oss.str().c_str());
+  plugElem.setAttributeNode(exposedAttr);
 }
 
-void AbstractPlug::load(QDomElement &plugElem)               
-{            
-	std::string val = plugElem.attribute("Exposed","0").ascii();
-	
-	exposed(val == "1" ? true : false);
-}	
+void AbstractPlug::load(QDomElement &plugElem)
+{
+  std::string val = plugElem.attribute("Exposed","0").ascii();
+
+  exposed(val == "1" ? true : false);
+}
 

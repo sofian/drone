@@ -37,7 +37,7 @@
  * values are computed using a very efficient (dynamical programming) algorithm, linear in the
  * number of cells. The resulting table allows one to calculate the sum of the values in a
  * sub-window with only four additions.
- * 
+ *
  * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
@@ -52,6 +52,8 @@ public:
   using Array2D<AccType*>::size;
   using Array2D<AccType*>::resize;
   using Array2D<AccType*>::front;
+  using Array2D<AccType*>::_width;
+  using Array2D<AccType*>::_height;
 
   //! Default constructor.
   SummedAreaTable() : _acc(), _cellSize(SIZE*sizeof(AccType)) {}
@@ -102,7 +104,7 @@ public:
    * @return the number of cells in the sub-window
    */
   static inline int getArea(int x0, int y0, int x1, int y1);
-  
+
 public:
   // The accumulation matrix.
   Array2D<AccType> _acc;
@@ -110,9 +112,9 @@ public:
   // Internal use.
   int _srcWidth;  // width of the source image (= width() - 1)
   int _srcHeight; // height of the source image (= height() - 1)
-  
+
   AccType _accBuffer[SIZE]; // accumulation buffer
-  
+
   int _rowWidth; // = SIZE * width()
   size_t _cellSize; // = SIZE * sizeof(AccType)
 };
@@ -125,14 +127,14 @@ inline void SummedAreaTable<Type, AccType, SIZE>::getSum(AccType *sum, int& area
   ASSERT_ERROR(sum);
   ASSERT_ERROR(-1 <= x0 && x0 <= x1 && x1 < _srcWidth);
   ASSERT_ERROR(-1 <= y0 && y0 <= y1 && y1 < _srcHeight);
-  
+
   area = (x1-x0)*(y1-y0);
-  
+
   ASSERT_ERROR(area >= 0);
-  
+
   x0++; x1++;
   y0++; y1++;
-  
+
   // it is assumed that (x0,y0) <= (x1,y1)
   memcpy(sum, get(x1,y1), SIZE*sizeof(AccType));
 
@@ -175,12 +177,12 @@ void SummedAreaTable<Type, AccType, SIZE>::reset(const Type *src, size_t srcWidt
   register Type *iterData;
   register AccType *iterAcc;
   register size_t i;
-  
+
   // Resize.
   _srcWidth = srcWidth;
   _srcHeight = srcHeight;
   _rowWidth = (_srcWidth+1) * SIZE;
-  
+
   resize(_srcWidth+1, _srcHeight+1); // resize this table of pointers to structure
   _acc.resize(_rowWidth, _srcHeight+1); // resize accumulation table
 
@@ -192,15 +194,15 @@ void SummedAreaTable<Type, AccType, SIZE>::reset(const Type *src, size_t srcWidt
     *iter++ = iterAcc;
     iterAcc += SIZE;
   }
-  
+
   // Init iterators.
   iterData = (Type*) src;
   iterAcc  = &_acc.front();
-  
+
   // Process first row (all zeros).
   ::clear(iterAcc, _rowWidth);
   iterAcc += _rowWidth;
-  
+
   // Process second row.
   memset(_accBuffer, 0, _cellSize);
   memset(iterAcc,    0, _cellSize); // first column is void
@@ -210,7 +212,7 @@ void SummedAreaTable<Type, AccType, SIZE>::reset(const Type *src, size_t srcWidt
     for (i=0; i<SIZE; ++i)
       *iterAcc++ = (_accBuffer[i] += *iterData++);
   }
-  
+
   // Process other rows.
   for (size_t y=2; y<height(); ++y)
   {
