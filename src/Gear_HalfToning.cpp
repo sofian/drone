@@ -46,69 +46,98 @@ void Gear_HalfToning::runVideo()
   _outData = _outImage->_data;
 
   /* allocate _carryLine0 and _carryLine1 */
-  if (_carryLine0)
-    _carryLine0-=1;
-  if (_carryLine1)
-    _carryLine1-=1;
+//   if (_carryLine0)
+//     _carryLine0-=1;
+//   if (_carryLine1)
+//     _carryLine1-=1;
   
-  _carryLine0 = (float*)realloc(_carryLine0, (_sizeX+2)*sizeof(float));
-  _carryLine1 = (float*)realloc(_carryLine1, (_sizeX+2)*sizeof(float));
-  memset(_carryLine0, 0, (_sizeX+2)*sizeof(float));
-  memset(_carryLine1, 0, (_sizeX+2)*sizeof(float));
-  _carryLine0+=1;
-  _carryLine1+=1;  
- 
+  _carryLine0 = (RGBAfloat*)realloc(_carryLine0, (_sizeX+2)*sizeof(RGBAfloat));
+  _carryLine1 = (RGBAfloat*)realloc(_carryLine1, (_sizeX+2)*sizeof(RGBAfloat));
+  memset(_carryLine0, 0, (_sizeX+2)*sizeof(RGBAfloat));
+  memset(_carryLine1, 0, (_sizeX+2)*sizeof(RGBAfloat));
+//   _carryLine0+=1;
+//   _carryLine1+=1;
+  
   unsigned char *iterData;
   unsigned char *iterOutData;
+  float *iterCarryLine0;
+  float *iterCarryLine1;
 
   int xstart, xstop, xstep, dir, iterDataStep;
   int input, intensity;
   float threshold = 127.5, corrected_level, diff;
+
+  float term_r, term_dl, term_d;
+  ThreeCoefficients coefs;
 
   for (int y = 0; y < _sizeY; ++y)
   {
     if (y & 1)
     {
       // odd line
-      dir = -1;
-      xstart = _sizeX-1; xstop = -1; xstep = -1; iterDataStep = -4;
+      dir = -4;
+      xstart = _sizeX-1; xstop = -1; xstep = -1; iterDataStep = -7;
     }
     else
     {
       // even line
-      dir = 1;
-      xstart = 0; xstop = _sizeX; xstep = 1; iterDataStep = 4;
+      dir = 4;
+      xstart = 0; xstop = _sizeX; xstep = 1; iterDataStep = 1;
     }
 
     iterData    = (unsigned char*)&_data[y*_sizeX+xstart];
     iterOutData = (unsigned char*)&_outData[y*_sizeX+xstart];
 
+    iterCarryLine0 = (float*)&_carryLine0[xstart+1];
+    iterCarryLine1 = (float*)&_carryLine1[xstart+1];
+    
     for (int x = xstart; x != xstop; x += xstep)
     {
-      input = 255;
-      input += *(iterData);
-      input += *(iterData+1);
-      input += *(iterData+2);
-      input >>= 2;
+      for (int z=0; z<3; ++z)
+      {
+        input = (int) *iterData;
 
-      corrected_level = input + _carryLine0[x];
-      if (corrected_level <= threshold)
-        intensity = 0; /* put black */
-      else
-        intensity = 255; /* put white */
-      diff = corrected_level - intensity;
-      distributeError(x, diff, dir, input);
+        // Correct level.
+        corrected_level = input + *iterCarryLine0;
 
-      if (input == 0 || intensity == 0) 
-        memset(iterOutData, 0, sizeof(RGBA));
-      else
-        memset(iterOutData, 255, sizeof(RGBA));
+        // Compute intensity.
+        intensity = (corrected_level > threshold ? 255 : 0);
 
-      iterData += iterDataStep;
-      iterOutData += iterDataStep;
+        // Distribute error.
+
+        diff = corrected_level - intensity;
+        
+        coefs = COEFS_TABLE[input];
+
+        term_r = coefs.i_r*diff;
+        term_dl = coefs.i_dl*diff;
+        term_d = diff - (term_r+term_dl);
+        
+        *(iterCarryLine0+dir) += term_r;
+        *(iterCarryLine1-dir) += term_dl;
+        *(iterCarryLine1)     += term_d;
+
+         // Put color.
+        *iterOutData = (input & intensity ? 255 : 0);
+
+        ++iterData;
+        ++iterOutData;
+        ++iterCarryLine0;
+        ++iterCarryLine1;
+      }
       
+      iterData       += iterDataStep;
+      iterOutData    += iterDataStep;
+      iterCarryLine0 += iterDataStep;
+      iterCarryLine1 += iterDataStep;
     }
-    shiftCarryBuffers();
+
+    // Shift carry buffers.
+    RGBAfloat *tmp = _carryLine0;
+    _carryLine0 = _carryLine1;
+    _carryLine1 = tmp;
+    memset(_carryLine1, 0, (_sizeX+2)*sizeof(RGBAfloat));
+    
   }
   
 }

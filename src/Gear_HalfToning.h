@@ -315,33 +315,10 @@ private:
   unsigned char *_imageIn;
   unsigned char *_imageOut;
 
-  float *_carryLine0; /* carry buffer; current line     */
-  float *_carryLine1; /* carry buffer; current line + 1 */
+  RGBAfloat *_carryLine0; /* carry buffer; current line     */
+  RGBAfloat *_carryLine1; /* carry buffer; current line + 1 */
   
-  inline void shiftCarryBuffers();
-  inline void distributeError(int x, float diff, int dir, int input_level);
 };
 
-void Gear_HalfToning::shiftCarryBuffers()
-{
-  float *tmp = _carryLine0;
-  _carryLine0 = _carryLine1;
-  _carryLine1 = tmp;
-  memset(_carryLine1, 0, _sizeX*sizeof(float));
-}
-
-void Gear_HalfToning::distributeError(int x, float diff, int dir, int input_level)
-{
-  float term_r, term_dl, term_d;
-  ThreeCoefficients coefs = COEFS_TABLE[input_level];
-  
-  term_r = coefs.i_r*diff;
-  term_dl = coefs.i_dl*diff;
-  term_d = diff - (term_r+term_dl);
-  
-  _carryLine0[x+dir] += term_r;
-  _carryLine1[x-dir] += term_dl;
-  _carryLine1[x]     += term_d;
-}
 
 #endif
