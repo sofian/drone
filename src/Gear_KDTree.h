@@ -22,6 +22,8 @@ public:
 
   bool ready();
 
+  void init();
+
 private:
 
   PlugVideoIn *_VIDEO_IN;
@@ -51,8 +53,6 @@ private:
 
   int _maxDepth;
 
-  void init();
-  
   void split(int x0, int x1, int y0, int y1, int depth);
 };
 

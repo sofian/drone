@@ -23,17 +23,16 @@ Gear_KDTree::~Gear_KDTree()
   delete _table;
 }
 
+bool Gear_KDTree::ready()
+{
+  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+}
+
 void Gear_KDTree::init()
 {
   _rasterer->setCanvas(_VIDEO_OUT->canvas());
   _rasterer->setColor(0, 0, 0); // black lines only
   _table->setCanvas(_VIDEO_IN->canvas());
-}
-
-
-bool Gear_KDTree::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_KDTree::runVideo()
