@@ -1,3 +1,5 @@
+include(config.pro)
+
 TEMPLATE=subdirs
 SUBDIRS= Osc \
 TV \
@@ -34,6 +36,10 @@ VideoLoop \
 ImageShuffle \
 ImageSequence \
 Invert 
+
+agg {
+SUBDIRS+=AggTest
+}
 
 #linux specific gears
 unix:!macx:SUBDIRS += VideoInput AudioInput
