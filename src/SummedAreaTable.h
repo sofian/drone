@@ -93,7 +93,7 @@ int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
 {
   int maxX = _sizeX-1;
   int maxY = _sizeY-1;
-  return ( (CLAMP(x1,0,maxX) - CLAMP(x0,0,maxX))*(CLAMP(y1,0,maxY) - CLAMP(y0,0,maxY)) );
+  return ( (MIN(x1,maxX) - MAX(x0,-1))*(MIN(y1,maxY) - MAX(y0,-1)) );
 }
 
 const RGBAint& SummedAreaTable::getAcc(int x, int y) const
