@@ -64,7 +64,8 @@ void Gear_GrayScale::runVideo()
     for (int p=0; p<_size; ++p)
     {
       // add everything
-      // 0.25 * R + 0.5 * G + 0.25 * B 
+      // 0.25 * R + 0.5 * G + 0.25 * B
+      // XXX another option (a little less efficient) comes from Qt : they use (r*11 + g*16 + b*5)/32 (division could be obtained with a shift)
       total = *_imageIn++;
       total += *_imageIn;
       total += *_imageIn++;
