@@ -16,7 +16,6 @@ const int MainWindow::CANVAS_SIZE_Y = 2048;
 MainWindow::MainWindow() : 
 QMainWindow(), 
 _engine(NULL), 
-_frame(NULL), 
 _schemaCanvas(NULL), 
 _schemaEditor(NULL)    
 {    
@@ -73,7 +72,9 @@ _schemaEditor(NULL)
 
 MainWindow::~MainWindow()
 {
-
+  delete _engine;
+  delete _schemaCanvas;
+  delete _schemaEditor;
 }
 
 void MainWindow::slotZoomIn()

@@ -35,7 +35,6 @@ private:
 
 
   Engine* _engine;
-  QFrame* _frame;
   QCanvas* _schemaCanvas;
 
   SchemaEditor *_schemaEditor;    
