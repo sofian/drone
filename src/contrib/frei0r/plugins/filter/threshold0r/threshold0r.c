@@ -30,14 +30,6 @@ typedef struct thresholder_instance
   unsigned char lut[256]; /* look-up table */
 } thresholder_instance_t;
 
-/* Clamps a int32-range int between 0 and 255 inclusive. */
-unsigned char CLAMP0255(int32_t a)
-{
-  return (unsigned char)
-    ( (((-a) >> 31) & a)  // 0 if the number was negative
-      | (255 - a) >> 31); // -1 if the number was greater than 255
-}
-
 /* Updates the look-up-table. */
 void update_lut(thresholder_instance_t *inst)
 {
