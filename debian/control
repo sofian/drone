@@ -1,0 +1,29 @@
+Source: drone
+Section: x11
+Priority: optional
+Maintainer: The Anarcat <anarcat@anarcat.ath.cx>
+Build-Depends: debhelper (>= 4.0.0), qt3-dev-tools, libqt3-dev | libqt3-mt-dev, libsndfile1-dev, fftw3-dev, libmpeg3-dev, libportaudio-dev (>= 18.0), libavcodec2-dev
+Standards-Version: 3.6.1
+
+Package: drone
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, qt3, libsndfile1, fftw3, libmpeg3, libportaudio0 (>= 18.0), libavcodec2
+Description: state-of-the art interactive VJ-ing software.
+ Drone is an open source software for digital and interactive arts. It
+ allows the design of realtime signal processing machines for video and
+ audio through a generic data flow interface.
+ .
+ Drone follows a fourfold developement philosophy:
+ .
+ * Open source : Drone is distributed under the GPL license and
+   builds upon several open source softwares.
+ * State-of-the art : Drone will implement the most up-to-date
+   algorithms for signal processing, including feature extraction and
+   automated generation.
+ * Grandmotherproof : Drone provides a very intuitive
+   interface, allowing the user to quickly learn how to use the software
+   without even having to read any documentation. We want your
+   grand-mother to start VJ-ing with a few clicks.
+ * Extensible : Drone's data flow structure defines a
+   meta-language for any kind of data processing, providing a strong
+   basis upon which to build software.
