@@ -4,10 +4,10 @@ HEADERS+=Gear_Oscilloscope.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_Oscilloscope
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_Oscilloscope
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_Oscilloscope
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_Oscilloscope
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 

@@ -4,11 +4,11 @@ HEADERS+=Gear_ClusteredDither.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_ClusteredDither
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_ClusteredDither
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_ClusteredDither
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_ClusteredDither
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

@@ -4,11 +4,11 @@ HEADERS+=Gear_ListBox.h GearGui_ListBox.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_ListBox
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_ListBox
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_ListBox
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_ListBox
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

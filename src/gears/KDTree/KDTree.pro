@@ -4,11 +4,11 @@ HEADERS+=Gear_KDTree.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_KDTree
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_KDTree
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_KDTree
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_KDTree
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

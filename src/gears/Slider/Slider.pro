@@ -4,11 +4,11 @@ HEADERS+=Gear_Slider.h GearGui_Slider.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_Slider
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_Slider
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_Slider
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_Slider
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

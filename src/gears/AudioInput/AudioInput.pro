@@ -5,12 +5,12 @@ INCLUDEPATH+=../../core/ ../../core/types ../../../lib/portaudio/include
 QMAKE_RPATH = -Wl,-rpath,lib/portaudio,-rpath,
 
 #linux
-unix:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
-unix:TARGET=../../../gears/Gear_AudioInput
+unix:!macx:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
+unix:!macx:TARGET=../../../gears/Gear_AudioInput
 
 #osx
 #todo add portaudio
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_AudioInput
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_AudioInput
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

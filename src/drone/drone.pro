@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-unix:QMAKE_CXXFLAGS += -rdynamic
+unix:!macx:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -40,13 +40,13 @@ DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types
 
 #mac
-mac:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
-mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
-mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
+macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 
 #linux
-unix:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
-unix:LIBS += -L../../lib -ldroneCore
+unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
+unix:!macx:LIBS += -L../../lib -ldroneCore
 
 
 TARGET = ../../drone

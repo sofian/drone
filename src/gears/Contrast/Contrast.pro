@@ -4,11 +4,11 @@ HEADERS+=Gear_Contrast.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_Contrast
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_Contrast
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_Contrast
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_Contrast
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

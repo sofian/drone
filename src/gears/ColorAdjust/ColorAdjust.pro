@@ -4,11 +4,11 @@ HEADERS+=Gear_ColorAdjust.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_ColorAdjust
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_ColorAdjust
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_ColorAdjust
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_ColorAdjust
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

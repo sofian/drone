@@ -4,11 +4,11 @@ HEADERS+=Gear_TV.h GearGui_TV.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_TV
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_TV
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_TV
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_TV
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

@@ -4,11 +4,11 @@ HEADERS+=Gear_VideoMix.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:LIBS+=-L../../../lib/ -ldroneCore
-unix:TARGET=../../../gears/Gear_VideoMix
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:TARGET=../../../gears/Gear_VideoMix
 
 #osx
-mac:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoMix
-mac:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoMix
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 
