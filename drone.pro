@@ -64,6 +64,7 @@ src/gears/Gear_AudioSource.h \
 src/gears/Gear_ApplyDisplaceGrid.h \
 src/gears/Gear_AreaArrayMask.h \
 src/gears/Gear_Blur.h \
+src/gears/Gear_Brightness.h \
 src/gears/Gear_ColorAdjust.h \
 src/gears/Gear_Contrast.h \
 src/gears/Gear_ColorQuantize.h \
@@ -158,6 +159,7 @@ src/gears/Gear_AudioInput.cpp \
 src/gears/Gear_AudioOutput.cpp \
 src/gears/Gear_AudioSource.cpp \
 src/gears/Gear_Blur.cpp \
+src/gears/Gear_Brightness.cpp \
 src/gears/Gear_ColorAdjust.cpp \
 src/gears/Gear_Contrast.cpp \
 src/gears/Gear_ColorQuantize.cpp \
