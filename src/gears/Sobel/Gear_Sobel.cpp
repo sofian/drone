@@ -87,15 +87,15 @@ void Gear_Sobel::runVideo()
     _p8 = (unsigned char*) (_image->row(y+1) + 1);
     _p9 = (unsigned char*) (_image->row(y+1) + 2);
     
-    _iterOutData = (unsigned char*) (_outImage->row(y) + 1); 
+    _iterOutData = (unsigned char*) (_outImage->row(y) + 1);
 
     for (int x=1;x<_sizeX-1;x++)
     {
       for (int z=0; z<SIZE_RGBA; ++z)
       {
         // Compute the kernel function.
-        *_iterOutData++ = CLAMP0255(fastabs(*_p1 + (*_p2 << 1) + *_p3 - *_p7 - (*_p8 << 1) - *_p9) +
-                                    fastabs(*_p3 + (*_p6 << 1) + *_p9 - *_p1 - (*_p4 << 1) - *_p7));
+        *_iterOutData++ = CLAMP0255(abs((int)(*_p1 + (*_p2 << 1) + *_p3 - *_p7 - (*_p8 << 1) - *_p9)) +
+                                    abs((int)(*_p3 + (*_p6 << 1) + *_p9 - *_p1 - (*_p4 << 1) - *_p7)));
         
         // Update iterators.
         _p1++; _p2++; _p3++; _p4++; _p6++; _p7++; _p8++; _p9++;

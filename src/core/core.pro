@@ -122,7 +122,6 @@ GearFrei0r.cpp \
 types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
-Math.cpp \
 MetaGear.cpp \
 MetaGearMaker.cpp \
 MidiEngine.cpp \
