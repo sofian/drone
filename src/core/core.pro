@@ -112,8 +112,10 @@ Utils.h \
 VideoInfo.h \
 XMLHelper.h \
 RtMidi/RtMidi.h \
-RtMidi/RtError.h
-
+RtMidi/RtError.h \
+composite/Composite.h \
+composite/CompositeGeneric.h
+ 
 SOURCES += error.cpp \
 ConnectionItem.cpp \
 Engine.cpp \
@@ -136,6 +138,7 @@ SignalInfo.cpp \
 Timing.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
-RtMidi/RtMidi.cpp
-
+RtMidi/RtMidi.cpp \
+composite/Composite.cpp \
+composite/CompositeGeneric.cpp
 

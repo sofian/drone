@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = frei0r
+SUBDIRS = frei0r 

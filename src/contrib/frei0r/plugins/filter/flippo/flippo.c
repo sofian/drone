@@ -129,14 +129,14 @@ void f0r_update(f0r_instance_t instance,double time,
     if (inst->flippoy)
     {
       // flip and flop
-      inframe += len; // point to the end
+      inframe += len-1; // point to the end
       while (len--)
         *outframe++ = *inframe--;
     }
     else
     {
       // flip only
-      inframe = inframe + w; // point to the end of current row
+      inframe += w-1; // point to the end of current row
       while (h--)
       {
         i=w;
@@ -151,7 +151,7 @@ void f0r_update(f0r_instance_t instance,double time,
     if (inst->flippoy)
     {
       // flop only
-      inframe += len - w; // point to start of last row
+      inframe += len - w - 1; // point to start of last row
       while (h--)
       {
         memcpy(outframe, inframe, rowsize);

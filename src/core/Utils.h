@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "ColorSpace.h"
+#include "error.h"
 
 inline unsigned char intensity(const unsigned char *rgb)
 {
