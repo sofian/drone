@@ -2,7 +2,7 @@ include (../config.pro)
 
 TEMPLATE=lib
 
-CONFIG+=thread
+CONFIG+=thread opengl
 
 #common
 SOURCES+=Gear_VideoOutput.cpp VideoOutputMaker.cpp 
@@ -18,13 +18,13 @@ unix:!macx:TARGET=../../../gears/Gear_VideoOutput
 
 #osx
 
-macx:SOURCES+=VideoOutputQT.cpp
-macx:HEADERS+=VideoOutputQT.h
+macx:SOURCES+=VideoOutputQT.cpp VideoOutputGl.cpp
+macx:HEADERS+=VideoOutputQT.h VideoOutputGl.h
 
 macx:INCLUDEPATH+=../../core/ ../../core/types
 macx:INCLUDEPATH+= /Developer/Headers/FlatCarbon
+macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
-macx:LIBS += -framework Quicktime
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoOutput
 

@@ -161,11 +161,11 @@ void Gear_VideoSource::onUpdateSettings()
   }
 
   // Determine required buffer size and allocate buffer
-  int numBytes=avpicture_get_size(PIX_FMT_RGBA32, _codecContext->width, _codecContext->height);
+  int numBytes=avpicture_get_size(PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
   _buffer=new uint8_t[numBytes];
 
   // Assign appropriate parts of buffer to image planes in _frameRGBA
-  avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGBA32, _codecContext->width, _codecContext->height);
+  avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
 
   _firstFrameTime=_formatContext->start_time;
 }
@@ -174,6 +174,7 @@ void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
 
+  
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 
   if ((int)_RESET_IN->type()->value() == 1)
@@ -191,8 +192,7 @@ void Gear_VideoSource::runVideo()
     if (av_read_frame(_formatContext, &_packet)<0)
       av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
   }
-
-
+  
   // Decode video frame
   do
   {
@@ -201,18 +201,17 @@ void Gear_VideoSource::runVideo()
 
 
   // Convert the image from its native format to RGBA
-  img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGBA32, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);
+  img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGB24, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);
 
   register char *out=(char*)_VIDEO_OUT->type()->data();
   register char *in=(char*)_frameRGBA->data[0];  
   register int size=_codecContext->width*_codecContext->height;
   for (register int i=0;i<size;i++)
   {
-    *out++=*(in+2);
-    *out++=*(in+1);
-    *out++=*(in);
+    *out++=*in++;
+    *out++=*in++;
+    *out++=*in++;
     out++;
-    in+=4;
   }
 
   // Free the packet that was allocated by av_read_frame

@@ -6,7 +6,7 @@ TV \
 #Oscilloscope \
 VideoOutput \
 #Blur \
-VideoSource
+VideoSource \
 #Slider \
 #KDTree\ 
 #VideoMix \
@@ -21,7 +21,7 @@ VideoSource
 #Enveloppe \
 #FlatSignal \
 #ListBox \
-#PushButton \
+PushButton
 #Rescale \
 #TouchPad \
 #ColorQuantize \

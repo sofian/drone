@@ -97,7 +97,7 @@ void Gear_VideoOutput::init()
 { 
 //osx version dont use the VideoOutputMaker strategy and directly use the GL Output
 #if defined(Q_OS_MACX)
-	_videoOutput = new VideoOutputGL();
+	_videoOutput = new VideoOutputGl();
 	if (!_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(), false))
 	{
 		std::cout << "fail to init GL videoOutput" << std::endl;

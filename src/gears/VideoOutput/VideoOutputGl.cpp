@@ -22,7 +22,13 @@
 
 #include <iostream>
 
-#include <GL/gl.h>
+#if defined(Q_OS_MACX)
+#include <OpenGL/gl.h>              
+#include <OpenGL/glu.h>
+#else
+#include <GL/gl.h>              
+#endif
+
 #include <qapplication.h>
 #include <qlayout.h>
 

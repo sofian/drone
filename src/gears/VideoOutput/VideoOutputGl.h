@@ -58,7 +58,11 @@ private:
 class DroneGLWindow : public QDialog
 {
 public:  
-  DroneGLWindow(QWidget* parent) : QDialog(parent){}
+  DroneGLWindow(QWidget* parent) : QDialog(parent)
+  {
+    setModal(false);
+    resize(320,240);
+  }
 protected:
   void closeEvent(QCloseEvent *){}  
 };
