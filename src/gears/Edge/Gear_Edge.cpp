@@ -92,12 +92,11 @@ void Gear_Edge::runVideo()
       for (int z=0; z<SIZE_RGBA; ++z)
       {
         // Compute the kernel function.
-        *_iterOutData =
-          (*_iterCenter++ << 2)
-          - *_iterUp++
-          - *_iterDown++
-          - *_iterLeft++
-          - *_iterRight++;
+        *_iterOutData = CLAMP0255((int)((*_iterCenter++ << 2)
+                                        - *_iterUp++
+                                        - *_iterDown++
+                                        - *_iterLeft++
+                                        - *_iterRight++));
 
         // Check threshold.
         if (*_iterOutData <= threshold)
