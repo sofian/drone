@@ -16,7 +16,7 @@
         <Gear PosX="197" PosY="231" Type="Slider" SliderPos="20.7317" Name="Slider1" >
             <Properties Lower_Bound="0" Higher_Bound="100" />
         </Gear>
-        <Gear PosX="518" PosY="278" Type="ColorQuantizeWu" Name="ColorQuantizeWu1" >
+        <Gear PosX="518" PosY="278" Type="ColorQuantize" Name="ColorQuantize1" >
             <Properties/>
         </Gear>
         <Gear PosX="348" PosY="404" Type="Slider" SliderPos="4.73171" Name="Slider2" >
@@ -31,12 +31,12 @@
     </Gears>
     <Connections>
         <Connection GearA="VideoSource1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
-        <Connection GearA="Blur1" GearB="ColorQuantizeWu1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Blur1" GearB="ColorQuantize1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="NGone1" GearB="VideoOutput1" Input="VideoOutput1" Output="VComp" />
         <Connection GearA="Slider1" GearB="Blur1" Input="Amount" Output="Value" />
-        <Connection GearA="ColorQuantizeWu1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="ColorQuantizeWu1" GearB="VideoAdd1" Input="ImgB" Output="ImgOUT" />
-        <Connection GearA="Slider2" GearB="ColorQuantizeWu1" Input="NColors" Output="Value" />
+        <Connection GearA="ColorQuantize1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="ColorQuantize1" GearB="VideoAdd1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="Slider2" GearB="ColorQuantize1" Input="NColors" Output="Value" />
         <Connection GearA="Edge1" GearB="VideoAdd1" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="VideoAdd1" GearB="NGone1" Input="Img" Output="ImgO" />
     </Connections>
