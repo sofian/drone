@@ -33,8 +33,7 @@ VideoDelay \
 VideoLoop \
 ImageShuffle \
 ImageSequence \
-Invert \
-Noise
+Invert 
 
 #linux specific gears
 unix:!macx:SUBDIRS += VideoInput AudioInput
