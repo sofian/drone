@@ -1,0 +1,33 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="142" PosY="166" Type="ImageSource" Name="ImageSource1" >
+            <Properties Filename="/home/tatien/drone/trunk/media/group.jpg" />
+        </Gear>
+        <Gear PosX="346" PosY="186" Type="FaceTrack" Name="FaceTrack1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="156" PosY="341" Type="Slider" SliderPos="0" Name="Slider1" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="495" PosY="61" Type="AreaArrayMask" Name="AreaArrayMask1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="544" PosY="218" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="474" PosY="304" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="ImageSource1" GearB="FaceTrack1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="ImageSource1" GearB="VideoMix1" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="ImageSource1" GearB="AreaArrayMask1" Input="Width" Output="..ValueType" />
+        <Connection GearA="ImageSource1" GearB="AreaArrayMask1" Input="Height" Output="..ValueType" />
+        <Connection GearA="FaceTrack1" GearB="AreaArrayMask1" Input="AreaIN" Output="Area" />
+        <Connection GearA="Slider1" GearB="FaceTrack1" Input="Thresh" Output="Value" />
+        <Connection GearA="AreaArrayMask1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
+    </Connections>
+</Schema>

@@ -1,0 +1,56 @@
+/* EnumType.h
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+ * This file is part of Drone.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#ifndef ENUMTYPE_INCLUDED
+#define ENUMTYPE_INCLUDED
+
+#include "AbstractType.h"
+#include "ArrayType.h"
+
+class EnumType : public ArrayType<std::string>
+{
+public:
+  EnumType(int size = 1, int defaultValue=0)
+    : ArrayType<std::string>(size)
+  {
+    setValue(defaultValue);
+  }
+  
+  virtual ~EnumType() {}
+  
+  virtual std::string name() const { return "EnumType"; }
+  virtual QColor color() const { return QColor(238,19,19); }
+  
+  void setValue(int value) {
+    ASSERT_ERROR(empty() || (0 <= value && value < (int)size()));
+    _value = value;
+  }
+  int value() const { return _value; }
+  //operator int () const { return _value; }
+  
+  const std::string& label() const { return operator[](_value); }
+  
+  void setLabel(int value, const std::string& label) { operator[](value) = label; }
+  const std::string& label(int value) const { return operator[](value); }
+  
+private:
+  int _value;
+};
+
+#endif

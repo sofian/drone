@@ -1,0 +1,99 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="833" PosY="488" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="3" PosY="0" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/lezardus/videos/FREEWARE2001.mpeg" />
+        </Gear>
+        <Gear PosX="5" PosY="120" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="8" />
+        </Gear>
+        <Gear PosX="143" PosY="128" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="145" PosY="224" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="141" PosY="304" Type="Oscilloscope" Name="Oscilloscope1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="133" PosY="430" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="0.137931" TouchPadVerticalPos="0.1379310" PosX="5" PosY="236" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="3" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="3" />
+        </Gear>
+        <Gear PosX="140" PosY="0" Type="TV" Name="TV2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="442" PosY="0" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="432" PosY="220" Type="AffineTransform" Name="AffineTransform1" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="4.88506" TouchPadVerticalPos="4.885062.51765" PosX="276" PosY="278" Type="TouchPad" Name="TouchPad2" >
+            <Properties Horizontal_higher_Bound="255" Horizontal_lower_Bound="-1" Vertical_lower_Bound="-10" Vertical_higher_Bound="256" />
+        </Gear>
+        <Gear PosX="827" PosY="59" Type="TV" Name="TV3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="441" PosY="110" Type="Saturation" Name="Saturation1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="431" PosY="336" Type="Slider" SliderPos="6.09756" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="100" />
+        </Gear>
+        <Gear PosX="732" PosY="228" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="528" PosY="410" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="332" PosY="440" Type="AffineTransform" Name="AffineTransform2" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="-94.8276" TouchPadVerticalPos="-94.8276-20" PosX="1" PosY="428" Type="TouchPad" Name="TouchPad3" >
+            <Properties Horizontal_higher_Bound="-50" Horizontal_lower_Bound="-100" Vertical_lower_Bound="-100" Vertical_higher_Bound="0" />
+        </Gear>
+        <Gear ListBoxPos="19" PosX="525" PosY="542" Type="ListBox" Name="ListBox2" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="343" PosY="544" Type="Slider" SliderPos="1" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="660" PosY="61" Type="TV" Name="TV4" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="TV2" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="Saturation1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
+        <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="Enveloppe1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="AffineTransform2" Input="In" Output="Out" />
+        <Connection GearA="Oscilloscope1" GearB="TV1" Input="ImgIN" Output="Out" />
+        <Connection GearA="TouchPad1" GearB="Enveloppe1" Input="Rel" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="Enveloppe1" Input="Att" Output="VValue" />
+        <Connection GearA="AffineTransform1" GearB="Blur1" Input="Amount" Output="Out" />
+        <Connection GearA="TouchPad2" GearB="AffineTransform1" Input="Scale" Output="HValue" />
+        <Connection GearA="TouchPad2" GearB="AffineTransform1" Input="Offset" Output="VValue" />
+        <Connection GearA="Saturation1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Slider1" GearB="Saturation1" Input="Amount" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="TV3" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
+        <Connection GearA="VideoDelay1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoDelay1" GearB="TV4" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="AffineTransform2" GearB="VideoDelay1" Input="Delay" Output="Out" />
+        <Connection GearA="TouchPad3" GearB="AffineTransform2" Input="Scale" Output="HValue" />
+        <Connection GearA="TouchPad3" GearB="AffineTransform2" Input="Offset" Output="VValue" />
+        <Connection GearA="ListBox2" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="Slider2" GearB="VideoDelay1" Input="Rec" Output="Value" />
+    </Connections>
+</Schema>

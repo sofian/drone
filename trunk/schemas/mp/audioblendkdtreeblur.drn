@@ -1,0 +1,95 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="172" PosY="13" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="2" />
+        </Gear>
+        <Gear PosX="1212" PosY="299" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="867" PosY="73" Type="VideoOutput" Name="VideoOutput2" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="597" PosY="322" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/mathieu/dl/videos/mpg/Nine Inch Nails - Closer (Uncut).mpg" />
+        </Gear>
+        <Gear PosX="739" PosY="64" Type="Oscilloscope" Name="Oscilloscope1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="602" PosY="153" Type="Slider" SliderPos="139.707" Name="Slider1" >
+            <Properties Lower_Bound="32" Higher_Bound="768" />
+        </Gear>
+        <Gear PosX="478" PosY="112" Type="Slider" SliderPos="382.049" Name="Slider2" >
+            <Properties Lower_Bound="32" Higher_Bound="768" />
+        </Gear>
+        <Gear PosX="473" PosY="42" Type="Slider" SliderPos="1.06098" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="598" PosY="17" Type="Slider" SliderPos="12212.5" Name="Slider4" >
+            <Properties Lower_Bound="512" Higher_Bound="192400" />
+        </Gear>
+        <Gear PosX="308" PosY="66" Type="Gain" Name="Gain1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="472" PosY="196" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="325" PosY="188" Type="Slider" SliderPos="0.00853659" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="0.1" />
+        </Gear>
+        <Gear PosX="324" PosY="253" Type="Slider" SliderPos="0" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="0.03" />
+        </Gear>
+        <Gear PosX="606" PosY="213" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="172" PosY="119" Type="FlatSignal" Name="FlatSignal1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="35" PosY="127" Type="Slider" SliderPos="5.18293" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="25" />
+        </Gear>
+        <Gear PosX="769" PosY="324" Type="KDTree" Name="KDTree1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1068" PosY="300" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="925" PosY="417" Type="Slider" SliderPos="-174.146" Name="Slider7" >
+            <Properties Lower_Bound="-255" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="950" PosY="152" Type="ColorAdjust" Name="ColorAdjust1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="917" PosY="318" Type="Saturation" Name="Saturation1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="794" PosY="199" Type="GrayScale" Name="GrayScale1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="AudioInput1" GearB="Gain1" Input="In" Output="Left" />
+        <Connection GearA="VideoSource1" GearB="KDTree1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="GrayScale1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Oscilloscope1" GearB="VideoOutput2" Input="VideoOutput2" Output="Out" />
+        <Connection GearA="Slider1" GearB="Oscilloscope1" Input="SizeY" Output="Value" />
+        <Connection GearA="Slider2" GearB="Oscilloscope1" Input="SizeX" Output="Value" />
+        <Connection GearA="Slider3" GearB="Oscilloscope1" Input="ZoomY" Output="Value" />
+        <Connection GearA="Slider4" GearB="Oscilloscope1" Input="ZoomX" Output="Value" />
+        <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
+        <Connection GearA="Gain1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="Slider5" GearB="Enveloppe1" Input="Rel" Output="Value" />
+        <Connection GearA="Slider6" GearB="Enveloppe1" Input="Att" Output="Value" />
+        <Connection GearA="SignalStat1" GearB="KDTree1" Input="Depth" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="Saturation1" Input="Amount" Output="Out" />
+        <Connection GearA="FlatSignal1" GearB="Gain1" Input="Gain" Output="Out" />
+        <Connection GearA="Slider8" GearB="FlatSignal1" Input="In" Output="Value" />
+        <Connection GearA="KDTree1" GearB="Saturation1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoBlend1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Slider7" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="Saturation1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="GrayScale1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
+    </Connections>
+</Schema>
