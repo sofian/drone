@@ -61,22 +61,29 @@ public:
   inline void getSum(AccType *sum, int& area, int x0, int y0, int x1, int y1) const;
 
   /**
-   * 
+   * Returns the sum of all pixels in the sub-window defined by <code>((0,0),(x,y))</code>.
+   *
+   * @param x the horizontal coordinate of the bottom-right corner of the sub-window
+   * @param y the vertical coordinate of the bottom-right corner of the sub-window
+   * @return the sum of the pixels in the sub-window
    */
   inline const AccType* getAcc(int x, int y) const;
 
   inline int getArea(int x0, int y0, int x1, int y1) const;
   
 public:
-
+  //! The matrix containing the sums.
   Matrix<AccType> _acc;
 
-  int _width, _height, _rowWidth;
-
+  // Internal use.
+  int _width;
+  int _height;
+  int _rowWidth;
   AccType _tmpAcc[SIZE];
-
-  AccType _black[SIZE];
+  AccType _zero[SIZE]; // a void value
 };
+
+// Implementations.
 
 template <typename Type, typename AccType, size_t SIZE>
 inline void SummedAreaTable<Type, AccType, SIZE>::getSum(AccType *sum, int& area, int x0, int y0, int x1, int y1) const
@@ -118,7 +125,7 @@ inline const AccType* SummedAreaTable<Type, AccType, SIZE>::getAcc(int x, int y)
   ASSERT_ERROR(x < _width);
   ASSERT_ERROR(y < _height);
   if (x < 0 || y < 0)
-    return _black;
+    return _zero;
   else
     return _acc.row(y) + SIZE*x;
 }
