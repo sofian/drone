@@ -4,7 +4,7 @@
 
 // initsize : size at first initialisation
 CircularBufferSignal::CircularBufferSignal(float def, int initsize)
-  :_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
+  :_default(def),_buf(NULL),_bufSize(0),_computeSum(false),_computeSumSquare(false)
 {
   resize(initsize);
   setDynamicResizingMaximumSize(_DYN_RESIZE_MAX);
@@ -16,18 +16,18 @@ void CircularBufferSignal::setStat(Stats stat, bool computed)
 {
   if (stat==STAT_SUM)
   {
-    if (!computeSum)
+    if (!_computeSum)
       resize(_bufSize);
     else
       delete[]_bufSum;
-    computeSum = computed;
+    _computeSum = computed;
   } else if (stat==STAT_SUMSQUARE)
   {
-    if (!computeSumSquare)
+    if (!_computeSumSquare)
       resize(_bufSize);
     else
       delete[]_bufSumSquare;
-    computeSumSquare = computed;
+    _computeSumSquare = computed;
   } else
     // log something
     assert(0);
@@ -62,9 +62,38 @@ void CircularBufferSignal::resize(int newsize)
       *(nptr++)=_default;
 
     CIRCBUF_SIGNAL_T_FORBEGIN(this,-_bufSize,-1)
-    *(nptr++)= *(cbptr++);
+      *(nptr++)= *(cbptr++);
     CIRCBUF_SIGNAL_T_FOREND
 
+      }
+
+  _bufSize=newsize;
+  delete[] _buf;
+
+  _buf = newbuf;
+  _current=_buf;
+
+  /* TODO
+  // resize sum buf
+  if(_computeSum)
+  {
+  // make a new buffer
+  float* newbuf = new float[newsize];
+    
+  // if we already had a buffer, we copy past signal
+  // into the new one to avoid 'temporary amnesia'
+  if(_bufSize)
+  {
+  float* nptr = newbuf;
+  int newSamples = newsize-_bufSize;
+      
+  //fill new extra-space with default value
+  for(int i=0;i<newSamples;i++)
+  *(nptr++)=_default;
+      
+  CIRCBUF_SIGNAL_T_FORLOOP(this,-_bufSize,-1)
+  *(nptr++)= *(cbptr++);
+  CIRCBUF_SIGNAL_T_FORLOOP_END
   }
 
   _bufSize=newsize;
@@ -72,36 +101,7 @@ void CircularBufferSignal::resize(int newsize)
 
   _buf = newbuf;
   _current=_buf;
-
-/* TODO
-  // resize sum buf
-  if(computeSum)
-  {
-    // make a new buffer
-    float* newbuf = new float[newsize];
-    
-    // if we already had a buffer, we copy past signal
-    // into the new one to avoid 'temporary amnesia'
-    if(_bufSize)
-    {
-      float* nptr = newbuf;
-      int newSamples = newsize-_bufSize;
-      
-      //fill new extra-space with default value
-      for(int i=0;i<newSamples;i++)
-        *(nptr++)=_default;
-      
-      CIRCBUF_SIGNAL_T_FORLOOP(this,-_bufSize,-1)
-        *(nptr++)= *(cbptr++);
-      CIRCBUF_SIGNAL_T_FORLOOP_END
-        }
-
-  _bufSize=newsize;
-  delete[] _buf;
-
-  _buf = newbuf;
-  _current=_buf;
-*/
+  */
 
 }
 
@@ -124,7 +124,7 @@ void CircularBufferSignal::append(float *ptr, int size)
   ptr += firstRun;
 
   if (size)
-  // some samples remaining...
+    // some samples remaining...
   {
     memcpy(_buf, ptr, size * sizeof(float));
     _current = _buf + size;
@@ -191,7 +191,7 @@ void CircularBufferSignal::getBounds(int sample_from, int sample_to, float*& pa1
     pb2=bt2;
 
   } else
-  // start is "before" buffer start but end is after (chunk is split in 2)
+    // start is "before" buffer start but end is after (chunk is split in 2)
   {
 
     pa1 = bt1 + _bufSize;

@@ -40,10 +40,10 @@ public:
   public:
     Connection(){};        
     Connection(std::string gearA, std::string output, std::string gearB, std::string input) :
-    _gearA(gearA),
-    _input(input),
-    _gearB(gearB),
-    _output(output)
+      _gearA(gearA),
+      _input(input),
+      _gearB(gearB),
+      _output(output)
     {
     }
 
@@ -67,19 +67,19 @@ public:
   {
   public:
     enum eConnectDisconnect
-    {
-      CONNECT, DISCONNECT
-    };
+      {
+        CONNECT, DISCONNECT
+      };
 
     ScheduledConnectDisconnect(AbstractPlug *a, AbstractPlug *b, eConnectDisconnect conn) :
-    A(a),
-    B(b),
-    connectDisconnect(conn)
+      _a(a),
+      _b(b),
+      connectDisconnect(conn)
     {
     };
-
-    AbstractPlug *A;
-    AbstractPlug *B;
+    
+    AbstractPlug *_a;
+    AbstractPlug *_b;
     eConnectDisconnect connectDisconnect;//connection or disconnection
   };
 
@@ -132,7 +132,7 @@ protected:
   void performScheduledGearDeletion();
   int _hWnd;
 
-  float _AverageLoad;
+  float _averageLoad;
 
   static SignalInfo _signalInfo;
   static VideoInfo _videoInfo;
@@ -146,7 +146,7 @@ private:
 
   bool _playing;
   bool _graphSynched;
-  std::list<Gear*> _Gears;
+  std::list<Gear*> _gears;
 
   // is sorted in processing order when _GraphSynched==true
   //only contain gears->ready()    
@@ -158,10 +158,5 @@ private:
   std::vector<Gear*> _scheduledsGearDeletion;
 
 };
-
-
-
-
-
 
 #endif

@@ -7,15 +7,15 @@
 
 
 Register_Gear(MAKERGear_VideoMix, Gear_VideoMix, "VideoMix")
-const std::string Gear_VideoMix::SETTING_MIX_FUNCTION = "MIX FUNCTION : See the code or just have fun";
+  const std::string Gear_VideoMix::SETTING_MIX_FUNCTION = "MIX FUNCTION : See the code or just have fun";
 
 Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoTypeRGBA>(this, "ImgA"));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoTypeRGBA>(this, "ImgB"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgO"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127)));
-  addPlug(_MIXFUNC_IN = new PlugIn<ValueType>(this, "MixFunc", new ValueType(0)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127, 0, 255)));
+  addPlug(_MIXFUNC_IN = new PlugIn<ValueType>(this, "MixFunc", new ValueType(BLEND,BLEND,DIFFERENCE)));
 
   _settings.add(Property::INT, SETTING_MIX_FUNCTION)->valueInt((int)BLEND);
 }
@@ -35,111 +35,239 @@ void Gear_VideoMix::runVideo()
   _imageA = _VIDEO_IN_A->type()->image();
   _imageB = _VIDEO_IN_B->type()->image();
   _outImage = _VIDEO_OUT->type()->image();
-  _mixType = (eVideoMixType)_MIXFUNC_IN->type()->value();
+  _mixType = CLAMP((eVideoMixType)_MIXFUNC_IN->type()->value(), BLEND, DIFFERENCE);
 
-  if (_imageA->width() != _imageB->width() ||
-      _imageA->height() != _imageB->height())
-  {
-    std::cerr << "images have to be of the same size for now" << std::endl;
-    exit(0);
-  }
+  _imageASizeX = _imageA->sizeX();
+  _imageASizeY = _imageA->sizeY();
+  _imageBSizeX = _imageB->sizeX();
+  _imageBSizeY = _imageB->sizeY();
+  _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
+  _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 
-  int size = _imageA->size();
+  _imageOutSizeX = MAX(_imageASizeX, _imageBSizeX);
+  _imageOutSizeY = MAX(_imageASizeY, _imageBSizeY);
+  _outImage->resize(_imageOutSizeX, _imageOutSizeY);
 
-  _outImage->resize(_imageA->width(), _imageA->height());
-
-  _dataA = _imageA->data();    
-  _dataB = _imageB->data();    
+  _dataA = _imageA->data();
+  _dataB = _imageB->data();
   _outData = _outImage->data();
+  memset(_outData, 0, _outImage->size()*sizeof(RGBA));
 
+  int amount = (int) CLAMP(_AMOUNT_IN->type()->value(), 0, 255);
   switch (_mixType)
   {
   case BLEND:
-    blend_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 (int) _AMOUNT_IN->type()->value(), size, SIZE_RGB);
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      blend_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                   amount, _iterSizeX, SIZE_RGBA);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
     break;
   case SHADE:
-    shade_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 (int) _AMOUNT_IN->type()->value(), size, SIZE_RGB, 0);
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      shade_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                   amount, _iterSizeX, SIZE_RGBA, 0);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
     break;
   case DARKEN:
-    darken_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                  size, SIZE_RGB, SIZE_RGB);
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      darken_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                    _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
     break;
   case LIGHTEN:
-    lighten_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   size, SIZE_RGB, SIZE_RGB);
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      lighten_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
     break;
   case HUE_ONLY:
-    hue_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                    size, SIZE_RGB, SIZE_RGB);
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      hue_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
     break;
   case SATURATION_ONLY:
-    saturation_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                           size, SIZE_RGB, SIZE_RGB);
-    break;
-  case VALUE_ONLY:
-    value_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      size, SIZE_RGB, SIZE_RGB);
-    break;
-  case COLOR_ONLY:
-    color_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      size, SIZE_RGB, SIZE_RGB);
-    break;
-  case MULTIPLY:
-    multiply_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                    size, SIZE_RGB, SIZE_RGB);
-    break;
-  case DIVIDE:
-    divide_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                  size, SIZE_RGB, SIZE_RGB);
-    break;
-  case SCREEN:
-    screen_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                  size, SIZE_RGB, SIZE_RGB);
-    break;
-  case OVERLAY:
-    overlay_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   size, SIZE_RGB, SIZE_RGB);
-    break;
-  case DODGE:
-    dodge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 size, SIZE_RGB, SIZE_RGB);
-    break;
-  case BURN:
-    burn_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                size, SIZE_RGB, SIZE_RGB);
-    break;
-  case HARDLIGHT:
-    hardlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                     size, SIZE_RGB, SIZE_RGB);
-    break;
-  case SOFTLIGHT:
-    softlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                     size, SIZE_RGB, SIZE_RGB);
-    break;
-  case GRAIN_EXTRACT:
-    grain_extract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                         size, SIZE_RGB, SIZE_RGB);
-    break;
-  case GRAIN_MERGE:
-    grain_merge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                       size, SIZE_RGB, SIZE_RGB);
-    break;
-  case ADD:
-    add_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-               size, SIZE_RGB, SIZE_RGB);
-    break;
-  case SUBTRACT:
-    subtract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                    size, SIZE_RGB, SIZE_RGB);
-    break;
-  case DIFFERENCE:
-    difference_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      size, SIZE_RGB, SIZE_RGB);
-    break;
-  default:;
-    memcpy(_outData, _dataA, size * sizeof(RGBA));
-  }
+    for (int y=0;y<_iterSizeY;y++)
+    {
+      saturation_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                             _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+      _dataA += _imageASizeX;
+      _dataB += _imageBSizeX;
+      _outData += _imageOutSizeX;
+    }
+  break;
+ case VALUE_ONLY:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     value_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case COLOR_ONLY:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     color_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case MULTIPLY:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     multiply_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case DIVIDE:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     divide_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                   _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case SCREEN:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     screen_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                   _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case OVERLAY:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     overlay_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                    _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case DODGE:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     dodge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                  _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case BURN:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     burn_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                 _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case HARDLIGHT:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     hardlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case SOFTLIGHT:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     softlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case GRAIN_EXTRACT:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     grain_extract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                          _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case GRAIN_MERGE:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     grain_merge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                        _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case ADD:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     add_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case SUBTRACT:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     subtract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ case DIFFERENCE:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     difference_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
+                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
+     _dataA += _imageASizeX;
+     _dataB += _imageBSizeX;
+     _outData += _imageOutSizeX;
+   }
+   break;
+ default:;
+   memcpy(_outData, _dataA, _outImage->size() * sizeof(RGBA));
+}
 
 }

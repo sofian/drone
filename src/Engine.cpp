@@ -44,11 +44,11 @@ SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
 
 Engine::Engine(int hwnd) : 
-_hWnd(hwnd),
-_AverageLoad(0.0f),
-_currentTime(0.0),
-_playing(false),
-_graphSynched(false)
+  _hWnd(hwnd),
+  _averageLoad(0.0f),
+  _currentTime(0.0),
+  _playing(false),
+  _graphSynched(false)
 
 {
 
@@ -61,16 +61,16 @@ Engine::~Engine()
 
 void Engine::removeAllGears()
 {
-  for (std::list<Gear*>::iterator it = _Gears.begin(); it != _Gears.end(); ++it)
+  for (std::list<Gear*>::iterator it = _gears.begin(); it != _gears.end(); ++it)
     delete *it;
 
-  _Gears.clear();
+  _gears.clear();
 }
 
 void Engine::removeGear(Gear* gear)
 {
   delete gear;
-  _Gears.remove(gear);
+  _gears.remove(gear);
 }
 
 
@@ -83,14 +83,14 @@ Gear* Engine::addGear(std::string geartype, std::string name)
   else
   {
     gear->internalInit();
-    _Gears.push_back(gear);
+    _gears.push_back(gear);
   }
 
   return gear;
 }
 
 Gear* Engine::addGear(std::string gearType)
-//auto-naming
+  //auto-naming
 {
   return addGear(gearType, getNewGearName(gearType));
 }
@@ -107,7 +107,7 @@ std::string Engine::getNewGearName(std::string prefix)
     ok=true;
     sprintf(buf,"%i",i);
     tmp=prefix + buf;
-    for (std::list<Gear*>::iterator it=_Gears.begin();it!=_Gears.end();++it)
+    for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
       if ((*it)->name() == tmp)
       {
         ok=false;
@@ -161,9 +161,9 @@ void *Engine::playThread(void *parent)
   real_starttime = Timing::time();
 
   float cumul_load = 0.0f;
-  engine->_AverageLoad=0.0f;
+  engine->_averageLoad=0.0f;
 
-  for (std::list<Gear*>::iterator it=engine->_Gears.begin();it!=engine->_Gears.end();++it)
+  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPrePlay();
 
   int currentFrame = 0;
@@ -204,11 +204,11 @@ void *Engine::playThread(void *parent)
     //compute AverageLoad
     block_time = block_endtime - block_starttime;
     cumul_load += (block_time /  block_targettime) * 100.0f;
-    engine->_AverageLoad =  cumul_load / blockIt;
+    engine->_averageLoad =  cumul_load / blockIt;
 
     //temp
     if (!(blockIt%100))
-      std::cout << "AverageLoad " << engine->_AverageLoad << "%" << std::endl;
+      std::cout << "AverageLoad " << engine->_averageLoad << "%" << std::endl;
     //
 
     //to maintain real-time processing we have to sleep
@@ -222,7 +222,7 @@ void *Engine::playThread(void *parent)
     blockIt++;
   }
 
-  for (std::list<Gear*>::iterator it=engine->_Gears.begin();it!=engine->_Gears.end();++it)
+  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();
 
 
@@ -298,7 +298,7 @@ void Engine::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
               break;
             }
           }
-          //add the box in the queue
+      //add the box in the queue
       if (isReady)
       {
         orderedGears.push_back(_gears[i]);
@@ -321,7 +321,7 @@ void Engine::synchGraph()
 
   std::vector<Gear*> gears;
 
-  for (std::list<Gear*>::iterator it=_Gears.begin();it!=_Gears.end();++it)
+  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
   {
     if ((*it)->ready())
       gears.push_back(*it);
@@ -385,10 +385,10 @@ void Engine::performScheduledConnectDisconnect()
   {
     if ((*it).connectDisconnect == ScheduledConnectDisconnect::CONNECT)
     {
-      (*it).A->connect((*it).B);
+      (*it)._a->connect((*it)._b);
     } else
     {
-      (*it).A->disconnect((*it).B);
+      (*it)._a->disconnect((*it)._b);
     }
   }
 
@@ -399,7 +399,7 @@ void Engine::getAllConnections(std::list<Connection*> &connections)
 {
   std::list<AbstractPlug*> outputs;
   std::list<AbstractPlug*> connectedPlugs;
-  for (std::list<Gear*>::iterator itGear = _Gears.begin(); itGear != _Gears.end(); ++itGear)
+  for (std::list<Gear*>::iterator itGear = _gears.begin(); itGear != _gears.end(); ++itGear)
   {
     (*itGear)->getOutputs(outputs);
     for (std::list<AbstractPlug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
@@ -427,7 +427,7 @@ void Engine::saveSchema(std::string filename)
   QDomElement gearsElem = doc.createElement("Gears");
   rootElem.appendChild(gearsElem);
 
-  for (std::list<Gear*>::iterator it=_Gears.begin();it!=_Gears.end();++it)
+  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
   {
     (*it)->internalSave(doc, gearsElem);            
   }
@@ -553,12 +553,12 @@ void Engine::loadSchema(std::string filename)
 void Engine::getAllGears(std::list<Gear*> &gears)
 {
   gears.clear();
-  gears.assign(_Gears.begin(), _Gears.end());
+  gears.assign(_gears.begin(), _gears.end());
 }
 
 Gear* Engine::getGear(std::string name) const
 {
-  for (std::list<Gear*>::const_iterator it = _Gears.begin();it!=_Gears.end();++it)
+  for (std::list<Gear*>::const_iterator it = _gears.begin();it!=_gears.end();++it)
   {
     if ((*it)->name() == name)
       return(*it);

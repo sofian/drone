@@ -37,7 +37,7 @@ public:
   
   void resize(const ValueType& width, const ValueType &height) 
   {
-    resize(width.value(), height.value());
+    resize((int)width.value(), (int)height.value());
   }
 
   void resize(int sizeX, int sizeY=1) 

@@ -103,8 +103,8 @@ private:
   // (so most recent sample is _current-1
   float *_current; 
 
-  bool computeSum;
-  bool computeSumSquare;
+  bool _computeSum;
+  bool _computeSumSquare;
 
 
 };

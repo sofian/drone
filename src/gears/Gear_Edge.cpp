@@ -41,7 +41,6 @@ void Gear_Edge::runVideo()
 
   //register int mmxCols=(_iterSizeX-2)/2;
   //register int index;
-  int pp=0;
   for (int y=1;y<_sizeY-2;y++)
   {
     for (int x=1;x<_sizeX-2;x++)

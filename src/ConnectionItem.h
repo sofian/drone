@@ -40,7 +40,6 @@ protected:
 //    void updateAreaPoints();
   void drawShape(QPainter &painter);
 
-
   void getOrigin(int *x, int *y);
   void getDest(int *x, int *y);
 
@@ -49,11 +48,8 @@ protected:
   bool _hiLighted;
   int _destPointX,_destPointY;
 
-
-
   PlugBox* _sourcePlugBox;
   PlugBox* _destPlugBox;
-
 
   Engine *_engine;
 

@@ -11,8 +11,8 @@
 
 
 GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear) :
-QDialog(parent, "Properties", true),
-_gear(gear)
+  QDialog(parent, "Properties", true),
+  _gear(gear)
 {
   setCaption("Properties");
   _verticalLayout = new QVBoxLayout(this, 12, 12, "layout");

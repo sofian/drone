@@ -42,12 +42,12 @@ class Timer
 {
 #ifdef _MSC_VER
 private:
-  static time_t base_time;
+  static time_t _baseTime;
 #endif
 public:
-  bool is_running;
-  real total_time;
-  real start_time;
+  bool _isRunning;
+  real _totalTime;
+  real _startTime;
 
   /// Create the timer and start it now!
   Timer();

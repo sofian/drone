@@ -10,14 +10,14 @@ const int ConnectionItem::CANVAS_RTTI_CONNECTION = 2001;//space odissey
 
 
 ConnectionItem::ConnectionItem(Engine *engine, QCanvas *canvas) : 
-QCanvasLine(canvas), 
-_state(DISCONNECTED),
-_hiLighted(false),
-_destPointX(0),
-_destPointY(0),
-_sourcePlugBox(NULL),
-_destPlugBox(NULL),
-_engine(engine)
+  QCanvasLine(canvas), 
+  _state(DISCONNECTED),
+  _hiLighted(false),
+  _destPointX(0),
+  _destPointY(0),
+  _sourcePlugBox(NULL),
+  _destPlugBox(NULL),
+  _engine(engine)
 
 {
   setZ(255);    

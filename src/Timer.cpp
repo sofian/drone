@@ -33,7 +33,7 @@
 #endif
 
 #ifdef _MSC_VER
-time_t Timer::base_time = 0;
+time_t Timer::_base_time = 0;
 #endif
 
 real Timer::getRunTime()
@@ -57,44 +57,44 @@ Timer::Timer()
   while (!base_time)
     time(&base_time);
 #endif
-  total_time = 0;
-  is_running = true;
-  start_time = getRunTime();
+  _totalTime = 0;
+  _isRunning = true;
+  _startTime = getRunTime();
 }
 
 void Timer::reset()
 {
-  total_time = 0;
-  start_time = getRunTime();
+  _totalTime = 0;
+  _startTime = getRunTime();
 }
 
 void Timer::stop()
 {
-  if (!is_running)
+  if (!_isRunning)
     return;
 
-  real current_time = getRunTime() - start_time;
-  total_time += current_time;
-  is_running = false;
+  real _currentTime = getRunTime() - _startTime;
+  _totalTime += _currentTime;
+  _isRunning = false;
 }
 
 void Timer::resume()
 {
-  if (is_running)
+  if (_isRunning)
     return;
 
-  start_time = getRunTime();
-  is_running = true;
+  _startTime = getRunTime();
+  _isRunning = true;
 }
 
 real Timer::getTime()
 {
-  if (is_running)
+  if (_isRunning)
   {
-    real current_time = getRunTime() - start_time;
-    return(total_time+current_time);
+    real _currentTime = getRunTime() - _startTime;
+    return(_totalTime+_currentTime);
   } else
-    return total_time;
+    return _totalTime;
 }
 
 Timer::~Timer()

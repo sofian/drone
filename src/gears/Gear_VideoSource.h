@@ -31,14 +31,14 @@ private:
 
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
-  mpeg3_t* _File;
+  mpeg3_t* _file;
 
-  int _SizeX, _SizeY;
+  int _sizeX, _sizeY;
 
   //locals
   
   float *_audioBuffer;
-  RGBA *_Frame[1024];
+  RGBA *_frame[1024];
   RGBA *_outData;
 
   //mmx
