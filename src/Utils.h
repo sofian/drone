@@ -23,11 +23,12 @@ inline unsigned char intensity(unsigned char *rgb)
 
 inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeight, int srcWidth, int srcHeight)
 {
-  const RGBA *srcIter = src;
+  NOTICE("%d %d %d %d", dstWidth, dstHeight, srcWidth, srcHeight);
   long xInc, xCur, yInc, yCur;
   xInc = (long)((long)srcWidth*65535L)/(long)dstWidth;
   yInc = (long)((long)srcHeight*65535L)/(long)dstHeight;
   register int i,j;
+  const RGBA *srcIter = src;
   yCur = 0;
   for (j=0; j<dstHeight; ++j)
   {
@@ -38,6 +39,7 @@ inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeigh
       xCur+=xInc;
     }
     srcIter = &src[(yCur>>16) * srcWidth];
+    dst += dstWidth;
     yCur+=yInc;
   }
 }
