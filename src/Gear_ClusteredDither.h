@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <math.h>
 
+//#define OVERSAMPLE 3
+
 /* Each call of the spot function results in one of these */
 typedef struct {
     int	index;	/* (y * width) + x */
