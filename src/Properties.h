@@ -23,6 +23,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "error.h"
 
 class QDomDocument;
 class QDomElement;
