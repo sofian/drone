@@ -31,7 +31,8 @@ Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6, 1, 16)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6, 0, 16)));
+  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Segm"));
   _rasterer = new Rasterer();
   _table = new SummedAreaTable<>();
 }
@@ -44,7 +45,7 @@ Gear_KDTree::~Gear_KDTree()
 
 bool Gear_KDTree::ready()
 {
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+  return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _AREA_OUT->connected()));
 }
 
 void Gear_KDTree::init()
@@ -56,7 +57,7 @@ void Gear_KDTree::init()
 void Gear_KDTree::runVideo()
 {
   // initialize
-  _maxDepth = MAX((int)_AMOUNT_IN->type()->value(), 1);
+  _maxDepth = MAX((int)_AMOUNT_IN->type()->value(), 0);
 
   _image = _VIDEO_IN->type();
   _outImage = _VIDEO_OUT->type();
@@ -64,31 +65,21 @@ void Gear_KDTree::runVideo()
 
   _sizeX = _image->width();
   _sizeY = _image->height();
-  //  _size = _sizeX * _sizeY;
-
-  //  _data = _image->data();
-  //  _outData = _outImage->data();
 
   _rasterer->setImage(_outImage);
 
   // build accumulation buffer
   _table->reset((unsigned char*)_image->data(), _image->width(), _image->height());
 
+  // clear areas
+  _AREA_OUT->type()->resize(0);
+    
   // create splits
   split(0, _sizeX-1, 0, _sizeY-1, 0);
 }
 
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
-  if (depth > _maxDepth)
-    return;
-
-  if (x1 == x0 || y1 == y0) // *** threshold to set
-    return;
-
-  // Increment depth by one level.
-  depth++;
-
   int x0minus1 = x0-1;
   int y0minus1 = y0-1;
   
@@ -97,15 +88,38 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   int area;
   _table->getSum(rgba, area, x0minus1, y0minus1, x1, y1);
 
+  if (depth == _maxDepth)
+  {
+    // Draw a rectangle around the area and paint it with the average color.
+    if (_VIDEO_OUT->connected())
+    {
+      _rasterer->setColor(rgba[0] / area, rgba[1] / area, rgba[2] / area);
+      _rasterer->rect(x0, y0, x1, y1, true);
+      _rasterer->setColor(0,0,0);
+      _rasterer->rect(x0, y0, x1, y1, false);
+    }
+    
+    // Add area to list.
+    if (_AREA_OUT->connected())
+    {
+      Area a;
+      a.x0 = x0; a.y0 = y0;
+      a.x1 = x1; a.y1 = y1;
+      _AREA_OUT->type()->push_back(a);
+    }
+
+    return;
+  }
+
+  if (x1 == x0 || y1 == y0) // *** threshold to set
+    return;
+
   // Useful values.
   //int area = _table->getArea(x0, y0, x1, y1);
   int cut = sum(rgba, SIZE_RGB) >> 1;
 
-  // Draw a rectangle around the area and paint it with the average color.
-  _rasterer->setColor(rgba[0] / area, rgba[1] / area, rgba[2] / area);
-  _rasterer->rect(x0, y0, x1, y1, true);
-  _rasterer->setColor(0,0,0);
-  _rasterer->rect(x0, y0, x1, y1, false);
+  // Increment depth by one level.
+  depth++;
 
   // Now split.
   if (depth % 2)

@@ -23,6 +23,7 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoRGBAType.h"
+#include "AreaArrayType.h"
 #include <assert.h>
 #include "Timing.h"
 #include "Rasterer.h"
@@ -35,7 +36,8 @@ public:
   Gear_KDTree(Engine *engine, std::string name);
   virtual ~Gear_KDTree();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
   void init();
 
@@ -43,13 +45,12 @@ private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugOut<AreaArrayType> *_AREA_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
   const VideoRGBAType *_image; 
   VideoRGBAType *_outImage; 
-//   const RGBA *_data;
-//   RGBA *_outData;
 
   SummedAreaTable<> *_table;
 
