@@ -36,8 +36,6 @@ public:
   void runVideo();  bool ready();
 
 private:
-
-
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
@@ -45,17 +43,14 @@ private:
   //local var
   const VideoRGBAType *_image; 
   VideoRGBAType *_outImage; 
-  const RGBA *_data;
-  RGBA *_outData;
 
-  int _iterSizeY;
-  int _iterSizeX;    
+  int _size;
 
   short _r;
   short _g;
   short _b;
 
-  unsigned char *_imageIn;
+  const unsigned char *_imageIn;
   unsigned char *_imageOut;
 
 };
