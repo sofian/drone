@@ -13,13 +13,13 @@ const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 
 Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) : 
   Gear(engine, "AudioInput", name),
-  _Stream(0),
-  _RingBufferSize(512),
-  _LBuffer(),
-  _RBuffer(),
-  _ReadIndex(0),
-  _Mutex(0),
-  _PlaybackThreadHandle()
+  _stream(0),
+  _ringBufferSize(512),
+  _lBuffer(),
+  _rBuffer(),
+  _readIndex(0),
+  _mutex(0),
+  _playbackThreadHandle()
 {
   //  _category << Category::AUDIO << Category::IO;
 
@@ -29,8 +29,8 @@ Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) :
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
 
-  _Mutex = new pthread_mutex_t();
-  pthread_mutex_init(_Mutex, NULL);
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
 
 }
 
@@ -61,24 +61,24 @@ void Gear_AudioInput::init()
 /*     Gear_AudioInput *parent = (Gear_AudioInput*) param;                                                       */
 /*     int readIndex=0;                                                                                            */
 /*                                                                                                                 */
-/*     //memset(parent->_LBuffer, 0 , sizeof(float) * parent->_RingBufferSize);                                    */
+/*     //memset(parent->_LBuffer, 0 , sizeof(float) * parent->_ringBufferSize);                                    */
 /*                                                                                                                 */
-/*     signed short temp[parent->_RingBufferSize*2];                                                               */
+/*     signed short temp[parent->_ringBufferSize*2];                                                               */
 /*     while(1)                                                                                                    */
 /*     {                                                                                                           */
 /*                                                                                                                 */
 /*                                                                                                                 */
-/*         //pthread_mutex_lock(parent->_Mutex);                                                                   */
+/*         //pthread_mutex_lock(parent->_mutex);                                                                   */
 /*         if (snd_pcm_writei(parent->_PCM, &(parent->_LBuffer[readIndex]), Engine::signalInfo().blockSize()) < 0) */
 /*         {                                                                                                       */
 /*              snd_pcm_prepare(parent->_PCM);                                                                     */
 /*              std::cout << "underflow" << std::endl;                                                                       */
 /*         }                                                                                                       */
 /*                                                                                                                 */
-/*         readIndex = (readIndex + Engine::signalInfo().blockSize()*2) % parent->_RingBufferSize;                 */
+/*         readIndex = (readIndex + Engine::signalInfo().blockSize()*2) % parent->_ringBufferSize;                 */
 /*                                                                                                                 */
 /*                                                                                                                 */
-/*         //pthread_mutex_unlock(parent->_Mutex);                                                                 */
+/*         //pthread_mutex_unlock(parent->_mutex);                                                                 */
 /*                                                                                                                 */
 /*     }                                                                                                           */
 /*                                                                                                                 */
@@ -97,10 +97,10 @@ void Gear_AudioInput::runAudio()
   int signal_blocksize = Engine::signalInfo().blockSize();
 
   for (int i=0; i<signal_blocksize; i++)
-    left_buffer[i] = _LBuffer[_ReadIndex++];
+    left_buffer[i] = _lBuffer[_readIndex++];
 
 
-  _ReadIndex %= _RingBufferSize;    
+  _readIndex %= _ringBufferSize;    
 
 }
 
@@ -128,12 +128,12 @@ void Gear_AudioInput::initPortAudio()
   int nbBuffers = Pa_GetMinNumBuffers(framesPerBuffer, Engine::signalInfo().sampleRate());
   std::cout << "Number of buffers: " << nbBuffers << std::endl;
 
-  _RingBufferSize = framesPerBuffer * 16;
+  _ringBufferSize = framesPerBuffer * 16;
 
-  _LBuffer.resize(_RingBufferSize);
+  _lBuffer.resize(_ringBufferSize);
 
   err = Pa_OpenStream(
-                     &_Stream,
+                     &_stream,
                      Pa_GetDefaultInputDeviceID(),/* default input device*/
                      1,              /* no input */
                      paFloat32,  /* 32 bit floating point input*/
@@ -165,7 +165,7 @@ void Gear_AudioInput::initPortAudio()
 
 /*     if (!started) */
 /*     {             */
-  Pa_StartStream(_Stream);
+  Pa_StartStream(_stream);
 //        started=true;
 /*     } */
 
@@ -177,11 +177,11 @@ int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long
   static Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
   static int lindex=0;
   //static int rindex=0;
-  SignalType& lbuffer = parent->_LBuffer;
+  SignalType& lbuffer = parent->_lBuffer;
 
-  int ringBufferSize = parent->_RingBufferSize;
+  int ringBufferSize = parent->_ringBufferSize;
 
-  //SignalType *rbuffer = parent->_RBuffer;
+  //SignalType *rbuffer = parent->_rBuffer;
 
   float *in = (float*)input_buffer;
 

@@ -45,21 +45,21 @@ private:
   static const int DEFAULT_FRAMES_PER_BUFFER;
   static const int DEFAULT_NB_BUFFERS;
 
-  PortAudioStream *_Stream;
+  PortAudioStream *_stream;
 
 
   void initPortAudio();    
 
-  int _RingBufferSize;
+  int _ringBufferSize;
 
-  SignalType _LBuffer;
-  SignalType _RBuffer;
+  SignalType _lBuffer;
+  SignalType _rBuffer;
 
-  int _ReadIndex;
+  int _readIndex;
 
-  pthread_mutex_t *_Mutex;
+  pthread_mutex_t *_mutex;
 
-  pthread_t _PlaybackThreadHandle;
+  pthread_t _playbackThreadHandle;
 
   static int portAudioCallback(void *input_buffer, void *, unsigned long frames_per_buffer,
                                PaTimestamp, void *user_data);
