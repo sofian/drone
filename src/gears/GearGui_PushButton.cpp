@@ -82,18 +82,29 @@ void GearGui_PushButton::drawShape(QPainter &painter)
 bool GearGui_PushButton::mouseEvent(const QPoint& p, Qt::ButtonState button)
 {
   bool ret=false;
-  if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
+
+  // Pushbutton zone ?
+if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
   {
     ((Gear_PushButton*)_gear)->setState(OFF);
     ret=true;
   }
   else if (((Gear_PushButton*)_gear)->getState()==OFF && button == Qt::LeftButton)
   {
-static int i=0;
-    std::cerr<<i++<<"\n";
-    
-    ((Gear_PushButton*)_gear)->setState(ON);
-    ret=true;
+    static int i=0;
+
+    int sliderStartX, sliderStartY, sizeX, sizeY;
+    getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
+
+    if (p.y() < sliderStartY || p.y() > sliderStartY + sizeY ||
+        p.x() < sliderStartX || p.x() > sliderStartX + sizeX)
+      ret = false;
+    else
+    {
+      NOTICE("Pushbutton: %d",i++);
+      ((Gear_PushButton*)_gear)->setState(ON);
+      ret=true;
+    }
   }
   update();
   canvas()->update();
