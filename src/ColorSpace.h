@@ -18,96 +18,20 @@
 
 // RGBA
 
-template <typename T>
-struct __RGBA
+struct RGBA
 {
-  T r, g, b, a;
-  __RGBA<T>() : r(0), g(0), b(0), a(0) {}
-  __RGBA<T>(T _r, T _g, T _b, T _a = 0) : r(_r), g(_g), b(_b), a(_a) {}
-  
-  inline __RGBA<T>& operator+=(const __RGBA<T>& x);
-  inline __RGBA<T>& operator-=(const __RGBA<T>& x);
-  inline __RGBA<T>& operator*=(const __RGBA<T>& x);
-  inline __RGBA<T>& operator/=(const __RGBA<T>& x);
-  inline __RGBA<T>& operator+=(T x);
-  inline __RGBA<T>& operator-=(T x);
-  inline __RGBA<T>& operator*=(T x);
-  inline __RGBA<T>& operator/=(T x);
-
-  template <typename U>
-  inline __RGBA<T>& operator=(const __RGBA<U>& x)
-  {
-    copy((T*)this, (const U*)&x, SIZE_RGBA);
-    return *this;
-  }
+  unsigned char r, g, b, a;
 };
 
-// template <typename T, typename U>
-// __RGBA<T>& operator<<(__RGBA<T>& x, const __RGBA<U>& y)
-// {
-//   copy((T*)&x, (const U*)&y);
-//   return x;
-// }
-
-typedef __RGBA<unsigned char> RGBA;
-typedef __RGBA<int>           RGBAint;
-typedef __RGBA<float>         RGBAfloat;
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator+=(const __RGBA<T>& x)
+struct RGBAint
 {
-  addAccVecVec((T*)this, (const T*)&x, SIZE_RGBA);
-  return *this;
-}
+  int r, g, b, a;
+};
 
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator-=(const __RGBA<T>& x)
+struct RGBAfloat
 {
-  subtractAccVecVec((T*)this, (const T*)&x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator*=(const __RGBA<T>& x)
-{
-  multiplyAccVecVec((T*)this, (const T*)&x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator/=(const __RGBA<T>& x)
-{
-  divideAccVecVec((T*)this, (const T*)&x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator+=(T x)
-{
-  addAccVecVal((T*)this, x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator-=(T x)
-{
-  subtractAccVecVal((T*)this, x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator*=(T x)
-{
-  multiplyAccVecVal((T*)this, x, SIZE_RGBA);
-  return *this;
-}
-
-template <typename T>
-__RGBA<T>& __RGBA<T>::operator/=(T x)
-{
-  divideAccVecVal((T*)this, x, SIZE_RGBA);
-  return *this;
-}
+  float r, g, b, a;
+};
 
 const RGBA BLACK_RGBA = RGBA( 0, 0, 0, 0 );
 const RGBA WHITE_RGBA = RGBA( 255, 255, 255, 0 );
@@ -118,7 +42,7 @@ const RGBAfloat WHITE_RGBAfloat = RGBAfloat( 255, 255, 255, 0 );
 
 // HSVA
 
-struct HSVA
+ struct HSVA
 {
   unsigned short h, s, v, a;
 };
