@@ -88,27 +88,38 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 
   // *** pour le moment recherche stupide lineaire poche
   if (depth % 2)
+  {
     // vertical split
-    for(int y=y0;y<y1; ++y)
+    int upper = y1;
+    int lower = y0;
+    int mid;
+    while (lower != upper)
     {
-      _table->getSum(&rgba, x0, y0, x1, y);
-      if (SummedAreaTable::total(&rgba) >= cut)
-      {
-        split(x0, x1, y0, y, depthPlusOne);
-        split(x0, x1, y, y1, depthPlusOne);
-        break;
-      }
+      mid = (lower+upper) / 2;
+      _table->getSum(&rgba, x0, y0, x1, mid);
+      if (SummedAreaTable::total(&rgba) < cut)
+        lower = mid+1; // look up //*** attention risque d'erreur : vérifier
+      else
+        upper = mid;  // look down
     }
+    split(x0, x1, y0, mid, depthPlusOne);
+    split(x0, x1, mid, y1, depthPlusOne);
+  }
   else
-    // horizontal split
-    for(int x=x0;x<x1; ++x)
+  {
+    int upper = x1;
+    int lower = x0;
+    int mid;
+    while (lower != upper)
     {
-      _table->getSum(&rgba, x0, y0, x, y1);
-      if (SummedAreaTable::total(&rgba) >= cut)
-      {
-        split(x0, x, y0, y1, depthPlusOne);
-        split(x, x1, y0, y1, depthPlusOne);
-        break;
-      }
+      mid = (lower+upper) / 2;
+      _table->getSum(&rgba, x0, y0, mid, y1);
+      if (SummedAreaTable::total(&rgba) < cut)
+        lower = mid+1; // look right //*** attention risque d'erreur : vérifier
+      else
+        upper = mid;  // look left
     }
+    split(x0, mid, y0, y1, depthPlusOne);
+    split(mid, x1, y0, y1, depthPlusOne);
+  }
 }
