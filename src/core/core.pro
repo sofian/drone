@@ -62,6 +62,7 @@ types/VideoChannelType.h \
 types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
 types/EnumType.h \
+GearClassification.h \
 GearGui.h \
 GearConverter.h \
 GearMaker.h \

@@ -36,6 +36,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "VideoOutput";
+  gearInfo.classification = GearClassifications::video().IO().instance();
   return gearInfo;
 }
 }

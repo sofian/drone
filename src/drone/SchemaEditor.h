@@ -26,9 +26,6 @@ react properly
 
 */
 
-
-
-
 #ifndef SCHEMAEDITOR_INCLUDED
 #define SCHEMAEDITOR_INCLUDED
 
@@ -42,7 +39,7 @@ class GearGui;
 class ConnectionItem;
 class Engine;
 class Schema;
-
+class GearListMenu;
 
 class SchemaEditor : public QCanvasView
 {
@@ -63,7 +60,7 @@ public:
   void zoom(float factor);
 
 public slots:
-  void slotMenuItemSelected(int id);
+  void slotMenuGearSelected(QString name);
   void slotGearProperties();
   void slotGearDelete();
 
@@ -78,7 +75,6 @@ protected:
   void contentsWheelEvent(QWheelEvent *wheelEvent);    
   void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
-  QPopupMenu* createGearsMenu();
 
 private:
   static const std::string NAME;
@@ -93,12 +89,13 @@ private:
 
   ConnectionItem* _activeConnection;
 
-  //popupmenus
-  std::vector<std::string> _allGearsName;
-  QPopupMenu *_allGearsMenu; 
+  //popupmenus  
+  QPopupMenu *_contextMenu; 
+  GearListMenu *_gearListMenu; 
+  
   // position of right click in Canvas coordinates
-  QPoint _allGearsMenuPos;
-  QPopupMenu *_gearMenu;
+  QPoint _contextMenuPos;  
+  QPopupMenu *_gearContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
 };
 

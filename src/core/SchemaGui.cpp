@@ -92,6 +92,10 @@ void SchemaGui::addGear(std::string type, int x, int y)
 void SchemaGui::addGear(std::string type, std::string name, int x, int y)
 {            
   Gear *gear = _schema->addGear(_engine, type, name);    
+
+  if (!gear)
+    return;
+    
   GearGui *gearGui = gear->getGearGui();    
 
   gearGui->setCanvas(this);    

@@ -44,6 +44,7 @@ TARGET = ../../drone
 
 
 HEADERS += config.h \
+GearListMenu.h \ 
 GearPropertiesDialog.h \
 MainWindow.h \
 PropertyControl.h \
@@ -56,6 +57,7 @@ Pause.xpm \
 splash.xpm
 
 SOURCES += drone.cpp \
+GearListMenu.cpp \ 
 GearPropertiesDialog.cpp \
 MainWindow.cpp \
 PropertyControl.cpp \

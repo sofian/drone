@@ -36,6 +36,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "Blur";
+  gearInfo.classification = GearClassifications::video().blur().instance();
   return gearInfo;
 }
 }

@@ -32,6 +32,8 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "AudioInput";
+  gearInfo.classification = GearClassifications::signal().IO().instance();
+
   return gearInfo;
 }
 }

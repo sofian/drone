@@ -33,6 +33,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "Osc";
+  gearInfo.classification = GearClassifications::signal().generator().instance();
   return gearInfo;
 }
 }

@@ -30,6 +30,7 @@
 
 #include "Timing.h"
 #include "Plug.h"
+#include "GearClassification.h"
 
 #include <map>
 
@@ -39,14 +40,17 @@ class QDomElement;
 class QCanvas;
 class Schema;
 
+
 struct GearInfo
 {
-  std::string name;
-  std::string category;
+  GearInfo() : majorVersion(1), minorVersion(1), classification(GearClassifications::unclassified().instance()) {}
+  
+  std::string name;    
   std::string author;
   std::string description;
-  int minorVersion;
   int majorVersion;
+  int minorVersion;  
+  GearClassification* classification;
 };
 
 class Gear  

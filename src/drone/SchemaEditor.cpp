@@ -25,6 +25,7 @@
 #include "GearMaker.h"
 #include "GearPropertiesDialog.h"
 #include "Gear.h"
+#include "GearListMenu.h"
 
 #include <qmainwindow.h>
 
@@ -46,21 +47,23 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _movingGear(NULL),
   _zoom(1),
   _activeConnection(NULL),
-  _allGearsMenuPos(0,0),
+  _contextMenuPos(0,0),
   _contextGear(NULL)
 {
   viewport()->setMouseTracking(TRUE);
 
-  GearMaker::getAllGearsName(_allGearsName);
+  _contextMenu = new QPopupMenu(this);
+  _gearListMenu = new GearListMenu(this);    
+  _gearListMenu->create();
 
-
-  _allGearsMenu = new QPopupMenu(this);    
-  _allGearsMenu->insertItem("Gears", createGearsMenu());
-
-  _gearMenu = new QPopupMenu(this);
-  _gearMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
-  _gearMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
-  _gearMenu->insertItem("About");    
+  _contextMenu->insertItem("Gears", _gearListMenu);
+  QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
+  
+  
+  _gearContextMenu = new QPopupMenu(this);
+  _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
+  _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
+  _gearContextMenu->insertItem("About");    
 
 }
 
@@ -298,17 +301,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   }
 }
 
-QPopupMenu* SchemaEditor::createGearsMenu()
-{
-  QPopupMenu *gearsMenu = new QPopupMenu(this);    
-  QObject::connect(gearsMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
-  int i=0;
-  for (std::vector<std::string>::iterator it = _allGearsName.begin(); it != _allGearsName.end(); ++it, ++i)
-    gearsMenu->insertItem((*it), i);
-
-  return gearsMenu;
-}
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 {    
@@ -320,30 +313,21 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
   if (gearGui!=NULL)
   {
     _contextGear = gearGui;
-    _gearMenu->popup(QCursor::pos());
+    _gearContextMenu->popup(QCursor::pos());
   } else
   {
     _contextGear = NULL;
-    _allGearsMenuPos = p;
-    _allGearsMenu->popup(QCursor::pos());
+    _contextMenuPos = p;
+    _contextMenu->popup(QCursor::pos());
   }
 
 
   QCanvasView::contextMenuEvent(contextMenuEvent);
 }
 
-void SchemaEditor::slotMenuItemSelected(int id)
-{
-  std::cout << id << std::endl;
-  //only process for gears menuitem
-  if (id < 0)
-    return;
-
-  if ((unsigned int)id > _allGearsName.size()-1)
-    return;
-
-  _schemaGui->addGear(_allGearsName[id], _allGearsMenuPos.x(), _allGearsMenuPos.y());  
-  //_schemaGui->addMetaGear("bidon", _allGearsMenuPos.x()+100, _allGearsMenuPos.y()+100);  
+void SchemaEditor::slotMenuGearSelected(QString name)
+{      
+  _schemaGui->addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
 void SchemaEditor::slotGearProperties()

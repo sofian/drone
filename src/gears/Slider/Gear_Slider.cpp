@@ -38,6 +38,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "Slider";
+  gearInfo.classification = GearClassifications::control().instance();
   return gearInfo;
 }
 }

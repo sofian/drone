@@ -22,7 +22,7 @@
 #include "Engine.h"
 
 #include "GearMaker.h"
-
+   
 extern "C" {           
 Gear* makeGear(Engine *engine, std::string name)
 {
@@ -32,6 +32,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "VideoSource";
+  gearInfo.classification = GearClassifications::video().IO().instance();
   return gearInfo;
 }
 }

@@ -25,19 +25,45 @@
 #include <vector>
 
 class Engine;
-class Gear;
+#include "Gear.h"
 
 class GearMaker  
 {
 public:
+  enum eGearPluginType {DRONE_PLUGIN, FREI0R_PLUGIN};
+  
+  class GearPluginDefinition
+  {
+  public:
+    GearPluginDefinition(GearInfo gearInfo, eGearPluginType pluginType, void *handle, Gear* (*pmakeGear)(Engine* engine, std::string name)) :
+      makeGear(pmakeGear),
+      _gearInfo(gearInfo),
+      _pluginType(pluginType),
+      _handle(handle)      
+    {
+    }
+
+    const GearInfo& gearInfo() const {return _gearInfo;}
+    eGearPluginType pluginType() const {return _pluginType;}
+    const void* handle() const {return _handle;}
+    
+    //ptrfunc
+    Gear* (*makeGear)(Engine* engine, std::string name);
+
+  private:
+    GearInfo _gearInfo;
+    eGearPluginType _pluginType;
+    void* _handle;
+  };
 
   GearMaker();
+  ~GearMaker();
 
   static Gear* makeGear(Engine *engine, std::string type, std::string name);
-  static void getAllGearsName(std::vector<std::string> &gearsName);
+  static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
 private:
-  static std::map<std::string, void*> *_registry;
+  static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
   static GearMaker _registerMyself;  
   static std::string droneGearsPath;
 };

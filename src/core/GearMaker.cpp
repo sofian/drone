@@ -25,17 +25,26 @@
 #include <dlfcn.h>
 
 GearMaker GearMaker::_registerMyself;
-std::map<std::string, void*> *GearMaker::_registry;
+std::map<std::string, GearMaker::GearPluginDefinition*> *GearMaker::_registry;
 
 GearMaker::GearMaker() 
 {  
-  _registry = new std::map<std::string, void*>;
+  _registry = new std::map<std::string, GearMaker::GearPluginDefinition*>;
   parseGears();
+}
+
+GearMaker::~GearMaker()
+{
+  //delete GearPluginDefinitions
+  for(std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it!=_registry->end();++it)
+    delete it->second;
+
+  delete _registry;
 }
 
 Gear* GearMaker::makeGear(Engine *engine, std::string type, std::string name)
 {    
-  std::map<std::string, void*>::iterator it = _registry->find(type);
+  std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
 
   //be sure we have this gear
   if (it == _registry->end())
@@ -44,31 +53,17 @@ Gear* GearMaker::makeGear(Engine *engine, std::string type, std::string name)
     return NULL;
   }
   
-  //query fonction ptr to make gear
-  void *handle = it->second;
-
-  dlerror();
-
-  Gear* (*makeGear)(Engine* engine, std::string name);   
-  *(void**) (&makeGear) = dlsym(handle, "makeGear");
-
-  char* error = dlerror();
-  if (error)
-  {
-    warningmsg("fail to make gear %s!", type.c_str());
-    std::cout << "dlsym error: " << error << std::endl;    
-    return NULL;
-  }
+  //todo switch on various strategy depending on gearPluginType
 
   //make the gear
-  return (*makeGear)(engine, name);  
+  return it->second->makeGear(engine, name);  
 }
 
-void GearMaker::getAllGearsName(std::vector<std::string> &gearsName)
+void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
 {
-  for (std::map<std::string, void*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
+  for (std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
   {
-    gearsName.push_back(it->first);
+    gearsInfo.push_back(&(it->second->gearInfo()));
   }
 }
 
@@ -93,7 +88,7 @@ void GearMaker::parseGears()
 
   while ((fileInfo = it.current()) != 0 )
   {
-    std::cout << fileInfo->fileName() << " ..." << std::endl;
+    std::cout << fileInfo->fileName() << std::endl;
     
     //reset error
     dlerror();
@@ -101,30 +96,43 @@ void GearMaker::parseGears()
     //open file
     void *handle = dlopen(fileInfo->filePath(), RTLD_LAZY);
         
-    if ((error = dlerror()))    
+    if (!(error = dlerror()))    
+    {          
+      //reset error
+      dlerror();
+      
+      //query getGearInfo ptrfun interface
+      GearInfo (*getGearInfo)();   
+      *(void**) (&getGearInfo) = dlsym(handle, "getGearInfo");
+           
+      //query makeGear ptrfun interface
+      Gear* (*makeGear)(Engine* engine, std::string name);   
+      *(void**) (&makeGear) = dlsym(handle, "makeGear");
+
+      if (!(error = dlerror()))    
+      {
+        //get gearInfo
+        GearInfo gearInfo = (*getGearInfo)();
+        
+        //build gear definition
+        GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo, DRONE_PLUGIN, handle, makeGear);
+        
+        //add geardefintion to the registry
+        (*_registry)[gearInfo.name]=gearPluginDefinition;//todo check for duplicates
+      }
+      else
+      {
+        warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
+        std::cout << error << std::endl;      
+      }
+
+    }
+    else
     {
       warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
       std::cout << error << std::endl;      
     }
-          
-    //reset error
-    dlerror();
-    
-    //query gearinfo
-    GearInfo (*getGearInfo)();   
-    *(void**) (&getGearInfo) = dlsym(handle, "getGearInfo");
-    
-    if ((error = dlerror()))    
-    {
-      warningmsg("fail to query info for gear %s!", fileInfo->fileName().ascii());
-      std::cout << error << std::endl;      
-    }
 
-    GearInfo gearInfo = (*getGearInfo)();
-    
-    //todo check for duplicates
-    //add gear to the registry
-    (*_registry)[gearInfo.name]=handle;    
-    ++it;
+    ++it;//next file
   }
 }
