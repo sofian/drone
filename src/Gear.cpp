@@ -8,18 +8,6 @@
 #include <iostream>
 #include <sstream>
 
-const char Gear::Category::CONTROL[] = "Control";
-const char Gear::Category::AUDIO[] = "Audio";
-const char Gear::Category::VIDEO[] = "Video";
-const char Gear::Category::PARAMETERS_EXTRACTION[] = "parameters extraction";
-const char Gear::Category::BASIC[] = "basic processing";
-const char Gear::Category::IO[] = "IO";
-const char Gear::Category::COLOR[] = "Color";
-const char Gear::Category::_DISTORTS[] = "Distorts";
-const char Gear::Category::BLUR[] = "Blur";
-const char Gear::Category::EDGE[] = "Edge";
-
-
 Gear::Gear(Engine *engine, std::string type, std::string name) : 
     _engine(engine), 
     _Type(type), 
@@ -30,7 +18,7 @@ Gear::Gear(Engine *engine, std::string type, std::string name) :
 
 Gear::~Gear()
 {    
-    for(std::list<Plug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    for(std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
 	   delete (*it);
 }
 
@@ -51,7 +39,7 @@ void Gear::internalInit()
     std::cout << _Type << std::endl;
     std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
     
-    for(std::list<Plug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    for(std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
         (*it)->init();
 
     _gearGui = createGearGui(NULL);
@@ -64,101 +52,46 @@ void Gear::internalInit()
 //    PLUGS
 //////////////////////////////////////////////////////////////////////
 
-void Gear::deletePlug(Plug *plug)
+void Gear::deletePlug(AbstractPlug *plug)
 {
     delete plug;
     _Plugs.remove(plug);
 }
 
 //todo : unique name for input and for outputs!!!
-PlugSignalIn* Gear::addPlugSignalIn(std::string name, Signal_T default_value)
+AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 {    
-    PlugSignalIn* newplug;
-	newplug = new PlugSignalIn(this, name, default_value);
-               
-    _Plugs.push_back(newplug);
+    _Plugs.push_back(plug);
         
-    return newplug;    
+    return plug;    
 }
 
-PlugSignalOut* Gear::addPlugSignalOut(std::string name)
-{    
-    PlugSignalOut* newplug;
-	newplug = new PlugSignalOut(this, name);
-               
-    _Plugs.push_back(newplug);
-        
-    return newplug;    
-}
-
-
-PlugVideoIn* Gear::addPlugVideoIn(std::string name)
-{    
-    PlugVideoIn* newplug;
-	newplug = new PlugVideoIn(this, name);
-               
-    _Plugs.push_back(newplug);
-        
-    return newplug;    
-}
-
-PlugVideoOut* Gear::addPlugVideoOut(std::string name)
-{    
-    PlugVideoOut* newplug;
-	newplug = new PlugVideoOut(this, name);
-               
-    _Plugs.push_back(newplug);
-        
-    return newplug;    
-}
-
-PlugVideoComposeIn* Gear::addPlugVideoComposeIn(std::string name)
-{
-    PlugVideoComposeIn* newplug;
-	newplug = new PlugVideoComposeIn(this, name);
-               
-    _Plugs.push_back(newplug);
-        
-    return newplug;    
-}
-
-PlugVideoComposeOut* Gear::addPlugVideoComposeOut(std::string name)
-{
-    PlugVideoComposeOut* newplug;
-	newplug = new PlugVideoComposeOut(this, name);
-               
-    _Plugs.push_back(newplug);
-        
-    return newplug;    
-}
-
-
-void Gear::getInputs(std::list<Plug*> &inputs) const
+void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
 {
     inputs.clear();
-    for(std::list<Plug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    for(std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
     {        
-        if ( ((*it)->In_Out() == IN) )
+        if ( ((*it)->inOut() == IN) )
             inputs.push_back(*it);            
     }    
 }
 
-void Gear::getOutputs(std::list<Plug*> &outputs) const
+void Gear::getOutputs(std::list<AbstractPlug*> &outputs) const
 {
     outputs.clear();
-    for(std::list<Plug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    for(std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
     {        
-        if ( ((*it)->In_Out() == OUT) )
+        if ( ((*it)->inOut() == OUT) )
             outputs.push_back(*it);            
     }
 }
 
 void Gear::getDependencies(std::vector<Gear*> &dependencies) const
 {
-	std::list<Plug*> inputs;
+	std::list<AbstractPlug*> inputs;
 	getInputs(inputs);
-	std::list<Plug*> lplug;
-	for(std::list<Plug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
+	std::list<AbstractPlug*> lplug;
+	for(std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
 	{
 		(*it)->connectedPlugs(lplug);
 		if(lplug.size()!=0 && lplug.back()->parent()->ready())
@@ -210,11 +143,11 @@ void Gear::internalLoad(QDomElement &gearElem)
         
 }
 
-Plug* Gear::getInput(std::string name) const
+AbstractPlug* Gear::getInput(std::string name) const
 {
-    std::list<Plug*> inputs;
+    std::list<AbstractPlug*> inputs;
     getInputs(inputs);
-    for(std::list<Plug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)    
+    for(std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)    
     {
         if ((*it)->name() == name)
             return (*it);        
@@ -223,11 +156,11 @@ Plug* Gear::getInput(std::string name) const
     return NULL;
 }
 
-Plug* Gear::getOutput(std::string name) const
+AbstractPlug* Gear::getOutput(std::string name) const
 {
-    std::list<Plug*> outputs;
+    std::list<AbstractPlug*> outputs;
     getOutputs(outputs);
-    for(std::list<Plug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)    
+    for(std::list<AbstractPlug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)    
     {
         if ((*it)->name() == name)
             return (*it);        

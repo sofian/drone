@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 class Engine;
-class Plug;
+class AbstractPlug;
 class GearGui;
 class ConnectionItem;
 
@@ -17,10 +17,10 @@ public:
     
     static const int PLUGBOX_SIZE;
     
-    PlugBox(Plug *plug, GearGui *gearItem, Engine *engine);
+    PlugBox(AbstractPlug *plug, GearGui *gearItem, Engine *engine);
     virtual ~PlugBox();
 
-    const QColor& PlugBox::color();
+    QColor color();
     void draw(int x, int y, int gearSizeX, QPainter &painter);
     bool hitted(int x, int y);
     void hilight(bool hiLight);
@@ -31,7 +31,7 @@ public:
     void disconnect(ConnectionItem *connectionItem, bool deleteConnectionItem=true);
     void disconnectAll();
     
-    Plug *plug(){return _plug;};
+    AbstractPlug *plug(){return _plug;};
 
     std::string test(){return "test";};
     
@@ -48,7 +48,7 @@ private:
     void doHilight();
     void doUnlight();
 
-    Plug *_plug;   
+    AbstractPlug *_plug;   
     GearGui *_gearGui;
     Engine *_engine;
     int _x, _y;    
@@ -60,10 +60,6 @@ private:
     static const int CONNECTION_HANDLE_OFFSETX;
     static const int CONNECTION_HANDLE_OFFSETY;
     static const int PLUG_NAME_NB_CHARS;
-    //colors
-    static const QColor SIGNAL_PLUG_COLOR;   
-    static const QColor VIDEO_PLUG_COLOR;   
-    static const QColor VIDEO_COMPOSE_PLUG_COLOR;   
     static const int MAX_HILIGHTSCALING;
 
     //fonts

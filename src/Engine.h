@@ -11,7 +11,7 @@
 #include "Math.h"
 
 class Gear;
-class Plug;
+class AbstractPlug;
 class QDomDocument;
 class QDomElement;
 
@@ -68,15 +68,15 @@ public:
     public:
         enum eConnectDisconnect {CONNECT, DISCONNECT};
         
-        ScheduledConnectDisconnect(Plug *a, Plug *b, eConnectDisconnect conn) :
+        ScheduledConnectDisconnect(AbstractPlug *a, AbstractPlug *b, eConnectDisconnect conn) :
             A(a),
             B(b),
             connectDisconnect(conn)
         {
         };
             
-        Plug *A;
-        Plug *B;
+        AbstractPlug *A;
+        AbstractPlug *B;
         eConnectDisconnect connectDisconnect;//connection or disconnection
     };
 
@@ -117,8 +117,8 @@ public:
 
     void needSynch() {_graphSynched=false;};
     
-    void scheduleConnection(Plug *plugA, Plug *plugB);
-    void scheduleDisconnection(Plug *plugA, Plug *plugB);
+    void scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB);
+    void scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB);
     void scheduleGearDeletion(Gear *gear);
 
 

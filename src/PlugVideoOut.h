@@ -4,15 +4,14 @@
 #include "PlugVideo.h"
 #include "Canvas.h"
 
-class PlugVideoOut  : public PlugVideo
+template <class T>
+class PlugOut  : public Plug<T>
 {
-public:    
-    PlugVideoOut(Gear* parent, std::string name);
-	virtual ~PlugVideoOut();
+public:
+  PlugOut(Gear* parent, std::string name);
+  virtual ~PlugOut();
 
-    void init();
-    
-
+  void init();
 };
 
 

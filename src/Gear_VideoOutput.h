@@ -2,8 +2,7 @@
 #define GEAR_VIDEOOUTPUT_INCLUDED
 
 #include "Gear.h"
-                         
-class PlugVideo;
+
 class VideoOutput;
 
 class Gear_VideoOutput : public Gear  
@@ -19,7 +18,7 @@ public:
     void runVideo();
     
 
-    PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
+    PlugIn<VideoType>* VIDEO_IN(){return _VIDEO_IN;};
     
     bool ready();
 
@@ -32,7 +31,7 @@ private:
     static const int DEFAULT_YRES;    
     static const bool DEFAULT_FULLSCREEN; 
     
-    PlugVideoIn *_VIDEO_IN;
+    PlugIn<VideoType> *_VIDEO_IN;
 
     VideoOutput *_videoOutput;
     std::vector<std::string> _allOutputs;

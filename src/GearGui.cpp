@@ -39,10 +39,10 @@ GearGui::GearGui(Gear *pgear, QCanvas *canvas, int sizeX, int sizeY, int updateR
         
     //create plugboxes
     PlugBox *plugBox;
-    std::list<Plug*> inputs;
+    std::list<AbstractPlug*> inputs;
     _gear->getInputs(inputs);
 
-    for (std::list<Plug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
+    for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
     {
         plugBox = new PlugBox(*it, this, _gear->engine());
         _plugBoxes.push_back(plugBox);
@@ -50,10 +50,10 @@ GearGui::GearGui(Gear *pgear, QCanvas *canvas, int sizeX, int sizeY, int updateR
     }
 
 
-    std::list<Plug*> outputs;
+    std::list<AbstractPlug*> outputs;
     _gear->getOutputs(outputs);
 
-    for (std::list<Plug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
+    for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
     {
         plugBox = new PlugBox(*it, this, _gear->engine());
         _plugBoxes.push_back(plugBox);

@@ -9,31 +9,31 @@ class Gear_GrayScale : public Gear
 {
 public:
 
-    Gear_GrayScale(Engine *engine, std::string name);
-    virtual ~Gear_GrayScale();
+  Gear_GrayScale(Engine *engine, std::string name);
+  virtual ~Gear_GrayScale();
     
-    void runVideo();
+  void runVideo();
 
-    PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
-    PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-        
-    bool ready();
+  PlugIn<VideoType>* VIDEO_IN() { return _VIDEO_IN; }
+  PlugOut<VideoType>* VIDEO_OUT() { return _VIDEO_OUT; }
+  
+  bool ready();
 
 private:
 
-	PlugVideoIn *_VIDEO_IN;
-	PlugVideoOut *_VIDEO_OUT;
+  PlugIn<VideoType> *_VIDEO_IN;
+  PlugOut<VideoType> *_VIDEO_OUT;
 
-    //local var
-    Video_T *_image; 
-    Video_T *_outImage; 
-    RGBA *_data;
-    RGBA *_outData;
+  //local var
+  Canvas *_image; 
+  Canvas *_outImage; 
+  RGBA *_data;
+  RGBA *_outData;
 
   int _size;
             
-    unsigned int *_imageOut;
-    unsigned char *_imageIn;
+  unsigned int *_imageOut;
+  unsigned char *_imageIn;
     
     
         

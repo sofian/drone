@@ -11,67 +11,67 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Plug::Plug(Gear* parent,  PLUG_TYPE type, IN_OUT in_out, std::string name) : 
-    _Parent(parent), 
-    _In_Out(in_out), 
-    _Type(type),
-    _Name(name)    
+AbstractPlug::AbstractPlug(Gear* parent, AbstractType *type, eInOut inOut, std::string name) : 
+    _parent(parent), 
+    _inOut(inOut), 
+    _abstractType(type),
+    _name(name)    
 {
     //une plug a besoin d'un parent
     assert(parent!=NULL);
 }         
 
-Plug::~Plug()
+AbstractPlug::~AbstractPlug()
 {
     disconnectAll();
 }
 
 
-bool Plug::canStartConnection()
+bool AbstractPlug::canStartConnection()
 {
     //assurer seulement une connection par input
-    if (_In_Out == IN)
+    if (_inOut == IN)
     {
-        if (!_ConnectedPlugs.empty())
+        if (!_connectedPlugs.empty())
             return false;
     }
 
     return true;
 }
 
-bool Plug::canConnect(Plug *plug, bool onlyTypeCheck)
+bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
 {
     if (plug==NULL)
         return false;
 
     //s'assurer que plug n'est pas deja connecte a nous
-    if (find(_ConnectedPlugs.begin(), _ConnectedPlugs.end(), plug) != _ConnectedPlugs.end())
+    if (find(_connectedPlugs.begin(), _connectedPlugs.end(), plug) != _connectedPlugs.end())
         return false;
     
     //est-ce que ce sont des plugs de meme type
-    if (_Type != plug->Type())
+    if (_abstractType->name() != plug->abstractType()->name())
         return false;
 
     //avons-nous bien une connection d'un in dans un out ou vice-versa
-    if (_In_Out == plug->In_Out())
+    if (_inOut == plug->inOut())
         return false;
     
     //assurer seulement une connection par input
     if (!onlyTypeCheck)
     {    
-        if (_In_Out == IN)
+        if (_inOut == IN)
         {        
-            if (!_ConnectedPlugs.empty())
+            if (!_connectedPlugs.empty())
                 return false;            
         }
         else
-            if (!plug->_ConnectedPlugs.empty())
+            if (!plug->_connectedPlugs.empty())
                 return false;            
     }
     return true;
 }
 
-bool Plug::connect(Plug *plug)
+bool AbstractPlug::connect(AbstractPlug *plug)
 //! logique de connection de base
 {
         
@@ -79,83 +79,81 @@ bool Plug::connect(Plug *plug)
         return false;
     
     //ajouter la nouvelle plug a nos connections
-    _ConnectedPlugs.push_back(plug);        
-    plug->_ConnectedPlugs.push_back(this);    
+    _connectedPlugs.push_back(plug);        
+    plug->_connectedPlugs.push_back(this);    
         
-    _Parent->onPlugConnected(this);
-    plug->_Parent->onPlugConnected(plug);
+    _parent->onPlugConnected(this);
+    plug->_parent->onPlugConnected(plug);
     
     //laisser la chance au class derive d'executer leur logique supplementaire
     onConnection(plug);
     plug->onConnection(this);
         
     //tell the gear that a new connection have been created and that sync is needed
-    _Parent->needSynch();
+    _parent->needSynch();
     
     return true;    
 }
 
-bool Plug::disconnect(Plug *plug)
+bool AbstractPlug::disconnect(AbstractPlug *plug)
 //! logique de deconnection de base
 {
     if (!plug)
         return false;
     
     //on ne peut pas deconnecter une plug qui n'est pas connecte a nous
-    std::list<Plug*>::iterator it = find(_ConnectedPlugs.begin(), _ConnectedPlugs.end(), plug);
-    if (it == _ConnectedPlugs.end())
+    std::list<AbstractPlug*>::iterator it = find(_connectedPlugs.begin(), _connectedPlugs.end(), plug);
+    if (it == _connectedPlugs.end())
         return false;
     
-    _Parent->onPlugDisconnected(this);
-    plug->_Parent->onPlugDisconnected(plug);
+    _parent->onPlugDisconnected(this);
+    plug->_parent->onPlugDisconnected(plug);
     
     //laisser la chance au class derive d'executer leur logique supplementaire
     onDisconnection(plug);
     plug->onDisconnection(this);
 
     //remove this plug from our connections
-    _ConnectedPlugs.remove(plug);    
+    _connectedPlugs.remove(plug);    
     //remove ourself from the other plug connections
-    plug->_ConnectedPlugs.remove(this);
+    plug->_connectedPlugs.remove(this);
         
     //tell the gear that a new connection have been created and that sync is needed
-    _Parent->needSynch();
+    _parent->needSynch();
 
     return true;
 }
 
-void Plug::disconnectAll()
+void AbstractPlug::disconnectAll()
 {
-    while(!_ConnectedPlugs.empty())
+    while(!_connectedPlugs.empty())
     {
-        disconnect(_ConnectedPlugs.back());
+        disconnect(_connectedPlugs.back());
     }
 }
 
-int Plug::connectedPlugs(std::list<Plug*> &connectedplugs) const
+int AbstractPlug::connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const
 {
     connectedplugs.clear();
-    connectedplugs.assign(_ConnectedPlugs.begin(), _ConnectedPlugs.end());
+    connectedplugs.assign(_connectedPlugs.begin(), _connectedPlugs.end());
 
     return connectedplugs.size();
 }
 
-std::string Plug::fullName() const
+std::string AbstractPlug::fullName() const
 {
-	return _Parent->name()+"/"+_Name;
+	return _parent->name()+"/"+_name;
 }
 
-std::string Plug::shortName(int nbChars) const
+std::string AbstractPlug::shortName(int nbChars) const
 {
     std::string abbrev;
         
     int c=0;
-    for (std::string::const_iterator it=_Name.begin();it != _Name.end() && c < nbChars; ++it, ++c)
+    for (std::string::const_iterator it=_name.begin();it != _name.end() && c < nbChars; ++it, ++c)
     {
         abbrev+=*it;
     }
-
        
     return abbrev;
 }
-

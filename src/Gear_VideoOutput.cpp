@@ -29,7 +29,7 @@ Gear_VideoOutput::Gear_VideoOutput(Engine *engine, std::string name) :
     _allOutputs.push_back("Shm");
     //
 
-    _VIDEO_IN = addPlugVideoIn(name);
+    _VIDEO_IN = (PlugIn<VideoType>*) addPlug(new PlugIn<VideoType>(this, name));
 
     _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
     _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
@@ -94,10 +94,10 @@ void Gear_VideoOutput::runVideo()
     if (_videoOutput==NULL)
         return;
         
-    if (_VIDEO_IN->canvas()->sizeX()==0 || _VIDEO_IN->canvas()->sizeY()==0)
+    if (_VIDEO_IN->type()->canvas()->sizeX()==0 || _VIDEO_IN->type()->canvas()->sizeY()==0)
         return;
     
-    _videoOutput->render(*(_VIDEO_IN->canvas()));
+    _videoOutput->render(*(_VIDEO_IN->type()->canvas()));
 }
 
 

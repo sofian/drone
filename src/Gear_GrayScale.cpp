@@ -10,9 +10,8 @@ Register_Gear(MAKERGear_GrayScale, Gear_GrayScale, "GrayScale")
 
 Gear_GrayScale::Gear_GrayScale(Engine *engine, std::string name) : Gear(engine, "GrayScale", name)
 {
-    _VIDEO_IN = addPlugVideoIn("ImgIN");
-    _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-
+  _VIDEO_IN = (PlugIn<VideoType>*) addPlug(new PlugIn<VideoType>(this, "ImgIN"));
+  _VIDEO_OUT = (PlugOut<VideoType>*) addPlug(new PlugOut<VideoType>(this,"ImgOUT"));
 }
 
 Gear_GrayScale::~Gear_GrayScale()
@@ -22,40 +21,40 @@ Gear_GrayScale::~Gear_GrayScale()
 
 bool Gear_GrayScale::ready()
 {
-    return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_GrayScale::runVideo()
 {
-    _image = _VIDEO_IN->canvas();
-    _outImage = _VIDEO_OUT->canvas();
-    _outImage->allocate(_image->sizeX(), _image->sizeY());
-    _data = _image->_data;    
-    _outData = _outImage->_data;
+  _image = _VIDEO_IN->type()->canvas();
+  _outImage = _VIDEO_OUT->type()->canvas();
+  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _data = _image->_data;    
+  _outData = _outImage->_data;
     
-    _size = _image->sizeX() * _image->sizeY();
+  _size = _image->sizeX() * _image->sizeY();
 
-    _imageIn  = (unsigned char*)_data;
-    _imageOut = (unsigned int*)_outData;
+  _imageIn  = (unsigned char*)_data;
+  _imageOut = (unsigned int*)_outData;
     
-    int total;
+  int total;
     
-    for (int p=0; p<_size; ++p)
-    {
-      // add everything
-      // 0.25 * R + 0.5 * G + 0.25 * B 
-      total = *_imageIn++;
-      total += *_imageIn;
-      total += *_imageIn++;
-      total += *_imageIn++;
-      _imageIn++;
+  for (int p=0; p<_size; ++p)
+  {
+    // add everything
+    // 0.25 * R + 0.5 * G + 0.25 * B 
+    total = *_imageIn++;
+    total += *_imageIn;
+    total += *_imageIn++;
+    total += *_imageIn++;
+    _imageIn++;
       
-      // divide by 4
-      total >>= 2;
+    // divide by 4
+    total >>= 2;
         
-      //        R = total | G = total | B = total
-      *_imageOut++ = total | total<<8 | total <<16;
-    }
+    //        R = total | G = total | B = total
+    *_imageOut++ = total | total<<8 | total <<16;
+  }
 }
 
 

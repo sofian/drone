@@ -14,8 +14,8 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : Gear(engi
     _SizeX(0),
     _SizeY(0)
 {    
-    _VIDEO_OUT = addPlugVideoOut("ImgOut");       
-    _AUDIO_OUT = addPlugSignalOut("AudioOut");       
+    _VIDEO_OUT = (PlugOut<VideoType>*) addPlug(new PlugOut<VideoType>(this, "ImgOut"));       
+    _AUDIO_OUT = (PlugOut<SignalType>*) addPlug(new PlugOut<SignalType>(this, "AudioOut"));       
     
     _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
@@ -70,7 +70,7 @@ void Gear_VideoSource::onUpdateSettings()
     //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
     _Frame[_SizeY-1] = (RGBA*) malloc((_SizeX * sizeof(RGBA)) + 4);
     
-    _VIDEO_OUT->canvas()->allocate(_SizeX, _SizeY);
+    _VIDEO_OUT->type()->canvas()->allocate(_SizeX, _SizeY);
 }
 
 void Gear_VideoSource::runVideo()
@@ -78,7 +78,7 @@ void Gear_VideoSource::runVideo()
     if (_File==NULL)
         return;
     
-    _image = _VIDEO_OUT->canvas();
+    _image = _VIDEO_OUT->type()->canvas();
 
     mpeg3_read_frame(_File, (unsigned char**)_Frame, 0, 0, _SizeX, _SizeY, _SizeX, _SizeY, MPEG3_RGBA8888, 0);
 
@@ -110,7 +110,7 @@ void Gear_VideoSource::runVideo()
 
 void Gear_VideoSource::runAudio()
 {
-    _audioBuffer = _AUDIO_OUT->buffer();
+    _audioBuffer = _AUDIO_OUT->type()->buffer();
 
     //mpeg3_read_audio(_File, signal, NULL, 1, 128, 0);
 }

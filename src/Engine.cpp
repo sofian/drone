@@ -341,7 +341,7 @@ void Engine::synchGraph()
 	_graphSynched=true;
 }
 
-void Engine::scheduleConnection(Plug *plugA, Plug *plugB)
+void Engine::scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB)
 {
     _scheduledsConnectDisconnect.push_back( ScheduledConnectDisconnect(plugA, plugB,  ScheduledConnectDisconnect::CONNECT));
 
@@ -351,7 +351,7 @@ void Engine::scheduleConnection(Plug *plugA, Plug *plugB)
     
 }
 
-void Engine::scheduleDisconnection(Plug *plugA, Plug *plugB)
+void Engine::scheduleDisconnection(AbstractPlug *plugA, AbstractPlug *plugB)
 {
     _scheduledsConnectDisconnect.push_back( ScheduledConnectDisconnect(plugA, plugB,  ScheduledConnectDisconnect::DISCONNECT));
 
@@ -398,16 +398,16 @@ void Engine::performScheduledConnectDisconnect()
 
 void Engine::getAllConnections(std::list<Connection*> &connections)
 {
-	std::list<Plug*> outputs;
-    std::list<Plug*> connectedPlugs;
+	std::list<AbstractPlug*> outputs;
+    std::list<AbstractPlug*> connectedPlugs;
     for(std::list<Gear*>::iterator itGear = _Gears.begin(); itGear != _Gears.end(); ++itGear)
     {        
         (*itGear)->getOutputs(outputs);
-        for(std::list<Plug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
+        for(std::list<AbstractPlug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
         {                        
             (*itOutput)->connectedPlugs(connectedPlugs);
             
-            for(std::list<Plug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
+            for(std::list<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
             {                
                 connections.push_back( new Connection((*itGear)->name(), (*itOutput)->name(), 
                                                       (*itConnectedPlug)->parent()->name(), 
@@ -574,8 +574,8 @@ void Engine::connectPlugs(Connection &connection)
 {
     Gear *gearA;
     Gear *gearB;
-    Plug *input;
-    Plug *output;
+    AbstractPlug *input;
+    AbstractPlug *output;
 
     if ( (gearA=getGear(connection.gearA())) == NULL)
     {

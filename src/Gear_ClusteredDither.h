@@ -38,7 +38,7 @@ protected:
   
 private:
   PlugVideoIn *_VIDEO_IN;
-	PlugVideoOut *_VIDEO_OUT;
+  PlugVideoOut *_VIDEO_OUT;
   PlugSignalIn *_AMOUNT_IN_A;
   PlugSignalIn *_AMOUNT_IN_B;
 

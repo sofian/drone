@@ -1,4 +1,3 @@
-
 #ifndef GEAR_VideoSource_INCLUDED
 #define GEAR_VideoSource_INCLUDED
 
@@ -7,44 +6,41 @@
 
 #include <libmpeg3.h>
 
-class PlugVideo;
-class PlugSignal;
-
 class Gear_VideoSource : public Gear
 {
 public:
-    static const std::string SETTING_FILENAME;
+  static const std::string SETTING_FILENAME;
 
-    Gear_VideoSource(Engine *engine, std::string name);
-    virtual ~Gear_VideoSource();
+  Gear_VideoSource(Engine *engine, std::string name);
+  virtual ~Gear_VideoSource();
         
-    void runVideo();
-    void runAudio();
+  void runVideo();
+  void runAudio();
     
-    PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-    PlugSignalOut* AUDIO_OUT(){return _AUDIO_OUT;};
+  PlugOut<VideoType>* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
-    bool ready();
+  bool ready();
 
 protected:
-    void onUpdateSettings();
+  void onUpdateSettings();
 
 private:
 
-    PlugVideoOut *_VIDEO_OUT;
-    PlugSignalOut *_AUDIO_OUT;
-    mpeg3_t* _File;
+  PlugOut<VideoType> *_VIDEO_OUT;
+  PlugOut<SignalType> *_AUDIO_OUT;
+  mpeg3_t* _File;
 
-    int _SizeX, _SizeY;
+  int _SizeX, _SizeY;
     
-    //locals
-    Video_T *_image;
-    Signal_T *_audioBuffer;
-    RGBA *_Frame[1024];
+  //locals
+  Canvas *_image;
+  float *_audioBuffer;
+  RGBA *_Frame[1024];
 
-    //mmx
-    double *_mmxImageIn;
-    double *_mmxImageOut;
+  //mmx
+  double *_mmxImageIn;
+  double *_mmxImageOut;
 
 };
 

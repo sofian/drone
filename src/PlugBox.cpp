@@ -11,15 +11,12 @@
 const int PlugBox::PLUGBOX_SIZE = 10;
 const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_SIZE - 2;
 const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_SIZE / 2;
-const QColor PlugBox::SIGNAL_PLUG_COLOR(249,169,7);   
-const QColor PlugBox::VIDEO_PLUG_COLOR(31,47,124);   
-const QColor PlugBox::VIDEO_COMPOSE_PLUG_COLOR(37,142,234);   
 const QFont PlugBox::SHORTNAME_FONT(QFont("system", 8, QFont::Normal));
 const QFont PlugBox::SHORTNAME_FONT_BOLD(QFont("system", 8, QFont::Bold));
 const int PlugBox::MAX_HILIGHTSCALING = 2;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
 
-PlugBox::PlugBox(Plug *plug, GearGui* gearGui, Engine *engine) : 
+PlugBox::PlugBox(AbstractPlug *plug, GearGui* gearGui, Engine *engine) : 
     _plug(plug), 
     _gearGui(gearGui),     
     _engine(engine),
@@ -35,22 +32,9 @@ PlugBox::~PlugBox()
     disconnectAll();
 }
 
-const QColor& PlugBox::color()
+QColor PlugBox::color()
 {
-    switch (_plug->Type())
-    {
-    case SIGNAL:
-        return SIGNAL_PLUG_COLOR;
-        break;
-    case VIDEO:
-        return VIDEO_PLUG_COLOR;
-        break;
-    case VIDEO_COMPOSE:
-        return VIDEO_COMPOSE_PLUG_COLOR;
-        break;
-    default:
-        return SIGNAL_PLUG_COLOR;
-    }
+  return _plug->abstractType()->color();
 }
 
 void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
@@ -60,24 +44,9 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
     _y = y;
    
     painter.setPen(Qt::black);
-    
-    //set color according to type
-    switch (_plug->Type())
-    {
-    case SIGNAL:
-        painter.setBrush(SIGNAL_PLUG_COLOR);
-        break;
-    case VIDEO:
-        painter.setBrush(VIDEO_PLUG_COLOR);
-        break;
-    case VIDEO_COMPOSE:
-        painter.setBrush(VIDEO_COMPOSE_PLUG_COLOR);
-        break;
-    default:
-        painter.setBrush(SIGNAL_PLUG_COLOR);
-    }
-    
-    if (_plug->In_Out() == IN)       
+    painter.setBrush(color());
+        
+    if (_plug->inOut() == IN)       
         painter.drawRect(_x, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);    
     else
         painter.drawRect(_x - _hilightScaling*2, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);    
@@ -88,7 +57,7 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
         painter.setFont(SHORTNAME_FONT);
     
     //align text left or right if In or Out
-    if (_plug->In_Out() == IN)       
+    if (_plug->inOut() == IN)       
         painter.drawText(_x + PLUGBOX_SIZE + 5, _y - 4, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
     else
         painter.drawText(_x - halfGearSizeX, _y - 4, halfGearSizeX - 5, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
@@ -159,14 +128,14 @@ bool PlugBox::connect(PlugBox *plugBox, ConnectionItem *connectionItem)
         
     //in the case of an input that is already
     //connected, we first need to disconnect
-    if (_plug->In_Out() == IN && _plug->connected())
+    if (_plug->inOut() == IN && _plug->connected())
     {
         //we can only have exactly one connection per Input plug, otherwise something bad is going on
         assert(_connectionItems.size() == 1);
         //destructor of ConnectionItem take care of PlugBox disconnection
         disconnect(_connectionItems[0]);
     }
-    else if (plugBox->_plug->In_Out() == IN && plugBox->_plug->connected())
+    else if (plugBox->_plug->inOut() == IN && plugBox->_plug->connected())
     {
         //we can only have exactly one connection per Input plug, otherwise something bad is going on
         assert(plugBox->_connectionItems.size() == 1);
@@ -216,7 +185,7 @@ void PlugBox::disconnectAll()
 
 int PlugBox::connectionHandleX()
 {
-    if (_plug->In_Out() == IN)          
+    if (_plug->inOut() == IN)          
     {
         return x() + 2;
     }

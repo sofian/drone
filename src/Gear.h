@@ -10,12 +10,7 @@
 #include "Properties.h"
 
 #include "Timing.h"
-#include "PlugSignalIn.h"
-#include "PlugSignalOut.h"
-#include "PlugVideoIn.h"
-#include "PlugVideoOut.h"
-#include "PlugVideoComposeIn.h"
-#include "PlugVideoComposeOut.h"
+#include "Plug.h"
 
 
 class GearGui;
@@ -30,16 +25,6 @@ public:
     class Category
     {
     public:
-        static const char CONTROL[];
-        static const char AUDIO[];
-        static const char VIDEO[];
-        static const char PARAMETERS_EXTRACTION[];
-        static const char BASIC[];
-        static const char IO[];
-        static const char COLOR[];
-        static const char _DISTORTS[];
-        static const char BLUR[];
-        static const char EDGE[];
     
         Category &operator<<(std::string s)
         {
@@ -72,11 +57,11 @@ public:
    
     void updateSettings();//! user must call this method after settings have been modified
      
-    void getInputs(std::list<Plug*> &inputs) const;
-    void getOutputs(std::list<Plug*> &outputs) const;
+    void getInputs(std::list<AbstractPlug*> &inputs) const;
+    void getOutputs(std::list<AbstractPlug*> &outputs) const;
 
-    Plug* getInput(std::string name) const;
-    Plug* getOutput(std::string name) const;
+    AbstractPlug* getInput(std::string name) const;
+    AbstractPlug* getOutput(std::string name) const;
 
 	void getDependencies(std::vector<Gear*> & dependencies) const;
     
@@ -101,23 +86,18 @@ protected:
     
     virtual GearGui* createGearGui(QCanvas *canvas);//! overload to create your own GearGui
     virtual void onUpdateSettings(){};
-    virtual void onPlugConnected(Plug*){};
-    virtual void onPlugDisconnected(Plug*){}; 
-    friend bool Plug::connect(Plug *plug);
-    friend bool Plug::disconnect(Plug *plug);
+    virtual void onPlugConnected(AbstractPlug*){};
+    virtual void onPlugDisconnected(AbstractPlug*){}; 
+    friend bool AbstractPlug::connect(AbstractPlug *plug);
+    friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
-    PlugSignalIn* addPlugSignalIn(std::string name, Signal_T default_value=0.0f);       
-    PlugSignalOut* addPlugSignalOut(std::string name);       
-    PlugVideoIn* addPlugVideoIn(std::string name);       
-    PlugVideoOut* addPlugVideoOut(std::string name);       
-    PlugVideoComposeIn* addPlugVideoComposeIn(std::string name);       
-    PlugVideoComposeOut* addPlugVideoComposeOut(std::string name);       
+    AbstractPlug* addPlug(AbstractPlug* plug);       
     
-    void deletePlug(Plug *plug);
+    void deletePlug(AbstractPlug *plug);
     
     Engine *_engine;
 
-    std::list<Plug*> _Plugs;    
+    std::list<AbstractPlug*> _Plugs;    
 
     Properties _settings;
     Category _category;
