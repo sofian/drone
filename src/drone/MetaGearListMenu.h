@@ -17,10 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEARLISTMENU_INCLUDED
-#define GEARLISTMENU_INCLUDED
+#ifndef METAGEARLISTMENU_INCLUDED
+#define METAGEARLISTMENU_INCLUDED
 
 #include <qpopupmenu.h>
+#include <qfileinfo.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -32,30 +33,33 @@ class ConnectionItem;
 class Engine;
 class Schema;
 
-class GearListMenu : public QPopupMenu
+class MetaGearListMenu : public QPopupMenu
 {
   Q_OBJECT
 public:
-  GearListMenu(QWidget *parent);
+  MetaGearListMenu(QWidget *parent, MetaGearListMenu* parentMetaGearListMenu=NULL);
+  virtual ~MetaGearListMenu();
   
   void create();
 
 signals:
-  //! emitted when a gear is selected, the name of the selected gear is given
-  void gearSelected(QString gearName);
+  //! emitted when a metagear is selected, the name of the selected gear is given
+  void metaGearSelected(QFileInfo *metaGearFileInfo);
   
 public slots:
-  //!transform the activated(int) signal into a gearSelected(QString)
-  void slotMenuItemSelected(int id) { emit gearSelected(text(id));}  
+  //!transform the activated(int) signal into a metagearSelected(QFileInfo*)
+  void slotMenuItemSelected(int id); 
   
   //!used to foward gearSelected signal to parent menu
-  void slotGearSelected(QString gearName) { emit gearSelected(gearName);}
+  void slotMetaGearSelected(QFileInfo *metaGearFileInfo) { emit metaGearSelected(metaGearFileInfo);}
   
 
 private:
-  GearListMenu *addSubMenu(std::string name);
+  MetaGearListMenu *addSubMenu(std::string name);
+  MetaGearListMenu *_parentMetaGearListMenu;
 
-  std::map<std::string, GearListMenu*> _subMenus;
+  std::map<std::string, MetaGearListMenu*> _subMenus;
+  std::map<int, QFileInfo*> *_menuItemIndexfileInfoMap;//!mapping between menu item and corresponding metagears qfileinfo, this map is shared between submenus
 };
 
 #endif

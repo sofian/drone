@@ -111,7 +111,9 @@ public:
   void disconnect(AbstractPlug *plugA, AbstractPlug *plugB);
   void disconnectAll(AbstractPlug *plugA);
 
-  MetaGear* addMetaGear(std::string name);
+  MetaGear* newMetaGear();
+  MetaGear* addMetaGear(std::string filename);
+  void renameMetaGear(MetaGear* metaGear, std::string newName);
   Gear* addGear(std::string geartype);
   
   bool removeDeepGear(Gear* gear);

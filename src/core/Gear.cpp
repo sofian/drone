@@ -228,8 +228,8 @@ void Gear::internalLoad(QDomElement &gearElem)
 
   _gearGui->load(gearElem);
 
-	//load plugs attributes
-	QDomNode plugsNode = XMLHelper::findChildNode(gearElem, "Plugs");
+  //load plugs attributes
+  QDomNode plugsNode = XMLHelper::findChildNode(gearElem, "Plugs");
 
   QDomNode plugNode = plugsNode.firstChild();
   while (!plugNode.isNull())

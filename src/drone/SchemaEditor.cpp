@@ -23,12 +23,15 @@
 #include "PlugBox.h"
 #include "Engine.h"
 #include "GearMaker.h"
+#include "MetaGearMaker.h"
 #include "GearPropertiesDialog.h"
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearListMenu.h"
+#include "MetaGearListMenu.h"
 
 #include <qmainwindow.h>
+#include <qfiledialog.h>
 
 #include <qcursor.h>
 #include <qlayout.h>
@@ -61,16 +64,27 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _contextMenu->insertItem("Gears", _gearListMenu);
   QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
   
-  _contextMenu->insertItem("Add MetaGear", this, SLOT(slotAddMetaGear()));
-  _contextMenu->insertItem("New", this, SLOT(slotNewSchema()));
-  _contextMenu->insertItem("Load ", this, SLOT(slotLoadSchema()));
-  _contextMenu->insertItem("Save", this, SLOT(slotSaveSchema()));
+  _metaGearListMenu = new MetaGearListMenu(this);    
+  _metaGearListMenu->create();
+  
+  _contextMenu->insertItem("MetaGears", _metaGearListMenu);
+  QObject::connect(_metaGearListMenu, SIGNAL(metaGearSelected(QFileInfo*)), this, SLOT(slotMenuMetaGearSelected(QFileInfo*)));
+
+  _contextMenu->insertItem("New MetaGear", this, SLOT(slotNewMetaGear()));
     
   _gearContextMenu = new QPopupMenu(this);
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
   _gearContextMenu->insertItem("About");    
   
+  _metaGearContextMenu = new QPopupMenu(this);
+  _metaGearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
+  _metaGearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));  
+  _metaGearContextMenu->insertItem("About");    
+  _metaGearContextMenu->insertSeparator();
+  _metaGearContextMenu->insertItem("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
+
+
    // plug context menu initialization
   _plugContextMenu = new QPopupMenu(this);
   _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
@@ -304,7 +318,9 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     //handle double-click on metagear
     if (gearGui!=NULL && gearGui->gear()->isMeta())
     {
-      QDialog *wnd = new QDialog();  
+      QDialog *wnd = new QDialog(this);  
+      wnd->setCaption(gearGui->gear()->name().c_str());
+      wnd->resize(640,480);
       QBoxLayout *layout = new QVBoxLayout(wnd, 1);
       SchemaGui *tschemaGui = new SchemaGui(gearGui->gear()->getInternalSchema(), _engine);
       SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
@@ -321,8 +337,6 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     break;
   }
 }
-
-
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 {    
@@ -350,7 +364,12 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
       
     } else
     {
-      _gearContextMenu->popup(QCursor::pos());
+      if (_contextGear->gear()->isMeta())
+      {
+        _metaGearContextMenu->popup(QCursor::pos());
+      }
+      else
+        _gearContextMenu->popup(QCursor::pos());
     }
   } else
   {
@@ -366,6 +385,11 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 void SchemaEditor::slotMenuGearSelected(QString name)
 {        
   _schemaGui->addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
+}
+
+void SchemaEditor::slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo)
+{  
+  _schemaGui->addMetaGear(metaGearFileInfo->filePath(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
 void SchemaEditor::slotGearProperties()
@@ -407,21 +431,41 @@ void SchemaEditor::slotPlugUnexpose()
   _contextPlug->plug()->exposed(false);
 } 
 
-void SchemaEditor::slotNewSchema()
+void SchemaEditor::slotNewMetaGear()
 {
-  _schemaGui->clear();
+  _schemaGui->newMetaGear(_contextMenuPos.x(), _contextMenuPos.y());
 }
 
-void SchemaEditor::slotLoadSchema()
+void SchemaEditor::slotSaveMetaGear()
 {
-}
+  if (!_contextGear->gear()->isMeta())
+  {
+    std::cout << "not a metagear, cannot save!!!" << std::endl; 
+    return;
+  }
+   
+  MetaGear* metaGear = (MetaGear*)_contextGear->gear();
+  
+  //mangle suggested filename
+  std::string suggestedFilename=metaGear->fullPath();  
+  if (suggestedFilename.empty())
+    suggestedFilename=MetaGearMaker::METAGEAR_PATH + "/" + metaGear->name();
+  
 
-void SchemaEditor::slotSaveSchema()
-{  
+  std::string filename = QFileDialog::getSaveFileName(suggestedFilename, "*" + MetaGear::EXTENSION + ";;" + "*.*", 
+                                                      this, "Save as", "Save as");
+  
+  if (!filename.empty())
+  {
+    //set the extension if not already present
+    if (filename.find(MetaGear::EXTENSION.c_str(), filename.size()-MetaGear::EXTENSION.size())==std::string::npos)
+      filename.append(MetaGear::EXTENSION);  
+    
+    metaGear->save(filename);    
+    
+    //rename the metagear to the new saved name
+    QFileInfo fileInfo(filename);
+    _schemaGui->renameMetaGear(_contextGear, fileInfo.baseName());
+  }
 
-}
-
-void SchemaEditor::slotAddMetaGear()
-{
-  _schemaGui->addMetaGear("MetaGear", _contextMenuPos.x(), _contextMenuPos.y());
 }

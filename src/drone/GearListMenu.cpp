@@ -3,8 +3,8 @@
 #include "GearClassification.h"
 
 
-GearListMenu::GearListMenu(QWidget *parent, const char *name) : 
-  QPopupMenu(parent, name)
+GearListMenu::GearListMenu(QWidget *parent) : 
+  QPopupMenu(parent)
 {
   //transform the activated(int) signal into a gearSelected(QString) signal via slotMenuItemSelected
   QObject::connect(this, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));   

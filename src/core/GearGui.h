@@ -55,10 +55,10 @@ public:
   GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
-	int renderingStartX();
-	int renderingStartY();	
-	
-	void refresh();
+  int renderingStartX();
+  int renderingStartY();	
+  
+  void refresh();
 	
   PlugBox* getInputPlugBox(std::string name) const;
   PlugBox* getOutputPlugBox(std::string name) const;
@@ -71,9 +71,7 @@ public:
   void performPlugHighligthing(const QPoint &p);
   void performPlugHighligthing(PlugBox *plugBox);
   void unHilightAllPlugBoxes();
-
-  void setTitle(std::string title){_title=title;};
-
+  
   void reDraw();
 
   virtual void save(QDomDocument &doc, QDomElement &gearElem);
@@ -109,7 +107,6 @@ protected:
 
   int _inputsInterval;
   int _outputsInterval;
-  std::string _title;
   QColor _boxNameColor;
 private:
   void removeAllPlugBoxes();

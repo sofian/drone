@@ -2,9 +2,11 @@
 #include "GearGui.h"
 
 #include "XMLHelper.h"
+#include "qfileinfo.h"
 
 const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const std::string MetaGear::TYPE="MetaGear";
+const std::string MetaGear::EXTENSION=".meta";
 
 MetaGear::MetaGear(Schema *schema, std::string vname, std::string uniqueName) :
 Gear(schema, TYPE, uniqueName),
@@ -98,21 +100,73 @@ void MetaGear::createPlugs()
 
 }
 
-void MetaGear::onPlugConnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
-{
-/*  std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
+void MetaGear::save(std::string filename)
+{  
+  QDomDocument doc("MetaGear");
+    
+  QDomElement metaGearElem = doc.createElement("MetaGear");
+  doc.appendChild(metaGearElem);
+    
+  save(doc, metaGearElem);
 
-  ASSERT_WARNING(it!=_plugMapping.end());
+  QFile file(filename.c_str());
+  if (file.open(IO_WriteOnly))
+  {
+    QTextStream stream(&file);
+    doc.save(stream,4);
+    file.close();
+  }
+  else
+  {
+    std::cout << "file io error, cannot save!" << std::endl;
+    return;
+  }
 
-  otherPlug->connect(it->second);*/
+  _fullPath = filename;
 }
 
-void MetaGear::onPlugDisconnected(AbstractPlug* ourPlug, AbstractPlug* otherPlug)
+bool MetaGear::load(std::string filename)
 {
-/*  std::map<AbstractPlug*, AbstractPlug*>::iterator it = _plugMapping.find(ourPlug);
+  QDomDocument doc("MetaGear");
 
-  ASSERT_WARNING(it!=_plugMapping.end());
+  QFile file(filename.c_str());
 
-  otherPlug->disconnect(it->second);*/
+  if (!file.open(IO_ReadOnly))
+  {
+    std::cout << "Fail to open file " << filename << std::endl;
+    return false;
+  }
+
+  QString errMsg;
+  int errLine;
+  int errColumn;
+  if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
+  {
+    std::cout << "parsing error in " << filename << std::endl;
+    std::cout << errMsg.ascii() << std::endl;
+    std::cout << "Line: " <<  errLine << std::endl;
+    std::cout << "Col: " <<  errColumn << std::endl;
+    file.close();
+    return false;
+  }
+
+  file.close();
+
+  
+  QDomNode metagearNode = doc.firstChild();
+  QDomElement metagearElem = metagearNode.toElement();
+  
+  if (metagearElem.isNull())
+  {
+    std::cout << "Bad drone metagear, metagear elem isNull" << std::endl;
+    return false;
+  }
+
+  //save the path
+  _fullPath = filename;
+  
+  //load
+  load(metagearElem);
+
+  return true;
 }
-

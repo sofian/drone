@@ -38,7 +38,9 @@ public:
 
   void addGear(std::string type, std::string name, int x, int y);
   void addGear(std::string type, int x, int y);
-  void addMetaGear(std::string name, int x, int y);  
+  void addMetaGear(std::string filename, int x, int y);  
+  void newMetaGear(int x, int y);  
+  void renameMetaGear(GearGui *metaGearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     
   bool connect(PlugBox *plugA, PlugBox *plugB);

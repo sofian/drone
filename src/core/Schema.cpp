@@ -5,6 +5,7 @@
 
 #include <qdom.h>
 #include <qfile.h>
+#include <qfileinfo.h>
 #include <qtextstream.h>
 #include "XMLHelper.h"
 
@@ -329,16 +330,43 @@ void Schema::initGear(Gear * gear) const
   gear->internalInit();
 }
 
-
-MetaGear* Schema::addMetaGear(std::string name)
+MetaGear* Schema::newMetaGear()
 {
+  std::string name="MetaGear";
   return addMetaGear(name, getUniqueGearName(name));
+}
+
+MetaGear* Schema::addMetaGear(std::string filename)
+{
+  QFileInfo fileInfo(filename);
+  std::string name = fileInfo.baseName();
+
+  MetaGear *metaGear = new MetaGear(this, name, getUniqueGearName(name));
+
+  initGear(metaGear);
+
+  if (!metaGear->load(filename))
+  {
+    delete metaGear;
+    return NULL;
+  }
+  
+  _gears.push_back(metaGear);
+
+  return metaGear;
+}
+
+void Schema::renameMetaGear(MetaGear* metaGear, std::string newName)
+{
+  if (!metaGear)
+    return;
+  
+  metaGear->name(getUniqueGearName(newName));
 }
 
 MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
 {
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
-  //  metaGear->internalInit();
   initGear(metaGear);
   _gears.push_back(metaGear);
 
@@ -467,8 +495,7 @@ bool Schema::connect(Schema::Connection &connection)
      std::cout << "connectPlugs fail: " + connection.gearA() + " not found!" << std::endl;  
      return false;                                                                                
    }                                                                                        
-                                                                                            
-                                                                                            
+                                                                                                                                                                                        
    if ( (gearB=getGearByName(connection.gearB())) == NULL)                                        
    {                                                                                        
      std::cout << "connectPlugs fail: " + connection.gearB() + " not found!" << std::endl;  

@@ -72,6 +72,7 @@ HEADERS += config.h \
 GearListMenu.h \ 
 GearPropertiesDialog.h \
 MainWindow.h \
+MetaGearListMenu.h \
 #PreferencesDialog.h \
 PropertyControl.h \
 PropertyControlFilename.h \
@@ -86,6 +87,7 @@ SOURCES += drone.cpp \
 GearListMenu.cpp \ 
 GearPropertiesDialog.cpp \
 MainWindow.cpp \
+MetaGearListMenu.cpp \
 PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \

@@ -18,7 +18,7 @@
  */
 
 #include <qapplication.h>
-//#include <qsplashscreen.h>
+#include <qsplashscreen.h>
 #include "Timing.h"
 #include "splash.xpm"
 
@@ -34,23 +34,21 @@ QSettings globalSettings;
 
 int main(int argc, char** argv)
 {
-
   QApplication qtApp(argc, argv);
   QApplication::setGlobalMouseTracking(TRUE);
-
-  //globalSettings.setPath("drone", "drone");
-  
-  
-  //QSplashScreen splash(splash_xpm);
-  //splash.show();
+      
+  QSplashScreen splash(splash_xpm);
+  splash.show();
 
   MainWindow mainWindow;
+  mainWindow.adjustSize();
   qtApp.setMainWidget(&mainWindow);
 
   //temp just because it's too fast for now
   //Timing::sleep(500);
   //
 
+  splash.hide();
   mainWindow.show();
   
   if(argc>1)

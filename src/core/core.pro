@@ -93,6 +93,7 @@ GearConverter.h \
 GearMaker.h \
 Math.h \
 MetaGear.h \
+MetaGearMaker.h \
 MidiEngine.h \
 AbstractPlug.h \
 Plug.h \
@@ -122,6 +123,7 @@ types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
 MetaGear.cpp \
+MetaGearMaker.cpp \
 MidiEngine.cpp \
 AbstractPlug.cpp \
 PlugBox.cpp \

@@ -56,7 +56,6 @@ _sizeX(sizeX),
 _sizeY(sizeY),
 _inputsInterval(0),
 _outputsInterval(0),
-_title(pgear->name()),
 _boxNameColor(color)
 {
 
@@ -276,7 +275,7 @@ void GearGui::drawShape(QPainter &painter)
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);
   painter.setPen(Qt::white);
-  painter.drawText(startX, startY, _sizeX, NAME_SIZEY, Qt::AlignHCenter | Qt::AlignVCenter, _title.c_str());
+  painter.drawText(startX, startY, _sizeX, NAME_SIZEY, Qt::AlignHCenter | Qt::AlignVCenter, _gear->name().c_str());
 
   //plugs
   drawPlugBoxes(painter);

@@ -108,9 +108,36 @@ void SchemaGui::addGear(std::string type, int x, int y)
   update();
 }
 
-void SchemaGui::addMetaGear(std::string name, int x, int y)
+void SchemaGui::addMetaGear(std::string filename, int x, int y)
 {    
-  MetaGear *metaGear = _schema->addMetaGear(name);    
+  MetaGear *metaGear = _schema->addMetaGear(filename);    
+
+  if (metaGear==NULL)
+    return;
+  
+  GearGui *gearGui = metaGear->getGearGui();    
+
+  gearGui->setCanvas(this);    
+  gearGui->move(x,y);    
+  gearGui->setZ(0);
+  gearGui->show();
+  update();
+}
+
+void SchemaGui::renameMetaGear(GearGui *metaGearGui, std::string newName)
+{
+  if (!metaGearGui)
+    return;
+
+  if (!metaGearGui->gear()->isMeta())
+    return;
+  
+  _schema->renameMetaGear((MetaGear*)(metaGearGui->gear()), newName);
+}
+
+void SchemaGui::newMetaGear(int x, int y)
+{    
+  MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
 
   gearGui->setCanvas(this);    

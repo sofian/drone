@@ -30,6 +30,7 @@ react properly
 #define SCHEMAEDITOR_INCLUDED
 
 #include <qpopupmenu.h>
+#include <qfileinfo.h>
 #include <string>
 #include <vector>
 
@@ -40,6 +41,7 @@ class ConnectionItem;
 class Engine;
 class Schema;
 class GearListMenu;
+class MetaGearListMenu;
 
 class SchemaEditor : public QCanvasView
 {
@@ -61,18 +63,20 @@ public:
 
 public slots:
   void slotMenuGearSelected(QString name);
+  void slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
+  
+  //common slots
   void slotGearProperties();
   void slotGearDelete();
+  void slotNewMetaGear();
 
   //plug editing slots
   void slotPlugExpose();
   void slotPlugUnexpose();
   
   //metagear editing slots
-  void slotNewSchema();
-  void slotLoadSchema();
-  void slotSaveSchema();
-  void slotAddMetaGear();
+  void slotSaveMetaGear();
+
 
 protected:
 
@@ -107,10 +111,12 @@ private:
   //popupmenus  
   QPopupMenu *_contextMenu; 
   GearListMenu *_gearListMenu; 
+  MetaGearListMenu *_metaGearListMenu; 
   
   // position of right click in Canvas coordinates
   QPoint _contextMenuPos;  
   QPopupMenu *_gearContextMenu;
+  QPopupMenu *_metaGearContextMenu;
   QPopupMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop

@@ -55,8 +55,6 @@ GearMaker::~GearMaker()
 Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
 {
   std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
-
-  std::cout << "calling GearMaker::makeGear" <<std::endl;
   
   //be sure we have this gear
   if (it == _registry->end())

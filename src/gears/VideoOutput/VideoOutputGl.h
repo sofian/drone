@@ -50,6 +50,7 @@ private:
   QWidget *_parentWidget;
 
   bool _firstDraw;
+  RGBA _buffer[352*480];
 };
 
 //we need to create our own widget for the window containing the droneqglwidget

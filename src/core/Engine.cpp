@@ -112,6 +112,7 @@ void *Engine::playThread(void *parent)
 //     MidiEngine::getInstance().purgeAndGetNew();
 
     //process video
+    //std::cout << real_time << std::endl;
     if (real_time >= (currentFrame*_videoInfo.timePerFrame()*1000.0f))
     {
 

@@ -62,26 +62,9 @@ public:
   static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
   static void parseFrei0rPlugins();
-private:
+private:  
   static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
-  static GearMaker _registerMyself;  
-  static std::string droneGearsPath;
+  static GearMaker _registerMyself;   
 };
-
-/*
-#define Register_Gear(MMAKERNAME, MCLASSNAME, MTYPE) \
-class MMAKERNAME : public GearMaker \
-{ \
-public: \
-    MMAKERNAME() : GearMaker(MTYPE){}; \
-private: \
-    Gear* internalMakeGear(Schema *schema, std::string uniqueName) \
-    { \
-        return new MCLASSNAME(schema, uniqueName);\
-    } \
-    static MMAKERNAME _registerThis;\
-};\
-MMAKERNAME MMAKERNAME::_registerThis;
-*/
 
 #endif

@@ -1,4 +1,4 @@
-/* SchemaEditor.cpp
+/* MetaGearMaker.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,45 +17,31 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEARLISTMENU_INCLUDED
-#define GEARLISTMENU_INCLUDED
+#ifndef METAGEAR_MAKER_INCLUDED
+#define METAGEAR_MAKER_INCLUDED
 
-#include <qpopupmenu.h>
 #include <string>
 #include <vector>
-#include <map>
+#include <qdir.h>
+#include <qfileinfo.h>
 
-#include "SchemaGui.h"
+#include "MetaGear.h"
 
-class GearGui;
-class ConnectionItem;
-class Engine;
-class Schema;
-
-class GearListMenu : public QPopupMenu
+class MetaGearMaker  
 {
-  Q_OBJECT
 public:
-  GearListMenu(QWidget *parent);
-  
-  void create();
+  MetaGearMaker();
+  ~MetaGearMaker();
 
-signals:
-  //! emitted when a gear is selected, the name of the selected gear is given
-  void gearSelected(QString gearName);
-  
-public slots:
-  //!transform the activated(int) signal into a gearSelected(QString)
-  void slotMenuItemSelected(int id) { emit gearSelected(text(id));}  
-  
-  //!used to foward gearSelected signal to parent menu
-  void slotGearSelected(QString gearName) { emit gearSelected(gearName);}
-  
+  static const std::string METAGEAR_PATH;
 
+  static MetaGear* makeMetaGear(Schema *schema, std::string type, std::string uniqueName);
+  static const std::vector<QFileInfo*> &getAllMetaGearsPath();
+  static void parseMetaGears();  
+  static void parseSubDirs(QDir dir);
 private:
-  GearListMenu *addSubMenu(std::string name);
-
-  std::map<std::string, GearListMenu*> _subMenus;
+  static std::vector<QFileInfo*> *_registry;//!qfileinfo  containing relative path to metagears
+  static MetaGearMaker _registerMyself;  
 };
 
 #endif
