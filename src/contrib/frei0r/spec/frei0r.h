@@ -1,5 +1,4 @@
-
-/** \file
+/** \mainpage frei0r - a minimalistic plugin API for video effects
  * This is frei0r - a minimalistic plugin API for video effects.
  *
  * The main emphasis is on simplicity - there are many different applications
@@ -18,6 +17,13 @@
  * applications and more complex effects (like multiple inputs, multiple
  * outputs, different color models, keyframing, ...).
  *
+ */
+
+/** \file
+ * \brief This file defines the frei0r api.
+ *
+ * A conforming plugin must implement and
+ * export all functions declared in this header.
  */
 
 #ifndef INCLUDED_FREI0R_H
