@@ -51,7 +51,7 @@ public:
   
   void fill(T value)
   {
-    for (T *it = _data; it != _data+_size; ++it)
+    for (T *it = _data; it != _data+_size;)
       *it++ = value;
   }
 
