@@ -22,6 +22,8 @@
 #include "GearMaker.h"
 #include "Engine.h"
 
+#include "ThreadUtil.h"
+
 
 Register_Gear(MAKERGear_AudioOutput, Gear_AudioOutput, "AudioOutput")
 
@@ -56,6 +58,9 @@ _readIndex(0)
   else
     std::cout << "init PortAudio...done" << std::endl;
 
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
+
 }
 
 Gear_AudioOutput::~Gear_AudioOutput()
@@ -66,6 +71,8 @@ Gear_AudioOutput::~Gear_AudioOutput()
     Pa_CloseStream(_stream);
   }
   Pa_Terminate();
+  
+  pthread_mutex_destroy(_mutex);
 
 }
 
@@ -90,6 +97,8 @@ void Gear_AudioOutput::onUpdateSettings()
 
 void Gear_AudioOutput::runAudio()
 {
+  ScopedLock scopedLock(_mutex);
+  
   const float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();
   
@@ -167,6 +176,8 @@ int Gear_AudioOutput::portAudioCallback(void *, void *output_buffer, unsigned lo
 {
   Gear_AudioOutput *parent = (Gear_AudioOutput*)user_data;
     
+  ScopedLock scopedLock(parent->_mutex);
+
   SignalType& lbuffer = parent->_lBuffer;
   int& lindex = parent->_lBufferIndex;
   

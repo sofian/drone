@@ -61,6 +61,10 @@ public:
 
   void scheduleGearUpdateSettings(Gear *gear);
 
+#ifdef SINGLE_THREADED_PLAYBACK  
+  void debugStartPlay();
+  void debugStopPlay();
+#endif
 
 protected:
 

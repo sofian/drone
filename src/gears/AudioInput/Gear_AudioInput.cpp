@@ -22,6 +22,8 @@
 #include "GearMaker.h"
 #include "Engine.h"
 
+#include "ThreadUtil.h"
+
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
@@ -70,6 +72,9 @@ Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) :
   else
     std::cout << "init PortAudio...done" << std::endl;
 
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
+
 }
 
 Gear_AudioInput::~Gear_AudioInput()
@@ -80,6 +85,8 @@ Gear_AudioInput::~Gear_AudioInput()
     Pa_CloseStream(_stream);
   }
   Pa_Terminate();
+
+  pthread_mutex_destroy(_mutex);
 }
 
 bool Gear_AudioInput::ready()
@@ -103,12 +110,13 @@ void Gear_AudioInput::onUpdateSettings()
 
 void Gear_AudioInput::runAudio()
 {
-  float *left_buffer = _AUDIO_OUT_LEFT->type()->data();
-  //SignalType right_buffer  = _AUDIO_OUT_RIGHT->type();
-  int signal_blocksize = Engine::signalInfo().blockSize();
+  ScopedLock scopedLock(_mutex);
 
+  float *left_buffer = _AUDIO_OUT_LEFT->type()->data();
+  int signal_blocksize = Engine::signalInfo().blockSize();
+  
   for (int i=0; i<signal_blocksize; i++)
-    left_buffer[i] = _lBuffer[_readIndex++];
+    left_buffer[i] = _lBuffer[_readIndex++];    
 
   _readIndex %= _ringBufferSize;    
 
@@ -180,9 +188,11 @@ void Gear_AudioInput::postPlay()
 
 int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long frames_per_buffer,
                                        PaTimestamp, void *user_data)
-{
+{  
   Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
         
+  ScopedLock scopedLock(parent->_mutex);
+
   SignalType& lbuffer = parent->_lBuffer;
   int& lindex = parent->_lBufferIndex;
   

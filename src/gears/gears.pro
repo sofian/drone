@@ -32,7 +32,8 @@ SignalStat \
 SmearGrid \
 VideoDelay \
 VideoLoop \
-ImageShuffle
+ImageShuffle \
+Invert
 
 #linux specific gears
 unix:!macx:SUBDIRS += VideoInput AudioInput

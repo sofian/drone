@@ -1,4 +1,4 @@
-CONFIG += debug
+CONFIG += release p4
 
 # User-dependent includes
 

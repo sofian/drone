@@ -1,5 +1,7 @@
 include (../config.pro)
 
+CONFIG += thread
+
 TEMPLATE=lib
 SOURCES+=Gear_AudioInput.cpp
 HEADERS+=Gear_AudioInput.h

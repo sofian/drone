@@ -148,6 +148,12 @@ private:
   friend void *Engine::playThread(void *parent);
   friend bool Schema::load(QDomElement& parent);
   friend bool Schema::save(QDomDocument& doc, QDomElement &parent);
+
+  #ifdef SINGLE_THREADED_PLAYBACK  
+  friend void Engine::debugStartPlay();
+  friend void Engine::debugStopPlay();
+  #endif
+
 };
 
 extern "C" {

@@ -79,6 +79,7 @@ private:
   static int portAudioCallback(void *input_buffer, void *, unsigned long frames_per_buffer,
                                PaTimestamp, void *user_data);
 
+  pthread_mutex_t *_mutex;
 };
 
 #endif

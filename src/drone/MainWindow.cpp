@@ -149,7 +149,8 @@ void MainWindow::slotPlay(bool play)
     #ifndef SINGLE_THREADED_PLAYBACK    
     _engine->startPlaying();
     #else
-      timerId=startTimer(10);
+    _engine->debugStartPlay();  
+    timerId=startTimer(10);
     #endif
   } 
   else
@@ -158,7 +159,8 @@ void MainWindow::slotPlay(bool play)
     #ifndef SINGLE_THREADED_PLAYBACK    
     _engine->stopPlaying();    
     #else
-      killTimer(timerId);
+     killTimer(timerId);
+     _engine->debugStopPlay();  
     #endif
   }
 }

@@ -33,7 +33,7 @@ const std::string Properties::XML_TAGNAME = "Properties";
 
 void Property::valueStr(std::string value)
 {
-  _value.clear();
+  _value.clear();  
   _value.push_back(value);
 }
 
@@ -74,7 +74,7 @@ int Property::valueInt()
 }
 
 float Property::valueFloat()
-{
+{    
   return atof(_value[0].c_str());
 }
 
@@ -120,10 +120,7 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
 
   QDomAttr propertieAttr;
   for (std::map<std::string, Property*>::iterator it = _properties.begin(); it != _properties.end(); ++it)
-  {
-    std::cout << it->second->name() << std::endl;
-    //we need to replace whitespaces with another char for xml attributes
-    
+  {    
     // to save string lists, we save each value the format property_name[index]
     const std::vector<std::string> &lst = it->second->valueStrList();
     if(lst.size()>1)
@@ -166,29 +163,23 @@ void Properties::load(QDomElement &parentElem)
     QString name = QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT);
     std::ostringstream oss;
     // to save string lists, we save each value the format name[index]
-    // we start by checking if there is a property named prop[0], in which case we expect a string list
+    // we start by checking if there is a property named prop0, in which case we expect a string list
     bool exists=true;
     int index=0;
     std::vector<std::string> strlist;
     for(;exists; index++)
     {
       std::ostringstream oss;
-      oss<<name<<index;
-      std::cout<<"looking for : "<<oss.str()<<std::endl;
+      oss<<name<<index;      
       QString value = propertiesElem.attribute(oss.str().c_str());
+      
       if(value==QString::null)
-      {
-        exists=false;
-        std::cout<<"not found !"<<std::endl;
-      }
+        exists=false;      
       else
-      {
         strlist.push_back(value.ascii());
-        std::cout<<"found !"<<std::endl;
-      }
-
     }
-    if(index==0)
+
+    if(index==1)//if it was not a stringlist, simply get the propertie value
       it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
     else
       it->second->valueStrList(strlist);

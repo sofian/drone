@@ -44,7 +44,7 @@ Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(sche
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgO"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127, 0, 255)));
 
   EnumType *mixFunc = new EnumType(N_VIDEOMIX_TYPES, BLEND);
@@ -119,7 +119,8 @@ void Gear_VideoMix::runVideo()
   _dataA = _imageA->data();
   _dataB = _imageB->data();
   _outData = _outImage->data();
-  memset(_outData, 0, _outImage->size()*sizeof(RGBA));
+  
+  //memset(_outData, 0, _outImage->size()*sizeof(RGBA));
 
   int amount = CLAMP((int)_AMOUNT_IN->type()->value(), 0, 255);
   switch (_mixType)

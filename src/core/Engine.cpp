@@ -88,12 +88,13 @@ void *Engine::playThread(void *parent)
 
   engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
 
-  for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
-    (*it)->internalPrePlay();
 
   int currentFrame = 0;
 
 #ifndef SINGLE_THREADED_PLAYBACK
+  for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
+    (*it)->internalPrePlay();
+  
   while (engine->_playing)
   {
 #endif    
@@ -151,15 +152,34 @@ void *Engine::playThread(void *parent)
 	engine->performScheduledGearUpdateSettings();
 #ifndef SINGLE_THREADED_PLAYBACK  
   }
+  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
+    (*it)->internalPostPlay();
+
 #endif               
                                                                          
   
-  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
-    (*it)->internalPostPlay();
 
 
   return NULL;
 }
+
+
+#ifdef SINGLE_THREADED_PLAYBACK  
+
+void Engine::debugStartPlay()
+{
+  _orderedGears = _mainSchema.getDeepOrderedReadyGears();
+  for (std::list<Gear*>::iterator it=_orderedGears.begin();it!=_orderedGears.end();++it)
+    (*it)->internalPrePlay();
+}
+
+void Engine::debugStopPlay()
+{
+  _orderedGears = _mainSchema.getDeepOrderedReadyGears();
+  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
+    (*it)->internalPostPlay();
+}
+#endif
 
 void Engine::scheduleGearUpdateSettings(Gear *gear)
 {
