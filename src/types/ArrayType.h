@@ -34,7 +34,7 @@ public:
   {
     addSubType(_typeSize);
     resize(size);
-    std::fill(begin(), end(), fillValue);
+    fill(fillValue);
   }
 
   virtual ~ArrayType() {}
