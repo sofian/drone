@@ -70,8 +70,8 @@ public:
    */
   reference operator()(size_type x, size_type y) const
   {
-    ASSERT_ERROR(0 <= x && x < width());
-    ASSERT_ERROR(0 <= y && y < height());
+    ASSERT_ERROR(x < width());
+    ASSERT_ERROR(y < height());
     return _rows[y][x];
   }
 
