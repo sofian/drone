@@ -126,16 +126,14 @@ void Gear_ClusteredDither::runVideo()
   iterData = (unsigned char*) _data;
   iterOutData = (unsigned char*) _outData;
 
-  //  MatrixType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
-   MatrixType<std::pair<int, int> >::iterator
+  MatrixType<std::pair<int, int> >::iterator
     rIt = _rChannel[0].begin(),
     gIt = _rChannel[1].begin(),
     bIt = _rChannel[2].begin();
   
   for (int y=0; y<_sizeY; ++y)
   {
-     for (int x=0; x<_sizeX; ++x, ++rIt, ++gIt, ++bIt)
-       //    for (int x=0; x<_sizeX; ++x, ++rIt, ++thetaIt)
+    for (int x=0; x<_sizeX; ++x, ++rIt, ++gIt, ++bIt)
     {
       *iterOutData++ = getValue(*iterData++, rIt->first, rIt->second);
       *iterOutData++ = getValue(*iterData++, gIt->first, gIt->second);

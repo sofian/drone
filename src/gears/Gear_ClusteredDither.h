@@ -11,21 +11,32 @@
 #include <algorithm>
 #include <map>
 
-// XXX indiquer la source (c.f. sur le wiki)
+/**
+ * This class implements an optimized version of the newsprint plugin for the Gimp
+ * (see http://www.cl.cam.ac.uk/~and1000/newsprint/index.html). It simulates a dot
+ * matrix printer.
+ *
+ * @author Jean-Sébastien Senécal
+ * version %I% %G%
+ */
 
 class Gear_ClusteredDither : public Gear
 {
+  //! The spot type of the printer.
   enum eSpotType
   {
     SQUARE, DIAMOND, ROUND, LINE
   };
 
+  // Internal use.
   typedef std::pair<int, float> Order;
   static bool less(const Order& a, const Order& b) { return(a.second < b.second);}
 
 public:
-
+  //! Default constructor.
   Gear_ClusteredDither(Engine *engine, std::string name);
+
+  // Destructor.
   virtual ~Gear_ClusteredDither();
 
   void runVideo();
@@ -38,15 +49,28 @@ protected:
   void onUpdateSettings();
 
 private:
+  //! Video input.
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+
+  //! Video output.
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
+
+  //! The size of the cluster.
   PlugIn<ValueType> *_CLUSTER_SIZE_IN;
+
+  //! The type of printer.
   PlugIn<ValueType> *_SPOT_TYPE_IN;
+
+  //! The angle for the red channel, in degrees.
   PlugIn<ValueType> *_ANGLE_RED_IN;
+
+  //! The angle for the green channel, in degrees.
   PlugIn<ValueType> *_ANGLE_GREEN_IN;
+  
+  //! The angle for the blue channel, in degrees.
   PlugIn<ValueType> *_ANGLE_BLUE_IN;
 
-  //local var
+  // Internal use.
   const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
   const RGBA *_data;
@@ -68,12 +92,14 @@ private:
 
   double _angle[SIZE_RGB];
 
-  Matrix<double> _r;     // precomputed r
-  // precomputed thetas
+  // Precomputed r.
+  Matrix<double> _r;
+  
+  // Precomputed thetas.
   Matrix<double> _theta;
   Matrix<std::pair<int, int> > _rChannel[SIZE_RGB];
 
-  //! Internal use (updates various components that hold precomputed data).
+  // Internal use (updates various components that hold precomputed data).
   void updateThreshold();
   void updatePolarCoordinates();
   void updateAngle(int channel);
