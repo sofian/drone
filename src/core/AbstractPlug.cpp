@@ -94,33 +94,22 @@ bool AbstractPlug::connect(AbstractPlug *plug)
   if(plug->inOut() == IN)
     plug->exposed(false);
 
-  //ajouter la nouvelle plug a nos connections
-  _connectedPlugs.push_back(plug);
-  plug->_connectedPlugs.push_back(this);
-
-  _parent->onPlugConnected(this, plug);
-  plug->_parent->onPlugConnected(plug, this);
-
   AbstractPlug * deepestPlug = 0;
   for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
   if(deepestPlug != this)
     deepestPlug->_connectedPlugs.push_back(plug);
-//   if(_forwardPlug)
-//   {
-//     _forwardPlug->_connectedPlugs.push_back(plug);
-//   }
 
   AbstractPlug * deepestOtherPlug = 0;
   for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.push_back(this);
 
+  //ajouter la nouvelle plug a nos connections
+  _connectedPlugs.push_back(plug);
+  plug->_connectedPlugs.push_back(this);
 
-//  if(plug->_forwardPlug)
-//  {
-//    plug->_forwardPlug->_connectedPlugs.push_back(this);
-//  }
-
+  _parent->onPlugConnected(this, plug);
+  plug->_parent->onPlugConnected(plug, this);
 
   //laisser la chance au class derive d'executer leur logique supplementaire
   onConnection(plug);
@@ -155,28 +144,17 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
 
   //remove this plug from our connections
   _connectedPlugs.remove(plug);
-  //remove ourself from the other plug connections
-  plug->_connectedPlugs.remove(this);
-
-
   AbstractPlug * deepestPlug = 0;
   for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
   if(deepestPlug != this)
     deepestPlug->_connectedPlugs.remove(plug);
-//   if(_forwardPlug)
-//   {
-//     _forwardPlug->_connectedPlugs.remove(plug);
-//   }
 
+  //remove ourself from the other plug connections
+  plug->_connectedPlugs.remove(this);
   AbstractPlug * deepestOtherPlug = 0;
   for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.remove(this);
-/*
-  if(plug->_forwardPlug)
-  {
-    plug->_forwardPlug->_connectedPlugs.remove(this);
-  }*/
 
   //tell the gear that disconnection have been made and that we need synch
   _parent->unSynch();

@@ -84,19 +84,18 @@ public:
   virtual ~PlugIn()
   {}
 
-  virtual void onConnection(AbstractPlug *plug);
-//   {
-//     std::cout << "PlugIn::onConnection : connecting " << this->name() << " with " << plug->name();
-//     // for other plug
-//     AbstractPlug * deepestOtherPlug = 0;
-//     for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
-//
-//     // for this plug
-//     AbstractPlug * deepestPlug = 0;
-//     for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
-//
-//     dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(dynamic_cast<PlugIn<T>*>(deepestOtherPlug)->abstractType()));
-//   }
+  virtual void onConnection(AbstractPlug *plug)
+  {
+    // for other plug
+    AbstractPlug * deepestOtherPlug = 0;
+    for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
+
+    //for this plug
+    AbstractPlug * deepestPlug = 0;
+    for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+
+    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(deepestOtherPlug->abstractType()));
+  }
 
   virtual void onDisconnection(AbstractPlug *)
   {
@@ -143,21 +142,5 @@ private:
   const T *_type;
   T *_internalType;
 };
-
-template<class T>
-void PlugIn<T>::onConnection(AbstractPlug *plug)
-{
-  std::cout << "PlugIn::onConnection : connecting " << this->name() << " with " << plug->name();
-
-  // for other plug
-  AbstractPlug * deepestOtherPlug = 0;
-  for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
-
-  //for this plug
-  AbstractPlug * deepestPlug = 0;
-  for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
-
-  dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(deepestOtherPlug->abstractType()));
-}
 
 #endif  //  __PLUG_INCLUDED
