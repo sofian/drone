@@ -20,7 +20,7 @@ debug {
 # Optimized settings
 release {
   OBJECTS_DIR = release
-  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
+  unix:!macx:QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }
@@ -43,13 +43,14 @@ INCLUDEPATH += ../core ../core/types
 macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+macx:TARGET = ../../drone.app/Contents/MacOS/drone
 
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
 unix:!macx:LIBS += -L../../lib -ldroneCore
 
 
-TARGET = ../../drone
+unix:!macx:TARGET = ../../drone
 
 
 HEADERS += config.h \

@@ -146,6 +146,7 @@ void *Engine::playThread(void *parent)
     blockIt++;
 
     engine->_mainSchema.unlock();
+	engine->performScheduledGearUpdateSettings();
 #ifndef SINGLE_THREADED_PLAYBACK  
   }
 #endif               
@@ -169,8 +170,9 @@ void Engine::scheduleGearUpdateSettings(Gear *gear)
 void Engine::performScheduledGearUpdateSettings()
 {
   for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)  
-    (*it)->updateSettings();
-      
+  {
+	  (*it)->updateSettings();
+  }   
   _scheduledsGearUpdateSettings.clear();
 }
 

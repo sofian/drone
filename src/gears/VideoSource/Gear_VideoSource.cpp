@@ -50,7 +50,7 @@ Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) :
   
   addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
   
-  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, NORMAL);
+  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, LOOP);
   playbackMode->setLabel(NORMAL,"Normal");
   playbackMode->setLabel(LOOP,"Loop");
   addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));

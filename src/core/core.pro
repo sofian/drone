@@ -20,7 +20,7 @@ debug {
 # Optimized settings
 release {
   OBJECTS_DIR = release
-  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
+  unix:!macx:QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }

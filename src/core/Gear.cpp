@@ -61,7 +61,7 @@ void Gear::internalInit()
 {
   std::cout << "__________________________________________" << std::endl;
   std::cout << _Type << std::endl;
-  std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
+  std::cout << "------------------------------------------" << std::endl;
 
   for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
     (*it)->init();

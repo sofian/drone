@@ -4,7 +4,7 @@ TV \
 Oscilloscope \
 #VideoOutput \
 Blur \
-#VideoSource \
+VideoSource \
 Slider \
 #AudioInput \
 KDTree\ 
