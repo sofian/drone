@@ -32,7 +32,7 @@ Register_Gear(MAKERGear_Gain, Gear_Gain, "Gain")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_Gain::Gear_Gain(Engine *engine, std::string name) : Gear(engine, "Gain", name)
+Gear_Gain::Gear_Gain(Schema *schema, std::string uniqueName) : Gear(schema, "Gain", uniqueName)
 {
 
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));

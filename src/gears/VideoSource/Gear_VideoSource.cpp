@@ -24,9 +24,9 @@
 #include "GearMaker.h"
    
 extern "C" {           
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_VideoSource(engine,name);
+  return new Gear_VideoSource(schema, uniqueName);
 }  
 GearInfo getGearInfo()
 {
@@ -39,8 +39,8 @@ GearInfo getGearInfo()
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : 
-  Gear(engine, "VideoSource", name),
+Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "VideoSource", uniqueName),
  _file(NULL),
  _sizeX(0),
  _sizeY(0)

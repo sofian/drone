@@ -27,9 +27,9 @@
 #include "Math.h"
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_Blur(engine,name);
+  return new Gear_Blur(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Blur::Gear_Blur(Engine *engine, std::string name) : Gear(engine, "Blur", name)
+Gear_Blur::Gear_Blur(Schema *schema, std::string uniqueName) : Gear(schema, "Blur", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

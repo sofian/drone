@@ -26,8 +26,8 @@ template <class TypeIn, class TypeOut>
 class GearConverter : public Gear
 {
 public:
-  GearConverter(Engine *engine, std::string type, std::string name)
-    : Gear(engine, type, name)
+  GearConverter(Schema *schema, std::string type, std::string uniqueName)
+    : Gear(schema, type, uniqueName)
   {
     addPlug(_PLUG_IN  = new PlugIn<TypeIn>(this, "In"));
     addPlug(_PLUG_OUT = new PlugOut<TypeOut>(this, "Out"));

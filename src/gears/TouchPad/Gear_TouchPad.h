@@ -34,7 +34,7 @@ public:
   static const std::string SETTING_VERTICAL_LOWERBOUND;
   static const std::string SETTING_VERTICAL_HIGHERBOUND;
 
-  Gear_TouchPad(Engine *engine, std::string name);
+  Gear_TouchPad(Schema *schema, std::string uniqueName);
   virtual ~Gear_TouchPad();
 
   void save(QDomDocument &doc, QDomElement &gearElem);

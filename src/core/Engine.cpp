@@ -27,12 +27,11 @@
 
 SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
-
+Time_T Engine::_currentTime=0.0;
 
 Engine::Engine(int hwnd) : 
   _hWnd(hwnd),
   _averageLoad(0.0f),
-  _currentTime(0.0),
   _playing(false),
   _graphSynched(false)
 
@@ -156,25 +155,6 @@ void *Engine::playThread(void *parent)
 
 
   return NULL;
-}
-
-void Engine::clearMainSchema()
-{
-  stopPlaying(); 
-  _mainSchema.clear();
-}
-
-void Engine::loadMainSchema(std::string filename)
-{
-  clearMainSchema();
-  _mainSchema.load(this, filename);
-}
-
-void Engine::saveMainSchema(std::string filename)
-{
-//TODO : make a scheduled save to allow synch  
-//performAllScheduledTask();
-  _mainSchema.save(filename);
 }
 
 void Engine::scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB)

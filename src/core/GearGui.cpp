@@ -29,7 +29,7 @@
 #include <qdom.h>
 
 const int GearGui::CANVAS_RTTI_GEAR = 2000;
-const int GearGui::DEFAULT_SIZEX = 120;
+const int GearGui::DEFAULT_SIZEX = 125;
 
 const int GearGui::NAME_SIZEY = 20;
 const int GearGui::PLUGBOXES_NOMINAL_INTERVAL = 16;
@@ -39,11 +39,10 @@ const int GearGui::SHADOW_OFFSET = 4;
 const QColor GearGui::BOX_COLOR(207,207,209);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
-const QColor GearGui::METABOXNAME_COLOR(60,31,0);
-const QFont GearGui::NAME_FONT("system", 8, QFont::Bold);
+const QFont GearGui::NAME_FONT("system", 10, QFont::Bold);
 
 
-GearGui::GearGui(Gear *pgear, QCanvas *canvas, int sizeX, int sizeY, int updateRate) :
+GearGui::GearGui(Gear *pgear, QCanvas *canvas, QColor color, int sizeX, int sizeY, int updateRate) :
 QCanvasRectangle(canvas),
 QObject(),
 _gear(pgear),
@@ -51,7 +50,8 @@ _sizeX(sizeX),
 _sizeY(0),
 _inputsInterval(0),
 _outputsInterval(0),
-_title(pgear->name())
+_title(pgear->name()),
+_boxNameColor(color)
 {
 
   if (updateRate>=0)
@@ -64,7 +64,7 @@ _title(pgear->name())
 
   for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
   {
-    plugBox = new PlugBox(*it, this, _gear->engine());
+    plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _inputPlugBoxes.push_back(plugBox);
   }
@@ -75,7 +75,7 @@ _title(pgear->name())
 
   for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
   {
-    plugBox = new PlugBox(*it, this, _gear->engine());
+    plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _outputPlugBoxes.push_back(plugBox);
   }
@@ -180,11 +180,8 @@ void GearGui::drawShape(QPainter &painter)
   painter.drawRoundRect(startX, startY, _sizeX, _sizeY);
 
   //name
-  painter.setPen(Qt::black);
-  if(!_gear->isMeta())
-    painter.setBrush(BOXNAME_COLOR);
-  else
-    painter.setBrush(METABOXNAME_COLOR);
+  painter.setPen(Qt::black);  
+  painter.setBrush(_boxNameColor);
 
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);
@@ -207,7 +204,7 @@ PlugBox* GearGui::plugHitted(const QPoint &p)
   return NULL;
 }
 
-void GearGui::performPlugHighligthing(const QPoint &p, PlugBox *onlyCompatibleWith)
+void GearGui::performPlugHighligthing(const QPoint &p)
 {
   PlugBox *plugbox;
 
@@ -217,21 +214,32 @@ void GearGui::performPlugHighligthing(const QPoint &p, PlugBox *onlyCompatibleWi
     plugbox = *it;
 
     if (plugbox->hitted(p.x(), p.y()))
-    {      
-      if (onlyCompatibleWith!=NULL) //perform compatibility test?
-      {
-        if (plugbox->canConnectWith(onlyCompatibleWith))
-          plugbox->hilight(true);
-        else
-          plugbox->hilight(false);
-      } else
-        plugbox->hilight(true);
-
-    } else
+       plugbox->hilight(true);
+    else
       plugbox->hilight(false);
   }
 
   //we need to repaint ourself
+  reDraw();
+}
+
+void GearGui::performPlugHighligthing(PlugBox *plugBox)
+{
+  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)  
+    if ((*it)!=plugBox)    
+      (*it)->hilight(false);
+  
+   if (plugBox)
+     plugBox->hilight(true);
+  
+ reDraw();
+}
+
+void GearGui::unHilightAllPlugBoxes()
+{
+  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
+    (*it)->hilight(false);
+
   reDraw();
 }
 

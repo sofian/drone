@@ -29,7 +29,7 @@
 
 Register_Gear(MAKERGear_Rescale, Gear_Rescale, "Rescale")
 
-Gear_Rescale::Gear_Rescale(Engine *engine, std::string name) : Gear(engine, "Rescale", name)
+Gear_Rescale::Gear_Rescale(Schema *schema, std::string uniqueName) : Gear(schema, "Rescale", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

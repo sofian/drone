@@ -30,7 +30,7 @@ class Gear_PlaceArea : public Gear
 {
 public:
 
-  Gear_PlaceArea(Engine *engine, std::string name);
+  Gear_PlaceArea(Schema *schema, std::string uniqueName);
   virtual ~Gear_PlaceArea();
 
   void init();

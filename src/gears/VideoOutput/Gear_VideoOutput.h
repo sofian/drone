@@ -30,7 +30,7 @@ class Gear_VideoOutput : public Gear
 {
 public:
 
-  Gear_VideoOutput(Engine *engine, std::string name);
+  Gear_VideoOutput(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoOutput();
 
   void prePlay();

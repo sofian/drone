@@ -29,7 +29,7 @@ class Gear_VideoAdd : public Gear
 {
 public:
 
-  Gear_VideoAdd(Engine *engine, std::string name);
+  Gear_VideoAdd(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoAdd();
 
   void runVideo();  bool ready();

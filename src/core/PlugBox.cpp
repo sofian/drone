@@ -20,7 +20,6 @@
 #include "PlugBox.h"
 #include "GearGui.h"
 #include "Plug.h"
-#include "Engine.h"
 #include "ConnectionItem.h"
 
 #include <iostream>
@@ -30,15 +29,13 @@
 const int PlugBox::PLUGBOX_SIZE = 10;
 const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_SIZE - 2;
 const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_SIZE / 2;
-const QFont PlugBox::SHORTNAME_FONT(QFont("system", 8, QFont::Normal));
-const QFont PlugBox::SHORTNAME_FONT_BOLD(QFont("system", 8, QFont::Bold));
+const QFont PlugBox::SHORTNAME_FONT(QFont("system", 9, QFont::Normal));
 const int PlugBox::MAX_HILIGHTSCALING = 2;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
 
-PlugBox::PlugBox(AbstractPlug *plug, GearGui* gearGui, Engine *engine) : 
+PlugBox::PlugBox(AbstractPlug *plug, GearGui* gearGui) : 
 _plug(plug), 
 _gearGui(gearGui),     
-_engine(engine),
 _x(0), 
 _y(0), 
 _status(NORMAL), 
@@ -69,11 +66,13 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
     painter.drawRect(_x, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);
   else
     painter.drawRect(_x - _hilightScaling*2, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);    
+  
+  painter.setFont(SHORTNAME_FONT);  
 
   if (_status==HILIGHTED)
-    painter.setFont(SHORTNAME_FONT_BOLD);
+    painter.setPen(Qt::blue);
   else
-    painter.setFont(SHORTNAME_FONT);
+    painter.setPen(Qt::black);
 
   //align text left or right if In or Out
   if (_plug->inOut() == IN)
@@ -112,19 +111,12 @@ void PlugBox::hilight(bool hiLight)
 void PlugBox::doHilight()
 {    
   _hilightScaling = MAX_HILIGHTSCALING;
-  //_gearGui->reDraw();
 }
 
 void PlugBox::doUnlight()
 { 
-  _hilightScaling = 0;
-  //_gearGui->reDraw();
+  _hilightScaling = 0;  
 }
-
-/* bool PlugBox::canStartConnection()      */
-/* {                                       */
-/*     return _plug->canStartConnection(); */
-/* }                                       */
 
 bool PlugBox::canConnectWith(PlugBox *plugBox)
 {
@@ -134,60 +126,58 @@ bool PlugBox::canConnectWith(PlugBox *plugBox)
   //we will only perform type checking, because we dont
   //we want the test to refuse multiple connection per inputs.
   //multiple connection per inputs will be handled in
-  //connect where we will disconnect before creating the
+  //SchemaGui::connect where we will disconnect before creating the
   //new connection
   return _plug->canConnect(plugBox->plug(), true);        
 
 }
 
-bool PlugBox::connect(PlugBox *plugBox, ConnectionItem *connectionItem)
+bool PlugBox::connect(PlugBox *plugBox)
 {
-  if (plugBox==NULL)
+  if (!plugBox)
     return false;
 
-  //in the case of an input that is already
-  //connected, we first need to disconnect
-  if (_plug->inOut() == IN && _plug->connected())
-  {
-    //we can only have exactly one connection per Input plug, otherwise something bad is going on
-    assert(_connectionItems.size() == 1);
-    //destructor of ConnectionItem take care of PlugBox disconnection
-    disconnect(_connectionItems[0]);
-  } else if (plugBox->_plug->inOut() == IN && plugBox->_plug->connected())
-  {
-    //we can only have exactly one connection per Input plug, otherwise something bad is going on
-    assert(plugBox->_connectionItems.size() == 1);
-    //destructor of ConnectionItem take care of PlugBox disconnection
-    disconnect(plugBox->_connectionItems[0]);
-  }
+  //create a connection item to represent this connection in the schemaGui
+  ConnectionItem *connectionItem = new ConnectionItem(_gearGui->canvas());
+  connectionItem->setSourcePlugBox(this);
+  connectionItem->setDestPlugBox(plugBox);
+  connectionItem->show();
 
+  //give the new connection item to both plugBox
   _connectionItems.push_back(connectionItem);
   plugBox->_connectionItems.push_back(connectionItem);
-
-  _engine->scheduleConnection(_plug, plugBox->plug());
 
   return true;
 }
 
-void PlugBox::assignConnectionOnly(PlugBox *plugBox, ConnectionItem *connectionItem)
-{
-  _connectionItems.push_back(connectionItem);
-  plugBox->_connectionItems.push_back(connectionItem);
-}
-
-void PlugBox::disconnect(ConnectionItem *connectionItem, bool deleteConnectionItem)
-{
-  std::vector<ConnectionItem*> *srcConnectionItems = &(connectionItem->sourcePlugBox()->_connectionItems);
-  std::vector<ConnectionItem*> *dstConnectionItems = &(connectionItem->destPlugBox()->_connectionItems);
+void PlugBox::disconnect(PlugBox *plugBox)
+{  
+  //find the corresponding connectionItem
+  ConnectionItem *connectionItem=0;
+  for (std::vector<ConnectionItem*>::iterator it=_connectionItems.begin(); it!=_connectionItems.end();++it)
+  {
+    if ( (((*it)->sourcePlugBox()==this) && ((*it)->destPlugBox()==plugBox)) ||
+         (((*it)->sourcePlugBox()==plugBox) && ((*it)->destPlugBox()==this)))
+    {
+      connectionItem=(*it);
+      break;
+    }
+  }
+  
+  //we are not connected to this plugBox
+  //return
+  if (!connectionItem)
+    return;
+  
+  //remove connectionItems from both plugboxes
+  std::vector<ConnectionItem*> *srcConnectionItems = &(_connectionItems);
+  std::vector<ConnectionItem*> *dstConnectionItems = &(plugBox->_connectionItems);
 
   srcConnectionItems->erase(std::remove(srcConnectionItems->begin(), srcConnectionItems->end(), connectionItem), srcConnectionItems->end());
   dstConnectionItems->erase(std::remove(dstConnectionItems->begin(), dstConnectionItems->end(), connectionItem), dstConnectionItems->end());
 
-  _engine->scheduleDisconnection(connectionItem->sourcePlugBox()->plug(), connectionItem->destPlugBox()->plug());        
-
-  if (deleteConnectionItem)
-    delete connectionItem;
-
+  //delete the connectionItem
+  delete connectionItem;
 }
 
 void PlugBox::disconnectAll()
@@ -197,7 +187,9 @@ void PlugBox::disconnectAll()
   while (!_connectionItems.empty())
   {
     connectionItem = _connectionItems.back();        
-    disconnect(connectionItem);        
+        
+    //by disconnection we will empty the _connectionItems vector
+    connectionItem->sourcePlugBox()->disconnect(connectionItem->destPlugBox());    
   }
 }
 

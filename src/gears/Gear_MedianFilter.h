@@ -38,7 +38,7 @@ class Gear_MedianFilter : public Gear
 {
 public:
   //! Default constructor.
-  Gear_MedianFilter(Engine *engine, std::string name);
+  Gear_MedianFilter(Schema *schema, std::string uniqueName);
 
   // Destructor.
   virtual ~Gear_MedianFilter();

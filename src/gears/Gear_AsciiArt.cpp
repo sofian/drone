@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_AsciiArt, Gear_AsciiArt, "AsciiArt")
 
-Gear_AsciiArt::Gear_AsciiArt(Engine *engine, std::string name) : Gear(engine, "AsciiArt", name)
+Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) : Gear(schema, "AsciiArt", uniqueName)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");

@@ -25,8 +25,10 @@
 #include "Schema.h"
 
 class GearGui;
+class PlugBox;
 class Engine;
 class ConnectionItem;
+class QDomDocument;
              
 class SchemaGui : public QCanvas
 {
@@ -36,23 +38,29 @@ public:
 
   void addGear(std::string type, std::string name, int x, int y);
   void addGear(std::string type, int x, int y);
-  void addMetaGear(std::string type, std::string name, int x, int y);
-  void addMetaGear(std::string type, int x, int y);
+  void addMetaGear(std::string name, int x, int y);  
   void removeGear(GearGui* gearGui);
-  
-  void clearSchema();
-  void loadSchema(std::string filename);
-  void saveSchema(std::string filename);
+    
+  bool connect(PlugBox *plugA, PlugBox *plugB);
+  void disconnect(PlugBox *plugA, PlugBox *plugB);
+  void disconnectAll(PlugBox *plugBox);
+
+  void clear();
+  bool load(QDomElement& parent);
+  bool save(QDomDocument& doc, QDomElement &parent);
 
   void moveGearBy(GearGui *gearItem, int x, int y);
   GearGui* testForGearCollision(const QPoint &p);
   ConnectionItem* testForConnectionCollision(const QPoint &p);
   void unHilightAllConnections();
+  void unHilightAllPlugBoxes();
 
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;
   
+  void setSchema(Schema *schema);
+
   Schema *_schema;
   Engine *_engine;
 };

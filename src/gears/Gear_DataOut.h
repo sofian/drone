@@ -29,7 +29,7 @@ class PlugSignal;
 class Gear_DataOut : public Gear
 {
 public:
-  Gear_DataOut(Engine *engine, std::string name);
+  Gear_DataOut(Schema *schema, std::string uniqueName);
   virtual ~Gear_DataOut();
 
   void runAudio();  

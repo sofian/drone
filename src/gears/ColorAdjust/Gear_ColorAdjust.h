@@ -30,7 +30,7 @@ class Gear_ColorAdjust : public Gear
 {
 public:
 
-  Gear_ColorAdjust(Engine *engine, std::string name);
+  Gear_ColorAdjust(Schema *schema, std::string uniqueName);
   virtual ~Gear_ColorAdjust();
 
   void runVideo();

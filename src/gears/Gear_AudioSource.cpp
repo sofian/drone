@@ -28,7 +28,7 @@ Register_Gear(MAKERGear_AudioSource, Gear_AudioSource, "AudioSource");
 
 const std::string Gear_AudioSource::SETTING_FILENAME = "Filename";
 
-Gear_AudioSource::Gear_AudioSource(Engine *engine, std::string name) : Gear(engine, "AudioSource", name),
+Gear_AudioSource::Gear_AudioSource(Schema *schema, std::string uniqueName) : Gear(schema, "AudioSource", uniqueName),
 _File(NULL)
 {        
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));       

@@ -44,7 +44,7 @@ public:
 
   virtual int rtti() const;
 
-  GearGui(Gear *pgear, QCanvas *canvas, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
+  GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
   PlugBox* getInputPlugBox(std::string name) const;
@@ -55,7 +55,9 @@ public:
   bool titleBarHitted(const QPoint& p);
 
   PlugBox* plugHitted(const QPoint& p);
-  void performPlugHighligthing(const QPoint &p, PlugBox *onlyCompatibleWith=NULL);
+  void performPlugHighligthing(const QPoint &p);
+  void performPlugHighligthing(PlugBox *plugBox);
+  void unHilightAllPlugBoxes();
 
   void setTitle(std::string title){_title=title;};
 
@@ -95,11 +97,11 @@ protected:
   int _inputsInterval;
   int _outputsInterval;
   std::string _title;
+  QColor _boxNameColor;
 
 
   //colors    
-  static const QColor BOX_COLOR;
-  static const QColor METABOXNAME_COLOR;
+  static const QColor BOX_COLOR;  
   static const QColor BOXNAME_COLOR;
   static const QColor SHADOW_COLOR;
 

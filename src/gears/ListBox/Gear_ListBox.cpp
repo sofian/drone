@@ -29,9 +29,9 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_ListBox(engine,name);
+  return new Gear_ListBox(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -46,7 +46,7 @@ GearInfo getGearInfo()
 const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
 const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
-Gear_ListBox::Gear_ListBox(Engine *engine, std::string name) : Gear(engine, "ListBox", name),_acceptHint(true)
+Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) : Gear(schema, "ListBox", uniqueName),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value"));
 

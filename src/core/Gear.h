@@ -63,7 +63,7 @@ public:
   //! is the gear a control gear ?
   virtual bool isControl() const {return false;}
 
-  Gear(Engine* engine, std::string type, std::string name);
+  Gear(Schema *schema, std::string type, std::string uniqueName);
   virtual ~Gear();
 
   virtual void init(){};
@@ -85,15 +85,18 @@ public:
 
   virtual Schema* getInternalSchema(){return NULL;}
 
+  void name(std::string vname){_Name=vname;}
 
   const std::string& type() const {return _Type;};
   const std::string& name() const {return _Name;};
-
+  const std::string& uniqueName() const {return _uniqueName;}
+    
   Properties& settings(){return _settings;};
 
   virtual bool ready()=0;
-  void needSynch();
-
+  void unSynch();
+  
+  //todo make bool
   virtual void save(QDomDocument &, QDomElement &){};
   virtual void load(QDomElement &){};
 
@@ -103,8 +106,6 @@ public:
     plugs.first = plugs.second = 0;
     return false;
   }
-
-  Engine *engine(){return _engine;};
 
 protected:
 
@@ -122,7 +123,7 @@ protected:
 
   void deletePlug(AbstractPlug *plug);
 
-  Engine *_engine;
+  Schema *_parentSchema;
 
   std::list<AbstractPlug*> _plugs;    
 
@@ -132,6 +133,7 @@ private:
 
   std::string _Type;
   std::string _Name;
+  std::string _uniqueName;//! unique name of this gear in a schema
 
   GearGui *_gearGui;
 
@@ -141,15 +143,15 @@ private:
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &gearElem);
 
-  friend Gear* Schema::addGear(Engine * engine, std::string geartype, std::string name);
-  friend Gear* Schema::addMetaGear(Engine * engine, std::string geartype, std::string name);
+  friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
+  friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);
   friend void *Engine::playThread(void *parent);
-  friend void Schema::load(Engine * engine, std::string filename);
-  friend void Schema::save(std::string filename);
+  friend bool Schema::load(QDomElement& parent);
+  friend bool Schema::save(QDomDocument& doc, QDomElement &parent);
 };
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name);
+Gear* makeGear(Schema *schema, std::string uniqueName);
 GearInfo getGearInfo();
 }
 

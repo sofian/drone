@@ -27,9 +27,9 @@
 #include <iostream>
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_VideoOutput(engine,name);
+  return new Gear_VideoOutput(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -50,8 +50,8 @@ const std::string Gear_VideoOutput::SETTING_YRES = "YRes";
 const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
-Gear_VideoOutput::Gear_VideoOutput(Engine *engine, std::string name) : 
-Gear(engine, "VideoOutput", name),
+Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) : 
+Gear(schema, "VideoOutput", uniqueName),
 _videoOutput(NULL)
 {
   //populate available video output list in order of preference

@@ -40,7 +40,7 @@ public:
     N_PLAYBACK_MODE
   };
 
-  Gear_VideoLoop(Engine *engine, std::string name);
+  Gear_VideoLoop(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoLoop();
 
   void runVideo();

@@ -64,6 +64,12 @@ public slots:
   void slotGearProperties();
   void slotGearDelete();
 
+  //metagear editing slots
+  void slotNewSchema();
+  void slotLoadSchema();
+  void slotSaveSchema();
+  void slotAddMetaGear();
+
 protected:
 
   void keyPressEvent ( QKeyEvent * e );

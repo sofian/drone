@@ -31,7 +31,7 @@ public:
   static const std::string SETTING_NELEMS;
   static const std::string SETTING_LABELS; // XXX temporary hack to save labels
 
-  Gear_ListBox(Engine *engine, std::string name);
+  Gear_ListBox(Schema *schema, std::string uniqueName);
   virtual ~Gear_ListBox();
 
   void save(QDomDocument &doc, QDomElement &gearElem);

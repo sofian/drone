@@ -23,9 +23,9 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_FlatSignal(engine,name);
+  return new Gear_FlatSignal(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -37,8 +37,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_FlatSignal::Gear_FlatSignal(Engine *engine, std::string name)
-  : GearConverter<ValueType, SignalType>(engine, "FlatSignal", name)
+Gear_FlatSignal::Gear_FlatSignal(Schema *schema, std::string uniqueName)
+  : GearConverter<ValueType, SignalType>(schema, "FlatSignal", uniqueName)
 {
   _PLUG_IN->hintType()->setValue(0.0f);
   _PLUG_IN->hintType()->setMinValue(-1.0f);

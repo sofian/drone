@@ -23,9 +23,9 @@
 #include "Engine.h"
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_AudioInput(engine,name);
+  return new Gear_AudioInput(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -44,8 +44,8 @@ const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
 const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) : 
-  Gear(engine, "AudioInput", name),
+Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "AudioInput", uniqueName),
   _stream(0),
   _ringBufferSize(512),
   _lBuffer(),

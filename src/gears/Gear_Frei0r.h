@@ -31,7 +31,7 @@ class Gear_Frei0r : public Gear
 {
 public:
 
-  Gear_Frei0r(Engine *engine, std::string name);
+  Gear_Frei0r(Schema *schema, std::string uniqueName);
   virtual ~Gear_Frei0r();
 
   void runVideo();  

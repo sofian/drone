@@ -74,9 +74,10 @@ public:
   Schema(MetaGear * parentMetaGear=NULL);
   virtual ~Schema();
 
-  void save(std::string filename);
+ 
+  bool save(QDomDocument& doc, QDomElement &parent);
   void clear();
-  void load(Engine * engine, std::string filename);
+  bool load(QDomElement& doc);
 
   //! Returns a list of unordered gears, but not expanded. Metagears are left as is.
   virtual std::list<Gear*> getGears(){return _gears;}
@@ -87,42 +88,44 @@ public:
   //! Returns a list of ordered gears
   virtual std::list<Gear*> getDeepOrderedReadyGears();
 
-  //! return a gear by its name
-  Gear* getDeepGearByName(std::string name) const;
-
   Gear* getGearByName(std::string name) const;
 
   //! Returns all connections in this schema
   void getAllConnections(std::list<Connection*> &connections);
 
 
-  Gear* addMetaGear(Engine * engine, std::string geartype, std::string name);
-  Gear* addGear(Engine * engine, std::string geartype, std::string name);
+  bool connect(AbstractPlug *plugA, AbstractPlug *plugB);
+  bool connect(Schema::Connection &connection);
+  void disconnect(AbstractPlug *plugA, AbstractPlug *plugB);
+  void disconnectAll(AbstractPlug *plugA);
+
+  MetaGear* addMetaGear(std::string name);
+  Gear* addGear(std::string geartype);
 
   //! removes the specified gear, searching recursivly in sub-schemas
   bool removeDeepGear(Gear* gear);
   
-  std::string getNewGearName(std::string prefix);
+  std::string getUniqueGearName(std::string prefix);
   std::list<Schema*> getSubSchemas();
   
-  void connectPlugs(Schema::Connection &connection);
+  void unSynch(){_needSynch=true;}  
 
 private:
 
+  Gear* addGear(std::string geartype, std::string uniqueName);
+  MetaGear* addMetaGear(std::string name, std::string uniqueName);
+
   bool needSynch();
-  void setSynched();
+  void synch();
 
   bool _needSynch;
-
 
   std::list<Gear*> _gears;
 
   std::list<Gear*> _lastDeepOrderedReadyGears;
   
   MetaGear *_parentMetaGear;
-  
-  static Schema _mainSchema;
-
+    
 };
 
 #endif

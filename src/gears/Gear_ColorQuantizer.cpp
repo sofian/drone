@@ -26,7 +26,7 @@
 
 Register_Gear(MAKERGear_ColorQuantizer, Gear_ColorQuantizer, "ColorQuantizer")
 
-Gear_ColorQuantizer::Gear_ColorQuantizer(Engine *engine, std::string name) : Gear(engine, "ColorQuantizer", name),
+Gear_ColorQuantizer::Gear_ColorQuantizer(Schema *schema, std::string uniqueName) : Gear(schema, "ColorQuantizer", uniqueName),
 _nColors(DEFAULT_N_COLORS),
 _mapping(0), _initColors(false)
 {

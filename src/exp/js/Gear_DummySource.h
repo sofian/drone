@@ -31,7 +31,7 @@
 class Gear_DummySource : public Gear
 {
 public:
-  Gear_DummySource(Engine *engine, std::string name);
+  Gear_DummySource(Schema *schema, std::string uniqueName);
   virtual ~Gear_DummySource();
 
   void runVideo();

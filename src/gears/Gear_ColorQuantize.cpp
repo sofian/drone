@@ -28,8 +28,8 @@ Register_Gear(MAKERGear_ColorQuantize, Gear_ColorQuantize, "ColorQuantize")
 
 const int Gear_ColorQuantize::MAX_COLOR = 256;
 
-Gear_ColorQuantize::Gear_ColorQuantize(Engine *engine, std::string name)
-  : Gear(engine, "ColorQuantize", name), _nColors(),
+Gear_ColorQuantize::Gear_ColorQuantize(Schema *schema, std::string uniqueName)
+  : Gear(schema, "ColorQuantize", uniqueName), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));

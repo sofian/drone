@@ -30,7 +30,7 @@ class Gear_VideoBlend : public Gear
 {
 public:
 
-  Gear_VideoBlend(Engine *engine, std::string name);
+  Gear_VideoBlend(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoBlend();
 
   void runVideo();

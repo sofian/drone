@@ -125,18 +125,18 @@ void Schema::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
     orderedGears.push_back(_nodes[i].gear);
 }
 
-Gear* Schema::getDeepGearByName(std::string name) const
-{
-  std::list<Gear*> allgears = getDeepGears();
-
-  for (std::list<Gear*>::const_iterator it = allgears.begin();it!=allgears.end();++it)
-  {
-    if ((*it)->name() == name)
-      return(*it);
-  }
-
-  return NULL;
-}
+/* Gear* Schema::getDeepGearByName(std::string name) const                                */
+/* {                                                                                      */
+/*   std::list<Gear*> allgears = getDeepGears();                                          */
+/*                                                                                        */
+/*   for (std::list<Gear*>::const_iterator it = allgears.begin();it!=allgears.end();++it) */
+/*   {                                                                                    */
+/*     if ((*it)->name() == name)                                                         */
+/*       return(*it);                                                                     */
+/*   }                                                                                    */
+/*                                                                                        */
+/*   return NULL;                                                                         */
+/* }                                                                                      */
 
 Gear* Schema::getGearByName(std::string name) const
 {
@@ -192,7 +192,7 @@ std::list<Gear*> Schema::getDeepOrderedReadyGears()
       _lastDeepOrderedReadyGears.push_back(*it);
   }
 
-  setSynched();
+  _needSynch=false;
 
   return _lastDeepOrderedReadyGears;
 }
@@ -217,7 +217,14 @@ std::list<Gear*> Schema::getDeepGears() const
   return deepGears;
 }
 
-std::string Schema::getNewGearName(std::string prefix)
+/**
+ * get a unique name for a gear in this schema only
+ * 
+ * @param prefix
+ * 
+ * @return 
+ */
+std::string Schema::getUniqueGearName(std::string prefix)
 {
   int i=1;
   std::string tmp;
@@ -243,19 +250,21 @@ bool Schema::needSynch()
 {
   if(_needSynch)
     return true;
+  
   std::list<Schema*> subschemas = getSubSchemas();
   for(std::list<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
     if((*it)->needSynch())
       return true;
+  
   return false;
 }
 
-void Schema::setSynched()
+void Schema::synch()
 {
   _needSynch=false;
   std::list<Schema*> subschemas = getSubSchemas();
   for(std::list<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
-    (*it)->setSynched();
+    (*it)->synch();
 }
 
 
@@ -296,19 +305,38 @@ bool Schema::removeDeepGear(Gear* gear)
   return false;
 }
 
-Gear* Schema::addMetaGear(Engine * engine, std::string geartype, std::string name)
+MetaGear* Schema::addMetaGear(std::string name)
 {
-  MetaGear * testgear = new MetaGear(engine, geartype, name);
-  testgear->internalInit();
-  _gears.push_back(testgear);
+  return addMetaGear(name, getUniqueGearName(name));
+}
 
-  return testgear;
+MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
+{
+  MetaGear *metaGear = new MetaGear(this, name, uniqueName);
+  metaGear->internalInit();
+  _gears.push_back(metaGear);
+
+  return metaGear;
+}
+
+Gear* Schema::addGear(std::string geartype)
+{  
+  return addGear(geartype, getUniqueGearName(geartype));
 }
 
 
-Gear* Schema::addGear(Engine * engine, std::string geartype, std::string name)
+/**
+ * called when loading because we already know the uniqueName
+ * 
+ * @param geartype
+ * @param uniqueName
+ * 
+ * @return 
+ */
+Gear* Schema::addGear(std::string geartype, std::string uniqueName)
 {
-  Gear *gear = GearMaker::makeGear(engine, geartype, name);
+  
+  Gear *gear = GearMaker::makeGear(this, geartype, uniqueName);
 
   if (gear==NULL)
     std::cout << "Schema addGear: " << geartype << " unknown" << std::endl;
@@ -347,50 +375,69 @@ void Schema::getAllConnections(std::list<Connection*> &connections)
 }
 
 
-void Schema::connectPlugs(Schema::Connection &connection)
+bool Schema::connect(AbstractPlug *plugA, AbstractPlug *plugB)
+{
+  if (!plugA || !plugB)
+    return false;
+  
+  return plugA->connect(plugB);  
+}
+
+void Schema::disconnect(AbstractPlug *plugA, AbstractPlug *plugB)
+{
+  if (!plugA || !plugB)
+    return;
+  
+  plugA->disconnect(plugB);
+}
+
+void Schema::disconnectAll(AbstractPlug *plug)
+{
+  if (!plug)
+    return;
+  
+  plug->disconnectAll();
+}
+
+bool Schema::connect(Schema::Connection &connection)
 {
    Gear *gearA;                                                                             
    Gear *gearB;                                                                             
    AbstractPlug *input;                                                                     
    AbstractPlug *output;                                                                    
                                                                                             
-   if ( (gearA=getDeepGearByName(connection.gearA())) == NULL)                                        
+   if ( (gearA=getGearByName(connection.gearA())) == NULL)                                        
    {                                                                                        
      std::cout << "connectPlugs fail: " + connection.gearA() + " not found!" << std::endl;  
-     return;                                                                                
+     return false;                                                                                
    }                                                                                        
                                                                                             
                                                                                             
-   if ( (gearB=getDeepGearByName(connection.gearB())) == NULL)                                        
+   if ( (gearB=getGearByName(connection.gearB())) == NULL)                                        
    {                                                                                        
      std::cout << "connectPlugs fail: " + connection.gearB() + " not found!" << std::endl;  
-     return;                                                                                
+     return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (output=gearA->getOutput(connection.output())) == NULL)                             
    {                                                                                        
      std::cout << "connectPlugs fail: " + connection.output() + " not found!" << std::endl; 
-     return;                                                                                
+     return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (input=gearB->getInput(connection.input())) == NULL)                                
    {                                                                                        
      std::cout << "connectPlugs fail: " + connection.input() + " not found!" << std::endl;  
-     return;                                                                                
+     return false;                                                                                
    }                                                                                        
                                                                                             
-   if (!output->connect(input))                                                             
-   {                                                                                        
-     std::cout << "connectPlugs fail!" << std::endl;                                        
-   }                                                                                        
-
+   return output->connect(input);
 }
 
-void Schema::save(std::string filename)
+bool Schema::save(QDomDocument& doc, QDomElement &parent)
 {
-  QDomDocument doc("DroneSchema");
   QDomElement rootElem = doc.createElement("Schema");
-  doc.appendChild(rootElem);
+  parent.appendChild(rootElem);
 
 
   //save all gears
@@ -415,55 +462,17 @@ void Schema::save(std::string filename)
     (*it)->save(doc, connectionsElem);
     delete (*it);//free
   }
-
-  //save to file  
-       
-  QFile file(filename.c_str());
-  if (file.open(IO_WriteOnly))
-  {
-    QTextStream stream(&file);
-    doc.save(stream,4);
-    file.close();
-  }
-  else
-    std::cout << "file io error, cannot save!" << std::endl;
-
+    
+  return true;
 }
 
-void Schema::load(Engine * engine, std::string filename)
+bool Schema::load(QDomElement& parent)
 {        
-  QDomDocument doc("DroneSchema");
-
-  QFile file(filename.c_str());
-
-  if (!file.open(IO_ReadOnly))
-  {
-    std::cout << "Fail to open file " << filename << std::endl;
-    return;
-  }
-
-  clear();
-
-  QString errMsg;
-  int errLine;
-  int errColumn;
-  if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
-  {
-    std::cout << "parsing error in " << filename << std::endl;
-    std::cout << errMsg.ascii() << std::endl;
-    std::cout << "Line: " <<  errLine << std::endl;
-    std::cout << "Col: " <<  errColumn << std::endl;
-    file.close();
-    return;
-  }
-
-  file.close();
-
   //load gears
-  QDomNodeList gearsNode = doc.elementsByTagName("Gears");
+  QDomNodeList gearsNode = parent.elementsByTagName("Gears");
 
   //be sure we have exactly one Gears tag
-  if (gearsNode.count()==1)
+  //if (gearsNode.count()==1)
   {
     //iteration on all gears
     QDomNode gearNode = gearsNode.item(0).firstChild();
@@ -473,7 +482,16 @@ void Schema::load(Engine * engine, std::string filename)
       QDomElement gearElem = gearNode.toElement();
       if (!gearElem.isNull())
       {
-        pgear = addGear(engine, gearElem.attribute("Type","").ascii(), gearElem.attribute("Name","").ascii());
+        std::string type = gearElem.attribute("Type","").ascii();
+        
+        std::cout << "loading " << type << std::endl;
+
+        if (type == MetaGear::TYPE)        
+          //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
+          pgear = addMetaGear("MetaGear", gearElem.attribute("Name","").ascii());          
+        else                   
+          pgear = addGear(type, gearElem.attribute("Name","").ascii());
+        
         if (pgear!=NULL)
         {
           pgear->internalLoad(gearElem);                                
@@ -482,12 +500,13 @@ void Schema::load(Engine * engine, std::string filename)
       }
       gearNode = gearNode.nextSibling();
     }                
-  } else
-    std::cout << "Bad DroneSchema : problem with <Gears>" << std::endl;
+  } 
+  //else
+    //std::cout << "Bad DroneSchema : problem with <Gears>" << std::endl;
 
 
   //load connections    
-  QDomNodeList connectionsNode = doc.elementsByTagName("Connections");
+  QDomNodeList connectionsNode = parent.elementsByTagName("Connections");
 
   //be sure we have exactly one Connections tag
   if (connectionsNode.count()==1)
@@ -502,12 +521,13 @@ void Schema::load(Engine * engine, std::string filename)
       if (!connectionElem.isNull())
       {
         connection.load(connectionElem);            
-        connectPlugs(connection);
+        connect(connection);
       }
 
       connectionNode = connectionNode.nextSibling();
     }               
   } else
     std::cout << "Bad DroneSchema : problem with <Connections>" << std::endl;
-
+  
+  return true;
 }

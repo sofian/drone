@@ -29,7 +29,7 @@
 
 Register_Gear(MAKERGear_Gamma, Gear_Gamma, "Gamma")
 
-Gear_Gamma::Gear_Gamma(Engine *engine, std::string name) : Gear(engine, "Gamma", name)
+Gear_Gamma::Gear_Gamma(Schema *schema, std::string uniqueName) : Gear(schema, "Gamma", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

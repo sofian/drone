@@ -23,11 +23,11 @@
 #include <qpainter.h>
 #include <string>
 #include <vector>
-class Engine;
-class AbstractPlug;
+
+#include "AbstractPlug.h"
+
 class GearGui;
 class ConnectionItem;
-
 
 class PlugBox
 {
@@ -39,7 +39,7 @@ public:
 
   static const int PLUGBOX_SIZE;
 
-  PlugBox(AbstractPlug *plug, GearGui *gearItem, Engine *engine);
+  PlugBox(AbstractPlug *plug, GearGui *gearItem);
   virtual ~PlugBox();
 
   QColor color();
@@ -47,10 +47,9 @@ public:
   bool hitted(int x, int y);
   void hilight(bool hiLight);
 
-  bool connect(PlugBox *plugBox, ConnectionItem *connectionItem);
-  void assignConnectionOnly(PlugBox *plugBox, ConnectionItem *connectionItem);
+  bool connect(PlugBox *plugBox);  
   bool canConnectWith(PlugBox *plugBox);    
-  void disconnect(ConnectionItem *connectionItem, bool deleteConnectionItem=true);
+  void disconnect(PlugBox *plugBox);
   void disconnectAll();
 
   AbstractPlug *plug(){return _plug;};
@@ -64,15 +63,17 @@ public:
   int x(){return _x;};
   int y(){return _y;};
 
-
+  //stubs
+  eInOut inOut(){return _plug->inOut();}
+  bool connected(){return _plug->connected();}
+    
 private:    
 
   void doHilight();
   void doUnlight();
 
   AbstractPlug *_plug;   
-  GearGui *_gearGui;
-  Engine *_engine;
+  GearGui *_gearGui;  
   int _x, _y;    
   eStatus _status;
   int _hilightScaling;
@@ -86,8 +87,6 @@ private:
 
   //fonts
   static const QFont SHORTNAME_FONT;
-  static const QFont SHORTNAME_FONT_BOLD;
-
 };
 
 #endif

@@ -45,12 +45,12 @@ _engine(NULL),
 _frame(NULL), 
 _mainSchemaGui(NULL), 
 _schemaEditor(NULL),
-_currentSchemaFilename(""),
 _menuFirstRecentSchemaId(-1)
 {    
   _engine = new Engine(0);
 
   _mainSchemaGui = new SchemaGui(_engine->mainSchema(), _engine);
+  _project = new Project(_mainSchemaGui);
 
   _schemaEditor = new SchemaEditor(this, _mainSchemaGui, _engine);
 
@@ -168,9 +168,8 @@ void MainWindow::slotMenuNew()
   //stop before clearing
   slotPlay(false);
 
-  _currentSchemaFilename="";
+  _project->newProject();
   //_schemaEditor->clearSchema();
-  _engine->clearMainSchema();
   _fileMenu->setItemEnabled(_menuSaveItemId, false);
 }
 
@@ -178,7 +177,6 @@ void MainWindow::slotMenuLoad()
 {  
   QString filename = QFileDialog::getOpenFileName(_lastLoadPath, "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
                                                   this, "Load", "Load");
-  
   load(filename);
 }
 
@@ -190,9 +188,7 @@ void MainWindow::load(std::string filename)
   //stop before loading
   slotPlay(false);
 
-  _engine->loadMainSchema(filename);
-  //_schemaEditor->setSchema(_engine->mainSchema());
-  _currentSchemaFilename=filename;
+  _project->load(filename);
   _fileMenu->setItemEnabled(_menuSaveItemId, true);
   
   //save the last load path
@@ -206,8 +202,7 @@ void MainWindow::load(std::string filename)
 
 void MainWindow::slotMenuSave()
 {
-  ASSERT_ERROR(_currentSchemaFilename.size());
-  _engine->saveMainSchema(_currentSchemaFilename);    
+  _project->save();    
 }
 
 void MainWindow::slotMenuSaveAs()
@@ -221,8 +216,7 @@ void MainWindow::slotMenuSaveAs()
     if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
       filename.append(SCHEMA_EXTENSION);  
     
-    _engine->saveMainSchema(filename);
-    _currentSchemaFilename=filename;
+    _project->saveAs(filename);
     _fileMenu->setItemEnabled(_menuSaveItemId, true);
 
     //save the last save path
@@ -265,8 +259,6 @@ void MainWindow::addToRecentSchema(std::string filename)
     oss << "/drone/Schema/Recent Files/" << i;
     globalSettings.writeEntry(oss.str(), *it);
   }
-
-   
 }
 
 void MainWindow::slotMenuItemSelected(int id)

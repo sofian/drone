@@ -25,9 +25,9 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_KDTree(engine,name);
+  return new Gear_KDTree(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -39,8 +39,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
-: Gear(engine, "KDTree", name)
+Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
+: Gear(schema, "KDTree", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

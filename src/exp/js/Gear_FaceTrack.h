@@ -43,7 +43,7 @@ class Gear_FaceTrack : public Gear
 {
 public:
 
-  Gear_FaceTrack(Engine *engine, std::string name);
+  Gear_FaceTrack(Schema *schema, std::string uniqueName);
   virtual ~Gear_FaceTrack();
 
   void init();

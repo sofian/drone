@@ -42,15 +42,17 @@ public:
 
   int rtti () const {return CANVAS_RTTI_CONNECTION;};
 
-  void setStartingPlugBox(PlugBox *plugBox);
+  void setSourcePlugBox(PlugBox *plugBox);
+  void setDestPlugBox(PlugBox *plugBox);
+
   void setConnectionLineEndPoint(QPoint const &p);
 
-  PlugBox *sourcePlugBox();
-  PlugBox *destPlugBox();
+  PlugBox* sourcePlugBox();
+  PlugBox* destPlugBox();
 
-  bool createConnection(PlugBox *plugBox);
-
-  void createConnectionLineOnly(PlugBox *source, PlugBox *dest);
+  bool ready();
+  
+  //void createConnectionLineOnly(PlugBox *source, PlugBox *dest);
 
   void hiLight(bool hi);
 

@@ -28,9 +28,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_Brightness(engine,name);
+  return new Gear_Brightness(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -42,7 +42,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Brightness::Gear_Brightness(Engine *engine, std::string name) : Gear(engine, "Brightness", name)
+Gear_Brightness::Gear_Brightness(Schema *schema, std::string uniqueName) : Gear(schema, "Brightness", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

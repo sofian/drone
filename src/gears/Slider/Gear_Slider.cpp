@@ -29,9 +29,9 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_Slider(engine,name);
+  return new Gear_Slider(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -48,7 +48,7 @@ const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 const std::string Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
 const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
 
-Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slider", name),_acceptHint(true)
+Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : Gear(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));

@@ -26,9 +26,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_Edge(engine,name);
+  return new Gear_Edge(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", name)
+Gear_Edge::Gear_Edge(Schema *schema, std::string uniqueName) : Gear(schema, "Edge", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

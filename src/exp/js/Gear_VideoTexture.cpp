@@ -34,7 +34,7 @@ const std::string Gear_VideoTexture::SETTING_FILENAME = "Filename";
 const std::string Gear_VideoTexture::SETTING_NFRAMES = "NFrames";
 const std::string Gear_VideoTexture::SETTING_TIMEWINDOWLENGTH = "Time window length";
 
-Gear_VideoTexture::Gear_VideoTexture(Engine *engine, std::string name) : Gear(engine, "VideoTexture", name),
+Gear_VideoTexture::Gear_VideoTexture(Schema *schema, std::string uniqueName) : Gear(schema, "VideoTexture", uniqueName),
                                                                          _file(NULL),
                                                                          _sizeX(0),
                                                                          _sizeY(0)

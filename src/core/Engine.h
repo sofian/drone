@@ -68,19 +68,12 @@ public:
   static const SignalInfo& signalInfo() {return _signalInfo;};
   static const VideoInfo& videoInfo() {return _videoInfo;};
 
-  std::string getNewGearName(std::string prefix);
-
   Schema* mainSchema() {return &_mainSchema;}
-
-  void loadMainSchema(std::string filename);
-  void saveMainSchema(std::string filename);
-  void clearMainSchema();
 
   void startPlaying();
   void stopPlaying();
 
-
-  Time_T currentTime();
+  static Time_T currentTime();
 
   int hWnd(){return _hWnd;};
   static void *playThread(void *parent);
@@ -107,7 +100,7 @@ protected:
   static SignalInfo _signalInfo;
   static VideoInfo _videoInfo;
 
-  Time_T _currentTime;
+  static Time_T _currentTime;
 
 
 private:

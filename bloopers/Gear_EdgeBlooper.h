@@ -11,7 +11,7 @@ class Gear_EdgeBlooper : public Gear
 {
 public:
 
-  Gear_EdgeBlooper(Engine *engine, std::string name);
+  Gear_EdgeBlooper(Schema *schema, std::string uniqueName);
   virtual ~Gear_EdgeBlooper();
 
   void runVideo();

@@ -29,7 +29,7 @@ class Gear_GrayScale : public Gear
 {
 public:
 
-  Gear_GrayScale(Engine *engine, std::string name);
+  Gear_GrayScale(Schema *schema, std::string uniqueName);
   virtual ~Gear_GrayScale();
 
   void runVideo();

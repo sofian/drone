@@ -49,7 +49,7 @@ class Gear_HalfToning : public Gear
   
 public:
   //! Default constructor.
-  Gear_HalfToning(Engine *engine, std::string name);
+  Gear_HalfToning(Schema *schema, std::string uniqueName);
 
   // Destructor.
   virtual ~Gear_HalfToning();

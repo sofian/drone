@@ -29,7 +29,7 @@ class Gear_Spectrogram : public Gear
 {
 public:
 
-  Gear_Spectrogram(Engine *engine, std::string name);
+  Gear_Spectrogram(Schema *schema, std::string uniqueName);
   virtual ~Gear_Spectrogram();
   
   void runVideo();

@@ -29,9 +29,9 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_PushButton(engine,name);
+  return new Gear_PushButton(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -47,7 +47,7 @@ const std::string Gear_PushButton::SETTING_OFFVALUE = "Off Value";
 const std::string Gear_PushButton::SETTING_ONVALUE = "On Value";
 const std::string Gear_PushButton::SETTING_ONESHOT = "One Shot";
 
-Gear_PushButton::Gear_PushButton(Engine *engine, std::string name) : Gear(engine, "PushButton", name),_acceptHint(true)
+Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) : Gear(schema, "PushButton", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));

@@ -32,7 +32,7 @@ Register_Gear(MAKERGear_DataOut, Gear_DataOut, "DataOut")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_DataOut::Gear_DataOut(Engine *engine, std::string name) : Gear(engine, "DataOut", name)
+Gear_DataOut::Gear_DataOut(Schema *schema, std::string uniqueName) : Gear(schema, "DataOut", uniqueName)
 {
 
   _FileOut.open("dataout.txt");

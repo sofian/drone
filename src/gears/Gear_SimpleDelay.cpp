@@ -33,7 +33,7 @@ Register_Gear(MAKERGear_SimpleDelay, Gear_SimpleDelay, "SimpleDelay")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_SimpleDelay::Gear_SimpleDelay(Engine *engine, std::string name) : Gear(engine, "SimpleDelay", name)
+Gear_SimpleDelay::Gear_SimpleDelay(Schema *schema, std::string uniqueName) : Gear(schema, "SimpleDelay", uniqueName)
 {
   addPlug(_PARAM_FEEDBACK = new PlugIn<SignalType>(this, "Feedback", new SignalType(0.3f)));
   addPlug(_PARAM_TIME = new PlugIn<SignalType>(this, "Time", new SignalType(0.3f)));

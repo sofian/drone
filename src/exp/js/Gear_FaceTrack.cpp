@@ -30,7 +30,7 @@
 
 Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 
-Gear_FaceTrack::Gear_FaceTrack(Engine *engine, std::string name) : Gear(engine, "FaceTrack", name),
+Gear_FaceTrack::Gear_FaceTrack(Schema *schema, std::string uniqueName) : Gear(schema, "FaceTrack", uniqueName),
                                                                    _pCascadeFeatures(0),
                                                                    _threshold(0),
                                                                    _deltaS(2)

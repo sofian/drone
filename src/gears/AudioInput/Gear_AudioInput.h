@@ -35,7 +35,7 @@ public:
   static const std::string SETTING_NB_BUFFERS;
 //
 
-  Gear_AudioInput(Engine *engine, std::string name);
+  Gear_AudioInput(Schema *schema, std::string uniqueName);
   virtual ~Gear_AudioInput();
 
   void prePlay();    

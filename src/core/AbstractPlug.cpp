@@ -106,7 +106,7 @@ bool AbstractPlug::connect(AbstractPlug *plug)
   plug->onConnection(this);
 
   //tell the gear that a new connection have been created and that sync is needed
-  _parent->needSynch();
+  _parent->unSynch();
 
   return true;    
 }
@@ -134,8 +134,8 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   //remove ourself from the other plug connections
   plug->_connectedPlugs.remove(this);
 
-  //tell the gear that a new connection have been created and that sync is needed
-  _parent->needSynch();
+  //tell the gear that disconnection have been made and that we need synch
+  _parent->unSynch();
 
   return true;
 }

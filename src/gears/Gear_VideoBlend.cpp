@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_VideoBlend, Gear_VideoBlend, "VideoBlend")
 
-Gear_VideoBlend::Gear_VideoBlend(Engine *engine, std::string name) : Gear(engine, "VideoBlend", name)
+Gear_VideoBlend::Gear_VideoBlend(Schema *schema, std::string uniqueName) : Gear(schema, "VideoBlend", uniqueName)
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));

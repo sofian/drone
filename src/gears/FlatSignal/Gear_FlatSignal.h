@@ -35,7 +35,7 @@ class Gear_FlatSignal : public GearConverter<ValueType, SignalType>
 {
 public:
   //! Default constructor.
-  Gear_FlatSignal(Engine *engine, std::string name);
+  Gear_FlatSignal(Schema *schema, std::string uniqueName);
 
   // Destructor.
   virtual ~Gear_FlatSignal() {}

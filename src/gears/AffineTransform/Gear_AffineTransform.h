@@ -29,7 +29,7 @@ class PlugSignal;
 class Gear_AffineTransform : public Gear  
 {
 public:
-  Gear_AffineTransform(Engine *engine, std::string name);
+  Gear_AffineTransform(Schema *schema, std::string uniqueName);
   virtual ~Gear_AffineTransform();
 
   void runVideo();

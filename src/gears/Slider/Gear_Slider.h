@@ -32,7 +32,7 @@ public:
   static const std::string SETTING_LOWERBOUND;
   static const std::string SETTING_HIGHERBOUND;
 
-  Gear_Slider(Engine *engine, std::string name);
+  Gear_Slider(Schema *schema, std::string uniqueName);
   virtual ~Gear_Slider();
 
   void save(QDomDocument &doc, QDomElement &gearElem);

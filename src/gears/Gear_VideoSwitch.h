@@ -31,7 +31,7 @@ class Gear_VideoSwitch : public Gear
 {
 public:
 
-  Gear_VideoSwitch(Engine *engine, std::string name);
+  Gear_VideoSwitch(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoSwitch();
 
   bool ready();

@@ -29,8 +29,8 @@
 
 Register_Gear(MAKERGear_Frei0r, Gear_Frei0r, "Frei0r")
 
-Gear_Frei0r::Gear_Frei0r(Engine *engine, std::string name) : 
-Gear(engine, "Frei0r", name),
+Gear_Frei0r::Gear_Frei0r(Schema *schema, std::string uniqueName) : 
+Gear(schema, "Frei0r", uniqueName),
 _handle(0),
 _instance(0),
 _sizeX(0),

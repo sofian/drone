@@ -285,8 +285,8 @@ const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {
 
 Register_Gear(MAKERGear_HalfToning, Gear_HalfToning, "HalfToning")
 
-Gear_HalfToning::Gear_HalfToning(Engine *engine, std::string name)
-: Gear(engine, "HalfToning", name), _carryLine0(0), _carryLine1(0)
+Gear_HalfToning::Gear_HalfToning(Schema *schema, std::string uniqueName)
+: Gear(schema, "HalfToning", uniqueName), _carryLine0(0), _carryLine1(0)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

@@ -31,7 +31,7 @@
 class Gear_EncrageMask : public Gear
 {
 public:
-  Gear_EncrageMask(Engine *engine, std::string name);
+  Gear_EncrageMask(Schema *schema, std::string uniqueName);
   virtual ~Gear_EncrageMask();
 
   void runVideo();

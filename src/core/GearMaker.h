@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-class Engine;
 #include "Gear.h"
 
 class GearMaker  
@@ -35,7 +34,7 @@ public:
   class GearPluginDefinition
   {
   public:
-    GearPluginDefinition(GearInfo gearInfo, eGearPluginType pluginType, void *handle, Gear* (*pmakeGear)(Engine* engine, std::string name)) :
+    GearPluginDefinition(GearInfo gearInfo, eGearPluginType pluginType, void *handle, Gear* (*pmakeGear)(Schema *schema, std::string uniqueName)) :
       makeGear(pmakeGear),
       _gearInfo(gearInfo),
       _pluginType(pluginType),
@@ -48,7 +47,7 @@ public:
     const void* handle() const {return _handle;}
     
     //ptrfunc
-    Gear* (*makeGear)(Engine* engine, std::string name);
+    Gear* (*makeGear)(Schema *schema, std::string uniqueName);
 
   private:
     GearInfo _gearInfo;
@@ -59,7 +58,7 @@ public:
   GearMaker();
   ~GearMaker();
 
-  static Gear* makeGear(Engine *engine, std::string type, std::string name);
+  static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
   static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
 private:
@@ -75,9 +74,9 @@ class MMAKERNAME : public GearMaker \
 public: \
     MMAKERNAME() : GearMaker(MTYPE){}; \
 private: \
-    Gear* internalMakeGear(Engine *engine, std::string name) \
+    Gear* internalMakeGear(Schema *schema, std::string uniqueName) \
     { \
-        return new MCLASSNAME(engine, name);\
+        return new MCLASSNAME(schema, uniqueName);\
     } \
     static MMAKERNAME _registerThis;\
 };\

@@ -26,8 +26,8 @@
 
 Register_Gear(MAKERGear_ColorQuantizeAlpha, Gear_ColorQuantizeAlpha, "ColorQuantizeAlpha")
 
-Gear_ColorQuantizeAlpha::Gear_ColorQuantizeAlpha(Engine *engine, std::string name)
-: Gear(engine, "ColorQuantizeAlpha", name), _nColors(DEFAULT_N_COLORS), _clusters(0)
+Gear_ColorQuantizeAlpha::Gear_ColorQuantizeAlpha(Schema *schema, std::string uniqueName)
+: Gear(schema, "ColorQuantizeAlpha", uniqueName), _nColors(DEFAULT_N_COLORS), _clusters(0)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");

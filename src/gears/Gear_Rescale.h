@@ -30,7 +30,7 @@ class Gear_Rescale : public Gear
 {
 public:
 
-  Gear_Rescale(Engine *engine, std::string name);
+  Gear_Rescale(Schema *schema, std::string uniqueName);
   virtual ~Gear_Rescale();
 
   void runVideo();

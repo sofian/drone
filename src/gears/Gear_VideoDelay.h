@@ -32,7 +32,7 @@ class Gear_VideoDelay : public Gear
 {
 public:
 
-  Gear_VideoDelay(Engine *engine, std::string name);
+  Gear_VideoDelay(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoDelay();
 
   void runVideo();

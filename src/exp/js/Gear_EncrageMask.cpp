@@ -26,7 +26,7 @@
 
 Register_Gear(MAKERGear_EncrageMask, Gear_EncrageMask, "EncrageMask");
 
-Gear_EncrageMask::Gear_EncrageMask(Engine *engine, std::string name) : Gear(engine, "EncrageMask", name)
+Gear_EncrageMask::Gear_EncrageMask(Schema *schema, std::string uniqueName) : Gear(schema, "EncrageMask", uniqueName)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_VIDEO_INK_IN = new PlugIn<VideoRGBAType>(this, "ImgInkIN"));

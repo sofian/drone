@@ -46,7 +46,7 @@ public:
   static const int DEFAULT_HEIGHT;
 
 
-  Gear_VideoInput(Engine *engine, std::string name);
+  Gear_VideoInput(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoInput();
 
   void runVideo();

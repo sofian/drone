@@ -8,7 +8,7 @@
 
 Register_Gear(MAKERGear_EdgeBlooper, Gear_EdgeBlooper, "EdgeBlooper")
 
-Gear_EdgeBlooper::Gear_EdgeBlooper(Engine *engine, std::string name) : Gear(engine, "EdgeBlooper", name)
+Gear_EdgeBlooper::Gear_EdgeBlooper(Schema *schema, std::string uniqueName) : Gear(schema, "EdgeBlooper", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));

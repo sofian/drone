@@ -42,7 +42,7 @@ public:
   
   static const std::string SETTING_FILENAME;
 
-  Gear_VideoSource(Engine *engine, std::string name);
+  Gear_VideoSource(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoSource();
 
   void runVideo();

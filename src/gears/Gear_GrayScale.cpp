@@ -29,7 +29,7 @@
 
 Register_Gear(MAKERGear_GrayScale, Gear_GrayScale, "GrayScale")
 
-Gear_GrayScale::Gear_GrayScale(Engine *engine, std::string name) : Gear(engine, "GrayScale", name)
+Gear_GrayScale::Gear_GrayScale(Schema *schema, std::string uniqueName) : Gear(schema, "GrayScale", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT"));

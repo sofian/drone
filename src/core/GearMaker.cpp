@@ -21,7 +21,7 @@
 #include "GearMaker.h"
 #include "error.h"
 #include <qdir.h>
-#include <iostream.h>
+#include <iostream>
 #include <dlfcn.h>
 
 GearMaker GearMaker::_registerMyself;
@@ -42,7 +42,7 @@ GearMaker::~GearMaker()
   delete _registry;
 }
 
-Gear* GearMaker::makeGear(Engine *engine, std::string type, std::string name)
+Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
 {    
   std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
 
@@ -56,7 +56,7 @@ Gear* GearMaker::makeGear(Engine *engine, std::string type, std::string name)
   //todo switch on various strategy depending on gearPluginType
 
   //make the gear
-  return it->second->makeGear(engine, name);  
+  return it->second->makeGear(schema, uniqueName);  
 }
 
 void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
@@ -106,7 +106,7 @@ void GearMaker::parseGears()
       *(void**) (&getGearInfo) = dlsym(handle, "getGearInfo");
            
       //query makeGear ptrfun interface
-      Gear* (*makeGear)(Engine* engine, std::string name);   
+      Gear* (*makeGear)(Schema *schema, std::string uniqueName);   
       *(void**) (&makeGear) = dlsym(handle, "makeGear");
 
       if (!(error = dlerror()))    

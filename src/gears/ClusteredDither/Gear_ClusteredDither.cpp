@@ -26,9 +26,9 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_ClusteredDither(engine,name);
+  return new Gear_ClusteredDither(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -40,8 +40,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
-: Gear(engine, "ClusteredDither", name), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
+Gear_ClusteredDither::Gear_ClusteredDither(Schema *schema, std::string uniqueName)
+: Gear(schema, "ClusteredDither", uniqueName), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
 {
   // Video I/O
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));

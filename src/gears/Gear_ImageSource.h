@@ -32,7 +32,7 @@ class Gear_ImageSource : public Gear
 public:
   static const std::string SETTING_FILENAME;
 
-  Gear_ImageSource(Engine *engine, std::string name);
+  Gear_ImageSource(Schema *schema, std::string uniqueName);
   virtual ~Gear_ImageSource();
 
   void runVideo();

@@ -30,7 +30,7 @@ class Gear_Gamma : public Gear
 {
 public:
 
-  Gear_Gamma(Engine *engine, std::string name);
+  Gear_Gamma(Schema *schema, std::string uniqueName);
   virtual ~Gear_Gamma();
 
   void runVideo();

@@ -35,7 +35,7 @@ class Gear_MotionTrack : public Gear
 {
 public:
 
-  Gear_MotionTrack(Engine *engine, std::string name);
+  Gear_MotionTrack(Schema *schema, std::string uniqueName);
   virtual ~Gear_MotionTrack();
 
   void init();

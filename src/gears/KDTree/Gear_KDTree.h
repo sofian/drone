@@ -33,7 +33,7 @@ class Gear_KDTree : public Gear
 {
 
 public:
-  Gear_KDTree(Engine *engine, std::string name);
+  Gear_KDTree(Schema *schema, std::string uniqueName);
   virtual ~Gear_KDTree();
 
   void runVideo();

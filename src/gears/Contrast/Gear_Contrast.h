@@ -30,7 +30,7 @@ class Gear_Contrast : public Gear
 {
 public:
 
-  Gear_Contrast(Engine *engine, std::string name);
+  Gear_Contrast(Schema *schema, std::string uniqueName);
   virtual ~Gear_Contrast();
 
   void runVideo();

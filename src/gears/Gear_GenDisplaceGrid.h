@@ -30,7 +30,7 @@ class Gear_GenDisplaceGrid : public Gear
 {
 public:
 
-  Gear_GenDisplaceGrid(Engine *engine, std::string name);
+  Gear_GenDisplaceGrid(Schema *schema, std::string uniqueName);
   virtual ~Gear_GenDisplaceGrid();
 
   void runVideo();

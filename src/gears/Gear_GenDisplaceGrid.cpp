@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_GenDisplaceGrid, Gear_GenDisplaceGrid, "GenDisplaceGrid")
 
-Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Engine *engine, std::string name) : Gear(engine, "GenDisplaceGrid", name)
+Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Schema *schema, std::string uniqueName) : Gear(schema, "GenDisplaceGrid", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID"));

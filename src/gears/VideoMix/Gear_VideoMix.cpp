@@ -26,9 +26,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_VideoMix(engine,name);
+  return new Gear_VideoMix(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "VideoMix", name)
+Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(schema, "VideoMix", uniqueName)
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));

@@ -12,7 +12,7 @@ class CircularBuffer;
 class Gear_FFT : public Gear
 {
 public:
-  Gear_FFT(Engine *engine, std::string name);
+  Gear_FFT(Schema *schema, std::string uniqueName);
   virtual ~Gear_FFT();
   
   bool ready();  

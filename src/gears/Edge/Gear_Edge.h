@@ -30,7 +30,7 @@ class Gear_Edge : public Gear
 {
 public:
 
-  Gear_Edge(Engine *engine, std::string name);
+  Gear_Edge(Schema *schema, std::string uniqueName);
   virtual ~Gear_Edge();
 
   void runVideo();

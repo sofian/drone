@@ -30,7 +30,7 @@ class Gear_DiffDist : public Gear
 {
 public:
 
-  Gear_DiffDist(Engine *engine, std::string name);
+  Gear_DiffDist(Schema *schema, std::string uniqueName);
   virtual ~Gear_DiffDist();
 
   void runVideo();

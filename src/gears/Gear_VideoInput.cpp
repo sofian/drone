@@ -52,7 +52,7 @@ const int Gear_VideoInput::DEFAULT_HEIGHT = 480;
 
 unsigned char *Gear_VideoInput::_data=NULL;
 
-Gear_VideoInput::Gear_VideoInput(Engine *engine, std::string name) : Gear(engine, "VideoInput", name),
+Gear_VideoInput::Gear_VideoInput(Schema *schema, std::string uniqueName) : Gear(schema, "VideoInput", uniqueName),
 _sizeX(0),
 _sizeY(0),
 _device(0),

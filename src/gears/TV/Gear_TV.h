@@ -31,7 +31,7 @@ class Gear_TV : public Gear
 {
 public:
 
-  Gear_TV(Engine *engine, std::string name);
+  Gear_TV(Schema *schema, std::string uniqueName);
   virtual ~Gear_TV();
 
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};

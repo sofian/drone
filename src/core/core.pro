@@ -72,6 +72,7 @@ AbstractPlug.h \
 Plug.h \
 PlugBox.h \
 Properties.h \
+Project.h \
 Rasterer.h \
 SummedAreaTable.h \
 Schema.h \
@@ -94,6 +95,7 @@ MetaGear.cpp \
 AbstractPlug.cpp \
 PlugBox.cpp \
 Properties.cpp \
+Project.cpp \
 Rasterer.cpp \
 Schema.cpp \
 SchemaGui.cpp \

@@ -30,7 +30,7 @@ class Gear_SmearGrid : public Gear
 {
 public:
 
-  Gear_SmearGrid(Engine *engine, std::string name);
+  Gear_SmearGrid(Schema *schema, std::string uniqueName);
   virtual ~Gear_SmearGrid();
 
   void runVideo();

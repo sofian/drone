@@ -20,19 +20,20 @@
 #include "Gear.h"
 
 #include "GearGui.h"
+#include "Schema.h"
 
 #include <qdom.h>
-
-
 #include <iostream>
 #include <sstream>
 
-Gear::Gear(Engine *engine, std::string type, std::string name) : 
-_engine(engine), 
+Gear::Gear(Schema *schema, std::string type, std::string uniqueName) : 
+_parentSchema(schema), 
 _Type(type), 
-_Name(name),
+_Name(type),//default name to typeName
+_uniqueName(uniqueName),
 _gearGui(NULL)
 {
+  ASSERT_ERROR_MESSAGE(_parentSchema!=0, "NULL schema passed to gear");
 }
 
 Gear::~Gear()
@@ -41,6 +42,10 @@ Gear::~Gear()
     delete (*it);
 }
 
+void Gear::unSynch()
+{
+  _parentSchema->unSynch();
+}
 
 void Gear::internalPrePlay()
 {
@@ -161,11 +166,6 @@ void Gear::getDependencies(std::vector<Gear*> &dependencies) const
   }
 }
 
-void Gear::needSynch()
-{
-  _engine->needSynch();
-}
-
 GearGui* Gear::createGearGui(QCanvas *canvas)
 {
   return new GearGui(this, canvas);    
@@ -241,3 +241,4 @@ void Gear::updateSettings()
   //call the virtual method that can be overriden
   onUpdateSettings();
 }
+

@@ -30,7 +30,7 @@ class Gear_AudioSource : public Gear
 public:
   static const std::string SETTING_FILENAME;
 
-  Gear_AudioSource(Engine *engine, std::string name);
+  Gear_AudioSource(Schema *schema, std::string uniqueName);
   virtual ~Gear_AudioSource();
 
   void runAudio();

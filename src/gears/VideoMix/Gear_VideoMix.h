@@ -59,7 +59,7 @@ class Gear_VideoMix : public Gear
 
 public:
 
-  Gear_VideoMix(Engine *engine, std::string name);
+  Gear_VideoMix(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoMix();
 
   void runVideo();

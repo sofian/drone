@@ -28,8 +28,8 @@ Register_Gear(MAKERGear_ImageSource, Gear_ImageSource, "ImageSource");
 
 const std::string Gear_ImageSource::SETTING_FILENAME = "Filename";
 
-Gear_ImageSource::Gear_ImageSource(Engine *engine, std::string name) : 
-  Gear(engine, "ImageSource", name),
+Gear_ImageSource::Gear_ImageSource(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "ImageSource", uniqueName),
   _sizeX(0),
   _sizeY(0)
 {

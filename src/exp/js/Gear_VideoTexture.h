@@ -35,7 +35,7 @@ public:
   static const std::string SETTING_NFRAMES;
   static const std::string SETTING_TIMEWINDOWLENGTH;
 
-  Gear_VideoTexture(Engine *engine, std::string name);
+  Gear_VideoTexture(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoTexture();
 
   void runVideo();

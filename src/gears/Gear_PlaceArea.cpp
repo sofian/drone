@@ -26,7 +26,7 @@
 
 Register_Gear(MAKERGear_PlaceArea, Gear_PlaceArea, "PlaceArea")
 
-Gear_PlaceArea::Gear_PlaceArea(Engine *engine, std::string name) : Gear(engine, "PlaceArea", name)
+Gear_PlaceArea::Gear_PlaceArea(Schema *schema, std::string uniqueName) : Gear(schema, "PlaceArea", uniqueName)
 {
   addPlug(_H_POSITION_IN = new PlugIn<ValueType>(this, "X", new ValueType(0, 0, 352)));
   addPlug(_V_POSITION_IN = new PlugIn<ValueType>(this, "Y", new ValueType(0, 0, 288)));

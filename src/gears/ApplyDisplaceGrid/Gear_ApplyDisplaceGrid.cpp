@@ -26,9 +26,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_ApplyDisplaceGrid(engine,name);
+  return new Gear_ApplyDisplaceGrid(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Engine *engine, std::string name) : Gear(engine, "ApplyDisplaceGrid", name)
+Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Schema *schema, std::string uniqueName) : Gear(schema, "ApplyDisplaceGrid", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

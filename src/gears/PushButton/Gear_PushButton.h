@@ -34,7 +34,7 @@ public:
   static const std::string SETTING_ONVALUE;
   static const std::string SETTING_ONESHOT;
 
-  Gear_PushButton(Engine *engine, std::string name);
+  Gear_PushButton(Schema *schema, std::string uniqueName);
   virtual ~Gear_PushButton();
 
   void runVideo();

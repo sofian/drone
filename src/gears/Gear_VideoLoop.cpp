@@ -28,7 +28,7 @@
 
 Register_Gear(MAKERGear_VideoLoop, Gear_VideoLoop, "VideoLoop")
 
-Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, "VideoLoop", name),
+Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName),
                                                                      _recording(true),
                                                                      _currentLoopFrame(0),
                                                                      _nLoopFrames(1),

@@ -27,9 +27,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_TV(engine,name);
+  return new Gear_TV(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_TV::Gear_TV(Engine *engine, std::string name) : Gear(engine, "TV", name)
+Gear_TV::Gear_TV(Schema *schema, std::string uniqueName) : Gear(schema, "TV", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
 }

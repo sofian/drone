@@ -30,7 +30,7 @@ class Gear_Brightness : public Gear
 {
 public:
 
-  Gear_Brightness(Engine *engine, std::string name);
+  Gear_Brightness(Schema *schema, std::string uniqueName);
   virtual ~Gear_Brightness();
 
   void runVideo();

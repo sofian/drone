@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_SmearGrid, Gear_SmearGrid, "SmearGrid")
 
-Gear_SmearGrid::Gear_SmearGrid(Engine *engine, std::string name) : Gear(engine, "SmearGrid", name)
+Gear_SmearGrid::Gear_SmearGrid(Schema *schema, std::string uniqueName) : Gear(schema, "SmearGrid", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID"));

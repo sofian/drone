@@ -55,7 +55,7 @@ class Gear_ClusteredDither : public Gear
 
 public:
   //! Default constructor.
-  Gear_ClusteredDither(Engine *engine, std::string name);
+  Gear_ClusteredDither(Schema *schema, std::string uniqueName);
 
   // Destructor.
   virtual ~Gear_ClusteredDither();

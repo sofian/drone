@@ -25,7 +25,7 @@
 
 Register_Gear(MAKERGear_Oscilloscope, Gear_Oscilloscope, "Oscilloscope")
 
-Gear_Oscilloscope::Gear_Oscilloscope(Engine *engine, std::string name) : Gear(engine, "Oscilloscope", name)
+Gear_Oscilloscope::Gear_Oscilloscope(Schema *schema, std::string uniqueName) : Gear(schema, "Oscilloscope", uniqueName)
 {
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
   addPlug(_ZOOM_X = new PlugIn<ValueType>(this, "ZoomX", new ValueType(44100,512,192400)));

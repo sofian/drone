@@ -25,9 +25,9 @@
 
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_AreaArrayMask(engine,name);
+  return new Gear_AreaArrayMask(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaArrayMask::Gear_AreaArrayMask(Engine *engine, std::string name) : Gear(engine, "AreaArrayMask", name)
+Gear_AreaArrayMask::Gear_AreaArrayMask(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayMask", uniqueName)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(352, 1, 1024)));

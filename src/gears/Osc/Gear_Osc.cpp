@@ -24,9 +24,9 @@
 #include <math.h>
 
 extern "C" {
-Gear* makeGear(Engine *engine, std::string name)
+Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_Osc(engine,name);
+  return new Gear_Osc(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
@@ -38,8 +38,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Osc::Gear_Osc(Engine *engine, std::string name) : 
-Gear(engine, "Oscillator", name),
+Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
+Gear(schema, "Oscillator", uniqueName),
 _phaseCorrection(0.0f)
 {
   addPlug(_PARAM_FREQ = new PlugIn<ValueType>(this, "Freq", new ValueType(440.0f,0.0f,1000.0f)));
@@ -62,7 +62,7 @@ void Gear_Osc::runAudio()
   float freq  = _PARAM_FREQ->type()->value();
   float amp  = _PARAM_AMP->type()->value();
   
-   _currentTime = _engine->currentTime();
+   _currentTime = Engine::currentTime();
   
   if (_oldFreq!=freq)
   {             

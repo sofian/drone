@@ -1,4 +1,4 @@
-/* Gear_Blur.h
+/* Project.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,49 +17,33 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_BLUR_INCLUDED
-#define GEAR_BLUR_INCLUDED
+#ifndef PROJECT_INCLUDED
+#define PROJECT_INCLUDED
 
+#include <string>
 
-#include "Gear.h"
-#include "SignalType.h"
-#include "VideoRGBAType.h"
-#include "SummedAreaTable.h"
+class QDomDocument;
+class QDomElement;
+class SchemaGui;
 
-class Gear_Blur : public Gear
+class Project  
 {
+
 public:
 
-  Gear_Blur(Schema *schema, std::string uniqueName);
-  virtual ~Gear_Blur();
+  Project(SchemaGui* mainSchemaGui);
 
-  void runVideo();
+  bool save();
+  bool saveAs(std::string filename);
+  bool load(std::string filename);
 
-  bool ready();
+  void newProject();
 
-private:
+protected:
 
-  PlugIn<VideoRGBAType> *_VIDEO_IN;
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
-  PlugIn<ValueType> *_AMOUNT_IN;
+  SchemaGui* _mainSchemaGui;
+  std::string _projectName;
 
-  //local var
-  const VideoRGBAType *_image;     
-  VideoRGBAType *_outImage;
-  unsigned char *_outData;
-
-  SummedAreaTable<> *_table;
-  int _sum[SIZE_RGBA];
-
-  int _sizeY;
-  int _sizeX;
-
-  int _x1,_y1,_x2,_y2;
-
-  int _blurSize;
-  int _area;
-  
-  void init();    
 };
 
 #endif

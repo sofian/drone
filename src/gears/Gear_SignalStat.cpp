@@ -24,8 +24,8 @@
 
 Register_Gear(MAKERGear_SignalStat, Gear_SignalStat, "SignalStat")
 
-Gear_SignalStat::Gear_SignalStat(Engine *engine, std::string name)
-  : GearConverter<SignalType, ValueType>(engine, "SignalStat", name)
+Gear_SignalStat::Gear_SignalStat(Schema *schema, std::string uniqueName)
+  : GearConverter<SignalType, ValueType>(schema, "SignalStat", uniqueName)
 {
   addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", new ValueType(0, 0, 6)));
 

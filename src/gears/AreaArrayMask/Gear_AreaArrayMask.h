@@ -40,7 +40,7 @@ class Gear_AreaArrayMask : public Gear
 {
 public:
   //! Default constructor.
-  Gear_AreaArrayMask(Engine *engine, std::string name);
+  Gear_AreaArrayMask(Schema *schema, std::string uniqueName);
 
   //! Destructor.
   virtual ~Gear_AreaArrayMask();

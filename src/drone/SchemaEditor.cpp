@@ -46,7 +46,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _state(IDLE),
   _movingGear(NULL),
   _zoom(1),
-  _activeConnection(NULL),
+  _activeConnection(0),
   _contextMenuPos(0,0),
   _contextGear(NULL)
 {
@@ -59,12 +59,15 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _contextMenu->insertItem("Gears", _gearListMenu);
   QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
   
-  
+  _contextMenu->insertItem("Add MetaGear", this, SLOT(slotAddMetaGear()));
+  _contextMenu->insertItem("New", this, SLOT(slotNewSchema()));
+  _contextMenu->insertItem("Load ", this, SLOT(slotLoadSchema()));
+  _contextMenu->insertItem("Save", this, SLOT(slotSaveSchema()));
+    
   _gearContextMenu = new QPopupMenu(this);
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
   _gearContextMenu->insertItem("About");    
-
 }
 
 SchemaEditor::~SchemaEditor()
@@ -105,13 +108,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox;
     
-//   QMainWindow *wnd = new QMainWindow();  
-//   SchemaGui *tschemaGui = new SchemaGui(_engine->mainSchema(), _engine);
-//   SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
-//   wnd->setCentralWidget(schemaEditor); 
-//   wnd->show();
   
-
   if (gearGui!=NULL)
   {    
     //send mouse events
@@ -125,12 +122,11 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
       {        
         _state=CONNECTING;
         _activeConnection = new ConnectionItem(canvas());
-        _activeConnection->setStartingPlugBox(selectedPlugBox);
+        _activeConnection->setSourcePlugBox(selectedPlugBox);
         _activeConnection->show();        
 
       } else if (gearGui->titleBarHitted(p))
       {
-        _activeConnection = NULL;
         _state = MOVING_GEAR;            
         _movingGear = gearGui;
         _movingGearStartPos = p;            
@@ -185,6 +181,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
 {
   GearGui *gearGui;
   ConnectionItem *connectionItem;
+  PlugBox *selectedPlugBox;
 
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   
@@ -192,23 +189,20 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   {
   case IDLE:
 
+    //connection hilighting
     _schemaGui->unHilightAllConnections();
     connectionItem = _schemaGui->testForConnectionCollision(p);
-
     if (connectionItem!=NULL)
     {
       connectionItem->hiLight(true);
-    } else
+    } 
+
+    //connection plugboxes hilighting
+    gearGui = _schemaGui->testForGearCollision(p);   
+    if (gearGui!=NULL)
     {
-      //if no connection hitted test for gear collision
-      gearGui = _schemaGui->testForGearCollision(p);   
-
-      if (gearGui!=NULL)
-      {
-        gearGui->mouseEvent(p, mouseEvent->state());
-        gearGui->performPlugHighligthing(p, NULL);
-      }
-
+      gearGui->mouseEvent(p, mouseEvent->state());
+      gearGui->performPlugHighligthing(p);
     }
 
     break;
@@ -221,16 +215,23 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
     }
     break;
 
-  case CONNECTING:
+  case CONNECTING:    
     _activeConnection->setConnectionLineEndPoint(p);
 
     gearGui = _schemaGui->testForGearCollision(p);   
 
     if (gearGui!=NULL)
     {
-      gearGui->performPlugHighligthing(p, _activeConnection->sourcePlugBox());
+      if ( ((selectedPlugBox = gearGui->plugHitted(p)) != 0))
+      {      
+        if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
+            gearGui->performPlugHighligthing(selectedPlugBox);
+        else
+            gearGui->unHilightAllPlugBoxes();
+      }
+      else
+        gearGui->unHilightAllPlugBoxes();
     }
-
 
     break;            
   }
@@ -240,6 +241,7 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
 {
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
+  PlugBox *selectedPlugBox=NULL;
 
   if (gearGui!=NULL)
   {
@@ -257,12 +259,16 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
   
     if (gearGui!=NULL)
     {
-      if (!_activeConnection->createConnection(gearGui->plugHitted(p)))
-        delete _activeConnection;
-    } else
-      delete _activeConnection;
+      if ( ((selectedPlugBox = gearGui->plugHitted(p)) != 0))             
+        if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
+          _schemaGui->connect(_activeConnection->sourcePlugBox(), selectedPlugBox);
+    }
 
+    //delete our temporary connectionItem
+    delete _activeConnection;
+    
     canvas()->update();
+    
     _state=IDLE;
     break;
   }
@@ -278,24 +284,27 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   switch (_state)
   {
   case IDLE:
-
+  {  
     _schemaGui->unHilightAllConnections();
     connectionItem = _schemaGui->testForConnectionCollision(p);
 
     if (connectionItem!=NULL)
-    {
-      delete connectionItem;
-      canvas()->update();
-    }
-
+      _schemaGui->disconnect(connectionItem->sourcePlugBox(), connectionItem->destPlugBox());      
+    
     gearGui = _schemaGui->testForGearCollision(p);   
 
-    if (gearGui!=NULL)
+    //handle double-click on metagear
+    if (gearGui!=NULL && gearGui->gear()->isMeta())
     {
-      if(!gearGui->mouseEvent(p, mouseEvent->button()))
-        slotGearProperties();
+      QMainWindow *wnd = new QMainWindow();  
+      SchemaGui *tschemaGui = new SchemaGui(gearGui->gear()->getInternalSchema(), _engine);
+      SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
+      wnd->setCentralWidget(schemaEditor); 
+      wnd->show();
     }
     break;
+  }  
+      
   default:
     break;
   }
@@ -326,7 +335,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 }
 
 void SchemaEditor::slotMenuGearSelected(QString name)
-{      
+{        
   _schemaGui->addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
@@ -353,4 +362,21 @@ void SchemaEditor::slotGearDelete()
   _schemaGui->removeGear(_contextGear);
 }
 
+void SchemaEditor::slotNewSchema()
+{
+  _schemaGui->clear();
+}
 
+void SchemaEditor::slotLoadSchema()
+{
+}
+
+void SchemaEditor::slotSaveSchema()
+{  
+
+}
+
+void SchemaEditor::slotAddMetaGear()
+{
+  _schemaGui->addMetaGear("MetaGear", _contextMenuPos.x(), _contextMenuPos.y());
+}

@@ -34,7 +34,7 @@ unsigned long xcng(void){  // takes 60 nanosecs, passes all tests
   if (y<w) y=y+17;
   return( y );}
 
-Gear_DiffDist::Gear_DiffDist(Engine *engine, std::string name) : Gear(engine, "DiffDist", name)
+Gear_DiffDist::Gear_DiffDist(Schema *schema, std::string uniqueName) : Gear(schema, "DiffDist", uniqueName)
 {
   addPlug(_FACTOR_IN = new PlugIn<ValueType>(this, "Factor"));
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));

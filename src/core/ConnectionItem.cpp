@@ -46,10 +46,6 @@ ConnectionItem::ConnectionItem(QCanvas *canvas) :
 
 ConnectionItem::~ConnectionItem()
 {        
-  //we disconnect but specify to not delete the connectionItem
-  //since we are currently destroying it!
-  if (_state == CONNECTED)
-    _sourcePlugBox->disconnect(this, false);
 }
 
 void ConnectionItem::drawShape(QPainter &painter)
@@ -98,7 +94,12 @@ PlugBox* ConnectionItem::destPlugBox()
   return _destPlugBox;
 }
 
-void ConnectionItem::setStartingPlugBox(PlugBox *plugBox)
+bool ConnectionItem::ready()
+{
+  return (_sourcePlugBox!=NULL && _destPlugBox!=NULL);
+}
+
+void ConnectionItem::setSourcePlugBox(PlugBox *plugBox)
 {
   _state = CONNECTING;
   _sourcePlugBox = plugBox;
@@ -112,6 +113,18 @@ void ConnectionItem::setStartingPlugBox(PlugBox *plugBox)
   setPoints(sourceX, sourceY, _destPointX, _destPointY);
 }
 
+void ConnectionItem::setDestPlugBox(PlugBox *plugBox)
+{
+  if (plugBox==NULL)
+  {
+    _state = DISCONNECTED;
+    return;
+  }
+  
+  _destPlugBox = plugBox;    
+  _state = CONNECTED;
+}
+
 void ConnectionItem::setConnectionLineEndPoint(QPoint const &p)
 {
   _destPointX = p.x();
@@ -123,26 +136,6 @@ void ConnectionItem::setConnectionLineEndPoint(QPoint const &p)
 
   update();
   canvas()->update();     
-}
-
-
-bool ConnectionItem::createConnection(PlugBox *plugBox)
-{
-  if (plugBox==NULL)
-    return false;
-
-
-  if (!_sourcePlugBox->canConnectWith(plugBox))
-  {
-    _state = DISCONNECTED;
-    return false;        
-  }
-
-
-  _sourcePlugBox->connect(plugBox, this);   
-  _destPlugBox = plugBox;
-  _state = CONNECTED;
-  return true;
 }
 
 void ConnectionItem::hiLight(bool hi)
@@ -167,22 +160,22 @@ void ConnectionItem::hiLight(bool hi)
   canvas()->update();
 }
 
-void ConnectionItem::createConnectionLineOnly(PlugBox *source, PlugBox *dest)
-{
-  _state = CONNECTED;    
-  _sourcePlugBox = source;
-  _destPlugBox = dest;
-
-  source->assignConnectionOnly(dest, this);
-
-  _pen->setColor(_sourcePlugBox->color());
-  setPen(*_pen);    
-
-  int sourceX, sourceY, destX, destY;
-  getOrigin(&sourceX, &sourceY);
-  getDest(&destX, &destY);
-  setPoints(sourceX, sourceY, destX, destY);
-
-
-  update();
-}
+/* void ConnectionItem::createConnectionLineOnly(PlugBox *source, PlugBox *dest) */
+/* {                                                                             */
+/*   _state = CONNECTED;                                                         */
+/*   _sourcePlugBox = source;                                                    */
+/*   _destPlugBox = dest;                                                        */
+/*                                                                               */
+/*   source->assignConnectionOnly(dest, this);                                   */
+/*                                                                               */
+/*   _pen->setColor(_sourcePlugBox->color());                                    */
+/*   setPen(*_pen);                                                              */
+/*                                                                               */
+/*   int sourceX, sourceY, destX, destY;                                         */
+/*   getOrigin(&sourceX, &sourceY);                                              */
+/*   getDest(&destX, &destY);                                                    */
+/*   setPoints(sourceX, sourceY, destX, destY);                                  */
+/*                                                                               */
+/*                                                                               */
+/*   update();                                                                   */
+/* }                                                                             */

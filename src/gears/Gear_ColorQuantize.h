@@ -39,7 +39,7 @@ class Gear_ColorQuantize : public Gear
 
 public:
   //! Default constructor.
-  Gear_ColorQuantize(Engine *engine, std::string name);
+  Gear_ColorQuantize(Schema *schema, std::string uniqueName);
 
   //! Destructor.
   virtual ~Gear_ColorQuantize();

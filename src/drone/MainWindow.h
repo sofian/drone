@@ -28,6 +28,7 @@
 #include <list>
 
 #include "Engine.h"
+#include "Project.h"
 
 #include "SchemaEditor.h"
 
@@ -81,6 +82,8 @@ private:
   
   int _menuSaveItemId;
   QPopupMenu *_fileMenu;
+
+  Project* _project;
   
   std::string _currentSchemaFilename;  
   QString _lastLoadPath;

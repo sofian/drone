@@ -26,7 +26,7 @@
 
 Register_Gear(MAKERGear_DummySource, Gear_DummySource, "DummySource");
 
-Gear_DummySource::Gear_DummySource(Engine *engine, std::string name) : Gear(engine, "DummySource", name)
+Gear_DummySource::Gear_DummySource(Schema *schema, std::string uniqueName) : Gear(schema, "DummySource", uniqueName)
 {    
   addPlug(_X_IN = new PlugIn<ValueType>(this, "X", new ValueType(160, 0, 320)));
   addPlug(_Y_IN = new PlugIn<ValueType>(this, "Y", new ValueType(120, 0, 240)));

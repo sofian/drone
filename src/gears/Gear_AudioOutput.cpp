@@ -31,8 +31,8 @@ const int Gear_AudioOutput::DEFAULT_NB_BUFFERS=0;
 const std::string Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const std::string Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioOutput::Gear_AudioOutput(Engine *engine, std::string name) : 
-Gear(engine, "AudioOutput", name),     
+Gear_AudioOutput::Gear_AudioOutput(Schema *schema, std::string uniqueName) : 
+Gear(schema, "AudioOutput", uniqueName),     
 _stream(0),
 _ringBufferSize(512),
 _lBuffer(),
