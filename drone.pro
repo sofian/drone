@@ -6,17 +6,17 @@
 #QMAKE_CXXFLAGS+=-pg
 
 # Optimized settings
-QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -pipe
+#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -pipe
 # P4
-QMAKE_CXXFLAGS += -march=pentium4
+#QMAKE_CXXFLAGS += -march=pentium4
 # Athlon
 #QMAKE_CXXFLAGS += -march=athlon
 
 # Debug settings
-#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=0
+QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=0
 #QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=1
 #QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=2
-#CONFIG += debug
+CONFIG += debug
 
 TEMPLATE = app
 DEPENDPATH += src
@@ -62,6 +62,7 @@ src/gears/Gear_GenDisplaceGrid.h \
 src/gears/Gear_GrayScale.h \
 src/gears/Gear_HalfToning.h \
 src/gears/Gear_KDTree.h \
+src/gears/Gear_ListBox.h \
 src/gears/Gear_MedianFilter.h \
 src/gears/Gear_Osc.h \
 src/gears/Gear_Oscilloscope.h \
@@ -83,6 +84,7 @@ src/gears/Gear_VideoOutput.h \
 src/gears/Gear_VideoSource.h \
 src/GearGui.h \
 src/GearConverter.h \
+src/gears/GearGui_ListBox.h \
 src/gears/GearGui_PushButton.h \
 src/gears/GearGui_Slider.h \
 src/gears/GearGui_TV.h \
@@ -143,6 +145,7 @@ src/gears/Gear_GenDisplaceGrid.cpp \
 src/gears/Gear_GrayScale.cpp \
 src/gears/Gear_HalfToning.cpp \
 src/gears/Gear_KDTree.cpp \
+src/gears/Gear_ListBox.cpp \
 src/gears/Gear_MedianFilter.cpp \
 src/gears/Gear_Osc.cpp \
 src/gears/Gear_Oscilloscope.cpp \
@@ -163,6 +166,7 @@ src/gears/Gear_VideoMix.cpp \
 src/gears/Gear_VideoOutput.cpp \
 src/gears/Gear_VideoSource.cpp \
 src/GearGui.cpp \
+src/gears/GearGui_ListBox.cpp \
 src/gears/GearGui_PushButton.cpp \
 src/gears/GearGui_Slider.cpp \
 src/gears/GearGui_TV.cpp \
