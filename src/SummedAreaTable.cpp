@@ -112,10 +112,10 @@ void SummedAreaTable::buildTableOfSquares()
   _accR = _accG = _accB = _accA = 0;
   for (int x=0; x<_sizeX; ++x)
   {
-    _accR += square( (int)*(iterData++) );
-    _accG += square( (int)*(iterData++) );
-    _accB += square( (int)*(iterData++) );
-    _accA += square( (int)*(iterData++) );
+    _accR += SQR( (int)*(iterData++) );
+    _accG += SQR( (int)*(iterData++) );
+    _accB += SQR( (int)*(iterData++) );
+    _accA += SQR( (int)*(iterData++) );
     *(iterAcc++) = _accR;
     *(iterAcc++) = _accG;
     *(iterAcc++) = _accB;
@@ -130,10 +130,10 @@ void SummedAreaTable::buildTableOfSquares()
     _accR = _accG = _accB = _accA = 0;
     for (int x=0; x<_sizeX; ++x)
     {
-      _accR += square( (int)*(iterData++) );
-      _accG += square( (int)*(iterData++) );
-      _accB += square( (int)*(iterData++) );
-      _accA += square( (int)*(iterData++) );
+      _accR += SQR( (int)*(iterData++) );
+      _accG += SQR( (int)*(iterData++) );
+      _accB += SQR( (int)*(iterData++) );
+      _accA += SQR( (int)*(iterData++) );
       *(iterAcc++) += _accR;
       *(iterAcc++) += _accG;
       *(iterAcc++) += _accB;

@@ -3,6 +3,7 @@
 
 #include "Canvas.h"
 #include "Utils.h"
+#include "ColorSpace.h"
 
 #include <iostream>
 
@@ -31,9 +32,9 @@ public:
   
   inline int getArea(int x0, int y0, int x1, int y1) const;
 
-  static inline int total(RGBAint *sum)
+  static inline int total(RGBAint *val)
   {
-    return sum->R + sum->G + sum->B;
+    return sum((int*)val, SIZE_RGB);
   }
 
 public:
@@ -61,12 +62,12 @@ void SummedAreaTable::getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const
   *sum = _acc[y1 * _sizeX + x1];
 
   if (x0 >= 0)
-    *sum -= _acc[y1 * _sizeX + x0];
+    subtract((int*)sum, (int*)&_acc[y1 * _sizeX + x0], SIZE_RGBA);
   if (y0 >= 0)
   {
-    *sum -= _acc[y0 * _sizeX + x1];
+    subtract((int*)sum, (int*)&_acc[y0 * _sizeX + x1], SIZE_RGBA);
     if (x0 >= 0)
-      *sum += _acc[y0 * _sizeX + x0];
+      add((int*)sum, (int*)&_acc[y0 * _sizeX + x0], SIZE_RGBA);
   }
 }
 
@@ -79,28 +80,20 @@ void SummedAreaTable::getSumOfSquares(RGBAint *sumSquares, int x0, int y0, int x
   *sumSquares = _accSquares[y1 * _sizeX + x1];
   
   if (x0 >= 0)
-    *sumSquares -= _accSquares[y1 * _sizeX + x0];
+    subtract((int*)sumSquares, (int*)&_accSquares[y1 * _sizeX + x0], SIZE_RGBA);
   if (y0 >= 0)
   {
-    *sumSquares -= _accSquares[y0 * _sizeX + x1];
+    subtract((int*)sumSquares, (int*)&_accSquares[y0 * _sizeX + x1], SIZE_RGBA);
     if (x0 >= 0)
-      *sumSquares += _accSquares[y0 * _sizeX + x0];
+      add((int*)sumSquares, (int*)&_accSquares[y0 * _sizeX + x0], SIZE_RGBA);
   }
 }
 
 int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
 {
-  if (x0 < 0) x0 = 0;
-  if (x1 < 0) x1 = 0;
-  if (y0 < 0) y0 = 0;
-  if (y1 < 0) y1 = 0;
-  
-  if (x0 >= _sizeX) x0 = _sizeX-1;
-  if (x1 >= _sizeX) x1 = _sizeX-1;
-  if (y0 >= _sizeY) y0 = _sizeY-1;
-  if (y1 >= _sizeY) y1 = _sizeY-1;
-
-  return ((x1-x0) * (y1-y0));
+  int maxX = _sizeX-1;
+  int maxY = _sizeY-1;
+  return ( (CLAMP(x1,0,maxX) - CLAMP(x0,0,maxX))*(CLAMP(y1,0,maxY) - CLAMP(y0,0,maxY)) );
 }
 
 const RGBAint& SummedAreaTable::getAcc(int x, int y) const
