@@ -1,4 +1,4 @@
-/* Gear_VideoSource.h
+/* Gear_VideoRecord.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_VIDEOSOURCE_INCLUDED
-#define GEAR_VIDEOSOURCE_INCLUDED
+#ifndef GEAR_VideoRecord_INCLUDED
+#define GEAR_VideoRecord_INCLUDED
 
 
 #include "Gear.h"
@@ -27,12 +27,10 @@
 #include "SignalType.h"
 #include "EnumType.h"
 
-#define TARGET_API_MAC_CARBON 1
-#define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
-#include <Carbon/Carbon.h>
-#include <QuickTime/Movies.h>
+#include "avcodec.h"
+#include "avformat.h"
 
-class Gear_VideoSource : public Gear
+class Gear_VideoRecord : public Gear
 {
 public:
   enum ePlaybackMode
@@ -44,50 +42,42 @@ public:
   
   static const std::string SETTING_FILENAME;
 
-  Gear_VideoSource(Schema *schema, std::string uniqueName);
-  virtual ~Gear_VideoSource();
+  Gear_VideoRecord(Schema *schema, std::string uniqueName);
+  virtual ~Gear_VideoRecord();
 
   void runVideo();
-  void runAudio();
 
-  void prePlay();
-  void postPlay();
-  
   bool ready();
 
 protected:
   void onUpdateSettings();
 
-  
 private:
 
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
-  PlugOut<SignalType> *_AUDIO_OUT;
+  void freeResources();
+
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugIn<SignalType> *_AUDIO_IN;
   PlugIn<ValueType> *_RESET_IN;
-  PlugIn<EnumType> *_MODE_IN;
 
   VideoRGBAType *_imageOut;
+
+  //locals
   
-  int _sizeX, _sizeY;
+  float *_audioBuffer;
+  //RGBA *_outData;  
+  long _previousFramePos;
 
-  //quicktime
-  bool initQuickTime();
-  bool openMovie();
-  int pathToFSS(const std::string path, FSSpec *fss);
-  void freeQuickTime();
-  void freeMovie();
-  
-  Movie _movie;
-  unsigned char *_baseAddr;
-  GWorldPtr _offscreen;
-  PixMapHandle	_pixMap;
-  unsigned long _rowStride;
-  TimeValue _currentTime;
-  TimeValue _movieDuration;
-  GDHandle _origDevice;
-  CGrafPtr _origPort;
-
-
+  //ffmpeg
+  AVFormatContext *_formatContext;  
+  AVCodecContext *_codecContext;
+  AVCodec *_codec;
+  AVPacket _packet;
+  AVFrame *_frame;
+  AVFrame *_frameRGBA;
+  uint8_t *_buffer;
+  int _videoStreamIndex;
+  int64_t _firstFrameTime;
 };
 
 #endif

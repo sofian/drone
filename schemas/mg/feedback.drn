@@ -1,7 +1,8 @@
-<!DOCTYPE DroneSchema>
+<!DOCTYPE DroneProject>
+<Project>
 <Schema>
     <Gears>
-        <Gear PosX="173" PosY="52" Type="VideoInput" Name="VideoInput1" >
+        <Gear PosX="173" PosY="52" Type="VideoSource" Name="VideoSource1" >
             <Properties width="352" Device="/dev/video1" height="292" />
         </Gear>
         <Gear PosX="769" PosY="32" Type="VideoOutput" Name="VideoOutput1" >
@@ -10,7 +11,7 @@
         <Gear PosX="257" PosY="143" Type="Slider" SliderPos="6.21951" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
-        <Gear PosX="400" PosY="73" Type="VideoBlend" Name="VideoBlend1" >
+        <Gear PosX="400" PosY="73" Type="VideoMix" Name="VideoMix1" >
             <Properties/>
         </Gear>
         <Gear PosX="315" PosY="367" Type="Slider" SliderPos="0" Name="Slider3" >
@@ -66,13 +67,13 @@
         </Gear>
     </Gears>
     <Connections>
-        <Connection GearA="VideoInput1" GearB="VideoBlend1" Input="ImgA" Output="Out" />
-        <Connection GearA="Slider5" GearB="VideoBlend1" Input="Alpha" Output="Value" />
-        <Connection GearA="VideoBlend1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="VideoBlend1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
-        <Connection GearA="VideoBlend1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoSource1" GearB="VideoMix1" Input="ImgA" Output="ImgOut" />
+        <Connection GearA="Slider5" GearB="VideoMix1" Input="ArgA" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="IN" Output="ImgOUT" />
+        <Connection GearA="VideoMix1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="Slider3" GearB="GenDisplaceGrid1" Input="PARAM3" Output="Value" />
-        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
         <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
         <Connection GearA="Slider6" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
         <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
@@ -91,3 +92,4 @@
         <Connection GearA="PushButton1" GearB="VideoDelay1" Input="Rec" Output="Value" />
     </Connections>
 </Schema>
+</Project>
