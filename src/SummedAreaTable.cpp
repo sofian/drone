@@ -30,7 +30,7 @@ void SummedAreaTable::buildTable()
     return;
 
   // check if we need to resize
-  if (_image->width() * _image->height() != _size) // there was a change
+  if ((int)(_image->width() * _image->height()) != _size) // there was a change
   {
     // resize
     _width = _image->width();
@@ -88,7 +88,7 @@ void SummedAreaTable::buildTableOfSquares()
     return;
 
   // check if we need to resize
-  if (_image->width() * _image->height() != _size) // there was a change
+  if ((int)(_image->width() * _image->height()) != _size) // there was a change
   {
     // resize
     _width = _image->width();
