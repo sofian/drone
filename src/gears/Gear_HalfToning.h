@@ -1,39 +1,31 @@
 #ifndef GEAR_HALFTONING_INCLUDED
 #define GEAR_HALFTONING_INCLUDED
 
-/*
-  Version 1 (August 2001), as described in the article
-  "A Simple and Efficient Error-Diffusion Algorithm" (SIGGRAPH'01)
-   Author: Victor Ostromoukhov
-   University of Montreal, http://www.iro.umontreal.ca/~ostrom/
-
-*******************************************************************/
-
-
 #include "Gear.h"
 #include "VideoType.h"
 
 #include <stdio.h>
 #include <math.h>
 
-// Internal use.
-struct ThreeCoefficients
-{
-  float i_r;        /* right */
-  float i_dl;       /* down-left */
-  float i_d;        /* down */
-  float i_sum;      /* sum */
-};
-
 /**
  * This class implements Victor Ostromoukhov error-diffusion algorithm, as
  * described in A Simple and Efficient Error-Diffusion Algorithm" (SIGGRAPH'01).
+ * The code could be found on the author's personal web page: 
+ * http://www.iro.umontreal.ca/~ostrom/
  *
  * @author Jean-Sébastien Senécal, Victor Ostromoukhov
  * @version %I% %G%
  */
 class Gear_HalfToning : public Gear
 {
+  // Internal use.
+  struct ThreeCoefficients
+  {
+    float i_r;        /* right */
+    float i_dl;       /* down-left */
+  };
+
+  static const ThreeCoefficients COEFS_TABLE[256];
   
 public:
   //! Default constructor.
@@ -71,6 +63,5 @@ private:
   RGBAfloat *_carryLine1;
 
 };
-
 
 #endif
