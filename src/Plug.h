@@ -83,6 +83,9 @@ public:
 
   void init() {}
 
+  T* defaultType() { return _internalType; }
+  T* hintType() { return _internalType; }
+
   const T* type() const { return _type;}
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
@@ -94,7 +97,8 @@ protected:
   }
 
 private:
-   const T *_type, *_internalType;
+  const T *_type;
+  T *_internalType;
 };
 
 
