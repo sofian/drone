@@ -62,22 +62,22 @@ private:
 
   // Attributes
 
-  bool    m_keepLooping;
-  unsigned char*   m_pCurrentFrame;
+  bool    _keepLooping;
+  unsigned char*   _pCurrentFrame;
 
-  //static const float   m_threshold;
-  static const int     m_deltaS;
+  //static const float   _threshold;
+  static const int     _deltaS;
 
-  //  bool    m_askForFrame;
+  //  bool    _askForFrame;
 
-  //  pthread_cond_t  m_hFrameEvent;
-  pthread_mutex_t m_inputMutex;
-  pthread_cond_t  m_inputCond;
-  pthread_mutex_t m_outputMutex;
+  //  pthread_cond_t  _hFrameEvent;
+  pthread_mutex_t _inputMutex;
+  pthread_cond_t  _inputCond;
+  pthread_mutex_t _outputMutex;
   pthread_t       _detectorThread;
   pthread_attr_t  _detectorAttr;
 
-  std::vector< FaceArea >  m_drawingFoundFaces; // the current faces drawn
+  std::vector< FaceArea >  _drawingFoundFaces; // the current faces drawn
 
   enum FeatureType 
   {
@@ -144,34 +144,36 @@ private:
 
   inline void   mergeFaces();
 
-  static const int        m_winSize;
+  static const int        _winSize;
 
-//  unsigned int*    m_integralImage
-  unsigned int*    m_pIntegralImage;
-  unsigned int*    m_pIntegralImageSquare;
+//  unsigned int*    _integralImage
+  unsigned int*    _pIntegralImage;
+  unsigned int*    _pIntegralImageSquare;
 
-  unsigned int*    m_pCumulativeRowSum;
-  unsigned int*    m_pCumulativeRowSumSquare;
+  unsigned int*    _pCumulativeRowSum;
+  unsigned int*    _pCumulativeRowSumSquare;
 
-  unsigned int     m_detector_x;
-  unsigned int     m_detector_y;
+  unsigned int     _detector_x;
+  unsigned int     _detector_y;
   // DO NOT FORGET TO SET THIS!!
-  unsigned int     m_picWidth;
-  unsigned int     m_picHeight;
+  unsigned int     _picWidth;
+  unsigned int     _picHeight;
 
-  std::vector< Feature >   m_selFeatures;
+  std::vector< Feature >   _selFeatures;
 
-  std::vector< FaceArea >  m_foundFaces; // the faces that are going to be found
-  std::vector< FaceArea >  m_mergedFaces; // the faces that are going to be found
+  std::vector< FaceArea >  _foundFaces; // the faces that are going to be found
+  std::vector< FaceArea >  _mergedFaces; // the faces that are going to be found
 
   // The features resized
   typedef std::vector< std::vector<Feature> > Cascade;
 
-  Cascade*                      m_pCascadeFeatures;
-  std::vector< PrecompWindows > m_precWinSizes;
+  Cascade*                      _pCascadeFeatures;
+  std::vector< PrecompWindows > _precWinSizes;
 
-  static const double                   m_thresholdList[];
-
+#if !NEW_VERSION
+  static const double                   _thresholdList[];
+#endif
+  
 private:
   PlugOut<AreaArrayType> *_AREA_OUT;
   PlugIn<VideoRGBAType> *_VIDEO_IN;

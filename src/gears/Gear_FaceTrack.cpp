@@ -31,7 +31,7 @@
 Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 
 Gear_FaceTrack::Gear_FaceTrack(Engine *engine, std::string name) : Gear(engine, "FaceTrack", name),
-                                                                   m_pCascadeFeatures(0),
+                                                                   _pCascadeFeatures(0),
                                                                    _threshold(0)
 {
   addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Area"));
@@ -41,24 +41,24 @@ Gear_FaceTrack::Gear_FaceTrack(Engine *engine, std::string name) : Gear(engine, 
 
 Gear_FaceTrack::~Gear_FaceTrack()
 {
-  m_keepLooping = false;
+  _keepLooping = false;
   pthread_attr_destroy(&_detectorAttr);
-  pthread_mutex_destroy(&m_inputMutex);
-  pthread_mutex_destroy(&m_outputMutex);
-  pthread_cond_destroy(&m_inputCond);
+  pthread_mutex_destroy(&_inputMutex);
+  pthread_mutex_destroy(&_outputMutex);
+  pthread_cond_destroy(&_inputCond);
   pthread_exit(NULL);
 }
 
 void Gear_FaceTrack::init()
 {
-  m_keepLooping = true;
+  _keepLooping = true;
   
   readFeaturesCascade(FILENAME);
 
-  pthread_mutex_init(&m_inputMutex, NULL ); // init
-  pthread_mutex_init(&m_outputMutex, NULL ); // init
-  pthread_mutex_lock(&m_inputMutex);
-  pthread_cond_init(&m_inputCond, NULL ); // init
+  pthread_mutex_init(&_inputMutex, NULL ); // init
+  pthread_mutex_init(&_outputMutex, NULL ); // init
+  pthread_mutex_lock(&_inputMutex);
+  pthread_cond_init(&_inputCond, NULL ); // init
 
   pthread_attr_init(&_detectorAttr);
   pthread_attr_setdetachstate(&_detectorAttr, PTHREAD_CREATE_JOINABLE);
@@ -72,7 +72,7 @@ bool Gear_FaceTrack::ready()
 
 void Gear_FaceTrack::runVideo()
 {
-  pthread_mutex_lock(&m_inputMutex);
+  pthread_mutex_lock(&_inputMutex);
 
   // Wait until the frame is ready
   _image = _VIDEO_IN->type();
@@ -82,43 +82,44 @@ void Gear_FaceTrack::runVideo()
 
   _threshold = _THRESHOLD_IN->type()->value();
 
-  m_picWidth = _image->width();
-  m_picHeight = _image->height();
+  _picWidth = _image->width();
+  _picHeight = _image->height();
 
   // Change to grayscale.
-  _grayImage.resize(m_picWidth, m_picHeight);
+  _grayImage.resize(_picWidth, _picHeight);
   
-  _integralImage.resize(m_picWidth, m_picHeight);
-  _integralImageSquare.resize(m_picWidth, m_picHeight);
-  _cumulativeRowSum.resize(m_picWidth);
-  _cumulativeRowSumSquare.resize(m_picWidth);
+  _integralImage.resize(_picWidth, _picHeight);
+  _integralImageSquare.resize(_picWidth, _picHeight);
+  _cumulativeRowSum.resize(_picWidth);
+  _cumulativeRowSumSquare.resize(_picWidth);
   
-  m_pIntegralImage = _integralImage.data();
-  m_pIntegralImageSquare = _integralImageSquare.data();
-  m_pCumulativeRowSum = _cumulativeRowSum.data();
-  m_pCumulativeRowSumSquare = _cumulativeRowSumSquare.data();
+  _pIntegralImage = _integralImage.data();
+  _pIntegralImageSquare = _integralImageSquare.data();
+  _pCumulativeRowSum = _cumulativeRowSum.data();
+  _pCumulativeRowSumSquare = _cumulativeRowSumSquare.data();
   
-  pthread_mutex_unlock(&m_inputMutex);
+  pthread_mutex_unlock(&_inputMutex);
 
-  pthread_cond_signal(&m_inputCond);
+  pthread_cond_signal(&_inputCond);
 
   // Output the faces.
-  pthread_mutex_lock(&m_outputMutex);
+  pthread_mutex_lock(&_outputMutex);
   _faces = _AREA_OUT->type();
-  _faces->resize(m_drawingFoundFaces.size());
+  _faces->resize(_drawingFoundFaces.size());
   for (int i=0; i<(int)_faces->size(); ++i)
   {
     Area& area = _faces->operator[](i);
-    area.x0 = m_drawingFoundFaces[i].x;
-    area.y0 = m_drawingFoundFaces[i].y;
-    area.x1 = m_drawingFoundFaces[i].x + m_drawingFoundFaces[i].size;
-    area.y1 = m_drawingFoundFaces[i].y + m_drawingFoundFaces[i].size;
+    area.x0 = _drawingFoundFaces[i].x;
+    area.y0 = _drawingFoundFaces[i].y;
+    area.x1 = _drawingFoundFaces[i].x + _drawingFoundFaces[i].size;
+    area.y1 = _drawingFoundFaces[i].y + _drawingFoundFaces[i].size;
   }
-  pthread_mutex_unlock(&m_outputMutex);
+  pthread_mutex_unlock(&_outputMutex);
 }
 
-const int     Gear_FaceTrack::m_winSize = 24;
-const double  Gear_FaceTrack::m_thresholdList[] = {-0.5,   // features bloc 1
+const int     Gear_FaceTrack::_winSize = 24;
+#if !NEW_VERSION
+const double  Gear_FaceTrack::_thresholdList[] = {-0.5,   // features bloc 1
                                                    -0.45,  // features bloc 2 
                                                    -0.35,  // features bloc 3
                                                    -0.1,   // features bloc 4
@@ -131,31 +132,32 @@ const double  Gear_FaceTrack::m_thresholdList[] = {-0.5,   // features bloc 1
                                                    0.05,   // features bloc 11
                                                    0.06
 };
+#endif
 
-const int     Gear_FaceTrack::m_deltaS = 3; 
+const int     Gear_FaceTrack::_deltaS = 3; 
 
-//bool    Gear_FaceTrack::m_askForFrame = true;
+//bool    Gear_FaceTrack::_askForFrame = true;
 
-// std::vector< Gear_FaceTrack::Feature >   Gear_FaceTrack::m_selFeatures;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::m_foundFaces;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::m_mergedFaces;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::m_drawingFoundFaces; // the current faces drawn
+// std::vector< Gear_FaceTrack::Feature >   Gear_FaceTrack::_selFeatures;
+// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_foundFaces;
+// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_mergedFaces;
+// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_drawingFoundFaces; // the current faces drawn
 
-//Gear_FaceTrack::Cascade*            Gear_FaceTrack::m_pCascadeFeatures = NULL;
+//Gear_FaceTrack::Cascade*            Gear_FaceTrack::_pCascadeFeatures = NULL;
 
-//std::vector< Gear_FaceTrack::PrecompWindows >  Gear_FaceTrack::m_precWinSizes;
+//std::vector< Gear_FaceTrack::PrecompWindows >  Gear_FaceTrack::_precWinSizes;
 
 // // VERY IMPORTANT!!!
 // #if defined(USING_CREATIVE_WEBCAM)
-// unsigned int Gear_FaceTrack::m_picWidth = 320;
-// unsigned int Gear_FaceTrack::m_picHeight = 240;
+// unsigned int Gear_FaceTrack::_picWidth = 320;
+// unsigned int Gear_FaceTrack::_picHeight = 240;
 // #elif defined(USING_DV)
-// unsigned int Gear_FaceTrack::m_picWidth = 360;
-// unsigned int Gear_FaceTrack::m_picHeight = 240;
+// unsigned int Gear_FaceTrack::_picWidth = 360;
+// unsigned int Gear_FaceTrack::_picHeight = 240;
 // #endif
 
-// unsigned int Gear_FaceTrack::m_detector_x = 0;
-// unsigned int Gear_FaceTrack::m_detector_y = 0;
+// unsigned int Gear_FaceTrack::_detector_x = 0;
+// unsigned int Gear_FaceTrack::_detector_y = 0;
 
 
 void *threadStartup(void *obj_)
@@ -168,25 +170,25 @@ void *threadStartup(void *obj_)
 
 void *Gear_FaceTrack::loopThread()
 {
-  m_keepLooping = true;
+  _keepLooping = true;
 
-  while (m_keepLooping)
+  while (_keepLooping)
   {
     // Tell the filter that we want a new frame
-    //m_askForFrame = true; 
+    //_askForFrame = true; 
 
-    pthread_cond_wait(&m_inputCond, &m_inputMutex);
+    pthread_cond_wait(&_inputCond, &_inputMutex);
     
-    m_pCurrentFrame = (unsigned char*) _grayImage.data();
-    rgba2grayscale(m_pCurrentFrame, (unsigned char*)_image->data(), _image->size());
+    _pCurrentFrame = (unsigned char*) _grayImage.data();
+    rgba2grayscale(_pCurrentFrame, (unsigned char*)_image->data(), _image->size());
     
     computeIntegralImages();
     findFaces();
     
-    pthread_mutex_lock(&m_outputMutex);
+    pthread_mutex_lock(&_outputMutex);
     mergeFaces();
-    m_drawingFoundFaces = m_mergedFaces; //m_foundFaces;
-    pthread_mutex_unlock(&m_outputMutex);
+    _drawingFoundFaces = _mergedFaces; //_foundFaces;
+    pthread_mutex_unlock(&_outputMutex);
   }
 
   pthread_exit(NULL);
@@ -215,18 +217,18 @@ void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
   std::vector< Feature > tmpPrecFeatures;
   std::vector< Feature >::iterator fIt;
 
-  ASSERT_ERROR_MESSAGE(m_pCascadeFeatures, "Cascade should be empty! Restart the application");
+  ASSERT_ERROR_MESSAGE(_pCascadeFeatures, "Cascade should be empty! Restart the application");
 
-  m_pCascadeFeatures = new Cascade[biggestSize - smallestSize + 1];
+  _pCascadeFeatures = new Cascade[biggestSize - smallestSize + 1];
 
   scale = pow((double)resizingFactor, smallestSize);
   // Computing the window sizes
   for (i = smallestSize; i <= biggestSize; ++i)
   {
     // First compute the window size
-    tmpWindowSize = static_cast<int>((float)m_winSize * scale + 0.499);
-    tmpShifting = static_cast<int>((float)m_deltaS * scale + 0.499);
-    m_precWinSizes.push_back( PrecompWindows(tmpWindowSize, tmpShifting) );
+    tmpWindowSize = static_cast<int>((float)_winSize * scale + 0.499);
+    tmpShifting = static_cast<int>((float)_deltaS * scale + 0.499);
+    _precWinSizes.push_back( PrecompWindows(tmpWindowSize, tmpShifting) );
     scale *= resizingFactor;
   }
 
@@ -295,7 +297,7 @@ void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
         tmpPrecFeatures.push_back(tmpFeature);
       }
 
-      m_pCascadeFeatures[sizeCounter].push_back(tmpPrecFeatures);
+      _pCascadeFeatures[sizeCounter].push_back(tmpPrecFeatures);
       tmpPrecFeatures.clear();
       scale *= resizingFactor;
     }
@@ -306,22 +308,22 @@ void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
 
 void Gear_FaceTrack::mergeFaces()
 {
-  m_mergedFaces.clear();
+  _mergedFaces.clear();
 
-  if (m_foundFaces.empty())
+  if (_foundFaces.empty())
     return;
 
-  unsigned char* foundFacesGroup = new unsigned char[m_foundFaces.size()];
-  unsigned char* foundFacesGroupSize = new unsigned char[m_foundFaces.size()];
-//  memset(foundFacesGroupSize, 0, m_foundFaces.size());
+  unsigned char* foundFacesGroup = new unsigned char[_foundFaces.size()];
+  unsigned char* foundFacesGroupSize = new unsigned char[_foundFaces.size()];
+//  memset(foundFacesGroupSize, 0, _foundFaces.size());
 
   FaceArea* currMergedFace;
 
-  std::vector< FaceArea >::iterator doneIt = m_foundFaces.begin();
+  std::vector< FaceArea >::iterator doneIt = _foundFaces.begin();
   std::vector< FaceArea >::iterator candidateIt;
 
-  //  m_mergedFaces.clear(); // this is a crappy hack to deal with crappy flickering algorithm
-  m_mergedFaces.push_back(*doneIt);
+  //  _mergedFaces.clear(); // this is a crappy hack to deal with crappy flickering algorithm
+  _mergedFaces.push_back(*doneIt);
   ++doneIt;
 
   foundFacesGroup[0] = 0;
@@ -333,12 +335,12 @@ void Gear_FaceTrack::mergeFaces()
   int foundCounter;
   int candCounter;
 
-  for (foundCounter = 1; doneIt != m_foundFaces.end(); ++doneIt, ++foundCounter)
+  for (foundCounter = 1; doneIt != _foundFaces.end(); ++doneIt, ++foundCounter)
   {
     candCounter = 0;
     foundPrevious = false;
 
-    for (candidateIt = m_foundFaces.begin(); candidateIt != doneIt; ++candidateIt, ++candCounter)
+    for (candidateIt = _foundFaces.begin(); candidateIt != doneIt; ++candidateIt, ++candCounter)
     {
       if (  (candidateIt->x + candidateIt->size > doneIt->x ) &&
             (candidateIt->x < doneIt->x + doneIt->size)       &&
@@ -347,7 +349,7 @@ void Gear_FaceTrack::mergeFaces()
       {
         foundFacesGroup[ foundCounter ] = foundFacesGroup[ candCounter ];
         foundFacesGroupSize[ foundFacesGroup[ foundCounter ] ] ++;
-        currMergedFace = &m_mergedFaces[ foundFacesGroup[ foundCounter ] ];
+        currMergedFace = &_mergedFaces[ foundFacesGroup[ foundCounter ] ];
         foundPrevious = true;
 
         currMergedFace->x += candidateIt->x;
@@ -362,24 +364,24 @@ void Gear_FaceTrack::mergeFaces()
     {
       foundFacesGroup[ foundCounter ] = nGroups++;
       foundFacesGroupSize[ foundFacesGroup[ foundCounter ] ] = 1;
-      m_mergedFaces.push_back(*doneIt);
-      currMergedFace = &m_mergedFaces[ foundFacesGroup[ foundCounter ] ];
+      _mergedFaces.push_back(*doneIt);
+      currMergedFace = &_mergedFaces[ foundFacesGroup[ foundCounter ] ];
     }
   }
 
   // let's do the real interpolation, dammit!
-  for (candidateIt = m_mergedFaces.begin(), candCounter = 0; 
-       candidateIt != m_mergedFaces.end(); 
+  for (candidateIt = _mergedFaces.begin(), candCounter = 0; 
+       candidateIt != _mergedFaces.end(); 
        ++candidateIt,  ++candCounter)
   {
     candidateIt->x /= foundFacesGroupSize[candCounter];
     candidateIt->y /= foundFacesGroupSize[candCounter];
     candidateIt->size /= foundFacesGroupSize[candCounter];
 
-    if (candidateIt->x + candidateIt->size > m_picWidth)
-      candidateIt->x = m_picWidth - candidateIt->size - 1;
-    if (candidateIt->y + candidateIt->size > m_picHeight)
-      candidateIt->y = m_picHeight - candidateIt->size - 1;
+    if (candidateIt->x + candidateIt->size > _picWidth)
+      candidateIt->x = _picWidth - candidateIt->size - 1;
+    if (candidateIt->y + candidateIt->size > _picHeight)
+      candidateIt->y = _picHeight - candidateIt->size - 1;
   }
  
   delete [] foundFacesGroup;
@@ -391,7 +393,7 @@ void Gear_FaceTrack::findFaces()
   unsigned int* pCurrWindow;
   unsigned int* pCurrWindowSquare;
 
-  m_foundFaces.clear();
+  _foundFaces.clear();
 
   std::vector< PrecompWindows > ::iterator vIt;
   Cascade* pCurrPrecFeatures;
@@ -402,16 +404,16 @@ void Gear_FaceTrack::findFaces()
 
   Cascade::iterator cIt;
 
-  for (vIt = m_precWinSizes.begin(); vIt != m_precWinSizes.end(); ++vIt, ++sizesCounter)
+  for (vIt = _precWinSizes.begin(); vIt != _precWinSizes.end(); ++vIt, ++sizesCounter)
   {
-    pCurrPrecFeatures = &m_pCascadeFeatures[sizesCounter];
+    pCurrPrecFeatures = &_pCascadeFeatures[sizesCounter];
     //cout << "Window Size: " << windowSize << endl;
-    for (m_detector_x = 0; m_detector_x +  vIt->winSize <= m_picWidth; m_detector_x += vIt->shifting)
+    for (_detector_x = 0; _detector_x +  vIt->winSize <= _picWidth; _detector_x += vIt->shifting)
     {
-      for (m_detector_y = 0; m_detector_y + vIt->winSize <= m_picHeight; m_detector_y += vIt->shifting)   
+      for (_detector_y = 0; _detector_y + vIt->winSize <= _picHeight; _detector_y += vIt->shifting)   
       {
-        pCurrWindow = &m_pIntegralImage[m_detector_y * m_picWidth + m_detector_x];
-        pCurrWindowSquare = &m_pIntegralImageSquare[m_detector_y * m_picWidth + m_detector_x];
+        pCurrWindow = &_pIntegralImage[_detector_y * _picWidth + _detector_x];
+        pCurrWindowSquare = &_pIntegralImageSquare[_detector_y * _picWidth + _detector_x];
 
         isFace = true;
         featuresBloc = 0;
@@ -432,13 +434,13 @@ void Gear_FaceTrack::findFaces()
           // Yeah! A face found!
 
           FaceArea aFace;
-          aFace.x = m_detector_x;
-          aFace.y = m_detector_y;
+          aFace.x = _detector_x;
+          aFace.y = _detector_y;
           aFace.size = vIt->winSize;
 
           //TRACE("Found at %d,%d (size: %d)\n", aFace.x, aFace.y, aFace.size);
 
-          m_foundFaces.push_back(aFace);
+          _foundFaces.push_back(aFace);
         }
       }
     }
@@ -462,10 +464,10 @@ bool Gear_FaceTrack::detector(unsigned int*& pCurrWindow, unsigned int*& pCurrWi
                         (getSumAt(pCurrWindow, newWinSize-1, -1) + // 2
                          getSumAt(pCurrWindow, -1, newWinSize-1)) ); // 3
 
-  double sumOfSquares = (double)( getSumAt(pCurrWindowSquare, newWinSize-1, newWinSize-1, m_pIntegralImageSquare) + // 4
-                                  getSumAt(pCurrWindowSquare, -1, -1, m_pIntegralImageSquare) - // 1
-                                 (getSumAt(pCurrWindowSquare, newWinSize-1, -1, m_pIntegralImageSquare) + // 2
-                                  getSumAt(pCurrWindowSquare, -1, newWinSize-1, m_pIntegralImageSquare)) ); // 3
+  double sumOfSquares = (double)( getSumAt(pCurrWindowSquare, newWinSize-1, newWinSize-1, _pIntegralImageSquare) + // 4
+                                  getSumAt(pCurrWindowSquare, -1, -1, _pIntegralImageSquare) - // 1
+                                 (getSumAt(pCurrWindowSquare, newWinSize-1, -1, _pIntegralImageSquare) + // 2
+                                  getSumAt(pCurrWindowSquare, -1, newWinSize-1, _pIntegralImageSquare)) ); // 3
 
   double numPixels = (double)(newWinSize * newWinSize);
 
@@ -498,7 +500,7 @@ bool Gear_FaceTrack::detector(unsigned int*& pCurrWindow, unsigned int*& pCurrWi
 
   f = sumAlphaAndH / sumAlpha;
 
-  if (f > _threshold)// * m_thresholdList[blockNumber])
+  if (f > _threshold)// * _thresholdList[blockNumber])
   {
     //cout << "confidence: " << f << endl;
     return true;
@@ -792,7 +794,7 @@ inline unsigned int
 Gear_FaceTrack::getSumAt(unsigned int*& winIntImage, int x, int y)
 {
 #ifdef DBG
-  if (m_picWidth == 0)
+  if (_picWidth == 0)
   {
     MessageBox(NULL, "ERROR: currPicSize = 0!!", "Error", MB_OK|MB_ICONERROR);
     exit(0);
@@ -815,22 +817,22 @@ Gear_FaceTrack::getSumAt(unsigned int*& winIntImage, int x, int y)
   // NORMAN'S METHOD
   if (x < 0 || y < 0)
   {
-    //int diffPos = (int)(winIntImage - m_pIntegralImage);
-    //int globalY = diffPos / m_picWidth;
-    //int globalX = diffPos % m_picWidth;
+    //int diffPos = (int)(winIntImage - _pIntegralImage);
+    //int globalY = diffPos / _picWidth;
+    //int globalX = diffPos % _picWidth;
 
-    if ( (m_detector_x == 0 && x < 0) || (m_detector_y == 0 && y < 0 ))
+    if ( (_detector_x == 0 && x < 0) || (_detector_y == 0 && y < 0 ))
       return 0;
   }
 
-  return winIntImage[ m_picWidth * y + x ];
+  return winIntImage[ _picWidth * y + x ];
 }
 
 inline unsigned int 
 Gear_FaceTrack::getSumAt(unsigned int*& winIntImage, int x, int y, unsigned int*& picIntImage)
 {
 #ifdef DBG
-  if (m_picWidth == 0)
+  if (_picWidth == 0)
   {
     MessageBox(NULL, "ERROR: currPicSize = 0!!", "Error", MB_OK|MB_ICONERROR);
     exit(0);
@@ -854,16 +856,16 @@ Gear_FaceTrack::getSumAt(unsigned int*& winIntImage, int x, int y, unsigned int*
   if (x < 0 || y < 0)
   {
     //int diffPos = (int)(winIntImage - picIntImage);
-    //int globalY = diffPos / m_picWidth;
-    //int globalX = diffPos % m_picWidth;
+    //int globalY = diffPos / _picWidth;
+    //int globalX = diffPos % _picWidth;
 
-    if ( (m_detector_x == 0 && x < 0) || (m_detector_y == 0 && y < 0 ))
+    if ( (_detector_x == 0 && x < 0) || (_detector_y == 0 && y < 0 ))
       return 0;
     //else
     //  return winIntImage[ picWidth * y + x ];
   }
   //else
-  return winIntImage[ m_picWidth * y + x ];
+  return winIntImage[ _picWidth * y + x ];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -878,39 +880,39 @@ void Gear_FaceTrack::computeIntegralImages()
 
   unsigned int* intImageIt;
   unsigned int* squareIntImgIt;
-  unsigned char* frameIt = m_pCurrentFrame;
+  unsigned char* frameIt = _pCurrentFrame;
 
   // For the moment I allocate and deallocate every time..
   //BYTE* bitsHead = new BYTE[bm.bmWidth * bm.bmHeight];
   //picture->GetBitmapBits(bm.bmWidth * bm.bmHeight, bitsHead);
   //BYTE* bits = bitsHead;
 
-  intImageIt = m_pIntegralImage;
-  squareIntImgIt = m_pIntegralImageSquare;
+  intImageIt = _pIntegralImage;
+  squareIntImgIt = _pIntegralImageSquare;
 
-  for (x = 0; x < m_picWidth; ++x)
+  for (x = 0; x < _picWidth; ++x)
   {
-    m_pCumulativeRowSum[x] = 0;
-    m_pCumulativeRowSumSquare[x] = 0;
+    _pCumulativeRowSum[x] = 0;
+    _pCumulativeRowSumSquare[x] = 0;
   }
 
-  for (y = 0; y < m_picHeight; ++y)
+  for (y = 0; y < _picHeight; ++y)
   {
     prevIntImValue = 0;
     prevIntImValueSquare = 0;
 
-    for (x = 0; x < m_picWidth; ++x)
+    for (x = 0; x < _picWidth; ++x)
     {
       // First integral image
-      m_pCumulativeRowSum[x] += (unsigned int)(*frameIt);
+      _pCumulativeRowSum[x] += (unsigned int)(*frameIt);
 
-      *intImageIt = prevIntImValue + m_pCumulativeRowSum[x];
+      *intImageIt = prevIntImValue + _pCumulativeRowSum[x];
       prevIntImValue = *intImageIt;
       ++intImageIt;
 
       // Square integral image
-      m_pCumulativeRowSumSquare[x] += ((unsigned int)(*frameIt) * (unsigned int)(*frameIt));
-      *squareIntImgIt = prevIntImValueSquare + m_pCumulativeRowSumSquare[x];
+      _pCumulativeRowSumSquare[x] += ((unsigned int)(*frameIt) * (unsigned int)(*frameIt));
+      *squareIntImgIt = prevIntImValueSquare + _pCumulativeRowSumSquare[x];
       prevIntImValueSquare = *squareIntImgIt;
 
       ++squareIntImgIt;
