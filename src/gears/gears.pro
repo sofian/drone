@@ -32,6 +32,7 @@ HalfToning \
 Saturation \
 SignalStat \
 SmearGrid \
+Sobel \
 VideoDelay \
 VideoLoop \
 ImageShuffle \
