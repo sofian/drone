@@ -68,7 +68,7 @@ bool Property::valueBool()
 Property* Properties::add(Property::eType type, std::string name)
 {
   //no duplicate
-  assert(_properties.find(name) == _properties.end());
+  ASSERT_ERROR(_properties.find(name) == _properties.end());
 
   Property *newProperty = new Property(type, name);
 
