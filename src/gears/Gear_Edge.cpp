@@ -13,6 +13,7 @@ Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", na
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127.0f, 0.0f, 255.0f)));
+  NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
 }
 
 Gear_Edge::~Gear_Edge()
@@ -40,8 +41,6 @@ void Gear_Edge::runVideo()
   _sizeX = _image->width();
   _sizeY = _image->height();
   
-  NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
-
   for (int y=1;y<_sizeY-2;y++)
   {
     // Set row iterators.
