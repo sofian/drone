@@ -46,7 +46,7 @@ release {
 
 
 TEMPLATE = lib
-INCLUDEPATH += . types contrib/frei0r
+INCLUDEPATH += . types ../contrib/frei0r ../gears/Frei0r
 
 #mac
 macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
@@ -73,6 +73,7 @@ ColorSpace.h \
 ConnectionItem.h \
 Engine.h \
 Gear.h \
+#Gear_Frei0r.h \
 types/AbstractType.h \
 types/AreaArrayType.h \
 types/FFTType.h \
@@ -116,6 +117,7 @@ SOURCES += error.cpp \
 ConnectionItem.cpp \
 Engine.cpp \
 Gear.cpp \
+#Gear_Frei0r.cpp \
 types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \

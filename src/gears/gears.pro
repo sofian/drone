@@ -35,7 +35,8 @@ VideoDelay \
 VideoLoop \
 ImageShuffle \
 ImageSequence \
-Invert 
+Invert \
+Frei0r
 
 agg {
 SUBDIRS+=AggTest

@@ -61,10 +61,12 @@ public:
   static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
   static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
+  static void initFrei0r();
 private:
   static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
   static GearMaker _registerMyself;  
   static std::string droneGearsPath;
+  static void *_frei0rHandle;
 };
 
 /*
@@ -82,6 +84,5 @@ private: \
 };\
 MMAKERNAME MMAKERNAME::_registerThis;
 */
-
 
 #endif

@@ -45,12 +45,13 @@ struct GearInfo
 {
   GearInfo() : majorVersion(1), minorVersion(1), classification(GearClassifications::unclassified().instance()) {}
   
-  std::string name;    
+  std::string name;
   std::string author;
   std::string description;
   int majorVersion;
-  int minorVersion;  
+  int minorVersion;
   GearClassification* classification;
+  void *data; // optional, additional information concerning the gear
 };
 
 class Gear  
