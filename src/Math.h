@@ -29,10 +29,12 @@
 #undef MAX
 #endif
 
+//! Min.
 template <typename T>
 T MIN(T x, T y)
 { return std::min(x,y); }
 
+//! Max.
 template <typename T>
 T MAX(T x, T y)
 { return std::max(x,y); }
@@ -40,6 +42,7 @@ T MAX(T x, T y)
 // Begin LIBGIMP
 
 // LIBGIMP - The GIMP Library
+// Copyright (c) 2004 Jean-Sébastien Senécal
 // Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
 
 //! Clamp x at lower = l and upper = u.
@@ -81,7 +84,7 @@ template <typename T, typename U, typename V> void
 add(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ + *src2++;
+    *dst++ = static_cast<T>(*src1++ + *src2++);
 }
 
 //! Adds #n# elements of #src# to #dst#.
@@ -105,7 +108,7 @@ template <typename T, typename U, typename V> void
 subtract(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ - *src2++;
+    *dst++ = static_cast<T>(*src1++ - *src2++);
 }
 
 //! Subtracts #n# elements of #src# from #dst#.
@@ -129,7 +132,7 @@ template <typename T, typename U, typename V> void
 multiply(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ * *src2++;
+    *dst++ = static_cast<T>(*src1++ * *src2++);
 }
 
 //! Multiplies #n# elements of #dst# by #src#.
@@ -153,7 +156,7 @@ template <typename T, typename U, typename V> void
 divide(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ / *src2++;
+    *dst++ = static_cast<T>(*src1++ / *src2++);
 }
 
 //! Divides #n# elements of #dst# by #src#.
