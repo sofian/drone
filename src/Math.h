@@ -74,118 +74,158 @@ inline int MAX255(int a)
 
 //! Return whether is outside boundaries (x<l or x>u)
 template <typename T>
-inline T IS_OUTSIDE(T x, T l, T u)
+inline bool IS_OUTSIDE(T x, T l, T u)
 { return ( (x < l) || (x > u) );}
 
 // Fast array operations.
 
+// Additions.
+
 //! Adds #n# elements of #src1# to #src2# and puts the result in #dst#. 
-template <typename T, typename U, typename V> void
-add(T *dst, const U *src1, const V *src2, size_t n)
+template <typename T, typename U, typename V>
+inline void add(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src1++ + *src2++);
+    *dst++ = *src1++ + *src2++;
 }
 
 //! Adds #n# elements of #src# to #dst#.
-template <typename T, typename U> void
-add(T *dst, const U *src, size_t n)
+template <typename T, typename U>
+inline void add(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ += static_cast<T>(*src++);
+    *dst++ += *src++;
 }
 
-//! Adds #val# to #n# elements of #src#.
-template <typename T, typename U> void
-add(T *src, T val, size_t n)
-{
-  while (n--)
-    *src++ += static_cast<T>(val);
-}
+// //! Adds #val# to #n# elements of #src# and puts the result in #dst#. 
+// template <typename T, typename U, typename V>
+// inline void add(T *dst, const U *src, const V val, size_t n)
+// {
+//   while (n--)
+//     *dst++ = *src++ + val;
+// }
 
-// //! Subtracts #n# elements of #src2# from #src1# and puts the result in #dst#. 
-template <typename T, typename U, typename V> void
-subtract(T *dst, const U *src1, const V *src2, size_t n)
+// //! Adds #val# to #n# elements of #src#.
+// template <typename T, typename U>
+// inline void add(T *src, const U val, size_t n)
+// {
+//   while (n--)
+//     *src++ += val;
+// }
+
+
+// Subtractions.
+
+//! Subtracts #n# elements of #src2# from #src1# and puts the result in #dst#. 
+template <typename T, typename U, typename V>
+inline void subtract(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src1++ - *src2++);
+    *dst++ = *src1++ - *src2++;
 }
 
 //! Subtracts #n# elements of #src# from #dst#.
-template <typename T, typename U> void
-subtract(T *dst, const U *src, size_t n)
+template <typename T, typename U>
+inline void subtract(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ -= static_cast<T>(*src++);
+    *dst++ -= *src++;
 }
 
-//! Subtracts #val# to #n# elements of #src#.
-template <typename T, typename U> void
-subtract(T *src, T val, size_t n)
-{
-  while (n--)
-    *src++ -= static_cast<T>(val);
-}
+// //! Subtracts #val# from #n# elements of #src# and puts the result in #dst#. 
+// template <typename T, typename U, typename V>
+// inline void subtract(T *dst, const U *src, const V val, size_t n)
+// {
+//   while (n--)
+//     *dst++ = *src++ - val;
+// }
+
+// //! Subtracts #val# to #n# elements of #src#.
+// template <typename T, typename U>
+// inline void subtract(T *src, const U val, size_t n)
+// {
+//   while (n--)
+//     *src++ -= val;
+// }
+
+
+// Multiplications.
 
 //! Multiplies #n# elements of #src1# to #src2# and puts the result in #dst#. 
-template <typename T, typename U, typename V> void
-multiply(T *dst, const U *src1, const V *src2, size_t n)
+template <typename T, typename U, typename V>
+inline void multiply(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src1++ * *src2++);
+    *dst++ = *src1++ * *src2++;
 }
 
 //! Multiplies #n# elements of #dst# by #src#.
-template <typename T, typename U> void
-multiply(T *dst, const U *src, size_t n)
+template <typename T, typename U>
+inline void multiply(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ *= static_cast<T>(*src++);
+    *dst++ *= *src++;
 }
 
-//! Multiplies #val# with #n# elements of #src#.
-template <typename T, typename U> void
-multiply(T *src, U val, size_t n)
-{
-  while (n--)
-    *src++ *= static_cast<T>(val);
-}
+// //! Subtracts #val# to #n# elements of #src# and puts the result in #dst#. 
+// template <typename T, typename U, typename V>
+// inline void mutliply(T *dst, const U *src, const V val, size_t n)
+// {
+//   while (n--)
+//     *dst++ = *src * val;
+// }
+
+// //! Multiplies #val# with #n# elements of #src#.
+// template <typename T, typename U>
+// inline void multiply(T *src, const U val, size_t n)
+// {
+//   while (n--)
+//     *src++ *= val;
+// }
 
 //! Divides #n# elements of #src2# from #src1# and puts the result in #dst#. 
-template <typename T, typename U, typename V> void
-divide(T *dst, const U *src1, const V *src2, size_t n)
+template <typename T, typename U, typename V>
+inline void divide(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src1++ / *src2++);
+    *dst++ = *src1++ / *src2++;
 }
 
 //! Divides #n# elements of #dst# by #src#.
-template <typename T, typename U> void
-divide(T *dst, const U *src, size_t n)
+template <typename T, typename U>
+inline void divide(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ /= static_cast<T>(*src++);
+    *dst++ /= *src++;
 }
 
-//! Divides #val# with #n# elements of #src#.
-template <typename T, typename U> void
-divide(T *src, U val, size_t n)
-{
-  while (n--)
-    *src++ /= static_cast<T>(val);
-}
+// //! Divides #n# elements of #src# by #val# and puts the result in #dst#. 
+// template <typename T, typename U, typename V>
+// inline void divide(T *dst, const U *src, const V val, size_t n)
+// {
+//   while (n--)
+//     *dst++ = *src / val;
+// }
+
+// //! Divides #n# elements of #src# by #val#.
+// template <typename T, typename U>
+// inline void divide(T *src, const U val, size_t n)
+// {
+//   while (n--)
+//     *src++ /= val;
+// }
 
 //! Copies #n# values of #src# to #dst#. If both are of the same type, better use memcpy(3).
-template <typename T, typename U> void
-copy(T *dst, const U *src, size_t n)
+template <typename T, typename U>
+inline void copy(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src++);
+    *dst++ = *src++;
 }
 
 //! Returns the sum of #n# elements of #src#.
-template <typename T> T
-sum(const T *src, size_t n)
+template <typename T>
+inline T sum(const T *src, size_t n)
 {
   if (!n)
     return 0;
@@ -196,32 +236,26 @@ sum(const T *src, size_t n)
 }
 
 //! Returns the min element of #n# elements of #src#.
-template <typename T> T
-min(const T *src, size_t n)
+template <typename T>
+inline T min(const T *src, size_t n)
 {
   if (!n)
     return 0;
   T min = *src++;
   while (--n)
-  {
-    min = MIN(*src,min);
-    src++;
-  }
+    min = MIN(*src++,min);
   return min;
 }
 
 //! Returns the max element of #n# elements of #src#.
-template <typename T> T
-max(const T *src, size_t n)
+template <typename T>
+inline T max(const T *src, size_t n)
 {
   if (!n)
     return 0;
   T max = *src++;
   while (--n)
-  {
-    max = MAX(*src,max);
-    src++;
-  }
+    max = MAX(*src++,max);
   return max;
 }
 
