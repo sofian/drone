@@ -22,8 +22,8 @@ HEADERS += config.h \
            src/Gear_ColorAdjust.h \
            src/Gear_Contrast.h \
        	   src/Gear_ColorQuantize.h \
-              	   src/Gear_ColorQuantizeWu.h \
-	   src/Gear_Saturation.h \
+           src/Gear_ColorQuantizeWu.h \
+           src/Gear_Saturation.h \
            src/Gear_DataOut.h \
            src/Gear_DiffDist.h \
            src/Gear_Edge.h \
@@ -32,6 +32,7 @@ HEADERS += config.h \
            src/Gear_Gain.h \
            src/Gear_GrayScale.h \
            src/Gear_Image.h \
+           src/Gear_KDTree.h \
            src/Gear_MasterFrequency.h \
            src/Gear_NGone.h \
            src/Gear_Osc.h \
@@ -67,6 +68,7 @@ HEADERS += config.h \
            src/PropertyControlFilename.h \
            src/PropertyControlString.h \
            src/Rasterer.h \
+           src/SummedAreaTable.h \
            src/SchemaEditor.h \
            src/Signal.h \
            src/SignalCircularBuffer.h \
@@ -92,7 +94,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_ColorAdjust.cpp \
            src/Gear_Contrast.cpp \
            src/Gear_ColorQuantize.cpp \
-                  src/Gear_ColorQuantizeWu.cpp \
+           src/Gear_ColorQuantizeWu.cpp \
            src/Gear_Saturation.cpp \
            src/Gear_DataOut.cpp \
            src/Gear_DiffDist.cpp \
@@ -102,6 +104,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_Gain.cpp \
            src/Gear_GrayScale.cpp \
            src/Gear_Image.cpp \
+           src/Gear_KDTree.cpp \
            src/Gear_MasterFrequency.cpp \
            src/Gear_NGone.cpp \
            src/Gear_Osc.cpp \
@@ -135,6 +138,7 @@ SOURCES += src/Canvas.cpp \
            src/SchemaEditor.cpp \
            src/SignalCircularBuffer.cpp \
            src/SignalInfo.cpp \
+           src/SummedAreaTable.cpp \
            src/Timing.cpp \
            src/VideoInfo.cpp
 	   
