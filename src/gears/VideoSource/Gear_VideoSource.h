@@ -27,8 +27,8 @@
 #include "SignalType.h"
 #include "EnumType.h"
 
-
-#include <libmpeg3.h>
+#include "avcodec.h"
+#include "avformat.h"
 
 class Gear_VideoSource : public Gear
 {
@@ -46,7 +46,6 @@ public:
   virtual ~Gear_VideoSource();
 
   void runVideo();
-  void runAudio();
 
   bool ready();
 
@@ -55,31 +54,30 @@ protected:
 
 private:
 
+  void freeResources();
+
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
   PlugIn<ValueType> *_RESET_IN;
-  PlugIn<EnumType> *_MODE_IN;
 
   VideoRGBAType *_imageOut;
-  
-
-  mpeg3_t* _file;
-
-  int _sizeX, _sizeY;
 
   //locals
   
   float *_audioBuffer;
-  RGBA *_frame[1024];
   //RGBA *_outData;  
   long _previousFramePos;
 
-  int64_t _bytes;
-  
-  //mmx
-//  unsigned long long int *_mmxImageIn;
-//  unsigned long long int *_mmxImageOut;
-
+  //ffmpeg
+  AVFormatContext *_formatContext;  
+  AVCodecContext *_codecContext;
+  AVCodec *_codec;
+  AVPacket _packet;
+  AVFrame *_frame;
+  AVFrame *_frameRGBA;
+  uint8_t *_buffer;
+  int _videoStreamIndex;
+  int64_t _firstFrameTime;
 };
 
 #endif

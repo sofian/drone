@@ -16,59 +16,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+//inspired from Using libavformat and libavcodec by Martin Böhme (boehme@inb.uni-luebeckREMOVETHIS.de) 
+
 
 #include <iostream>
 #include "Gear_VideoSource.h"
 #include "Engine.h"
 
 #include "GearMaker.h"
-   
+
 extern "C" {           
-Gear* makeGear(Schema *schema, std::string uniqueName)
-{
-  return new Gear_VideoSource(schema, uniqueName);
-}  
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoSource";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+  Gear* makeGear(Schema *schema, std::string uniqueName)
+  {
+    return new Gear_VideoSource(schema, uniqueName);
+  }  
+  GearInfo getGearInfo()
+  {
+    GearInfo gearInfo;
+    gearInfo.name = "VideoSource";
+    gearInfo.classification = GearClassifications::video().IO().instance();
+    return gearInfo;
+  }
 }
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "VideoSource", uniqueName),
- _file(NULL),
- _sizeX(0),
- _sizeY(0)
+Gear(schema, "VideoSource", uniqueName),
+_formatContext(NULL),
+_codecContext(NULL),
+_codec(NULL),
+_frame(NULL),
+_frameRGBA(NULL),
+_buffer(NULL)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
-  
+
   addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
-  
-  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, LOOP);
-  playbackMode->setLabel(NORMAL,"Normal");
-  playbackMode->setLabel(LOOP,"Loop");
-  addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));
-  
+
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
-  //todo
-  memset(_frame, 0, 1024*sizeof(RGBA*));
+  av_register_all();
 }
 
 Gear_VideoSource::~Gear_VideoSource()
 {
-  if (_file!=NULL)
-    mpeg3_close(_file);
-
-  for (int i=0;i<1024;i++)
-    free(_frame[i]);
-
+  freeResources();
 }
 
 bool Gear_VideoSource::ready()
@@ -76,100 +70,154 @@ bool Gear_VideoSource::ready()
   return(_VIDEO_OUT->connected() || _AUDIO_OUT->connected());
 }
 
+void Gear_VideoSource::freeResources()
+{
+  if (_buffer)  
+    delete [] _buffer;
+  
+  if (_frameRGBA)  
+    av_free(_frameRGBA);
+  
+  if (_frame)  
+    av_free(_frame);
+  
+  if (_codecContext)
+    avcodec_close(_codecContext);
+  
+  if (_formatContext)
+    av_close_input_file(_formatContext);
+}
+
 void Gear_VideoSource::onUpdateSettings()
 {
-  char tempstr[1024];
 
-  strcpy(tempstr,_settings.get(SETTING_FILENAME)->valueStr().c_str());
+  std::cout << "opening movie : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
 
-  std::cout << "opening movie : " << tempstr << std::endl;
+  //free previously allocated structures
+  freeResources();
 
-  if (_file!=NULL)
-    mpeg3_close(_file);
-  
-  _file = mpeg3_open(tempstr);    
-
-  if (_file==NULL)
+  if (av_open_input_file(&_formatContext, _settings.get(SETTING_FILENAME)->valueStr().c_str(), NULL, 0, NULL)<0)
   {
-    std::cout << "error opening movie : " << tempstr << std::endl;
+    std::cout << "fail to open movie!" << std::endl;
     return;
   }
-  _sizeX = mpeg3_video_width(_file, 0);
-  _sizeY = mpeg3_video_height(_file, 0);
 
-  _bytes = mpeg3_video_frames(_file,0);
+  if (av_find_stream_info(_formatContext)<0)
+  {
+    std::cout << "fail to find stream info!" << std::endl;
+    return;
+  }
 
-  std::cout << "movie size X : " << _sizeX << std::endl;
-  std::cout << "movie size Y : " << _sizeY << std::endl;
+  dump_format(_formatContext, 0, _settings.get(SETTING_FILENAME)->valueStr().c_str(), 0);
 
-  std::cout << "numframes : " << mpeg3_video_frames(_file, 0) << std::endl;
-  std::cout << "movie samplerate : " << mpeg3_sample_rate(_file,0) << std::endl;
+  _videoStreamIndex=-1;
+  for (int i=0; i<_formatContext->nb_streams; i++)
+    if (_formatContext->streams[i]->codec.codec_type == CODEC_TYPE_VIDEO)
+    {
+      _videoStreamIndex=i;
+      break;
+    }
 
+  if (_videoStreamIndex<0)
+  {
+    std::cout << "no video stream!" << std::endl;
+    return;
+  }
 
-  for (int i=0;i<_sizeY-1;i++)
-    _frame[i] = (RGBA*) realloc(_frame[i], _sizeX * sizeof(RGBA));
+  _codecContext=&(_formatContext->streams[_videoStreamIndex]->codec);       
+  _codec = avcodec_find_decoder(_codecContext->codec_id);
+  if (!_codec)
+  {
+    std::cout << "no appropriate codec found!" << std::endl;
+    return;
+  }
 
-  //from the doc :
-  //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
-  _frame[_sizeY-1] = (RGBA*) realloc(_frame[_sizeY-1], (_sizeX * sizeof(RGBA)) + 4);
+  std::cout << "using codec : " << _codec->name << std::endl;
+  if (avcodec_open(_codecContext, _codec ) < 0)
+  {
+    std::cout << "fail to open codec!" << std::endl;
+    return;       
+  }
+
+  // Hack to correct wrong frame rates that seem to be generated by some 
+  // codecs
+  if (_codecContext->frame_rate>1000 && _codecContext->frame_rate_base==1)
+    _codecContext->frame_rate_base=1000;
+
+  // Allocate video frame
+  _frame=avcodec_alloc_frame();
+  if (_frame==NULL)
+  {
+    std::cout << "fail to allocate frame!" << std::endl;
+    return;
+  }
+
+  // Allocate rgba frame
+  _frameRGBA=avcodec_alloc_frame();
+  if (_frameRGBA==NULL)
+  {
+    std::cout << "fail to allocate frame!" << std::endl;
+    return;
+  }
+
+  // Determine required buffer size and allocate buffer
+  int numBytes=avpicture_get_size(PIX_FMT_RGBA32, _codecContext->width, _codecContext->height);
+  _buffer=new uint8_t[numBytes];
+
+  // Assign appropriate parts of buffer to image planes in _frameRGBA
+  avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGBA32, _codecContext->width, _codecContext->height);
+
+  _firstFrameTime=_formatContext->start_time;
 }
 
 void Gear_VideoSource::runVideo()
 {
-  if (_file==NULL)
-    return;
+  int frameFinished=0;
 
-  _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
+  _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 
-  if ((int)_RESET_IN->type()->value() == 1 ||
-      ((ePlaybackMode)_MODE_IN->type()->value() == LOOP &&
-       mpeg3_get_frame(_file,0) == _bytes))
-    mpeg3_set_frame(_file, 0, 0); // reset
-
-  //_image = _VIDEO_OUT->type().image();
-  //_outData = _image.data();
-  mpeg3_read_frame(_file, (unsigned char**)_frame, 0, 0, _sizeX, _sizeY, _sizeX, _sizeY, MPEG3_RGBA8888, 0);
-
-  _imageOut = _VIDEO_OUT->type();
-
-  for(int y=0;y<_sizeY;y++)
-    memcpy(_imageOut->row(y), _frame[y], sizeof(RGBA) * _sizeX);
-
-//  register int mmxCols=(_sizeX)/2;
-//  register int index;    
-
-  /*   _mmxImageIn = (unsigned long long int*) _frame;        */
-  /*   _mmxImageOut =(unsigned long long int*) _image.data(); */
-  /*                                                          */
+  if ((int)_RESET_IN->type()->value() == 1)
+  {
+    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
+  }
+    
+  //loop until we get a videoframe
+  //if we reach end, return to the beginning
+  if (av_read_frame(_formatContext, &_packet)<0)
+    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
+  while (_packet.stream_index!=_videoStreamIndex)
+  {    
+    av_free_packet(&_packet);
+    if (av_read_frame(_formatContext, &_packet)<0)
+      av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
+  }
 
 
-  /*                                                                            */
-  /*   for (int y=0;y<_sizeY;y++)                                               */
-  /*   {                                                                        */
-  /*     _mmxImageIn = (unsigned long long int*)_frame[y];                      */
-  /*     _mmxImageOut = (unsigned long long int*)(_outData + y*_sizeX);         */
-  /*                                                                            */
-  /*     for (index=0;index<mmxCols;index++)                                    */
-  /*     {                                                                      */
-  /*       __asm__ volatile (                                                   */
-  /*                        "\n\t movq %1,%%mm0        \t# (u) load imageIn"    */
-  /*                        "\n\t movq %%mm0,%0        \t# (u) store result "   */
-  /*                        : "=m" (_mmxImageOut[index])  // this is %0, output */
-  /*                        : "m"  (_mmxImageIn[index]) // this is %1, image A  */
-  /*                        );                                                  */
-  /*     }                                                                      */
-  /*    _mmxImageIn++;          */
-  /*    _mmxImageOut += _sizeX; */
-  /*   }                     */
-  /*   __asm__("emms" : : ); */
+  // Decode video frame
+  do
+  {
+    avcodec_decode_video(_codecContext, _frame, &frameFinished, _packet.data, _packet.size);
+  } while (!frameFinished);
 
+
+  // Convert the image from its native format to RGBA
+  img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGBA32, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);
+
+  register char *out=(char*)_VIDEO_OUT->type()->data();
+  register char *in=(char*)_frameRGBA->data[0];  
+  register int size=_codecContext->width*_codecContext->height;
+  for (register int i=0;i<size;i++)
+  {
+    *out++=*(in+2);
+    *out++=*(in+1);
+    *out++=*(in);
+    out++;
+    in+=4;
+  }
+
+  // Free the packet that was allocated by av_read_frame
+  av_free_packet(&_packet);
 }
 
-void Gear_VideoSource::runAudio()
-{
-  //  _audioBuffer = _AUDIO_OUT->type()->type()->data();
-
-  //mpeg3_read_audio(_file, signal, NULL, 1, 128, 0);
-}
 
 

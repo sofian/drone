@@ -36,7 +36,7 @@ VideoDelay \
 VideoLoop \
 ImageShuffle \
 ImageSequence \
-AsciiArt \
+#AsciiArt \
 Invert 
 
 agg {

@@ -262,7 +262,6 @@ void GearGui::drawShape(QPainter &painter)
   //shadow
   painter.setPen(Qt::NoPen);
   painter.setBrush(SHADOW_COLOR);
-  //painter.setBrush(Qt::Dense4Pattern);
   painter.drawRoundRect(startX + SHADOW_OFFSET, startY + SHADOW_OFFSET, _sizeX, _sizeY);
 
   //box
