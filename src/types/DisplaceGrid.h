@@ -43,7 +43,7 @@ public:
   virtual ~DisplaceGrid() {}
   
   std::string name() const { return "DisplaceGrid";}
-  QColor color() const { return QColor(240,260,14);}
+  QColor color() const { return QColor(240,255,14);}
 };
 
 #endif //VIDEOTYPE_INCLUDED
