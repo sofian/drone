@@ -41,7 +41,7 @@ class MainWindow : public QMainWindow
 
   //! loads the specified schema file
   void load(std::string filename);
-  void play(bool pl);
+  //void play(bool pl);
 
   MainWindow();
   ~MainWindow();
@@ -59,6 +59,9 @@ public slots:
   void slotMenuQuit();
 
   void slotMenuItemSelected(int id);
+
+protected:
+  void timerEvent(QTimerEvent*);
 
 private:
 

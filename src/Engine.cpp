@@ -189,8 +189,10 @@ void *Engine::playThread(void *parent)
 
   int currentFrame = 0;
 
+#ifndef SINGLE_THREADED_PLAYBACK
   while (engine->_playing)
   {
+#endif    
     block_starttime = Timing::time();
 
     engine->performScheduledConnectDisconnect();
@@ -241,7 +243,9 @@ void *Engine::playThread(void *parent)
       Timing::sleep((int)sleeptime);
 
     blockIt++;
+#ifndef SINGLE_THREADED_PLAYBACK  
   }
+#endif               
 
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();

@@ -28,16 +28,23 @@
 
 Register_Gear(MAKERGear_VideoLoop, Gear_VideoLoop, "VideoLoop")
 
-  Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, "VideoLoop", name),
+Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, "VideoLoop", name),
                                                                      _recording(true),
                                                                      _currentLoopFrame(0),
-                                                                     _nLoopFrames(1)
+                                                                     _nLoopFrames(1),
+                                                                     _pingpongDir(1)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_PUNCH_IN = new PlugIn<ValueType>(this, "PunchIn", new ValueType(0, 0, 1)));
   addPlug(_PUNCH_OUT = new PlugIn<ValueType>(this, "PunchOut", new ValueType(0, 0, 1)));
   addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
+
+  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FOWARD);
+  playbackMode->setLabel(FOWARD,"Foward");
+  playbackMode->setLabel(BACKWARD,"Backward");
+  playbackMode->setLabel(PING_PONG,"Ping pong");
+  addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));
 
   _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
 
@@ -69,6 +76,8 @@ void Gear_VideoLoop::runVideo()
   _outImage = _VIDEO_OUT->type();
 
   _outImage->resize(_sizeX, _sizeY);
+
+  _playbackMode = CLAMP((ePlaybackMode)_MODE_IN->type()->value(), FOWARD, PING_PONG);
 
   _memory = MAX(_MEMORY->type()->intValue(), 0);
   _circbuf->resize(_sizeY*_sizeX, _memory);
@@ -102,10 +111,29 @@ void Gear_VideoLoop::runVideo()
   else
   {
     ASSERT_ERROR (_nLoopFrames > 0);
-    _currentLoopFrame = (_currentLoopFrame + 1) % _nLoopFrames;
+    
+    switch (_playbackMode)
+    {
+    case FOWARD:
+        _currentLoopFrame = (_currentLoopFrame + 1) % _nLoopFrames;
+      break;
+    case BACKWARD:
+        if (_currentLoopFrame < 0)
+           _currentLoopFrame = _nLoopFrames-1;
+         _currentLoopFrame--;
+      break;
+    case PING_PONG:
+        if (_currentLoopFrame < 0)
+          _pingpongDir=1;
+        else if (_currentLoopFrame >= _nLoopFrames)
+          _pingpongDir=-1;
+        _currentLoopFrame+=_pingpongDir;
+      break;
+    }
+
+    
     _circbuf->fillVectorFromBlock(_outImage, _currentLoopFrame -_nLoopFrames + 1);
   }
-
-  
+ 
   
 }

@@ -141,31 +141,34 @@ void MainWindow::slotZoomOut()
 
 void MainWindow::slotPlay(bool play)
 {
+  #ifdef SINGLE_THREADED_PLAYBACK    
+    static int timerId=0;
+  #endif 
+  
   if (play)
-  {
+  {    
+    _playPause->setOn(true);   
+    #ifndef SINGLE_THREADED_PLAYBACK    
     _engine->startPlaying();
-  } else
-    _engine->stopPlaying();    
-}
-
-void MainWindow::play(bool pl)
-{
-  if (pl)
-  {
-    _playPause->setOn(true);
-    _engine->startPlaying();
-
-  } else
+    #else
+      timerId=startTimer(10);
+    #endif
+  } 
+  else
   {
     _playPause->setOn(false);
-    _engine->stopPlaying();
-  }    
+    #ifndef SINGLE_THREADED_PLAYBACK    
+    _engine->stopPlaying();    
+    #else
+      killTimer(timerId);
+    #endif
+  }
 }
 
 void MainWindow::slotMenuNew()
 {
   //stop before clearing
-  play(false);
+  slotPlay(false);
 
   _currentSchemaFilename="";
   _schemaEditor->clearSchema();
@@ -186,7 +189,7 @@ void MainWindow::load(std::string filename)
     return;
   
   //stop before loading
-  play(false);
+  slotPlay(false);
 
   _schemaEditor->loadSchema(filename);
   _currentSchemaFilename=filename;
@@ -280,3 +283,7 @@ void MainWindow::slotMenuQuit()
   qApp->quit();
 }
 
+void MainWindow::timerEvent(QTimerEvent*)
+{
+  _engine->playThread(_engine);
+}

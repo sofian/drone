@@ -126,7 +126,7 @@ void Gear_VideoBlend::runVideo()
                        "m"  (tempAlpha[0]) // this is %3, Alpha
                        );
     }
-
+    
   }
 
   __asm__("emms" : : );

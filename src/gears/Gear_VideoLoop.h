@@ -24,6 +24,7 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoRGBAType.h"
+#include "EnumType.h"
 
 template <class T>
 class CircularBuffer;
@@ -31,6 +32,13 @@ class CircularBuffer;
 class Gear_VideoLoop : public Gear
 {
 public:
+  enum ePlaybackMode
+  {
+    FOWARD,
+    BACKWARD,
+    PING_PONG,
+    N_PLAYBACK_MODE
+  };
 
   Gear_VideoLoop(Engine *engine, std::string name);
   virtual ~Gear_VideoLoop();
@@ -46,6 +54,7 @@ private:
   PlugIn<ValueType> *_PUNCH_OUT;
   PlugIn<ValueType> *_PUNCH_IN;
   PlugIn<ValueType> *_MEMORY;
+  PlugIn<EnumType> *_MODE_IN;
 
   //local var
   const VideoRGBAType *_image;     
@@ -63,6 +72,8 @@ private:
   int _currentLoopFrame;
   int _nLoopFrames;
   int _memory;
+  int _playbackMode;
+  int _pingpongDir;
   
   void init();    
 };
