@@ -1,6 +1,7 @@
 #ifndef ERROR_INCLUDED
 #define ERROR_INCLUDED
 
+#define LEVEL_NODEBUG -1
 #define LEVEL_ERROR   0
 #define LEVEL_WARNING 1
 #define LEVEL_NOTICE  2
