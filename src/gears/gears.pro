@@ -3,41 +3,41 @@ include(config.pro)
 TEMPLATE=subdirs
 SUBDIRS= Osc \
 TV \
-Oscilloscope \
+#Oscilloscope \
 VideoOutput \
-Blur \
-VideoSource \
-Slider \
-KDTree\ 
-VideoMix \
-Edge \
-AffineTransform \
-ApplyDisplaceGrid \
-AreaArrayMask \
-Brightness \
-ClusteredDither \
-ColorAdjust \
-Contrast \
-Enveloppe \
-FlatSignal \
-ListBox \
-PushButton \
-Rescale \
-TouchPad \
-ColorQuantize \
-Gamma \
-GenDisplaceGrid \
-GrayScale \
-HalfToning \
-Saturation \
-SignalStat \
-SmearGrid \
-VideoDelay \
-VideoLoop \
-ImageShuffle \
-ImageSequence \
+#Blur \
+VideoSource
+#Slider \
+#KDTree\ 
+#VideoMix \
+#Edge \
+#AffineTransform \
+#ApplyDisplaceGrid \
+#AreaArrayMask \
+#Brightness \
+#ClusteredDither \
+#ColorAdjust \
+#Contrast \
+#Enveloppe \
+#FlatSignal \
+#ListBox \
+#PushButton \
+#Rescale \
+#TouchPad \
+#ColorQuantize \
+#Gamma \
+#GenDisplaceGrid \
+#GrayScale \
+#HalfToning \
+#Saturation \
+#SignalStat \
+#SmearGrid \
+#VideoDelay \
+#VideoLoop \
+#ImageShuffle \
+#ImageSequence \
 #AsciiArt \
-Invert 
+#Invert 
 
 agg {
 SUBDIRS+=AggTest
