@@ -1,5 +1,5 @@
-/* Gear_Contrast.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+/* Gear_Invert.cpp
+ * Copyright (C) 2004 Gephex crew
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify

@@ -1,5 +1,5 @@
-/* contrast0r.c
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+/* squareblur.c
+ * Copyright (C) 2004--2005 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is a Frei0r plugin.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -142,7 +142,7 @@ void f0r_deinit()
 void f0r_get_plugin_info(f0r_plugin_info_t* inverterInfo)
 {
   inverterInfo->name = "Squareblur";
-  inverterInfo->author = "Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal (Drone)";
+  inverterInfo->author = "Drone";
   inverterInfo->plugin_type = F0R_PLUGIN_TYPE_FILTER;
   inverterInfo->color_model = F0R_COLOR_MODEL_BGRA8888;
   inverterInfo->frei0r_version = FREI0R_MAJOR_VERSION;

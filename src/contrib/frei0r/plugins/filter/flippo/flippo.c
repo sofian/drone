@@ -1,6 +1,7 @@
 /* flippo.c */
 
 /*
+ * 02/03/2004 j.s.s. optimized the whole process
  * 07/11/2004 c.e. prelz
  *
  * My first frei0r effect - simple flipping

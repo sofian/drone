@@ -42,6 +42,7 @@ namespace frei0r
     double time;
     unsigned int width;
     unsigned int height;
+    unsigned int size; // = width * height
     uint32_t* out;
     std::vector<void*> param_ptrs;
     

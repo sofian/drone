@@ -1,5 +1,5 @@
 /* Gear_TouchPad.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
