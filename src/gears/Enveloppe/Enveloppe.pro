@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Enveloppe.cpp
 HEADERS+=Gear_Enveloppe.h

@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_VideoDelay.cpp
 HEADERS+=Gear_VideoDelay.h

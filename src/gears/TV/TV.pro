@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_TV.cpp GearGui_TV.cpp
 HEADERS+=Gear_TV.h GearGui_TV.h

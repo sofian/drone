@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_VideoLoop.cpp
 HEADERS+=Gear_VideoLoop.h

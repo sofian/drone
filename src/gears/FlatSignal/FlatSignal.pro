@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_FlatSignal.cpp
 HEADERS+=Gear_FlatSignal.h

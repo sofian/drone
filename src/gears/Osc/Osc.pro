@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Osc.cpp
 HEADERS+=Gear_Osc.h

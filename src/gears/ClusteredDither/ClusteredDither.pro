@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_ClusteredDither.cpp
 HEADERS+=Gear_ClusteredDither.h

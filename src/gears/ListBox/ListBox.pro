@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_ListBox.cpp GearGui_ListBox.cpp
 HEADERS+=Gear_ListBox.h GearGui_ListBox.h

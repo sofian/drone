@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 
 unix:!macx:SOURCES+=Gear_VideoSource.cpp

@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_TouchPad.cpp GearGui_TouchPad.cpp
 HEADERS+=Gear_TouchPad.h GearGui_TouchPad.h

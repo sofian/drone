@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_AffineTransform.cpp
 HEADERS+=Gear_AffineTransform.h

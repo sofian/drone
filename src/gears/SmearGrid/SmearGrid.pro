@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_SmearGrid.cpp
 HEADERS+=Gear_SmearGrid.h

@@ -107,16 +107,21 @@ AbstractPlug* Gear::addPlug(AbstractPlug* plug)
       return NULL;
   }    
 
+/*  
   //if plug is input, add only plug for main type
   if (plug->inOut()==IN)
-    _plugs.push_back(plug);
+    _plugs.push_back(plug);  
   else
     //add main plug and plugs for its subType
     addPlugAndSubPlugs(plug,0);  
+*/  
+
+  _plugs.push_back(plug);  
 
   return plug;    
 }
 
+//! temp method
 void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
 {
   std::string str;

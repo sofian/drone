@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_GrayScale.cpp
 HEADERS+=Gear_GrayScale.h

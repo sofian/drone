@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Saturation.cpp
 HEADERS+=Gear_Saturation.h

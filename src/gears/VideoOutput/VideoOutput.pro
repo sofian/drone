@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 
 CONFIG+=thread

@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Edge.cpp
 HEADERS+=Gear_Edge.h

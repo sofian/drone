@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_AreaArrayMask.cpp
 HEADERS+=Gear_AreaArrayMask.h

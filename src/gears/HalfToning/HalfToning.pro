@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_HalfToning.cpp
 HEADERS+=Gear_HalfToning.h

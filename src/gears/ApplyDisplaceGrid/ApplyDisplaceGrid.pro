@@ -1,3 +1,5 @@
+#include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_ApplyDisplaceGrid.cpp
 HEADERS+=Gear_ApplyDisplaceGrid.h

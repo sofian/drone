@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_ColorQuantize.cpp
 HEADERS+=Gear_ColorQuantize.h

@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_SignalStat.cpp
 HEADERS+=Gear_SignalStat.h

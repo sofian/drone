@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Brightness.cpp
 HEADERS+=Gear_Brightness.h

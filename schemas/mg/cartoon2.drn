@@ -2,7 +2,7 @@
 <Schema>
     <Gears>
         <Gear PosX="29" PosY="220" Type="VideoInput" Name="VideoInput1" >
-            <Properties width="352" Device="/dev/video0" height="292" />
+            <Properties width="352" Device="/dev/video1" height="292" />
         </Gear>
         <Gear PosX="980" PosY="64" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
@@ -19,10 +19,10 @@
         <Gear PosX="738" PosY="102" Type="Saturation" Name="Saturation1" >
             <Properties/>
         </Gear>
-        <Gear PosX="239" PosY="58" Type="Slider" SliderPos="4.87805" Name="Slider1" >
+        <Gear PosX="239" PosY="58" Type="Slider" SliderPos="4.63415" Name="Slider1" >
             <Properties Lower_Bound="-10" Higher_Bound="10" />
         </Gear>
-        <Gear PosX="267" PosY="433" Type="Slider" SliderPos="4.56098" Name="Slider2" >
+        <Gear PosX="267" PosY="433" Type="Slider" SliderPos="26.878" Name="Slider2" >
             <Properties Lower_Bound="2" Higher_Bound="32" />
         </Gear>
         <Gear PosX="730" PosY="341" Type="VideoMix" Name="VideoMix1" >
@@ -34,7 +34,7 @@
         <Gear PosX="890" PosY="231" Type="VideoBlend" Name="VideoBlend1" >
             <Properties/>
         </Gear>
-        <Gear PosX="763" PosY="512" Type="Slider" SliderPos="31.0976" Name="Slider4" >
+        <Gear PosX="740" PosY="643" Type="Slider" SliderPos="183.476" Name="Slider4" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
         <Gear PosX="873" PosY="128" Type="Contrast" Name="Contrast1" >
@@ -61,10 +61,10 @@
         <Gear ListBoxPos="2" PosX="204" PosY="721" Type="ListBox" Name="ListBox2" >
             <Properties Number_of_elements="3" Labels_of_elements="Foward,Backward,Ping pong" />
         </Gear>
-        <Gear PosX="600" PosY="66" Type="Slider" SliderPos="-202.439" Name="Slider6" >
+        <Gear PosX="600" PosY="66" Type="Slider" SliderPos="126.829" Name="Slider6" >
             <Properties Lower_Bound="-300" Higher_Bound="200" />
         </Gear>
-        <Gear PosX="150" PosY="320" Type="Slider" SliderPos="39.0244" Name="Slider3" >
+        <Gear PosX="590" PosY="640" Type="Slider" SliderPos="1.21951" Name="Slider3" >
             <Properties Lower_Bound="0" Higher_Bound="50" />
         </Gear>
         <Gear PosX="-540" PosY="254" Type="TV" Name="TV1" >
@@ -73,7 +73,7 @@
         <Gear PosX="106" PosY="384" Type="VideoBlend" Name="VideoBlend2" >
             <Properties/>
         </Gear>
-        <Gear PosX="-2" PosY="459" Type="Slider" SliderPos="15.5488" Name="Slider7" >
+        <Gear PosX="-2" PosY="459" Type="Slider" SliderPos="255" Name="Slider7" >
             <Properties Lower_Bound="0" Higher_Bound="255" />
         </Gear>
         <Gear PosX="418" PosY="731" Type="TV" Name="TV2" >

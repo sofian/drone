@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_KDTree.cpp
 HEADERS+=Gear_KDTree.h

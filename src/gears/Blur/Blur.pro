@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Blur.cpp
 HEADERS+=Gear_Blur.h

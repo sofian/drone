@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_ColorAdjust.cpp
 HEADERS+=Gear_ColorAdjust.h

@@ -1,3 +1,5 @@
+include (../config.pro)
+
 TEMPLATE=lib
 SOURCES+=Gear_Contrast.cpp
 HEADERS+=Gear_Contrast.h
