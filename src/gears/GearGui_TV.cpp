@@ -45,7 +45,7 @@ void GearGui_TV::drawShape(QPainter &painter)
 {
   GearGui::drawShape(painter);
 
-  const MatrixType<RGBA> *image;
+  const Array2DType<RGBA> *image;
   const RGBA *data;
   bool noImage=false;
 

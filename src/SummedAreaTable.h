@@ -20,7 +20,7 @@
 #ifndef SUMMEDAREATABLE_INCLUDED
 #define SUMMEDAREATABLE_INCLUDED
 
-#include "Matrix.h"
+#include "Array2D.h"
 #include "Math.h"
 #include "Utils.h"
 #include "ColorSpace.h"
@@ -42,7 +42,7 @@
  * @version %I% %G%
  */
 template <typename Type = unsigned char, typename AccType = int, size_t SIZE = SIZE_RGBA>
-class SummedAreaTable : public Matrix<AccType*>
+class SummedAreaTable : public Array2D<AccType*>
 {
 public:
   //! Default constructor.
@@ -97,7 +97,7 @@ public:
   
 public:
   // The accumulation matrix.
-  Matrix<AccType> _acc;
+  Array2D<AccType> _acc;
 
   // Internal use.
   int _srcWidth;  // width of the source image (= width() - 1)

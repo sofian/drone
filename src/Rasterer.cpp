@@ -33,7 +33,7 @@ Rasterer::~Rasterer()
 {
 }
 
-void Rasterer::setImage(MatrixType<RGBA> *image)
+void Rasterer::setImage(Array2DType<RGBA> *image)
 {
   _image=image;
 

@@ -21,7 +21,7 @@
 #define DISPLACEGRID_INCLUDED
 
 #include "ColorSpace.h"
-#include "MatrixType.h"
+#include "Array2DType.h"
 
 struct XYDisp
 {
@@ -30,13 +30,13 @@ struct XYDisp
 
 const XYDisp XYDisp_STILL = {0.0f, 0.0f};
 
-class DisplaceGrid : public MatrixType<XYDisp>
+class DisplaceGrid : public Array2DType<XYDisp>
 {
 public:
   DisplaceGrid(int width = 0,
                 int height = 0,
                 XYDisp fillValue = XYDisp_STILL)
-    : MatrixType<XYDisp>(width, height, fillValue)
+    : Array2DType<XYDisp>(width, height, fillValue)
   {
   }
 

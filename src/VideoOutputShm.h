@@ -36,7 +36,7 @@ public:
   void fullscreen(bool fs);
   void destroy();
   bool init(int xRes, int yRes, bool fullscreen);
-  void render(const MatrixType<RGBA> &image);
+  void render(const Array2DType<RGBA> &image);
 
 protected:
 

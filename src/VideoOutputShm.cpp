@@ -53,7 +53,7 @@ void VideoOutputShm::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputShm::render(const MatrixType<RGBA> &image)
+void VideoOutputShm::render(const Array2DType<RGBA> &image)
 {    
   processX11Events();
 

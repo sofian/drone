@@ -114,11 +114,11 @@ private:
   double _angle[SIZE_RGB];
 
   // Precomputed r.
-  Matrix<double> _r;
+  Array2D<double> _r;
   
   // Precomputed thetas.
-  Matrix<double> _theta;
-  Matrix<std::pair<int, int> > _rChannel[SIZE_RGB];
+  Array2D<double> _theta;
+  Array2D<std::pair<int, int> > _rChannel[SIZE_RGB];
 
   // Internal use (updates various components that hold precomputed data).
   void updateThreshold();

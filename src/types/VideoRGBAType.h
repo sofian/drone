@@ -21,15 +21,15 @@
 #define VIDEORGBATYPE_INCLUDED
 
 #include "ColorSpace.h"
-#include "MatrixType.h"
+#include "Array2DType.h"
 
-class VideoRGBAType : public MatrixType<RGBA>
+class VideoRGBAType : public Array2DType<RGBA>
 {
 public:
   VideoRGBAType(int width = 0,
                 int height = 0,
                 RGBA fillValue = BLACK_RGBA)
-    : MatrixType<RGBA>(width, height, fillValue),
+    : Array2DType<RGBA>(width, height, fillValue),
       _isGray(false)
   {
   }

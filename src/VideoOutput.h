@@ -21,7 +21,7 @@
 #define VIDEOOUTPUT_INCLUDED
 
 #include "ColorSpace.h"
-#include "MatrixType.h"
+#include "Array2DType.h"
 
 class VideoOutput
 {
@@ -30,7 +30,7 @@ public:
   virtual ~VideoOutput(){}
 
   virtual bool init(int xRes, int yRes, bool fullscreen)=0;    
-  virtual void render(const MatrixType<RGBA> &image)=0;
+  virtual void render(const Array2DType<RGBA> &image)=0;
   virtual void fullscreen(bool fs)=0;
   virtual void destroy()=0;
 

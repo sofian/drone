@@ -21,9 +21,9 @@
 #define VIDEOBINARYTYPE_INCLUDED
 
 #include "ColorSpace.h"
-#include "MatrixType.h"
+#include "Array2DType.h"
 
-class VideoBinaryType : public MatrixType<bool>
+class VideoBinaryType : public Array2DType<bool>
 {
 public:
   static const bool WHITE;
@@ -32,7 +32,7 @@ public:
   VideoBinaryType(int width = 0,
                   int height = 0,
                   bool fillValue = VideoBinaryType::WHITE)
-    : MatrixType<bool>(width, height, fillValue)
+    : Array2DType<bool>(width, height, fillValue)
   {
   }
 

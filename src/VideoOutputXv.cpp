@@ -60,12 +60,12 @@ void VideoOutputXv::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputXv::render(const MatrixType<RGBA> &image)
+void VideoOutputXv::render(const Array2DType<RGBA> &image)
 {    
   processX11Events();
 
   //only recreate xvimage if framesize change
-  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
+  if (_frameSizeX!=(int)image.width() || _frameSizeY!=(int)image.height())
   {
     _frameSizeX=image.width();
     _frameSizeY=image.height();

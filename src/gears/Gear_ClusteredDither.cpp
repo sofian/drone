@@ -158,7 +158,7 @@ void Gear_ClusteredDither::runVideo()
   iterData = (unsigned char*) _data;
   iterOutData = (unsigned char*) _outData;
 
-  MatrixType<std::pair<int, int> >::iterator
+  Array2DType<std::pair<int, int> >::iterator
     rIt = _rChannel[0].begin(),
     gIt = _rChannel[1].begin(),
     bIt = _rChannel[2].begin();
@@ -224,7 +224,7 @@ void Gear_ClusteredDither::updatePolarCoordinates()
   int minSizeX  = - (maxSizeX + _sizeX%2);
   int minSizeY = - (maxSizeY + _sizeY%2);
   
-  MatrixType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
+  Array2DType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
 
   for (int y=minSizeY; y<maxSizeY; ++y)
     for (int x=minSizeX; x<maxSizeX; ++x)
@@ -241,11 +241,11 @@ void Gear_ClusteredDither::updateAngle(int channel)
 
   _rChannel[channel].resize(_sizeX, _sizeY);
   
-  MatrixType<double>::iterator
+  Array2DType<double>::iterator
     rIt = _r.begin(),
     thetaIt = _theta.begin();
 
-  MatrixType<std::pair<int, int> >::iterator
+  Array2DType<std::pair<int, int> >::iterator
     rChannelIt = _rChannel[channel].begin();
   
   for (int y=0; y<_sizeY; ++y)

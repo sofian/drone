@@ -26,12 +26,17 @@
 
 //! Basic definitions
 
+// XXX ça devrait être des constantes statiques (sinon on fait le calcul à chaque fois...)
+#ifndef PI
+#define PI M_PI
+#endif
+
 #ifndef HALF_PI
-#define HALF_PI 0.5*M_PI
+#define HALF_PI 0.5*PI
 #endif
 
 #ifndef TWICE_PI
-#define TWICE_PI 2*M_PI
+#define TWICE_PI 2*PI
 #endif
 
 #ifndef TRUE
@@ -323,164 +328,233 @@ inline T max(const T *src, size_t n)
 // and may not be copied or disclosed except in accordance with the terms of
 // that agreement.
 
-#define FAST_MATH_PRECISION 1 // XXX to be changed ultimately (how??)
+// #define FAST_MATH_PRECISION 1 // XXX to be changed ultimately (how??)
 
 
-// WARNING : these function are only valid in some interval
-// TODO: which interval.. Should be something like -2PI..2PI
-inline float fastsin (float x)
-{
-#if FAST_MATH_PRECISION
-  float x2 = x*x;
-  float ret = -2.39e-08f;
-  ret *= x2;
-  ret += 2.7526e-06f;
-  ret *= x2;
-  ret -= 1.98409e-04f;
-  ret *= x2;
-  ret += 8.3333315e-03f;
-  ret *= x2;
-  ret -= 1.666666664e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#else
-  float x2 = x*x;
-  float ret = 7.61e-03f;
-  ret *= x2;
-  ret -= 1.6605e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#endif
-}
+// // WARNING : these function are only valid in some interval
+// // TODO: which interval.. Should be something like -2PI..2PI
 
-inline float fastcos (float x)
-{
-#if FAST_MATH_PRECISION
-  float x2 = x*x;
-  float ret = -2.605e-07f;
-  ret *= x2;
-  ret += 2.47609e-05f;
-  ret *= x2;
-  ret -= 1.3888397e-03f;
-  ret *= x2;
-  ret += 4.16666418e-02f;
-  ret *= x2;
-  ret -= 4.999999963e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  return ret;
-#else
-  float x2 = x*x;
-  float ret = 3.705e-02f;
-  ret *= x2;
-  ret -= 4.967e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  return ret;
-#endif
-}
+// // Fast evaluation of sin(angle) by polynomial approximations.  The angle
+// // must be in [0,pi/2].  The maximum absolute error is about 1.7e-04 for
+// // FastSin0 and about 2.3e-09 for FastSin1.  The speed up is about 2 for
+// // FastSin0 and about 1.5 for FastSin1.
+// inline float fastsin0 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 7.61e-03f;
+//   ret *= x2;
+//   ret -= 1.6605e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   ret *= x;
+//   return ret;
+// }
 
-inline float fasttan (float x)
-{
-#if FAST_MATH_PRECISION
-  float x2 = x*x;
-  float ret = 9.5168091e-03f;
-  ret *= x2;
-  ret += 2.900525e-03f;
-  ret *= x2;
-  ret += 2.45650893e-02f;
-  ret *= x2;
-  ret += 5.33740603e-02f;
-  ret *= x2;
-  ret += 1.333923995e-01f;
-  ret *= x2;
-  ret += 3.333314036e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#else
-  float x2 = x*x;
-  float ret = 2.033e-01f;
-  ret *= x2;
-  ret += 3.1755e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#endif
-}
+// inline float fastsin1 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = -2.39e-08f;
+//   ret *= x2;
+//   ret += 2.7526e-06f;
+//   ret *= x2;
+//   ret -= 1.98409e-04f;
+//   ret *= x2;
+//   ret += 8.3333315e-03f;
+//   ret *= x2;
+//   ret -= 1.666666664e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   ret *= x;
+//   return ret;
+// }
 
-inline float fastasin (float x)
-{
-  float xRoot = sqrt(1.0f-x);
-  float ret = -0.0187293f;
-  ret *= x;
-  ret += 0.0742610f;
-  ret *= x;
-  ret -= 0.2121144f;
-  ret *= x;
-  ret += 1.5707288f;
-  ret = HALF_PI - xRoot*ret;
-  return ret;
-}
+// inline float fastsin (float x)
+// {
+//   float ret;
+//   bool positive = (x >= 0);
+//   x = (positive ? x : -x);
+//   ret = fmod(x, HALF_PI);
+// #if FAST_MATH_PRECISION
+//   ret = fastsin1(ret);
+// #else
+//   ret = fastsin0(ret);
+// #endif
+//   ret = (positive ^ (fmod(x, TWICE_PI) < PI) ? ret : -ret);
+//   return ret;
+// }
 
-inline float fastacos (float x)
-{
-  float xRoot = sqrt(1.0f-x);
-  float ret = -0.0187293f;
-  ret *= x;
-  ret += 0.0742610f;
-  ret *= x;
-  ret -= 0.2121144f;
-  ret *= x;
-  ret += 1.5707288f;
-  ret *= xRoot;
-  return ret;
-}
 
-inline float fastatan (float x)
-{
-#if FAST_MATH_PRECISION
-  float x2 = x*x;
-  float ret = 0.0028662257f;
-  ret *= x2;
-  ret -= 0.0161657367f;
-  ret *= x2;
-  ret += 0.0429096138f;
-  ret *= x2;
-  ret -= 0.0752896400f;
-  ret *= x2;
-  ret += 0.1065626393f;
-  ret *= x2;
-  ret -= 0.1420889944f;
-  ret *= x2;
-  ret += 0.1999355085f;
-  ret *= x2;
-  ret -= 0.3333314528f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#else
-  float x2 = x*x;
-  float ret = 0.0208351f;
-  ret *= x2;
-  ret -= 0.085133f;
-  ret *= x2;
-  ret += 0.180141f;
-  ret *= x2;
-  ret -= 0.3302995f;
-  ret *= x2;
-  ret += 0.999866f;
-  ret *= x;
-  return ret;
-#endif
-}
+
+// // Fast evaluation of cos(angle) by polynomial approximations.  The angle
+// // must be in [0,pi/2].  The maximum absolute error is about 1.2e-03 for
+// // FastCos0 and about 2.3e-09 for FastCos1.  The speed up is about 2 for
+// // FastCos0 and about 1.5 for FastCos1.
+// inline float fastcos0 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 3.705e-02f;
+//   ret *= x2;
+//   ret -= 4.967e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   return ret;
+// }
+
+// inline float fastcos1 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = -2.605e-07f;
+//   ret *= x2;
+//   ret += 2.47609e-05f;
+//   ret *= x2;
+//   ret -= 1.3888397e-03f;
+//   ret *= x2;
+//   ret += 4.16666418e-02f;
+//   ret *= x2;
+//   ret -= 4.999999963e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   return ret;
+// }
+
+// inline float fastcos (float x)
+// {
+//   float ret;
+//   bool positive = (x >= 0);
+//   x = (positive ? x : -x);
+//   ret = fmod(x, HALF_PI);
+// #if FAST_MATH_PRECISION
+//   ret = fastsin1(ret);
+// #else
+//   ret = fastsin0(ret);
+// #endif
+//   ret = (positive ^ (fmod(x, TWICE_PI) < PI) ? ret : -ret);
+//   return ret;
+// }
+
+
+
+// // Fast evaluation of tan(angle) by polynomial approximations.  The angle
+// // must be in [0,pi/4].  The maximum absolute error is about 8.1e-04 for
+// // FastTan0 and about 1.9e-08 for FastTan1.  The speed up is about 2.5 for
+// // FastTan0 and about 1.75 for FastTan1.
+// #if FAST_MATH_PRECISION
+// #define fasttan(x) fasttan1(x)
+// #else
+// #define fasttan(x) fasttan0(x)
+// #endif
+
+// inline float fasttan0 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 2.033e-01f;
+//   ret *= x2;
+//   ret += 3.1755e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   ret *= x;
+//   return ret;
+// }
+
+// inline float fasttan1 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 9.5168091e-03f;
+//   ret *= x2;
+//   ret += 2.900525e-03f;
+//   ret *= x2;
+//   ret += 2.45650893e-02f;
+//   ret *= x2;
+//   ret += 5.33740603e-02f;
+//   ret *= x2;
+//   ret += 1.333923995e-01f;
+//   ret *= x2;
+//   ret += 3.333314036e-01f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   ret *= x;
+//   return ret;
+// }
+
+// // Fast evaluation of asin(value) by a sqrt times a polynomial.  The value
+// // must be in [0,1].  The maximum absolute error is about 6.8e-05 and the
+// // speed up is about 2.5.
+// inline float fastasin (float x)
+// {
+//   float xRoot = sqrt(1.0f-x);
+//   float ret = -0.0187293f;
+//   ret *= x;
+//   ret += 0.0742610f;
+//   ret *= x;
+//   ret -= 0.2121144f;
+//   ret *= x;
+//   ret += 1.5707288f;
+//   ret = HALF_PI - xRoot*ret;
+//   return ret;
+// }
+
+// // Fast evaluation of acos(value) by a sqrt times a polynomial.  The value
+// // must be in [0,1].  The maximum absolute error is about 6.8e-05 and the
+// // speed up is about 2.5.
+// inline float fastacos (float x)
+// {
+//   float xRoot = sqrt(1.0f-x);
+//   float ret = -0.0187293f;
+//   ret *= x;
+//   ret += 0.0742610f;
+//   ret *= x;
+//   ret -= 0.2121144f;
+//   ret *= x;
+//   ret += 1.5707288f;
+//   ret *= xRoot;
+//   return ret;
+// }
+
+// #if FAST_MATH_PRECISION
+// #define fastatan(x) fastatan1(x)
+// #else
+// #define fastatan(x) fastatan0(x)
+// #endif
+
+// inline float fastatan0 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 0.0208351f;
+//   ret *= x2;
+//   ret -= 0.085133f;
+//   ret *= x2;
+//   ret += 0.180141f;
+//   ret *= x2;
+//   ret -= 0.3302995f;
+//   ret *= x2;
+//   ret += 0.999866f;
+//   ret *= x;
+//   return ret;
+// }
+
+// inline float fastatan1 (float x)
+// {
+//   float x2 = x*x;
+//   float ret = 0.0028662257f;
+//   ret *= x2;
+//   ret -= 0.0161657367f;
+//   ret *= x2;
+//   ret += 0.0429096138f;
+//   ret *= x2;
+//   ret -= 0.0752896400f;
+//   ret *= x2;
+//   ret += 0.1065626393f;
+//   ret *= x2;
+//   ret -= 0.1420889944f;
+//   ret *= x2;
+//   ret += 0.1999355085f;
+//   ret *= x2;
+//   ret -= 0.3333314528f;
+//   ret *= x2;
+//   ret += 1.0f;
+//   ret *= x;
+//   return ret;
+// }
 
 //! End WML
 
@@ -497,17 +571,17 @@ inline float fastAngle(float x, float y)
   return atan2f(y,x);
 }
 
-// warning : theta must be clamped inside some range 0..2PI (see fastcos)
-inline float fastPolarToX(float rho, float theta)
-{
-  return fastcos(theta)*rho;
-}
+// // warning : theta must be clamped inside some range 0..2PI (see fastcos)
+// inline float fastPolarToX(float rho, float theta)
+// {
+//   return fastcos(theta)*rho;
+// }
 
-// warning : theta must be clamped inside some range 0..2PI (see fastsin)
-inline float fastPolarToY(float rho, float theta)
-{
-  return fastsin(theta)*rho;
-}
+// // warning : theta must be clamped inside some range 0..2PI (see fastsin)
+// inline float fastPolarToY(float rho, float theta)
+// {
+//   return fastsin(theta)*rho;
+// }
 
 //! clamps the value in a mirror fashion :
 //! It is like the interval was infinite, but repeating himself 'mirrorly'

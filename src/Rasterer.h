@@ -20,7 +20,7 @@
 #ifndef RASTERER_INCLUDED
 #define RASTERER_INCLUDED
 
-#include "MatrixType.h"
+#include "Array2DType.h"
 #include "ColorSpace.h"
 
 class Rasterer
@@ -34,8 +34,8 @@ public:
   Rasterer();
   ~Rasterer();
 
-  void setImage(MatrixType<RGBA> *image);    
-  void setBrush(MatrixType<RGBA> *brush){_brush=brush;};
+  void setImage(Array2DType<RGBA> *image);    
+  void setBrush(Array2DType<RGBA> *brush){_brush=brush;};
   void setColor(const RGBA &color){_color=color;};
   void setColor(unsigned char r, unsigned char g, unsigned char b);
 
@@ -60,9 +60,9 @@ public:
 
 private:
 
-  MatrixType<RGBA> *_image;
+  Array2DType<RGBA> *_image;
   RGBA *_imageData;
-  MatrixType<RGBA> *_brush; //!if brush = null then color is use to raster
+  Array2DType<RGBA> *_brush; //!if brush = null then color is use to raster
   RGBA _color;
 
   RasterMode _rasterMode;

@@ -37,7 +37,7 @@ src/types/ValueType.h \
 src/types/VideoRGBAType.h \
 src/types/SignalType.h \
 src/types/DisplaceGrid.h \
-src/types/MatrixType.h \
+src/types/Array2DType.h \
 src/types/VideoChannelType.h \
 src/types/VideoBinaryType.h \
 src/types/PaletteRGBAType.h \

@@ -20,7 +20,7 @@
 #include "Gear_GrayScale.h"
 #include "Engine.h"
 
-#include "MatrixType.h"
+#include "Array2DType.h"
 
 #include <iostream>
 

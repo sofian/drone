@@ -21,15 +21,15 @@
 #define VIDEOCHANNELTYPE_INCLUDED
 
 #include "ColorSpace.h"
-#include "MatrixType.h"
+#include "Array2DType.h"
 
-class VideoChannelType : public MatrixType<unsigned char>
+class VideoChannelType : public Array2DType<unsigned char>
 {
 public:
   VideoChannelType(int width = 0,
                    int height = 0,
                    unsigned char fillValue = 0)
-    : MatrixType<unsigned char>(width, height, fillValue)
+    : Array2DType<unsigned char>(width, height, fillValue)
   {
   }
 
