@@ -21,7 +21,7 @@
 #define GEAR_SLIDER_INCLUDED
 
 #include "Gear.h"
-#include "SignalType.h"
+#include "ValueType.h"
 
 
 class Gear_Slider : public Gear  
