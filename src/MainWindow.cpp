@@ -29,9 +29,8 @@
 #include "GearGui.h"
 #include "error.h"
 
+#include "SchemaGui.h"
 
-const int MainWindow::CANVAS_SIZE_X = 2048;
-const int MainWindow::CANVAS_SIZE_Y = 2048;
 const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
 const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
 
@@ -44,17 +43,16 @@ MainWindow::MainWindow() :
 QMainWindow(), 
 _engine(NULL), 
 _frame(NULL), 
-_schemaCanvas(NULL), 
+_mainSchemaGui(NULL), 
 _schemaEditor(NULL),
 _currentSchemaFilename(""),
 _menuFirstRecentSchemaId(-1)
 {    
   _engine = new Engine(0);
 
-  _schemaCanvas = new QCanvas(CANVAS_SIZE_X, CANVAS_SIZE_Y);
-  _schemaCanvas->setBackgroundColor(QColor(107,124,153));
+  _mainSchemaGui = new SchemaGui(_engine->mainSchema(), _engine);
 
-  _schemaEditor = new SchemaEditor(_schemaCanvas, this, _engine, _engine->mainSchema());               
+  _schemaEditor = new SchemaEditor(this, _mainSchemaGui, _engine);
 
   setCentralWidget(_schemaEditor);   
 
@@ -171,7 +169,7 @@ void MainWindow::slotMenuNew()
   slotPlay(false);
 
   _currentSchemaFilename="";
-  _schemaEditor->clearSchema();
+  //_schemaEditor->clearSchema();
   _engine->clearMainSchema();
   _fileMenu->setItemEnabled(_menuSaveItemId, false);
 }
@@ -193,7 +191,7 @@ void MainWindow::load(std::string filename)
   slotPlay(false);
 
   _engine->loadMainSchema(filename);
-  _schemaEditor->setSchema(_engine->mainSchema());
+  //_schemaEditor->setSchema(_engine->mainSchema());
   _currentSchemaFilename=filename;
   _fileMenu->setItemEnabled(_menuSaveItemId, true);
   

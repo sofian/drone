@@ -136,6 +136,7 @@ src/Rasterer.h \
 src/SummedAreaTable.h \
 src/Schema.h \
 src/SchemaEditor.h \
+src/SchemaGui.h \
 src/SignalInfo.h \
 src/ThreadUtil.h \
 src/Timing.h \
@@ -230,6 +231,7 @@ src/PropertyControlBool.cpp \
 src/Rasterer.cpp \
 src/Schema.cpp \
 src/SchemaEditor.cpp \
+src/SchemaGui.cpp \
 src/SignalInfo.cpp \
 src/Timing.cpp \
 src/VideoInfo.cpp \	   

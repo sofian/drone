@@ -25,7 +25,8 @@
 #include "GearMaker.h"
 #include "GearPropertiesDialog.h"
 #include "Gear.h"
-#include "Schema.h"
+
+#include <qmainwindow.h>
 
 #include <qcursor.h>
 
@@ -37,17 +38,16 @@
 const std::string SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 0.1;
 
-SchemaEditor::SchemaEditor(QCanvas *canvas, QWidget *parent, Engine * engine, Schema *schema) :
-QCanvasView(canvas, parent, NAME.c_str(),0),
-_engine(engine),
-_schema(schema),
-_state(IDLE),
-_movingGear(NULL),
-_zoom(1),
-_activeConnection(NULL),
-_allGearsMenuPos(0,0),
-_contextGear(NULL)
-
+SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine) :
+  QCanvasView(schemaGui, parent, NAME.c_str(),0),
+  _engine(engine),
+  _schemaGui(schemaGui),
+  _state(IDLE),
+  _movingGear(NULL),
+  _zoom(1),
+  _activeConnection(NULL),
+  _allGearsMenuPos(0,0),
+  _contextGear(NULL)
 {
   viewport()->setMouseTracking(TRUE);
 
@@ -61,6 +61,8 @@ _contextGear(NULL)
   _gearMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
   _gearMenu->insertItem("About");    
+
+
 }
 
 SchemaEditor::~SchemaEditor()
@@ -138,6 +140,14 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   GearGui *gearGui = testForGearCollision(p);
   PlugBox *selectedPlugBox;
     
+  /*
+  QMainWindow *wnd = new QMainWindow();  
+  SchemaGui *tschemaGui = new SchemaGui(_engine->mainSchema(), _engine);
+  SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
+  wnd->setCentralWidget(schemaEditor); 
+  wnd->show();
+  */
+
   if (gearGui!=NULL)
   {    
     //send mouse events
@@ -333,55 +343,6 @@ void SchemaEditor::moveGearBy(GearGui *gearGui, int x, int y)
   canvas()->update();    
 }
 
-void SchemaEditor::addGear(std::string type, int x, int y)
-{    
-  addGear(type, _schema->getNewGearName(type), x, y);
-}
-
-void SchemaEditor::addGear(std::string type, std::string name, int x, int y)
-{            
-  Gear *gear = _schema->addGear(_engine, type, name);    
-  GearGui *gearGui = gear->getGearGui();    
-
-  gearGui->setCanvas(canvas());    
-  gearGui->move(x,y);    
-  gearGui->setZ(0);
-  gearGui->show();
-  canvas()->update();
-}
-
-void SchemaEditor::removeGear(GearGui* gearGui)
-{
-  Gear* gear = gearGui->gear();
-  delete gearGui;
-
-  _engine->scheduleGearDeletion(gear);
-
-  canvas()->update();
-}
-
-void SchemaEditor::clearSchema()
-{
-
-  QCanvasItemList l=canvas()->allItems();
-
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    (*it)->hide();
-
-
-  //_schema->clear();
-  canvas()->update();
-
-}
-
-void SchemaEditor::loadSchema(std::string filename)
-{
-}
-
-void SchemaEditor::saveSchema(std::string filename)
-{
-}
-
 QPopupMenu* SchemaEditor::createGearsMenu()
 {
   QPopupMenu *gearsMenu = new QPopupMenu(this);    
@@ -426,7 +387,7 @@ void SchemaEditor::slotMenuItemSelected(int id)
   if ((unsigned int)id > _allGearsName.size()-1)
     return;
 
-  addGear(_allGearsName[id], _allGearsMenuPos.x(), _allGearsMenuPos.y());
+  _schemaGui->addGear(_allGearsName[id], _allGearsMenuPos.x(), _allGearsMenuPos.y());  
 }
 
 void SchemaEditor::slotGearProperties()
@@ -449,57 +410,7 @@ void SchemaEditor::slotGearDelete()
   if (_contextGear == NULL)
     return;
 
-  removeGear(_contextGear);
-}
-
-void SchemaEditor::setSchema(Schema *schema)
-{
-  //todo: clear
-  clearSchema();
-
-  _schema=schema;
-
-  //add gearguis
-  std::list<Gear*> gears = _schema->getGears();
-
-  GearGui *gearGui=NULL;
-  for (std::list<Gear*>::iterator it=gears.begin();it!=gears.end();++it)
-  {
-    gearGui=(*it)->getGearGui();
-    gearGui->setCanvas(canvas());
-    gearGui->show();
-  }
-
-
-  //add connectionItems
-  std::list<Schema::Connection*> connections;
-  _schema->getAllConnections(connections);
-  ConnectionItem *connectionItem=NULL;
-  PlugBox *sourcePlugBox;
-  PlugBox *destPlugBox;
-  Gear *gearA;
-  Gear *gearB;
-
-  for (std::list<Schema::Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
-  {
-
-    connectionItem = new ConnectionItem(canvas());
-
-    gearA = _schema->getGearByName((*it)->gearA());
-    sourcePlugBox = gearA->getGearGui()->getOutputPlugBox((*it)->output());
-
-    gearB = _schema->getGearByName((*it)->gearB());
-    destPlugBox = gearB->getGearGui()->getInputPlugBox((*it)->input());
-
-    connectionItem->createConnectionLineOnly(sourcePlugBox, destPlugBox);
-
-    connectionItem->show();
-
-    delete (*it);//free
-
-  }
-
-  canvas()->update();
+  _schemaGui->removeGear(_contextGear);
 }
 
 

@@ -31,13 +31,12 @@
 
 #include "SchemaEditor.h"
 
+class SchemaGui;
 
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
   public:
-  static const int CANVAS_SIZE_X;
-  static const int CANVAS_SIZE_Y;
 
   //! loads the specified schema file
   void load(std::string filename);
@@ -73,7 +72,7 @@ private:
 
   Engine* _engine;
   QFrame* _frame;
-  QCanvas* _schemaCanvas;
+  SchemaGui* _mainSchemaGui;
 
   SchemaEditor *_schemaEditor;    
 

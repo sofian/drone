@@ -106,8 +106,6 @@ public:
   void connectPlugs(Schema::Connection &connection);
 
 private:
-  void performScheduledConnectDisconnect();
-  void performScheduledGearDeletion();  
 
   bool needSynch();
   void setSynched();
