@@ -3,39 +3,16 @@
 
 #include "AbstractPlug.h"
 
-template <class T>
-class PlugOut;
-template <class T>
-class PlugIn;
+/**
+ * This class is a template instance of an <code>AbstractPlug</code>. 
+ */
 
 template <class T>
-class Plug : public AbstractPlug
-{
-  enum {ACTIVE,INCATIVE};
-  friend PlugIn<T>::PlugIn(Gear* parent, std::string name);
-  friend PlugOut<T>::PlugOut(Gear* parent, std::string name);
-
-protected:
-  Plug(Gear* parent, eInOut inOut, std::string name, T* type)
-    : AbstractPlug(parent, inOut, name, type)
-  {    
-  }
-
-public:
- 
-  virtual const T* type() const = 0;
-  virtual const T* defaultType() const = 0;
-  virtual const T* hintType() const = 0;
-  
-};
-
-
-template <class T>
-class PlugOut : public Plug<T>
+class PlugOut : public AbstractPlug
 {
 public:
   PlugOut(Gear* parent, std::string name, T* type = new T())
-  : Plug<T>(parent, OUT, name, type)
+  : AbstractPlug(parent, OUT, name, type)
   {
     _type = _internalType = type;
   }
@@ -68,11 +45,11 @@ private:
 
 
 template <class T>
-class PlugIn : public Plug<T>
+class PlugIn : public AbstractPlug
 {
 public:
   PlugIn(Gear* parent, std::string name, T* type = new T())
-  : Plug<T>(parent, IN, name, type)
+  : AbstractPlug(parent, IN, name, type)
   {
      _type = _internalType = type;
   }
