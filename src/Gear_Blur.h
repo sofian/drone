@@ -27,7 +27,6 @@ private:
   PlugVideoIn *_AMOUNT_MAP_IN;
 	PlugVideoOut *_VIDEO_OUT;
   PlugSignalIn *_AMOUNT_IN;
-  PlugSignalIn *_HOME_WEIGHT;
 
   //local var
   Video_T *_image;     

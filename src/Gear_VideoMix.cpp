@@ -15,6 +15,7 @@ Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "V
   _VIDEO_IN_B = addPlugVideoIn("ImgB");
   _VIDEO_OUT = addPlugVideoOut("ImgO");
   _AMOUNT_IN = addPlugSignalIn("ArgA", 127);
+  _MIXFUNC_IN = addPlugSignalIn("MixFunc", 0);
 
   _settings.add(Property::INT, SETTING_MIX_FUNCTION)->valueInt((int)BLEND);
 }
@@ -22,11 +23,6 @@ Gear_VideoMix::Gear_VideoMix(Engine *engine, std::string name) : Gear(engine, "V
 Gear_VideoMix::~Gear_VideoMix()
 {
 
-}
-
-void Gear_VideoMix::onUpdateSettings()
-{
-  _mixType = (eVideoMixType)_settings.get(SETTING_MIX_FUNCTION)->valueInt();
 }
 
 bool Gear_VideoMix::ready()
@@ -39,6 +35,7 @@ void Gear_VideoMix::runVideo()
   _imageA = _VIDEO_IN_A->canvas();
   _imageB = _VIDEO_IN_B->canvas();
   _outImage = _VIDEO_OUT->canvas();
+  _mixType = (eVideoMixType)_MIXFUNC_IN->buffer()[0];
 
   if (_imageA->sizeX() != _imageB->sizeX() ||
       _imageA->sizeY() != _imageB->sizeY())

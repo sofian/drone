@@ -6,7 +6,7 @@ TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src /usr/include/libmpeg3
 LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL -lqt -lXv
-CONFIG += thread debug 
+CONFIG += thread
 # Input
 HEADERS += config.h \
            src/Canvas.h \
