@@ -24,7 +24,6 @@ HEADERS += config.h \
            src/Gear_Contrast.h \
        	   src/Gear_ColorQuantize.h \
            src/Gear_ColorQuantizeWu.h \
-           src/Gear_Saturation.h \
            src/Gear_DataOut.h \
            src/Gear_DiffDist.h \
            src/Gear_Edge.h \
@@ -40,6 +39,7 @@ HEADERS += config.h \
            src/Gear_Osc.h \
            src/Gear_Oscilloscope.h \
            src/Gear_PatternGen.h \
+           src/Gear_Saturation.h \
            src/Gear_SimpleDelay.h \
            src/Gear_Slider.h \
            src/Gear_TV.h \
@@ -98,7 +98,6 @@ SOURCES += src/Canvas.cpp \
            src/Gear_Contrast.cpp \
            src/Gear_ColorQuantize.cpp \
            src/Gear_ColorQuantizeWu.cpp \
-           src/Gear_Saturation.cpp \
            src/Gear_DataOut.cpp \
            src/Gear_DiffDist.cpp \
            src/Gear_Edge.cpp \
@@ -114,6 +113,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_Osc.cpp \
            src/Gear_Oscilloscope.cpp \
            src/Gear_PatternGen.cpp \
+           src/Gear_Saturation.cpp \
            src/Gear_SimpleDelay.cpp \
            src/Gear_Slider.cpp \
            src/Gear_TV.cpp \
