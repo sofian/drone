@@ -71,7 +71,8 @@ void VideoOutputXv::render(const VideoRGBAType &image)
     _frameSizeY=image.height();
     _frameSize=_frameSizeX*_frameSizeY;
     createXvImage(_frameSizeX, _frameSizeY);
-    resizeWindow(_frameSizeX, _frameSizeY);
+    if (!_fullscreen)    
+      resizeWindow(_frameSizeX, _frameSizeY);    
   }
 
   //todo rendering for other rgb formats..

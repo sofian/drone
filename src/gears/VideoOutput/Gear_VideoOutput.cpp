@@ -88,6 +88,11 @@ bool Gear_VideoOutput::ready()
   return _VIDEO_IN->connected();
 }
 
+void Gear_VideoOutput::onUpdateSettings()
+{
+  _videoOutput->fullscreen(true);
+}
+
 void Gear_VideoOutput::init()
 { 
 //osx version dont use the VideoOutputMaker strategy and directly use the QT output

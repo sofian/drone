@@ -25,6 +25,7 @@
 #include <qdom.h>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 const std::string Gear::XML_TAGNAME = "Gear";
 
@@ -215,9 +216,19 @@ AbstractPlug* Gear::getInput(std::string name) const
 {
   std::list<AbstractPlug*> inputs;
   getInputs(inputs);
+  
+  int (*pf)(int)=tolower; 
+  std::string nameAlower=name;
+  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf); 
+  
   for (std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
   {
-    if ((*it)->name() == name)
+    std::string nameBlower=(*it)->name();
+    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf); 
+    
+    std::cout << nameAlower << std::endl;
+    std::cout << nameBlower << std::endl;
+    if (nameAlower == nameBlower)
       return(*it);
   }
 
@@ -228,9 +239,17 @@ AbstractPlug* Gear::getOutput(std::string name) const
 {
   std::list<AbstractPlug*> outputs;
   getOutputs(outputs);
+  
+  int (*pf)(int)=tolower; 
+  std::string nameAlower=name;
+  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf); 
+  
   for (std::list<AbstractPlug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)
   {
-    if ((*it)->name() == name)
+    std::string nameBlower=(*it)->name();
+    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf); 
+    
+    if (nameAlower == nameBlower)
       return(*it);
   }
 

@@ -43,6 +43,7 @@ public:
 
   bool ready();
 
+  void onUpdateSettings();
 private:
   static const std::string SETTING_XRES;
   static const std::string SETTING_YRES;

@@ -33,6 +33,17 @@ extern "C"{
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <inttypes.h>
+#include <X11/extensions/Xinerama.h>
+#define MWM_HINTS_DECORATIONS (1L << 1)
+typedef struct
+{
+    unsigned long flags;
+    unsigned long functions;
+    unsigned long decorations;
+    long          inputMode;
+    unsigned long status;
+} PropMotifWmHints;
+#define PROP_MOTIF_WM_HINTS_ELEMENTS 5
 }
 
 

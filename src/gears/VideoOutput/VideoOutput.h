@@ -26,7 +26,7 @@
 class VideoOutput
 {
 public:
-  VideoOutput() : _xRes(0), _yRes(0) {}
+  VideoOutput() : _xRes(0), _yRes(0), _fullscreen(false) {}
   virtual ~VideoOutput(){}
 
   virtual bool init(int xRes, int yRes, bool fullscreen)=0;    
@@ -37,6 +37,7 @@ public:
 protected:
   int _xRes, _yRes;
   int _bpp;
+  bool _fullscreen;
 
 };
 

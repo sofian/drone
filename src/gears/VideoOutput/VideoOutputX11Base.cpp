@@ -21,7 +21,6 @@
 
 #include "VideoOutputX11Base.h"
 
-
 #include <iostream>
 
 using namespace X11;
@@ -42,36 +41,77 @@ VideoOutputX11Base::~VideoOutputX11Base()
 
 bool VideoOutputX11Base::togglefullscreen(bool fs, int xRes, int yRes)
 {
-  std::cout << "switching to fullscreen..." << std::endl;
+/*   std::cout << "switching to fullscreen..." << std::endl;                                    */
+/*                                                                                              */
+/*   std::cout << "finding best fit resolution..." << std::endl;                                */
+/*                                                                                              */
+/*   XF86VidModeModeInfo **modes;                                                               */
+/*   int nbmodes=0;                                                                             */
+/*   int bestmode=0;                                                                            */
+/*                                                                                              */
+/*   XF86VidModeGetAllModeLines((Display*)_display, DefaultScreen(_display), &nbmodes, &modes); */
+/*                                                                                              */
+/*   //save desktop-resolution                                                                  */
+/*   _desktopMode = *modes[0];                                                                  */
+/*                                                                                              */
+/*   for (int i=0; i < nbmodes; i++)                                                            */
+/*   {                                                                                          */
+/*     if ((modes[i]->hdisplay == xRes) && (modes[i]->vdisplay == yRes))                        */
+/*     {                                                                                        */
+/*       bestmode = i;                                                                          */
+/*     }                                                                                        */
+/*   }                                                                                          */
+/*                                                                                              */
+/*                                                                                              */
+/*                                                                                              */
+/*   XF86VidModeSwitchToMode((Display*)_display, DefaultScreen(_display), modes[bestmode]);     */
+/*   XF86VidModeSetViewPort((Display*)_display, DefaultScreen(_display), 0, 0);                 */
+/*                                                                                              */
+/*   XWarpPointer((Display*)_display, None, _window, 0, 0, 0, 0, 0, 0);                         */
+/*                                                                                              */
+/*   //free the VideoModes Array                                                                */
+/*   XFree(modes);                                                                              */
+/*                                                                                              */
+    
+  _fullscreen=fs;
+  
+  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+  //XSetWindowBorderWidth((Display*)_display, _window, 0);
 
-  std::cout << "finding best fit resolution..." << std::endl;
-
-  XF86VidModeModeInfo **modes;
-  int nbmodes=0;
-  int bestmode=0;
-
-  XF86VidModeGetAllModeLines((Display*)_display, DefaultScreen(_display), &nbmodes, &modes);
-
-  //save desktop-resolution
-  _desktopMode = *modes[0];
-
-  for (int i=0; i < nbmodes; i++)
-  {
-    if ((modes[i]->hdisplay == xRes) && (modes[i]->vdisplay == yRes))
-    {
-      bestmode = i;
-    }
-  }
+  XineramaScreenInfo *xineramaScreenInfo;
+  int numberOfScreens=0;
+  xineramaScreenInfo = XineramaQueryScreens((Display*) _display, &numberOfScreens);
 
 
+   PropMotifWmHints motif_hints;
+   Atom prop, proptype;
 
-  XF86VidModeSwitchToMode((Display*)_display, DefaultScreen(_display), modes[bestmode]);
-  XF86VidModeSetViewPort((Display*)_display, DefaultScreen(_display), 0, 0);
+   /* setup the property */
+   motif_hints.flags = MWM_HINTS_DECORATIONS;
+   motif_hints.decorations = 0;
 
-  XWarpPointer((Display*)_display, None, _window, 0, 0, 0, 0, 0, 0);
+   /* get the atom for the property */
+   prop = XInternAtom((Display*) _display, "_MOTIF_WM_HINTS", True );
+   if (!prop) {
+      /* something went wrong! */
+      return false;
+   }
 
-  //free the VideoModes Array
-  XFree(modes);
+   /* not sure this is correct, seems to work, XA_WM_HINTS didn't work */
+   proptype = prop;
+
+   XChangeProperty((Display*) _display, _window,                         /* display, window */
+                    prop, proptype,                 /* property, type */
+                    32,                             /* format: 32-bit datums*/
+                    PropModeReplace,                /* mode */
+                    (unsigned char *) &motif_hints, /* data */
+                    PROP_MOTIF_WM_HINTS_ELEMENTS    /* nelements */
+                  );
+
+  XMoveWindow((Display*)_display, _window, 0,0);
+  XResizeWindow((Display*)_display, _window, 1024,768);
+  XSetWindowBackground((Display*)_display, _window, 0);
+  XFlush((Display*)_display);
 
   return true;
 }
@@ -155,7 +195,7 @@ bool VideoOutputX11Base::createXWindow(int xRes, int yRes)
     std::cout << "FAIL!" << std::endl;
     return false;
   }
-
+  
   XSelectInput((Display*)_display, _window, StructureNotifyMask);
   XSetStandardProperties((Display*)_display, _window, "Drone video output", "Drone video output", None, NULL, 0, NULL);            
   //XGrabPointer((Display*)_display, _window, True, ButtonPressMask, GrabModeAsync, GrabModeAsync, _window, None, CurrentTime);        
