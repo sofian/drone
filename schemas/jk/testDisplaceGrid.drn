@@ -4,23 +4,20 @@
         <Gear PosX="78" PosY="108" Type="VideoSource" Name="VideoSource1" >
             <Properties Filename="/home/julien/dev/drone/media/ClassicT1948.mpg" />
         </Gear>
-        <Gear PosX="230" PosY="191" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+        <Gear PosX="449" PosY="192" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
             <Properties/>
         </Gear>
-        <Gear PosX="381" PosY="122" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+        <Gear PosX="460" PosY="58" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
             <Properties/>
         </Gear>
         <Gear PosX="642" PosY="79" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="58" PosY="288" Type="Slider" SliderPos="2.26829" Name="Slider1" >
-            <Properties Lower_Bound="0" Higher_Bound="6" />
+        <Gear PosX="58" PosY="288" Type="Slider" SliderPos="0.682927" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
         </Gear>
-        <Gear PosX="66" PosY="368" Type="Slider" SliderPos="-0.0097561" Name="Slider2" >
-            <Properties Lower_Bound="-.1" Higher_Bound=".1" />
-        </Gear>
-        <Gear PosX="533" PosY="154" Type="VideoDelay" Name="VideoDelay1" >
-            <Properties/>
+        <Gear PosX="66" PosY="368" Type="Slider" SliderPos="3.75" Name="Slider2" >
+            <Properties Lower_Bound="-.1" Higher_Bound="4" />
         </Gear>
         <Gear PosX="721" PosY="302" Type="VideoBlend" Name="VideoBlend1" >
             <Properties/>
@@ -28,34 +25,37 @@
         <Gear PosX="458" PosY="365" Type="Slider" SliderPos="-30.2439" Name="Slider3" >
             <Properties Lower_Bound="-124" Higher_Bound="0" />
         </Gear>
-        <Gear PosX="438" PosY="464" Type="Slider" SliderPos="143.049" Name="Slider4" >
-            <Properties Lower_Bound="0" Higher_Bound="255" />
+        <Gear PosX="438" PosY="464" Type="Slider" SliderPos="0.487805" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="10" />
         </Gear>
         <Gear PosX="707" PosY="439" Type="Contrast" Name="Contrast1" >
             <Properties/>
         </Gear>
-        <Gear PosX="102" PosY="457" Type="Slider" SliderPos="0.390244" Name="Slider5" >
-            <Properties Lower_Bound="0" Higher_Bound="2" />
+        <Gear PosX="8" PosY="221" Type="Slider" SliderPos="0" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
         </Gear>
-        <Gear PosX="234" PosY="374" Type="Slider" SliderPos="99" Name="Slider6" >
+        <Gear PosX="234" PosY="374" Type="Slider" SliderPos="0" Name="Slider6" >
             <Properties Lower_Bound="0" Higher_Bound="99" />
+        </Gear>
+        <Gear PosX="275" PosY="57" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="205" PosY="188" Type="Slider" SliderPos="11.5854" Name="Slider7" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
         </Gear>
     </Gears>
     <Connections>
+        <Connection GearA="VideoSource1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="VideoSource1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
-        <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgB" Output="ImgOut" />
-        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="XSIZE" Output="..ValueType" />
-        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="YSIZE" Output="..ValueType" />
         <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
-        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="ApplyDisplaceGrid1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
         <Connection GearA="Slider1" GearB="GenDisplaceGrid1" Input="PARAM1" Output="Value" />
         <Connection GearA="Slider2" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Value" />
-        <Connection GearA="VideoDelay1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="VideoBlend1" GearB="Contrast1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="Slider3" GearB="VideoDelay1" Input="Delay" Output="Value" />
-        <Connection GearA="Slider4" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="Slider4" GearB="GenDisplaceGrid1" Input="SCALE" Output="Value" />
         <Connection GearA="Slider5" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
         <Connection GearA="Slider6" GearB="GenDisplaceGrid1" Input="PARAM3" Output="Value" />
+        <Connection GearA="Blur1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider7" GearB="Blur1" Input="Amount" Output="Value" />
     </Connections>
 </Schema>

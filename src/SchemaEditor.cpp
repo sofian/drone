@@ -47,6 +47,32 @@ SchemaEditor::~SchemaEditor()
 
 }
 
+void SchemaEditor::keyPressEvent(QKeyEvent *e)
+{     
+  QCanvasItemList l=canvas()->allItems();
+
+  std::cerr<<"!!!!!!!!!!!!!!"<<e->ascii()<<" "<<e->stateAfter()<<std::endl;
+
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  {
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
+      if(((GearGui*)(*it))->keyEvent(e))
+        e->accept();
+  }
+}
+
+void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
+{     
+  QCanvasItemList l=canvas()->allItems();
+
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  {
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
+      if(((GearGui*)(*it))->keyEvent(e))
+        e->accept();
+  }
+}
+
 GearGui* SchemaEditor::testForGearCollision(const QPoint &p)
 {     
   QCanvasItemList l=canvas()->collisions(p);
@@ -60,7 +86,6 @@ GearGui* SchemaEditor::testForGearCollision(const QPoint &p)
   }
   return NULL;
 }
-
 
 ConnectionItem* SchemaEditor::testForConnectionCollision(const QPoint &p)
 {        
@@ -85,7 +110,6 @@ void SchemaEditor::unHilightAllConnections()
     }
   }    
 }
-
 
 void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 {

@@ -80,3 +80,10 @@ static int i=0;
   canvas()->update();
   return ret;
 }
+
+bool GearGui_PushButton::keyEvent(QKeyEvent *e)
+{
+  std::cerr<<e->ascii()<<" "<<e->stateAfter()<<std::endl;
+  return false;
+}
+  

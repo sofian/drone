@@ -21,6 +21,7 @@ public:
   GearGui_PushButton(Gear_PushButton *gear, QCanvas *canvas);
 
   bool mouseEvent(const QPoint& p, Qt::ButtonState button);
+  bool keyEvent(QKeyEvent *e);
   
 protected:
 

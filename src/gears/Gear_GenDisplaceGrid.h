@@ -5,6 +5,7 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "DisplaceGrid.h"
+#include "VideoType.h"
 
 class Gear_GenDisplaceGrid : public Gear
 {
@@ -24,12 +25,13 @@ private:
   PlugIn<ValueType> *_PARAM1;
   PlugIn<ValueType> *_PARAM2;
   PlugIn<ValueType> *_PARAM3;
-  PlugIn<ValueType> *_XSIZE;
-  PlugIn<ValueType> *_YSIZE;
+  PlugIn<ValueType> *_SCALE;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+
 
   //local vars
-  float _param1,_param2,_param3;
-  float _lastparam1,_lastparam2,_lastparam3;
+  float _param1,_param2,_param3,_scale;
+  float _lastparam1,_lastparam2,_lastparam3,_lasttype,_lastscale;
 
   int _xsize,_ysize,_type;
   //!image halfdiagonal
@@ -37,6 +39,9 @@ private:
 
   XYDisp *_gridData; 
   DisplaceGrid * _gridOut;
+  const VideoTypeRGBA *_image;     
+
+  unsigned char* _data; // pointer on input image
 
   void init();    
 };

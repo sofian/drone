@@ -44,6 +44,9 @@ public slots:
 
 protected:
 
+  void keyPressEvent ( QKeyEvent * e );
+  void keyReleaseEvent ( QKeyEvent * e );
+
   void contentsMousePressEvent(QMouseEvent *mouseEvent);
   void contentsMouseMoveEvent(QMouseEvent *mouseEvent);       
   void contentsMouseReleaseEvent(QMouseEvent *mouseEvent);

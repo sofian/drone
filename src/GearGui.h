@@ -47,7 +47,7 @@ public:
 
   //! returns true if the function eats up the event
   virtual bool mouseEvent(const QPoint&, Qt::ButtonState){return false;}
-
+  virtual bool keyEvent(QKeyEvent *){return false;}
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
 
