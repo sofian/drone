@@ -46,7 +46,7 @@ release {
 
 
 TEMPLATE = lib
-INCLUDEPATH += . types ../contrib/frei0r/
+INCLUDEPATH += . types ../contrib/frei0r/spec
 
 #mac
 macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
