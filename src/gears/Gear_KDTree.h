@@ -29,14 +29,14 @@ private:
   //local var
   const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
-  const RGBA *_data;
-  RGBA *_outData;
+//   const RGBA *_data;
+//   RGBA *_outData;
 
-  SummedAreaTable *_table;
+  SummedAreaTable<> *_table;
 
   int _sizeX;
   int _sizeY;
-  int _size;
+  //  int _size;
 
   int _r;
   int _g;

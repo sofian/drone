@@ -14,7 +14,7 @@ Gear_KDTree::Gear_KDTree(Engine *engine, std::string name)
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(6, 1, 16)));
   _rasterer = new Rasterer();
-  _table = new SummedAreaTable();
+  _table = new SummedAreaTable<>();
 }
 
 Gear_KDTree::~Gear_KDTree()
@@ -32,7 +32,6 @@ void Gear_KDTree::init()
 {
   _rasterer->setImage(_VIDEO_OUT->type());
   _rasterer->setColor(0, 0, 0); // black lines only
-  _table->setImage(_VIDEO_IN->type());
 }
 
 void Gear_KDTree::runVideo()
@@ -46,13 +45,13 @@ void Gear_KDTree::runVideo()
 
   _sizeX = _image->width();
   _sizeY = _image->height();
-  _size = _sizeX * _sizeY;
+  //  _size = _sizeX * _sizeY;
 
-  _data = _image->data();
-  _outData = _outImage->data();
+  //  _data = _image->data();
+  //  _outData = _outImage->data();
 
   _rasterer->setImage(_outImage);
-  _table->setImage(_image);
+  _table->setTable((unsigned char*)_image->data(), _image->width(), _image->height());
 
   // build accumulation buffer
   _table->buildTable();
@@ -74,16 +73,16 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   depth++;
 
   // Get the total values in the area.
-  RGBAint rgba;
+  int rgba[SIZE_RGBA];
   int area;
   _table->getSum(rgba, area, x0, y0, x1, y1);
 
   // Useful values.
   //int area = _table->getArea(x0, y0, x1, y1);
-  int cut = SummedAreaTable::total(rgba) / 2;
+  int cut = sum(rgba, SIZE_RGB) >> 1;
 
   // Draw a rectangle around the area and paint it with the average color.
-  _rasterer->setColor(rgba.r / area, rgba.g / area, rgba.b / area);
+  _rasterer->setColor(rgba[0] / area, rgba[1] / area, rgba[2] / area);
   _rasterer->rect(x0, y0, x1, y1, true);
   _rasterer->setColor(0,0,0);
   _rasterer->rect(x0, y0, x1, y1, false);
@@ -100,7 +99,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     {
       mid = (lower+upper) / 2; // take the mean
       _table->getSum(rgba, area, x0, y0, x1, mid); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
-      if (SummedAreaTable::total(rgba) < cut)
+      if (sum(rgba, SIZE_RGB) < cut)
         lower = mid+1; // look up //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look down
@@ -119,7 +118,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     {
       mid = (lower+upper) / 2; // take the mean
       _table->getSum(rgba, area, x0, y0, mid, y1); /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
-      if (SummedAreaTable::total(rgba) < cut)
+      if (sum(rgba, SIZE_RGB) < cut)
         lower = mid+1; // look right //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look left

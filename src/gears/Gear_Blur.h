@@ -27,10 +27,10 @@ private:
   //local var
   const VideoTypeRGBA *_image;     
   VideoTypeRGBA *_outImage;
-  RGBA *_outData;
+  unsigned char *_outData;
 
-  SummedAreaTable *_table;
-  RGBAint _sum;
+  SummedAreaTable<> *_table;
+  int _sum[SIZE_RGBA];
 
   int _sizeY;
   int _sizeX;
@@ -38,10 +38,8 @@ private:
   int _x1,_y1,_x2,_y2;
 
   int _blurSize;
-  int _halfBlurSize;
-
-  RGBA _acc;
-
+  int _area;
+  
   void init();    
 };
 
