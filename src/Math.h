@@ -61,12 +61,12 @@
 // Fast array operations.
 
 //! Adds #n# elements of #src1# to #src2# and puts the result in #dst#. 
-// template <class T> void
-// add(T *dst, const T *src1, const T *src2, size_t n)
-// {
-//   while (n--)
-//     *dst++ = *src1++ + *src2++;
-// }
+template <typename T, typename U, typename V> void
+add(T *dst, const U *src1, const V *src2, size_t n)
+{
+  while (n--)
+    *dst++ = *src1++ + *src2++;
+}
 
 //! Adds #n# elements of #src# to #dst#.
 template <typename T, typename U> void
@@ -85,12 +85,12 @@ add(T *src, T val, size_t n)
 }
 
 // //! Subtracts #n# elements of #src2# from #src1# and puts the result in #dst#. 
-// template <typename T, typename U> void
-// subtract(T *dst, const T *src1, const T *src2, size_t n)
-// {
-//   while (n--)
-//     *dst++ = *src1++ - *src2++;
-// }
+template <typename T, typename U, typename V> void
+subtract(T *dst, const U *src1, const V *src2, size_t n)
+{
+  while (n--)
+    *dst++ = *src1++ - *src2++;
+}
 
 //! Subtracts #n# elements of #src# from #dst#.
 template <typename T, typename U> void
@@ -108,13 +108,13 @@ subtract(T *src, T val, size_t n)
     *src++ -= static_cast<T>(val);
 }
 
-// //! Multiplies #n# elements of #src1# to #src2# and puts the result in #dst#. 
-// template <typename T, typename U> void
-// multiply(T *dst, const T *src1, const T *src2, size_t n)
-// {
-//   while (n--)
-//     *dst++ = *src1++ * *src2++;
-// }
+//! Multiplies #n# elements of #src1# to #src2# and puts the result in #dst#. 
+template <typename T, typename U, typename V> void
+multiply(T *dst, const U *src1, const V *src2, size_t n)
+{
+  while (n--)
+    *dst++ = *src1++ * *src2++;
+}
 
 //! Multiplies #n# elements of #dst# by #src#.
 template <typename T, typename U> void
@@ -132,13 +132,13 @@ multiply(T *src, U val, size_t n)
     *src++ *= static_cast<T>(val);
 }
 
-// //! Divides #n# elements of #src2# from #src1# and puts the result in #dst#. 
-// template <typename T, typename U> void
-// divide(T *dst, const T *src1, const T *src2, size_t n)
-// {
-//   while (n--)
-//     *dst++ = *src1++ / *src2++;
-// }
+//! Divides #n# elements of #src2# from #src1# and puts the result in #dst#. 
+template <typename T, typename U, typename V> void
+divide(T *dst, const U *src1, const V *src2, size_t n)
+{
+  while (n--)
+    *dst++ = *src1++ / *src2++;
+}
 
 //! Divides #n# elements of #dst# by #src#.
 template <typename T, typename U> void
@@ -174,6 +174,36 @@ sum(const T *src, size_t n)
   while (--n)
     ret += *src++;
   return ret;
+}
+
+//! Returns the min element of #n# elements of #src#.
+template <typename T> T
+min(const T *src, size_t n)
+{
+  if (!n)
+    return 0;
+  T min = *src++;
+  while (--n)
+  {
+    min = MIN(*src,min);
+    src++;
+  }
+  return min;
+}
+
+//! Returns the max element of #n# elements of #src#.
+template <typename T> T
+max(const T *src, size_t n)
+{
+  if (!n)
+    return 0;
+  T max = *src++;
+  while (--n)
+  {
+    max = MAX(*src,max);
+    src++;
+  }
+  return max;
 }
 
 //! Fast trigonometric functions approximations
