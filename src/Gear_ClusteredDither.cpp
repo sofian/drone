@@ -42,6 +42,8 @@ bool Gear_ClusteredDither::ready()
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
+#define ISNEG(x)	(((x) < 0)? 1 : 0)
+
 void Gear_ClusteredDither::runVideo()
 {
   _image = _VIDEO_IN->canvas();
@@ -71,13 +73,11 @@ void Gear_ClusteredDither::runVideo()
   // *** OPTIM : les modulo et les MIN...
   for (int y=0; y<_sizeY; y += _clusterSize - (y % _clusterSize))
   {
-    maxClusterSizeY = _clusterSize - ( y % _clusterSize);
-    maxClusterSizeY = MIN( maxClusterSizeY, _sizeY-y );
+    maxClusterSizeY = MIN( _clusterSize, _sizeY-y );
 
     for (int x=0; x<_sizeX; x+=_clusterSize - (x % _clusterSize))
     {
-      maxClusterSizeX = _clusterSize - ( x % _clusterSize);
-      maxClusterSizeX = MIN( maxClusterSizeX, _sizeX-x );
+      maxClusterSizeX = MIN( _clusterSize, _sizeX-x );
 
       for (int yCell=0; yCell<maxClusterSizeY; ++yCell)
       {
@@ -98,19 +98,12 @@ void Gear_ClusteredDither::runVideo()
         
         for (int xCell=0; xCell<maxClusterSizeX; ++xCell)
         {
-          int rx = (x + xCell) * 3;          
+          int rx = (x + xCell) * 3;
           rx -= ((rx - ISNEG(rx)*(_width-1)) / _width) * _width;
-          
-          // Grayscale.
-          int total = *iterData++;
-          total += *iterData;
-          total += *iterData++;
-          total += *iterData++;
-          iterData++;
-          total >>=2;
 
           // Compute and copy value.
-          memset(iterOutData, getValue(total, rx, ry), 4*sizeof(unsigned char));
+          memset(iterOutData, getValue(intensity(iterData), rx, ry), 4*sizeof(unsigned char));
+          iterData+=4;
           iterOutData+=4;
         }
 
@@ -121,3 +114,4 @@ void Gear_ClusteredDither::runVideo()
 
 }
 
+//#undef ISNEG
