@@ -11,6 +11,7 @@ public:
   typedef typename std::vector<T>::iterator iterator;
   typedef typename std::vector<T>::const_iterator const_iterator;
   typedef typename std::vector<T>::reference reference;
+  typedef typename std::vector<T>::pointer pointer;
 
 public:
   Matrix()
@@ -28,13 +29,10 @@ public:
   size_type height() const { return _height; }
   size_type width() const { return _width; }
 
-  reference operator()(size_type x, size_type y) const { return _rows[y][x]; }
+  reference operator[](size_type x, size_type y) const { return _rows[y][x]; }
   reference get(size_type x, size_type y)  const { return _rows[y][x]; }
   
-  iterator operator()(size_type y) const { return _rows[y]; }
-  iterator getRow(size_type y) const { return _rows[y]; }
-  
-  std::vector<iterator>& rows() const { return _rows; }
+  std::vector<pointer>& rows() const { return _rows; }
   
   void resize(size_type size)
   {
@@ -54,22 +52,21 @@ public:
   
     // Efficient setting of the rows pointer.
     _rows.resize(height);
-    iterator row = begin();
-    for (typename std::vector<iterator>::iterator it = _rows.begin();
-          it != _rows.end(); ++it, row+=width)
-      *it = row;
+    pointer iterData = data();
+    for (typename std::vector<pointer>::iterator it = _rows.begin();
+          it != _rows.end(); ++it, iterData += width)
+      *it = iterData;
   }               
 
-  const T* data() const {return &front();}
-  T* data() {return &front();}
+  const pointer data() const {return &front();}
+  pointer data() {return &front();}
 
-  const T* row(int i) const { return &(*getRow(i)); }
-  T* row(int i) { return &(*getRow(i)); }
-
+  const pointer row(int i) const { return &(*getRow(i)); }
+  pointer row(int i) { return &(*getRow(i)); }
 
 protected:
   size_type _width, _height;
-  std::vector<iterator> _rows;
+  std::vector<pointer> _rows;
 };
 
 #endif
