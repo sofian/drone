@@ -34,8 +34,9 @@ Saturation \
 SignalStat \
 SmearGrid \
 Sobel \
-VideoDelay \
-VideoLoop \
+#VideoDelay \
+#VideoLoop \
+VideoRecord \
 ImageShuffle \
 ImageSequence \
 Invert 
