@@ -49,7 +49,6 @@ Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(sche
 
   EnumType *mixFunc = new EnumType(N_VIDEOMIX_TYPES, BLEND);
   mixFunc->setLabel(BLEND,"Blend");
-  mixFunc->setLabel(SHADE,"Shade");
   mixFunc->setLabel(DARKEN,"Darken");
   mixFunc->setLabel(LIGHTEN,"Lighten");
   mixFunc->setLabel(HUE_ONLY,"Hue only");
@@ -69,6 +68,7 @@ Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(sche
   mixFunc->setLabel(ADD,"Add");
   mixFunc->setLabel(SUBTRACT,"Subtract");
   mixFunc->setLabel(DIFFERENCE,"Difference");
+  mixFunc->setLabel(SCALE,"Scale");
   addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", mixFunc));
 }
 
@@ -107,7 +107,7 @@ void Gear_VideoMix::runVideo()
   }
 
 
-  _mixType = CLAMP((eVideoMixType)_MIXFUNC_IN->type()->value(), BLEND, DIFFERENCE);
+  _mixType = CLAMP((eVideoMixType)_MIXFUNC_IN->type()->value(), BLEND, SCALE);
 
   _imageASizeX = _imageA->width();
   _imageASizeY = _imageA->height();
@@ -116,227 +116,213 @@ void Gear_VideoMix::runVideo()
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 
-  _dataA = _imageA->data();
-  _dataB = _imageB->data();
-  _outData = _outImage->data();
-  
-  //memset(_outData, 0, _outImage->size()*sizeof(RGBA));
+  _imageASizeX   *= SIZE_RGBA;
+  _imageBSizeX   *= SIZE_RGBA;
+  _imageOutSizeX *= SIZE_RGBA;
 
+  GimpCompositeContext ctx;
+  ctx.n_pixels=_iterSizeX;
+
+  ctx.A = (guchar *)_imageA->data();
+  ctx.B = (guchar *)_imageB->data();
+  ctx.D = (guchar *)_outImage->data();
+  
   int amount = CLAMP((int)_AMOUNT_IN->type()->value(), 0, 255);
+
   switch (_mixType)
   {
   case BLEND:
+    ctx.blend.blend=amount;
     for (int y=0;y<_iterSizeY;y++)
     {
-      blend_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   amount, _iterSizeX, SIZE_RGBA);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
-    }
-    break;
-  case SHADE:
-    for (int y=0;y<_iterSizeY;y++)
-    {
-      shade_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   amount, _iterSizeX, SIZE_RGBA, 0);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
+      gimp_composite_blend_any_any_any_generic(&ctx);
+      ctx.A += _imageASizeX;
+      ctx.B += _imageBSizeX;
+      ctx.D += _imageOutSizeX;
     }
     break;
   case DARKEN:
     for (int y=0;y<_iterSizeY;y++)
     {
-      darken_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                    _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
+      gimp_composite_darken_any_any_any_generic(&ctx);
+      ctx.A += _imageASizeX;
+      ctx.B += _imageBSizeX;
+      ctx.D += _imageOutSizeX;
     }
     break;
   case LIGHTEN:
     for (int y=0;y<_iterSizeY;y++)
     {
-      lighten_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
+      gimp_composite_lighten_any_any_any_generic(&ctx);
+      ctx.A += _imageASizeX;
+      ctx.B += _imageBSizeX;
+      ctx.D += _imageOutSizeX;
     }
     break;
   case HUE_ONLY:
     for (int y=0;y<_iterSizeY;y++)
     {
-      hue_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
+      gimp_composite_hue_any_any_any_generic(&ctx);
+      ctx.A += _imageASizeX;
+      ctx.B += _imageBSizeX;
+      ctx.D += _imageOutSizeX;
     }
     break;
   case SATURATION_ONLY:
+    gimp_composite_saturation_any_any_any_generic(&ctx);
     for (int y=0;y<_iterSizeY;y++)
     {
-      saturation_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                             _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-      _dataA += _imageASizeX;
-      _dataB += _imageBSizeX;
-      _outData += _imageOutSizeX;
+      ctx.A += _imageASizeX;
+      ctx.B += _imageBSizeX;
+      ctx.D += _imageOutSizeX;
     }
   break;
  case VALUE_ONLY:
    for (int y=0;y<_iterSizeY;y++)
    {
-     value_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_value_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case COLOR_ONLY:
    for (int y=0;y<_iterSizeY;y++)
    {
-     color_only_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_color_only_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case MULTIPLY:
    for (int y=0;y<_iterSizeY;y++)
    {
-     multiply_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_multiply_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case DIVIDE:
    for (int y=0;y<_iterSizeY;y++)
    {
-     divide_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_divide_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case SCREEN:
    for (int y=0;y<_iterSizeY;y++)
    {
-     screen_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                   _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_screen_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case OVERLAY:
    for (int y=0;y<_iterSizeY;y++)
    {
-     overlay_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                    _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_overlay_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case DODGE:
    for (int y=0;y<_iterSizeY;y++)
    {
-     dodge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                  _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_dodge_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case BURN:
    for (int y=0;y<_iterSizeY;y++)
    {
-     burn_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                 _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_burn_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case HARDLIGHT:
    for (int y=0;y<_iterSizeY;y++)
    {
-     hardlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_hardlight_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case SOFTLIGHT:
    for (int y=0;y<_iterSizeY;y++)
    {
-     softlight_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                      _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_softlight_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case GRAIN_EXTRACT:
    for (int y=0;y<_iterSizeY;y++)
    {
-     grain_extract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                          _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_grain_extract_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case GRAIN_MERGE:
    for (int y=0;y<_iterSizeY;y++)
    {
-     grain_merge_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                        _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_grain_merge_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case ADD:
    for (int y=0;y<_iterSizeY;y++)
    {
-     add_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_addition_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case SUBTRACT:
    for (int y=0;y<_iterSizeY;y++)
    {
-     subtract_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                     _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_subtract_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  case DIFFERENCE:
    for (int y=0;y<_iterSizeY;y++)
    {
-     difference_pixels((unsigned char*)_dataA, (unsigned char *)_dataB, (unsigned char*)_outData,
-                       _iterSizeX, SIZE_RGBA, SIZE_RGBA);
-     _dataA += _imageASizeX;
-     _dataB += _imageBSizeX;
-     _outData += _imageOutSizeX;
+     gimp_composite_difference_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
+   }
+   break;
+ case SCALE:
+   for (int y=0;y<_iterSizeY;y++)
+   {
+     gimp_composite_scale_any_any_any_generic(&ctx);
+     ctx.A += _imageASizeX;
+     ctx.B += _imageBSizeX;
+     ctx.D += _imageOutSizeX;
    }
    break;
  default:;
-   memcpy(_outData, _dataA, _outImage->size() * sizeof(RGBA));
+   memcpy(ctx.D, ctx.A, _outImage->size() * sizeof(RGBA));
 }
 
 }

@@ -21,39 +21,40 @@
 #define GEAR_VIDEOMIX_INCLUDED
 
 #include "Gear.h"
-#include "SignalType.h"
 #include "ValueType.h"
 #include "EnumType.h"
 #include "VideoRGBAType.h"
 #include "Utils.h"
+#include "Composite.h"
+#include "CompositeGeneric.h"
 
 class Gear_VideoMix : public Gear
 {
   enum eVideoMixType
   {
-    BLEND,            // 0
-    SHADE,
+    BLEND,
     DARKEN,
     LIGHTEN,
     HUE_ONLY,
-    SATURATION_ONLY,  // 5
+    SATURATION_ONLY,
     VALUE_ONLY,
     COLOR_ONLY,
     MULTIPLY,
     DIVIDE,
-    SCREEN,           // 10
+    SCREEN,
     OVERLAY,
     DODGE,
     BURN,
     HARDLIGHT,
-    SOFTLIGHT,        // 15
+    SOFTLIGHT,
     GRAIN_EXTRACT,
     GRAIN_MERGE,
     ADD,
     SUBTRACT,
-    DIFFERENCE,       // 20
+    DIFFERENCE,
     //    DISSOLVE, // XXX trop de paramètres, faire dans une gear differente
     //    REPLACE,  // XXX idem
+    SCALE,
     N_VIDEOMIX_TYPES
   };
 
