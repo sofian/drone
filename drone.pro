@@ -6,7 +6,7 @@ TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3
 LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
-CONFIG += thread debug
+CONFIG += thread
 
 HEADERS += config.h \
            src/CircularBufferSignal.h \
@@ -58,7 +58,7 @@ HEADERS += config.h \
           src/gears/Gear_VideoSource.h \
            src/GearGui.h \
            src/gears/GearGui_Slider.h \
-            src/gears/gears/GearGui_TV.h \
+            src/gears/GearGui_TV.h \
            src/GearMaker.h \
            src/GearPropertiesDialog.h \
            src/MainWindow.h \
