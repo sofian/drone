@@ -58,7 +58,7 @@ void GearGui_TV::drawShape(QPainter &painter)
         for (int y1=0;y1<iterSizeY;++y1)
             for (int x1=0;x1<iterSizeX;++x1)
             {                
-                (*(QRgb*)bits) = qRgb(data->R, data->G, data->B); 
+                (*(QRgb*)bits) = qRgb(data->r, data->g, data->b); 
                 bits+=4;
                 data++;
             }
