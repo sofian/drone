@@ -30,17 +30,20 @@
 
 Register_Gear(MAKERGear_ListBox, Gear_ListBox, "ListBox")
 
-const int Gear_ListBox::DEFAULT_VALUE = 0;
-
 const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
+const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
 Gear_ListBox::Gear_ListBox(Engine *engine, std::string name) : Gear(engine, "ListBox", name),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value"));
 
   _settings.add(Property::FLOAT, SETTING_NELEMS)->valueInt(1);
+   // XXX temporary hack to save labels
+  _settings.add(Property::STRING, SETTING_LABELS)->valueStr("");
+  _labels.resize(1);
+  _labels[0] = "";
 
-  setValue(DEFAULT_VALUE);
+  setValue(0);
 }
 
 Gear_ListBox::~Gear_ListBox()
@@ -55,11 +58,26 @@ bool Gear_ListBox::ready()
 
 void Gear_ListBox::onUpdateSettings()
 {
+  _VALUE_OUT->type()->resize(_settings.get(Gear_ListBox::SETTING_NELEMS)->valueInt());
+
   //set the value, to force clamping if needed
   setValue(getValue());
 
   //then we need to redraw the gearGui
   getGearGui()->reDraw();
+
+  // XXX temporary hack to save labels, to be removed ultimately
+  char str[1000];
+  strcpy(str, _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr().c_str());
+  char *tok = strtok(str, ",");
+  _labels.resize(0);
+  while (tok != NULL) // parse comma-separated array
+  {
+    printf("[%s],", tok);
+    _labels.push_back(tok);
+    tok = strtok (NULL, ",");
+  }
+  ASSERT_ERROR(_labels.size() == _VALUE_OUT->type()->size());
 
   _acceptHint = false;
 }
@@ -71,8 +89,22 @@ void Gear_ListBox::onPlugConnected(AbstractPlug *plug)
     const EnumType *tmpType = static_cast<const EnumType*>(plug->firstConnectedPlug()->abstractHintType());
     _settings.get(Gear_ListBox::SETTING_NELEMS)->valueInt((int)tmpType->size());
     _VALUE_OUT->type()->resize(tmpType->size());
-    for (int i=0; i<(int)tmpType->size(); ++i)
-      _VALUE_OUT->type()->setLabel(i, tmpType->label(i));
+    _labels.resize(tmpType->size());
+    std::string labels = "";
+    if (tmpType->size() > 0)
+    {
+      std::string label = tmpType->label(0);
+      labels += label;
+      _VALUE_OUT->type()->setLabel(0, label);
+      for (int i=1; i<(int)tmpType->size(); ++i)
+      {
+        label = tmpType->label(i);
+        labels += "," + label;
+        _VALUE_OUT->type()->setLabel(i, label);
+      }
+    }
+    
+    _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr(labels);
     setValue(tmpType->value());
     onUpdateSettings();
   }

@@ -28,9 +28,8 @@
 class Gear_ListBox : public Gear  
 {
 public:
-  static const int DEFAULT_VALUE;
-
   static const std::string SETTING_NELEMS;
+  static const std::string SETTING_LABELS; // XXX temporary hack to save labels
 
   Gear_ListBox(Engine *engine, std::string name);
   virtual ~Gear_ListBox();
@@ -42,7 +41,7 @@ public:
 
   void setValue(int value);
   int getValue(){ return _VALUE_OUT->type()->value(); }
-  const std::string& getLabel() { return _VALUE_OUT->type()->label(); }
+  const std::string& getLabel() { return _labels[getValue()]; }
 
   bool ready();
 
@@ -56,6 +55,9 @@ private:
   PlugOut<EnumType>* _VALUE_OUT;  
 
   bool _acceptHint;
+
+   // XXX temporary hack to save labels
+  std::vector<std::string> _labels;
 };
 
 #endif 
