@@ -13,6 +13,6 @@ unix:!macx:TARGET=../../../gears/Gear_VideoSource
 #call ranlib on prelinked static libs on mac
 macx:system( ranlib ../../../lib/ffmpeg/libavformat/libavformatmac.a )
 macx:system( ranlib ../../../lib/ffmpeg/libavcodec/libavcodecmac.a )
-macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L../../../lib/ -L../../../lib/ffmpeg/libavcodec -L../../../lib/ffmpeg/libavformat -lavformatmac -lavcodecmac -lz
+macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L../../../lib/ -L../../../lib/ffmpeg/libavcodec -L../../../lib/ffmpeg/libavformat -lavformat -lavcodec -lz
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoSource
 macx:QMAKE_LFLAGS+=-read_only_relocs suppress
