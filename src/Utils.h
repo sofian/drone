@@ -1646,7 +1646,7 @@ invert_pixels (const unsigned char *src,
     while (length --)
     {
       for (b = 0; b < alpha; b++)
-        dest[b] = 255 - src[b];
+        dest[b] = 0xff ^ src[b];
       
       dest[alpha] = src[alpha];
       dest += bytes;
@@ -1658,7 +1658,7 @@ invert_pixels (const unsigned char *src,
     while (length --)
     {
       for (b = 0; b < alpha; b++)
-        dest[b] = 255 - src[b];
+        dest[b] = 0xff ^ src[b];
       
       dest += bytes;
       src += bytes;
