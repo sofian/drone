@@ -32,7 +32,7 @@ Gear_Saturation::Gear_Saturation(Engine *engine, std::string name) : Gear(engine
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 1.0f)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 10.0f)));
 
 }
 
