@@ -68,6 +68,12 @@ inline int MAX255(int a)
 
 // End LIBGIMP
 
+
+//! Return whether is outside boundaries (x<l or x>u)
+template <typename T>
+inline T IS_OUTSIDE(T x, T l, T u)
+{ return ( (x < l) || (x > u) );}
+
 // Fast array operations.
 
 //! Adds #n# elements of #src1# to #src2# and puts the result in #dst#. 
@@ -232,6 +238,9 @@ max(const T *src, size_t n)
 
 #define FAST_MATH_PRECISION 0 // XXX to be changed ultimately (how??)
 
+
+// WARNING : these function are only valid in some interval
+// TODO: which interval.. Should be something like -2PI..2PI
 inline float fastsin (float x)
 {
 #if FAST_MATH_PRECISION
@@ -387,5 +396,65 @@ inline float fastatan (float x)
 }
 
 //! End WML
+
+//
+inline float fastDist(float x, float y)
+{
+  // well... not that fast yet :)
+  return sqrt( x*x + y*y );
+}
+
+inline float fastAngle(float x, float y)
+{
+  // well... not that fast yet :)
+  return atan2f(y,x);
+}
+
+// warning : theta must be clamped inside some range 0..2PI (see fastcos)
+inline float fastPolarToX(float rho, float theta)
+{
+  return fastcos(theta)*rho;
+}
+
+// warning : theta must be clamped inside some range 0..2PI (see fastsin)
+inline float fastPolarToY(float rho, float theta)
+{
+  return fastsin(theta)*rho;
+}
+
+//! clamps the value in a mirror fashion :
+//! It is like the interval was infinite, but repeating himself 'mirrorly'
+//! e.g: MIRROR_CLAMP(x,0,2) for x={-3,-2,-1,0,1,2,3} gives :
+//! {1,2,1,0,1,2,1}
+//! WARNING : not thread safe because of static variables
+
+template<class T>
+T MIRROR_CLAMP(T t,T low,T high)
+{
+  if(t>=low && t<=high)
+    return t;
+  else
+  {
+    static T range,howmuch;
+    static int howmuchtimes,flip;
+    range=high-low;
+    if(t<low)
+    {
+      howmuch=low-t;
+      flip=0;
+    }
+    else
+    {
+      howmuch=t-high;
+      flip=1;
+    }
+    howmuchtimes = (int)(howmuch/range);
+    if((howmuchtimes+flip)%2)
+      return high-howmuch+howmuchtimes*range;
+    else
+      return low+howmuch-howmuchtimes*range;
+  }
+}
+
 
 #endif

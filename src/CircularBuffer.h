@@ -179,8 +179,10 @@ public:
       // check if we need dynamic resizing
       if (samplesWanted > _bufSize)
           // some kind of log/error
-          assert(0);
-      
+          WARNING("getBounds::ah non...  samplesWanted (%i)> taille du circularBuffer(%i)",samplesWanted,_bufSize);
+
+      samplesWanted=CLAMP(samplesWanted,0,_bufSize);
+
       T *bt1 = _current + sample_from;
       T *bt2 = _current + sample_to;
       
