@@ -46,9 +46,7 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) :
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
   //todo
-  for (int i=0;i<1024;i++)
-    _frame[i] = NULL;
-
+  memset(_frame, 0, 1024*sizeof(RGBA*));
 }
 
 Gear_VideoSource::~Gear_VideoSource()
@@ -102,9 +100,6 @@ void Gear_VideoSource::onUpdateSettings()
   //from the doc :
   //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
   _frame[_sizeY-1] = (RGBA*) realloc(_frame[_sizeY-1], (_sizeX * sizeof(RGBA)) + 4);
-
-  _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
-
 }
 
 void Gear_VideoSource::runVideo()
@@ -112,9 +107,11 @@ void Gear_VideoSource::runVideo()
   if (_file==NULL)
     return;
 
+  _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
+
   if ((int)_RESET_IN->type()->value() == 1 ||
       ((ePlaybackMode)_MODE_IN->type()->value() == LOOP &&
-       mpeg3_tell_byte(_file) == _bytes))
+       mpeg3_tell_byte(_file) >= _bytes))
     mpeg3_seek_byte(_file, 0); // reset
 
   //_image = _VIDEO_OUT->type().image();
