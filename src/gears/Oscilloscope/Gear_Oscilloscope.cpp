@@ -23,7 +23,20 @@
 #include "GearMaker.h"
 #include "CircularBuffer.h"
 
-Register_Gear(MAKERGear_Oscilloscope, Gear_Oscilloscope, "Oscilloscope")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+	return new Gear_Oscilloscope(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+	GearInfo gearInfo;
+	gearInfo.name = "Oscilloscope";
+	gearInfo.classification = GearClassifications::signal().visualization().instance();
+	return gearInfo;
+}
+}
 
 Gear_Oscilloscope::Gear_Oscilloscope(Schema *schema, std::string uniqueName) : Gear(schema, "Oscilloscope", uniqueName)
 {

@@ -37,6 +37,7 @@ release {
 
 TEMPLATE = lib
 INCLUDEPATH += . types contrib/frei0r
+mac:INCLUDEPATH += /Developer/Headers/FlatCarbon
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 mac:LIBS += -lz

@@ -200,7 +200,16 @@ public:
     {
     public: std::string toString(){return "Enveloppe";} 
     };    
-    GearClassification_Enveloppe enveloppe(){return GearClassification_Enveloppe();}     
+    GearClassification_Enveloppe enveloppe(){return GearClassification_Enveloppe();}
+
+    //SIGNAL/Visualization
+    class GearClassification_Visualization: public GearClassificationT<GearClassification_Visualization, GearClassification_Signal>
+    {
+	public: std::string toString(){return "Visualization";} 
+    };    
+    GearClassification_Visualization visualization(){return GearClassification_Visualization();}
+	
+	
 
   };
 

@@ -1,23 +1,24 @@
 TEMPLATE=subdirs
-SUBDIRS= Osc
+SUBDIRS= Osc \
+TV \
+Oscilloscope \
 #VideoOutput \
-#Blur \
+Blur \
 #VideoSource \
-#Slider \
+Slider \
 #AudioInput \
-#KDTree\ 
-#VideoMix \
-#Edge \
-#AffineTransform \
-#ApplyDisplaceGrid \
-#AreaArrayMask \
-#Brightness \
-#ClusteredDither \
-#ColorAdjust \
-#Contrast \
-#Enveloppe \
-#FlatSignal \
-#ListBox \
-#PushButton \
-#TV \
-#TouchPad
+KDTree\ 
+VideoMix \
+Edge \
+AffineTransform \
+ApplyDisplaceGrid \
+AreaArrayMask \
+Brightness \
+ClusteredDither \
+ColorAdjust \
+Contrast \
+Enveloppe \
+FlatSignal \
+ListBox \
+PushButton \
+TouchPad

@@ -24,6 +24,10 @@
 #include <iostream>
 #include <dlfcn.h>
 
+#if defined(Q_OS_MACX)
+#include <CFBundle.h>
+#endif
+
 GearMaker GearMaker::_registerMyself;
 std::map<std::string, GearMaker::GearPluginDefinition*> *GearMaker::_registry;
 
@@ -71,7 +75,12 @@ void GearMaker::parseGears()
 {           
   std::cout << "--- loading gears ---" << std::endl;
 #if defined(Q_OS_MACX)
-	QDir dir("../Gears");
+	//on osx we have to first find the bundle full path
+	CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+  CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef, kCFURLPOSIXPathStyle);
+	//gears are in /Contents/PlugIns
+	QString qstrMacPath = QString(CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding())) + "/Contents/PlugIns";
+	QDir dir(qstrMacPath);
 #else
 	QDir dir("gears");
 #endif
@@ -82,6 +91,7 @@ void GearMaker::parseGears()
   }
     
   dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+
 #if defined(Q_OS_MACX)
   dir.setNameFilter("*.dylib*");
 #else
@@ -91,7 +101,7 @@ void GearMaker::parseGears()
   const QFileInfoList *files = dir.entryInfoList();
   QFileInfoListIterator it(*files);
   QFileInfo *fileInfo;
-  char* error;
+  const char* error;
 
   while ((fileInfo = it.current()) != 0 )
   {
