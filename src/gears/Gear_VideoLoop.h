@@ -34,7 +34,7 @@ class Gear_VideoLoop : public Gear
 public:
   enum ePlaybackMode
   {
-    FOWARD,
+    FORWARD,
     BACKWARD,
     PING_PONG,
     N_PLAYBACK_MODE

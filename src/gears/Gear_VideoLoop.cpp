@@ -40,8 +40,8 @@ Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, 
   addPlug(_PUNCH_OUT = new PlugIn<ValueType>(this, "PunchOut", new ValueType(0, 0, 1)));
   addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
 
-  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FOWARD);
-  playbackMode->setLabel(FOWARD,"Foward");
+  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
+  playbackMode->setLabel(FORWARD,"Foward");
   playbackMode->setLabel(BACKWARD,"Backward");
   playbackMode->setLabel(PING_PONG,"Ping pong");
   addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));
@@ -80,7 +80,7 @@ void Gear_VideoLoop::runVideo()
 
   _outImage->resize(_sizeX, _sizeY);
 
-  _playbackMode = CLAMP((ePlaybackMode)_MODE_IN->type()->value(), FOWARD, PING_PONG);
+  _playbackMode = CLAMP((ePlaybackMode)_MODE_IN->type()->value(), FORWARD, PING_PONG);
 
   _memory = MAX(_MEMORY->type()->intValue(), 0);
   _circbuf->resize(_sizeY*_sizeX, _memory);
@@ -117,7 +117,7 @@ void Gear_VideoLoop::runVideo()
     
     switch (_playbackMode)
     {
-    case FOWARD:
+    case FORWARD:
         _currentLoopFrame = (_currentLoopFrame + 1) % _nLoopFrames;
       break;
     case BACKWARD:
@@ -138,5 +138,4 @@ void Gear_VideoLoop::runVideo()
     _circbuf->fillVectorFromBlock(_outImage, _currentLoopFrame -_nLoopFrames + 1);
   }
  
-  
 }
