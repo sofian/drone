@@ -12,11 +12,14 @@ const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer"
 const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 
 Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) : 
-  Gear(engine, "AudioInput", name),     
+  Gear(engine, "AudioInput", name),
+  _Stream(0),
   _RingBufferSize(512),
   _LBuffer(),
   _RBuffer(),
-  _ReadIndex(0)
+  _ReadIndex(0),
+  _Mutex(0),
+  _PlaybackThreadHandle()
 {
   //  _category << Category::AUDIO << Category::IO;
 
