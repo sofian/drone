@@ -22,7 +22,7 @@
 
 #include "Gear.h"
 #include "SignalType.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 #include <assert.h>
 #include "Timing.h"
 #include "Rasterer.h"

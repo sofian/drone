@@ -22,7 +22,7 @@
 
 #include "Gear.h"
 #include "SignalType.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 #include "Utils.h"
 
 class Gear_VideoMix : public Gear

@@ -34,7 +34,7 @@ src/FrequencyAnalyzer.h \
 src/Gear.h \
 src/types/AbstractType.h \
 src/types/ValueType.h \
-src/types/VideoType.h \
+src/types/VideoRGBAType.h \
 src/types/SignalType.h \
 src/types/DisplaceGrid.h \
 src/types/MatrixType.h \

@@ -22,7 +22,7 @@
 
 
 #include "Gear.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 #include "SignalType.h"
 
 #include <libmpeg3.h>

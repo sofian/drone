@@ -24,7 +24,7 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "DisplaceGrid.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 
 class Gear_GenDisplaceGrid : public Gear
 {

@@ -21,7 +21,7 @@
 #define GEAR_HALFTONING_INCLUDED
 
 #include "Gear.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 
 #include <stdio.h>
 #include <math.h>

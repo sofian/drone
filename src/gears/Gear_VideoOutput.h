@@ -21,7 +21,7 @@
 #define GEAR_VIDEOOUTPUT_INCLUDED
 
 #include "Gear.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 
 class VideoOutput;
 

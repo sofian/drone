@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 
 extern "C" {
 

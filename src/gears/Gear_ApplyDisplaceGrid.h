@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 #include "SignalType.h"
-#include "VideoType.h"
+#include "VideoRGBAType.h"
 #include "DisplaceGrid.h"
 
 class Gear_ApplyDisplaceGrid : public Gear
