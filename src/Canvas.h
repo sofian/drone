@@ -1,9 +1,6 @@
 #ifndef CANVAS_INCLUDED
 #define CANVAS_INCLUDED
 
-
-
-
 struct RGBA
 {
     unsigned char R,G,B,A;
@@ -11,7 +8,29 @@ struct RGBA
 
 struct RGBAint
 {
-    int R,G,B,A;
+  int R,G,B,A;
+  
+  void operator+=(const RGBAint& x)
+  {
+    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
+    *ptr1++ += *ptr2++; *ptr1++ += *ptr2++;
+    *ptr1++ += *ptr2++; *ptr1   += *ptr2;
+  }
+
+  void operator-=(const RGBAint& x)
+  {
+    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
+    *ptr1++ -= *ptr2++; *ptr1++ -= *ptr2++;
+    *ptr1++ -= *ptr2++; *ptr1   -= *ptr2;
+  }
+
+  void operator*=(const RGBAint& x)
+  {
+    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
+    *ptr1++ *= *ptr2++; *ptr1++ *= *ptr2++;
+    *ptr1++ *= *ptr2++; *ptr1   *= *ptr2;
+  }
+
 };
 
 struct RGBAshort
