@@ -29,7 +29,7 @@ public:
   size_type height() const { return _height; }
   size_type width() const { return _width; }
 
-  reference operator[](size_type x, size_type y) const { return _rows[y][x]; }
+  reference operator()(size_type x, size_type y) const { return _rows[y][x]; }
   reference get(size_type x, size_type y)  const { return _rows[y][x]; }
   
   std::vector<pointer>& rows() const { return _rows; }
@@ -52,17 +52,14 @@ public:
   
     // Efficient setting of the rows pointer.
     _rows.resize(height);
-    pointer iterData = data();
+    pointer iterData = &front();
     for (typename std::vector<pointer>::iterator it = _rows.begin();
           it != _rows.end(); ++it, iterData += width)
       *it = iterData;
   }               
 
-  const pointer data() const {return &front();}
-  pointer data() {return &front();}
-
-  const pointer row(int i) const { return &(*getRow(i)); }
-  pointer row(int i) { return &(*getRow(i)); }
+  const pointer row(int i) const { return _rows[i]; }
+  pointer row(int i) { return _rows[i]; }
 
 protected:
   size_type _width, _height;

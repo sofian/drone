@@ -38,6 +38,9 @@ public:
     std::fill(begin(), end(), fillValue);
   }
 
+  const T* data() const {return &front();}
+  T* data() {return &front();}
+
   virtual ~MatrixType() {}
   
 
