@@ -71,16 +71,15 @@ void Gear_Gamma::runVideo()
 
   _size = (int)_image->size();
 
-  float gamma = MAX(_GAMMA_IN->type()->value(), FLT_MIN);
+  float tmp = MAX(_GAMMA_IN->type()->value(), FLT_MIN);
 
+  if (_gamma != tmp)
+  {
+    _gamma = tmp;
+    computeLookUpTable();
+  }
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
-
-  // Compute lookup table.
-  _lut[0] = 0;
-  float invGamma = 1.0 / gamma;
-  for (int i=1; i<256; ++i)
-    _lut[i] = CLAMP0255( ROUND(255.0f * exp( invGamma * log( float(i) / 255.0f ) ) ));
 
   // Apply on image.
   for (int p=0; p<_size; ++p)
@@ -93,4 +92,20 @@ void Gear_Gamma::runVideo()
     _imageOut += SIZE_RGBA;
   }
   
+}
+
+void Gear_Gamma::init()
+{
+  _gamma = FLT_MIN;
+  computeLookUpTable();
+}
+
+void Gear_Gamma::computeLookUpTable()
+{
+  // Compute lookup table.
+  _lut[0] = 0;
+  float invGamma = 1.0 / _gamma;
+  for (int i=1; i<256; ++i)
+    _lut[i] = CLAMP0255( ROUND(255.0f * exp( invGamma * log( float(i) / 255.0f ) ) ));
+
 }

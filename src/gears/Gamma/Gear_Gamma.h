@@ -34,7 +34,12 @@ public:
   virtual ~Gear_Gamma();
 
   void runVideo();
+  void init();
   bool ready();
+
+private:
+  // Recompute look-up-table based on current gamma level.
+  void computeLookUpTable();
 
 private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
@@ -47,6 +52,8 @@ private:
 
   // Lookup table for gamma values.
   unsigned char _lut[256];
+
+  float _gamma; // the current amount of gamma
 
   int _size;
 
