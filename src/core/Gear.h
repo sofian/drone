@@ -134,13 +134,15 @@ protected:
 
   Properties _settings;
 
-private:
+protected:
 
   std::string _Type;
   std::string _name;//! unique name of this gear in a schema
 
   GearGui *_gearGui;
 
+private:
+  
   void internalInit();
   void internalPrePlay();    
   void internalPostPlay();    

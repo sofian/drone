@@ -28,15 +28,13 @@
 #include "GearMaker.h"
 
 GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib) : 
-  Gear(schema, "GearFrei0r", uniqueName),
+  Gear(schema, "", uniqueName),
   _handle(0),
   _instance(0),
   _sizeX(0),
   _sizeY(0),
   _frei0rLib(frei0rLib)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   std::cout << "Constructing a GearFrei0r with lib " << _frei0rLib << std::endl;
 
   _handle = dlopen(_frei0rLib.c_str(), RTLD_LAZY);
@@ -66,14 +64,31 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
   //get infos  
   (*f0r_get_plugin_info)(&_pluginInfo);
 
-  std::cout << "Frei0r plugin: " << _pluginInfo.name << std::endl;
-  std::cout << "author: " << _pluginInfo.author << std::endl;        /**< The plugin author                                */
-  std::cout << "type: " << _pluginInfo.plugin_type << std::endl;     /**< The plugin type (source or filter)               */
-  std::cout << "colormodel: " << _pluginInfo.color_model << std::endl;     /**< The color model used                             */
-  std::cout << "version: " << _pluginInfo.frei0r_version << "." << _pluginInfo.major_version << "." << _pluginInfo.minor_version << std::endl;  /**< The frei0r major version this plugin is built for*/
-  std::cout << "num_params: " << _pluginInfo.num_params << std::endl;      /**< The number of parameters of the plugin           */
-  std::cout << "details: " << _pluginInfo.explanation << std::endl;     /**< An optional explanation string (can be 0)    */
+  //set type
+  char str[1000];
+  sprintf(str, "f0r::%s", _pluginInfo.name);
+  _Type = str;
   
+//   std::cout << "Frei0r plugin: " << _pluginInfo.name << std::endl;
+//   std::cout << "author: " << _pluginInfo.author << std::endl;        /**< The plugin author                                */
+//   std::cout << "type: " << _pluginInfo.plugin_type << std::endl;     /**< The plugin type (source or filter)               */
+//   std::cout << "colormodel: " << _pluginInfo.color_model << std::endl;     /**< The color model used                             */
+//   std::cout << "version: " << _pluginInfo.frei0r_version << "." << _pluginInfo.major_version << "." << _pluginInfo.minor_version << std::endl;  /**< The frei0r major version this plugin is built for*/
+//   std::cout << "num_params: " << _pluginInfo.num_params << std::endl;      /**< The number of parameters of the plugin           */
+//   std::cout << "details: " << _pluginInfo.explanation << std::endl;     /**< An optional explanation string (can be 0)    */
+
+  // Set all plugs.
+
+  if (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_FILTER)
+    addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  else
+  {
+    addPlug(_VIDEO_X_IN = new PlugIn<ValueType>(this, "Width", new ValueType(320, 0, 640)));
+    addPlug(_VIDEO_Y_IN = new PlugIn<ValueType>(this, "Height", new ValueType(240, 0, 480)));
+  }
+
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+    
   for (int i=0; i<_pluginInfo.num_params; ++i)
   {
     f0r_param_info param_info;
@@ -126,28 +141,51 @@ GearFrei0r::~GearFrei0r()
 
 bool GearFrei0r::ready()
 {
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+  return
+    ( (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_FILTER && _VIDEO_IN->connected() && _VIDEO_OUT->connected()) ||
+      (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_SOURCE && _VIDEO_OUT->connected()) );
 }
 
 void GearFrei0r::runVideo()
 {
-  _image = _VIDEO_IN->type();
-  if (_image->isNull())
-    return;
-
-  _outImage = _VIDEO_OUT->type();
-  _outImage->resize(_image->width(), _image->height());
-
-  if (_sizeX != (int)_image->width() || _sizeY != (int)_image->height())
+  if (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_FILTER)
   {
-    // Rebuild the instance since dimensions have changed.
-    if (_instance)      
-      (*f0r_destruct)(_instance);
-    _sizeX = _image->width();
-    _sizeY = _image->height();
+    _image = _VIDEO_IN->type();
+    if (_image->isNull())
+      return;
 
-    _instance = (*f0r_construct)(_sizeX, _sizeY);
+    if (_sizeX != (int)_image->width() || _sizeY != (int)_image->height())
+    {
+      // Rebuild the instance since dimensions have changed.
+      if (_instance)
+        (*f0r_destruct)(_instance);
+      _sizeX = _image->width();
+      _sizeY = _image->height();
+      
+      _instance = (*f0r_construct)(_sizeX, _sizeY);
+    }
+    _imageIn = (uint32_t*)_image->data();
   }
+  else
+  {
+    int width = (int)_VIDEO_X_IN->type()->value();
+    int height = (int)_VIDEO_Y_IN->type()->value();
+
+    if (_sizeX != width || _sizeY != height)
+    {
+      // Rebuild the instance since dimensions have changed.
+      if (_instance)
+        (*f0r_destruct)(_instance);
+      _sizeX = width;
+      _sizeY = height;
+      
+      _instance = (*f0r_construct)(_sizeX, _sizeY);
+    }
+    _imageIn = 0;
+  }
+  
+  _outImage = _VIDEO_OUT->type();
+  _outImage->resize(_sizeX, _sizeY);
 
   for (int i=0,k=0; i<_pluginInfo.num_params; ++i)
   {
@@ -189,7 +227,8 @@ void GearFrei0r::runVideo()
     }
   }
 
-  (*f0r_update)(_instance, 0.0, (uint32_t*)_image->data(), (uint32_t*)_outImage->data());
+  // note: XXX incomplete XXX we have to switch on BGRA
+  (*f0r_update)(_instance, Engine::currentTime(), _imageIn, (uint32_t*)_outImage->data());
 }
 
 Gear* GearFrei0r::makeGear(Schema *schema, std::string uniqueName, std::string frei0rLib)

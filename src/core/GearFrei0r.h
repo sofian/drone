@@ -30,7 +30,6 @@
 class GearFrei0r : public Gear
 {
 public:
-
   GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib);
   virtual ~GearFrei0r();
 
@@ -38,17 +37,22 @@ public:
   bool ready();
 
 private:
+  // for F0R_PLUGIN_TYPE_FILTER
   PlugIn<VideoRGBAType> *_VIDEO_IN;
+
+  // for F0R_PLUGIN_TYPE_SOURCE
+  PlugIn<ValueType> *_VIDEO_X_IN;
+  PlugIn<ValueType> *_VIDEO_Y_IN;
+
+  // common to all plugin types
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
-  
   std::vector<PlugIn<ValueType>*> _params;
 
   //local var
   const VideoRGBAType *_image; 
   VideoRGBAType *_outImage; 
 
-  const unsigned char *_imageIn;
-  unsigned char *_imageOut;
+  const uint32_t *_imageIn;
 
   //!Handle on the .so plugin.
   void *_handle;
