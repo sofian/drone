@@ -1,10 +1,10 @@
 <!DOCTYPE DroneSchema>
 <Schema>
     <Gears>
-        <Gear PosX="489" PosY="52" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+        <Gear PosX="475" PosY="70" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
             <Properties/>
         </Gear>
-        <Gear PosX="199" PosY="66" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+        <Gear PosX="204" PosY="23" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
             <Properties/>
         </Gear>
         <Gear PosX="5" PosY="8" Type="Slider" SliderPos="0" Name="Slider1" >
@@ -19,21 +19,87 @@
         <Gear PosX="6" PosY="69" Type="Slider" SliderPos="50" Name="Slider4" >
             <Properties Lower_Bound="0" Higher_Bound="50" />
         </Gear>
-        <Gear PosX="341" PosY="57" Type="VideoSource" Name="VideoSource1" >
+        <Gear PosX="340" PosY="71" Type="VideoSource" Name="VideoSource1" >
             <Properties Filename="/home/mathieu/dl/videos/Herbaliser.mpg" />
         </Gear>
-        <Gear PosX="634" PosY="52" Type="VideoOutput" Name="VideoOutput1" >
+        <Gear PosX="1166" PosY="154" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="10" PosY="339" Type="Slider" SliderPos="288" Name="Slider5" >
+        <Gear PosX="21" PosY="454" Type="Slider" SliderPos="288" Name="Slider5" >
             <Properties Lower_Bound="288" Higher_Bound="384" />
         </Gear>
-        <Gear PosX="9" PosY="270" Type="Slider" SliderPos="384" Name="Slider6" >
+        <Gear PosX="20" PosY="387" Type="Slider" SliderPos="384" Name="Slider6" >
             <Properties Lower_Bound="288" Higher_Bound="384" />
+        </Gear>
+        <Gear PosX="11" PosY="259" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="2" />
+        </Gear>
+        <Gear PosX="597" PosY="218" Type="KDTree" Name="KDTree1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="773" PosY="386" Type="Edge" Name="Edge1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="313" PosY="343" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="187" PosY="347" Type="AffineTransform" Name="AffineTransform1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="275" PosY="258" Type="FlatSignal" Name="FlatSignal1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="144" PosY="264" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="636" PosY="311" Type="Slider" SliderPos="6" Name="Slider7" >
+            <Properties Lower_Bound="1" Higher_Bound="16" />
+        </Gear>
+        <Gear PosX="637" PosY="461" Type="Slider" SliderPos="-0.682927" Name="Slider8" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="1023" PosY="15" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1162" PosY="46" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1019" PosY="112" Type="Slider" SliderPos="3" Name="Slider9" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="777" PosY="515" Type="Contrast" Name="Contrast1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="315" PosY="440" Type="SignalStat" Name="SignalStat2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1101" PosY="327" Type="ClusteredDither" Name="ClusteredDither1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="936" PosY="323" Type="Slider" SliderPos="2" Name="Slider10" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="940" PosY="451" Type="Slider" SliderPos="75" Name="Slider11" >
+            <Properties Lower_Bound="0" Higher_Bound="360" />
+        </Gear>
+        <Gear PosX="937" PosY="386" Type="Slider" SliderPos="15" Name="Slider12" >
+            <Properties Lower_Bound="0" Higher_Bound="360" />
+        </Gear>
+        <Gear PosX="935" PosY="255" Type="Slider" SliderPos="2" Name="Slider13" >
+            <Properties Lower_Bound="2" Higher_Bound="32" />
+        </Gear>
+        <Gear PosX="942" PosY="513" Type="Slider" SliderPos="0" Name="Slider14" >
+            <Properties Lower_Bound="0" Higher_Bound="360" />
+        </Gear>
+        <Gear PosX="119" PosY="548" Type="VideoInput" Name="VideoInput1" >
+            <Properties Device="/dev/video0" />
+        </Gear>
+        <Gear PosX="423" PosY="208" Type="VideoSource" Name="VideoSource2" >
+            <Properties Filename="" />
         </Gear>
     </Gears>
     <Connections>
-        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
         <Connection GearA="Slider1" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
         <Connection GearA="Slider2" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Value" />
@@ -42,5 +108,22 @@
         <Connection GearA="VideoSource1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="XSIZE" Output="..ValueType" />
         <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="YSIZE" Output="..ValueType" />
+        <Connection GearA="Slider5" GearB="AffineTransform1" Input="Offset" Output="Value" />
+        <Connection GearA="Slider6" GearB="AffineTransform1" Input="Scale" Output="Value" />
+        <Connection GearA="AudioInput1" GearB="SignalStat1" Input="In" Output="Left" />
+        <Connection GearA="Enveloppe1" GearB="SignalStat2" Input="In" Output="Out" />
+        <Connection GearA="AffineTransform1" GearB="FlatSignal1" Input="In" Output="Out" />
+        <Connection GearA="FlatSignal1" GearB="Enveloppe1" Input="In" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
+        <Connection GearA="Slider7" GearB="KDTree1" Input="Depth" Output="Value" />
+        <Connection GearA="Slider8" GearB="Edge1" Input="Amount" Output="Value" />
+        <Connection GearA="VideoBlend1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Blur1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Slider9" GearB="Blur1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider10" GearB="ClusteredDither1" Input="SpotType" Output="Value" />
+        <Connection GearA="Slider11" GearB="ClusteredDither1" Input="AngleGreen" Output="Value" />
+        <Connection GearA="Slider12" GearB="ClusteredDither1" Input="AngleRed" Output="Value" />
+        <Connection GearA="Slider13" GearB="ClusteredDither1" Input="ClusterSize" Output="Value" />
+        <Connection GearA="Slider14" GearB="ClusteredDither1" Input="AngleBlue" Output="Value" />
     </Connections>
 </Schema>
