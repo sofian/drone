@@ -53,18 +53,18 @@ void Gear_AreaArrayMask::runVideo()
   _imageOut = _VIDEO_OUT->type();
   _imageOut->resize((size_t)_sizeX, (size_t)_sizeY);
   
-  _imageOut->fill(WHITE_RGBA);
+  _imageOut->fill(BLACK_RGBA);
   for (AreaArrayType::const_iterator it = _areaArray->begin(); it != _areaArray->end(); ++it)
   {
     ASSERT_ERROR(it->x0 <= it->x1 && it->y0 <= it->y1);
-    int minX = MAX((int)it->x0,0);
-    int maxX = MIN((int)it->x1,_sizeX-1);
-    int minY = MAX((int)it->y0,0);
-    int maxY = MIN((int)it->y1,_sizeY-1);
-    size_t rowSize = maxX-minX;
+    _minX = MAX((int)it->x0,0);
+    _maxX = MIN((int)it->x1,_sizeX-1);
+    _minY = MAX((int)it->y0,0);
+    _maxY = MIN((int)it->y1,_sizeY-1);
+    _rowWidth = _maxX - _minX;
     //  NOTICE("minX = %d, maxX = %d, minY = %d, maxY = %d, rowBytes = %d", minX, maxX, minY, maxY, rowBytes);
-    for (int y = minY; y < maxY; ++y)
-      fill(_imageOut->row(y) + minX, BLACK_RGBA, rowSize); // copy row
+    for (int y = _minY; y < _maxY; ++y)
+      fill(&_imageOut->row(y)[_minX], WHITE_RGBA, _rowWidth); // copy row
   }
 }
 

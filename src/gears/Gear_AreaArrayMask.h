@@ -27,10 +27,22 @@
 //#include "ValueType.h"
 #include "error.h"
 
+/**
+ * This gear creates an output mask from an array of area (AreaArrayType).
+ * The mask is false (black) in every point where no area falls and is true
+ * (white) wherever lies an area.
+ *
+ * @see AreaArrayType
+ * @author Jean-Sébastien Senécal
+ * @version %I% %G%
+ */
 class Gear_AreaArrayMask : public Gear
 {
 public:
+  //! Default constructor.
   Gear_AreaArrayMask(Engine *engine, std::string name);
+
+  //! Destructor.
   virtual ~Gear_AreaArrayMask();
 
   void runVideo();
@@ -38,17 +50,25 @@ public:
   bool ready();
 
 private:
+  //! Output mask.
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
+
+  //! The mask's width.
   PlugIn<ValueType> *_WIDTH_IN;
+
+  //! The mask's height.
   PlugIn<ValueType> *_HEIGHT_IN;
+  
   //  PlugIn<ValueType> *_OPACITY_IN;
+
+  //! The input array of areas.
   PlugIn<AreaArrayType> *_AREA_ARRAY_IN;
 
-  //int _sizeX, _sizeY;
-
+  // Internal use.
   VideoRGBAType *_imageOut;
   const AreaArrayType *_areaArray;
   int _sizeX, _sizeY;
+  int _minX, _maxX, _minY, _maxY, _rowWidth;
 };
 
 #endif
