@@ -19,6 +19,29 @@ inline unsigned char intensity(unsigned char *rgb)
   return(unsigned char) total;
 }
 
+// # Image rescaling function ###############################################
+
+inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeight, int srcWidth, int srcHeight)
+{
+  const RGBA *srcIter = src;
+  long xInc, xCur, yInc, yCur;
+  xInc = (long)((long)srcWidth*65535L)/(long)dstWidth;
+  yInc = (long)((long)srcHeight*65535L)/(long)dstHeight;
+  register int i,j;
+  yCur = 0;
+  for (j=0; j<dstHeight; ++j)
+  {
+    xCur = 0;
+    for (i=0; i<dstWidth; ++i)
+    {
+      dst[i] = srcIter[xCur>>16];
+      xCur+=xInc;
+    }
+    srcIter = &src[(yCur>>16) * srcWidth];
+    yCur+=yInc;
+  }
+}
+
 // # Basic paint functions (from the Gimp paint-funcs-generic.h) ############
 
 /* Opacities */
