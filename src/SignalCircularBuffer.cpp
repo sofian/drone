@@ -3,83 +3,83 @@
 
 
 
-SignalCircularBuffer::SignalCircularBuffer(int size) : _ReadPos(0), _WritePos(0), _Size(0), _AvailableData(0), _Mutex(NULL)
+SignalCircularBuffer::SignalCircularBuffer(int size) : _readPos(0), _writePos(0), _size(0), _availableData(0), _mutex(NULL)
 {
-  _Mutex = new pthread_mutex_t();
-  pthread_mutex_init(_Mutex, NULL);
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
 
   init(size);
 }
 
 SignalCircularBuffer::~SignalCircularBuffer()
 {
-  pthread_mutex_destroy(_Mutex);
-  delete[] _Buffer;
+  pthread_mutex_destroy(_mutex);
+  delete[] _buffer;
 }
 
 void SignalCircularBuffer::init(int size)
 {
-  if (_Buffer != NULL)
-    delete[] _Buffer;
+  if (_buffer != NULL)
+    delete[] _buffer;
 
-  _ReadPos=0;
-  _WritePos=0;
-  _Size=size;
-  _AvailableData=0;
+  _readPos=0;
+  _writePos=0;
+  _size=size;
+  _availableData=0;
 
-  _Buffer = new Signal_T[size];
+  _buffer = new float[size];
 
 }
 
-void SignalCircularBuffer::write(Signal_T *buf, int size)
+void SignalCircularBuffer::write(const float *buf, int size)
 {
-  if (size > _Size)
+  if (size > _size)
     return;
 
-//    pthread_mutex_lock(_Mutex);
+//    pthread_mutex_lock(_mutex);
 
-  int len_to_end = _Size - _WritePos;
+  int len_to_end = _size - _writePos;
 
   if (len_to_end >= size)
-    memcpy(&_Buffer[_WritePos], buf, size*sizeof(float));
+    memcpy(&_buffer[_writePos], buf, size*sizeof(float));
   else
   {
-    memcpy(&_Buffer[_WritePos], buf, len_to_end*sizeof(float));
-    memcpy(_Buffer, &buf[len_to_end], (size - len_to_end)*sizeof(float));
+    memcpy(&_buffer[_writePos], buf, len_to_end*sizeof(float));
+    memcpy(_buffer, &buf[len_to_end], (size - len_to_end)*sizeof(float));
   }
 
-  _WritePos = (_WritePos + size) % _Size;    
+  _writePos = (_writePos + size) % _size;    
 
-  std::cout << "_Writepos:" << _WritePos << std::endl;
+  std::cout << "_writepos:" << _writePos << std::endl;
 
-//    pthread_mutex_unlock(_Mutex);
+//    pthread_mutex_unlock(_mutex);
 }
 
-void SignalCircularBuffer::read(Signal_T *buf, int &size)
+void SignalCircularBuffer::read(float *buf, int &size)
 {
-//    pthread_mutex_lock(_Mutex);
+//    pthread_mutex_lock(_mutex);
 
-  int len_to_end = _Size - _ReadPos;
+  int len_to_end = _size - _readPos;
 
-  if (size > _Size)
+  if (size > _size)
     return;
 
-/*     if (size > _AvailableData)           */
-/*         available_size = _AvailableData; */
+/*     if (size > _availableData)           */
+/*         available_size = _availableData; */
 /*     else                                 */
 /*         available_size = size;           */
 
-  //cout << "ReadPos:" << _ReadPos << endl;
-  //cout << "_AvailableData :" << _AvailableData << endl;
+  //cout << "ReadPos:" << _readPos << endl;
+  //cout << "_availableData :" << _availableData << endl;
 
 /*     if (available_size > 0)                                                                 */
 /*     {                                                                                       */
 /*         if (len_to_end >= available_size)                                                   */
-/*             memcpy(buf, &_Buffer[_ReadPos], available_size*sizeof(float));                  */
+/*             memcpy(buf, &_buffer[_readPos], available_size*sizeof(float));                  */
 /*         else                                                                                */
 /*         {                                                                                   */
-/*             memcpy( buf, &_Buffer[_ReadPos], len_to_end*sizeof(float));                     */
-/*             memcpy(&buf[len_to_end], _Buffer, (available_size - len_to_end)*sizeof(float)); */
+/*             memcpy( buf, &_buffer[_readPos], len_to_end*sizeof(float));                     */
+/*             memcpy(&buf[len_to_end], _buffer, (available_size - len_to_end)*sizeof(float)); */
 /*         }                                                                                   */
 /*     }                                                                                       */
 /*                                                                                             */
@@ -88,18 +88,18 @@ void SignalCircularBuffer::read(Signal_T *buf, int &size)
 
 
   if (len_to_end >= size)
-    memcpy(buf, &_Buffer[_ReadPos], size*sizeof(float));
+    memcpy(buf, &_buffer[_readPos], size*sizeof(float));
   else
   {
-    memcpy(buf, &_Buffer[_ReadPos], len_to_end*sizeof(float));
-    memcpy(&buf[len_to_end], _Buffer, (size - len_to_end)*sizeof(float));
+    memcpy(buf, &_buffer[_readPos], len_to_end*sizeof(float));
+    memcpy(&buf[len_to_end], _buffer, (size - len_to_end)*sizeof(float));
   }
 
-  _ReadPos = (_ReadPos + size) % _Size;    
+  _readPos = (_readPos + size) % _size;    
 
-  std::cout << "_Readpos:" << _ReadPos << std::endl;
+  std::cout << "_readpos:" << _readPos << std::endl;
 
-//    pthread_mutex_unlock(_Mutex);
+//    pthread_mutex_unlock(_mutex);
 }
 
 

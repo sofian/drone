@@ -1,7 +1,7 @@
 #ifndef SIGNALCIRCULARBUFFER_INCLUDED
 #define SIGNALCIRCULARBUFFER_INCLUDED
 
-#include "PlugSignal.h"
+#include "Plug.h"
 
 class SignalCircularBuffer
 {
@@ -12,17 +12,17 @@ public:
 
   void init(int size);
 
-  void write(Signal_T *buf, int size);
-  void read(Signal_T *buf, int &size);
+  void write(const float *buf, int size);
+  void read(float *buf, int &size);
 
 private:
 
-  Signal_T *_Buffer;
-  int _ReadPos;
-  int _WritePos;
-  int _Size;
-  int _AvailableData;
-  pthread_mutex_t *_Mutex;
+  float *_buffer;
+  int _readPos;
+  int _writePos;
+  int _size;
+  int _availableData;
+  pthread_mutex_t *_mutex;
 
 
 };
