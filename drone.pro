@@ -72,11 +72,13 @@ src/gears/Gear_DataOut.h \
 src/gears/Gear_DiffDist.h \
 src/gears/Gear_Edge.h \
 src/gears/Gear_Enveloppe.h \
+src/gears/Gear_FaceTrack.h \
 src/gears/Gear_FFT.h \
 src/gears/Gear_Gain.h \
 src/gears/Gear_GenDisplaceGrid.h \
 src/gears/Gear_GrayScale.h \
 src/gears/Gear_HalfToning.h \
+src/gears/Gear_ImageSource.h \
 src/gears/Gear_KDTree.h \
 src/gears/Gear_ListBox.h \
 src/gears/Gear_MedianFilter.h \
@@ -164,11 +166,13 @@ src/gears/Gear_DataOut.cpp \
 src/gears/Gear_DiffDist.cpp \
 src/gears/Gear_Edge.cpp \
 src/gears/Gear_Enveloppe.cpp \
+src/gears/Gear_FaceTrack.cpp \
 src/gears/Gear_FFT.cpp \
 src/gears/Gear_Gain.cpp \
 src/gears/Gear_GenDisplaceGrid.cpp \
 src/gears/Gear_GrayScale.cpp \
 src/gears/Gear_HalfToning.cpp \
+src/gears/Gear_ImageSource.cpp \
 src/gears/Gear_KDTree.cpp \
 src/gears/Gear_ListBox.cpp \
 src/gears/Gear_MedianFilter.cpp \
