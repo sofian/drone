@@ -22,7 +22,6 @@
 
 
 #include "Gear.h"
-#include "SignalType.h"
 #include "VideoRGBAType.h"
 
 
