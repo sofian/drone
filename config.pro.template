@@ -15,8 +15,8 @@ LIBS += -L/usr/lib/opencv/ -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio
 
 # User-dependent files
 
-HEADERS += src/gears/js/Gear_EncrageMask.h \
-src/gears/js/Gear_DummySource.h
+HEADERS += src/exp/js/Gear_EncrageMask.h \
+src/exp/js/Gear_DummySource.h
 
-SOURCES += src/gears/js/Gear_EncrageMask.cpp \
-src/gears/js/Gear_DummySource.cpp
+SOURCES += src/exp/js/Gear_EncrageMask.cpp \
+src/exp/js/Gear_DummySource.cpp
