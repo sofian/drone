@@ -57,70 +57,75 @@ void Gear_KDTree::runVideo()
   // build accumulation buffer
   _table->buildTable();
 
-  // *** me rappele pu pourquoi c'est nécessaire
-  //  memcpy(_outData, _data, _size * sizeof(RGBA));
-  
   // create splits
   split(0, _sizeX-1, 0, _sizeY-1, 0);
 }
 
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
+
   if (depth > MAX_DEPTH)
     return;
 
   if (x1 == x0 || y1 == y0) // *** threshold to set
     return;
 
-  int depthPlusOne = depth+1;
+  // Increment depth by one level.
+  depth++;
 
+  // Get the total values in the area.
   RGBAint rgba;
-  // ** idee de Julien: calculer seulement une fois les deux points du top
   _table->getSum(&rgba, x0, y0, x1, y1);
 
+  // Useful values.
   int area = _table->getArea(x0, y0, x1, y1);
-  int total = SummedAreaTable::total(&rgba);
-  int cut = total / 2;
-  
+  int cut = SummedAreaTable::total(&rgba) / 2;
+
+  // Draw a rectangle around the area and paint it with the average color.
   _rasterer->setColor(rgba.R / area, rgba.G / area, rgba.B / area);
   _rasterer->rect(x0, y0, x1, y1, true);
   _rasterer->setColor(0,0,0);
   _rasterer->rect(x0, y0, x1, y1, false);
 
-  // *** pour le moment recherche stupide lineaire poche
+  // Now split.
   if (depth % 2)
   {
     // vertical split
     int upper = y1;
     int lower = y0;
     int mid = 0;
+    // binary search
     while (lower != upper)
     {
-      mid = (lower+upper) / 2;
+      mid = (lower+upper) / 2; // take the mean
       _table->getSum(&rgba, x0, y0, x1, mid);
       if (SummedAreaTable::total(&rgba) < cut)
         lower = mid+1; // look up //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look down
     }
-    split(x0, x1, y0, mid, depthPlusOne);
-    split(x0, x1, mid, y1, depthPlusOne);
+    // split the area in two
+    split(x0, x1, y0, mid, depth);
+    split(x0, x1, mid, y1, depth);
   }
   else
   {
+    // horizontal split
     int upper = x1;
     int lower = x0;
     int mid = 0;
+    // binary search
     while (lower != upper)
     {
-      mid = (lower+upper) / 2;
+      mid = (lower+upper) / 2; // take the mean
       _table->getSum(&rgba, x0, y0, mid, y1);
       if (SummedAreaTable::total(&rgba) < cut)
         lower = mid+1; // look right //*** attention risque d'erreur : vérifier
       else
         upper = mid;  // look left
     }
-    split(x0, mid, y0, y1, depthPlusOne);
-    split(mid, x1, y0, y1, depthPlusOne);
+    // split the area in two
+    split(x0, mid, y0, y1, depth);
+    split(mid, x1, y0, y1, depth);
   }
 }
