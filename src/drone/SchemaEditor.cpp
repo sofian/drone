@@ -56,7 +56,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _contextMenu = new QPopupMenu(this);
   _gearListMenu = new GearListMenu(this);    
   _gearListMenu->create();
-
+  
   _contextMenu->insertItem("Gears", _gearListMenu);
   QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
   
@@ -69,6 +69,12 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
   _gearContextMenu->insertItem("About");    
+  
+   // plug context menu initialization
+  _plugContextMenu = new QPopupMenu(this);
+  _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
+  _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
+
 }
 
 SchemaEditor::~SchemaEditor()
@@ -302,10 +308,9 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
       wnd->setCentralWidget(schemaEditor); 
       wnd->show();
-	  
-			//todo : temp...
-			((MetaGear*)(gearGui->gear()))->createPlugs();
-			
+      
+      //todo : temp...
+      ((MetaGear*)(gearGui->gear()))->createPlugs();
     }
     break;
   }  
@@ -320,17 +325,34 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 {    
   QPoint p = inverseWorldMatrix().map(contextMenuEvent->pos());
-  
+  PlugBox *selectedPlugBox;
 
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
 
   if (gearGui!=NULL)
   {
     _contextGear = gearGui;
-    _gearContextMenu->popup(QCursor::pos());
+    if(((selectedPlugBox = gearGui->plugHitted(p)) != 0))
+    {
+      if(selectedPlugBox->plug()->exposed())
+      {
+        _plugContextMenu->setItemVisible(EXPOSE, false);
+        _plugContextMenu->setItemVisible(UNEXPOSE, true);
+      } else
+      {
+        _plugContextMenu->setItemVisible(EXPOSE, true);
+        _plugContextMenu->setItemVisible(UNEXPOSE, false);
+      }
+      _contextPlug = selectedPlugBox;
+      _plugContextMenu->popup(QCursor::pos());
+      
+    } else
+    {
+      _gearContextMenu->popup(QCursor::pos());
+    }
   } else
   {
-    _contextGear = NULL;
+    _contextGear = NULL; 
     _contextMenuPos = p;
     _contextMenu->popup(QCursor::pos());
   }
@@ -366,6 +388,22 @@ void SchemaEditor::slotGearDelete()
 
   _schemaGui->removeGear(_contextGear);
 }
+
+/**
+ * React on Expose selection in the plug context menu
+ */
+void SchemaEditor::slotPlugExpose()
+{
+  _contextPlug->plug()->exposed(true);
+} 
+
+/**
+ * React on Unexpose selection in the plug context menu
+ */
+void SchemaEditor::slotPlugUnexpose()
+{
+  _contextPlug->plug()->exposed(false);
+} 
 
 void SchemaEditor::slotNewSchema()
 {

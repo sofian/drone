@@ -64,6 +64,10 @@ public slots:
   void slotGearProperties();
   void slotGearDelete();
 
+  //plug editing slots
+  void slotPlugExpose();
+  void slotPlugUnexpose();
+  
   //metagear editing slots
   void slotNewSchema();
   void slotLoadSchema();
@@ -85,6 +89,11 @@ protected:
 private:
   static const std::string NAME;
   static const double ZOOM_FACTOR;
+  
+  enum ePlugContextItemId
+  {
+    EXPOSE, UNEXPOSE
+  };
 
   Engine *_engine;
   SchemaGui *_schemaGui;
@@ -102,7 +111,9 @@ private:
   // position of right click in Canvas coordinates
   QPoint _contextMenuPos;  
   QPopupMenu *_gearContextMenu;
+  QPopupMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
+  PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
 };
 
 #endif
