@@ -35,7 +35,7 @@ private:
   unsigned char *_amountMapData;
 
   SummedAreaTable *_table;
-  int *_iterAcc;
+  RGBAint _sum;
 
   unsigned char *_outData;
 

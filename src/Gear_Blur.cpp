@@ -60,11 +60,11 @@ void Gear_Blur::runVideo()
   
   ////////////////////////////
     
-  _iterAcc = (int*)_table->_acc;
+  //  _iterAcc = (int*)_table->_acc;
             
   _blurSize=(int) (_AMOUNT_IN->buffer()[0]);
 
-
+    
   if (_blurSize<2)
     _blurSize=2;
 
@@ -80,19 +80,14 @@ void Gear_Blur::runVideo()
       if(_x1 < 0)_x1 = 0;      
       if(_y1 < 0)_y1 = 0;
 
-      if(_x2 >= _sizeX)_x2 = _sizeX-1;        
+      if(_x2 >= _sizeX)_x2 = _sizeX-1;
       if(_y2 >= _sizeY)_y2 = _sizeY-1;
 
-      _dimension = (_x2-_x1)*(_y2-_y1);      
-      for(int z=0;z<4;z++)
-      {
-
-        *(_outData++) = (_iterAcc[(_y2 * (_sizeX<<2)) + (_x2<<2) + z] - 
-                         _iterAcc[(_y1) * (_sizeX<<2) + (_x2<<2) + z] -
-                         _iterAcc[(_y2 * (_sizeX<<2)) + ((_x1)<<2) + z] +
-                         _iterAcc[(_y1) * (_sizeX<<2) + ((_x1)<<2) + z]) / _dimension;
-      }
-
+      _table->getSum(&_sum, _x1, _y1, _x2, _y2);
+      
+      divide((int*)&_sum, _table->getArea(_x1, _y1, _x2, _y2), SIZE_RGBA);
+      copy(_outData, (int*)&_sum, SIZE_RGBA);
+      _outData+=SIZE_RGBA;
     }
                                          
   }                                    
