@@ -61,14 +61,15 @@ void ConnectionItem::drawShape(QPainter &painter)
   getDest(&destX, &destY);
 
   setPoints(sourceX, sourceY, destX, destY);
-
+  
   QCanvasLine::drawShape(painter);
 }
 
 void ConnectionItem::getOrigin(int *x, int *y)
-{
+{  
   *x = _sourcePlugBox->connectionHandleX();
   *y = _sourcePlugBox->connectionHandleY();
+
 }
 
 void ConnectionItem::getDest(int *x, int *y)
@@ -107,12 +108,19 @@ void ConnectionItem::setStartingPlugBox(PlugBox *plugBox)
   _pen->setColor(_sourcePlugBox->color());
   setPen(*_pen);
 
+  int sourceX, sourceY;
+  getOrigin(&sourceX, &sourceY);
+  setPoints(sourceX, sourceY, _destPointX, _destPointY);
 }
 
 void ConnectionItem::setConnectionLineEndPoint(QPoint const &p)
 {
   _destPointX = p.x();
   _destPointY = p.y();
+  
+  int sourceX, sourceY;
+  getOrigin(&sourceX, &sourceY);
+  setPoints(sourceX, sourceY, _destPointX, _destPointY);
 
   update();
   canvas()->update();     
@@ -170,6 +178,12 @@ void ConnectionItem::createConnectionLineOnly(PlugBox *source, PlugBox *dest)
 
   _pen->setColor(_sourcePlugBox->color());
   setPen(*_pen);    
+
+  int sourceX, sourceY, destX, destY;
+  getOrigin(&sourceX, &sourceY);
+  getDest(&destX, &destY);
+  setPoints(sourceX, sourceY, destX, destY);
+
 
   update();
 }

@@ -47,27 +47,20 @@ class Engine
       Node(Gear* pgear) :
         gear(pgear),
         order(0),
-        visited(false)
-      {
-      }
-      
+        visited(false){}
+
       Gear* gear;
       int order;
       bool visited;
     };
 
-    GearGraphManip(std::vector<Gear*> &gears);
-    ~GearGraphManip();
-    // test for direct or indirect dependency
-    //bool hasDependencyOn(int testedGear, int dependedGear);
+    GearGraphManip(std::vector<Gear*> &gears);    
     void getOrderedGears(std::list<Gear*>& orderedGears);
     void labelling(Node &node);
 
   protected:
     static bool compareNodes(const Node &a, const Node &b);
 
-    //signed char* _depmat;
-    //uint _nboxes;
     std::vector<Node> _nodes;
     std::vector<Gear*> _gears;
     int _depthFirstCounter;
@@ -190,7 +183,7 @@ private:
   bool _graphSynched;
   std::list<Gear*> _gears;
 
-  // is sorted in processing order when _GraphSynched==true
+  //is sorted in processing order when _GraphSynched==true
   //only contain gears->ready()    
   std::list<Gear*> _orderedGears;
 

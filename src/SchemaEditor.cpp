@@ -135,32 +135,29 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = testForGearCollision(p);
   PlugBox *selectedPlugBox;
-  
+    
   if (gearGui!=NULL)
-  {
+  {    
     //send mouse events
     gearGui->mouseEvent(p, mouseEvent->button());
 
     //on left button we...
     if (mouseEvent->button() == Qt::LeftButton)
-    {
+    {      
       //plug collision to start connections ?
       if ( ((selectedPlugBox = gearGui->plugHitted(p)) != NULL))
-      {
+      {        
         _state=CONNECTING;
         _activeConnection = new ConnectionItem(_engine, canvas());
         _activeConnection->setStartingPlugBox(selectedPlugBox);
         _activeConnection->show();        
 
-      } else//no, move gear?
+      } else if (gearGui->titleBarHitted(p))
       {
-        if (gearGui->titleBarHitted(p))
-        {
-          _activeConnection = NULL;
-          _state = MOVING_GEAR;            
-          _movingGear = gearGui;
-          _movingGearStartPos = p;    
-        }
+        _activeConnection = NULL;
+        _state = MOVING_GEAR;            
+        _movingGear = gearGui;
+        _movingGearStartPos = p;            
       }
     }
   } else
@@ -213,9 +210,8 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   GearGui *gearGui;
   ConnectionItem *connectionItem;
 
-
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
-
+  
   switch (_state)
   {
   case IDLE:

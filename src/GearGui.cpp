@@ -206,13 +206,13 @@ void GearGui::performPlugHighligthing(const QPoint &p, PlugBox *onlyCompatibleWi
 {
   PlugBox *plugbox;
 
-
+  
   for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
   {
     plugbox = *it;
 
     if (plugbox->hitted(p.x(), p.y()))
-    {
+    {      
       if (onlyCompatibleWith!=NULL) //perform compatibility test?
       {
         if (plugbox->canConnectWith(onlyCompatibleWith))
