@@ -15,9 +15,9 @@ Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
   addPlug(_CLUSTER_SIZE_IN = new PlugIn<ValueType>(this, "ClusterSize", new ValueType(16, 2, 32)));
   addPlug(_SPOT_TYPE_IN = new PlugIn<ValueType>(this, "SpotType", new ValueType(ROUND, SQUARE, LINE)));
-  addPlug(_ANGLE_RED_IN = new PlugIn<ValueType>(this, "AngleRed", new ValueType(15,0,90)));
-  addPlug(_ANGLE_GREEN_IN = new PlugIn<ValueType>(this, "AngleGreen", new ValueType(75,0,90)));
-  addPlug(_ANGLE_BLUE_IN = new PlugIn<ValueType>(this, "AngleBlue", new ValueType(0,0,90)));
+  addPlug(_ANGLE_RED_IN = new PlugIn<ValueType>(this, "AngleRed", new ValueType(15,0,360)));
+  addPlug(_ANGLE_GREEN_IN = new PlugIn<ValueType>(this, "AngleGreen", new ValueType(75,0,360)));
+  addPlug(_ANGLE_BLUE_IN = new PlugIn<ValueType>(this, "AngleBlue", new ValueType(0,0,360)));
 }
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
@@ -31,8 +31,15 @@ void Gear_ClusteredDither::init()
   _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, 512);
   _spotType = (eSpotType)CLAMP((int)_SPOT_TYPE_IN->type()->value(), (int)SQUARE, (int)LINE);
   _width = _clusterSize * 3;
-  computeThreshold();
-  computePolarCoordinates();
+  _sizeX = _sizeY = 0;
+  _angle[0] = DEG2RAD(CLAMP((int)_ANGLE_RED_IN->type()->value(), 0, 360));
+  _angle[1] = DEG2RAD(CLAMP((int)_ANGLE_GREEN_IN->type()->value(), 0, 360));
+  _angle[2] = DEG2RAD(CLAMP((int)_ANGLE_BLUE_IN->type()->value(), 0, 360));
+  updateThreshold();
+  updatePolarCoordinates();
+  updateAngle(0);
+  updateAngle(1);
+  updateAngle(2);
   ASSERT_WARNING(_threshold);
   ASSERT_WARNING(_order);
 }
@@ -52,41 +59,24 @@ void Gear_ClusteredDither::runVideo()
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   
-  if (_sizeX != (int)_image->width() || _sizeY != (int)_image->height())
-  {
-    _sizeX = _image->width();
-    _sizeY = _image->height();
-    computePolarCoordinates();
-  }
-  else
-  {
-    _sizeX = _image->width();
-    _sizeY = _image->height();
-  }
-  
   _data = _image->data();    
   _outData = _outImage->data();
-
-  _angle[0] = DEG2RAD(CLAMP((int)_ANGLE_RED_IN->type()->value(), 0, 90));
-  _angle[1] = DEG2RAD(CLAMP((int)_ANGLE_GREEN_IN->type()->value(), 0, 90));
-  _angle[2] = DEG2RAD(CLAMP((int)_ANGLE_BLUE_IN->type()->value(), 0, 90));
-  
-  //NOTICE("Angles : R=%f, G=%f, B=%f", _angle[0], _angle[1], _angle[2]);
   
   unsigned char *iterData = (unsigned char*)_data;
   unsigned char *iterOutData = (unsigned char*)_outData;
 
-//   int maxClusterSizeX;
-//   int maxClusterSizeY;
-//   int minClusterSizeX;
-//   int minClusterSizeY;
-
+  int prevSizeX = _sizeX;
+  int prevSizeY = _sizeY;
+  _sizeX = _image->width();
+  _sizeY = _image->height();
+  
+  NOTICE("Changing cluster");
   bool valuesHaveChanged = false;
   // If cluster size has changed, recompute threshold matrix.
-  int clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, MAX((int)_image->height(),4));
+  int clusterSize = _clusterSize;
+  _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, MAX((int)_image->height(),4));
   if (_clusterSize != clusterSize)
   {
-    _clusterSize = clusterSize;
     _width = _clusterSize * 3;
     valuesHaveChanged = true;
   }
@@ -101,52 +91,69 @@ void Gear_ClusteredDither::runVideo()
   }
 
   if (valuesHaveChanged)
-    computeThreshold();
+    updateThreshold();
+  NOTICE("...done");
 
+  if (_sizeX != prevSizeX || _sizeY != prevSizeY)
+  {
+    NOTICE("Updating polar coordinates");
+    updatePolarCoordinates();
+    NOTICE("Changing angles");
+    _angle[0] = DEG2RAD(CLAMP((int)_ANGLE_RED_IN->type()->value(), 0, 360));
+    _angle[1] = DEG2RAD(CLAMP((int)_ANGLE_GREEN_IN->type()->value(), 0, 360));
+    _angle[2] = DEG2RAD(CLAMP((int)_ANGLE_BLUE_IN->type()->value(), 0, 360));
+    
+    updateAngle(0);
+    updateAngle(1);
+    updateAngle(2);
+    NOTICE("...done");
+  }
+  else
+  {
+    NOTICE("Changing angles");
+    double angleR = _angle[0];
+    _angle[0] = DEG2RAD(CLAMP((int)_ANGLE_RED_IN->type()->value(), 0, 360));
+    double angleG = _angle[1];
+    _angle[1] = DEG2RAD(CLAMP((int)_ANGLE_GREEN_IN->type()->value(), 0, 360));
+    double angleB = _angle[2];
+    _angle[2] = DEG2RAD(CLAMP((int)_ANGLE_BLUE_IN->type()->value(), 0, 360));
+
+    if (_clusterSize != clusterSize || _angle[0] != angleR)
+      updateAngle(0);
+    
+    if (_clusterSize != clusterSize || _angle[1] != angleG)
+      updateAngle(1);
+    
+    if (_clusterSize != clusterSize || _angle[2] != angleB)
+      updateAngle(2);
+    NOTICE("...done");
+  }
+  
   iterData = (unsigned char*) _data;
   iterOutData = (unsigned char*) _outData;
 
-  MatrixType<double>::iterator
-    rIt = _r.begin(),
-    thetaIt = _theta.begin();
+  //  MatrixType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
+   MatrixType<std::pair<int, int> >::iterator
+    rIt = _rChannel[0].begin(),
+    gIt = _rChannel[1].begin(),
+    bIt = _rChannel[2].begin();
   
   for (int y=0; y<_sizeY; ++y)
   {
-    for (int x=0; x<_sizeX; ++x, ++rIt, ++thetaIt)
+     for (int x=0; x<_sizeX; ++x, ++rIt, ++gIt, ++bIt)
+       //    for (int x=0; x<_sizeX; ++x, ++rIt, ++thetaIt)
     {
-      for (int c=0; c<SIZE_RGB; ++c)
-      {
-        double theta_c = CLAMP(*thetaIt + _angle[c], 0.0, TWICE_PI);
-        int rx = (int)rint( fastPolarToX(*rIt,  theta_c) );
-        int ry = (int)rint( fastPolarToY(*rIt,  theta_c) );
-        
-        /* Make sure rx and ry are positive and within
-         * the range 0 .. width-1 (incl).  Can't use %
-         * operator, since its definition on negative
-         * numbers is not helpful.  Can't use ABS(),
-         * since that would cause reflection about the
-         * x- and y-axes.  Relies on integer division
-         * rounding towards zero. */
-        rx -= ((rx - isNeg(rx)*(_width-1)) / _width) * _width;
-        ry -= ((ry - isNeg(ry)*(_width-1)) / _width) * _width;
-        
-        ASSERT_WARNING(rx >= 0 && rx <= _width-1);
-        ASSERT_WARNING(ry >= 0 && ry <= _width-1);
-        
-        //            NOTICE("rx=%d, ry=%d", rx, ry);
-        // Compute and copy value.
-        iterOutData[c] = getValue(iterData[c], rx, ry);
-      }
-      
-      iterData+=SIZE_RGBA;
-      iterOutData+=SIZE_RGBA;
-      
+      *iterOutData++ = getValue(*iterData++, rIt->first, rIt->second);
+      *iterOutData++ = getValue(*iterData++, gIt->first, gIt->second);
+      *iterOutData++ = getValue(*iterData++, bIt->first, bIt->second);
+      iterOutData++;
+      iterData++;
     }
   }  
 
 }
 
-void Gear_ClusteredDither::computeThreshold()
+void Gear_ClusteredDither::updateThreshold()
 {
   int width2 = _width*_width;
 
@@ -240,17 +247,64 @@ float Gear_ClusteredDither::spot(float x, float y)
   }
 }
 
-void Gear_ClusteredDither::computePolarCoordinates()
+void Gear_ClusteredDither::updatePolarCoordinates()
 {
   _r.resize(_sizeX, _sizeY);
   _theta.resize(_sizeX, _sizeY);
-
+  int maxSizeX  = _sizeX / 2;
+  int maxSizeY = _sizeY / 2;
+  int minSizeX  = - (maxSizeX + _sizeX%2);
+  int minSizeY = - (maxSizeY + _sizeY%2);
+  
   MatrixType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
 
-  for (int y=0; y<_sizeY; ++y)
-    for (int x=0; x<_sizeX; ++x)
+  for (int y=minSizeY; y<maxSizeY; ++y)
+    for (int x=minSizeX; x<maxSizeX; ++x)
     {
       *rIt++ = fastDist(x,y);
       *thetaIt++ = fastAngle(x,y);
     }
+}
+
+void Gear_ClusteredDither::updateAngle(int channel)
+{
+  ASSERT_ERROR(channel >= 0 && channel < SIZE_RGB);
+  double angle = _angle[channel];
+
+  _rChannel[channel].resize(_sizeX, _sizeY);
+  
+  MatrixType<double>::iterator
+    rIt = _r.begin(),
+    thetaIt = _theta.begin();
+
+  MatrixType<std::pair<int, int> >::iterator
+    rChannelIt = _rChannel[channel].begin();
+  
+  for (int y=0; y<_sizeY; ++y)
+  {
+    for (int x=0; x<_sizeX; ++x, ++rIt, ++thetaIt, ++rChannelIt)
+    {
+      double theta_c = *thetaIt + angle;
+      
+      int rx = (int)rint(*rIt * cos(theta_c) );
+      int ry = (int)rint(*rIt * sin(theta_c) );
+      
+      /* Make sure rx and ry are positive and within
+       * the range 0 .. width-1 (incl).  Can't use %
+       * operator, since its definition on negative
+       * numbers is not helpful.  Can't use ABS(),
+       * since that would cause reflection about the
+       * x- and y-axes.  Relies on integer division
+       * rounding towards zero. */
+      rx -= ((rx - isNeg(rx)*(_width-1)) / _width) * _width;
+      ry -= ((ry - isNeg(ry)*(_width-1)) / _width) * _width;
+
+      ASSERT_WARNING(rx >= 0 && rx <= _width-1);
+      ASSERT_WARNING(ry >= 0 && ry <= _width-1);
+      
+      rChannelIt->first = rx;
+      rChannelIt->second = ry;
+    }
+  }
+
 }

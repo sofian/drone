@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
+#include <map>
 
 // XXX indiquer la source (c.f. sur le wiki)
 
@@ -68,10 +69,14 @@ private:
   double _angle[SIZE_RGB];
 
   Matrix<double> _r;     // precomputed r
-  Matrix<double> _theta; // precomputed theta
+  // precomputed thetas
+  Matrix<double> _theta;
+  Matrix<std::pair<int, int> > _rChannel[SIZE_RGB];
   
-  void computeThreshold();
-  void computePolarCoordinates();
+  void updateThreshold();
+  void updatePolarCoordinates();
+  void updateAngle(int channel);
+  
   float spot(float x, float y);
 
   inline unsigned char getValue(unsigned char intensity, int rx, int ry);
