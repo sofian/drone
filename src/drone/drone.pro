@@ -71,9 +71,14 @@ unix:!macx:TARGET = ../../drone
 HEADERS += config.h \
 GearListMenu.h \ 
 GearPropertiesDialog.h \
+MediaPoolIconView.h \
+MediaPoolItem.h \
 MainWindow.h \
+MetaGearEditor.h \
 MetaGearListMenu.h \
+MediaPoolDialog.h \
 #PreferencesDialog.h \
+PanelScrollView.h \
 PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
@@ -87,7 +92,12 @@ SOURCES += drone.cpp \
 GearListMenu.cpp \ 
 GearPropertiesDialog.cpp \
 MainWindow.cpp \
+MediaPoolIconView.cpp \
+MediaPoolItem.cpp \
+MetaGearEditor.cpp \
 MetaGearListMenu.cpp \
+MediaPoolDialog.cpp \
+PanelScrollView.cpp \
 PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \

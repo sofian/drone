@@ -71,6 +71,8 @@ Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
 ConnectionItem.h \
+Control.h \
+ControlPanel.h \
 Engine.h \
 Gear.h \
 GearFrei0r.h \
@@ -92,6 +94,9 @@ GearGui.h \
 GearConverter.h \
 GearMaker.h \
 Math.h \
+Media.h \
+MediaPool.h \
+MediaMovie.h \
 MetaGear.h \
 MetaGearMaker.h \
 MidiEngine.h \
@@ -118,12 +123,16 @@ composite/CompositeGeneric.h
  
 SOURCES += error.cpp \
 ConnectionItem.cpp \
+Control.cpp \
+ControlPanel.cpp \
 Engine.cpp \
 Gear.cpp \
 GearFrei0r.cpp \
 types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
+MediaPool.cpp \
+MediaMovie.cpp \
 MetaGear.cpp \
 MetaGearMaker.cpp \
 MidiEngine.cpp \

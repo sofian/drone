@@ -36,10 +36,10 @@ SmearGrid \
 Sobel \
 #VideoDelay \
 #VideoLoop \
-VideoRecord \
 ImageShuffle \
 ImageSequence \
-Invert 
+Invert
+#VideoRecord 
 
 agg {
 SUBDIRS+=AggTest

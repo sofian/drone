@@ -31,10 +31,12 @@
 #include "error.h"
 #include "Schema.h"
 
+
 class Gear;
 class AbstractPlug;
 class QDomDocument;
 class QDomElement;
+class MetaGear;
 
 class Engine  
 {
@@ -47,7 +49,7 @@ public:
   static const SignalInfo& signalInfo() {return _signalInfo;};
   static const VideoInfo& videoInfo() {return _videoInfo;};
 
-  Schema* mainSchema() {return &_mainSchema;}
+  MetaGear* mainMetaGear() {return _mainMetaGear;}
 
   void startPlaying();
   void stopPlaying();
@@ -82,8 +84,8 @@ protected:
 
 private:
 
-  Schema _mainSchema;
-
+  MetaGear *_mainMetaGear;
+  
   bool _playing;
   bool _graphSynched;
   std::list<Gear*> _gears;

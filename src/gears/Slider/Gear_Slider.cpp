@@ -20,11 +20,13 @@
 #include "Gear_Slider.h"
 #include "GearMaker.h"
 #include "GearGui_Slider.h"
+#include "ControlSlider.h"
 #include "Math.h"
 
 #include "MidiEngine.h"
 
 #include "Engine.h"
+
 
 #include <qdom.h>
 #include <iostream>
@@ -97,6 +99,9 @@ void Gear_Slider::onUpdateSettings()
 
   //then we need to redraw the gearGui
   getGearGui()->reDraw();
+
+  //tell the control slider to update his range and value
+  getControl()->onUpdate();
 
   _acceptHint = false;
 }
@@ -173,6 +178,11 @@ void Gear_Slider::runAudio()
 GearGui *Gear_Slider::createGearGui(QCanvas *canvas)
 {                
   return new GearGui_Slider(this, canvas);
+}
+
+Control* Gear_Slider::createCustomControl(ControlPanel* parent)
+{
+  return new ControlSlider(this, parent);  
 }
 
 void Gear_Slider::save(QDomDocument &doc, QDomElement &gearElem)

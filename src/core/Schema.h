@@ -83,7 +83,7 @@ public:
   };
 
 
-  Schema(MetaGear * parentMetaGear=NULL);
+  Schema(MetaGear * parentMetaGear);
   virtual ~Schema();
 
  

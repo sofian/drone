@@ -157,6 +157,7 @@ _needSynch(true),
 _parentMetaGear(parentMetaGear),
 _locked(false)
 {
+  ASSERT_ERROR_MESSAGE(_parentMetaGear!=0, "Schema with a null parent metagear");
 }
 
 Schema::~Schema()
@@ -312,8 +313,9 @@ bool Schema::removeDeepGear(Gear* gear)
   // if the gear to be removed is at the current schema level, remove it here
   if(find(_gears.begin(),_gears.end(),gear) != _gears.end())
   {   
+    _parentMetaGear->onGearRemoved(gear);
     delete gear;
-    _gears.remove(gear);
+    _gears.remove(gear);    
     return true;
   }
 
@@ -352,6 +354,7 @@ MetaGear* Schema::addMetaGear(std::string filename)
   }
   
   _gears.push_back(metaGear);
+  _parentMetaGear->onGearAdded(metaGear);
 
   return metaGear;
 }
@@ -369,6 +372,8 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
   initGear(metaGear);
   _gears.push_back(metaGear);
+  
+  _parentMetaGear->onGearAdded(metaGear);
 
   return metaGear;
 }
@@ -396,9 +401,10 @@ Gear* Schema::addGear(std::string geartype, std::string uniqueName)
     std::cout << "Schema addGear: " << geartype << " unknown" << std::endl;
   else
   {
-    initGear(gear);
+    initGear(gear);    
     //gear->internalInit();
     _gears.push_back(gear);
+    _parentMetaGear->onGearAdded(gear);
   }
 
   return gear;

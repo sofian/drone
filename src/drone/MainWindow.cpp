@@ -30,6 +30,14 @@
 #include "error.h"
 
 #include "SchemaGui.h"
+#include "MetaGear.h"
+#include "MetaGearEditor.h"
+
+#include "MediaPoolItem.h"
+#include "MediaMovie.h"
+#include "MediaPoolDialog.h"
+
+
 
 //#include "PreferencesDialog.h"
 
@@ -46,32 +54,26 @@ QMainWindow(),
 _engine(NULL), 
 _frame(NULL), 
 _mainSchemaGui(NULL), 
-_schemaEditor(NULL),
 _menuFirstRecentSchemaId(-1)
 {    
-  _engine = new Engine(0);
-
-  _mainSchemaGui = new SchemaGui(_engine->mainSchema(), _engine);
+  _engine = new Engine(0);    
+  _metaGearEditor = new MetaGearEditor(this, _engine->mainMetaGear(), _engine);
+  _mainSchemaGui = _metaGearEditor->schemaGui();
+  
   _project = new Project(_mainSchemaGui);
-
-  _schemaEditor = new SchemaEditor(this, _mainSchemaGui, _engine);
-
-  setCentralWidget(_schemaEditor);   
+  
+  setCentralWidget(_metaGearEditor);
 
   _toolBar = new QToolBar(this);
   addToolBar(_toolBar);        
   _playPause = new QToolButton(_toolBar);    
   _playPause->setToggleButton(true);
 
-  //temp
   _toolBar->addSeparator();
   QToolButton *zoomOut = new QToolButton(_toolBar);    
   zoomOut->setText("-");    
   QToolButton *zoomIn = new QToolButton(_toolBar);    
   zoomIn->setText("+");    
-  //
-
-  
 
   QIconSet playPauseIcon;
   playPauseIcon.setPixmap(Play_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
@@ -103,6 +105,9 @@ _menuFirstRecentSchemaId(-1)
   _menuSaveItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
 
+  _viewMenu = new QPopupMenu(this);
+  _viewMenu->insertItem("Media Pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
+ 
   //for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
@@ -110,6 +115,7 @@ _menuFirstRecentSchemaId(-1)
   menuBar->setSeparator(QMenuBar::InWindowsStyle);
   menuBar->insertItem("&File", _fileMenu);
   menuBar->insertItem("&Tools", _toolsMenu);
+  menuBar->insertItem("&View", _viewMenu);
 
   //load settings
   _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
@@ -135,12 +141,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::slotZoomIn()
 {
-  _schemaEditor->zoomIn();
+  //_schemaEditor->zoomIn();
 }
 
 void MainWindow::slotZoomOut()
 {
-  _schemaEditor->zoomOut();
+  //_schemaEditor->zoomOut();
 }
 
 
@@ -289,6 +295,14 @@ void MainWindow::slotMenuItemSelected(int id)
 void MainWindow::slotMenuQuit()
 {
   qApp->quit();
+}
+
+void MainWindow::slotMenuViewMediaPool()
+{
+  MediaPoolDialog mediaPoolDialog(this);
+
+  mediaPoolDialog.exec();
+
 }
 
 void MainWindow::timerEvent(QTimerEvent*)

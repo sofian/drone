@@ -6,14 +6,15 @@
 
 #include <map>
 
+class ControlPanel;
+
 class MetaGear : public Gear
 {
 public:  
-  MetaGear(Schema *schema, std::string name, std::string uniqueName);
+  MetaGear(Schema *parentSchema, std::string name, std::string uniqueName);
   virtual ~MetaGear();
-  virtual Schema* getInternalSchema(){return &_schema;}
-
-  //! is this gear a MetaGear? 
+  virtual Schema* getInternalSchema(){return _schema;}
+  
   virtual bool isMeta() const {return true;}
   bool ready();
 
@@ -30,14 +31,20 @@ public:
 
   std::string fullPath(){return _fullPath;}
   
+  void onGearAdded(Gear *gear);
+  void onGearRemoved(Gear *gear);
 
+  void associateControlPanel(ControlPanel *controlPanel) {_associatedControlPanel = controlPanel;}
+  
 protected:
   GearGui* createGearGui(QCanvas *canvas);
   	
-  Schema _schema;
+  Schema *_schema;
   
   std::string _metaGearName;
   std::string _fullPath;
+
+  ControlPanel *_associatedControlPanel;
 
   static const QColor METAGEAR_COLOR;
 	

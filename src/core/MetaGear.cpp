@@ -2,16 +2,20 @@
 #include "GearGui.h"
 
 #include "XMLHelper.h"
-#include "qfileinfo.h"
+#include "ControlPanel.h"
+
+#include <qfileinfo.h>
 
 const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const std::string MetaGear::TYPE="MetaGear";
 const std::string MetaGear::EXTENSION=".meta";
 
-MetaGear::MetaGear(Schema *schema, std::string vname, std::string uniqueName) :
-Gear(schema, TYPE, uniqueName),
-_metaGearName(vname)
+MetaGear::MetaGear(Schema *parentSchema, std::string vname, std::string uniqueName) :
+Gear(parentSchema, TYPE, uniqueName),
+_metaGearName(vname),
+_associatedControlPanel(0)
 {
+  _schema = new Schema(this);
 }
 
 MetaGear::~MetaGear()
@@ -32,7 +36,7 @@ bool MetaGear::ready()
 
 void MetaGear::save(QDomDocument &doc, QDomElement &parent)
 {
-  _schema.save(doc, parent);
+  _schema->save(doc, parent);
 }
 
 void MetaGear::load(QDomElement &parent)
@@ -48,7 +52,7 @@ void MetaGear::load(QDomElement &parent)
   }
 
   QDomElement schemaElem = schemaNode.toElement();
-  _schema.load(schemaElem);
+  _schema->load(schemaElem);
 
   createPlugs();
 }
@@ -68,7 +72,7 @@ void MetaGear::createPlugs()
   //clear plug mapping
   _plugMapping.clear();
 
-  std::list<Gear*> gears = _schema.getGears();
+  std::list<Gear*> gears = _schema->getGears();
 
   std::list<AbstractPlug*> inputs;
   std::list<AbstractPlug*> outputs;
@@ -170,3 +174,17 @@ bool MetaGear::load(std::string filename)
 
   return true;
 }
+
+void MetaGear::onGearAdded(Gear *gear)
+{
+  if (!_associatedControlPanel)
+    return;
+  
+  _associatedControlPanel->addControl(gear);
+}
+
+void MetaGear::onGearRemoved(Gear *gear)
+{
+
+}
+

@@ -39,6 +39,8 @@ class QDomDocument;
 class QDomElement;
 class QCanvas;
 class Schema;
+class Control;
+class ControlPanel;
 
 
 struct GearInfo
@@ -66,7 +68,7 @@ public:
   //! is the gear a control gear ?
   virtual bool isControl() const {return false;}
 
-  Gear(Schema *schema, std::string type, std::string uniqueName);
+  Gear(Schema *parentSchema, std::string type, std::string uniqueName);
   virtual ~Gear();
 
   virtual void init(){};
@@ -75,6 +77,7 @@ public:
   virtual void runAudio(){};//! test pour ready doit etre fait avant
   virtual void runVideo(){};//! test pour ready doit etre fait avant
   GearGui* getGearGui();
+  Control* getControl();
 
   void updateSettings();//! user must call this method after settings have been modified
 
@@ -110,13 +113,18 @@ public:
   }
 
 	
-	bool isPlugNameUnique(std::string name);
-	
+  bool isPlugNameUnique(std::string name);
+
+  Control* createControl(ControlPanel* parent);
+  
 protected:
 
   //! overload to create your own GearGui
   virtual GearGui* createGearGui(QCanvas *canvas);
 
+  //! overload to create your own control if needed
+  virtual Control* createCustomControl(ControlPanel*){return NULL;}  
+  
   virtual void onUpdateSettings(){};
   virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug
   virtual void onPlugDisconnected(AbstractPlug*, AbstractPlug*){};//!disconnection form one of our plug from other plug
@@ -140,6 +148,8 @@ protected:
   std::string _name;//! unique name of this gear in a schema
 
   GearGui *_gearGui;
+
+  Control *_control;
 
 private:
   

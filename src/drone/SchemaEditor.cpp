@@ -30,6 +30,10 @@
 #include "GearListMenu.h"
 #include "MetaGearListMenu.h"
 
+#include "MetaGearEditor.h"
+#include "PanelScrollView.h"
+#include "ControlPanel.h"
+
 #include <qmainwindow.h>
 #include <qfiledialog.h>
 
@@ -44,7 +48,7 @@
 const std::string SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 0.1;
 
-SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine) :
+SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
   QCanvasView(schemaGui, parent, NAME.c_str(),0),
   _engine(engine),
   _schemaGui(schemaGui),
@@ -53,7 +57,8 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _zoom(1),
   _activeConnection(0),
   _contextMenuPos(0,0),
-  _contextGear(NULL)
+  _contextGear(NULL),
+  _panelScrollView(panelScrollView)
 {
   viewport()->setMouseTracking(TRUE);
 
@@ -318,14 +323,13 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     //handle double-click on metagear
     if (gearGui!=NULL && gearGui->gear()->isMeta())
     {
-      QDialog *wnd = new QDialog(this);  
-      wnd->setCaption(gearGui->gear()->name().c_str());
-      wnd->resize(640,480);
-      QBoxLayout *layout = new QVBoxLayout(wnd, 1);
-      SchemaGui *tschemaGui = new SchemaGui(gearGui->gear()->getInternalSchema(), _engine);
-      SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
-      layout->addWidget(schemaEditor);
-      wnd->exec();
+      QDialog metaGearEditorDialog(this);  
+      QVBoxLayout layout(&metaGearEditorDialog, 1);
+      metaGearEditorDialog.setCaption(gearGui->gear()->name().c_str());
+      metaGearEditorDialog.resize(640,480);
+      MetaGearEditor metaGearEditor(&metaGearEditorDialog, (MetaGear*)gearGui->gear(), _engine);
+      layout.addWidget(&metaGearEditor);
+      metaGearEditorDialog.exec();
       
       //todo : temp...
       ((MetaGear*)(gearGui->gear()))->createPlugs();
@@ -384,12 +388,12 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 
 void SchemaEditor::slotMenuGearSelected(QString name)
 {        
-  _schemaGui->addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
+  addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
 void SchemaEditor::slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo)
 {  
-  _schemaGui->addMetaGear(metaGearFileInfo->filePath(), _contextMenuPos.x(), _contextMenuPos.y());    
+  addMetaGear(metaGearFileInfo->filePath().ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
 void SchemaEditor::slotGearProperties()
@@ -412,7 +416,7 @@ void SchemaEditor::slotGearDelete()
   if (_contextGear == NULL)
     return;
 
-  _schemaGui->removeGear(_contextGear);
+  removeGear(_contextGear);
 }
 
 /**
@@ -433,7 +437,7 @@ void SchemaEditor::slotPlugUnexpose()
 
 void SchemaEditor::slotNewMetaGear()
 {
-  _schemaGui->newMetaGear(_contextMenuPos.x(), _contextMenuPos.y());
+  addNewMetaGear(_contextMenuPos.x(), _contextMenuPos.y());
 }
 
 void SchemaEditor::slotSaveMetaGear()
@@ -468,4 +472,36 @@ void SchemaEditor::slotSaveMetaGear()
     _schemaGui->renameMetaGear(_contextGear, fileInfo.baseName());
   }
 
+}
+
+void SchemaEditor::addGear(std::string name, int posX, int posY)
+{
+  _schemaGui->addGear(name, posX, posY);    
+}
+
+void SchemaEditor::addMetaGear(std::string filename, int posX, int posY)
+{  
+  MetaGear *metaGear = _schemaGui->addMetaGear(filename, posX, posY);
+  associateControlPanelWithMetaGear(metaGear);
+}
+
+void SchemaEditor::addNewMetaGear(int posX, int posY)
+{
+  MetaGear *metaGear = _schemaGui->newMetaGear(posX, posY);
+  
+  associateControlPanelWithMetaGear(metaGear);
+}
+
+void SchemaEditor::removeGear(GearGui *gear)
+{
+  if (gear == NULL)
+    return;
+
+  _schemaGui->removeGear(gear);
+}
+
+void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
+{
+  //create and associate a control panel with this metagear
+  _panelScrollView->addControlPanel(metaGear);    
 }

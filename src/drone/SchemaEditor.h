@@ -42,6 +42,7 @@ class Engine;
 class Schema;
 class GearListMenu;
 class MetaGearListMenu;
+class PanelScrollView;
 
 class SchemaEditor : public QCanvasView
 {
@@ -54,12 +55,17 @@ public:
     IDLE, MOVING_GEAR, CONNECTING
   };
 
-  SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine);
+  SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
   ~SchemaEditor();
   
   void zoomIn();
   void zoomOut();
   void zoom(float factor);
+
+  void addGear(std::string name, int posX, int posY);
+  void addMetaGear(std::string filename, int posX, int posY);
+  void addNewMetaGear(int posX, int posY);
+  void removeGear(GearGui *gear);
 
 public slots:
   void slotMenuGearSelected(QString name);
@@ -91,6 +97,9 @@ protected:
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
 
 private:
+  
+  void associateControlPanelWithMetaGear(MetaGear *metaGear);
+
   static const std::string NAME;
   static const double ZOOM_FACTOR;
   
@@ -107,7 +116,7 @@ private:
   double _zoom;
 
   ConnectionItem* _activeConnection;
-
+  
   //popupmenus  
   QPopupMenu *_contextMenu; 
   GearListMenu *_gearListMenu; 
@@ -120,6 +129,8 @@ private:
   QPopupMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
+
+  PanelScrollView *_panelScrollView;
 };
 
 #endif

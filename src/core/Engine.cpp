@@ -22,6 +22,7 @@
 #include "Gear.h"
 #include "Plug.h"
 #include "GearMaker.h"
+#include "MetaGear.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -36,7 +37,8 @@ Engine::Engine(int hwnd) :
   _playing(false),
   _graphSynched(false)
 
-{
+{  
+  _mainMetaGear = new MetaGear(NULL, "Main", "Main");  
 }
 
 Engine::~Engine()
@@ -69,6 +71,7 @@ void Engine::stopPlaying()
 void *Engine::playThread(void *parent)
 {
   Engine *engine = (Engine*) parent;
+  Schema *mainSchema = engine->_mainMetaGear->getInternalSchema();
 
   engine->_currentTime=0;
 
@@ -87,7 +90,7 @@ void *Engine::playThread(void *parent)
   float cumul_load = 0.0f;
   engine->_averageLoad=0.0f;
 
-  engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
+  engine->_orderedGears = mainSchema->getDeepOrderedReadyGears();
 
 
   int currentFrame = 0;
@@ -101,9 +104,9 @@ void *Engine::playThread(void *parent)
 #endif
     block_starttime = Timing::time();
 
-    engine->_mainSchema.lock();
+    mainSchema->lock();
 
-    engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
+    engine->_orderedGears = mainSchema->getDeepOrderedReadyGears();
 
     //process audio
     for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
@@ -153,7 +156,7 @@ void *Engine::playThread(void *parent)
 
     blockIt++;
 
-    engine->_mainSchema.unlock();
+    mainSchema->unlock();
     engine->performScheduledGearUpdateSettings();
 #ifndef SINGLE_THREADED_PLAYBACK
   }
@@ -161,9 +164,6 @@ void *Engine::playThread(void *parent)
     (*it)->internalPostPlay();
 
 #endif
-
-
-
 
   return NULL;
 }
@@ -173,14 +173,14 @@ void *Engine::playThread(void *parent)
 
 void Engine::debugStartPlay()
 {
-  _orderedGears = _mainSchema.getDeepOrderedReadyGears();
+  _orderedGears = _mainMetaGear->getInternalSchema()->getDeepOrderedReadyGears();
   for (std::list<Gear*>::iterator it=_orderedGears.begin();it!=_orderedGears.end();++it)
     (*it)->internalPrePlay();
 }
 
 void Engine::debugStopPlay()
 {
-  _orderedGears = _mainSchema.getDeepOrderedReadyGears();
+  _orderedGears = _mainMetaGear->getInternalSchema()->getDeepOrderedReadyGears();
   for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
     (*it)->internalPostPlay();
 }

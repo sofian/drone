@@ -23,6 +23,7 @@
 #include "Gear.h"
 #include "ValueType.h"
 
+class ControlSlider;
 
 class Gear_Slider : public Gear  
 {
@@ -49,8 +50,11 @@ public:
 
   bool ready();
 
+  
+
 protected:
   GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
+  Control* createCustomControl(ControlPanel *parent);
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
@@ -59,7 +63,6 @@ private:
   PlugOut<ValueType>* _VALUE_OUT;  
   
   bool _acceptHint;
-
 };
 
 #endif 

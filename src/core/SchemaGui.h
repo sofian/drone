@@ -36,10 +36,10 @@ public:
   SchemaGui(Schema *schema, Engine *engine);
   ~SchemaGui();
 
-  void addGear(std::string type, std::string name, int x, int y);
-  void addGear(std::string type, int x, int y);
-  void addMetaGear(std::string filename, int x, int y);  
-  void newMetaGear(int x, int y);  
+  //Gear* addGear(std::string type, std::string name, int x, int y);
+  Gear* addGear(std::string type, int x, int y);
+  MetaGear* addMetaGear(std::string filename, int x, int y);  
+  MetaGear* newMetaGear(int x, int y);  
   void renameMetaGear(GearGui *metaGearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     

@@ -25,14 +25,15 @@
 #include <qtoolbutton.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <qsplitter.h>
 #include <list>
 
 #include "Engine.h"
 #include "Project.h"
 
-#include "SchemaEditor.h"
-
 class SchemaGui;
+class MetaGearEditor;
+class MetaGear;
 
 class MainWindow : public QMainWindow
 {
@@ -60,6 +61,8 @@ public slots:
 
   void slotMenuPreferences();
 
+  void slotMenuViewMediaPool();
+
   void slotMenuItemSelected(int id);
 
 protected:
@@ -76,9 +79,9 @@ private:
   Engine* _engine;
   QFrame* _frame;
   SchemaGui* _mainSchemaGui;
-
-  SchemaEditor *_schemaEditor;    
-
+  
+  MetaGearEditor *_metaGearEditor;
+  
   QToolBar *_toolBar;
   QToolButton *_playPause;
   
@@ -86,6 +89,7 @@ private:
   int _menuPrefsItemId;
   QPopupMenu *_fileMenu;
   QPopupMenu *_toolsMenu;
+  QPopupMenu *_viewMenu;
 
   Project* _project;
   

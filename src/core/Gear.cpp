@@ -30,13 +30,13 @@
 
 const std::string Gear::XML_TAGNAME = "Gear";
 
-Gear::Gear(Schema *schema, std::string type, std::string name) : 
-_parentSchema(schema), 
+Gear::Gear(Schema *parentSchema, std::string type, std::string name) : 
+_parentSchema(parentSchema), 
 _Type(type), 
 _name(name),
-_gearGui(NULL)
+_gearGui(NULL),
+_control(NULL)
 {
-  ASSERT_ERROR_MESSAGE(_parentSchema!=0, "NULL schema passed to gear");
 }
 
 Gear::~Gear()
@@ -297,9 +297,19 @@ GearGui* Gear::getGearGui()
   return _gearGui;
 }
 
+Control* Gear::getControl()
+{
+  return _control;
+}
+
 void Gear::updateSettings()
 {
   //call the virtual method that can be overriden
   onUpdateSettings();
 }
 
+Control* Gear::createControl(ControlPanel* parent)
+{
+  _control = createCustomControl(parent);
+  return _control;
+}

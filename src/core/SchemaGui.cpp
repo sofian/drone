@@ -92,12 +92,12 @@ void SchemaGui::setSchema(Schema *schema)
 
 }
 
-void SchemaGui::addGear(std::string type, int x, int y)
+Gear* SchemaGui::addGear(std::string type, int x, int y)
 {            
   Gear *gear = _schema->addGear(type);    
 
   if (!gear)
-    return;
+    return NULL;
     
   GearGui *gearGui = gear->getGearGui();    
 
@@ -106,14 +106,16 @@ void SchemaGui::addGear(std::string type, int x, int y)
   gearGui->setZ(0);
   gearGui->show();
   update();
+
+  return gear;
 }
 
-void SchemaGui::addMetaGear(std::string filename, int x, int y)
+MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
 {    
   MetaGear *metaGear = _schema->addMetaGear(filename);    
 
   if (metaGear==NULL)
-    return;
+    return NULL;
   
   GearGui *gearGui = metaGear->getGearGui();    
 
@@ -122,6 +124,8 @@ void SchemaGui::addMetaGear(std::string filename, int x, int y)
   gearGui->setZ(0);
   gearGui->show();
   update();
+
+  return metaGear;
 }
 
 void SchemaGui::renameMetaGear(GearGui *metaGearGui, std::string newName)
@@ -135,7 +139,7 @@ void SchemaGui::renameMetaGear(GearGui *metaGearGui, std::string newName)
   _schema->renameMetaGear((MetaGear*)(metaGearGui->gear()), newName);
 }
 
-void SchemaGui::newMetaGear(int x, int y)
+MetaGear* SchemaGui::newMetaGear(int x, int y)
 {    
   MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
@@ -145,6 +149,8 @@ void SchemaGui::newMetaGear(int x, int y)
   gearGui->setZ(0);
   gearGui->show();
   update();
+
+  return metaGear;
 }
 
 void SchemaGui::removeGear(GearGui* gearGui)
