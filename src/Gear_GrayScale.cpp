@@ -43,7 +43,9 @@ void Gear_GrayScale::runVideo()
     for (int p=0; p<_size; ++p)
     {
       // add everything
-      total = 128;
+      //      total = 128;
+      // 0.5 * R + 0.25 * G + 0.25 * B 
+      total = *_imageIn;
       total += *_imageIn++;
       total += *_imageIn++;
       total += *_imageIn++;
