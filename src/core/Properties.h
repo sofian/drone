@@ -33,23 +33,27 @@ class Property
 public:
   enum eType
   {
-    STRING, FILENAME, INT, FLOAT, BOOL
+    STRING, FILENAME, FILENAMES, INT, FLOAT, BOOL
   };
 
   Property()
   {
+    _value.push_back("");
   }
 
   Property(eType type, std::string name) : _type(type), _name(name)
   {
+    _value.push_back("");
   }
 
-  void valueStr(std::string value) {_value = value;};
+  void valueStr(std::string value);
+  void valueStrList(const std::vector<std::string> &value);
   void valueInt(int value);
   void valueFloat(float value);
   void valueBool(bool value);
 
-  std::string valueStr() {return _value;};
+  std::string valueStr() {return _value[0];};
+  std::vector<std::string> valueStrList() {return _value;};
   int valueInt();
   float valueFloat();
   bool valueBool();
@@ -63,7 +67,7 @@ public:
 private:
   eType _type;
   std::string _name;
-  std::string _value;
+  std::vector<std::string> _value;
 
 };
 

@@ -7,7 +7,6 @@ VideoOutput \
 Blur \
 VideoSource \
 Slider \
-#AudioInput \
 KDTree\ 
 VideoMix \
 Edge \
@@ -32,8 +31,9 @@ Saturation \
 SignalStat \
 SmearGrid \
 VideoDelay \
-VideoLoop
+VideoLoop \
+ImageShuffle
 
 #linux specific gears
-unix:!macx:SUBDIRS += VideoInput
+unix:!macx:SUBDIRS += VideoInput AudioInput
 

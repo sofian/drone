@@ -1,5 +1,5 @@
-/* PropertyControlFilename.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+/* Gear_ImageShuffle.h
+ * Copyright (C) 2004 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,36 +17,42 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef PROPERTYCONTROLFILENAME_INCLUDED
-#define PROPERTYCONTROLFILENAME_INCLUDED
+#ifndef GEAR_IMAGESHUFFLE_INCLUDED
+#define GEAR_IMAGESHUFFLE_INCLUDED
 
-#include "PropertyControl.h"
 
-class QLineEdit;
-class QPushButton;
+#include "Gear.h"
+#include "VideoRGBAType.h"
+#include "ValueType.h"
 
-class PropertyControlFilename : public PropertyControl
+#include <qimage.h>
+
+class Gear_ImageShuffle : public Gear
 {
-  Q_OBJECT
-  public:
-  PropertyControlFilename(QWidget *parent, Property *property, bool multiple=false);
-  virtual ~PropertyControlFilename();
+public:
+  static const std::string SETTING_FILENAME;
 
-  void save();
+  Gear_ImageShuffle(Schema *schema, std::string name);
+  virtual ~Gear_ImageShuffle();
 
+  void init();
+  
+  void runVideo();
 
-public slots:
-  void slotBrowseClicked();    
+  bool ready();
+
+  void onUpdateSettings();
 
 private:
+  void loadImage(const std::string& filename, Array2D<RGBA>& image);
+  
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugIn<ValueType> *_SPEED_IN;
+  
+  Array< Array2D<RGBA> > _imageBuffers;
 
-  QHBoxLayout *_hLayout;
-  QLineEdit *_lineEdit;
-  QPushButton *_browseButton;
-  bool _multiple;
-  std::vector<std::string> _values;
-
-
+  int _current;
+  int _nFramesCurrent;
 };
 
 #endif

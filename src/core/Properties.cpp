@@ -30,42 +30,58 @@
 const char Properties::WHITESPACE_REPLACEMENT = '_';
 const std::string Properties::XML_TAGNAME = "Properties";
 
+
+void Property::valueStr(std::string value)
+{
+  _value.clear();
+  _value.push_back(value);
+}
+
+void Property::valueStrList(const std::vector<std::string> &value)
+{
+  _value = value;
+  if(!_value.size())
+    _value.push_back("");
+};
+
 void Property::valueFloat(float value)
 {
   std::ostringstream str;
   str << value;
-  _value = str.str();
+  _value.clear();
+  _value.push_back(str.str());
 }
 
 void Property::valueBool(bool value)
 {
   std::ostringstream str;
   str << std::noboolalpha << value;
-  _value = str.str();
+  _value.clear();
+  _value.push_back(str.str());
 }
 
 void Property::valueInt(int value)
 {
   std::ostringstream str;
   str << value;
-  _value = str.str();
+  _value.clear();
+  _value.push_back(str.str());
 }
 
 int Property::valueInt()
 {
-  return atoi(_value.c_str());
+  return atoi(_value[0].c_str());
 }
 
 float Property::valueFloat()
 {
-  return atof(_value.c_str());
+  return atof(_value[0].c_str());
 }
 
 bool Property::valueBool()
 {
-  return _value == "1" ? true : false;
+  return _value[0] == "1" ? true : false;
 }
-
 
 Property* Properties::add(Property::eType type, std::string name)
 {
@@ -107,9 +123,27 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
   {
     std::cout << it->second->name() << std::endl;
     //we need to replace whitespaces with another char for xml attributes
-    propertieAttr = doc.createAttribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT));
-    propertieAttr.setValue(it->second->valueStr().c_str());
-    propertiesElem.setAttributeNode(propertieAttr);
+    
+    // to save string lists, we save each value the format property_name[index]
+    const std::vector<std::string> &lst = it->second->valueStrList();
+    if(lst.size()>1)
+    {
+      
+      for(unsigned int i=0;i<lst.size(); i++)
+      {
+        QString index;
+        index.sprintf("%i",i);
+        propertieAttr = doc.createAttribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT)+index);
+        propertieAttr.setValue(lst[i].c_str());
+        propertiesElem.setAttributeNode(propertieAttr);
+      }
+    }
+    else
+    {
+      propertieAttr = doc.createAttribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT));
+      propertieAttr.setValue(it->second->valueStr().c_str());
+      propertiesElem.setAttributeNode(propertieAttr);
+    }
   }    
 }
 
@@ -128,8 +162,36 @@ void Properties::load(QDomElement &parentElem)
 
   for (std::map<std::string, Property*>::iterator it = _properties.begin(); it != _properties.end(); ++it)
   {
-    //we need to replace whitespaces with another char for xml attributes
-    it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
+    // we need to replace whitespaces with another char for xml attributes
+    QString name = QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT);
+    std::ostringstream oss;
+    // to save string lists, we save each value the format name[index]
+    // we start by checking if there is a property named prop[0], in which case we expect a string list
+    bool exists=true;
+    int index=0;
+    std::vector<std::string> strlist;
+    for(;exists; index++)
+    {
+      std::ostringstream oss;
+      oss<<name<<index;
+      std::cout<<"looking for : "<<oss.str()<<std::endl;
+      QString value = propertiesElem.attribute(oss.str().c_str());
+      if(value==QString::null)
+      {
+        exists=false;
+        std::cout<<"not found !"<<std::endl;
+      }
+      else
+      {
+        strlist.push_back(value.ascii());
+        std::cout<<"found !"<<std::endl;
+      }
+
+    }
+    if(index==0)
+      it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
+    else
+      it->second->valueStrList(strlist);
   }    
 
 

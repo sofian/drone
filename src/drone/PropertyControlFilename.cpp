@@ -23,8 +23,10 @@
 #include <qpushbutton.h>
 #include <qfiledialog.h>
 
-PropertyControlFilename::PropertyControlFilename(QWidget *parent, Property *property) :
-PropertyControl(parent, property)
+#include <iostream>
+
+PropertyControlFilename::PropertyControlFilename(QWidget *parent, Property *property, bool multiple) :
+PropertyControl(parent, property), _multiple(multiple)
 {
   _hLayout = new QHBoxLayout(this, 3);
 
@@ -35,7 +37,7 @@ PropertyControl(parent, property)
   _hLayout->addWidget(_browseButton);
   QObject::connect(_browseButton, SIGNAL(clicked()), this, SLOT(slotBrowseClicked()));                
 
-  _lineEdit->setText(property->valueStr().c_str());
+  _lineEdit->setText(property->valueStr().c_str());  
 }
 
 PropertyControlFilename::~PropertyControlFilename()
@@ -44,13 +46,28 @@ PropertyControlFilename::~PropertyControlFilename()
 
 void PropertyControlFilename::save()
 {
-  _property->valueStr(_lineEdit->text().ascii());    
+  if (_multiple)
+    _property->valueStrList(_values);
+  else
+    _property->valueStr(_lineEdit->text().ascii());        
 }
 
 void PropertyControlFilename::slotBrowseClicked()
-{    
-  QString filename = QFileDialog::getOpenFileName("./", "*.*", this, "Load", "Load");
-  _lineEdit->setText(filename);
+{   
+  if(_multiple) 
+  {    
+    QStringList filenames = QFileDialog::getOpenFileNames("*.*", "./", this, "Load", "Load");
+    _values.clear();
+    for ( QStringList::Iterator it = filenames.begin(); it != filenames.end(); ++it ) 
+        _values.push_back((*it).ascii());
+    _lineEdit->setText(filenames.join(","));
+  }
+  else
+  {
+     QString filename= QFileDialog::getOpenFileName("./", "*.*", this, "Load", "Load");
+     _lineEdit->setText(filename);
+  }
+  
 }
 
 

@@ -169,7 +169,7 @@ void Gear_AudioInput::initPortAudio()
 
 void Gear_AudioInput::prePlay()
 {
-   Pa_StartStream(_stream);
+   Pa_StartStream(_stream);   
 }    
 
 void Gear_AudioInput::postPlay()
@@ -182,7 +182,7 @@ int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long
                                        PaTimestamp, void *user_data)
 {
   Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
-      
+        
   SignalType& lbuffer = parent->_lBuffer;
   int& lindex = parent->_lBufferIndex;
   

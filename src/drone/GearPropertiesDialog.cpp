@@ -89,6 +89,9 @@ void GearPropertiesDialog::addControl(Property *property)
   case Property::FILENAME:
     propertyControl = new PropertyControlFilename(this, property);
     break;
+  case Property::FILENAMES:
+    propertyControl = new PropertyControlFilename(this, property, true);
+    break;  
   case Property::INT:
     propertyControl = new PropertyControlString(this, property);
     break;

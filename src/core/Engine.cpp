@@ -86,7 +86,9 @@ void *Engine::playThread(void *parent)
   float cumul_load = 0.0f;
   engine->_averageLoad=0.0f;
 
-  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
+  engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
+
+  for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
     (*it)->internalPrePlay();
 
   int currentFrame = 0;
@@ -150,7 +152,7 @@ void *Engine::playThread(void *parent)
 #ifndef SINGLE_THREADED_PLAYBACK  
   }
 #endif               
-
+                                                                         
   
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();

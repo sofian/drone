@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread release p4
+CONFIG += debug
 
 # User-dependent includes
 
