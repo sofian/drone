@@ -78,9 +78,10 @@ public:
   VideoOutputX11Base();
   virtual ~VideoOutputX11Base();
 
-protected:
+  bool toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos);
 
-  bool togglefullscreen(bool fs, int xRes, int yRes);
+protected:
+  
   bool openXDisplay();
   bool checkXShmExtension();
   bool createXWindow(int xRes, int yRes);

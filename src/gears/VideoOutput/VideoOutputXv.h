@@ -37,7 +37,6 @@ public:
   VideoOutputXv();
   ~VideoOutputXv();
 
-  void fullscreen(bool fs);
   bool init(int xRes, int yRes, bool fullscreen);
   void render(const VideoRGBAType &image);
 

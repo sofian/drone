@@ -50,10 +50,6 @@ VideoOutputXv::~VideoOutputXv()
 
 }
 
-void VideoOutputXv::fullscreen(bool fs)
-{
-  togglefullscreen(fs, _xRes, _yRes);
-}
 
 void VideoOutputXv::render(const VideoRGBAType &image)
 {    

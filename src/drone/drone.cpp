@@ -44,13 +44,12 @@ int main(int argc, char** argv)
   mainWindow.adjustSize();
   qtApp.setMainWidget(&mainWindow);
 
-  //temp just because it's too fast for now
-  //Timing::sleep(500);
-  //
 
   splash.hide();
   mainWindow.show();
   
+
+
   if(argc>1)
   {
     if(argc==2)
@@ -59,7 +58,6 @@ int main(int argc, char** argv)
       error("Usage : drone [schema.drn]");
   }
 
-  //splash.finish(&mainWindow);
 
   paint_funcs_setup();
 

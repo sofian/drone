@@ -39,43 +39,14 @@ VideoOutputX11Base::~VideoOutputX11Base()
 }
 
 
-bool VideoOutputX11Base::togglefullscreen(bool fs, int xRes, int yRes)
+bool VideoOutputX11Base::toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos)
 {
-/*   std::cout << "switching to fullscreen..." << std::endl;                                    */
-/*                                                                                              */
-/*   std::cout << "finding best fit resolution..." << std::endl;                                */
-/*                                                                                              */
-/*   XF86VidModeModeInfo **modes;                                                               */
-/*   int nbmodes=0;                                                                             */
-/*   int bestmode=0;                                                                            */
-/*                                                                                              */
-/*   XF86VidModeGetAllModeLines((Display*)_display, DefaultScreen(_display), &nbmodes, &modes); */
-/*                                                                                              */
-/*   //save desktop-resolution                                                                  */
-/*   _desktopMode = *modes[0];                                                                  */
-/*                                                                                              */
-/*   for (int i=0; i < nbmodes; i++)                                                            */
-/*   {                                                                                          */
-/*     if ((modes[i]->hdisplay == xRes) && (modes[i]->vdisplay == yRes))                        */
-/*     {                                                                                        */
-/*       bestmode = i;                                                                          */
-/*     }                                                                                        */
-/*   }                                                                                          */
-/*                                                                                              */
-/*                                                                                              */
-/*                                                                                              */
-/*   XF86VidModeSwitchToMode((Display*)_display, DefaultScreen(_display), modes[bestmode]);     */
-/*   XF86VidModeSetViewPort((Display*)_display, DefaultScreen(_display), 0, 0);                 */
-/*                                                                                              */
-/*   XWarpPointer((Display*)_display, None, _window, 0, 0, 0, 0, 0, 0);                         */
-/*                                                                                              */
-/*   //free the VideoModes Array                                                                */
-/*   XFree(modes);                                                                              */
-/*                                                                                              */
-    
   _fullscreen=fs;
+
+   if (_fullscreen)  
+    std::cout << "switching to fullscreen..." << std::endl;                                    
+    
   
-  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
   //XSetWindowBorderWidth((Display*)_display, _window, 0);
 
 //   XineramaScreenInfo *xineramaScreenInfo;

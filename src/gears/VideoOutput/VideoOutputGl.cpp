@@ -114,30 +114,6 @@ void DroneQGLWidget::paintGL()
 
   glEnd();
 
-  
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-  
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-
-  _currentImage->toTexture();
-  glReadPixels(0,0, 352, 480, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)_buffer);
-
 }
 
 void DroneQGLWidget::resizeGL(int w, int h)
