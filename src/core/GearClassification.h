@@ -166,6 +166,13 @@ public:
     };       
     GearClassification_Mask mask(){return GearClassification_Mask();}  
 
+    //SIGNAL/Visualization
+    class GearClassification_Vectorial: public GearClassificationT<GearClassification_Vectorial, GearClassification_Video>
+    {
+	public: std::string toString(){return "Vectorial";} 
+    };    
+    GearClassification_Vectorial vectorial(){return GearClassification_Vectorial();}
+
   };
   
   //SIGNAL
@@ -208,8 +215,6 @@ public:
 	public: std::string toString(){return "Visualization";} 
     };    
     GearClassification_Visualization visualization(){return GearClassification_Visualization();}
-	
-	
 
   };
 

@@ -47,6 +47,8 @@
 typedef agg::pixfmt_rgba32 pixfmt;
 typedef agg::rgba8 color_type;
 typedef agg::order_rgba32 component_order;
+typedef agg::renderer_base<pixfmt> renderer_base;
+typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_solid;
 
 
 
@@ -311,7 +313,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "AggTest";
-  gearInfo.classification = GearClassifications::video().color().instance();
+  gearInfo.classification = GearClassifications::video().vectorial().instance();
   return gearInfo;
 }
 }
@@ -443,11 +445,6 @@ void Gear_AggTest::init()
 
 // };
 
-
-
-
-
-
 // int agg_main(int argc, char* argv[])
 // {
 //     the_application app(pix_format, flip_y);
@@ -474,7 +471,9 @@ void Gear_AggTest::runVideo()
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
 
-  memset(&_imageOut[0], 255, _image->width() * _image->height() * 4);
+
+  memcpy(&_imageOut[0],&_imageIn[0], _image->width() * _image->height() * 4);
+  //memset(&_imageOut[0], 255, _image->width() * _image->height() * 4);
 
   agg::rendering_buffer rbuf(&_imageOut[0], 
                                _image->width(), 
@@ -484,34 +483,29 @@ void Gear_AggTest::runVideo()
 
   _size = (int) _image->size();
   
-  float amount = _AMOUNT_IN->type()->value();
-    
-//         int width = rbuf_window().width();
-//         int height = rbuf_window().height();
+  float alpha = _AMOUNT_IN->type()->value();
+  unsigned i;
+  for(i = 0; i < g_npaths; i++)
+  {
+    g_colors[i].a = (agg::int8u)alpha;
+  }
 
-//         unsigned i;
-//         unsigned alpha = unsigned(m_alpha_slider.value() * 255.0);
-//         for(i = 0; i < g_npaths; i++)
-//         {
-//            g_colors[i].a = (agg::int8u)alpha;
-//         }
+  pixfmt pixf(rbuf);
+         renderer_base rb(pixf);
+         renderer_solid r(rb);
 
-//         pixfmt pixf(rbuf_window());
-//         renderer_base rb(pixf);
-//         renderer_solid r(rb);
-
-//         agg::trans_affine mtx;
-//         mtx *= agg::trans_affine_translation(-g_base_dx, -g_base_dy);
-//         mtx *= agg::trans_affine_scaling(g_scale, g_scale);
-//         mtx *= agg::trans_affine_rotation(g_angle + agg::pi);
-//         mtx *= agg::trans_affine_skewing(g_skew_x/1000.0, g_skew_y/1000.0);
-//         mtx *= agg::trans_affine_translation(width/2, height/2);
+        agg::trans_affine mtx;
+        mtx *= agg::trans_affine_translation(-g_base_dx, -g_base_dy);
+        mtx *= agg::trans_affine_scaling(g_scale, g_scale);
+        mtx *= agg::trans_affine_rotation(alpha/50 + agg::pi);
+        mtx *= agg::trans_affine_skewing(g_skew_x/1000.0, g_skew_y/1000.0);
+        mtx *= agg::trans_affine_translation(_outImage->width()/2, _outImage->height()/2);
 
 //         // This code renders the lion:
 
 //         // Variant with template converter classes - static pipeline
 //         //-------------------------------
-//         agg::conv_transform<agg::path_storage, agg::trans_affine> trans(g_path, mtx);
+         agg::conv_transform<agg::path_storage, agg::trans_affine> trans(g_path, mtx);
 //         //-------------------------------
 
 
@@ -523,7 +517,7 @@ void Gear_AggTest::runVideo()
 //         //typedef agg::conv_transform<source, agg::trans_affine> transform;
 //         //transform trans(src, mtx);
 
-//         agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+         agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
 //         agg::render_ctrl(g_rasterizer, g_scanline, r, m_alpha_slider);
 
 }

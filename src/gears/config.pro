@@ -36,5 +36,5 @@ release {
 }
 
 agg {
-  QMAKE_CXXFLAGS += -L../../agg2/src/libagg.a -I../../agg2/include
+  QMAKE_CXXFLAGS += -I../../agg2/include
 }

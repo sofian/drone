@@ -45,6 +45,11 @@ release {
   
 }
 
+agg {
+  QMAKE_CXXFLAGS += 
+}
+
+
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types
