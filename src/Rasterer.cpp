@@ -44,7 +44,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
   if (filled)
     for (int y=y0;y<y1;y++)
     {
-      data = (unsigned char*) (_image->row(y) + x0);//imageData[y*sizeX + x0];
+      data = (unsigned char*) &_image->get(x0,y);
       for (int x=x0;x<x1;x++)
       {
         *(data++) = r;
@@ -55,7 +55,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
     }
   else
   {
-    data = (unsigned char*) (_image->row(y0) + x0);//imageData[y0*sizeX + x0];
+    data = (unsigned char*) &_image->get(x0,y0);
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
@@ -66,18 +66,18 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 
     for (int y=y0; y<=y1; ++y)
     {
-      data = (unsigned char*) (_image->row(y) + x0);//imageData[y*sizeX + x0];
+      data = (unsigned char*) &_image->get(x0,y);
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;       
 
-      data = (unsigned char*) (_image->row(y) + x1);//imageData[y*sizeX + x1];
+      data = (unsigned char*) &_image->get(x1,y);
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;
     }
 
-    data = (unsigned char*) (_image->row(y1) + x0);//imageData[y1*sizeX + x0];
+    data = (unsigned char*) &_image->get(x0,y1);
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
