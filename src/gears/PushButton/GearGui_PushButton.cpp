@@ -41,7 +41,7 @@ void GearGui_PushButton::drawShape(QPainter &painter)
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << ((Gear_PushButton*)_gear)->getValue();
-  //setTitle(sstream.str());
+  setTitle(sstream.str());
 
   GearGui::drawShape(painter);    
 

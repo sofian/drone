@@ -275,7 +275,13 @@ void GearGui::drawShape(QPainter &painter)
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);
   painter.setPen(Qt::white);
-  painter.drawText(startX, startY, _sizeX, NAME_SIZEY, Qt::AlignHCenter | Qt::AlignVCenter, _gear->name().c_str());
+  
+  //title default to gear name if not explicitly setted
+  std::string title=_title;
+  if (title.empty())
+    title=gear()->name();
+    
+  painter.drawText(startX, startY, _sizeX, NAME_SIZEY, Qt::AlignHCenter | Qt::AlignVCenter, title.c_str());
 
   //plugs
   drawPlugBoxes(painter);

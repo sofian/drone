@@ -42,7 +42,7 @@ void GearGui_Slider::drawShape(QPainter &painter)
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << ((Gear_Slider*)_gear)->getValue();
-  //setTitle(sstream.str());
+  setTitle(sstream.str());
 
   GearGui::drawShape(painter);    
 

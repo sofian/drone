@@ -82,7 +82,8 @@ public:
   virtual bool keyEvent(QKeyEvent *){return false;}
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
-
+  void setTitle(std::string title){_title=title;}
+  
 protected:
 				
   void timerEvent(QTimerEvent*);
@@ -108,6 +109,7 @@ protected:
   int _inputsInterval;
   int _outputsInterval;
   QColor _boxNameColor;
+  std::string _title;
 private:
   void removeAllPlugBoxes();
 
