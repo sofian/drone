@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../GearMaker.h"
+#include "GearMaker.h"
 
 
 Register_Gear(MAKERGear_AsciiArt, Gear_AsciiArt, "AsciiArt")
