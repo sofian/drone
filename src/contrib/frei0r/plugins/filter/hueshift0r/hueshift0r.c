@@ -32,7 +32,7 @@ typedef struct hueshift0r_instance
   float mat[4][4];
 } hueshift0r_instance_t;
 
-/* Updates the look-up-table. */
+/* Updates the shift matrix. */
 void update_mat(hueshift0r_instance_t *inst)
 {
   identmat(inst->mat);
