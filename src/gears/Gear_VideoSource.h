@@ -34,6 +34,7 @@ private:
   mpeg3_t* _file;
 
   int _sizeX, _sizeY;
+  long _nbFrames;
 
   //locals
   

@@ -1,24 +1,29 @@
 #include "MainWindow.h"
 
 #include <iostream>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
 #include <qfiledialog.h>
 #include <qapplication.h>
 
 #include "Play.xpm"
 #include "Pause.xpm"
 #include "GearGui.h"
+#include "error.h"
 
 const int MainWindow::CANVAS_SIZE_X = 2048;
 const int MainWindow::CANVAS_SIZE_Y = 2048;
+
+#include <qsettings.h>
+
+extern QSettings globalSettings;
+
 
 MainWindow::MainWindow() : 
 QMainWindow(), 
 _engine(NULL), 
 _frame(NULL), 
 _schemaCanvas(NULL), 
-_schemaEditor(NULL)    
+_schemaEditor(NULL),
+_currentSchemaFilename("")
 {    
   _engine = new Engine(0);
 
@@ -57,17 +62,24 @@ _schemaEditor(NULL)
   //
 
   //menu    
-  QPopupMenu *fileMenu = new QPopupMenu(this);
-  fileMenu->insertItem("New", this, SLOT(slotMenuNew()));
-  fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()));
-  fileMenu->insertItem("Save", this, SLOT(slotMenuSave()));    
-  fileMenu->insertItem("Save as", this, SLOT(slotMenuSaveAs()));    
-  fileMenu->insertSeparator();
-  fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()));    
+  _fileMenu = new QPopupMenu(this);
+  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()));
+  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()));
+  //we need to keep this id to enable/disable the save item
+  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()));    
+  _fileMenu->setItemEnabled(_menuSaveItemId, false);  
+  
+  _fileMenu->insertItem("Save as", this, SLOT(slotMenuSaveAs()));    
+  _fileMenu->insertSeparator();
+  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()));    
   QMenuBar *menuBar = new QMenuBar(this);
   menuBar->setSeparator(QMenuBar::InWindowsStyle);
-  menuBar->insertItem("&File", fileMenu);
+  menuBar->insertItem("&File", _fileMenu);
 
+
+  //load settings
+  _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
+  _lastSavePath = globalSettings.readEntry("/drone/Schema/LastSavePath");
 
 }
 
@@ -100,15 +112,24 @@ void MainWindow::slotMenuNew()
 {
   _currentSchemaFilename="";
   _schemaEditor->clearSchema();
+  _fileMenu->setItemEnabled(_menuSaveItemId, false);
 }
 
 void MainWindow::slotMenuLoad()
-{
-  QString filename = QFileDialog::getOpenFileName(QString::null, "*.*", this, "Load", "Load");
+{  
+  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, "*" + Engine::SCHEMA_EXTENSION + ";;" + "*.*", 
+                                                  this, "Load", "Load");
+
   if (!filename.isEmpty())
   {
     _schemaEditor->loadSchema(filename.ascii());
     _currentSchemaFilename=filename.ascii();
+    _fileMenu->setItemEnabled(_menuSaveItemId, true);
+
+    //save the last load path
+    _lastLoadPath=filename;
+    globalSettings.writeEntry("/drone/Schema/LastLoadPath", _lastLoadPath);
+    
   }
 }
 
@@ -116,20 +137,29 @@ void MainWindow::load(std::string filename)
 {
   _schemaEditor->loadSchema(filename);
   _currentSchemaFilename=filename;
+  _fileMenu->setItemEnabled(_menuSaveItemId, true);
 }
 
 void MainWindow::slotMenuSave()
 {
+  ASSERT_ERROR(_currentSchemaFilename.size());
   _engine->saveSchema(_currentSchemaFilename);    
 }
 
 void MainWindow::slotMenuSaveAs()
 {
-  QString filename = QFileDialog::getSaveFileName(QString::null, "*.*", this, "Save as", "Save as");
+  QString filename = QFileDialog::getSaveFileName(_lastSavePath, "*" + Engine::SCHEMA_EXTENSION + ";;" + "*.*", 
+                                                  this, "Save as", "Save as");
   if (!filename.isEmpty())
   {
     _engine->saveSchema(filename.ascii());
     _currentSchemaFilename=filename.ascii();
+    _fileMenu->setItemEnabled(_menuSaveItemId, true);
+
+    //save the last save path
+    _lastSavePath=filename;
+    globalSettings.writeEntry("/drone/Schema/LastSavePath", _lastSavePath);
+
   }
 }
 

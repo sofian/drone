@@ -51,6 +51,14 @@ void Gear_DiffDist::runVideo()
   _imageOutSizeX = MAX(_imageASizeX, _imageBSizeX);
   _imageOutSizeY = MAX(_imageASizeY, _imageBSizeY);
   _outImage->resize(_imageOutSizeX, _imageOutSizeY);
+  
+  if (factor <= 0)
+  {
+     memcpy(_outImage->data(), _imageA->data(), _imageA->size()*sizeof(RGBA));
+     return;
+  }
+   
+  
   memset(_outImage->data(), 0, _outImage->size()*sizeof(RGBA));
 
   _dataA = _imageA->data();    

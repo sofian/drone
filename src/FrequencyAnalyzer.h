@@ -17,21 +17,21 @@ public:
   void timeToFrequency(const float *inputBuffer, float *outputBuffer);
   void filter(const float *inputBuffer, float *outputBuffer);
 
-  //int getMasterFrequency();
-  //float getBand(int lowerFreq, int higherFreq);
+  int getMasterFrequency();
+  float getBand(int lowerFreq, int higherFreq);
   //fftw_real *powerSpectrum() {return _powerSpectrum;};
 
 
 private:    
-/*     rfftw_plan _fftwPlan;                                                     */
-/*     rfftw_plan _fftwPlanInvert;                                               */
-/*     float *_hammingWindow;                                                 */
-/*     int _bufferSize;                                                          */
-/*     int _windowSize;                                                          */
-/*                                                                               */
-/*     fftw_real *_inputComplex;//the complex buffer where our input will be put */
-/*     fftw_real *_outputComplex;//the result of fftw                            */
-/*     fftw_real *_backComplex;//the complex buffer where our input will be put  */
+    fftw_plan _fftwPlan;
+    fftw_plan _fftwPlanInvert;
+    float *_hammingWindow;
+    int _bufferSize;
+    int _windowSize;
+
+    fftw_complex *_inputComplex;//the complex buffer where our input will be put
+    fftw_complex *_outputComplex;//the result of fftw
+    fftw_complex *_backComplex;//the complex buffer where our input will be put
 
 };
 

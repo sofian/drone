@@ -9,8 +9,9 @@
 #include <stdio.h>
 
 #include "Utils.h"
+#include <qsettings.h>
 
-//#include "AllGears.h"
+QSettings globalSettings;
 
 int main(int argc, char** argv)
 {
@@ -18,6 +19,9 @@ int main(int argc, char** argv)
   QApplication qtApp(argc, argv);
   QApplication::setGlobalMouseTracking(TRUE);
 
+  globalSettings.setPath("drone", "drone");
+  
+  
   //QSplashScreen splash(splash_xpm);
   //splash.show();
 

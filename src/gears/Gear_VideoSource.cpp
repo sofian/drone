@@ -9,10 +9,13 @@ Register_Gear(MAKERGear_VideoSource, Gear_VideoSource, "VideoSource");
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : Gear(engine, "VideoSource", name),
-                                                                       _file(NULL),
-                                                                       _sizeX(0),
-                                                                       _sizeY(0)
+Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : 
+  Gear(engine, "VideoSource", name),
+  _file(NULL),
+  _sizeX(0),
+  _sizeY(0),
+  _nbFrames(0)
+                                                                            
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
@@ -44,12 +47,15 @@ void Gear_VideoSource::onUpdateSettings()
     mpeg3_close(_file);
 
   _file = mpeg3_open(tempstr);    
-
+  
   if (_file==NULL)
   {
     std::cout << "error opening movie : " << tempstr << std::endl;
     return;
   }
+
+  //mpeg3_set_cpus(_file, 1);
+  //mpeg3_set_mmx(_file, 1);
 
 
   _sizeX = mpeg3_video_width(_file, 0);
@@ -59,7 +65,8 @@ void Gear_VideoSource::onUpdateSettings()
   std::cout << "movie size X : " << _sizeX << std::endl;
   std::cout << "movie size Y : " << _sizeY << std::endl;
 
-  std::cout << "numframes : " << mpeg3_video_frames(_file, 0) << std::endl;
+  _nbFrames =  mpeg3_video_frames(_file, 0);
+  std::cout << "numframes : " << _nbFrames << std::endl;
   std::cout << "movie samplerate : " << mpeg3_sample_rate(_file,0) << std::endl;
 
 
@@ -87,8 +94,13 @@ void Gear_VideoSource::runVideo()
   for(int y=0;y<_sizeY;y++)
     memcpy(&_outData[y*_sizeX], _frame[y], sizeof(RGBA) * _sizeX);
 
-  register int mmxCols=(_sizeX)/2;
-  register int index;    
+  //loop
+  if (mpeg3_get_frame(_file,0) >= _nbFrames)  
+    mpeg3_set_frame(_file, 0, 0);
+  
+
+  //register int mmxCols=(_sizeX)/2;
+  //register int index;    
 
   /*   _mmxImageIn = (unsigned long long int*) _frame;        */
   /*   _mmxImageOut =(unsigned long long int*) _image.data(); */

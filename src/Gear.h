@@ -19,13 +19,6 @@ class QDomDocument;
 class QDomElement;
 class QCanvas;
 
-
-// struct AutoDuplicatePlugGroup
-// {
-//   int nbMin, nbMax;
-//   std::vector<AbstractPlug* > plugs;
-// };
-
 class Gear  
 {
 public:
@@ -85,24 +78,15 @@ protected:
   AbstractPlug* addPlug(AbstractPlug* plug);       
   void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
-//   template<class T>
-//   void addAutoDuplicatePlugGroup<T>(Abstract>* plug, std::vector< Plug<T>* > zeVector, int nbMin, int nbMax);
-//     {
-//       zeVector.push_back(plug);
-//       _autoDuplicatePlugsVectors.push_back(zeVector);
-//     }
-
   void deletePlug(AbstractPlug *plug);
 
   Engine *_engine;
 
-  std::list<AbstractPlug*> _Plugs;    
+  std::list<AbstractPlug*> _plugs;    
 
   Properties _settings;
 
 private:
-
-//   std::vector< AutoDuplicateGroup > _autoDuplicatePlugsVectors;
 
   std::string _Type;
   std::string _Name;

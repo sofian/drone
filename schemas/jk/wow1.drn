@@ -2,7 +2,7 @@
 <Schema>
     <Gears>
         <Gear PosX="78" PosY="108" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/julien/dev/drone/media/ClassicT1948.mpg" />
+            <Properties Filename="/home/foogy/movies/5sat-pm.mpg" />
         </Gear>
         <Gear PosX="449" PosY="192" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
             <Properties/>
@@ -59,10 +59,13 @@
             <Properties/>
         </Gear>
         <Gear PosX="717" PosY="146" Type="VideoMix" Name="VideoMix1" >
-            <Properties MIX_FUNCTION_:_See_the_code_or_just_have_fun="0" />
+            <Properties MIX_FUNCTION_:_See_the_code_or_just_have_fun="" />
         </Gear>
         <Gear PosX="589" PosY="270" Type="Slider" SliderPos="11.2195" Name="Slider10" >
             <Properties Lower_Bound="0" Higher_Bound="20" />
+        </Gear>
+        <Gear PosX="216" PosY="255" Type="Slider" SliderPos="0" Name="Slider11" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
         </Gear>
     </Gears>
     <Connections>
@@ -86,5 +89,6 @@
         <Connection GearA="Edge1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
         <Connection GearA="Slider10" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="Slider11" GearB="ApplyDisplaceGrid1" Input="Mode" Output="Value" />
     </Connections>
 </Schema>

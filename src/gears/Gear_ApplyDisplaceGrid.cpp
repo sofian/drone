@@ -13,6 +13,7 @@ Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Engine *engine, std::string name)
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
   addPlug(_GRID = new PlugIn<DisplaceGrid>(this, "Grid"));
+  addPlug(_MODE = new PlugIn<ValueType>(this, "Mode", new ValueType(0.0f,0.0f,1.0f)));
 }
 
 Gear_ApplyDisplaceGrid::~Gear_ApplyDisplaceGrid()
@@ -52,29 +53,60 @@ void Gear_ApplyDisplaceGrid::runVideo()
   ////////////////////////////
   
   _gridData = (float*)(_GRID->type()->data());
-  _data = (unsigned char*)_image->data();    
-  _outData = (unsigned char*)_outImage->data();
+  _data = _image->data();    
+  _outData = _outImage->data();
   
-  for (int y=0;y<_imsizeY;y++)
+  _mode = (int)_MODE->type()->intValue();
+
+  if(_mode==0)
   {
-    for (int x=0;x<_imsizeX;x++)
+    for (int y=0;y<_imsizeY;y++)
     {
-      _nx = (int)(x + *_gridData++);
-      _ny = (int)(y + *_gridData++);
-      
-      _nx=MIRROR_CLAMP(_nx,0,_imsizeX-1);
-      _ny=MIRROR_CLAMP(_ny,0,_imsizeY-1);
+      for (int x=0;x<_imsizeX;x++)
+      {
+        _nx = (int)(x + *_gridData++);
+        _ny = (int)(y + *_gridData++);
 
-      ASSERT_ERROR(_nx>=0 && _nx<=_imsizeX-1);
-      ASSERT_ERROR(_ny>=0 && _ny<=_imsizeY-1);      
+        _nx=MIRROR_CLAMP(_nx,0,_imsizeX-1);
+        _ny=MIRROR_CLAMP(_ny,0,_imsizeY-1);
 
-      _data = (unsigned char*)(_image->row(_ny)+_nx);
-  
-      //NOTICE("data %i _outData %i _nx %i _ny %i x %i y %i ", _data, _outData, _nx-x, _ny-y, x, y);
-      memcpy(_outData,_data,sizeof(RGBA));
-      _outData+=4;
-    }
-  }   
+        ASSERT_ERROR(_nx>=0 && _nx<=_imsizeX-1);
+        ASSERT_ERROR(_ny>=0 && _ny<=_imsizeY-1);      
+
+        *_outData = *(_image->row(_ny)+_nx);
+
+        //NOTICE("data %i _outData %i _nx %i _ny %i x %i y %i ", _data, _outData, _nx-x, _ny-y, x, y);
+        //memcpy(_outData,_data,sizeof(RGBA));
+        _outData++;//=4;
+      }
+    }   
+  }
+  else
+  {
+    _outImage->fill(BLACK_RGBA);
+    for (int y=0;y<_imsizeY;y++)
+    {
+      for (int x=0;x<_imsizeX;x++)
+      {
+        _nx = (int)(x + *_gridData++);
+        _ny = (int)(y + *_gridData++);
+
+        _nx=MIRROR_CLAMP(_nx,0,_imsizeX-1);
+        _ny=MIRROR_CLAMP(_ny,0,_imsizeY-1);
+
+        ASSERT_ERROR(_nx>=0 && _nx<=_imsizeX-1);
+        ASSERT_ERROR(_ny>=0 && _ny<=_imsizeY-1);      
+
+        *(_outImage->row(_ny)+_nx) = *_data;
+
+        //NOTICE("data %i _outData %i _nx %i _ny %i x %i y %i ", _data, _outData, _nx-x, _ny-y, x, y);
+        //memcpy(_outData,_data,sizeof(RGBA));
+        _data++;//=4;
+      }
+    }   
+
+  }
+    
   
 
 }

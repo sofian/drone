@@ -4,6 +4,9 @@
 #include <qmainwindow.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qpopupmenu.h>
+#include <qmenubar.h>
+
 #include "Engine.h"
 
 #include "SchemaEditor.h"
@@ -45,7 +48,13 @@ private:
 
   QToolBar *_toolBar;
   QToolButton *_playPause;
-  std::string _currentSchemaFilename;
+  
+  int _menuSaveItemId;
+  QPopupMenu *_fileMenu;
+  
+  std::string _currentSchemaFilename;  
+  QString _lastLoadPath;
+  QString _lastSavePath;
 
 //    PlayThread *_playThread;
 };

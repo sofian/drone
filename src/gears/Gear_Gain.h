@@ -18,7 +18,8 @@ public:
   bool ready();
 
 private:
-  PlugIn<SignalType> *_AUDIO_IN, *_PARAM_GAIN;
+  PlugIn<SignalType> *_AUDIO_IN;
+  PlugIn<SignalType> *_PARAM_GAIN;
   PlugOut<SignalType> *_AUDIO_OUT;
 
 };

@@ -23,19 +23,22 @@ private:
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
   PlugIn<DisplaceGrid> *_GRID;
+  PlugIn<ValueType> *_MODE;
 
   //local var
   const VideoTypeRGBA *_image;     
   VideoTypeRGBA *_outImage; 
-  unsigned char *_data;
+  const RGBA *_data;
 
   const DisplaceGrid *_grid;
 
-  unsigned char *_inData;
-  unsigned char *_outData;
+  RGBA *_inData;
+  RGBA *_outData;
   float * _gridData;
 
   int _nx,_ny;
+
+  int _mode;
 
   int _imsizeY;
   int _imsizeX;

@@ -18,7 +18,7 @@ _gearGui(NULL)
 
 Gear::~Gear()
 {    
-  for (std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
     delete (*it);
 }
 
@@ -39,7 +39,7 @@ void Gear::internalInit()
   std::cout << _Type << std::endl;
   std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
 
-  for (std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
     (*it)->init();
 
   _gearGui = createGearGui(NULL);
@@ -48,33 +48,45 @@ void Gear::internalInit()
   init();
 }
 
-//////////////////////////////////////////////////////////////////////
-//    PLUGS
-//////////////////////////////////////////////////////////////////////
 
+/**
+ * Calls the destructor for the plug and remove it 
+ * from the gear plugs
+ * 
+ * @param plug   the plug to delete
+ */
 void Gear::deletePlug(AbstractPlug *plug)
 {
   delete plug;
-  _Plugs.remove(plug);
+  _plugs.remove(plug);
 }
 
 
 /**
- * hello it's cool
+ * Adds the specified AbstractPlug to the Gear. 
+ * This method will fail if a plug with the same name already
+ * exist for this gear.
  * 
- * @param name
- * @param default_value
+ * @param plug   the plug to add
  * 
- * @return 
+ * @return Success : pointer on the specified plug
+ *         Error : null
+ * @see AbstractPlug
  */
 AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 {    
+  //check for duplicate plug name
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  {
+    if ( ((*it)->name() == plug->name()) )
+      return NULL;
+  }    
 
-  // if plug is input, add only plug for main type
+  //if plug is input, add only plug for main type
   if(plug->inOut()==IN)
-    _Plugs.push_back(plug);
+    _plugs.push_back(plug);
   else
-    // add main plug and plugs for its subType
+    //add main plug and plugs for its subType
     addPlugAndSubPlugs(plug,0);  
 
   return plug;    
@@ -87,7 +99,7 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
   for(int l=0;l<=level;l++)
     str+="..";
 
-  _Plugs.push_back(plug);
+  _plugs.push_back(plug);
   int size = plug->abstractType()->nSubTypes();
   
   for(int i=0;i<size;i++)
@@ -97,18 +109,10 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
   }
 }
 
-// template<class T>
-// void Gear::addAutoDuplicatePlug<T>(Plug<T>* plug, std::vector< Plug<T>* > zeVector, int nbMin, int nbMax)
-// {
-  
-
-// }
-
-
 void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
 {
   inputs.clear();
-  for (std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
     if ( ((*it)->inOut() == IN) )
       inputs.push_back(*it);
@@ -118,7 +122,7 @@ void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
 void Gear::getOutputs(std::list<AbstractPlug*> &outputs) const
 {
   outputs.clear();
-  for (std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
     if ( ((*it)->inOut() == OUT) )
       outputs.push_back(*it);

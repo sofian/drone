@@ -8,6 +8,7 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
+
 void Engine::Connection::save(QDomDocument &doc, QDomElement &parent)
 {
   QDomElement connectionElem = doc.createElement("Connection");
@@ -42,6 +43,8 @@ void Engine::Connection::load(QDomElement &connectionElem)
 
 SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
+const std::string Engine::SCHEMA_EXTENSION = ".drn";
+
 
 Engine::Engine(int hwnd) : 
   _hWnd(hwnd),
@@ -446,7 +449,11 @@ void Engine::saveSchema(std::string filename)
     delete (*it);//free
   }
 
-  //save to file
+  //save to file  
+  //set the extension if not already present
+  if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
+    filename.append(SCHEMA_EXTENSION);  
+       
   QFile file(filename.c_str());
   if (file.open(IO_WriteOnly))
   {
@@ -454,6 +461,8 @@ void Engine::saveSchema(std::string filename)
     doc.save(stream,4);
     file.close();
   }
+  else
+    std::cout << "file io error, cannot save!" << std::endl;
 
 }
 
@@ -546,7 +555,6 @@ void Engine::loadSchema(std::string filename)
     }               
   } else
     std::cout << "Bad DroneSchema : problem with <Connections>" << std::endl;
-
 
 }
 

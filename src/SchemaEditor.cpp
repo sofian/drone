@@ -131,7 +131,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
         _state=CONNECTING;
         _activeConnection = new ConnectionItem(_engine, canvas());
         _activeConnection->setStartingPlugBox(selectedPlugBox);
-        _activeConnection->show();
+        _activeConnection->show();        
 
       } else//no, move gear?
       {

@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "GearMaker.h"
-#include <assert.h>
+#include "error.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -30,7 +30,12 @@ Gear* GearMaker::makeGear(Engine *engine, std::string type,std::string name)
   GearMaker *gearMaker= _registry->find(type)->second;
 
   //Gear non trouve dans le registry
-  assert(gearMaker != NULL);
+  if (gearMaker == NULL)
+  {
+      warningmsg("gear %s not found!", type.c_str());
+      return NULL;
+  }
+  
 
   return gearMaker->internalMakeGear(engine,name);
 }

@@ -38,7 +38,7 @@ public:
    * @param height the wished number of rows
    */
   Matrix(size_type width,
-         size_type height)
+         size_type height)    
     : _width(0), _height(0)
   {
     resize(width, height);
