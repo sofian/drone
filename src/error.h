@@ -95,7 +95,7 @@
 
 // Dummy methods (used for empty macros, see up there).
 inline void dummymsg(const char* , ...) {}
-inline void dummymsg(bool, const char* , ...) {}
+inline void assertdummymsg(bool, const char* , ...) {}
 
 //! Prints a message.
 void message(const char* msg, ...);
@@ -122,7 +122,7 @@ void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...);
 #else
 #define ERROR dummymsg
 #define ASSERT_ERROR(expr) __DUMMY_ASSERT
-#define ASSERT_ERROR_MESSAGE dummymsg
+#define ASSERT_ERROR_MESSAGE assertdummymsg
 #endif
 
 //! Warning messages/assertion.
@@ -133,7 +133,7 @@ void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...);
 #else
 #define WARNING dummymsg
 #define ASSERT_WARNING(expr) __DUMMY_ASSERT
-#define ASSERT_WARNING_MESSAGE dummymsg
+#define ASSERT_WARNING_MESSAGE assertdummymsg
 #endif
 
 //! Notice messages/assertion.
@@ -144,7 +144,7 @@ void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...);
 #else
 #define NOTICE dummymsg
 #define ASSERT_NOTICE(expr) __DUMMY_ASSERT
-#define ASSERT_NOTICE_MESSAGE dummymsg
+#define ASSERT_NOTICE_MESSAGE assertdummymsg
 #endif
 
 
