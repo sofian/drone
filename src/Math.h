@@ -283,7 +283,7 @@ inline T max(const T *src, size_t n)
 // and may not be copied or disclosed except in accordance with the terms of
 // that agreement.
 
-#define FAST_MATH_PRECISION 0 // XXX to be changed ultimately (how??)
+#define FAST_MATH_PRECISION 1 // XXX to be changed ultimately (how??)
 
 
 // WARNING : these function are only valid in some interval
@@ -321,14 +321,6 @@ inline float fastcos (float x)
 {
 #if FAST_MATH_PRECISION
   float x2 = x*x;
-  float ret = 3.705e-02f;
-  ret *= x2;
-  ret -= 4.967e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  return ret;
-#else
-  float x2 = x*x;
   float ret = -2.605e-07f;
   ret *= x2;
   ret += 2.47609e-05f;
@@ -341,21 +333,20 @@ inline float fastcos (float x)
   ret *= x2;
   ret += 1.0f;
   return ret;
+#else
+  float x2 = x*x;
+  float ret = 3.705e-02f;
+  ret *= x2;
+  ret -= 4.967e-01f;
+  ret *= x2;
+  ret += 1.0f;
+  return ret;
 #endif
 }
 
 inline float fasttan (float x)
 {
 #if FAST_MATH_PRECISION
-  float x2 = x*x;
-  float ret = 2.033e-01f;
-  ret *= x2;
-  ret += 3.1755e-01f;
-  ret *= x2;
-  ret += 1.0f;
-  ret *= x;
-  return ret;
-#else
   float x2 = x*x;
   float ret = 9.5168091e-03f;
   ret *= x2;
@@ -368,6 +359,15 @@ inline float fasttan (float x)
   ret += 1.333923995e-01f;
   ret *= x2;
   ret += 3.333314036e-01f;
+  ret *= x2;
+  ret += 1.0f;
+  ret *= x;
+  return ret;
+#else
+  float x2 = x*x;
+  float ret = 2.033e-01f;
+  ret *= x2;
+  ret += 3.1755e-01f;
   ret *= x2;
   ret += 1.0f;
   ret *= x;
