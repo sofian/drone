@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-unix:QMAKE_CXXFLAGS += -rdynamic
+unix:!macx:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -39,17 +39,17 @@ TEMPLATE = lib
 INCLUDEPATH += . types contrib/frei0r
 
 #mac
-mac:INCLUDEPATH += /Developer/Headers/FlatCarbon
-mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
-mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
-mac:LIBS += -lz
-mac:LIBS += -framework OpenGL
-mac:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-mac:TARGET = ../../drone.app/Contents/Frameworks/droneCore
+macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
+macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+macx:LIBS += -lz
+macx:LIBS += -framework OpenGL
+macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
+macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
 
 #linux
-unix:LIBS += -lGLU -lGL
-unix:TARGET = ../../lib/droneCore
+unix:!macx:LIBS += -lGLU -lGL
+unix:!macx:TARGET = ../../lib/droneCore
 
 
 HEADERS += config.h \
