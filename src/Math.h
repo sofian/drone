@@ -92,14 +92,15 @@ inline T SQR(T x)
 inline int MAX255(int a)
 { return (a | ((a & 256) - ((a & 256) >> 8))); }
 
-//! Clamp a int32-range int between 0 and 255 inclusive
-#ifndef CLAMP0255
-#define CLAMP0255(a)  CLAMP(a,0,255)
-#endif
-
-
 // End LIBGIMP
 
+//! Clamp a int32-range int between 0 and 255 inclusive
+inline unsigned char CLAMP0255(int a)
+{
+  return (unsigned char)
+    ( (((-a) >> 31) & a)  // 0 if the number was negative
+      | (255 - a) >> 31); // -1 if the number was greater than 255
+}
 
 #define PI_DIV_180 M_PI / 180
 inline double DEG2RAD(double d)
