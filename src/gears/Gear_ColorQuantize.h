@@ -19,7 +19,8 @@ public:
   Gear_ColorQuantize(Engine *engine, std::string name);
   virtual ~Gear_ColorQuantize();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
 
