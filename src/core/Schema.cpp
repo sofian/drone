@@ -324,6 +324,12 @@ bool Schema::removeDeepGear(Gear* gear)
   return false;
 }
 
+void Schema::initGear(Gear * gear) const
+{
+  gear->internalInit();
+}
+
+
 MetaGear* Schema::addMetaGear(std::string name)
 {
   return addMetaGear(name, getUniqueGearName(name));
@@ -332,7 +338,8 @@ MetaGear* Schema::addMetaGear(std::string name)
 MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
 {
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
-  metaGear->internalInit();
+  //  metaGear->internalInit();
+  initGear(metaGear);
   _gears.push_back(metaGear);
 
   return metaGear;
@@ -361,7 +368,8 @@ Gear* Schema::addGear(std::string geartype, std::string uniqueName)
     std::cout << "Schema addGear: " << geartype << " unknown" << std::endl;
   else
   {
-    gear->internalInit();
+    initGear(gear);
+    //gear->internalInit();
     _gears.push_back(gear);
   }
 

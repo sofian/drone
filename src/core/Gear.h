@@ -143,8 +143,9 @@ private:
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &gearElem);
 
-  friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
-  friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);
+  friend void Schema::initGear(Gear* gear) const;
+  //friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
+  //friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);
   friend void *Engine::playThread(void *parent);
   friend bool Schema::load(QDomElement& parent);
   friend bool Schema::save(QDomDocument& doc, QDomElement &parent);

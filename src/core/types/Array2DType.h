@@ -29,6 +29,8 @@ class Array2DType : public AbstractType, public Array2D<T>
 public:
   typedef typename Array2D<T>::size_type size_type;
 
+  using Array2D<T>::resize;
+
   Array2DType(int width = 0,
              int height = 0, 
              T fillValue = T())
@@ -37,7 +39,7 @@ public:
     addSubType(_typeWidth);
     addSubType(_typeHeight);
     resize(width, height);
-    std::fill(begin(), end(), fillValue);
+    fill(fillValue);
   }
 
   void resize(size_type size)

@@ -23,7 +23,7 @@ release {
   OBJECTS_DIR = release  
   QMAKE_CXXFLAGS_RELEASE -= -O2 -Os
   
-  unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3  
+  unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -Os
   
   p4 {
@@ -53,7 +53,7 @@ macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
 
 #linux
-unix:!macx:LIBS += -lGLU -lGL
+unix:!macx:LIBS += -L/usr/X11R6/lib -lGL
 unix:!macx:TARGET = ../../lib/droneCore
 
 

@@ -22,6 +22,7 @@
 
 #include "error.h"
 #include <vector>
+#include <algorithm>
 
 /**
  * This class is a wrapper around the <code>vector<code>, with
@@ -43,13 +44,18 @@ public:
   typedef typename std::vector<T>::pointer pointer;
 
 public:
+  // using (as suggested by Norm)
+  using std::vector<T>::end;
+  using std::vector<T>::begin;
+  using std::vector<T>::front;
+
   /**
    * Default constructor.
    */
   Array() : std::vector<T>() {}
 
   /**
-   * Constructor.
+   * Constructor
    *
    * @param size the size of the vector
    */

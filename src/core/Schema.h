@@ -125,7 +125,9 @@ public:
   void lock(){_locked=true;}
   void unlock();
     
-private:
+  void initGear(Gear * gear) const;
+
+ private:
 
   Gear* addGear(std::string geartype, std::string uniqueName);
   MetaGear* addMetaGear(std::string name, std::string uniqueName);

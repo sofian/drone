@@ -12,7 +12,7 @@ release {
   OBJECTS_DIR = release  
   QMAKE_CXXFLAGS_RELEASE -= -O2 -Os
   
-  unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3  
+  unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
   macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -mcpu=G4 -mtune=G4 -Os  
   
   p4 {

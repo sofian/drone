@@ -45,6 +45,10 @@ public:
   typedef typename std::vector<T>::pointer pointer;
 
 public:
+  // using (as suggested by Norm)
+  using Array<T>::data;
+  using Array<T>::size;
+
   /**
    * Default constructor.
    */
@@ -142,7 +146,7 @@ public:
     if (width==_width && height==_height)
       return;
     
-    std::vector<T>::resize(width*height);
+    resize(width*height);
     _width = width;
     _height = height;
   
@@ -182,7 +186,7 @@ protected:
   //! The number of columns.
   size_type _width;
 
-  //! The number of rows.
+  //! The number of rows
   size_type _height;
 
   //! The precomputed array of row pointers.

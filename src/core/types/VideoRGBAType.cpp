@@ -6,7 +6,7 @@ namespace GL
 #include <OpenGL/glu.h>
 #else
 #include <GL/gl.h>              
-#include <GL/glu.h>
+  //#include <GL/glu.h>
 #endif
 }
 

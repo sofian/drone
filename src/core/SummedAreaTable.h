@@ -45,6 +45,14 @@ template <typename Type = unsigned char, typename AccType = int, size_t SIZE = S
 class SummedAreaTable : public Array2D<AccType*>
 {
 public:
+  // using (as suggested by Norm)
+  using Array2D<AccType*>::get;
+  using Array2D<AccType*>::width;
+  using Array2D<AccType*>::height;
+  using Array2D<AccType*>::size;
+  using Array2D<AccType*>::resize;
+  using Array2D<AccType*>::front;
+
   //! Default constructor.
   SummedAreaTable() : _acc(), _cellSize(SIZE*sizeof(AccType)) {}
 
