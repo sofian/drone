@@ -1,58 +1,60 @@
 <!DOCTYPE DroneSchema>
 <Schema>
     <Gears>
-        <Gear PosX="82" PosY="56" Type="AudioInput" Name="AudioInput1" >
+        <Gear PosX="162" PosY="94" Type="AudioInput" Name="AudioInput1" >
             <Properties FramesPerBuffer="512" NbBuffers="2" />
         </Gear>
-        <Gear PosX="735" PosY="338" Type="VideoOutput" Name="VideoOutput1" >
+        <Gear PosX="729" PosY="453" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="720" PosY="33" Type="VideoOutput" Name="VideoOutput2" >
+        <Gear PosX="856" PosY="72" Type="VideoOutput" Name="VideoOutput2" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="87" PosY="343" Type="VideoSource" Name="VideoSource1" >
+        <Gear PosX="81" PosY="458" Type="VideoSource" Name="VideoSource1" >
             <Properties Filename="/home/mathieu/dl/videos/Radiohead - Karma Police.mpg" />
         </Gear>
-        <Gear PosX="496" PosY="31" Type="Oscilloscope" Name="Oscilloscope1" >
+        <Gear PosX="724" PosY="66" Type="Oscilloscope" Name="Oscilloscope1" >
             <Properties/>
         </Gear>
-        <Gear PosX="367" PosY="129" Type="Slider" SliderPos="202.537" Name="Slider1" >
+        <Gear PosX="588" PosY="167" Type="Slider" SliderPos="139.707" Name="Slider1" >
             <Properties Lower_Bound="32" Higher_Bound="768" />
         </Gear>
-        <Gear PosX="233" PosY="104" Type="Slider" SliderPos="382.049" Name="Slider2" >
+        <Gear PosX="477" PosY="114" Type="Slider" SliderPos="382.049" Name="Slider2" >
             <Properties Lower_Bound="32" Higher_Bound="768" />
         </Gear>
-        <Gear PosX="227" PosY="27" Type="Slider" SliderPos="18.2927" Name="Slider3" >
-            <Properties Lower_Bound="0" Higher_Bound="100" />
+        <Gear PosX="473" PosY="42" Type="Slider" SliderPos="1.06098" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
         </Gear>
-        <Gear PosX="367" PosY="1" Type="Slider" SliderPos="12212.5" Name="Slider4" >
+        <Gear PosX="598" PosY="13" Type="Slider" SliderPos="12212.5" Name="Slider4" >
             <Properties Lower_Bound="512" Higher_Bound="192400" />
         </Gear>
-        <Gear PosX="366" PosY="58" Type="Gain" Name="Gain1" >
+        <Gear PosX="314" PosY="67" Type="Gain" Name="Gain1" >
             <Properties/>
         </Gear>
-        <Gear PosX="525" PosY="165" Type="Enveloppe" Name="Enveloppe1" >
+        <Gear PosX="534" PosY="227" Type="Enveloppe" Name="Enveloppe1" >
             <Properties/>
         </Gear>
-        <Gear PosX="524" PosY="338" Type="Blur" Name="Blur1" >
+        <Gear PosX="536" PosY="453" Type="Blur" Name="Blur1" >
             <Properties/>
         </Gear>
-        <Gear PosX="225" PosY="180" Type="Slider" SliderPos="0.109756" Name="Slider5" >
+        <Gear PosX="366" PosY="243" Type="Slider" SliderPos="0.109756" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="1" />
         </Gear>
-        <Gear PosX="364" PosY="224" Type="Slider" SliderPos="0.0097561" Name="Slider6" >
+        <Gear PosX="366" PosY="306" Type="Slider" SliderPos="0.0097561" Name="Slider6" >
             <Properties Lower_Bound="0" Higher_Bound="0.1" />
         </Gear>
-        <Gear PosX="525" PosY="259" Type="SignalStat" Name="SignalStat1" >
+        <Gear PosX="535" PosY="364" Type="SignalStat" Name="SignalStat1" >
             <Properties/>
         </Gear>
-        <Gear PosX="221" PosY="275" Type="Slider" SliderPos="25.6098" Name="Slider7" >
+        <Gear PosX="165" PosY="206" Type="FlatSignal" Name="FlatSignal1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="34" PosY="215" Type="Slider" SliderPos="13.4146" Name="Slider8" >
             <Properties Lower_Bound="0" Higher_Bound="100" />
         </Gear>
     </Gears>
     <Connections>
         <Connection GearA="AudioInput1" GearB="Gain1" Input="In" Output="Left" />
-        <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
         <Connection GearA="VideoSource1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="Oscilloscope1" GearB="VideoOutput2" Input="VideoOutput2" Output="Out" />
         <Connection GearA="Slider1" GearB="Oscilloscope1" Input="SizeY" Output="Value" />
@@ -60,11 +62,13 @@
         <Connection GearA="Slider3" GearB="Oscilloscope1" Input="ZoomY" Output="Value" />
         <Connection GearA="Slider4" GearB="Oscilloscope1" Input="ZoomX" Output="Value" />
         <Connection GearA="Gain1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
         <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
         <Connection GearA="Blur1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
         <Connection GearA="Slider5" GearB="Enveloppe1" Input="Rel" Output="Value" />
         <Connection GearA="Slider6" GearB="Enveloppe1" Input="Att" Output="Value" />
         <Connection GearA="SignalStat1" GearB="Blur1" Input="Amount" Output="Out" />
-        <Connection GearA="Slider7" GearB="SignalStat1" Input="Func" Output="Value" />
+        <Connection GearA="FlatSignal1" GearB="Gain1" Input="Gain" Output="Out" />
+        <Connection GearA="Slider8" GearB="FlatSignal1" Input="In" Output="Value" />
     </Connections>
 </Schema>
