@@ -51,6 +51,7 @@ class SchemaEditor : public QCanvasView
   void recreateSchemaFromEngine();
   void zoomIn();
   void zoomOut();
+  void zoom(float factor);
   void clearSchema();
   void loadSchema(std::string filename);
   //void saveSchema(std::string filename);
@@ -94,6 +95,7 @@ private:
   //popupmenus
   std::vector<std::string> _allGearsName;
   QPopupMenu *_allGearsMenu; 
+  // position of right click in Canvas coordinates
   QPoint _allGearsMenuPos;
   QPopupMenu *_gearMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop

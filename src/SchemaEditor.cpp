@@ -169,47 +169,42 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 }
 
 void SchemaEditor::contentsWheelEvent(QWheelEvent * wheelEvent)
-{        
+{
   if (wheelEvent->delta() > 0)
-    _zoom+=ZOOM_FACTOR;
+    zoom(ZOOM_FACTOR);
   else
-    _zoom-=ZOOM_FACTOR;
-
-  if (_zoom < 0.2f)
-    _zoom = 0.2f;
-
-  QWMatrix wm;    
-  wm.scale(_zoom, _zoom);
-  //wm.translate();
-  setWorldMatrix(wm);
-
+    zoom(-ZOOM_FACTOR);
 }
 
 void SchemaEditor::zoomIn()
 {
-  _zoom+=ZOOM_FACTOR;
-
-  if (_zoom < 0.2f)
-    _zoom = 0.2f;
-
-  QWMatrix wm;    
-  wm.scale(_zoom, _zoom);
-  //wm.translate();
-  setWorldMatrix(wm);
-
+  zoom(ZOOM_FACTOR);
 }
 
 void SchemaEditor::zoomOut()
 {
-  _zoom-=ZOOM_FACTOR;
+  zoom(-ZOOM_FACTOR);
+}
 
+void SchemaEditor::zoom(float factor)
+{
+  _zoom+=factor;
   if (_zoom < 0.2f)
     _zoom = 0.2f;
 
-  QWMatrix wm;    
+  int oldcenterx = visibleWidth()/2;
+  int oldcentery = visibleHeight()/2;
+  int x, y;
+  viewportToContents(oldcenterx, oldcentery, x, y);
+  inverseWorldMatrix().map(x, y, &x, &y);
+	
+  QWMatrix wm;
   wm.scale(_zoom, _zoom);
-  //wm.translate();
   setWorldMatrix(wm);
+
+  
+  worldMatrix().map(x, y, &x, &y);
+  setContentsPos(x-oldcenterx, y-oldcentery);
 
 }
 
@@ -273,7 +268,6 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
 {
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = testForGearCollision(p);
-  PlugBox *selectedPlugBox;
 
   if (gearGui!=NULL)
   {

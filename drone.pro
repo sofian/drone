@@ -23,6 +23,9 @@ release {
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }
+  p3 {
+    QMAKE_CXXFLAGS += -march=pentium3
+  }
   athlon {
     QMAKE_CXXFLAGS += -march=athlon
   }
@@ -85,6 +88,7 @@ src/gears/Gear_Rescale.h \
 src/gears/Gear_Spectrogram.h \
 src/gears/Gear_PushButton.h \
 src/gears/Gear_Saturation.h \
+src/gears/Gear_SmearGrid.h \
 src/gears/Gear_SignalStat.h \
 src/gears/Gear_SimpleDelay.h \
 src/gears/Gear_Slider.h \
@@ -178,6 +182,7 @@ src/gears/Gear_Saturation.cpp \
 src/gears/Gear_SignalStat.cpp \
 src/gears/Gear_SimpleDelay.cpp \
 src/gears/Gear_Slider.cpp \
+src/gears/Gear_SmearGrid.cpp \
 src/gears/Gear_Spectrogram.cpp \
 src/gears/Gear_TV.cpp \
 src/gears/Gear_TouchPad.cpp \

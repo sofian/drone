@@ -2,7 +2,7 @@
 <Schema>
     <Gears>
         <Gear PosX="156" PosY="114" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/julien/dev/drone/media/TrueExpe1938.mpg" />
+            <Properties Filename="/home/julien/dev/drone/media/Breakfas1939.mpeg" />
         </Gear>
         <Gear PosX="505" PosY="158" Type="Blur" Name="Blur1" >
             <Properties/>

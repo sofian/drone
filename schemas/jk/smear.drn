@@ -2,28 +2,22 @@
 <Schema>
     <Gears>
         <Gear PosX="36" PosY="132" Type="VideoSource" Name="VideoSource1" >
-            <Properties Filename="/home/julien/dev/drone/media/Perversi1965_2.mpeg" />
+            <Properties Filename="/home/julien/dev/drone/media/DateWith1950_2.mpeg" />
         </Gear>
         <Gear PosX="368" PosY="136" Type="VideoBlend" Name="VideoBlend1" >
             <Properties/>
         </Gear>
-        <Gear PosX="239" PosY="384" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
-            <Properties/>
-        </Gear>
-        <Gear PosX="415" PosY="301" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+        <Gear PosX="367" PosY="239" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
             <Properties/>
         </Gear>
         <Gear PosX="781" PosY="151" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="444" PosY="448" Type="Slider" SliderPos="0.097561" Name="Slider3" >
+        <Gear PosX="416" PosY="374" Type="Slider" SliderPos="0.902439" Name="Slider3" >
             <Properties Lower_Bound="0" Higher_Bound="2" />
         </Gear>
-        <Gear PosX="83" PosY="538" Type="Slider" SliderPos="-0.0487805" Name="Slider2" >
-            <Properties Lower_Bound="-0.1" Higher_Bound=".1" />
-        </Gear>
-        <Gear PosX="647" PosY="62" Type="Blur" Name="Blur1" >
-            <Properties/>
+        <Gear PosX="63" PosY="512" Type="Slider" SliderPos="0.0731707" Name="Slider2" >
+            <Properties Lower_Bound="-3" Higher_Bound="3" />
         </Gear>
         <Gear PosX="373" PosY="24" Type="Saturation" Name="Saturation1" >
             <Properties/>
@@ -31,10 +25,10 @@
         <Gear PosX="186" PosY="13" Type="Slider" SliderPos="0.00243902" Name="Slider4" >
             <Properties Lower_Bound="0" Higher_Bound=".2" />
         </Gear>
-        <Gear PosX="637" PosY="509" Type="Slider" SliderPos="26.2195" Name="Slider5" >
+        <Gear PosX="637" PosY="509" Type="Slider" SliderPos="0.609756" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="50" />
         </Gear>
-        <Gear PosX="536" PosY="229" Type="Slider" SliderPos="12.9756" Name="Slider6" >
+        <Gear PosX="606" PosY="35" Type="Slider" SliderPos="12.9756" Name="Slider6" >
             <Properties Lower_Bound="2" Higher_Bound="32" />
         </Gear>
         <Gear PosX="475" PosY="575" Type="Slider" SliderPos="2.73171" Name="Slider1" >
@@ -43,43 +37,42 @@
         <Gear PosX="20" PosY="-3" Type="TV" Name="TV1" >
             <Properties/>
         </Gear>
-        <Gear PosX="143" PosY="262" Type="Slider" SliderPos="252.988" Name="Slider7" >
+        <Gear PosX="210" PosY="195" Type="Slider" SliderPos="238.902" Name="Slider7" >
             <Properties Lower_Bound="200" Higher_Bound="255" />
         </Gear>
-        <Gear TouchPadHorizontalPos="746.379" TouchPadVerticalPos="746.3790.0458824" PosX="36" PosY="361" Type="TouchPad" Name="TouchPad1" >
+        <Gear TouchPadHorizontalPos="378.931" TouchPadVerticalPos="378.931-0.0858824" PosX="36" PosY="361" Type="TouchPad" Name="TouchPad1" >
             <Properties Horizontal_higher_Bound="999" Horizontal_lower_Bound="-999" Vertical_lower_Bound="-.1" Vertical_higher_Bound=".1" />
         </Gear>
-        <Gear PosX="708" PosY="300" Type="ColorAdjust" Name="ColorAdjust1" >
-            <Properties/>
-        </Gear>
-        <Gear PosX="592" PosY="407" Type="Contrast" Name="Contrast1" >
+        <Gear PosX="544" PosY="163" Type="Contrast" Name="Contrast1" >
             <Properties/>
         </Gear>
         <Gear PosX="201" PosY="77" Type="AffineTransform" Name="AffineTransform1" >
             <Properties/>
         </Gear>
+        <Gear PosX="240" PosY="366" Type="SmearGrid" Name="SmearGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="91" PosY="575" Type="Slider" SliderPos="0.0243902" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
     </Gears>
     <Connections>
         <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgB" Output="ImgOut" />
         <Connection GearA="VideoSource1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="SmearGrid1" Input="ImgIN" Output="ImgOut" />
         <Connection GearA="VideoBlend1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="VideoBlend1" GearB="ColorAdjust1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="VideoBlend1" GearB="Contrast1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
         <Connection GearA="ApplyDisplaceGrid1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
         <Connection GearA="Slider3" GearB="ApplyDisplaceGrid1" Input="Mode" Output="Value" />
-        <Connection GearA="Blur1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
-        <Connection GearA="Saturation1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider2" GearB="SmearGrid1" Input="PARAM1" Output="Value" />
         <Connection GearA="Saturation1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
         <Connection GearA="Slider4" GearB="AffineTransform1" Input="Scale" Output="Value" />
-        <Connection GearA="Slider5" GearB="Blur1" Input="Amount" Output="Value" />
         <Connection GearA="Slider7" GearB="VideoBlend1" Input="Alpha" Output="Value" />
-        <Connection GearA="TouchPad1" GearB="ColorAdjust1" Input="Red" Output="HValue" />
-        <Connection GearA="TouchPad1" GearB="ColorAdjust1" Input="Blue" Output="HValue" />
         <Connection GearA="TouchPad1" GearB="Contrast1" Input="Amount" Output="HValue" />
         <Connection GearA="TouchPad1" GearB="AffineTransform1" Input="In" Output="HValue" />
-        <Connection GearA="TouchPad1" GearB="GenDisplaceGrid1" Input="SCALE" Output="VValue" />
+        <Connection GearA="TouchPad1" GearB="SmearGrid1" Input="SCALE" Output="VValue" />
         <Connection GearA="Contrast1" GearB="Saturation1" Input="ImgIN" Output="ImgOUT" />
         <Connection GearA="AffineTransform1" GearB="Saturation1" Input="Amount" Output="Out" />
+        <Connection GearA="SmearGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
     </Connections>
 </Schema>

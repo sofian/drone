@@ -95,6 +95,8 @@ void Gear_GenDisplaceGrid::runVideo()
 
   fy = - _ysize/2;
   
+  double _scale2,xx,yy;
+
   switch(_type)
   {
   case 0:
@@ -103,8 +105,10 @@ void Gear_GenDisplaceGrid::runVideo()
       for (int x=0 ; x<_xsize ; x++)
       {        
         _gridData->xdisp = _scale * ((float)(*_data++)-128);
+        _data++;
         _gridData->ydisp = _scale * ((float)(*_data++)-128);
-        _data+=2;
+                                                
+        _data++;
         _gridData++;
       }
     }   
