@@ -14,7 +14,8 @@ public:
   Gear_Edge(Engine *engine, std::string name);
   virtual ~Gear_Edge();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
 
@@ -31,16 +32,16 @@ private:
   int _sizeY;
   int _sizeX;    
 
-  RGBA _adjust[2];
+  //  RGBA _adjust[2];
 
-  double *_mmxImageInL0;
-  double *_mmxImageInL02;
-  double *_mmxImageInL1;
-  double *_mmxImageInL12;
-  double *_mmxImageInL2;
-  double *_mmxImageInL22;
-  double *_mmxImageOut;    
-  double *_mmxAdjust;
+//   double *_mmxImageInL0;
+//   double *_mmxImageInL02;
+//   double *_mmxImageInL1;
+//   double *_mmxImageInL12;
+//   double *_mmxImageInL2;
+//   double *_mmxImageInL22;
+//   double *_mmxImageOut;    
+//   double *_mmxAdjust;
 
 
 

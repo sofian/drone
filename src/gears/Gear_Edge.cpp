@@ -12,7 +12,7 @@ Gear_Edge::Gear_Edge(Engine *engine, std::string name) : Gear(engine, "Edge", na
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f)));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127.0f, 0.0f, 255.0f)));
 }
 
 Gear_Edge::~Gear_Edge()
@@ -34,8 +34,8 @@ void Gear_Edge::runVideo()
   _outImage->resize(_image->width(), _image->height());
   _data = (unsigned char*)_image->data();
   _outData = (unsigned char*)_outImage->data();
-  float tresh = _AMOUNT_IN->type()->value();
-
+  int threshold = (int)CLAMP(_AMOUNT_IN->type()->value(), 0.0f, 255.0f);
+  
   _sizeX = _image->width();
   _sizeY = _image->height();
 
@@ -53,7 +53,7 @@ void Gear_Edge::runVideo()
                                       _data[y*_sizeX*4+(x-1)*4+z] -
                                       _data[y*_sizeX*4+(x+1)*4+z])/2;
 
-        if (_outData[y*_sizeX*4+x*4+z]<tresh)
+        if (_outData[y*_sizeX*4+x*4+z]<threshold)
           _outData[y*_sizeX*4+x*4+z]=0;
 
         //if(z<3)pp+=_outData[y*_sizeX*4+x*4+z];
