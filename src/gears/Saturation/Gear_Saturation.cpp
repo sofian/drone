@@ -45,7 +45,7 @@ Gear_Saturation::Gear_Saturation(Schema *schema, std::string uniqueName) : Gear(
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 10.0f)));
+  addPlug(_SATURATION_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 10.0f)));
 
 }
 
@@ -70,9 +70,9 @@ void Gear_Saturation::runVideo()
 
   _size = (int) _image->size();
 
-  if (_saturation != _AMOUNT_IN->type()->value())
+  if (_saturation != _SATURATION_IN->type()->value())
   {
-      _saturation = _AMOUNT_IN->type()->value();
+      _saturation = _SATURATION_IN->type()->value();
       computeLookUpTable();
   }
   _imageIn  = (const unsigned char*) _image->data();

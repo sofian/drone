@@ -44,7 +44,7 @@ private:
 private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
-  PlugIn<ValueType> *_AMOUNT_IN;
+  PlugIn<ValueType> *_SATURATION_IN;
 
   //local var
   const VideoRGBAType *_image; 
