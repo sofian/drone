@@ -15,6 +15,7 @@ HEADERS += config.h \
            src/Engine.h \
            src/FrequencyAnalyzer.h \
            src/Gear.h \
+           src/Gear_AsciiArt.h \
            src/Gear_AudioInput.h \
            src/Gear_AudioOutput.h \
            src/Gear_AudioSource.h \
@@ -91,6 +92,7 @@ SOURCES += src/Canvas.cpp \
            src/Engine.cpp \
            src/FrequencyAnalyzer.cpp \
            src/Gear.cpp \
+           src/Gear_AsciiArt.cpp \
            src/Gear_AudioInput.cpp \
            src/Gear_AudioOutput.cpp \
            src/Gear_AudioSource.cpp \

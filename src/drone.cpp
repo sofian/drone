@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #include "Signal.h"
-#include "CircBuf.h"
+#include "CircularBufferSignal.h"
 
 int main(int argc, char** argv)
 {
