@@ -12,6 +12,7 @@
 
 #include "Signal.h"
 #include "CircularBufferSignal.h"
+#include "Utils.h"
 
 int main(int argc, char** argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, char** argv)
 
     MainWindow mainWindow;
     qtApp.setMainWidget(&mainWindow);
-
+    
     //temp just because it's too fast for now
 //    Timing::sleep(500);
     //
@@ -33,7 +34,11 @@ int main(int argc, char** argv)
 
     //splash.finish(&mainWindow);
 
+    paint_funcs_setup();
+    
     qtApp.exec();
+
+    paint_funcs_free();
 
 }
 
