@@ -203,30 +203,33 @@ void SummedAreaTable<Type, AccType, SIZE>::reset(const Type *src, size_t srcWidt
   ::clear(iterAcc, _rowWidth);
   iterAcc += _rowWidth;
 
-  // Process second row.
-  memset(_accBuffer, 0, _cellSize);
-  memset(iterAcc,    0, _cellSize); // first column is void
-  iterAcc += SIZE;
-  for (size_t x=1; x<width(); ++x)
+  if (_srcHeight >= 0)
   {
-    for (i=0; i<SIZE; ++i)
-      *iterAcc++ = (_accBuffer[i] += *iterData++);
-  }
-
-  // Process other rows.
-  for (size_t y=2; y<height(); ++y)
-  {
-    // Copy upper line.
-    memcpy(iterAcc, iterAcc - _rowWidth, _rowWidth * sizeof(AccType));
-
-    // Process row.
+    // Process second row.
     memset(_accBuffer, 0, _cellSize);
     memset(iterAcc,    0, _cellSize); // first column is void
     iterAcc += SIZE;
     for (size_t x=1; x<width(); ++x)
     {
       for (i=0; i<SIZE; ++i)
-        *iterAcc++ += (_accBuffer[i] += *iterData++);
+        *iterAcc++ = (_accBuffer[i] += *iterData++);
+    }
+
+    // Process other rows.
+    for (size_t y=2; y<height(); ++y)
+    {
+      // Copy upper line.
+      memcpy(iterAcc, iterAcc - _rowWidth, _rowWidth * sizeof(AccType));
+
+      // Process row.
+      memset(_accBuffer, 0, _cellSize);
+      memset(iterAcc,    0, _cellSize); // first column is void
+      iterAcc += SIZE;
+      for (size_t x=1; x<width(); ++x)
+      {
+        for (i=0; i<SIZE; ++i)
+          *iterAcc++ += (_accBuffer[i] += *iterData++);
+      }
     }
   }
 }
