@@ -33,11 +33,10 @@ public:
   Gear_Gamma(Engine *engine, std::string name);
   virtual ~Gear_Gamma();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
-
-
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_GAMMA_IN;

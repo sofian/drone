@@ -33,7 +33,8 @@ public:
   Gear_Contrast(Engine *engine, std::string name);
   virtual ~Gear_Contrast();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
 
@@ -41,7 +42,6 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_CONTRAST_IN;
-  PlugIn<ValueType> *_BRIGHTNESS_IN;
 
   //local var
   const VideoRGBAType *_image; 

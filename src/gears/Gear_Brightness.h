@@ -33,11 +33,10 @@ public:
   Gear_Brightness(Engine *engine, std::string name);
   virtual ~Gear_Brightness();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
-
-
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_BRIGHTNESS_IN;
