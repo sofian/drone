@@ -2,7 +2,7 @@ TEMPLATE=subdirs
 SUBDIRS= Osc \
 TV \
 Oscilloscope \
-#VideoOutput \
+VideoOutput \
 Blur \
 VideoSource \
 Slider \

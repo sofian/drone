@@ -22,7 +22,12 @@
 #include "GearMaker.h"
 #include "Engine.h"
 #include "VideoOutput.h"
+
+#if defined(Q_OS_MACX)
+#include "VideoOutputQT.h"
+#else
 #include "VideoOutputMaker.h"
+#endif
 
 #include <iostream>
 
@@ -56,9 +61,12 @@ _videoOutput(NULL)
 {
   //populate available video output list in order of preference
   //the init will try them in order, until he find one that fit
+#ifndef Q_OS_MACX
   _allOutputs.push_back("Xv");
   _allOutputs.push_back("Gl");
   _allOutputs.push_back("Shm");
+  _allOutputs.push_back("QT");
+#endif  
   //
 
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "IN"));
@@ -81,7 +89,17 @@ bool Gear_VideoOutput::ready()
 }
 
 void Gear_VideoOutput::init()
-{             
+{ 
+//osx version dont use the VideoOutputMaker strategy and directly use the QT output
+#if defined(Q_OS_MACX)
+	_videoOutput = new VideoOutputQT();
+	if (!_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(), false))
+	{
+		std::cout << "fail to init QT videoOutput" << std::endl;
+		delete _videoOutput;
+		_videoOutput=NULL;
+	}
+#else
   std::cout << "selecting best video output for your hardware..." << std::endl; 
   for (std::vector<std::string>::iterator it=_allOutputs.begin();it!=_allOutputs.end();++it)
   {
@@ -104,6 +122,7 @@ void Gear_VideoOutput::init()
   }
 
   std::cout << "sac a papier! fail to find a video output!!!" << std::endl;
+#endif
 }
 
 void Gear_VideoOutput::prePlay()
