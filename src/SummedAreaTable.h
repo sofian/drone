@@ -10,6 +10,7 @@
 
 class SummedAreaTable
 {
+  static const RGBAint ZERO;
 public:
 
   SummedAreaTable();
@@ -25,8 +26,8 @@ public:
   inline void getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const;
   inline void getSumOfSquares(RGBAint *sumSquares, int x0, int y0, int x1, int y1) const;
 
-  inline RGBAint *getAcc(int x, int y) const;
-  inline RGBAint *getAccOfSquares(int x, int y) const;
+  inline const RGBAint& getAcc(int x, int y) const;
+  inline const RGBAint& getAccOfSquares(int x, int y) const;
   
   inline int getArea(int x0, int y0, int x1, int y1) const;
 
@@ -34,6 +35,7 @@ public:
   {
     return sum->R + sum->G + sum->B;
   }
+
 public:
   
   RGBAint *_acc;
@@ -107,20 +109,20 @@ int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
   return ((x1-x0) * (y1-y0));
 }
 
-RGBAint *SummedAreaTable::getAcc(int x, int y) const
+const RGBAint& SummedAreaTable::getAcc(int x, int y) const
 {
   if (x < 0 || y < 0)
-    return 0;
+    return ZERO;
   else
-    return &_acc[y * _sizeX + x];
+    return _acc[y * _sizeX + x];
 }
 
-RGBAint *SummedAreaTable::getAccOfSquares(int x, int y) const
+const RGBAint& SummedAreaTable::getAccOfSquares(int x, int y) const
 {
   if (x < 0 || y < 0)
-    return 0;
+    return ZERO;
   else
-    return &_accSquares[y * _sizeX + x];
+    return _accSquares[y * _sizeX + x];
 }
 
 #endif
