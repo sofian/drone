@@ -53,6 +53,11 @@ public:
 
   void init() {}
 
+	AbstractPlug *clone(Gear* parent)
+	{
+		return new PlugOut<T>(parent, name());
+	}
+	
 private:
   T *_type, *_internalType;
   //! state of the plug : when gears don't update a plug, _plugState is == SLEEPING to tell the plug is inactive.
@@ -102,6 +107,11 @@ public:
 //       }
 //     }
 
+	AbstractPlug *clone(Gear* parent)
+	{
+			return new PlugOut<T>(parent, name());
+	}
+	
 protected:
   void setType(const T *type)
   {

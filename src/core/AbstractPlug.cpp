@@ -97,8 +97,8 @@ bool AbstractPlug::connect(AbstractPlug *plug)
   _connectedPlugs.push_back(plug);        
   plug->_connectedPlugs.push_back(this);    
 
-  _parent->onPlugConnected(this);
-  plug->_parent->onPlugConnected(plug);
+  _parent->onPlugConnected(this, plug);
+  plug->_parent->onPlugConnected(plug, this);
 
   //laisser la chance au class derive d'executer leur logique supplementaire
   onConnection(plug);
@@ -121,8 +121,8 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   if (it == _connectedPlugs.end())
     return false;
 
-  _parent->onPlugDisconnected(this);
-  plug->_parent->onPlugDisconnected(plug);
+  _parent->onPlugDisconnected(this, plug);
+  plug->_parent->onPlugDisconnected(plug, this);
 
   //laisser la chance au class derive d'executer leur logique supplementaire
   onDisconnection(plug);

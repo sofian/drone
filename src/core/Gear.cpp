@@ -123,6 +123,7 @@ AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 }
 
 //! temp method
+/*
 void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
 {
   std::string str;
@@ -139,6 +140,7 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
     addPlugAndSubPlugs(new AbstractPlug(this, plug->inOut(), str + subtype->name(), subtype ),level+1);
   }
 }
+*/
 
 void Gear::getInputs(std::list<AbstractPlug*> &inputs, bool onlyExposed) const
 {

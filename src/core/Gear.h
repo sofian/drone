@@ -114,13 +114,13 @@ protected:
   virtual GearGui* createGearGui(QCanvas *canvas);
 
   virtual void onUpdateSettings(){};
-  virtual void onPlugConnected(AbstractPlug*){};
-  virtual void onPlugDisconnected(AbstractPlug*){}; 
+  virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug
+  virtual void onPlugDisconnected(AbstractPlug*, AbstractPlug*){};//!disconnection form one of our plug from other plug
   friend bool AbstractPlug::connect(AbstractPlug *plug);
   friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
   AbstractPlug* addPlug(AbstractPlug* plug);       
-  void addPlugAndSubPlugs(AbstractPlug* plug, int level);
+  //void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
   void deletePlug(AbstractPlug *plug);
 

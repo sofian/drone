@@ -52,8 +52,8 @@ public:
 protected:
   GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
   void onUpdateSettings();
-  void onPlugConnected(AbstractPlug *plug);
-  void onPlugDisconnected(AbstractPlug* plug);
+  void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
+  void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
 
 private:
   PlugOut<ValueType>* _VALUE_H_OUT;

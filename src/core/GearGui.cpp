@@ -78,12 +78,12 @@ GearGui::~GearGui()
 
 int GearGui::renderingStartX()
 {
-  return x() + RENDERING_OFFSET;
+	return (int)x() + RENDERING_OFFSET;
 }
 
 int GearGui::renderingStartY()
 {
-  return y() + RENDERING_OFFSET;
+	return (int)y() + RENDERING_OFFSET;
 }
 
 //!create plugBoxes from the parent gear plugs

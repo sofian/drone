@@ -77,6 +77,7 @@ public:
   void exposed(bool exp);
   
   //virtual ePlugState plugState()=0;
+	virtual AbstractPlug* clone(Gear* parent)=0;
 
 protected:
   std::list<AbstractPlug*> _connectedPlugs;    

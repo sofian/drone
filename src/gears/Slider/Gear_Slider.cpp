@@ -91,7 +91,7 @@ void Gear_Slider::onUpdateSettings()
   _acceptHint = false;
 }
 
-void Gear_Slider::onPlugConnected(AbstractPlug *plug)
+void Gear_Slider::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
 {
   if (plug == _VALUE_OUT && _acceptHint)
   {
@@ -103,7 +103,7 @@ void Gear_Slider::onPlugConnected(AbstractPlug *plug)
   }
 }
 
-void Gear_Slider::onPlugDisconnected(AbstractPlug* plug)
+void Gear_Slider::onPlugDisconnected(AbstractPlug* plug, AbstractPlug*)
 {
    if (plug == _VALUE_OUT)
      _acceptHint=true;

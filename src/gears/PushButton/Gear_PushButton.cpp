@@ -77,14 +77,14 @@ void Gear_PushButton::onUpdateSettings()
   getGearGui()->reDraw();
 }
 
-void Gear_PushButton::onPlugConnected(AbstractPlug *plug)
+void Gear_PushButton::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
 {
   if (plug == _VALUE_OUT && _acceptHint)
   {
   }
 }
 
-void Gear_PushButton::onPlugDisconnected(AbstractPlug* plug)
+void Gear_PushButton::onPlugDisconnected(AbstractPlug* plug, AbstractPlug*)
 {
    if (plug == _VALUE_OUT)
      _acceptHint=true;

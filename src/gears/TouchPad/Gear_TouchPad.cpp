@@ -119,7 +119,7 @@ void Gear_TouchPad::onUpdateVertical()
   _acceptVerticalHint = false;
 }
 
-void Gear_TouchPad::onPlugConnected(AbstractPlug *plug)
+void Gear_TouchPad::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
 {
   if (plug == _VALUE_H_OUT && _acceptHorizontalHint)
   {
@@ -142,7 +142,7 @@ void Gear_TouchPad::onPlugConnected(AbstractPlug *plug)
   
 }
 
-void Gear_TouchPad::onPlugDisconnected(AbstractPlug* plug)
+void Gear_TouchPad::onPlugDisconnected(AbstractPlug* plug, AbstractPlug*)
 {
   if (plug == _VALUE_H_OUT)
     _acceptHorizontalHint=true;

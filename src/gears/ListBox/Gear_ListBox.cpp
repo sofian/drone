@@ -94,7 +94,7 @@ void Gear_ListBox::onUpdateSettings()
   _acceptHint = false;
 }
 
-void Gear_ListBox::onPlugConnected(AbstractPlug *plug)
+void Gear_ListBox::onPlugConnected(AbstractPlug *plug, AbstructPlug *)
 {
   if (plug == _VALUE_OUT && _acceptHint)
   {
@@ -122,7 +122,7 @@ void Gear_ListBox::onPlugConnected(AbstractPlug *plug)
   }
 }
 
-void Gear_ListBox::onPlugDisconnected(AbstractPlug* plug)
+void Gear_ListBox::onPlugDisconnected(AbstractPlug* plug, AbstractPlug *)
 {
    if (plug == _VALUE_OUT)
      _acceptHint=true;
