@@ -60,6 +60,8 @@ private:
   RGBA *_frame[1024];
   RGBA *_outData;
 
+  pthread_mutex_t *_mutex;
+
   //mmx
 //  unsigned long long int *_mmxImageIn;
 //  unsigned long long int *_mmxImageOut;

@@ -37,12 +37,25 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : Gear(engi
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
+
+  _mutex = new pthread_mutex_t();
+  pthread_mutex_init(_mutex, NULL);
+
+  //todo
+  for (int i=0;i<1024;i++)
+    _frame[i] = NULL;
+
 }
 
 Gear_VideoSource::~Gear_VideoSource()
 {
   if (_file!=NULL)
     mpeg3_close(_file);
+
+  pthread_mutex_destroy(_mutex);
+
+  for (int i=0;i<1024;i++)
+    free(_frame[i]);
 
 }
 
@@ -55,25 +68,26 @@ void Gear_VideoSource::onUpdateSettings()
 {
   char tempstr[1024];
 
+  pthread_mutex_lock(_mutex);
+
   strcpy(tempstr,_settings.get(SETTING_FILENAME)->valueStr().c_str());
 
   std::cout << "opening movie : " << tempstr << std::endl;
 
   if (_file!=NULL)
     mpeg3_close(_file);
-
+  
   _file = mpeg3_open(tempstr);    
 
+  
   if (_file==NULL)
   {
     std::cout << "error opening movie : " << tempstr << std::endl;
+    pthread_mutex_unlock(_mutex);
     return;
   }
-
-
   _sizeX = mpeg3_video_width(_file, 0);
   _sizeY = mpeg3_video_height(_file, 0);
-
 
   std::cout << "movie size X : " << _sizeX << std::endl;
   std::cout << "movie size Y : " << _sizeY << std::endl;
@@ -83,19 +97,23 @@ void Gear_VideoSource::onUpdateSettings()
 
 
   for (int i=0;i<_sizeY-1;i++)
-    _frame[i] = (RGBA*) malloc(_sizeX * sizeof(RGBA));
+    _frame[i] = (RGBA*) realloc(_frame[i], _sizeX * sizeof(RGBA));
 
   //from the doc :
   //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
-  _frame[_sizeY-1] = (RGBA*) malloc((_sizeX * sizeof(RGBA)) + 4);
+  _frame[_sizeY-1] = (RGBA*) realloc(_frame[_sizeY-1], (_sizeX * sizeof(RGBA)) + 4);
 
   _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
+
+  pthread_mutex_unlock(_mutex);
 }
 
 void Gear_VideoSource::runVideo()
 {
   if (_file==NULL)
     return;
+
+  pthread_mutex_lock(_mutex);
 
   //_image = _VIDEO_OUT->type().image();
   //_outData = _image.data();
@@ -105,6 +123,8 @@ void Gear_VideoSource::runVideo()
 
   for(int y=0;y<_sizeY;y++)
     memcpy(&_outData[y*_sizeX], _frame[y], sizeof(RGBA) * _sizeX);
+
+  pthread_mutex_unlock(_mutex);
 
 //  register int mmxCols=(_sizeX)/2;
 //  register int index;    
