@@ -10,6 +10,8 @@ CircularBufferSignal::CircularBufferSignal(Signal_T def, int initsize)
   setDynamicResizingMaximumSize(_DYN_RESIZE_MAX);
 }
 
+
+// stats not implemented yet
 void CircularBufferSignal::setStat(Stats stat, bool computed)
 {
   if(stat==STAT_SUM)
@@ -103,21 +105,21 @@ void CircularBufferSignal::resize(int newsize)
   _current=_buf;
 */
 
-
-
 }
 
 
 // appends data to the circular buffer
-// if append size is too big, we resize the buffer.
+// no resizing is done
 void CircularBufferSignal::append(Signal_T * ptr, int size)
 {
-  if(size > _bufSize)
-    resize(size);
-
   int toEnd = _buf + _bufSize - _current;
   int firstRun = MIN(size,toEnd);
-  
+
+  if(size > _bufSize)
+    //log_something !!
+    _bufSize=_bufSize;
+    
+
   memcpy(_current, ptr, firstRun * sizeof(Signal_T));
   _current += firstRun;
   size -= firstRun;
@@ -134,6 +136,16 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
     _current -= _bufSize;
 
 }
+
+// appends data to the circular buffer
+// if append size is too big, we resize the buffer.
+void CircularBufferSignal::appendEnlarge(Signal_T * ptr, int size)
+{
+  if(size > _bufSize)
+    resize(size);
+  append(ptr,size);
+}
+
 
 // returns bounds needed to run over the specified data
 // sample_from : first sample to be read. relative to _current 

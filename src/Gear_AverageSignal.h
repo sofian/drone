@@ -2,6 +2,8 @@
 #define GEAR_AVERAGESIGNAL_INCLUDED
 
 #include "Gear.h"
+#include "CircularBufferSignal.h"
+
 
 class PlugSignal;
 
@@ -25,7 +27,8 @@ private:
     Signal_T _totalSignal;
     Signal_T _nbSamples;
     Signal_T _average;
-    
+  
+    CircularBufferSignal *_cbAudioIn;
 
 };
 

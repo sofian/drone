@@ -11,9 +11,9 @@
 // the variable pcur points on the actual sample
 
 // e.g : 
-// CIRCBUF_SIGNAL_T_LOOPDATA_FORBEGIN(b,-10,-1)  <- no semicolon
+// CIRCBUF_SIGNAL_T_FORBEGIN(b,-10,-1)  <- no semicolon
 //   std::cerr<<*(cbptr++)<<",";
-// CIRCBUF_SIGNAL_T_LOOPDATA_FOREND;
+// CIRCBUF_SIGNAL_T_FOREND;
 
 
 #define CIRCBUF_SIGNAL_T_FORBEGIN(obj,from,to)           \
@@ -62,7 +62,11 @@ public:
   // where t1<=0 and t2<=0, specifying bounds of a sample window in the past ( e.g : t1= -512, t2= -256 ) 
   // (we need 2 pairs in case the time window crosses the buffer start.)
   void getBounds(int t1, int t2, Signal_T_ptr& a1, Signal_T_ptr& a2, Signal_T_ptr& b1, Signal_T_ptr& b2, Stats which_stat=STAT_NONE);
+  
   void append(Signal_T * ptr, int size);
+  // appends and enlarge if buffer is not big enough
+  void appendEnlarge(Signal_T * ptr, int size)
+
   void setDynamicResizingMaximumSize(int sz);
 
   // satistics are 1/3 implemented.. do not use
