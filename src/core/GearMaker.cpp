@@ -70,8 +70,11 @@ void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
 void GearMaker::parseGears()
 {           
   std::cout << "--- loading gears ---" << std::endl;
-  QDir dir("gears");
-    
+#if defined(Q_OS_MACX)
+	QDir dir("../Gears");
+#else
+	QDir dir("gears");
+#endif
   if (!dir.exists())
   {
     warningmsg("no gears path");
@@ -79,7 +82,11 @@ void GearMaker::parseGears()
   }
     
   dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+#if defined(Q_OS_MACX)
+  dir.setNameFilter("*.dylib*");
+#else
   dir.setNameFilter("*.so*");
+#endif  
   
   const QFileInfoList *files = dir.entryInfoList();
   QFileInfoListIterator it(*files);

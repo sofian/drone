@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-QMAKE_CXXFLAGS += -rdynamic
+linux:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -29,7 +29,7 @@ release {
   }
 
   ppc {
-    QMAKE_CXXFLAGS += -march=ppc
+	QMAKE_CXXFLAGS += -O3 -faltivec
   }
   
 }
@@ -38,10 +38,13 @@ release {
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types
-QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
-LIBS += -L../../lib -ldroneCore
+linux:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
+linux:LIBS += -L../../lib -ldroneCore
+mac:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 TARGET = ../../drone
 
+mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 
 HEADERS += config.h \
 GearListMenu.h \ 

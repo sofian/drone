@@ -39,7 +39,7 @@ const int GearGui::SHADOW_OFFSET = 4;
 const QColor GearGui::BOX_COLOR(207,207,209);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
-const QFont GearGui::NAME_FONT("system", 10, QFont::Bold);
+const QFont GearGui::NAME_FONT("Verdana", 12, QFont::Bold);
 
 
 GearGui::GearGui(Gear *pgear, QCanvas *canvas, QColor color, int sizeX, int sizeY, int updateRate) :

@@ -4,7 +4,7 @@
 
 include (config.pro)
 
-QMAKE_CXXFLAGS += -rdynamic
+linux:QMAKE_CXXFLAGS += -rdynamic
 # Use gprof
 gprof {
   QMAKE_CXXFLAGS+=-pg
@@ -29,7 +29,7 @@ release {
   }
 
   ppc {
-    QMAKE_CXXFLAGS += -march=ppc
+    QMAKE_CXXFLAGS += -O3 -faltivec
   }
   
 }
@@ -37,8 +37,17 @@ release {
 
 TEMPLATE = lib
 INCLUDEPATH += . types contrib/frei0r
-LIBS += -lGLU -lGL
-TARGET = ../../lib/droneCore
+mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+mac:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+mac:LIBS += -lz
+mac:LIBS += -framework OpenGL
+mac:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
+
+linux:LIBS += -lGLU -lGL
+
+
+linux:TARGET = ../../lib/droneCore
+mac:TARGET = ../../drone.app/Contents/Frameworks/droneCore
 
 HEADERS += config.h \
 error.h \

@@ -75,9 +75,10 @@ void Timing::sleep(int msec)
 
 int Timing::setProcessFullPriority()
 {
+	int ecode=0;
+#ifdef LINUX
   struct sched_param priority;
-  int ecode;
-
+  
   //Give the current process full priority
   priority.sched_priority = 99;
   ecode = sched_setscheduler(getpid(), SCHED_FIFO, &priority);
@@ -85,7 +86,7 @@ int Timing::setProcessFullPriority()
 
   if (ecode)
     std::cout << "cannot set scheduler priority to 99, must be root" << std::endl;
-
+#endif
   return ecode;
 }
 
