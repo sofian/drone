@@ -149,7 +149,9 @@ Gear* Schema::getGearByName(std::string name) const
   return NULL;
 }
 
-Schema::Schema(MetaGear * parentMetaGear):_parentMetaGear(parentMetaGear)
+Schema::Schema(MetaGear * parentMetaGear) :
+_needSynch(true),  
+_parentMetaGear(parentMetaGear)
 {
 }
 
