@@ -29,10 +29,7 @@ public:
   /**
    * Default constructor.
    */
-  Matrix()
-  {
-    resize(0,0);
-  }
+  Matrix() : _width(0), _height(0) {}
 
   /**
    * Constructor.
@@ -42,6 +39,7 @@ public:
    */
   Matrix(size_type width,
          size_type height)
+    : _width(0), _height(0)
   {
     resize(width, height);
   }
