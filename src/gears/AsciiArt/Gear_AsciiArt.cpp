@@ -28,6 +28,7 @@
 
 aa_context *_aaContext;
 aa_hardware_params _aaHDParams;
+aa_renderparams *_aaRParams;
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
@@ -55,19 +56,22 @@ Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) :
   renderingFunc->setLabel(GOOD, "Good");
   addPlug(_RENDER_IN =  new PlugIn<EnumType>(this, "Render", renderingFunc));
 
-  EnumType *ditheringFunc = new EnumType(N_DITHERING_TYPES, NONE);
-  ditheringFunc->setLabel(NONE, "None"); 
-  ditheringFunc->setLabel(ERROR, "Error-distribution"); 
-  ditheringFunc->setLabel(FLOYD, "Floyd-Steinberg"); 
+  //EnumType *ditheringFunc = new EnumType(N_DITHERING_TYPES, NONE);
+  EnumType *ditheringFunc = new EnumType(AA_DITHERTYPES, AA_NONE);
+  ditheringFunc->setLabel(AA_NONE, "None"); 
+  ditheringFunc->setLabel(AA_ERRORDISTRIB, "Error-distrib"); 
+  ditheringFunc->setLabel(AA_FLOYD_S, "Floyd-Steinberg"); 
   addPlug(_DITHER_IN =  new PlugIn<EnumType>(this, "Dither", ditheringFunc));
 
-  EnumType *charFunc = new EnumType(N_CHARSET_TYPES, BASIC);
-  charFunc->setLabel(BASIC, "7 Bit"); 
-  charFunc->setLabel(EXTENDED, "8 Bit"); 
-  addPlug(_CHAR_IN =  new PlugIn<EnumType>(this, "CharSet", charFunc));
-
+  /* ca ne donne pas de tres bon resultat.. ca depend des fontes.. */
+  //   EnumType *charFunc = new EnumType(N_CHARSET_TYPES, BASIC);
+  //   charFunc->setLabel(BASIC, "7 Bit"); 
+  //   charFunc->setLabel(EXTENDED, "8 Bit"); 
+  //   addPlug(_CHAR_IN =  new PlugIn<EnumType>(this, "CharSet", charFunc));
+  
+  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Brightness", new ValueType(0, 0, 127)));
   addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Contrast", new ValueType(0, 0, 255)));
-  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Brightness", new ValueType(0, 0, 255)));
+  addPlug(_RANDOM_IN = new PlugIn<ValueType>(this, "Noise", new ValueType(0, 0, 255)));
 
 }
 
@@ -80,6 +84,15 @@ void Gear_AsciiArt::init()
 {
   aa_parseoptions (NULL, NULL, NULL, NULL);
   _aaContext = NULL;
+
+  _renderingSpeed = (eRenderingSpeed)CLAMP((int)_RENDER_IN->type()->value(), (int)FAST, (int)GOOD);
+  //_ditheringType = (eDitheringType)CLAMP((int)_DITHER_IN->type()->value(), (int)NONE, (int)FLOYD);
+  _ditheringType = (aa_dithering_mode)CLAMP((int)_DITHER_IN->type()->value(), (int)AA_NONE, (int)AA_FLOYD_S);
+
+  _brightness = CLAMP((int)_BRIGHTNESS_IN->type()->value(), 0, 255);
+  _contrast = CLAMP((int)_CONTRAST_IN->type()->value(), 0, 127);
+  _randomNoise = CLAMP((int)_RANDOM_IN->type()->value(), 0, 255);
+
 }
 
 bool Gear_AsciiArt::ready()
@@ -111,15 +124,15 @@ void Gear_AsciiArt::runVideo()
   if ( _aaContext == NULL ) {
     //_aaContext = aa_autoinit(&_aaHDParams); /* ca, ca sort dans le terminal.. */
     _aaContext = aa_init(&X11_d, &_aaHDParams, NULL);
+
+    if ( _aaContext == NULL ) {
+      fprintf(stderr, "Error while initializing aalib\n");
+      exit(-1);  /* est-ce trop violent? */
+    }
   }
 
-  if ( _aaContext == NULL ) {
-    fprintf(stderr, "error while initialising AA-Lib.\n");
-    exit(-1);  /* c'est violent, mais sinon ca jamme... */
-  }
-
-  _inData = (unsigned char*)_inImage->data();
-  
+  /* drawing */
+  _inData = (unsigned char*)_inImage->data();  
   for (int y=0; y<_sizeY; y++) 
   {
     for (int x=0; x<_sizeX; x++) 
@@ -130,11 +143,38 @@ void Gear_AsciiArt::runVideo()
       _inData++;
     }
   }
-  
-  //aa_render(_aaContext, &aa_defrenderparams, 0, 0, aa_scrwidth(_aaContext), aa_scrheight(_aaContext));
-  aa_fastrender(_aaContext, 0, 0, aa_scrwidth(_aaContext), aa_scrheight(_aaContext));
 
-  /* faire l'affichage */
+  /* rendering */
+  _renderingSpeed = (eRenderingSpeed)CLAMP((int)_RENDER_IN->type()->value(), (int)FAST, (int)GOOD);
+
+  switch (_renderingSpeed) 
+  {
+  case FAST : 
+    aa_fastrender(_aaContext, 0, 0, aa_scrwidth(_aaContext), aa_scrheight(_aaContext));
+    break;
+
+  case GOOD :
+    _aaRParams = aa_getrenderparams();
+
+    //_ditheringType = (eDitheringType)CLAMP((int)_DITHER_IN->type()->value(), (int)NONE, (int)FLOYD);
+    _ditheringType = (aa_dithering_mode)CLAMP((int)_DITHER_IN->type()->value(), (int)AA_NONE, (int)AA_FLOYD_S);
+    _aaRParams->dither = _ditheringType;
+
+    _contrast = CLAMP((int)_CONTRAST_IN->type()->value(), 0, 127);
+    _aaRParams->contrast = _contrast;
+
+    _brightness = CLAMP((int)_BRIGHTNESS_IN->type()->value(), 0, 255);
+    _aaRParams->bright = _brightness;
+
+    _randomNoise = CLAMP((int)_RANDOM_IN->type()->value(), 0, 255);
+    _aaRParams->randomval = _randomNoise;
+
+    aa_render(_aaContext, _aaRParams, 0, 0, 
+              aa_scrwidth(_aaContext), aa_scrheight(_aaContext));    
+    break;
+  }
+
+  /* flushing to screen */
   aa_flush(_aaContext);
   
 }

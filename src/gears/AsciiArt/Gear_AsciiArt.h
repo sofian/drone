@@ -39,20 +39,21 @@ class Gear_AsciiArt : public Gear
     N_RENDERING_TYPES
   };
 
-  enum eDitheringType
-  {
-    NONE,         // 0 
-    ERROR,
-    FLOYD,
-    N_DITHERING_TYPES
-  };
+  /* valeurs conforme a aa_dithering_mode */
+/*   enum eDitheringType */
+/*   { */
+/*     NONE,         // 0  */
+/*     ERROR, */
+/*     FLOYD, */
+/*     N_DITHERING_TYPES */
+/*   }; */
 
-  enum eCharSet
-  {
-    BASIC,         // 0 
-    EXTENDED,
-    N_CHARSET_TYPES
-  };
+/*   enum eCharSet */
+/*   { */
+/*     BASIC,         // 0  */
+/*     EXTENDED, */
+/*     N_CHARSET_TYPES */
+/*   }; */
 
 public:
   Gear_AsciiArt(Schema *schema, std::string name);
@@ -69,12 +70,13 @@ public:
 private:
   
   PlugIn<VideoRGBAType> *_VIDEO_IN;
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  //PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<EnumType> *_RENDER_IN;
   PlugIn<EnumType> *_DITHER_IN;
-  PlugIn<EnumType> *_CHAR_IN;
+  //PlugIn<EnumType> *_CHAR_IN;
   PlugIn<ValueType> *_CONTRAST_IN;
   PlugIn<ValueType> *_BRIGHTNESS_IN;
+  PlugIn<ValueType> *_RANDOM_IN;
 
   const VideoRGBAType *_inImage; 
   VideoRGBAType *_outImage;
@@ -86,11 +88,13 @@ private:
   unsigned char *_inData;
  
   eRenderingSpeed _renderingSpeed;
-  eDitheringType _ditheringType;
-  eCharSet _charSet;
+  //eDitheringType _ditheringType;
+  aa_dithering_mode _ditheringType;
+  //eCharSet _charSet;
   
   int _contrast;
   int _brightness;
+  int _randomNoise;
 
 };
 
