@@ -32,6 +32,11 @@ private:
   int _sizeY;
   int _sizeX;    
 
+  RGBA *_iterPrevRow;
+  RGBA *_iterCurrRow;
+  RGBA *_iterNextRow;
+  RGBA *_iterOutData;
+
   //  RGBA _adjust[2];
 
 //   double *_mmxImageInL0;

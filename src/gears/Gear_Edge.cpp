@@ -34,31 +34,46 @@ void Gear_Edge::runVideo()
   _outImage->resize(_image->width(), _image->height());
   _data = (unsigned char*)_image->data();
   _outData = (unsigned char*)_outImage->data();
-  int threshold = (int)CLAMP(_AMOUNT_IN->type()->value(), 0.0f, 255.0f);
+
+  unsigned char threshold = (unsigned char)CLAMP(_AMOUNT_IN->type()->value(), 0.0f, 255.0f);
+
+  unsigned char *it;
   
   _sizeX = _image->width();
   _sizeY = _image->height();
 
-  //register int mmxCols=(_iterSizeX-2)/2;
-  //register int index;
+  //  ASSERT_ERROR_MESSAGE(_outImage->height() >= 3, "Currently, Edge is not supported for images of height < 3");
+  
   for (int y=1;y<_sizeY-2;y++)
   {
+    _iterPrevRow = _image->row(y-1) + 1;
+    _iterCurrRow = _image->row(y)   + 1;
+    _iterNextRow = _image->row(y+1) + 1;
+
+    _iterOutData = _outImage->row(y) + 1;
+    
     for (int x=1;x<_sizeX-2;x++)
     {
-      for (int z=0;z<4;z++)
+      *_iterOutData = *_iterCurrRow;
+      *_iterOutData *= 4;
+      *_iterOutData -= *_iterPrevRow;
+      *_iterOutData -= *_iterNextRow;
+      *_iterOutData -= *(_iterCurrRow-1);
+      *_iterOutData -= *(_iterCurrRow+1);
+
+      it = (unsigned char*) _iterOutData;
+      for (int z=0; z<SIZE_RGBA; ++z)
       {
-        _outData[y*_sizeX*4+x*4+z] = (4* _data[y*_sizeX*4+x*4+z] - 
-                                      _data[(y-1)*_sizeX*4+x*4+z] -
-                                      _data[(y+1)*_sizeX*4+x*4+z] -
-                                      _data[y*_sizeX*4+(x-1)*4+z] -
-                                      _data[y*_sizeX*4+(x+1)*4+z])/2;
-
-        if (_outData[y*_sizeX*4+x*4+z]<threshold)
-          _outData[y*_sizeX*4+x*4+z]=0;
-
-        //if(z<3)pp+=_outData[y*_sizeX*4+x*4+z];
+        if (*it <= threshold)
+          *it = 0;
+        it++;
       }
-
+      
+      _iterOutData++;
+      _iterPrevRow++;
+      _iterCurrRow++;
+      _iterNextRow++;
+ 
       /*
       
       
