@@ -272,6 +272,7 @@ Gear_HalfToning::Gear_HalfToning(Engine *engine, std::string name)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
+  NOTICE("Pour le moment les coeffs tables ne sont pas pré-calculées... à corriger un jour.");
   for (int i=0; i<256; ++i)
   // *** en fait le mieux serait de les calculer directo... on a juste besoin d'un tableau pour r et dl (paires)
   {
@@ -303,18 +304,10 @@ void Gear_HalfToning::runVideo()
   _data = _image->data();    
   _outData = _outImage->data();
 
-  /* allocate _carryLine0 and _carryLine1 */
-//   if (_carryLine0)
-//     _carryLine0-=1;
-//   if (_carryLine1)
-//     _carryLine1-=1;
-
   _carryLine0 = (RGBAfloat*)realloc(_carryLine0, (_sizeX+2)*sizeof(RGBAfloat));
   _carryLine1 = (RGBAfloat*)realloc(_carryLine1, (_sizeX+2)*sizeof(RGBAfloat));
   memset(_carryLine0, 0, (_sizeX+2)*sizeof(RGBAfloat));
   memset(_carryLine1, 0, (_sizeX+2)*sizeof(RGBAfloat));
-//   _carryLine0+=1;
-//   _carryLine1+=1;
 
   unsigned char *iterData;
   unsigned char *iterOutData;

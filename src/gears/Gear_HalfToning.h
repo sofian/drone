@@ -16,32 +16,43 @@
 #include <stdio.h>
 #include <math.h>
 
+// Internal use.
 struct ThreeCoefficients
 {
   float i_r;        /* right */
   float i_dl;       /* down-left */
   float i_d;        /* down */
   float i_sum;      /* sum */
-//   int i_r;        /* right */
-//   int i_dl;       /* down-left */
-//   int i_d;        /* down */
-//   int i_sum;      /* sum */
 };
 
+/**
+ * This class implements Victor Ostromoukhov error-diffusion algorithm, as
+ * described in A Simple and Efficient Error-Diffusion Algorithm" (SIGGRAPH'01).
+ *
+ * @author Jean-Sébastien Senécal, Victor Ostromoukhov
+ * @version %I% %G%
+ */
 class Gear_HalfToning : public Gear
 {
+  
 public:
-
+  //! Default constructor.
   Gear_HalfToning(Engine *engine, std::string name);
+
+  // Destructor.
   virtual ~Gear_HalfToning();
 
-  void runVideo();  bool ready();
+  void runVideo();
+  bool ready();
 
 private:
+  //! Video input.
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+
+  //! Video output.
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
-  //local var
+  // Internal use.
   const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
   const RGBA *_data;
@@ -53,8 +64,11 @@ private:
   unsigned char *_imageIn;
   unsigned char *_imageOut;
 
-  RGBAfloat *_carryLine0; /* carry buffer; current line     */
-  RGBAfloat *_carryLine1; /* carry buffer; current line + 1 */
+  // Carry buffer, current line.
+  RGBAfloat *_carryLine0;
+  
+  // Carry buffer, next line.
+  RGBAfloat *_carryLine1;
 
 };
 
