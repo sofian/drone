@@ -98,34 +98,34 @@ void noticemsg(const char* msg, ...);
 //! Error messages/assertion.
 #if DEBUG_ERROR
 #define ERROR errormsg
-void IFTHEN_ERROR(bool expr, const char* msg, ...);
+void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...);
 #define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr, ERROR)
 #else
 #define ERROR dummymsg
 #define ASSERT_ERROR(expr) __DUMMY_ASSERT
-#define IFTHEN_ERROR dummymsg
+#define ASSERT_ERROR_MESSAGE dummymsg
 #endif
 
 //! Warning messages/assertion.
 #if DEBUG_WARNING
 #define WARNING warningmsg
-void IFTHEN_WARNING(bool expr, const char* msg, ...);
+void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...);
 #define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr, WARNING)
 #else
 #define WARNING dummymsg
 #define ASSERT_WARNING(expr) __DUMMY_ASSERT
-#define IFTHEN_WARNING dummymsg
+#define ASSERT_WARNING_MESSAGE dummymsg
 #endif
 
 //! Notice messages/assertion.
 #if DEBUG_NOTICE
 #define NOTICE noticemsg
-void IFTHEN_NOTICE(bool expr, const char* msg, ...);
+void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...);
 #define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr, NOTICE)
 #else
 #define NOTICE dummymsg
 #define ASSERT_NOTICE(expr) __DUMMY_ASSERT
-#define IFTHEN_NOTICE dummymsg
+#define ASSERT_NOTICE_MESSAGE dummymsg
 #endif
 
 

@@ -7,7 +7,7 @@
 char xxpetit_message_pour_melanie[10000];
 
 #if DEBUG_ERROR
-void IFTHEN_ERROR(bool expr, const char* msg, ...)
+void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...)
 {
   if (expr)
   {
@@ -20,7 +20,7 @@ void IFTHEN_ERROR(bool expr, const char* msg, ...)
 #endif
 
 #if DEBUG_WARNING
-void IFTHEN_WARNING(bool expr, const char* msg, ...)
+void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...)
 {
   if (expr)
   {
@@ -33,7 +33,7 @@ void IFTHEN_WARNING(bool expr, const char* msg, ...)
 #endif
 
 #if DEBUG_NOTICE
-void IFTHEN_NOTICE(bool expr, const char* msg, ...)
+void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...)
 {
   if (expr)
   {
