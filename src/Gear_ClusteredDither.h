@@ -2,30 +2,13 @@
 #define GEAR_CLUSTEREDDITHER_INCLUDED
 
 #include "Gear.h"
+#include "Utils.h"
 
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
 
-//#define OVERSAMPLE 3
-
-/* Each call of the spot function results in one of these */
-typedef struct {
-    int	index;	/* (y * width) + x */
-    float value;	/* return value of the spot function */
-} order_t;
-
-/* qsort(3) compare function */
-static bool
-order_cmp(const order_t& va, const order_t& vb)
-{
-//     const order_t *a = (const order_t*)va;
-//     const order_t *b = (const order_t*)vb;
-
-  return (va.value < vb.value);
-}
-
-#define ISNEG(x)	(((x) < 0)? 1 : 0)
+// XXX indiquer la source (c.f. sur le wiki)
 
 class Gear_ClusteredDither : public Gear
 {
@@ -130,44 +113,31 @@ unsigned char Gear_ClusteredDither::getValue(int intensity, int rx, int ry)
 
   int ryHigh = ry+1;
   if (ryHigh >= _width) ryHigh -= _width;
-
+  
   int rxLow = rx-1;
   if (rxLow < 0) rxLow += _width;
 
   int rxHigh = rx+1;
   if (rxHigh >= _width) rxHigh -= _width;
 
+  ryLow *=_width;
+  ry*=_width;
+  ryHigh*=_width;
+  
   // This obscure code is based on an unrolling of the antialiasing loop. The
   // numbers (255, 510, 1010) are taken from the Bartlett matrix.
   
-  if (intensity > _threshold[ryLow*_width + rxLow])
-    sum += 255;
+  if (intensity > _threshold[ryLow  + rxLow])  sum += 255;
+  if (intensity > _threshold[ryLow  + rx])     sum += 510;
+  if (intensity > _threshold[ryLow  + rxHigh]) sum += 255;
+  if (intensity > _threshold[ry     + rxLow])  sum += 510;
+  if (intensity > _threshold[ry     + rx])     sum += 1010;
+  if (intensity > _threshold[ry     + rxHigh]) sum += 510;
+  if (intensity > _threshold[ryHigh + rxLow])  sum += 255;
+  if (intensity > _threshold[ryHigh + rx])     sum += 510;
+  if (intensity > _threshold[ryHigh + rxHigh]) sum += 255;
 
-  if (intensity > _threshold[ryLow*_width + rx])
-    sum += 510;
-
-  if (intensity > _threshold[ryLow*_width + rxHigh])
-    sum += 255;
-
-  if (intensity > _threshold[ry*_width + rxLow])
-    sum += 510;
-
-  if (intensity > _threshold[ry*_width + rx])
-    sum += 1010;
-
-  if (intensity > _threshold[ry*_width + rxHigh])
-    sum += 510;
-
-  if (intensity > _threshold[ryHigh*_width + rxLow])
-    sum += 255;
-  
-  if (intensity > _threshold[ryHigh*_width + rx])
-    sum += 510;
-
-  if (intensity > _threshold[ryHigh*_width + rxHigh])
-    sum += 255;
-
-  sum >>= 4;
+  sum >>= 4; // divide by 16
 
   return (unsigned char) sum;
 }
