@@ -55,9 +55,9 @@ void Gear_Saturation::runVideo()
 
             bw = (_r+_g+_b) / 3;
 
-            _r = bw + (_r - bw)*amount;
-            _g = bw + (_g - bw)*amount;
-            _b = bw + (_b - bw)*amount;
+            _r = (short) (bw + (_r - bw)*amount);
+            _g = (short) (bw + (_g - bw)*amount);
+            _b = (short) (bw + (_b - bw)*amount);
 
             
             if (_r>255)
