@@ -14,7 +14,7 @@ Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
   _AMOUNT_MAP_IN = addPlugVideoIn("Amount Map");
     
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("Amount", 4.0f);
+  _AMOUNT_IN = addPlugSignalIn("Amount", 0.5f);
   _table = new SummedAreaTable();
 }
 
@@ -42,7 +42,7 @@ void Gear_Blur::runVideo()
   _sizeY = _image->sizeY();
   _sizeX = _image->sizeX();
 
-  //we set a default value of 255 size of the image if amountmap not connected
+  // we set a default value of 255 size of the image if amountmap not connected
   if (!_AMOUNT_MAP_IN->connected())
   {        
     _defaultAmountMapData.allocate(_image->sizeX(), _image->sizeY());
@@ -70,7 +70,7 @@ void Gear_Blur::runVideo()
       
       for(int z=0;z<4;z++)
       {
-        _blurSize=_AMOUNT_IN->buffer()[0] * ((float)*(_amountMapData++)/255.0f);
+        _blurSize=(int) ( _AMOUNT_IN->buffer()[0] * *(_amountMapData++) );
 
         _blurSize/=2;
         if (_blurSize<2)
