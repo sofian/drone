@@ -65,7 +65,7 @@ public:
   
   void append(Signal_T * ptr, int size);
   // appends and enlarge if buffer is not big enough
-  void appendEnlarge(Signal_T * ptr, int size)
+  void appendEnlarge(Signal_T * ptr, int size);
 
   void setDynamicResizingMaximumSize(int sz);
 
