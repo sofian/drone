@@ -74,8 +74,8 @@ void Gear_GenDisplaceGrid::runVideo()
       
       for (int x=0 ; x<_xsize ; x++)
       {
-        rho = fastPolarDist(fx,fy);
-        theta = fastPolarAngle(fx,fy) + _param2;
+        rho = fastDist(fx,fy);
+        theta = fastAngle(fx,fy) + _param2;
         
         rho *= _param1;
         

@@ -13,11 +13,11 @@
         <Gear PosX="642" PosY="79" Type="VideoOutput" Name="VideoOutput1" >
             <Properties YRes="240" XRes="352" FullScreen="0" />
         </Gear>
-        <Gear PosX="58" PosY="288" Type="Slider" SliderPos="0.512195" Name="Slider1" >
+        <Gear PosX="58" PosY="288" Type="Slider" SliderPos="2.26829" Name="Slider1" >
             <Properties Lower_Bound="0" Higher_Bound="6" />
         </Gear>
-        <Gear PosX="66" PosY="368" Type="Slider" SliderPos="2.43902" Name="Slider2" >
-            <Properties Lower_Bound="0" Higher_Bound="40" />
+        <Gear PosX="66" PosY="368" Type="Slider" SliderPos="-0.0097561" Name="Slider2" >
+            <Properties Lower_Bound="-.1" Higher_Bound=".1" />
         </Gear>
         <Gear PosX="533" PosY="154" Type="VideoDelay" Name="VideoDelay1" >
             <Properties/>
@@ -37,7 +37,7 @@
         <Gear PosX="102" PosY="457" Type="Slider" SliderPos="0.390244" Name="Slider5" >
             <Properties Lower_Bound="0" Higher_Bound="2" />
         </Gear>
-        <Gear PosX="234" PosY="374" Type="Slider" SliderPos="5.90007" Name="Slider6" >
+        <Gear PosX="234" PosY="374" Type="Slider" SliderPos="99" Name="Slider6" >
             <Properties Lower_Bound="0" Higher_Bound="99" />
         </Gear>
     </Gears>
