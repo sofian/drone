@@ -1,0 +1,22 @@
+# Debug / release
+#CONFIG = debug
+CONFIG = release
+
+# Architecture
+CONFIG += athlon 
+CONFIG += p4
+
+# User-dependent includes
+INCLUDEPATH += src/gears/js
+
+# User-dependent libs
+LIBS += -L/usr/lib/opencv/ -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv -lopencv -lcvaux
+# LIBS += -L/usr/lib/opencv/ -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv -lcv -lcvaux -lcxcore
+
+# User-dependent files
+
+HEADERS += src/gears/js/Gear_EncrageMask.h \
+src/gears/js/Gear_DummySource.h
+
+SOURCES += src/gears/js/Gear_EncrageMask.cpp \
+src/gears/js/Gear_DummySource.cpp
