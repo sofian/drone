@@ -43,7 +43,7 @@ private:
   int _sizeX;
     
   int _x1,_y1,_x2,_y2;
-
+  int _dimension;
 
 
   int _blurSize;
