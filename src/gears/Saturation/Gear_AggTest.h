@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_SATURATION_INCLUDED
-#define GEAR_SATURATION_INCLUDED
+#ifndef GEAR_AGGTEST_INCLUDED
+#define GEAR_AGGTEST_INCLUDED
 
 
 #include "Gear.h"
@@ -26,14 +26,15 @@
 #include "VideoRGBAType.h"
 
 
-class Gear_Saturation : public Gear
+class Gear_AggTest : public Gear
 {
 public:
 
-  Gear_Saturation(Schema *schema, std::string uniqueName);
-  virtual ~Gear_Saturation();
+  Gear_AggTest(Schema *schema, std::string uniqueName);
+  virtual ~Gear_AggTest();
 
   void runVideo();  bool ready();
+  virtual void init();
 
 private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
