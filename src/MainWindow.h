@@ -44,6 +44,7 @@ public slots:
 private:
 
   static const unsigned int MainWindow::MAX_RECENT_SCHEMAS;
+  static const std::string SCHEMA_EXTENSION;
 
   void addToRecentSchema(std::string filename);
   

@@ -14,6 +14,7 @@
 const int MainWindow::CANVAS_SIZE_X = 2048;
 const int MainWindow::CANVAS_SIZE_Y = 2048;
 const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
+const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
 
 #include <qsettings.h>
 
@@ -154,7 +155,7 @@ void MainWindow::slotMenuNew()
 
 void MainWindow::slotMenuLoad()
 {  
-  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, "*" + Engine::SCHEMA_EXTENSION + ";;" + "*.*", 
+  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
                                                   this, "Load", "Load");
   
   load(filename);
@@ -189,12 +190,17 @@ void MainWindow::slotMenuSave()
 
 void MainWindow::slotMenuSaveAs()
 {
-  QString filename = QFileDialog::getSaveFileName(_lastSavePath, "*" + Engine::SCHEMA_EXTENSION + ";;" + "*.*", 
-                                                  this, "Save as", "Save as");
-  if (!filename.isEmpty())
+  std::string filename = QFileDialog::getSaveFileName(_lastSavePath, "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
+                                                      this, "Save as", "Save as");
+  
+  if (!filename.empty())
   {
-    _engine->saveSchema(filename.ascii());
-    _currentSchemaFilename=filename.ascii();
+    //set the extension if not already present
+    if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
+      filename.append(SCHEMA_EXTENSION);  
+    
+    _engine->saveSchema(filename);
+    _currentSchemaFilename=filename;
     _fileMenu->setItemEnabled(_menuSaveItemId, true);
 
     //save the last save path

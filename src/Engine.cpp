@@ -43,7 +43,6 @@ void Engine::Connection::load(QDomElement &connectionElem)
 
 SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
-const std::string Engine::SCHEMA_EXTENSION = ".drn";
 
 
 Engine::Engine(int hwnd) : 
@@ -450,9 +449,6 @@ void Engine::saveSchema(std::string filename)
   }
 
   //save to file  
-  //set the extension if not already present
-  if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
-    filename.append(SCHEMA_EXTENSION);  
        
   QFile file(filename.c_str());
   if (file.open(IO_WriteOnly))

@@ -85,8 +85,6 @@ public:
   };
 
 
-  static const std::string SCHEMA_EXTENSION;
-
   Engine(int hwnd);
   virtual ~Engine();
 

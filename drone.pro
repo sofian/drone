@@ -19,7 +19,7 @@ QMAKE_LFLAGS   +=-DDEBUG_LEVEL=2
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/stk-4.1.3/include
-LIBS += -Lsrc/stk-4.1.3/src/ -lstk -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
+LIBS += -Lsrc/stk-4.1.3/src/ -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
 CONFIG += thread debug
 
 HEADERS += config.h \
@@ -51,19 +51,14 @@ src/gears/Gear_DiffDist.h \
 src/gears/Gear_Edge.h \
 src/gears/Gear_Enveloppe.h \
 src/gears/Gear_FilterSignal.h \
-src/gears/Gear_FreqBoxes.h \
 src/gears/Gear_Gain.h \
 src/gears/Gear_GenDisplaceGrid.h \
 src/gears/Gear_GrayScale.h \
 src/gears/Gear_HalfToning.h \
-src/gears/Gear_Image.h \
 src/gears/Gear_KDTree.h \
-src/gears/Gear_MasterFrequency.h \
 src/gears/Gear_MedianFilter.h \
-src/gears/Gear_NGone.h \
 src/gears/Gear_Osc.h \
 src/gears/Gear_Oscilloscope.h \
-src/gears/Gear_PatternGen.h \
 src/gears/Gear_Rescale.h \
 src/gears/Gear_PushButton.h \
 src/gears/Gear_Saturation.h \
@@ -137,20 +132,15 @@ src/gears/Gear_DiffDist.cpp \
 src/gears/Gear_Edge.cpp \
 src/gears/Gear_Enveloppe.cpp \
 src/gears/Gear_FilterSignal.cpp \
-src/gears/Gear_FreqBoxes.cpp \
 src/gears/Gear_Gain.cpp \
 src/gears/Gear_GenDisplaceGrid.cpp \
 src/gears/Gear_GrayScale.cpp \
 src/gears/Gear_HalfToning.cpp \
-src/gears/Gear_Image.cpp \
 src/gears/Gear_KDTree.cpp \
-src/gears/Gear_MasterFrequency.cpp \
 src/gears/Gear_MedianFilter.cpp \
-src/gears/Gear_NGone.cpp \
 src/gears/Gear_Osc.cpp \
 src/gears/Gear_Oscilloscope.cpp \
 src/gears/Gear_PushButton.cpp \
-src/gears/Gear_PatternGen.cpp \
 src/gears/Gear_Rescale.cpp \
 src/gears/Gear_Saturation.cpp \
 src/gears/Gear_SignalStat.cpp \

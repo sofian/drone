@@ -6,7 +6,7 @@
 Register_Gear(MAKERGear_AudioInput, Gear_AudioInput, "AudioInput")
 
 const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=512;
-const int Gear_AudioInput::DEFAULT_NB_BUFFERS=2;
+const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
 
 const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
@@ -17,9 +17,8 @@ Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) :
   _ringBufferSize(512),
   _lBuffer(),
   _rBuffer(),
-  _readIndex(0),
-  _mutex(0),
-  _playbackThreadHandle()
+  _lBufferIndex(0),
+  _readIndex(0)
 {
   //  _category << Category::AUDIO << Category::IO;
 
@@ -29,14 +28,25 @@ Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) :
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
 
-  _mutex = new pthread_mutex_t();
-  pthread_mutex_init(_mutex, NULL);
+  std::cout << "init PortAudio..." << std::endl;
+
+  PaError err = Pa_Initialize();
+
+  if (err != paNoError)
+    std::cout << Pa_GetErrorText(err) << std::endl;
+  else
+    std::cout << "init PortAudio...done" << std::endl;
 
 }
 
 Gear_AudioInput::~Gear_AudioInput()
-{
-
+{   
+  if (_stream)
+  {  
+    Pa_AbortStream(_stream);
+    Pa_CloseStream(_stream);
+  }
+  Pa_Terminate();
 }
 
 bool Gear_AudioInput::ready()
@@ -48,42 +58,10 @@ void Gear_AudioInput::init()
 {
   std::cout << "Initializing AudioInput..." << std::endl;
 
-
   initPortAudio();
-
-  //pthread_create(&_PlaybackThreadHandle, NULL, &Gear_AudioInput::playbackThread, this);
-
+  
   std::cout << "Initializing AudioInput...done" << std::endl;
 }
-
-/* void *Gear_AudioInput::playbackThread(void *param)                                                             */
-/* {                                                                                                               */
-/*     Gear_AudioInput *parent = (Gear_AudioInput*) param;                                                       */
-/*     int readIndex=0;                                                                                            */
-/*                                                                                                                 */
-/*     //memset(parent->_LBuffer, 0 , sizeof(float) * parent->_ringBufferSize);                                    */
-/*                                                                                                                 */
-/*     signed short temp[parent->_ringBufferSize*2];                                                               */
-/*     while(1)                                                                                                    */
-/*     {                                                                                                           */
-/*                                                                                                                 */
-/*                                                                                                                 */
-/*         //pthread_mutex_lock(parent->_mutex);                                                                   */
-/*         if (snd_pcm_writei(parent->_PCM, &(parent->_LBuffer[readIndex]), Engine::signalInfo().blockSize()) < 0) */
-/*         {                                                                                                       */
-/*              snd_pcm_prepare(parent->_PCM);                                                                     */
-/*              std::cout << "underflow" << std::endl;                                                                       */
-/*         }                                                                                                       */
-/*                                                                                                                 */
-/*         readIndex = (readIndex + Engine::signalInfo().blockSize()*2) % parent->_ringBufferSize;                 */
-/*                                                                                                                 */
-/*                                                                                                                 */
-/*         //pthread_mutex_unlock(parent->_mutex);                                                                 */
-/*                                                                                                                 */
-/*     }                                                                                                           */
-/*                                                                                                                 */
-/*     return 0;                                                                                                   */
-/* }                                                                                                               */
 
 void Gear_AudioInput::onUpdateSettings()
 {
@@ -99,55 +77,54 @@ void Gear_AudioInput::runAudio()
   for (int i=0; i<signal_blocksize; i++)
     left_buffer[i] = _lBuffer[_readIndex++];
 
-
   _readIndex %= _ringBufferSize;    
 
 }
 
-
 void Gear_AudioInput::initPortAudio()
 {
-  PaError err;
-
-  std::cout << "init PortAudio..." << std::endl;
-
-  int framesPerBuffer = _settings.get(SETTING_FRAMES_PER_BUFFER)->valueInt();
-
-
-  err = Pa_Initialize();
-
-  if (err != paNoError)
-    std::cout << Pa_GetErrorText(err) << std::endl;
-  else
-    std::cout << "init PortAudio...done" << std::endl;
-
   std::cout << "Opening PortAudio Stream..." << std::endl;
+  
+  if (_stream)
+  {  
+    Pa_AbortStream(_stream);
+    Pa_CloseStream(_stream);
+  }
+  
   std::cout << Engine::signalInfo().sampleRate() << "hz " << std::endl;
+  
+  int framesPerBuffer = _settings.get(SETTING_FRAMES_PER_BUFFER)->valueInt();
   std::cout << "Frames per buffer: " << framesPerBuffer << std::endl;
 
-  int nbBuffers = Pa_GetMinNumBuffers(framesPerBuffer, Engine::signalInfo().sampleRate());
+  int nbBuffers = _settings.get(SETTING_NB_BUFFERS)->valueInt();
+  //if nbBuffers is 0, let portaudio set the value
+  if (!nbBuffers)
+  {
+      nbBuffers = Pa_GetMinNumBuffers(framesPerBuffer, Engine::signalInfo().sampleRate());
+      _settings.get(SETTING_NB_BUFFERS)->valueInt(nbBuffers);
+  }
+  
   std::cout << "Number of buffers: " << nbBuffers << std::endl;
 
-  _ringBufferSize = framesPerBuffer * 16;
+  _ringBufferSize = framesPerBuffer;
 
   _lBuffer.resize(_ringBufferSize);
 
-  err = Pa_OpenStream(
-                     &_stream,
-                     Pa_GetDefaultInputDeviceID(),/* default input device*/
-                     1,              /* no input */
-                     paFloat32,  /* 32 bit floating point input*/
-                     NULL,
-                     paNoDevice,
-                     0,          /* stereo output*/
-                     paFloat32,      /* 32 bit floating point output*/
-                     NULL,
-                     Engine::signalInfo().sampleRate(),
-                     framesPerBuffer,
-                     0,              /* number of buffers, if zero then use default minimum*/
-                     paClipOff,      /* we won't output out of range samples so don't bother clipping them*/
-                     portAudioCallback,
-                     this);
+  PaError err = Pa_OpenStream(&_stream,
+                             Pa_GetDefaultInputDeviceID(),/* default input device*/
+                             1,              //input
+                             paFloat32,     
+                             NULL,
+                             paNoDevice,    //no output
+                             0,             //mono          
+                             paFloat32,     
+                             NULL,
+                             Engine::signalInfo().sampleRate(),
+                             framesPerBuffer,
+                             nbBuffers,              /* number of buffers, if zero then use default minimum*/
+                             paClipOff,      /* we won't output out of range samples so don't bother clipping them*/
+                             portAudioCallback,
+                             this);
 
 
   if (err != paNoError)
@@ -155,42 +132,33 @@ void Gear_AudioInput::initPortAudio()
   else
     std::cout << "Opening PortAudio Stream...done" << std::endl;
 
-  std::cout << "Starting PortAudio stream..." << std::endl;
-
-
-  if (err != paNoError)
-    std::cout << Pa_GetErrorText(err) << std::endl;
-  else
-    std::cout << "Starting PortAudio stream...done" << std::endl;
-
-/*     if (!started) */
-/*     {             */
-  Pa_StartStream(_stream);
-//        started=true;
-/*     } */
-
 }
+
+void Gear_AudioInput::prePlay()
+{
+   Pa_StartStream(_stream);
+}    
+
+void Gear_AudioInput::postPlay()
+{
+   Pa_AbortStream(_stream);
+}    
+
 
 int Gear_AudioInput::portAudioCallback(void *input_buffer, void *, unsigned long frames_per_buffer,
                                        PaTimestamp, void *user_data)
 {
-  static Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
-  static int lindex=0;
-  //static int rindex=0;
+  Gear_AudioInput *parent = (Gear_AudioInput*)user_data;
+      
   SignalType& lbuffer = parent->_lBuffer;
-
-  int ringBufferSize = parent->_ringBufferSize;
-
-  //SignalType *rbuffer = parent->_rBuffer;
-
+  int& lindex = parent->_lBufferIndex;
+  
   float *in = (float*)input_buffer;
 
   for (unsigned int i=0; i<frames_per_buffer; i++ )
     lbuffer[lindex++] = *in++;
 
-
-  lindex %= ringBufferSize;
-
+  lindex %= parent->_ringBufferSize;
 
   return 0;
 }

@@ -18,9 +18,11 @@ public:
   static const std::string SETTING_NB_BUFFERS;
 //
 
-
   Gear_AudioOutput(Engine *engine, std::string name);
   virtual ~Gear_AudioOutput();
+
+  void prePlay();    
+  void postPlay();    
 
   void init();
   void runAudio();    
@@ -41,32 +43,26 @@ private:
 //
 
 
-/*
-    portaudio
-*/    
+
+//portaudio
 
   static const int DEFAULT_FRAMES_PER_BUFFER;
   static const int DEFAULT_NB_BUFFERS;
 
-  PortAudioStream *_Stream;
-
+  PortAudioStream *_stream;
 
   void initPortAudio();    
 
-  int _RingBufferSize;
+  int _ringBufferSize;
 
-  SignalType _LBuffer;
-  SignalType _RBuffer;
+  SignalType _lBuffer;
+  SignalType _rBuffer;
+  int _lBufferIndex;
 
-  int _ReadIndex;
-
-  pthread_mutex_t *_Mutex;
-
-  pthread_t _PlaybackThreadHandle;
+  int _readIndex;
 
   static int portAudioCallback(void *, void *output_buffer, unsigned long frames_per_buffer,
                                PaTimestamp, void *user_data);
-
 
 };
 

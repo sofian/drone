@@ -19,16 +19,17 @@ public:
   Gear_AudioInput(Engine *engine, std::string name);
   virtual ~Gear_AudioInput();
 
+  void prePlay();    
+  void postPlay();    
+  
   void init();
   void runAudio();
-
-  PlugOut<SignalType>* AUDIO_OUT_LEFT(){return _AUDIO_OUT_LEFT;};
-  PlugOut<SignalType>* AUDIO_OUT_RIGHT(){return _AUDIO_OUT_RIGHT;};
 
   bool ready();
 
 protected:
   void onUpdateSettings();
+
 
 private:
 
@@ -38,15 +39,12 @@ private:
 //
 
 
-/*
-    portaudio
-*/    
+//portaudio
 
   static const int DEFAULT_FRAMES_PER_BUFFER;
   static const int DEFAULT_NB_BUFFERS;
 
   PortAudioStream *_stream;
-
 
   void initPortAudio();    
 
@@ -55,11 +53,9 @@ private:
   SignalType _lBuffer;
   SignalType _rBuffer;
 
+  int _lBufferIndex;
+
   int _readIndex;
-
-  pthread_mutex_t *_mutex;
-
-  pthread_t _playbackThreadHandle;
 
   static int portAudioCallback(void *input_buffer, void *, unsigned long frames_per_buffer,
                                PaTimestamp, void *user_data);
