@@ -54,7 +54,6 @@ GearMaker::~GearMaker()
 
 Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
 {
-  const char *error;
   std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
 
   std::cout << "calling GearMaker::makeGear" <<std::endl;
@@ -70,22 +69,13 @@ Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueNa
   if (it->second->pluginType() == FREI0R_PLUGIN)
   {
     std::cout << "building up a frei0r plugin" << std::endl;
-    
-    void (*setGlobalFrei0rLib)(std::string myFrei0rLib);
-    setGlobalFrei0rLib = &GearFrei0r::setGlobalFrei0rLib;
-
-    if ((error = dlerror()))
-    {
-      std::cout<< "fuck: " <<std::endl;
-      std::cout << error << std::endl;
-    }
-
     std::cout << "frei0rlib path = " <<(char*)it->second->gearInfo().data << std::endl;
-    (*setGlobalFrei0rLib)((char*)it->second->gearInfo().data);
+    //GearFrei0r::setGlobalFrei0rLib((char*)it->second->gearInfo().data);
+    return GearFrei0r::makeGear(schema, uniqueName, (char*)it->second->gearInfo().data);
   }
-  
-  //make the gear
-  return it->second->makeGear(schema, uniqueName);  
+  else
+    //make the gear
+    return it->second->makeGear(schema, uniqueName);  
 }
 
 void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
@@ -228,23 +218,12 @@ void GearMaker::parseFrei0rPlugins()
     if (!(error = dlerror()))
     {
       // get gear info
-      
-      // set frei0r lib (XXX pourrait etre une fonction statique)
-      GearFrei0r::setGlobalFrei0rLib(fileInfo->filePath());
-      
-      GearInfo gearInfo = GearFrei0r::getGearInfo();
-      
-      // XXX TODO: should be a handle to Gear_Frei0r
-      if ((error = dlerror()))
-      {
-        warningmsg("fail to query interfaces for gear %s!", fileInfo->fileName().ascii());
-        std::cout << error << std::endl;
-      }
-      
+      GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo->filePath());
+
+      // build plugin definition
       GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,
                                                                             FREI0R_PLUGIN,
-                                                                            0, &GearFrei0r::makeGear);
-      
+                                                                            0, 0);
       //add geardefintion to the registry
       (*_registry)[gearInfo.name]=gearPluginDefinition;//todo check for duplicates
     }

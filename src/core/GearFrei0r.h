@@ -73,10 +73,9 @@ private:
   std::string _frei0rLib;
 
 public:
-  static std::string _globalFrei0rLib;
-  static void setGlobalFrei0rLib(std::string frei0rLib);
-  static Gear* makeGear(Schema *schema, std::string uniqueName);
-  static GearInfo getGearInfo();
+  //! Static reimplementations of the standard Gear interface C functions.
+  static Gear* makeGear(Schema *schema, std::string uniqueName, std::string frei0rLib);
+  static GearInfo getGearInfo(std::string frei0rLib);
 };
 
 #endif

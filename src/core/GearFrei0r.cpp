@@ -27,18 +27,6 @@
 
 #include "GearMaker.h"
 
-extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
-{
-  return GearFrei0r::makeGear(schema, uniqueName);
-}
-
-GearInfo getGearInfo()
-{
-  return GearFrei0r::getGearInfo();
-}
-}
-
 GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib) : 
   Gear(schema, frei0rLib, uniqueName),
   _handle(0),
@@ -204,21 +192,14 @@ void GearFrei0r::runVideo()
   (*f0r_update)(_instance, 0.0, (uint32_t*)_image->data(), (uint32_t*)_outImage->data());
 }
 
-std::string GearFrei0r::_globalFrei0rLib;
-
-void GearFrei0r::setGlobalFrei0rLib(std::string frei0rLib)
+Gear* GearFrei0r::makeGear(Schema *schema, std::string uniqueName, std::string frei0rLib)
 {
-  _globalFrei0rLib = frei0rLib;
+  return new GearFrei0r(schema, uniqueName, frei0rLib);
 }
 
-Gear* GearFrei0r::makeGear(Schema *schema, std::string uniqueName)
+GearInfo GearFrei0r::getGearInfo(std::string frei0rLib)
 {
-  return new GearFrei0r(schema, uniqueName, GearFrei0r::_globalFrei0rLib); // dummy
-}
-
-GearInfo GearFrei0r::getGearInfo()
-{
-  void *handle = dlopen(GearFrei0r::_globalFrei0rLib.c_str(), RTLD_LAZY);
+  void *handle = dlopen(frei0rLib.c_str(), RTLD_LAZY);
   ASSERT_ERROR_MESSAGE(handle, "fail to load plugin");
 
   GearInfo gearInfo;
@@ -232,8 +213,8 @@ GearInfo GearFrei0r::getGearInfo()
   gearInfo.name = str;
   gearInfo.classification = GearClassifications::video().frei0r().instance();
   gearInfo.data = (char*) malloc(1000*sizeof(char));
-  strcpy((char*)gearInfo.data, GearFrei0r::_globalFrei0rLib.c_str());
-  
+  strcpy((char*)gearInfo.data, frei0rLib.c_str());
+
   return gearInfo;
 }
 
