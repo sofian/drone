@@ -22,8 +22,6 @@ private:
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
   
-  std::vector<PlugIn<VideoTypeRGBA>* > _SHIT;
-
   //local var
   const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
