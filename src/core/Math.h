@@ -1,5 +1,5 @@
 /* Math.h
- * Copyright (C) 2004 Jean-Sebastien Senecal
+ * Copyright (C) 2004--2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,6 +92,33 @@ inline int MAX255(int a)
 { return (a | ((a & 256) - ((a & 256) >> 8))); }
 
 // End LIBGIMP
+
+// Fast absolute value for shorts.
+#define FASTABS_OFFSET -SHRT_MIN
+extern short fastabs_lut[FASTABS_OFFSET*2];
+extern short *p_fastabs_lut;
+
+//! Fast absolute value function. Only works if #x# is in (SHRT_MIN, SHRT_MAX]
+inline short
+fastabs (short x)
+{
+  return *(p_fastabs_lut + x);
+}
+
+#include <stdio.h>
+// Inits some globals.
+inline void
+math_init(void)
+{
+  int i;
+  // Fill fast abs look-up-table.
+  for (i=0; i<FASTABS_OFFSET; ++i)
+  {
+    fastabs_lut[                 i] = FASTABS_OFFSET-i;
+    fastabs_lut[FASTABS_OFFSET + i] = i;
+  }
+  fastabs_lut[FASTABS_OFFSET*2] = FASTABS_OFFSET;
+}
 
 //! Clamp a int32-range int between 0 and 255 inclusive
 inline unsigned char CLAMP0255(int a)

@@ -28,9 +28,21 @@
 #include <stdio.h>
 
 #include "Utils.h"
+#include "Math.h"
 #include <qsettings.h>
 
 QSettings globalSettings;
+
+void global_init(void)
+{
+  paint_funcs_setup();
+  math_init();
+}
+
+void global_free(void)
+{
+  paint_funcs_free();
+}
 
 int main(int argc, char** argv)
 {
@@ -59,11 +71,13 @@ int main(int argc, char** argv)
   }
 
 
-  paint_funcs_setup();
+  // init globals
+  global_init();
 
   qtApp.exec();
 
-  paint_funcs_free();
+  // free globals
+  global_free();
 
 }
 
