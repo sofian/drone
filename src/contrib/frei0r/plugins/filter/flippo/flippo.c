@@ -6,10 +6,17 @@
  * My first frei0r effect - simple flipping
  */
 
-#include "flippo.h"
+#include "frei0r.h"
+
 #include <stdlib.h>
 #include <assert.h>
 #include <inttypes.h>
+
+typedef struct flippo_instance
+{
+  unsigned int width, height;
+  char flippox, flippoy;
+} flippo_instance_t;
 
 int f0r_init()
 {
@@ -23,7 +30,7 @@ void f0r_deinit()
 void f0r_get_plugin_info(f0r_plugin_info_t* flippoInfo)
 {
   flippoInfo->name = "Flippo";
-  flippoInfo->author = "Carlo Emilio";
+  flippoInfo->author = "Carlo Emilio, Jean-Sebastien Senecal";
   flippoInfo->plugin_type = F0R_PLUGIN_TYPE_FILTER;
   flippoInfo->color_model = F0R_COLOR_MODEL_BGRA8888;
   flippoInfo->frei0r_version = FREI0R_MAJOR_VERSION;
@@ -77,10 +84,10 @@ void f0r_set_param_value(f0r_instance_t instance,
   switch(param_index)
   {
   case 0:
-    inst->flippox=(*((double*)param))>=0.5 ? 1 : 0;
+    inst->flippox=( *((double*)param) >= 0.5 );
     break;
   case 1:
-    inst->flippoy=(*((double*)param))>=0.5 ? 1 : 0;
+    inst->flippoy=( *((double*)param) >= 0.5 );
     break;
   }
 }
@@ -95,27 +102,68 @@ void f0r_get_param_value(f0r_instance_t instance,
   switch(param_index)
   {
   case 0:
-    *((double*)param)=(inst->flippox>0) ? 1.0 : 0.0;
+    *((double*)param)=(inst->flippox ? 1.0 : 0.0);
     break;
   case 1:
-    *((double*)param)=(inst->flippoy>0) ? 1.0 : 0.0;
+    *((double*)param)=(inst->flippoy ? 1.0 : 0.0);
     break;
   }
 }
 
 void f0r_update(f0r_instance_t instance,double time,
-		const uint32_t *inframe, uint32_t *outframe)
+                const uint32_t *inframe, uint32_t *outframe)
 {
   assert(instance);
   
   flippo_instance_t* inst=(flippo_instance_t*)instance;
   unsigned int w=inst->width;
   unsigned int h=inst->height;
-  unsigned int x,y;
+  unsigned int len=w*h;
+  unsigned int twice_w = 2*w;
+  unsigned int rowsize = w*sizeof(uint32_t);
+  unsigned int i;
+
+  if (inst->flippox)
+  {
+    if (inst->flippoy)
+    {
+      // flip and flop
+      inframe += len; // point to the end
+      while (len--)
+        *outframe++ = *inframe--;
+    }
+    else
+    {
+      // flip only
+      inframe = inframe + w; // point to the end of current row
+      while (h--)
+      {
+        i=w;
+        while (i--)
+          *outframe++ = *inframe--;
+        inframe += twice_w;
+      }
+    }
+  }
+  else
+  {
+    if (inst->flippoy)
+    {
+      // flop only
+      inframe += len - w; // point to start of last row
+      while (h--)
+      {
+        memcpy(outframe, inframe, rowsize);
+        outframe += w;
+        inframe -= w;
+      }
+    }
+    else
+    {
+      // no flip, no flop
+      memcpy(outframe, inframe, len*sizeof(uint32_t));
+    }
+  }
   
-  for(y=0;y<=h;y++)
-    for(x=0;x<=w;x++)
-      outframe[y*w+x]=inframe[(inst->flippox ? h-y-1 : y )*w+
-			      (inst->flippoy ? w-x-1 : x)];
 }
 
