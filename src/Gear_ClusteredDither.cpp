@@ -6,16 +6,14 @@
 #include "GearMaker.h"
 
 Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither")
-const std::string Gear_ClusteredDither::SETTING_SPOT_FUNCTION = "SPOT_FUNCTION (0=square, 1=diamond, 2=round, 3=line)";
 
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
   : Gear(engine, "ClusteredDither", name), _threshold(0), _order(0), _spotType(ROUND)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
-  _AMOUNT_IN = addPlugSignalIn("ClusterIN", 16);
-
-  _settings.add(Property::INT, SETTING_SPOT_FUNCTION)->valueInt((int)ROUND);
+  _AMOUNT_IN_A = addPlugSignalIn("ClusterIN", 16);
+  _AMOUNT_IN_B = addPlugSignalIn("SpotIN", 0);
 }
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
@@ -26,15 +24,14 @@ Gear_ClusteredDither::~Gear_ClusteredDither()
 
 void Gear_ClusteredDither::init()
 {
-  _clusterSize = (int)_AMOUNT_IN->buffer()[0];
+  _clusterSize = (int)_AMOUNT_IN_A->buffer()[0];
+  _spotType = (eSpotType)CLAMP(_AMOUNT_IN_B->buffer()[0],0,4);
   _width = _clusterSize * 3;
   computeThreshold();
 }
 
 void Gear_ClusteredDither::onUpdateSettings()
 {
-  _spotType = (eSpotType)_settings.get(SETTING_SPOT_FUNCTION)->valueInt();
-  computeThreshold();
 }
 
 bool Gear_ClusteredDither::ready()
@@ -63,13 +60,21 @@ void Gear_ClusteredDither::runVideo()
   int maxClusterSizeX;
 
   // If cluster size has changed, recompute threshold matrix.
-  if (_clusterSize != (int)_AMOUNT_IN->buffer()[0])
+  if (_clusterSize != (int)_AMOUNT_IN_A->buffer()[0])
   {
-    _clusterSize = (int)_AMOUNT_IN->buffer()[0];
+    _clusterSize = (int)_AMOUNT_IN_A->buffer()[0];
     _width = _clusterSize * 3;
     computeThreshold();
   }
 
+  // Set spot type.
+  eSpotType tmpSpotType = (eSpotType)CLAMP(_AMOUNT_IN_B->buffer()[0],0,4);
+  if (tmpSpotType != _spotType)
+  {
+    computeThreshold();
+    _spotType = tmpSpotType;
+  }
+  
   // *** OPTIM : les modulo et les MIN...
   for (int y=0; y<_sizeY; y += _clusterSize - (y % _clusterSize))
   {

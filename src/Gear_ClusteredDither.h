@@ -12,8 +12,7 @@
 
 class Gear_ClusteredDither : public Gear
 {
-  enum eSpotType { SQUARE = 0, DIAMOND = 1, ROUND = 2, LINE = 3 };
-  static const std::string SETTING_SPOT_FUNCTION;
+  enum eSpotType { SQUARE, DIAMOND, ROUND, LINE };
 
   typedef std::pair<int, float> Order;
   static bool less(const Order& a, const Order& b) { return (a.second < b.second); }
@@ -27,7 +26,8 @@ public:
 
   PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
   PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
-  PlugSignalIn* AMOUNT_IN(){return _AMOUNT_IN;};
+  PlugSignalIn* AMOUNT_IN_A(){return _AMOUNT_IN_A;};
+  PlugSignalIn* AMOUNT_IN_B(){return _AMOUNT_IN_B;};
   
   bool ready();
 
@@ -39,7 +39,8 @@ protected:
 private:
   PlugVideoIn *_VIDEO_IN;
 	PlugVideoOut *_VIDEO_OUT;
-  PlugSignalIn *_AMOUNT_IN;
+  PlugSignalIn *_AMOUNT_IN_A;
+  PlugSignalIn *_AMOUNT_IN_B;
 
   int _clusterSize;
   int _width; // clusterSize * 3
