@@ -4,6 +4,8 @@
 #include <iostream>
 #include "Canvas.h"
 
+using namespace X11;
+
 Register_VideoOutput(MAKERVideoOutputShm, VideoOutputShm, "Shm")
 
 VideoOutputShm::VideoOutputShm() :
@@ -34,22 +36,22 @@ void VideoOutputShm::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputShm::render(Canvas &canvas)
+void VideoOutputShm::render(MatrixType<RGBA> &image)
 {    
   processX11Events();
 
   //only recreate xvimage if framesize change
-  if (_frameSizeX!=canvas.sizeX() || _frameSizeY!=canvas.sizeY())
+  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
   {
-    _frameSizeX=canvas.sizeX();
-    _frameSizeY=canvas.sizeY();
+    _frameSizeX=image.width();
+    _frameSizeY=image.height();
     _frameSize=_frameSizeX*_frameSizeY;
     createXImage(_frameSizeX, _frameSizeY);
     resizeWindow(_frameSizeX, _frameSizeY);
   }
 
 
-  unsigned char *data = (unsigned char*)canvas._data;
+  unsigned char *data = (unsigned char*)image.data();
 
   if (_bpp == 24 || _bpp == 32)
   {

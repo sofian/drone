@@ -1,6 +1,6 @@
 #ifndef __ABSTRACTTYPE_INCLUDED
 #define __ABSTRACTTYPE_INCLUDED
-
+  
 
 #include <qcolor.h>
 #include <string>
@@ -15,17 +15,18 @@ public:
   virtual std::string name() const = 0;
   virtual QColor color() const = 0;
 
-  int nSubTypes() const { return _elements.size();}
-  AbstractType* getSubType(int i) { return _elements[i];}
-  AbstractType* addSubType(AbstractType *elem)
+  int nSubTypes() const { return _subTypes.size();}
+  AbstractType& getSubType(int i) { return *_subTypes[i];}
+  AbstractType& addSubType(AbstractType &subType)
   {
-    _elements.push_back(elem);
-    return elem;
+    _subTypes.push_back(&subType);
+    return subType;
   }
 
 protected:
-  std::vector<AbstractType*> _elements;
+  std::vector<AbstractType*> _subTypes;
 };
+
 
 #endif //__ABSTRACTTYPE_INCLUDED
 

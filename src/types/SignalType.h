@@ -1,23 +1,26 @@
 #ifndef SIGNALTYPE_INCLUDED
 #define SIGNALTYPE_INCLUDED
 
+#include "MatrixType.h"
+
 class SignalType : public AbstractType
 {
 public:
-  SignalType() : _buffer(0) 
+  SignalType() 
   {
-    _buffer = (float*) malloc(Engine::signalInfo().blockSize()*sizeof(float));
-    memset(_buffer, 0, Engine::signalInfo().blockSize()*sizeof(float));
+    addSubType(_buffer);
+    _buffer.resize(Engine::signalInfo().blockSize());    
   }
-  virtual ~SignalType() { if (_buffer) free(_buffer);}
 
+  virtual ~SignalType(){}
+  
   std::string name() const { return "SignalType";}
   QColor color() const { return QColor(249,169,7);}
 
-  float* buffer() const { return _buffer;}
+  MatrixType<float>& buffer() { return _buffer;}
 
 protected:
-  float *_buffer;
+  MatrixType<float> _buffer;
 };
 
 #endif 

@@ -1,23 +1,26 @@
 #ifndef VIDEOTYPE_INCLUDED
 #define VIDEOTYPE_INCLUDED
 
-class VideoType : public AbstractType
+#include "ColorSpace.h"
+#include "MatrixType.h"
+
+class VideoTypeRGBA : public AbstractType
 {
 public:
-  VideoType() : _canvas(0) 
+  VideoTypeRGBA()
   {
-    _canvas = new Canvas();
+    addSubType(_image);  
   }
 
-  virtual ~VideoType() { delete _canvas;}
-
-  std::string name() const { return "VideoType";}
+  virtual ~VideoTypeRGBA(){}
+  
+  std::string name() const { return "VideoTypeRGBA";}
   QColor color() const { return QColor(31,47,124);}
 
-  Canvas* canvas() const { return _canvas;}
+  MatrixType<RGBA>* image() { return &_image;}  
 
 private:
-  Canvas *_canvas;
+  MatrixType<RGBA> _image;
 };
 
 #endif //VIDEOTYPE_INCLUDED

@@ -3,6 +3,9 @@
 
 #include "VideoOutputX11Base.h"
 
+namespace X11
+{
+
 class Canvas;
 
 class VideoOutputShm : public VideoOutputX11Base
@@ -14,7 +17,7 @@ public:
   void fullscreen(bool fs);
   void destroy();
   bool init(int xRes, int yRes, bool fullscreen);
-  void render(Canvas &canvas);
+  void render(MatrixType<RGBA> &image);
 
 protected:
 
@@ -32,5 +35,5 @@ private:
   int _frameSize;
 
 };
-
+}
 #endif

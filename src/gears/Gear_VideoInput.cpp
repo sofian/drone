@@ -11,12 +11,12 @@
 #include <string>
 #include <iostream>
 
-#include </usr/src/linux/drivers/media/video/zoran.h>
-
-extern "C" {
-#include <jpegutils.h>
-
-}
+/* #include </usr/src/linux/drivers/media/video/zoran.h> */
+/*                                                       */
+/* extern "C" {                                          */
+/* #include <jpegutils.h>                                */
+/*                                                       */
+/* }                                                     */
 
 
 #include "Gear_VideoInput.h"
@@ -39,8 +39,8 @@ _sizeY(0),
 _device(0),
 _bufferBGRA(NULL)
 
-{    
-  _VIDEO_OUT = addPlugVideoOut("Out");       
+{      
+  addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
 
@@ -93,21 +93,21 @@ void Gear_VideoInput::prePlay()
 
 }
 
-void Gear_VideoInput::videoCallback(uint8_t *video, long size, long count)
-{
-  std::cout << size << std::endl;
+/* void Gear_VideoInput::videoCallback(uint8_t *video, long size, long count) */
+/* {                                                                          */
+/*   std::cout << size << std::endl;                                          */
+/*                                                                            */
+/*                                                                            */
+/*   unsigned char *data1 = (unsigned char*)malloc(160*120*4);                */
+/*   unsigned char *data2 = (unsigned char*)malloc(160*120*4);                */
+/*   decode_jpeg_raw(video, size, 0, 420, 160, 120, _data, data1, data2);     */
+/*                                                                            */
+/* }                                                                          */
 
-
-  unsigned char *data1 = (unsigned char*)malloc(160*120*4);
-  unsigned char *data2 = (unsigned char*)malloc(160*120*4);
-  decode_jpeg_raw(video, size, 0, 420, 160, 120, _data, data1, data2);
-
-}
-
-void audioCallback(uint8_t *audio, long sampes)
-{
-
-}
+/* void audioCallback(uint8_t *audio, long sampes) */
+/* {                                               */
+/*                                                 */
+/* }                                               */
 
 void Gear_VideoInput::initInputDevice()
 {
@@ -176,16 +176,16 @@ void Gear_VideoInput::initInputDevice()
   std::cout << "bpp    : " << _vidPic.depth << std::endl;
   std::cout << "Overlay : " << ((_vidCap.type & VID_TYPE_OVERLAY) ? "Y" : "N") << std::endl;
 
-  struct zoran_params params;
-  ioctl(_device, BUZIOC_G_PARAMS, &params);
-  std::cout << "decimationH: " << params.HorDcm << std::endl;
-  std::cout << "decimationV: " << params.VerDcm << std::endl;
-  std::cout << "quality: " << params.quality << std::endl;
-  std::cout << "xres: " << params.img_width << std::endl;
-  std::cout << "yres: " << params.img_height << std::endl;
-
-  params.decimation=2;
-  ioctl(_device, BUZIOC_S_PARAMS, &params);
+/*   struct zoran_params params;                                 */
+/*   ioctl(_device, BUZIOC_G_PARAMS, &params);                   */
+/*   std::cout << "decimationH: " << params.HorDcm << std::endl; */
+/*   std::cout << "decimationV: " << params.VerDcm << std::endl; */
+/*   std::cout << "quality: " << params.quality << std::endl;    */
+/*   std::cout << "xres: " << params.img_width << std::endl;     */
+/*   std::cout << "yres: " << params.img_height << std::endl;    */
+/*                                                               */
+/*   params.decimation=2;                                        */
+/*   ioctl(_device, BUZIOC_S_PARAMS, &params);                   */
 
 /*     _vidBuf.width = _sizeX;                */
 /*     _vidBuf.height = _sizeY;               */
@@ -216,13 +216,13 @@ void Gear_VideoInput::initInputDevice()
   _vidMMap.width  = _sizeX;
   _vidMMap.height = _sizeY;
 
-  _VIDEO_OUT->canvas()->allocate(_sizeX, _sizeY);
+  _VIDEO_OUT->type().image().resize(_sizeY, _sizeX);
   _data = (unsigned char*)malloc(_sizeX*_sizeY*4);
 }
 
 void Gear_VideoInput::runVideo()
 {
-  _outData = (unsigned char*) _VIDEO_OUT->canvas()->_data;
+  _outData = (unsigned char*) _VIDEO_OUT->type().image().data();
 
   //read(_device, _data, _sizeX*_sizeY*4);
   if (ioctl(_device, VIDIOCMCAPTURE, &(_vidMMap))<0)
@@ -246,8 +246,8 @@ void Gear_VideoInput::runVideo()
   for (int i=0;i<imgSize;i++)
   {
     *(_tempOutData) = *(_tempInData);
-    *(_tempOutData+1) = *(_tempInData);
-    *(_tempOutData+2) = *(_tempInData);
+    *(_tempOutData+1) = *(_tempInData+1);
+    *(_tempOutData+2) = *(_tempInData+2);
 
     _tempOutData+=4;
     _tempInData+=4;

@@ -1,7 +1,8 @@
 #ifndef VIDEOOUTPUT_INCLUDED
 #define VIDEOOUTPUT_INCLUDED
 
-class Canvas;
+#include "ColorSpace.h"
+#include "MatrixType.h"
 
 class VideoOutput
 {
@@ -10,7 +11,7 @@ public:
   virtual ~VideoOutput(){}
 
   virtual bool init(int xRes, int yRes, bool fullscreen)=0;    
-  virtual void render(Canvas &canvas)=0;
+  virtual void render(MatrixType<RGBA> &image)=0;
   virtual void fullscreen(bool fs)=0;
   virtual void destroy()=0;
 

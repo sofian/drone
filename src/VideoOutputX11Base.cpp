@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+using namespace X11;
 
 VideoOutputX11Base::VideoOutputX11Base() :
 VideoOutput(),

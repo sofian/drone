@@ -5,8 +5,11 @@
 
 #include <iostream>
 #include "Canvas.h"
+using namespace X11;
 
 Register_VideoOutput(MAKERVideoOutputXv, VideoOutputXv, "Xv")
+
+
 
 VideoOutputXv::VideoOutputXv() :
 VideoOutputX11Base(),
@@ -39,15 +42,15 @@ void VideoOutputXv::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputXv::render(Canvas &canvas)
+void VideoOutputXv::render(MatrixType<RGBA> &image)
 {    
   processX11Events();
 
   //only recreate xvimage if framesize change
-  if (_frameSizeX!=canvas.sizeX() || _frameSizeY!=canvas.sizeY())
+  if (_frameSizeX!=image.width().value() || _frameSizeY!=image.height().value())
   {
-    _frameSizeX=canvas.sizeX();
-    _frameSizeY=canvas.sizeY();
+    _frameSizeX=image.width();
+    _frameSizeY=image.height();
     _frameSize=_frameSizeX*_frameSizeY;
     createXvImage(_frameSizeX, _frameSizeY);
     resizeWindow(_frameSizeX, _frameSizeY);
@@ -56,7 +59,7 @@ void VideoOutputXv::render(Canvas &canvas)
   //todo rendering for other rgb formats..
   //this only work for 0x3 (RGB) 24.
   unsigned char *xvData = (unsigned char*)_xvImage->data;
-  unsigned char *data = (unsigned char*)canvas._data;
+  unsigned char *data = (unsigned char*)image.data();
   for (int i=0;i<_frameSize;++i)
   {
     *xvData++ = *(data+2);

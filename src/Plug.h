@@ -28,10 +28,10 @@ public:
     delete _type;
   }
 
-  T *type() const { return _type;}
+  T& type() const { return *_type;}
 
 protected:
-  T *_type, * _defaultType;
+  T *_type, *_defaultType;
 };
 
 

@@ -4,11 +4,13 @@
 
 #include "Gear.h"
 
+#include "VideoType.h"
+
 extern "C" {
 
 #include <linux/videodev.h>
 #define HAVE_STDINT_H
-#include <liblavrec.h>
+//#include <liblavrec.h>
 #undef HAVE_STDINT_H
 }
 
@@ -25,20 +27,20 @@ public:
   void init();
   void prePlay();    
 
-  PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugOut<VideoTypeRGBA> *VIDEO_OUT(){return _VIDEO_OUT;};
 
   bool ready();
 
 protected:
   void onUpdateSettings();
-  static void videoCallback(uint8_t *video, long size, long count);
+//  static void videoCallback(uint8_t *video, long size, long count);
 
 private:
 
   void initInputDevice();
   void resetInputDevice();
 
-  PlugVideoOut *_VIDEO_OUT;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
   int _sizeX, _sizeY;
 
@@ -66,7 +68,7 @@ private:
   double *_mmxImageIn;
   double *_mmxImageOut;
 
-  lavrec_t *_lavrecInfo;
+  //lavrec_t *_lavrecInfo;
   static unsigned char *_data;
 
 };

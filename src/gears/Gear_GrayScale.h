@@ -15,21 +15,19 @@ public:
 
   void runVideo();
 
-  PlugIn<VideoType>* VIDEO_IN() { return _VIDEO_IN;}
-  PlugOut<VideoType>* VIDEO_OUT() { return _VIDEO_OUT;}
+  PlugIn<VideoTypeRGBA>* VIDEO_IN() { return _VIDEO_IN;}
+  PlugOut<VideoTypeRGBA>* VIDEO_OUT() { return _VIDEO_OUT;}
 
   bool ready();
 
 private:
 
-  PlugIn<VideoType> *_VIDEO_IN;
-  PlugOut<VideoType> *_VIDEO_OUT;
+  PlugIn<VideoTypeRGBA> *_VIDEO_IN;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
   //local var
-  Canvas *_image; 
-  Canvas *_outImage; 
-  RGBA *_data;
-  RGBA *_outData;
+  MatrixType<RGBA> *_image; 
+  MatrixType<RGBA> *_outImage; 
 
   int _size;
 

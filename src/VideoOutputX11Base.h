@@ -1,6 +1,11 @@
 #ifndef VIDEOOUTPUTX11BASE_INCLUDED
 #define VIDEOOUTPUTX11BASE_INCLUDED
 
+#include "VideoOutput.h"
+
+namespace X11
+{
+
 extern "C"{
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -10,6 +15,8 @@ extern "C"{
 #include <sys/shm.h>
 #include <inttypes.h>
 }
+
+
 
 // Clean up the mess caused by the X headers
 /* #undef Bool       */
@@ -34,9 +41,6 @@ struct XVisualInfo_fixed
   int colormap_size;
   int bits_per_rgb;
 };
-
-
-#include "VideoOutput.h"
 
 class Canvas;
 
@@ -74,5 +78,7 @@ protected:
   int _currentWindowWidth, _currentWindowHeight;
 
 };
+
+}
 
 #endif

@@ -19,7 +19,7 @@ public:
   void runVideo();
   void runAudio();
 
-  PlugOut<VideoType>* VIDEO_OUT(){return _VIDEO_OUT;};
+  PlugOut<VideoTypeRGBA>* VIDEO_OUT(){return _VIDEO_OUT;};
   PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
   bool ready();
@@ -29,20 +29,21 @@ protected:
 
 private:
 
-  PlugOut<VideoType> *_VIDEO_OUT;
+  PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
   mpeg3_t* _File;
 
   int _SizeX, _SizeY;
 
   //locals
-  Canvas *_image;
+  
   float *_audioBuffer;
   RGBA *_Frame[1024];
+  RGBA *_outData;
 
   //mmx
-  double *_mmxImageIn;
-  double *_mmxImageOut;
+  unsigned long long int *_mmxImageIn;
+  unsigned long long int *_mmxImageOut;
 
 };
 

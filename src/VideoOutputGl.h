@@ -3,6 +3,9 @@
 
 #include "VideoOutputX11Base.h"
 
+namespace X11
+{
+
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
@@ -20,7 +23,7 @@ public:
   void fullscreen(bool fs);
   void destroy();
   bool init(int xRes, int yRes, bool fullscreen);
-  void render(Canvas &canvas);
+  void render(MatrixType<RGBA> &image);
 
 
 protected:
@@ -42,5 +45,6 @@ private:
   float _texSizeX, _texSizeY;
 
 };
+}
 
 #endif

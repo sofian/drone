@@ -4,6 +4,8 @@
 #include <iostream>
 #include "Canvas.h"
 
+using namespace X11;
+
 Register_VideoOutput(MAKERVideoOutputGL, VideoOutputGl, "Gl")
 
 VideoOutputGl::VideoOutputGl() :
@@ -33,14 +35,14 @@ void VideoOutputGl::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputGl::render(Canvas &canvas)
+void VideoOutputGl::render(MatrixType<RGBA> &image)
 {    
   processX11Events();
 
-  if (_frameSizeX!=canvas.sizeX() || _frameSizeY!=canvas.sizeY())
+  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
   {
-    _frameSizeX = canvas.sizeX();
-    _frameSizeY = canvas.sizeY();
+    _frameSizeX = image.width();
+    _frameSizeY = image.height();
 
     if (!_glInitialized)
     {
@@ -56,31 +58,31 @@ void VideoOutputGl::render(Canvas &canvas)
       resizeGl(_frameSizeX, _frameSizeY);
     }        
   }
-
-  _texSizeX = (float)_frameSizeX / (float)canvas.textureSizeX();
-  _texSizeY = (float)_frameSizeY / (float)canvas.textureSizeY();
-
-  glBindTexture(GL_TEXTURE_2D, canvas.toTexture(_bpp));
-  glEnable(GL_TEXTURE_2D);        
-
-  glBegin(GL_QUADS);
-  glColor3f(1.0f, 1.0f, 1.0f);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex2f(0.0f, 0.0f);
-
-  glTexCoord2f(_texSizeX, 0.0f);
-  glVertex2f(_xRes, 0.0f);
-
-  glTexCoord2f(_texSizeX, _texSizeY);
-  glVertex2f(_xRes, _yRes);
-
-  glTexCoord2f(0.0f, _texSizeY);
-  glVertex2f(0.0f, _yRes);
-
-  glEnd();
-
-  glXWaitGL();
-  glXSwapBuffers((Display*)_display, _window);        
+/*                                                                  */
+/*   _texSizeX = (float)_frameSizeX / (float)canvas.textureSizeX(); */
+/*   _texSizeY = (float)_frameSizeY / (float)canvas.textureSizeY(); */
+/*                                                                  */
+/*   glBindTexture(GL_TEXTURE_2D, canvas.toTexture(_bpp));          */
+/*   glEnable(GL_TEXTURE_2D);                                       */
+/*                                                                  */
+/*   glBegin(GL_QUADS);                                             */
+/*   glColor3f(1.0f, 1.0f, 1.0f);                                   */
+/*   glTexCoord2f(0.0f, 0.0f);                                      */
+/*   glVertex2f(0.0f, 0.0f);                                        */
+/*                                                                  */
+/*   glTexCoord2f(_texSizeX, 0.0f);                                 */
+/*   glVertex2f(_xRes, 0.0f);                                       */
+/*                                                                  */
+/*   glTexCoord2f(_texSizeX, _texSizeY);                            */
+/*   glVertex2f(_xRes, _yRes);                                      */
+/*                                                                  */
+/*   glTexCoord2f(0.0f, _texSizeY);                                 */
+/*   glVertex2f(0.0f, _yRes);                                       */
+/*                                                                  */
+/*   glEnd();                                                       */
+/*                                                                  */
+/*   glXWaitGL();                                                   */
+/*   glXSwapBuffers((Display*)_display, _window);                   */
 }
 
 bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)

@@ -19,6 +19,7 @@ HEADERS += config.h \
 	    src/types/AbstractType.h \
 	    src/types/VideoType.h \
 	    src/types/SignalType.h \
+	    src/types/MatrixType.h \
 #           src/gears/Gear_AudioInput.h \
 #           src/gears/Gear_AudioOutput.h \
 #           src/gears/Gear_AudioSource.h \
@@ -52,10 +53,10 @@ HEADERS += config.h \
 #           src/gears/Gear_TV.h \
 #           src/gears/Gear_VideoAdd.h \
 #           src/gears/Gear_VideoBlend.h \
-#           src/gears/Gear_VideoInput.h \
+           src/gears/Gear_VideoInput.h \
 #           src/gears/Gear_VideoMix.h \
            src/gears/Gear_VideoOutput.h \
-           src/gears/Gear_VideoSource.h \
+          src/gears/Gear_VideoSource.h \
            src/GearGui.h \
 #           src/GearGui_Slider.h \
 #           src/GearGui_TV.h \
@@ -106,6 +107,7 @@ SOURCES += src/Canvas.cpp \
            src/Engine.cpp \
 #           src/FrequencyAnalyzer.cpp \
            src/Gear.cpp \
+	    src/types/MatrixType.cpp \
 #           src/gears/Gear_AudioInput.cpp \
 #           src/gears/Gear_AudioOutput.cpp \
 #           src/gears/Gear_AudioSource.cpp \
@@ -139,7 +141,7 @@ SOURCES += src/Canvas.cpp \
 #           src/gears/Gear_TV.cpp \
 #           src/gears/Gear_VideoAdd.cpp \
 #           src/gears/Gear_VideoBlend.cpp \
-#           src/gears/Gear_VideoInput.cpp \
+           src/gears/Gear_VideoInput.cpp \
 #           src/gears/Gear_VideoMix.cpp \
            src/gears/Gear_VideoOutput.cpp \
            src/gears/Gear_VideoSource.cpp \

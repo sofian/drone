@@ -3,6 +3,9 @@
 
 #include "VideoOutputX11Base.h"
 
+namespace X11
+{
+
 extern "C"{
 #include <X11/extensions/Xvlib.h>
 }
@@ -18,7 +21,7 @@ public:
   void fullscreen(bool fs);
   void destroy();
   bool init(int xRes, int yRes, bool fullscreen);
-  void render(Canvas &canvas);
+  void render(MatrixType<RGBA> &image);
 
 protected:
   struct XvImageFormatValuesPortPair
@@ -44,5 +47,6 @@ private:
   int _frameSize;
 
 };
+}
 
 #endif
