@@ -5,7 +5,7 @@
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src /usr/include/libmpeg3
-LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL
+LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL -lqt
 CONFIG += thread debug
 # Input
 HEADERS += config.h \
