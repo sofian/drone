@@ -5,6 +5,7 @@
 
 #include "GearMaker.h"
 
+#include "Math.h"
 
 Register_Gear(MAKERGear_Blur, Gear_Blur, "Blur")
 
@@ -42,20 +43,18 @@ void Gear_Blur::runVideo()
   _sizeX = _image->width();
 
   ////////////////////////////
-  int *iterSum;
-  int area;
+  int area = 0;
 
-  _blurSize=(int) _AMOUNT_IN->type()->value();
+  _blurSize=(int) MAX(_AMOUNT_IN->type()->value(), 0.0f);
 
-  if (_blurSize <= 0)
+  if (_blurSize == 0)
     memcpy(_outImage->data(), _image->data(), _image->size()*sizeof(RGBA));
   else
   {
     _table->setImage(_image);
     _table->buildTable();
 
-    _data = (unsigned char*)_image->data();    
-    _outData = (unsigned char*)_outImage->data();
+    _outData = _outImage->data();
 
     for (int y=0;y<_sizeY;y++)
     {
@@ -65,20 +64,12 @@ void Gear_Blur::runVideo()
         _x2 = x + _blurSize;
         _y1 = y - _blurSize - 1;
         _y2 = y + _blurSize;
-                
+        
         _table->getSum(_sum, area, _x1, _y1, _x2, _y2);
-        
-        iterSum = (int*) &_sum;
-        (*_outData++)=(*iterSum++) / area;
-        (*_outData++)=(*iterSum++) / area;
-        (*_outData++)=(*iterSum++) / area;
-        (*_outData++)=(*iterSum++) / area;
-        
-//         divide((int*)&_sum, area, SIZE_RGBA);
-//         copy(_outData, (int*)&_sum, SIZE_RGBA);
-//         _outData+=SIZE_RGBA;
+        _sum /= area;
+        *_outData++ = _sum;
       }
-    }   
+    }
   }
 
 }

@@ -26,13 +26,11 @@ private:
 
   //local var
   const VideoTypeRGBA *_image;     
-  VideoTypeRGBA *_outImage; 
-  unsigned char *_data;
+  VideoTypeRGBA *_outImage;
+  RGBA *_outData;
 
   SummedAreaTable *_table;
   RGBAint _sum;
-
-  unsigned char *_outData;
 
   int _sizeY;
   int _sizeX;
