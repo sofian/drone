@@ -7,7 +7,7 @@
 #include "Rasterer.h"
 #include "SummedAreaTable.h"
 
-#define MAX_DEPTH 10
+#define MAX_DEPTH 4
 
 class Gear_KDTree : public Gear  
 {

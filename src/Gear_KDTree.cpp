@@ -43,7 +43,6 @@ void Gear_KDTree::runVideo()
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
   _outImage->allocate(_image->sizeX(), _image->sizeY());
-  //_image->allocate(_image->sizeX(), _image->sizeY());
 
   _sizeX = _image->sizeX();
   _sizeY = _image->sizeY();
@@ -57,11 +56,12 @@ void Gear_KDTree::runVideo()
 
   // build accumulation buffer
   _table->buildTable();
-  
-  memcpy(_outData, _data, _size * sizeof(RGBA));
+
+  // *** me rappele pu pourquoi c'est nécessaire
+  //  memcpy(_outData, _data, _size * sizeof(RGBA));
   
   // create splits
-  split(0, _sizeX, 0, _sizeY, 0);
+  split(0, _sizeX-1, 0, _sizeY-1, 0);
 }
 
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
@@ -75,6 +75,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   int depthPlusOne = depth+1;
 
   RGBAint rgba;
+  // ** idee de Julien: calculer seulement une fois les deux points du top
   _table->getSum(&rgba, x0, y0, x1, y1);
 
   int area = _table->getArea(x0, y0, x1, y1);
@@ -92,7 +93,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     // vertical split
     int upper = y1;
     int lower = y0;
-    int mid;
+    int mid = 0;
     while (lower != upper)
     {
       mid = (lower+upper) / 2;
@@ -109,7 +110,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   {
     int upper = x1;
     int lower = x0;
-    int mid;
+    int mid = 0;
     while (lower != upper)
     {
       mid = (lower+upper) / 2;
