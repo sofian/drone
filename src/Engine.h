@@ -20,6 +20,22 @@ class QDomElement;
 
 class Engine  
 {
+
+class GearGraphManip
+{
+public :
+  GearGraphManip(std::vector<Gear*> &gears);
+  ~GearGraphManip();
+  // test for direct or indirect dependency
+  bool hasDependencyOn(int testedGear, int dependedGear);
+  void getOrderedGears(std::list<Gear*>& orderedGears);
+ 
+protected:
+  signed char* _depmat;
+  uint _nboxes;
+  std::vector<Gear*> _gears;
+};
+
 public:
 
     class Connection
@@ -122,8 +138,6 @@ protected:
     static VideoInfo _videoInfo;
 
     void synchGraph();
-   
-	
 
     Time_T _currentTime;
 
@@ -136,7 +150,7 @@ private:
     
     // is sorted in processing order when _GraphSynched==true
     //only contain gears->ready()    
-    std::list<Gear*> _gearsToProcess;
+    std::list<Gear*> _orderedGears;
 
     pthread_t _playThreadHandle;
 
@@ -144,6 +158,9 @@ private:
     std::vector<Gear*> _scheduledsGearDeletion;
 
 };
+
+
+
 
 
 

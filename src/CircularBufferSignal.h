@@ -1,5 +1,5 @@
-#ifndef CircBuf_included
-#define CircBuf_included
+#ifndef CircBufSignal_included
+#define CircBufSignal_included
 
 #include "Signal.h"
 #include "assert.h"
