@@ -57,8 +57,13 @@ private:
   int _sizeY;
   int _sizeX;
 
-  CircularBuffer<RGBA> * circbuf;
+  CircularBuffer<RGBA> * _circbuf;
 
+  bool _recording;
+  int _currentLoopFrame;
+  int _nLoopFrames;
+  int _memory;
+  
   void init();    
 };
 

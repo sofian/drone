@@ -28,7 +28,10 @@
 
 Register_Gear(MAKERGear_VideoLoop, Gear_VideoLoop, "VideoLoop")
 
-Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, "VideoLoop", name)
+  Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, "VideoLoop", name),
+                                                                     _recording(true),
+                                                                     _currentLoopFrame(0),
+                                                                     _nLoopFrames(1)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
@@ -36,7 +39,7 @@ Gear_VideoLoop::Gear_VideoLoop(Engine *engine, std::string name) : Gear(engine, 
   addPlug(_PUNCH_OUT = new PlugIn<ValueType>(this, "PunchOut", new ValueType(0, 0, 1)));
   addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
 
-  circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
+  _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
 
 }
 
@@ -46,6 +49,9 @@ Gear_VideoLoop::~Gear_VideoLoop()
 
 void Gear_VideoLoop::init()
 {
+  _recording = true;
+  _currentLoopFrame = 0;
+  _nLoopFrames = 0;
 }
 
 bool Gear_VideoLoop::ready()
@@ -56,16 +62,50 @@ bool Gear_VideoLoop::ready()
 void Gear_VideoLoop::runVideo()
 {
   _image = _VIDEO_IN->type();
-
+  
   _sizeY = _image->height();
   _sizeX = _image->width();
 
   _outImage = _VIDEO_OUT->type();
 
   _outImage->resize(_sizeX, _sizeY);
- 
-  circbuf->resize(_sizeY*_sizeX, _MEMORY->type()->intValue());
-  circbuf->append(_image->data());
 
-  circbuf->fillVectorFromBlock(_outImage, - (int)rand() % 4);  
+  _memory = MAX(_MEMORY->type()->intValue(), 0);
+  _circbuf->resize(_sizeY*_sizeX, _memory);
+
+  // Punch in!
+  if ((int)_PUNCH_IN->type()->value() == 1)
+  {
+    NOTICE("Punch in");
+    // Start recording.
+    _recording = true;
+    _nLoopFrames = 0;
+  }
+  
+  if (_recording)
+  {
+    // Now recording.
+    _circbuf->append(_image->data()); // append current image
+    _nLoopFrames = MIN(_nLoopFrames+1,_memory); // update number of frames
+    
+    // Punch out!
+    if ((int)_PUNCH_OUT->type()->value() == 1)
+    {
+      NOTICE("Punch out");
+      // Stop recording.
+      _recording = false;
+      _currentLoopFrame = 0;
+    }
+    
+    _circbuf->fillVectorFromBlock(_outImage, 0);
+  }
+  else
+  {
+    ASSERT_ERROR (_nLoopFrames > 0);
+    _currentLoopFrame = (_currentLoopFrame + 1) % _nLoopFrames;
+    _circbuf->fillVectorFromBlock(_outImage, _currentLoopFrame -_nLoopFrames + 1);
+  }
+
+  
+  
 }
