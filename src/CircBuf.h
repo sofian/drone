@@ -7,8 +7,8 @@
 #include <string>
 
 // this define code to cycle over samples from 'from' to 'to' 
-// (relative to _current) of CircBufSignal object 'obj
-// the variable pcur points on the actual sample
+// (relative to _current) of CircBufSignal object 'obj'
+// the variable cbptr points on the actual sample
 
 // e.g : 
 // CIRCBUF_SIGNAL_T_LOOPDATA_FOR(b,-10,-1)  <- no semicolon
