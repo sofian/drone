@@ -23,8 +23,8 @@ Gear_PatternGen::Gear_PatternGen(Engine *engine, std::string name) : Gear(engine
     _VIDEO_OUT = addPlugVideoOut("ImgOUT");
     _PARAM_IN = addPlugSignalIn("Parm", 1.0f);
         
-    _settings.add(Property::INT, SETTING_SIZE_X,"256");    
-    _settings.add(Property::INT, SETTING_SIZE_Y,"256");    
+    _settings.add(Property::INT, SETTING_SIZE_X)->valueInt(256);    
+    _settings.add(Property::INT, SETTING_SIZE_Y)->valueInt(256);    
     
     updateSettings();
 }
@@ -36,7 +36,7 @@ Gear_PatternGen::~Gear_PatternGen()
 
 void Gear_PatternGen::onUpdateSettings()
 {    
-    _VIDEO_OUT->canvas()->allocate(_settings.getInt(SETTING_SIZE_X), _settings.getInt(SETTING_SIZE_Y));
+    _VIDEO_OUT->canvas()->allocate(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 bool Gear_PatternGen::ready()

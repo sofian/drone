@@ -31,8 +31,8 @@ void GearGui_Slider::drawShape(QPainter &painter)
     getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
 
     //convert sliderpos to screen value    
-    float low = _gear->settings().getFloat(Gear_Slider::SETTING_LOWERBOUND);
-    float hi = _gear->settings().getFloat(Gear_Slider::SETTING_HIGHERBOUND);    
+    float low = _gear->settings().get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
+    float hi = _gear->settings().get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
     float screenRatio = (((Gear_Slider*)_gear)->getValue()-low) / (hi-low);    
     int sliderPos = (int) ((float)(screenRatio * (float)(sizeX-SLIDER_THICKNESS)));
 
@@ -78,8 +78,8 @@ void GearGui_Slider::moveSlider(int sliderPos)
     getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
 
     float screenRatio = (float)sliderPos / (float)(sizeX-SLIDER_THICKNESS);
-    float low = _gear->settings().getFloat(Gear_Slider::SETTING_LOWERBOUND);
-    float hi = _gear->settings().getFloat(Gear_Slider::SETTING_HIGHERBOUND);
+    float low = _gear->settings().get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
+    float hi = _gear->settings().get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();
     float incAmount = (hi - low) * screenRatio;
 
     float value = low + incAmount;

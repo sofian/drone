@@ -6,6 +6,7 @@
 #include "PropertyControl.h"
 #include "PropertyControlString.h"
 #include "PropertyControlFilename.h"
+#include "PropertyControlBool.h"
 
 
 
@@ -73,6 +74,11 @@ void GearPropertiesDialog::addControl(Property *property)
     case Property::FLOAT:
         propertyControl = new PropertyControlString(this, property);
         break;
+    
+    case Property::BOOL:
+        propertyControl = new PropertyControlBool(this, property);
+        break;
+
     default:
         propertyControl = new PropertyControlString(this, property);
     }

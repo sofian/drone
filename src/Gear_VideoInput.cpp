@@ -32,7 +32,7 @@ Gear_VideoInput::Gear_VideoInput(Engine *engine, std::string name) : Gear(engine
 {    
     _VIDEO_OUT = addPlugVideoOut("Out");       
     
-    _settings.add(Property::STRING, SETTING_DEVICE, DEFAULT_DEVICE);    
+    _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
 
     resetInputDevice();
 }
@@ -79,11 +79,11 @@ void Gear_VideoInput::initInputDevice()
 {
     resetInputDevice();
 
-    _device = open(_settings.get(SETTING_DEVICE).c_str(), O_RDWR | O_NONBLOCK);
+    _device = open(_settings.get(SETTING_DEVICE)->valueStr().c_str(), O_RDWR | O_NONBLOCK);
 
     if (_device<=0)
     {
-        std::cout << "fail to open device " << _settings.get(SETTING_DEVICE).c_str() << std::endl;
+        std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
         return;
     }
 

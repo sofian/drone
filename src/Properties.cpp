@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <assert.h>
 
 #include <qdom.h>
 
@@ -8,84 +9,64 @@
 
 const char Properties::WHITESPACE_REPLACEMENT = '_';
 
-
-
-void Properties::add(Property::eType type, std::string name, std::string default_value)
+void Property::valueFloat(float value)
 {
-    if (_properties.find(name) != _properties.end())
-        return;//already exist
+    std::ostringstream str;
+    str << value;
+    _value = str.str();
+}
 
+void Property::valueBool(bool value)
+{
+    std::ostringstream str;
+    str << std::noboolalpha << value;
+    _value = str.str();
+}
+
+void Property::valueInt(int value)
+{
+    std::ostringstream str;
+    str << value;
+    _value = str.str();
+}
+
+int Property::valueInt()
+{
+    return atoi(_value.c_str());
+}
+
+float Property::valueFloat()
+{
+    return atof(_value.c_str());
+}
+
+bool Property::valueBool()
+{
+    return _value == "1" ? true : false;
+}
+
+
+Property* Properties::add(Property::eType type, std::string name)
+{
+    //no duplicate
+    assert(_properties.find(name) == _properties.end());
+        
     Property *newProperty = new Property(type, name);
-    newProperty->value(default_value);
-
+   
     _properties[name] = newProperty;
-}
 
-void Properties::add(Property::eType type, std::string name, int default_value)
-{
-    std::ostringstream str;
-    str << default_value;
-
-    add(type, name, str.str());
-}
-
-void Properties::add(Property::eType type, std::string name, float default_value)
-{
-    std::ostringstream str;
-    str << default_value;
-
-    add(type, name, str.str());
+    return newProperty;
 }
 
 
-void Properties::set(std::string name, std::string value)
+Property* Properties::get(std::string name)
 {
     if (_properties.find(name) == _properties.end())
-        return;//not existing
-    
-    _properties[name]->value(value);
+        return NULL;
+
+    return _properties[name];
 }
 
-void Properties::set(std::string name, int value)
-{
-    std::ostringstream str;
-    str << value;
-
-    set(name,str.str());
-}
-
-void Properties::set(std::string name, float value)
-{
-    std::ostringstream str;
-    str << value;
-
-    set(name,str.str());
-}
-
-
-std::string Properties::get(std::string name)
-{
-    if (_properties.find(name) == _properties.end())
-        return "";
-
-    return _properties[name]->value();
-}
-
-int Properties::getInt(std::string name)
-{
-    if (_properties.find(name) == _properties.end())
-        return 0;
-
-    return atoi(_properties[name]->value().c_str());
-}
-
-float Properties::getFloat(std::string name)
-{
-    if (_properties.find(name) == _properties.end())
-        return 0.0f;
-
-    return atof(_properties[name]->value().c_str());
-}
 
 void Properties::getAll(std::vector<Property*> *properties)
 {
@@ -93,7 +74,6 @@ void Properties::getAll(std::vector<Property*> *properties)
     {
         properties->push_back(it->second);
     }
-
 }
 
 void Properties::save(QDomDocument &doc, QDomElement &parent)
@@ -107,7 +87,7 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
         std::cout << it->second->name() << std::endl;
         //we need to replace whitespaces with another char for xml attributes
         propertieAttr = doc.createAttribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT));
-        propertieAttr.setValue(it->second->value().c_str());
+        propertieAttr.setValue(it->second->valueStr().c_str());
         propertiesElem.setAttributeNode(propertieAttr);
     }    
 }
@@ -124,7 +104,7 @@ void Properties::load(QDomElement &parentElem)
         for (std::map<std::string, Property*>::iterator it = _properties.begin(); it != _properties.end(); ++it)    
         {                
             //we need to replace whitespaces with another char for xml attributes
-            it->second->value(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
+            it->second->valueStr(propertiesElem.attribute(QString(it->second->name().c_str()).replace(' ', WHITESPACE_REPLACEMENT),"").ascii());
         }    
                 
     }

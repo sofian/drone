@@ -54,13 +54,13 @@ public:
     
     RGBA* _data;
     
-    int sizeX(){return _sizeX;};
-    int sizeY(){return _sizeY;};
+    int sizeX() const {return _sizeX;};
+    int sizeY() const {return _sizeY;};
     
     void fill(unsigned char value=0);
     void fromRGB24(unsigned char *bufferRGB24);
 
-    RGBA* pix(int x, int y)
+    RGBA* pix(int x, int y) const
     {
         return &_data[(y*_sizeX) + x];
     }

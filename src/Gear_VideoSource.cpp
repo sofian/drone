@@ -17,7 +17,7 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) : Gear(engi
     _VIDEO_OUT = addPlugVideoOut("ImgOut");       
     _AUDIO_OUT = addPlugSignalOut("AudioOut");       
     
-    _settings.add(Property::FILENAME, SETTING_FILENAME,"");    
+    _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
 
 Gear_VideoSource::~Gear_VideoSource()
@@ -36,7 +36,7 @@ void Gear_VideoSource::onUpdateSettings()
 {
     char tempstr[1024];
     
-    strcpy(tempstr,_settings.get(SETTING_FILENAME).c_str());
+    strcpy(tempstr,_settings.get(SETTING_FILENAME)->valueStr().c_str());
 
     std::cout << "opening movie : " << tempstr << std::endl;
 

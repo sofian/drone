@@ -47,8 +47,9 @@ void Gear::internalPostPlay()
 
 void Gear::internalInit()
 {
-    std::cout << "------------------------------" << std::endl;
-    std::cout << "Init : " << _Type << std::endl;
+    std::cout << "__________________________________________" << std::endl;
+    std::cout << _Type << std::endl;
+    std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
     
     for(std::list<Plug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
         (*it)->init();

@@ -20,10 +20,12 @@ Gear_Slider::Gear_Slider(Engine *engine, std::string name) : Gear(engine, "Slide
 {
 	
     _VALUE_OUT = addPlugSignalOut("Value");
+    
+    _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);    
+    _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);    
+    
     setValue(DEFAULT_VALUE);
     
-    _settings.add(Property::FLOAT, SETTING_HIGHERBOUND,100.0f);    
-    _settings.add(Property::FLOAT, SETTING_LOWERBOUND,0.0f);    
 }
 
 Gear_Slider::~Gear_Slider()
@@ -39,12 +41,12 @@ bool Gear_Slider::ready()
 void Gear_Slider::onUpdateSettings()
 {
     //validation
-    float low = _settings.getFloat(Gear_Slider::SETTING_LOWERBOUND);
-    float hi = _settings.getFloat(Gear_Slider::SETTING_HIGHERBOUND);    
+    float low = _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
+    float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
     if (low>hi)
     {
-        _settings.set(Gear_Slider::SETTING_LOWERBOUND, hi);    
-        _settings.set(Gear_Slider::SETTING_HIGHERBOUND, low);    
+        _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(hi);    
+        _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat(low);    
     }
     
     //range have changed
@@ -62,8 +64,8 @@ void Gear_Slider::setValue(Signal_T value)
     Signal_T *buffer = _VALUE_OUT->buffer();
     
     //clamp value to range
-    float low = _settings.getFloat(Gear_Slider::SETTING_LOWERBOUND);
-    float hi = _settings.getFloat(Gear_Slider::SETTING_HIGHERBOUND);    
+    float low = _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
+    float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
     
     if (value<low)
         value=low;

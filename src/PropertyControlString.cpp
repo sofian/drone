@@ -11,7 +11,7 @@ PropertyControlString::PropertyControlString(QWidget *parent, Property *property
     _lineEdit = new QLineEdit(this);
     _hLayout->addWidget(_lineEdit);
 
-    _lineEdit->setText(property->value().c_str());
+    _lineEdit->setText(property->valueStr().c_str());
 }
 
 PropertyControlString::~PropertyControlString()
@@ -20,9 +20,9 @@ PropertyControlString::~PropertyControlString()
 
 void PropertyControlString::save()
 {
-    _property->value(_lineEdit->text());
+    _property->valueStr(_lineEdit->text().ascii());
 }
 
 
 
-
+                                            

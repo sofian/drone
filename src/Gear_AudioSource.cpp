@@ -14,7 +14,7 @@ Gear_AudioSource::Gear_AudioSource(Engine *engine, std::string name) : Gear(engi
 {        
     _AUDIO_OUT = addPlugSignalOut("Out");       
     
-    _settings.add(Property::FILENAME, SETTING_FILENAME,"");    
+    _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
 
 Gear_AudioSource::~Gear_AudioSource()
@@ -35,7 +35,7 @@ void Gear_AudioSource::onUpdateSettings()
     if (_File!=NULL)
         sf_close(_File);
 
-    _File = sf_open(_settings.get(SETTING_FILENAME).c_str(), SFM_READ, &_SFInfo);    
+    _File = sf_open(_settings.get(SETTING_FILENAME)->valueStr().c_str(), SFM_READ, &_SFInfo);    
 
     if (_File==NULL)
     {

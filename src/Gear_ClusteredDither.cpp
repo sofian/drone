@@ -15,7 +15,7 @@ Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
   _AMOUNT_IN = addPlugSignalIn("ClusterIN", 16);
 
-  _settings.add(Property::INT, SETTING_SPOT_FUNCTION, (int)ROUND);
+  _settings.add(Property::INT, SETTING_SPOT_FUNCTION)->valueInt((int)ROUND);
 }
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
@@ -33,7 +33,7 @@ void Gear_ClusteredDither::init()
 
 void Gear_ClusteredDither::onUpdateSettings()
 {
-  _spotType = (eSpotType)_settings.getInt(SETTING_SPOT_FUNCTION);
+  _spotType = (eSpotType)_settings.get(SETTING_SPOT_FUNCTION)->valueInt();
   computeThreshold();
 }
 

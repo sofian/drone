@@ -11,7 +11,7 @@ Gear_Image::Gear_Image(Engine *engine, std::string name) : Gear(engine, "Image",
 {
     _VIDEO_OUT = addPlugVideoOut("Out");
 
-    _settings.add(Property::FILENAME, SETTING_FILENAME,"");    
+    _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
 
 Gear_Image::~Gear_Image()

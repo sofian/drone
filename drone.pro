@@ -5,7 +5,7 @@
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src /usr/include/libmpeg3
-LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL -lqt
+LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL -lqt -lXv
 CONFIG += thread 
 # Input
 HEADERS += config.h \
@@ -71,6 +71,7 @@ HEADERS += config.h \
            src/PropertyControl.h \
            src/PropertyControlFilename.h \
            src/PropertyControlString.h \
+	   src/PropertyControlBool.h \
            src/Rasterer.h \
            src/SummedAreaTable.h \
            src/SchemaEditor.h \
@@ -79,7 +80,12 @@ HEADERS += config.h \
            src/SignalInfo.h \
            src/Timing.h \
            src/Typedefs.h \
-           src/VideoInfo.h \
+           src/VideoInfo.h \	   
+	   src/VideoOutput.h \
+	   src/VideoOutputMaker.h \
+	   src/VideoOutputX11Base.h \
+	   src/VideoOutputXv.h \
+	   src/VideoOutputShm.h \
 	   src/Play.xpm \
 	   src/Pause.xpm \
 	   src/splash.xpm \
@@ -142,11 +148,16 @@ SOURCES += src/Canvas.cpp \
            src/PropertyControl.cpp \
            src/PropertyControlFilename.cpp \
            src/PropertyControlString.cpp \
+	   src/PropertyControlBool.cpp \
            src/Rasterer.cpp \
            src/SchemaEditor.cpp \
            src/SignalCircularBuffer.cpp \
            src/SignalInfo.cpp \
            src/SummedAreaTable.cpp \
            src/Timing.cpp \
-           src/VideoInfo.cpp
-	   
+           src/VideoInfo.cpp \	   
+	   src/VideoOutputMaker.cpp \
+	   src/VideoOutputX11Base.cpp \
+	   src/VideoOutputXv.cpp \
+	   src/VideoOutputShm.cpp
+

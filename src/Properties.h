@@ -11,7 +11,7 @@ class QDomElement;
 class Property
 {
 public:
-    enum eType {STRING, FILENAME, INT, FLOAT};
+    enum eType {STRING, FILENAME, INT, FLOAT, BOOL};
     
     Property()
     {
@@ -21,8 +21,16 @@ public:
     {
     }
     
-    std::string value() {return _value;};
-    void value(std::string value) {_value = value;};
+    void valueStr(std::string value) {_value = value;};
+    void valueInt(int value);
+    void valueFloat(float value);
+    void valueBool(bool value);
+    
+    std::string valueStr() {return _value;};
+    int valueInt();
+    float valueFloat();
+    bool valueBool();
+    
     eType type(){return _type;};
     std::string name(){return _name;};
     void name(std::string name){_name = name;};
@@ -40,17 +48,9 @@ class Properties
 {
 public:
 
-    void add(Property::eType type, std::string name, std::string default_value);
-    void add(Property::eType type, std::string name, int default_value);
-    void add(Property::eType type, std::string name, float default_value);
+    Property* add(Property::eType type, std::string name);
 
-    void set(std::string name, std::string value);
-    void set(std::string name, int value);
-    void set(std::string name, float value);
-    
-    std::string get(std::string name);
-    int getInt(std::string name);
-    float getFloat(std::string name);
+    Property* get(std::string name);
 
     void getAll(std::vector<Property*> *properties);
 

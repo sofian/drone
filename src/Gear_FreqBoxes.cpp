@@ -19,8 +19,8 @@ Gear_FreqBoxes::Gear_FreqBoxes(Engine *engine, std::string name) : Gear(engine, 
     _VIDEO_OUT = addPlugVideoOut("Img");
     _SIGNAL_IN = addPlugSignalIn("Signal");
 
-    _settings.add(Property::INT, SETTING_SIZE_X,"256");    
-    _settings.add(Property::INT, SETTING_SIZE_Y,"256");    
+    _settings.add(Property::INT, SETTING_SIZE_X)->valueInt(256);    
+    _settings.add(Property::INT, SETTING_SIZE_Y)->valueInt(256);    
     
     updateSettings();
 
@@ -44,7 +44,7 @@ void Gear_FreqBoxes::init()
 
 void Gear_FreqBoxes::onUpdateSettings()
 {    
-    _VIDEO_OUT->canvas()->allocate(_settings.getInt(SETTING_SIZE_X), _settings.getInt(SETTING_SIZE_Y));
+    _VIDEO_OUT->canvas()->allocate(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 

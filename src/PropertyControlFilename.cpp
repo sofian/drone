@@ -16,7 +16,7 @@ PropertyControlFilename::PropertyControlFilename(QWidget *parent, Property *prop
     _hLayout->addWidget(_browseButton);
     QObject::connect(_browseButton, SIGNAL(clicked()), this, SLOT(slotBrowseClicked()));                
 
-    _lineEdit->setText(property->value().c_str());
+    _lineEdit->setText(property->valueStr().c_str());
 }
 
 PropertyControlFilename::~PropertyControlFilename()
@@ -25,7 +25,7 @@ PropertyControlFilename::~PropertyControlFilename()
 
 void PropertyControlFilename::save()
 {
-    _property->value(_lineEdit->text());    
+    _property->valueStr(_lineEdit->text().ascii());    
 }
 
 void PropertyControlFilename::slotBrowseClicked()

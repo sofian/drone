@@ -24,8 +24,8 @@ Gear_AudioInput::Gear_AudioInput(Engine *engine, std::string name) :
     _AUDIO_OUT_LEFT = addPlugSignalOut("Left");    
     _AUDIO_OUT_RIGHT = addPlugSignalOut("Right");    
 
-    _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER, DEFAULT_FRAMES_PER_BUFFER);
-    _settings.add(Property::INT, SETTING_NB_BUFFERS, DEFAULT_NB_BUFFERS);    
+    _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
+    _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
 
     _Mutex = new pthread_mutex_t();
     pthread_mutex_init(_Mutex, NULL);
@@ -110,7 +110,7 @@ void Gear_AudioInput::initPortAudio()
 
     std::cout << "init PortAudio..." << std::endl;
 
-    int framesPerBuffer = _settings.getInt(SETTING_FRAMES_PER_BUFFER);
+    int framesPerBuffer = _settings.get(SETTING_FRAMES_PER_BUFFER)->valueInt();
     
 
     err = Pa_Initialize();
