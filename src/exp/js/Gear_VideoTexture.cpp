@@ -171,24 +171,20 @@ void Gear_VideoTexture::onUpdateSettings()
   case 1:
     for (int i=0; i<_nFrames; ++i)
     {
-      for (int j=0; j<i; ++j)
+      for (int j=0; j<_nFrames; ++j)
       {
         int iPrev = MAX(i-1,0);
         int jPrev = MAX(j-1,0);
-        int iNext = MIN(i+1,_nFrames-1);
-        int jNext = MIN(j+1,_nFrames-1);
-        double smoothedDistance =
-          0.25 * _distances(iPrev,jPrev) +
-          0.5 * _distances(i,j) +
-          0.25 * _distances(iNext, jNext);
-        _smoothedDistances(i,j) = _smoothedDistances(j,i) = smoothedDistance;
+        _smoothedDistances(j,i) =
+          0.5 * _distances(jPrev,iPrev) +
+          0.5 * _distances(j,i);
       }
     }
     break;
   case 2:
     for (int i=0; i<_nFrames; ++i)
     {
-      for (int j=0; j<i; ++j)
+      for (int j=0; j<_nFrames; ++j)
       {
         int iPrev = MAX(i-1,0);
         int jPrev = MAX(j-1,0);
@@ -196,15 +192,11 @@ void Gear_VideoTexture::onUpdateSettings()
         int jNext = MIN(j+1,_nFrames-1);
         int iPrev2 = MAX(i-2,0);
         int jPrev2 = MAX(j-2,0);
-        int iNext2 = MIN(i+2,_nFrames-1);
-        int jNext2 = MIN(j+2,_nFrames-1);
-        double smoothedDistance =
-          0.0625 * _distances(iPrev2,jPrev2) +
-          0.25 * _distances(iPrev,jPrev) +
-          0.375 * _distances(i,j) +
-          0.25 * _distances(iNext, jNext) +
-          0.0625 * _distances(iNext2,jNext2);
-        _smoothedDistances(i,j) = _smoothedDistances(j,i) = smoothedDistance;
+        _smoothedDistances(j,i) =
+          0.125 * _distances(jPrev2,iPrev2) +
+          0.375  * _distances(jPrev,iPrev) +
+          0.375  * _distances(j,i) +
+          0.125 * _distances(jNext,iNext);
       }
     }
     break;
@@ -220,7 +212,7 @@ void Gear_VideoTexture::onUpdateSettings()
   for (int i=0; i<_nFrames; ++i)
   {
     for (int j=0; j<_nFrames; ++j)
-      std::cout << _smoothedDistances(j,i) << " ";
+      std::cout << _smoothedDistances(i,j) << " ";
     std::cout << std::endl;
   }
   std::cout << std::endl;
@@ -233,7 +225,7 @@ void Gear_VideoTexture::onUpdateSettings()
   // Initialize distances.
   for (int i=0; i<_nFrames; ++i)
     for (int j=0; j<=i; ++j)
-      _distances(i,j) = _distances(j,i) = pow(_smoothedDistances(i,j), power);
+      _distances(i,j) = _distances(j,i) = _smoothedDistances(i,j) = _smoothedDistances(j,i) = pow(_smoothedDistances(i,j), power);
 
   // Q-learning.
   for (int t=0; t<nEpochs; ++t)
@@ -249,14 +241,18 @@ void Gear_VideoTexture::onUpdateSettings()
     std::cout << std::endl;
 #endif
 
-    // Set min distances.
-    for (int i=0; i<_nFrames; ++i)
-      _minDistances[i] = min(_distances.row(i), (size_t)_nFrames);
-
-    // Update distances.
-    for (int i=0; i<_nFrames; ++i)
+    // Init min distances.
+    for (int j=0; j<_nFrames; ++j)
+      _minDistances[j] = min(_distances.row(j), (size_t)_nFrames);
+    
+    for (int i=_nFrames-1; i>=0; --i)
       for (int j=0; j<_nFrames; ++j)
-        _distances(j,i) = pow(_smoothedDistances(j,i), power) + alpha * _minDistances[j];
+      {
+        // Update distances.
+        _distances(j,i) = _smoothedDistances(j,i) + alpha * _minDistances[j];
+        // Update min distances.
+        _minDistances[j] = min(_distances.row(j), (size_t)_nFrames);
+      }
   }
 
   // std::cout <<  "Time to compute Q-learned distances: " <<  timer.getTime() << std::endl;
