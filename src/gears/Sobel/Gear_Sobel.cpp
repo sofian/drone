@@ -72,35 +72,40 @@ void Gear_Sobel::runVideo()
   _sizeX = _image->width();
   _sizeY = _image->height();
 
-  // XXX temporary hack (since we don't process the borders for now)
-  std::copy(_image->data(), _image->data() + _image->size(), _outImage->data());
-
-  for (int y=1;y<_sizeY-1;y++)
+  // Process center
+  for (int y=0;y<_sizeY;++y)
   {
     // Set row iterators.
-    _p1 = (unsigned char*) (_image->row(y-1)    );
-    _p2 = (unsigned char*) (_image->row(y-1) + 1);
-    _p3 = (unsigned char*) (_image->row(y-1) + 2);
+    _p1 = (unsigned char*) (_image->row(MAX(0,y-1))    );
+    _p2 = (unsigned char*) (_image->row(MAX(0,y-1))    );
+    _p3 = (unsigned char*) (_image->row(MAX(0,y-1)) + 1);
     _p4 = (unsigned char*) (_image->row(y)      );
-    _p6 = (unsigned char*) (_image->row(y)   + 2);
-    _p7 = (unsigned char*) (_image->row(y+1)    );
-    _p8 = (unsigned char*) (_image->row(y+1) + 1);
-    _p9 = (unsigned char*) (_image->row(y+1) + 2);
+    _p6 = (unsigned char*) (_image->row(y)   + 1);
+    _p7 = (unsigned char*) (_image->row(MIN(_sizeY-1,y+1))    );
+    _p8 = (unsigned char*) (_image->row(MIN(_sizeY-1,y+1))    );
+    _p9 = (unsigned char*) (_image->row(MIN(_sizeY-1,y+1)) + 1);
     
-    _iterOutData = (unsigned char*) (_outImage->row(y) + 1);
+    _iterOutData = (unsigned char*) _outImage->row(y);
+    
+    // Process leftmost point.
+    singleStep();
 
-    for (int x=1;x<_sizeX-1;x++)
-    {
-      for (int z=0; z<SIZE_RGBA; ++z)
-      {
-        // Compute the kernel function.
-        *_iterOutData++ = CLAMP0255(abs((int)(*_p1 + (*_p2 << 1) + *_p3 - *_p7 - (*_p8 << 1) - *_p9)) +
-                                    abs((int)(*_p3 + (*_p6 << 1) + *_p9 - *_p1 - (*_p4 << 1) - *_p7)));
-        
-        // Update iterators.
-        _p1++; _p2++; _p3++; _p4++; _p6++; _p7++; _p8++; _p9++;
-      }
-    }
+    // Reset kernel's leftmost pointers.
+    _p1 -= SIZE_RGBA;
+    _p4 -= SIZE_RGBA;
+    _p7 -= SIZE_RGBA;
+    
+    // Process center.
+    for (int x=1;x<_sizeX-1;++x)
+      singleStep();
+
+    // Reset kernel's rightmost pointers.
+    _p3 -= SIZE_RGBA;
+    _p6 -= SIZE_RGBA;
+    _p9 -= SIZE_RGBA;
+
+    // Process rightmost point.
+    singleStep();
 
   }
 
