@@ -27,7 +27,7 @@
 
 #include "ColorSpace.h"
 
-inline unsigned char intensity(unsigned char *rgb)
+inline unsigned char intensity(const unsigned char *rgb)
 {
   unsigned int total = *rgb++;
   total += *rgb;
@@ -38,11 +38,31 @@ inline unsigned char intensity(unsigned char *rgb)
   return(unsigned char) total;
 }
 
+#define rgb2gray(r,g,b)  \
+  (unsigned char) ( ( 19595*(unsigned int)(unsigned char)(r) +  \
+             38470*(unsigned int)(unsigned char)(g) +  \
+              7471*(unsigned int)(unsigned char)(b)   ) >> 16 )
+
+inline void rgba2grayscale(unsigned char *dstGray, const unsigned char *srcRGBA, size_t size)
+{
+  while (size--)
+  {
+    *dstGray++ = rgb2gray(srcRGBA[0], srcRGBA[1], srcRGBA[2]);
+    srcRGBA+=4;
+  }
+}
+
 // # Image rescaling function ###############################################
 
 inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeight, int srcWidth, int srcHeight)
 {
   NOTICE("%d %d %d %d", dstWidth, dstHeight, srcWidth, srcHeight);
+  if (dstWidth == srcWidth && dstHeight == srcHeight)
+  {
+    // Same dimensions, just copy the data.
+    memcpy(dst, src, dstHeight*dstWidth*sizeof(RGBA));
+    return;
+  }
   long xInc, xCur, yInc, yCur;
   xInc = (long)((long)srcWidth*65535L)/(long)dstWidth;
   yInc = (long)((long)srcHeight*65535L)/(long)dstHeight;
@@ -533,7 +553,8 @@ divide_pixels (const unsigned char *src1,
   {
     for (b = 0; b < alpha; b++)
     {
-      result = ((src1[b] * 256) / (1+src2[b]));
+      result = ((src1[b] << 8) / (1+src2[b]));
+      //result = ((src1[b] * 256) / (1+src2[b]));
       dest[b] = MIN (result, 255u);
     }
 
