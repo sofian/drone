@@ -18,6 +18,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "frei0r.h"
@@ -140,12 +141,11 @@ void f0r_update(f0r_instance_t instance, double time,
   assert(instance);
   thresholder_instance_t* inst = (thresholder_instance_t*)instance;
   unsigned int len = inst->width * inst->height;
-  int p;
 
   unsigned char* lut = inst->lut;
   unsigned char* dst = (unsigned char*)outframe;
   const unsigned char* src = (unsigned char*)inframe;
-  for (p=0; p<len; ++p)
+  while (len--)
   {
     *dst++ = lut[*src++];
     *dst++ = lut[*src++];

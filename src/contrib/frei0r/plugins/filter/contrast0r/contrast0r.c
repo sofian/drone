@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "frei0r.h"
 
@@ -104,7 +105,6 @@ void f0r_set_param_value(f0r_instance_t instance,
 {
   assert(instance);
   contraster_instance_t* inst = (contraster_instance_t*)instance;
-
   switch(param_index)
   {
     int val;
@@ -140,12 +140,11 @@ void f0r_update(f0r_instance_t instance, double time,
   assert(instance);
   contraster_instance_t* inst = (contraster_instance_t*)instance;
   unsigned int len = inst->width * inst->height;
-  int p;
   
   unsigned char* lut = inst->lut;
   unsigned char* dst = (unsigned char*)outframe;
   const unsigned char* src = (unsigned char*)inframe;
-  for (p=0; p<len; ++p)
+  while (len--)
   {
     *dst++ = lut[*src++];
     *dst++ = lut[*src++];
