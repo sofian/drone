@@ -15,7 +15,7 @@ Gear_GrayScale::Gear_GrayScale(Engine *engine, std::string name) : Gear(engine, 
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this,"ImgOUT"));
 
-  addAutoDuplicatePlug<VideoTypeRGBA>(new PlugIn<VideoTypeRGBA>(this,"Test"), _SHIT, 1,5);
+  //addAutoDuplicatePlug<VideoTypeRGBA>(new PlugIn<VideoTypeRGBA>(this,"Test"), _SHIT, 1,5);
 
 }
 

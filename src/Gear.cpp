@@ -93,7 +93,7 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
   for(int i=0;i<size;i++)
   {
     AbstractType* subtype = plug->abstractType()->getSubType(i);
-    addPlugAndSubPlugs(new AbstractPlug(this, subtype, plug->inOut(), str + subtype->name() ),level+1);
+    addPlugAndSubPlugs(new AbstractPlug(this, plug->inOut(), str + subtype->name(), subtype ),level+1);
   }
 }
 
