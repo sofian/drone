@@ -27,7 +27,7 @@ private:
     int *valIter = (int*)val;
     int *incIter = (int*)inc;
     for (int i=0; i<4; ++i)
-      *(valIter++) += (*incIter++);
+      *(valIter++) += *(incIter++);
   }
 
   static inline void subRGBAint(RGBAint *val, RGBAint *inc)
@@ -35,7 +35,7 @@ private:
     int *valIter = (int*)val;
     int *incIter = (int*)inc;
     for (int i=0; i<4; ++i)
-      *(valIter++) -= (*incIter++);
+      *(valIter++) -= *(incIter++);
   }
 
 public:
