@@ -63,12 +63,12 @@ void SummedAreaTable::getSum(RGBAint& sum, int& area, int x0, int y0, int x1, in
   sum = _acc[y1 * _width + x1];
 
   if (x0 >= 0)
-    subtract((int*)&sum, (int*)&_acc[y1 * _width + x0], SIZE_RGBA);
+    sum -= _acc[y1 * _width + x0];
   if (y0 >= 0)
   {
-    subtract((int*)&sum, (int*)&_acc[y0 * _width + x1], SIZE_RGBA);
+    sum -= _acc[y0 * _width + x1];
     if (x0 >= 0)
-      add((int*)&sum, (int*)&_acc[y0 * _width + x0], SIZE_RGBA);
+      sum += _acc[y0 * _width + x0];
   }
   
 }
@@ -87,12 +87,12 @@ void SummedAreaTable::getSumOfSquares(RGBAint& sumSquares, int &area, int x0, in
   sumSquares = _accSquares[y1 * _width + x1];
 
   if (x0 >= 0)
-    subtract((int*)&sumSquares, (int*)&_accSquares[y1 * _width + x0], SIZE_RGBA);
+    sumSquares -= _accSquares[y1 * _width + x0];
   if (y0 >= 0)
   {
-    subtract((int*)&sumSquares, (int*)&_accSquares[y0 * _width + x1], SIZE_RGBA);
+    sumSquares -= _accSquares[y0 * _width + x1];
     if (x0 >= 0)
-      add((int*)&sumSquares, (int*)&_accSquares[y0 * _width + x0], SIZE_RGBA);
+      sumSquares += _accSquares[y0 * _width + x0];
   }
 }
 
