@@ -30,7 +30,7 @@ class Gear_Saturation : public Gear
 {
 public:
 
-  Gear_Saturation(Engine *engine, std::string name);
+  Gear_Saturation(Schema *schema, std::string uniqueName);
   virtual ~Gear_Saturation();
 
   void runVideo();  bool ready();
