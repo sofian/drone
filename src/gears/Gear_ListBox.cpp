@@ -73,7 +73,6 @@ void Gear_ListBox::onUpdateSettings()
   _labels.resize(0);
   while (tok != NULL) // parse comma-separated array
   {
-    printf("[%s],", tok);
     _labels.push_back(tok);
     tok = strtok (NULL, ",");
   }
