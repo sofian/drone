@@ -6,6 +6,7 @@
 #include <qtoolbutton.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
+#include <list>
 
 #include "Engine.h"
 
@@ -21,6 +22,7 @@ class MainWindow : public QMainWindow
 
   //! loads the specified schema file
   void load(std::string filename);
+  void play(bool pl);
 
   MainWindow();
   ~MainWindow();
@@ -37,8 +39,14 @@ public slots:
   void slotMenuSaveAs();
   void slotMenuQuit();
 
+  void slotMenuItemSelected(int id);
+
 private:
 
+  static const unsigned int MainWindow::MAX_RECENT_SCHEMAS;
+
+  void addToRecentSchema(std::string filename);
+  
 
   Engine* _engine;
   QFrame* _frame;
@@ -55,6 +63,8 @@ private:
   std::string _currentSchemaFilename;  
   QString _lastLoadPath;
   QString _lastSavePath;
+  std::list<std::string> _recentSchemas;
+  int _menuFirstRecentSchemaId;
 
 //    PlayThread *_playThread;
 };

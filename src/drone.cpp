@@ -19,7 +19,7 @@ int main(int argc, char** argv)
   QApplication qtApp(argc, argv);
   QApplication::setGlobalMouseTracking(TRUE);
 
-  globalSettings.setPath("drone", "drone");
+  //globalSettings.setPath("drone", "drone");
   
   
   //QSplashScreen splash(splash_xpm);

@@ -20,7 +20,7 @@ TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/stk-4.1.3/include
 LIBS += -Lsrc/stk-4.1.3/src/ -lstk -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
-CONFIG += thread 
+CONFIG += thread debug
 
 HEADERS += config.h \
 src/error.h \
@@ -121,7 +121,7 @@ src/drone.cpp \
 src/Engine.cpp \
 src/FrequencyAnalyzer.cpp \
 src/Gear.cpp \
-src/types/VideoType.cpp \
+#src/types/VideoType.cpp \
 src/gears/Gear_AffineTransform.cpp \
 src/gears/Gear_ApplyDisplaceGrid.cpp \
 src/gears/Gear_AudioInput.cpp \

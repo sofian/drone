@@ -367,6 +367,7 @@ void SchemaEditor::clearSchema()
 
 void SchemaEditor::loadSchema(std::string filename)
 {
+  clearSchema();
   _engine->loadSchema(filename);
   recreateSchemaFromEngine();
 }
