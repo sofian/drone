@@ -99,7 +99,7 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
     
     for (int y=rady; y>=0; --y)
     {
-      int xmax = (int) radx * sqrt(1 - (float)SQR(y) / (float)rady2);
+      int xmax = (int) (radx * sqrt(1 - (float)SQR(y) / (float)rady2));
       for (int x=xmax; x>=0; --x)
         ellipsePoints(x0, y0, x, y);
     }
