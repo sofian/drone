@@ -120,17 +120,17 @@ void SummedAreaTable::buildTable2()
 
 }
 
-void SummedAreaTable::getSum(RGBAint *sum, int x0, int y0, int x1, int y1)
+void SummedAreaTable::getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const
 {
   getSumIn(sum, _acc, x0, y0, x1, y1);
 }
 
-void SummedAreaTable::getSumSquare(RGBAint *sumSquare, int x0, int y0, int x1, int y1)
+void SummedAreaTable::getSumSquare(RGBAint *sumSquare, int x0, int y0, int x1, int y1) const
 {
   getSumIn(sumSquare, _accSquare, x0, y0, x1, y1);
 }
 
-int SummedAreaTable::getArea(int x0, int y0, int x1, int y1)
+int SummedAreaTable::getArea(int x0, int y0, int x1, int y1) const
 {
   if (x0 < 0) x0 = 0;
   if (x1 < 0) x1 = 0;
@@ -146,7 +146,7 @@ int SummedAreaTable::getArea(int x0, int y0, int x1, int y1)
 }
 
 
-void SummedAreaTable::getSumIn(RGBAint *sum, RGBAint *acc, int x0, int y0, int x1, int y1)
+void SummedAreaTable::getSumIn(RGBAint *sum, RGBAint *acc, int x0, int y0, int x1, int y1) const
 {
   if (!sum)
     return;
@@ -193,6 +193,6 @@ void SummedAreaTable::getSumIn(RGBAint *sum, RGBAint *acc, int x0, int y0, int x
 //     subRGBAint(sum, &acc[y0 * _sizeX + x1]);
 //   }
 
-//   addRGBAint(sum, &acc[y1 * _sizeX + x1]);
+//  addRGBAint(sum, &acc[y1 * _sizeX + x1]);
   
 }

@@ -64,14 +64,6 @@ void Gear_KDTree::runVideo()
   split(0, _sizeX, 0, _sizeY, 0);
 }
 
-int Gear_KDTree::accum(int x0, int x1, int y0, int y1)
-{
-  int rgba[4];
-  _table->getSum((RGBAint*)rgba, x0, y0, x1, y1);
-  return ( *(rgba) + *(rgba+1) + *(rgba+2) );
-}
-
-
 void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
   if (depth > MAX_DEPTH)
@@ -86,7 +78,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   _table->getSum(&rgba, x0, y0, x1, y1);
 
   int area = _table->getArea(x0, y0, x1, y1);
-  int total = rgba.R + rgba.G + rgba.B; //*(rgba) + *(rgba+1) + *(rgba+2);
+  int total = SummedAreaTable::total(&rgba);
   int cut = total / 2;
   
   _rasterer->setColor(rgba.R / area, rgba.G / area, rgba.B / area);
@@ -95,12 +87,12 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
   _rasterer->rect(x0, y0, x1, y1, false);
 
   // *** pour le moment recherche stupide lineaire poche
-  // *** fucking unefficient with all these "new" 
   if (depth % 2)
     // vertical split
     for(int y=y0;y<y1; ++y)
     {
-      if (accum(x0, x1, y0, y) >= cut)
+      _table->getSum(&rgba, x0, y0, x1, y);
+      if (SummedAreaTable::total(&rgba) >= cut)
       {
         split(x0, x1, y0, y, depthPlusOne);
         split(x0, x1, y, y1, depthPlusOne);
@@ -111,7 +103,8 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
     // horizontal split
     for(int x=x0;x<x1; ++x)
     {
-      if (accum(x0, x, y0, y1) >= cut)
+      _table->getSum(&rgba, x0, y0, x, y1);
+      if (SummedAreaTable::total(&rgba) >= cut)
       {
         split(x0, x, y0, y1, depthPlusOne);
         split(x, x1, y0, y1, depthPlusOne);

@@ -15,12 +15,22 @@ public:
   void buildTable();
   void buildTable2();
 
-  void getSum(RGBAint *sum, int x0, int y0, int x1, int y1);
-  void getSumSquare(RGBAint *sumSquare, int x0, int y0, int x1, int y1);
-  int getArea(int x0, int y0, int x1, int y1);
+  void getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const;
+  void getSumSquare(RGBAint *sumSquare, int x0, int y0, int x1, int y1) const;
+  int getArea(int x0, int y0, int x1, int y1) const;
+
+  static inline int total(RGBAint *sum)
+  {
+    return sum->R + sum->G + sum->B;
+//     int ret = 0;
+//     int *sumIter = (int*)sum;
+//     for (int i=0; i<4; ++i)
+//       ret += *(sumIter++);
+//     return ret;
+  }
 
 private:
-  void getSumIn(RGBAint *sum, RGBAint *acc, int x0, int y0, int x1, int y1);
+  void getSumIn(RGBAint *sum, RGBAint *acc, int x0, int y0, int x1, int y1) const;
 
   static inline void addRGBAint(RGBAint *val, RGBAint *inc)
   {
