@@ -25,8 +25,8 @@ private:
   std::vector<PlugIn<VideoTypeRGBA>* > _SHIT;
 
   //local var
-  MatrixType<RGBA> *_image; 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_image; 
+  VideoTypeRGBA *_outImage; 
 
   int _size;
 

@@ -33,8 +33,8 @@ bool Gear_Oscilloscope::ready()
 
 void Gear_Oscilloscope::runAudio()
 {
-  MatrixType<float> buffer = _AUDIO_IN->type()->buffer();
-  circbuf->append(buffer.data(),buffer.size());
+  const SignalType *buffer = _AUDIO_IN->type();
+  circbuf->append(buffer->data(),buffer->size());
 }
 
 void Gear_Oscilloscope::runVideo()
@@ -44,18 +44,16 @@ void Gear_Oscilloscope::runVideo()
   int midy = sizey>>1;
   int midym1 = midy-1;
 
-  _outImage = _VIDEO_OUT->type()->image();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(sizex,sizey);
   _outData = _outImage->data();
 
   float zoomy = _ZOOM_Y->type()->value();
-  int zoomx = _ZOOM_X->type()->value();
+  int zoomx = (int)_ZOOM_X->type()->value();
   int signal_blocksize = Engine::signalInfo().blockSize();
 
   // ? debug circularbuffer please .. can't get total buffer ?
   zoomx=CLAMP(zoomx,signal_blocksize,191399);
-
-  MatrixType<float> buffer = _AUDIO_IN->type()->buffer();
 
   _outImage->fill(BLACK_RGBA);
 

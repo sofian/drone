@@ -31,8 +31,8 @@ private:
   PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  MatrixType<RGBA> *_image;     
-  MatrixType<RGBA> *_outImage; 
+  const VideoTypeRGBA *_image;     
+  VideoTypeRGBA *_outImage; 
   unsigned char *_data;
   unsigned char *_amountMapData;
 
@@ -52,7 +52,7 @@ private:
 
   RGBA _acc;
 
-  MatrixType<RGBA> _defaultAmountMapData;
+  VideoTypeRGBA _defaultAmountMapData;
 
   void init();    
 };

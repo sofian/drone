@@ -3,7 +3,7 @@
 PROGRAMS = demo
 RM = /bin/rm
 SRC_PATH = ../../src
-OBJECT_PATH = Debug
+OBJECT_PATH = Release
 vpath %.o $(OBJECT_PATH)
 
 OBJECTS	=	Stk.o Noise.o SubNoise.o Envelope.o ADSR.o \
@@ -31,8 +31,8 @@ vpath %.h $(INCLUDE)
 
 CC       = g++
 DEFS     = -D__LITTLE_ENDIAN__
-DEFS    += -D_STK_DEBUG_
-CFLAGS   = -g
+DEFS    += 
+CFLAGS   = -O2
 CFLAGS  += -Wall -g -I$(INCLUDE)
 LIBRARY = -lasound -lpthread -lm 
 LIBRARY += 

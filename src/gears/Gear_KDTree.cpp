@@ -30,9 +30,9 @@ bool Gear_KDTree::ready()
 
 void Gear_KDTree::init()
 {
-  _rasterer->setImage(_VIDEO_OUT->type()->image());
+  _rasterer->setImage(_VIDEO_OUT->type());
   _rasterer->setColor(0, 0, 0); // black lines only
-  _table->setImage(_VIDEO_IN->type()->image());
+  _table->setImage(_VIDEO_IN->type());
 }
 
 void Gear_KDTree::runVideo()
@@ -40,8 +40,8 @@ void Gear_KDTree::runVideo()
   // initialize
   _maxDepth = (int)_AMOUNT_IN->type()->value();
 
-  _image = _VIDEO_IN->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _image = _VIDEO_IN->type();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 
   _sizeX = _image->width();

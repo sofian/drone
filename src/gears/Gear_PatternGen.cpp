@@ -36,7 +36,7 @@ Gear_PatternGen::~Gear_PatternGen()
 
 void Gear_PatternGen::onUpdateSettings()
 {    
-  _VIDEO_OUT->type()->image()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
+  _VIDEO_OUT->type()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 bool Gear_PatternGen::ready()
@@ -46,7 +46,7 @@ bool Gear_PatternGen::ready()
 
 void Gear_PatternGen::runVideo()
 {
-  _outImage = _VIDEO_OUT->type()->image();    
+  _outImage = _VIDEO_OUT->type();    
   _outData = _outImage->data();
 
   _iterSizeX = _outImage->width();

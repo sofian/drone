@@ -27,7 +27,6 @@ void VideoOutputShm::destroy()
 
   destroyXImage();
 
-  destroyShm();
 }
 
 void VideoOutputShm::fullscreen(bool fs)
@@ -35,7 +34,7 @@ void VideoOutputShm::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputShm::render(MatrixType<RGBA> &image)
+void VideoOutputShm::render(const MatrixType<RGBA> &image)
 {    
   processX11Events();
 
@@ -128,6 +127,8 @@ XImage* VideoOutputShm::createXImage(int sizeX, int sizeY)
 
 void VideoOutputShm::destroyXImage()
 {
+  destroyShm();
+
   if (_xImage != NULL)
   {
     XFree(_xImage);

@@ -26,9 +26,9 @@ bool Gear_MedianFilter::ready()
 
 void Gear_MedianFilter::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
+  _image = _VIDEO_IN->type();
 
-  _outImage = _VIDEO_OUT->type()->image();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _sizeY = _image->height();
   _sizeX = _image->width();

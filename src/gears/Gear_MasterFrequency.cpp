@@ -42,8 +42,8 @@ void Gear_MasterFrequency::init()
 
 void Gear_MasterFrequency::runAudio()
 {
-  //   MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
-  //   MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
+  //   SignalType bufferin = _AUDIO_IN->type();
+  //   SignalType bufferout = _AUDIO_OUT->type();
 
   //_freqAnalyser->performAnalysis(bufferin);
 

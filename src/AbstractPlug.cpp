@@ -8,11 +8,11 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type) : 
-  _parent(parent), 
-  _inOut(inOut), 
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type) : 
   _abstractType(type),
   _abstractInternalType(type),
+  _parent(parent), 
+  _inOut(inOut), 
   _name(name)
 {
   //une plug a besoin d'un parent

@@ -24,8 +24,8 @@ private:
   PlugIn<ValueType> *_CONTRAST_IN;
 
   //local var
-  MatrixType<RGBA> *_image; 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_image; 
+  VideoTypeRGBA *_outImage; 
   RGBA *_data;
   RGBA *_outData;
 

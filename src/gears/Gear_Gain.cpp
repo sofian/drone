@@ -33,10 +33,9 @@ bool Gear_Gain::ready()
 
 void Gear_Gain::runAudio()
 {
-  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
-  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
-  MatrixType<float> buffergain  = _PARAM_GAIN->type()->buffer();
-
+  float *bufferin = _AUDIO_IN->type()->data();
+  float *bufferout = _AUDIO_OUT->type()->data();
+  float *buffergain  = _PARAM_GAIN->type()->data();
 
   int signal_blocksize = Engine::signalInfo().blockSize();
   for (int i=0;i<signal_blocksize;i++)

@@ -3,7 +3,7 @@
 PROGRAMS = ragamat
 RM = /bin/rm
 SRC_PATH = ../../src
-OBJECT_PATH = Debug
+OBJECT_PATH = Release
 vpath %.o $(OBJECT_PATH)
 
 OBJECTS	=	Stk.o Envelope.o ADSR.o Noise.o \
@@ -21,8 +21,8 @@ vpath %.h $(INCLUDE)
 
 CC       = g++
 DEFS     = -D__LITTLE_ENDIAN__
-DEFS    += -D_STK_DEBUG_
-CFLAGS   = -g
+DEFS    += 
+CFLAGS   = -O2
 CFLAGS  += -Wall -g -I$(INCLUDE)
 LIBRARY = -lasound -lpthread -lm 
 LIBRARY += 

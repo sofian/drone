@@ -64,7 +64,7 @@ void Gear_STKAudioOutput::onUpdateSettings()
 void Gear_STKAudioOutput::runAudio()
 {
   std::cerr<<"!!!!!!!!! ";
-  MatrixType<float> left_buffer  = _AUDIO_IN_LEFT->type()->buffer();
+  float *left_buffer = _AUDIO_IN_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();
   
   for (int i=0; i<signal_blocksize; i++)
@@ -102,7 +102,7 @@ void Gear_STKAudioOutput::initDevice()
   _RingBufferSize = framesPerBuffer * 16;
 
   _LBuffer.resize(_RingBufferSize);
-  _LBuffer.resize(0.0f);
+  _LBuffer.resize(0);
   std::cerr<<"framesPerBuffer: "<<framesPerBuffer<<"\n";
   
   startReadingBuffer();
@@ -176,7 +176,7 @@ int Gear_STKAudioOutput::bufferCallback(char *output_buffer, int frames_per_buff
   static Gear_STKAudioOutput *parent = (Gear_STKAudioOutput*)user_data;
   static int lindex=0;
   //static int rindex=0;
-  MatrixType<float>& lbuffer = parent->_LBuffer;
+  SignalType& lbuffer = parent->_LBuffer;
 
   int ringBufferSize = parent->_RingBufferSize;
 

@@ -30,10 +30,10 @@ bool Gear_VideoBlend::ready()
 
 void Gear_VideoBlend::runVideo()
 {
-  _imageA = _VIDEO_IN_A->type()->image();
-  _imageB = _VIDEO_IN_B->type()->image();
+  _imageA = _VIDEO_IN_A->type();
+  _imageB = _VIDEO_IN_B->type();
 
-  _outImage = _VIDEO_OUT->type()->image();
+  _outImage = _VIDEO_OUT->type();
 
   _imageOutSizeX = MAX(_imageA->width(), _imageB->width());
   _imageOutSizeY = MAX(_imageA->height(), _imageB->height());

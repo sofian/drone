@@ -36,7 +36,6 @@ void Rasterer::line(int x0, int y0, int x1, int y1)
 
 void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 {
-  int sizeX = _image->sizeX();
   unsigned char *data;
   unsigned char r=_color.r;
   unsigned char g=_color.g;
@@ -45,18 +44,18 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
   if (filled)
     for (int y=y0;y<y1;y++)
     {
-      data = (unsigned char*)&_imageData[y*sizeX + x0];
+      data = (unsigned char*) (_image->row(y) + x0);//imageData[y*sizeX + x0];
       for (int x=x0;x<x1;x++)
       {
         *(data++) = r;
         *(data++) = g;
-        *(data++) = b;            
+        *(data++) = b;       
         data++;
       }
     }
   else
   {
-    data = (unsigned char*)&_imageData[y0*sizeX + x0];
+    data = (unsigned char*) (_image->row(y0) + x0);//imageData[y0*sizeX + x0];
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
@@ -67,18 +66,18 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 
     for (int y=y0; y<=y1; ++y)
     {
-      data = (unsigned char*)&_imageData[y*sizeX + x0];
+      data = (unsigned char*) (_image->row(y) + x0);//imageData[y*sizeX + x0];
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;       
 
-      data = (unsigned char*)&_imageData[y*sizeX + x1];
+      data = (unsigned char*) (_image->row(y) + x1);//imageData[y*sizeX + x1];
       *(data++) = r;
       *(data++) = g;
       *(data++) = b;
     }
 
-    data = (unsigned char*)&_imageData[y1*sizeX + x0];
+    data = (unsigned char*) (_image->row(y1) + x0);//imageData[y1*sizeX + x0];
     for (int x=x0;x<=x1;x++)
     {
       *(data++) = r;
@@ -94,7 +93,7 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
 {
   if (filled)
   {
-    int radx2 = SQR(radx);
+    //    int radx2 = SQR(radx);
     int rady2 = SQR(rady);
 
     for (int y=rady; y>=0; --y)

@@ -19,7 +19,7 @@ class Gear;
 class AbstractPlug  
 {
 public:
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type);
+  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -34,9 +34,9 @@ public:
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
 
-  AbstractType* abstractType() const { return _abstractType;}
-  AbstractType* abstractDefaultType() const { return _abstractInternalType;}
-  AbstractType* abstractHintType() const { return _abstractInternalType;}
+  const AbstractType* abstractType() const { return _abstractType;}
+  const AbstractType* abstractDefaultType() const { return _abstractInternalType;}
+  const AbstractType* abstractHintType() const { return _abstractInternalType;}
   eInOut inOut() const {return _inOut;};
 
   int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
@@ -50,8 +50,8 @@ public:
 
 protected:
   std::list<AbstractPlug*> _connectedPlugs;    
-  AbstractType *_abstractType;
-  AbstractType *_abstractInternalType;
+  const AbstractType *_abstractType;
+  const AbstractType *_abstractInternalType;
 
 private:
   Gear *_parent;

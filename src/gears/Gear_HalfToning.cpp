@@ -293,8 +293,8 @@ bool Gear_HalfToning::ready()
 
 void Gear_HalfToning::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _image = _VIDEO_IN->type();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 
   _sizeX = _image->width();

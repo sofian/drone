@@ -3,7 +3,7 @@
 LIBRARY = libstk.a
 AR = ar -rsc
 RM = /bin/rm
-OBJECT_PATH = Debug
+OBJECT_PATH = Release
 vpath %.o $(OBJECT_PATH)
 
 OBJECTS	=	Stk.o Noise.o SubNoise.o Envelope.o ADSR.o \
@@ -36,8 +36,8 @@ endif
 
 CC       = g++
 DEFS     = -D__LITTLE_ENDIAN__
-DEFS    += -D_STK_DEBUG_
-CFLAGS   = -g
+DEFS    += 
+CFLAGS   = -O2
 CFLAGS  += -Wall -g $(INCLUDE)
 
 REALTIME = yes

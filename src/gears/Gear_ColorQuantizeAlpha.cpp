@@ -54,10 +54,10 @@ void Gear_ColorQuantizeAlpha::runVideo()
 
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _outImage->allocate(_image->width(), _image->height());
 
-  _iterSizeX = _image->sizeX();
-  _iterSizeY = _image->sizeY();
+  _iterSizeX = _image->width();
+  _iterSizeY = _image->height();
   _iterSize = _iterSizeX * _iterSizeY;
 
   if (_clusters)

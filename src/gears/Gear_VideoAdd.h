@@ -22,9 +22,9 @@ private:
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
   //local var
-  MatrixType<RGBA> *_imageA; 
-  MatrixType<RGBA> *_imageB; 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_imageA; 
+  VideoTypeRGBA *_imageB; 
+  VideoTypeRGBA *_outImage; 
   RGBA *_dataA;
   RGBA *_dataB;
   RGBA *_outData;

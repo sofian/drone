@@ -108,7 +108,7 @@ void CircularBufferSignal::resize(int newsize)
 
 // appends data to the circular buffer
 // no resizing is done
-void CircularBufferSignal::append(float *ptr, int size)
+void CircularBufferSignal::append(const float *ptr, int size)
 {
   int toEnd = _buf + _bufSize - _current;
   int firstRun = MIN(size,toEnd);

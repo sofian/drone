@@ -9,8 +9,8 @@
 
 TEMPLATE = app
 DEPENDPATH += src
-INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3
-LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
+INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/stk-4.1.3/include
+LIBS += -Lsrc/stk-4.1.3/src/ -lstk -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
 CONFIG += thread debug
 
 HEADERS += config.h \
@@ -26,41 +26,41 @@ HEADERS += config.h \
 	    src/types/SignalType.h \
 	    src/types/MatrixType.h \
            src/gears/Gear_AudioInput.h \
-           src/gears/Gear_AudioOutput.h \
-           src/gears/Gear_AudioSource.h \
-           src/gears/Gear_AverageSignal.h \
+#           src/gears/Gear_AudioOutput.h \
+#           src/gears/Gear_AudioSource.h \
+#           src/gears/Gear_AverageSignal.h \
            src/gears/Gear_Blur.h \
-           src/gears/Gear_ColorAdjust.h \
-           src/gears/Gear_Contrast.h \
-     	    src/gears/Gear_ColorQuantize.h \
-           src/gears/Gear_ClusteredDither.h \
-           src/gears/Gear_DataOut.h \
-           src/gears/Gear_DiffDist.h \
-           src/gears/Gear_Edge.h \
+#           src/gears/Gear_ColorAdjust.h \
+#           src/gears/Gear_Contrast.h \
+#     	    src/gears/Gear_ColorQuantize.h \
+#           src/gears/Gear_ClusteredDither.h \
+#           src/gears/Gear_DataOut.h \
+#           src/gears/Gear_DiffDist.h \
+#           src/gears/Gear_Edge.h \
 #            src/gears/Gear_Enveloppe.h \
-           src/gears/Gear_FilterSignal.h \
-            src/gears/Gear_FreqBoxes.h \
-           src/gears/Gear_Gain.h \
-           src/gears/Gear_GrayScale.h \
-            src/gears/Gear_HalfToning.h \
-            src/gears/Gear_Image.h \
-            src/gears/Gear_KDTree.h \
-           src/gears/Gear_MasterFrequency.h \
-            src/gears/Gear_MedianFilter.h \
-            src/gears/Gear_NGone.h \
-           src/gears/Gear_Osc.h \
+#           src/gears/Gear_FilterSignal.h \
+#            src/gears/Gear_FreqBoxes.h \
+#           src/gears/Gear_Gain.h \
+#           src/gears/Gear_GrayScale.h \
+#            src/gears/Gear_HalfToning.h \
+#            src/gears/Gear_Image.h \
+#            src/gears/Gear_KDTree.h \
+#           src/gears/Gear_MasterFrequency.h \
+#            src/gears/Gear_MedianFilter.h \
+#            src/gears/Gear_NGone.h \
+#           src/gears/Gear_Osc.h \
            src/gears/Gear_Oscilloscope.h \
-            src/gears/Gear_PatternGen.h \
-            src/gears/Gear_Saturation.h \
-           src/gears/Gear_SimpleDelay.h \
+#            src/gears/Gear_PatternGen.h \
+#            src/gears/Gear_Saturation.h \
+#           src/gears/Gear_SimpleDelay.h \
            src/gears/Gear_Slider.h \
-            src/gears/Gear_TV.h \
-            src/gears/Gear_VideoAdd.h \
-            src/gears/Gear_VideoBlend.h \
+#            src/gears/Gear_TV.h \
+#            src/gears/Gear_VideoAdd.h \
+#            src/gears/Gear_VideoBlend.h \
            src/gears/Gear_VideoInput.h \
-            src/gears/Gear_VideoMix.h \
+#            src/gears/Gear_VideoMix.h \
            src/gears/Gear_VideoOutput.h \
-          src/gears/Gear_VideoSource.h \
+#          src/gears/Gear_VideoSource.h \
            src/GearGui.h \
            src/gears/GearGui_Slider.h \
             src/gears/GearGui_TV.h \
@@ -110,43 +110,44 @@ SOURCES +=     src/ConnectionItem.cpp \
            src/Engine.cpp \
            src/FrequencyAnalyzer.cpp \
            src/Gear.cpp \
-	    src/types/MatrixType.cpp \
+#	   src/Matrix.cpp \
+#	    src/types/MatrixType.cpp \
            src/gears/Gear_AudioInput.cpp \
-           src/gears/Gear_AudioOutput.cpp \
-           src/gears/Gear_AudioSource.cpp \
-           src/gears/Gear_AverageSignal.cpp \
+#           src/gears/Gear_AudioOutput.cpp \
+#           src/gears/Gear_AudioSource.cpp \
+#           src/gears/Gear_AverageSignal.cpp \
            src/gears/Gear_Blur.cpp \
-           src/gears/Gear_ColorAdjust.cpp \
-            src/gears/Gear_Contrast.cpp \
-           src/gears/Gear_ColorQuantize.cpp \
-           src/gears/Gear_ClusteredDither.cpp \
-            src/gears/Gear_DataOut.cpp \
-            src/gears/Gear_DiffDist.cpp \
-           src/gears/Gear_Edge.cpp \
+#           src/gears/Gear_ColorAdjust.cpp \
+#            src/gears/Gear_Contrast.cpp \
+#           src/gears/Gear_ColorQuantize.cpp \
+#           src/gears/Gear_ClusteredDither.cpp \
+#            src/gears/Gear_DataOut.cpp \
+#            src/gears/Gear_DiffDist.cpp \
+#           src/gears/Gear_Edge.cpp \
 #            src/gears/Gear_Enveloppe.cpp \
-           src/gears/Gear_FilterSignal.cpp \
-            src/gears/Gear_FreqBoxes.cpp \
-           src/gears/Gear_Gain.cpp \
-           src/gears/Gear_GrayScale.cpp \
-            src/gears/Gear_HalfToning.cpp \
-            src/gears/Gear_Image.cpp \
-            src/gears/Gear_KDTree.cpp \
-           src/gears/Gear_MasterFrequency.cpp \
-            src/gears/Gear_MedianFilter.cpp \
-            src/gears/Gear_NGone.cpp \
-           src/gears/Gear_Osc.cpp \
+#           src/gears/Gear_FilterSignal.cpp \
+#            src/gears/Gear_FreqBoxes.cpp \
+#           src/gears/Gear_Gain.cpp \
+#           src/gears/Gear_GrayScale.cpp \
+#            src/gears/Gear_HalfToning.cpp \
+#            src/gears/Gear_Image.cpp \
+#            src/gears/Gear_KDTree.cpp \
+#           src/gears/Gear_MasterFrequency.cpp \
+#            src/gears/Gear_MedianFilter.cpp \
+#            src/gears/Gear_NGone.cpp \
+#           src/gears/Gear_Osc.cpp \
            src/gears/Gear_Oscilloscope.cpp \
-            src/gears/Gear_PatternGen.cpp \
-            src/gears/Gear_Saturation.cpp \
-           src/gears/Gear_SimpleDelay.cpp \
+#            src/gears/Gear_PatternGen.cpp \
+#            src/gears/Gear_Saturation.cpp \
+#           src/gears/Gear_SimpleDelay.cpp \
            src/gears/Gear_Slider.cpp \
-            src/gears/Gear_TV.cpp \
-            src/gears/Gear_VideoAdd.cpp \
-            src/gears/Gear_VideoBlend.cpp \
+#            src/gears/Gear_TV.cpp \
+#            src/gears/Gear_VideoAdd.cpp \
+#            src/gears/Gear_VideoBlend.cpp \
            src/gears/Gear_VideoInput.cpp \
-            src/gears/Gear_VideoMix.cpp \
+#            src/gears/Gear_VideoMix.cpp \
            src/gears/Gear_VideoOutput.cpp \
-           src/gears/Gear_VideoSource.cpp \
+#           src/gears/Gear_VideoSource.cpp \
            src/GearGui.cpp \
            src/gears/GearGui_Slider.cpp \
             src/gears/GearGui_TV.cpp \

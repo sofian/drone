@@ -60,6 +60,7 @@ protected:
   bool mapWindow();
   bool unMapWindow();
   XShmSegmentInfo *createShmSegment(int size);//assign segment to _shmInfo and return the segment info
+  void waitForShmCompletion();
   void destroyShm();
   bool createGC();
   void processX11Events();

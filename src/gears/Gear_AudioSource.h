@@ -28,10 +28,6 @@ private:
   PlugOut<SignalType> *_AUDIO_OUT;
   SNDFILE* _File;
   SF_INFO _SFInfo;
-
-  //locals
-  MatrixType<float> _audioBuffer;
-
 };
 
 #endif

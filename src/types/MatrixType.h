@@ -1,92 +1,50 @@
 #ifndef __MATRIXTYPE_INCLUDED
 #define __MATRIXTYPE_INCLUDED
 
+#include "Matrix.h"
 #include "ValueType.h"
 
 template <class T>
-class MatrixType : public AbstractType
+class MatrixType : public AbstractType, public Matrix<T>
 {
 public:
+  typedef typename Matrix<T>::size_type size_type;
+
   MatrixType(int width = 0,
              int height = 0, 
              T fillValue = T())
-    : _data(0),_fillValue(fillValue)
-    {
-      addSubType(_width);
-      addSubType(_height);
-      resize(width, height);
-      fill(_fillValue);
-    }
-  
+    : Matrix<T>(width, height)      
+  {
+    addSubType(_typeWidth);
+    addSubType(_typeHeight);
+    resize(width, height);
+    std::fill(begin(), end(), fillValue);
+  }
+
+  void resize(size_type size)
+  {
+    Matrix<T>::resize(size);
+  }
+
+  void resize(size_type width, size_type height)
+  {
+    Matrix<T>::resize(width, height);
+    _typeWidth.setValue(width);
+    _typeHeight.setValue(height);
+  }
+
+  void fill(const T& fillValue)
+  {
+    std::fill(begin(), end(), fillValue);
+  }
+
   virtual ~MatrixType() {}
-
-  const ValueType& width() const { return _width; }
-  const ValueType& height() const { return _height; }
-
-  int size() const { return _size; }
-  int sizeX() const { return _sizeX; }
-  int sizeY() const { return _sizeY; }
-
-  T& operator[](int i) const { return _data[i]; }
-  T& operator()(int x, int y) const { return _data[y*_sizeX+x]; }
   
-  T* data() { return _data; }
-  
-  virtual std::string name() const {return "!error! UndefinedMatrixType";} 
-  virtual QColor color() const {  return QColor(127,127,127); }
-  
-  void resize(const ValueType& width, const ValueType &height) 
-  {
-    resize((int)width.value(), (int)height.value());
-  }
 
-  void resize(int sizeX, int sizeY=1) 
-  {
-    //int oldSize = _size;
-    _width.setValue(sizeX);
-    _height.setValue(sizeY);
-    _sizeX = sizeX;
-    _sizeY = sizeY;
-    allocate(sizeX*sizeY);
-    // fill only new allocated space with _fillValue
-    // for (T *it = _daeta+oldSize; it < _data+_size;)
-//       *it++ = _fillValue;
-  }
-  
-  void fill(T value)
-  {
-    for (T *it = _data; it != _data+_size;)
-      *it++ = value;
-  }
-
-private:
-  void allocate(size_t size)
-  {
-    _data = (T*)realloc(_data, size*sizeof(T));
-    _size = size;
-  }
-
-  ValueType _width;
-  ValueType _height;
-  int _size;
-  int _sizeX;
-  int _sizeY;
-  T *_data;
-  T _fillValue;
+protected:
+  ValueType _typeWidth;
+  ValueType _typeHeight;  
 };
-
-/* template<>                                   */
-/* std::string MatrixType<float>::name() const; */
-/*                                              */
-/* template<>                                   */
-/* QColor MatrixType<float>::color() const;     */
-/*                                              */
-/* template<>                                   */
-/* std::string MatrixType<char>::name() const;  */
-/*                                              */
-/* template<>                                   */
-/* QColor MatrixType<char>::color() const;      */
-
 
 #endif //__MATRIXTYPE_INCLUDED
 

@@ -27,8 +27,8 @@ private:
   PlugIn<VideoTypeRGBA> *_VIDEO_IN;
 
   //local var
-  MatrixType<RGBA> *_image; 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_image; 
+  VideoTypeRGBA *_outImage; 
   unsigned char *_data;
   unsigned char *_tempData;
   RGBA *_outData;

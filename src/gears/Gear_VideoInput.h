@@ -25,7 +25,7 @@ public:
 
   void runVideo();
   void init();
-  void prePlay();    
+  
 
   PlugOut<VideoTypeRGBA> *VIDEO_OUT(){return _VIDEO_OUT;};
 

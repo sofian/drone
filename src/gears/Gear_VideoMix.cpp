@@ -32,15 +32,15 @@ bool Gear_VideoMix::ready()
 
 void Gear_VideoMix::runVideo()
 {
-  _imageA = _VIDEO_IN_A->type()->image();
-  _imageB = _VIDEO_IN_B->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _imageA = _VIDEO_IN_A->type();
+  _imageB = _VIDEO_IN_B->type();
+  _outImage = _VIDEO_OUT->type();
   _mixType = CLAMP((eVideoMixType)_MIXFUNC_IN->type()->value(), BLEND, DIFFERENCE);
 
-  _imageASizeX = _imageA->sizeX();
-  _imageASizeY = _imageA->sizeY();
-  _imageBSizeX = _imageB->sizeX();
-  _imageBSizeY = _imageB->sizeY();
+  _imageASizeX = _imageA->width();
+  _imageASizeY = _imageA->height();
+  _imageBSizeX = _imageB->width();
+  _imageBSizeY = _imageB->height();
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 

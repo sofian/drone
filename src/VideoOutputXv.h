@@ -21,7 +21,7 @@ public:
   void fullscreen(bool fs);
   void destroy();
   bool init(int xRes, int yRes, bool fullscreen);
-  void render(MatrixType<RGBA> &image);
+  void render(const MatrixType<RGBA> &image);
 
 protected:
   struct XvImageFormatValuesPortPair
@@ -37,11 +37,14 @@ protected:
   XvImage* createXvImage(int sizeX, int sizeY);
   void destroyXvImage();
 
+  
+
 private:
 
   XvImageFormatValuesPortPair _selectedFormat;
 
   XvImage* _xvImage;
+  XShmSegmentInfo *_shmInfo;
   int _frameSizeX;
   int _frameSizeY;
   int _frameSize;

@@ -36,8 +36,8 @@ bool Gear_AverageSignal::ready()
 
 void Gear_AverageSignal::runAudio()
 {
-  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
-  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();    
+  SignalType& bufferin = *_AUDIO_IN->type();
+  SignalType& bufferout = *_AUDIO_OUT->type();    
   float sqaverage=0.0f;
 
   int signal_blocksize = Engine::signalInfo().blockSize();

@@ -11,7 +11,7 @@ public:
   virtual ~VideoOutput(){}
 
   virtual bool init(int xRes, int yRes, bool fullscreen)=0;    
-  virtual void render(MatrixType<RGBA> &image)=0;
+  virtual void render(const MatrixType<RGBA> &image)=0;
   virtual void fullscreen(bool fs)=0;
   virtual void destroy()=0;
 

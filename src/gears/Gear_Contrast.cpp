@@ -29,8 +29,8 @@ bool Gear_Contrast::ready()
 
 void Gear_Contrast::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _image = _VIDEO_IN->type();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _data = _image->data();    
   _outData = _outImage->data();

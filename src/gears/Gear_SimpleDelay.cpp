@@ -44,10 +44,10 @@ float _HARDCLIP(float X, float MIN, float MAX)
 
 void Gear_SimpleDelay::runAudio()
 {    
-/*     MatrixType<float> bufferfeed  = _PARAM_FEEDBACK->type()->buffer();                                                                      */
-/*     MatrixType<float> buffertime  = _PARAM_TIME->type()->buffer();                                                                          */
-/*     MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();                                                                               */
-/*     MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();                                                                             */
+/*     SignalType bufferfeed  = _PARAM_FEEDBACK->type();                                                                      */
+/*     SignalType buffertime  = _PARAM_TIME->type();                                                                          */
+/*     SignalType bufferin = _AUDIO_IN->type();                                                                               */
+/*     SignalType bufferout = _AUDIO_OUT->type();                                                                             */
 /*                                                                                                                             */
 /*     static double t=0;                                                                                                      */
 /*     int signal_blocksize = _Engine->audioBlockSize();                                                                       */
@@ -56,7 +56,7 @@ void Gear_SimpleDelay::runAudio()
 /*     {                                                                                                                       */
 /*         int ndefaults;                                                                                                      */
 /*         Signal_T defaultval;                                                                                                */
-/*         MatrixType<float>  block1,*block2;                                                                                          */
+/*         SignalType  block1,*block2;                                                                                          */
 /*         int block1len,block2len;                                                                                            */
 /*                                                                                                                             */
 /*         // use first value of buffertime as delay time for whole block processing (could use average)                       */

@@ -25,9 +25,9 @@ bool Gear_Osc::ready()
 
 void Gear_Osc::runAudio()
 {        
-  float freq  = *_PARAM_FREQ->type();
-  float amp  = *_PARAM_AMP->type();
-  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
+  float freq  = _PARAM_FREQ->type()->value();
+  float amp  = _PARAM_AMP->type()->value();
+  float *bufferout = _AUDIO_OUT->type()->data();
 
   int signal_blocksize = Engine::signalInfo().blockSize();
 

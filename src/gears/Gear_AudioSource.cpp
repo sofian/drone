@@ -47,9 +47,7 @@ void Gear_AudioSource::onUpdateSettings()
 
 void Gear_AudioSource::runAudio()
 {
-  _audioBuffer = _AUDIO_OUT->type()->buffer();
-
-  if ( sf_readf_float(_File, _audioBuffer.data(), Engine::signalInfo().blockSize()) == 0)
+  if ( sf_readf_float(_File, _AUDIO_OUT->type()->data(), Engine::signalInfo().blockSize()) == 0)
   {
     //go back to the beginning, loop
     sf_seek(_File, 0, SEEK_SET);

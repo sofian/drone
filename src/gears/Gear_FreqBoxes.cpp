@@ -38,13 +38,13 @@ void Gear_FreqBoxes::init()
 
   _freqAnalyser = new FrequencyAnalyser(Engine::signalInfo().blockSize());    
   _rasterer = new Rasterer();
-  _rasterer->setImage(_VIDEO_OUT->type()->image());
+  _rasterer->setImage(_VIDEO_OUT->type());
 
 }
 
 void Gear_FreqBoxes::onUpdateSettings()
 {    
-  _VIDEO_OUT->type()->image()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
+  _VIDEO_OUT->type()->resize(_settings.get(SETTING_SIZE_X)->valueInt(), _settings.get(SETTING_SIZE_Y)->valueInt());
 }
 
 
@@ -55,13 +55,13 @@ bool Gear_FreqBoxes::ready()
 
 void Gear_FreqBoxes::runVideo()
 {    
-  _outImage = _VIDEO_OUT->type()->image();
+  _outImage = _VIDEO_OUT->type();
   memset(_outImage->data(), 0, _outImage->size()*sizeof(RGBA));
   _outData = _outImage->data();
   int sizeX = _outImage->width();
   int sizeY = _outImage->height();
 
-  //Signal_T *bufferin = _SIGNAL_IN->type()->buffer()->data();
+  //Signal_T *bufferin = _SIGNAL_IN->type()->data();
 
   //_freqAnalyser->performAnalysis(bufferin);
 

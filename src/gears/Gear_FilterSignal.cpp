@@ -53,8 +53,8 @@ void Gear_FilterSignal::init()
 
 void Gear_FilterSignal::runAudio()
 {
-  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
-  MatrixType<float> bufferout = _AUDIO_OUT->type()->buffer();
+  SignalType bufferin = _AUDIO_IN->type();
+  SignalType bufferout = _AUDIO_OUT->type();
 
   float kernel[Engine::signalInfo().blockSize()];
 

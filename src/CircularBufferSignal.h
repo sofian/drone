@@ -96,7 +96,7 @@ public:
   // (we need 2 pairs in case the time window crosses the buffer start.)
   void getBounds(int t1, int t2, float*& a1, float*& a2, float*& b1, float*& b2, Stats which_stat=STAT_NONE);
 
-  void append(float * ptr, int size);
+  void append(const float * ptr, int size);
   // appends and enlarge if buffer is not big enough
   void appendEnlarge(float * ptr, int size);
 

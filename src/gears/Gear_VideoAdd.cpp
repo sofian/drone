@@ -29,9 +29,9 @@ bool Gear_VideoAdd::ready()
 
 void Gear_VideoAdd::runVideo()
 {
-  _imageA = _VIDEO_IN_A->type()->image();
-  _imageB = _VIDEO_IN_B->type()->image();    
-  _outImage = _VIDEO_OUT->type()->image();
+  _imageA = _VIDEO_IN_A->type();
+  _imageB = _VIDEO_IN_B->type();    
+  _outImage = _VIDEO_OUT->type();
 
   _imageASizeX = _imageA->width();
   _imageASizeY = _imageA->height();

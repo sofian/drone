@@ -21,6 +21,7 @@ public:
   
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
+  
   operator float () const {return _value;}
   
   void setMinValue(float minValue) { _minValue = minValue; }

@@ -25,7 +25,7 @@ private:
   PlugIn<SignalType> *_AUDIO_IN;
   PlugOut<SignalType> *_AUDIO_OUT;
 
-  MatrixType<float> _convolutionShape;
+  SignalType _convolutionShape;
   FrequencyAnalyser *_freqAnalyzer;
 
 };

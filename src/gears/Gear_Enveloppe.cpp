@@ -40,8 +40,8 @@ bool Gear_Enveloppe::ready()
 
 void Gear_Enveloppe::runAudio()
 {
-  Signal_T *bufferin = _AUDIO_IN->type()->buffer().data();
-  Signal_T *bufferout = _AUDIO_OUT->type()->buffer().data();
+  Signal_T *bufferin = _AUDIO_IN->type()->data();
+  Signal_T *bufferout = _AUDIO_OUT->type()->data();
   float release = _PARAM_RELEASE->type()->value();
   float attack = _PARAM_ATTACK->type()->value();
   

@@ -62,7 +62,7 @@ void Gear_Slider::onPlugConnected(AbstractPlug *plug)
 {
   if (plug == _VALUE_OUT && _acceptHint)
   {
-    ValueType *tmpType = dynamic_cast<ValueType*>(plug->firstConnectedPlug()->abstractHintType());
+    const ValueType *tmpType = static_cast<const ValueType*>(plug->firstConnectedPlug()->abstractHintType());
     _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat(tmpType->minValue()); 
     _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat(tmpType->maxValue());
     setValue(tmpType->value());

@@ -29,14 +29,14 @@ bool Gear_NGone::ready()
 
 void Gear_NGone::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
+  _image = _VIDEO_IN->type();
   _sizeX = 512;
   _sizeY = 512;
   _texSizeX = _image->width() / _sizeX;
   _texSizeY = _image->height() / _sizeY;
 
-  _signalBufferX = _SIGNAL_X_IN->type()->buffer();
-  _signalBufferY = _SIGNAL_Y_IN->type()->buffer();
+  _signalBufferX = _SIGNAL_X_IN->type()->data();
+  _signalBufferY = _SIGNAL_Y_IN->type()->data();
 
   int subDivisions=64;
 

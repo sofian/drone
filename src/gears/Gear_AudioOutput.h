@@ -55,8 +55,8 @@ private:
 
   int _RingBufferSize;
 
-  MatrixType<float> _LBuffer;
-  MatrixType<float> _RBuffer;
+  SignalType _LBuffer;
+  SignalType _RBuffer;
 
   int _ReadIndex;
 

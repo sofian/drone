@@ -29,15 +29,14 @@ public:
 
   void ellipsePoints(int x0, int y0, int relx, int rely)
   {
-    int sizeX = _image->sizeX();
     int x    = x0 + relx;
     int xSym = x0 - relx;
     int y    = y0 + rely;
     int ySym = y0 - rely;
-    _imageData[ y * sizeX + x ]       = _color;
-    _imageData[ y * sizeX + xSym ]    = _color;
-    _imageData[ ySym * sizeX + x ]    = _color;
-    _imageData[ ySym * sizeX + xSym ] = _color;
+    _image->get(y,x)       = _color;
+    _image->get(y,xSym)    = _color;
+    _image->get(ySym,x)    = _color;
+    _image->get(ySym,xSym) = _color;
   }
 
 private:

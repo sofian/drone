@@ -222,6 +222,7 @@ XShmSegmentInfo *VideoOutputX11Base::createShmSegment(int size)
   if (_display==NULL)
     return NULL;
 
+
   destroyShm();
 
   _shmInfo.shmid = shmget(IPC_PRIVATE, size, IPC_CREAT | 0777);
@@ -231,9 +232,10 @@ XShmSegmentInfo *VideoOutputX11Base::createShmSegment(int size)
     std::cout << "no shm" << std::endl;
     return NULL;
   }
-
-  std::cout << "2" << std::endl;
+  
   _shmInfo.shmaddr = (char*)shmat(_shmInfo.shmid, 0, 0777);
+
+  XSync((Display*)_display, False);
 
   if (_shmInfo.shmaddr == (char*)-1)
   {
@@ -242,7 +244,6 @@ XShmSegmentInfo *VideoOutputX11Base::createShmSegment(int size)
     return NULL;
   }
 
-  XSync((Display*)_display, False);
 
   _shmInfo.readOnly = False;
   XShmAttach((Display*)_display, &_shmInfo);
@@ -283,14 +284,18 @@ void VideoOutputX11Base::destroyShm()
 
   XShmDetach((Display*)_display, &_shmInfo);
 
+  XSync ((Display*)_display, False);
+   
   if (_shmInfo.shmaddr!=NULL)
   {
     shmdt(_shmInfo.shmaddr);
-    _shmInfo.shmaddr=NULL;
+    _shmInfo.shmaddr=NULL;    
   }
 
   shmctl(_shmInfo.shmid, IPC_RMID, 0);
   _shmInfo.shmid=-1;
+  
+  XSync ((Display*)_display, False);
 
 }
 
@@ -310,8 +315,7 @@ void VideoOutputX11Base::processX11Events()
         _yRes = event.xconfigure.height;
         onResize(_xRes, _yRes);
       }
-
-      break;
+      break;    
     }
   }
 }
@@ -324,6 +328,7 @@ void VideoOutputX11Base::resizeWindow(int sizeX, int sizeY)
   windowChanges.width = sizeX;
   windowChanges.height = sizeY;
   XConfigureWindow((Display*)_display, _window, CWWidth | CWHeight, &windowChanges);
+  XSync((Display*)_display, False);
 }
 
 
@@ -372,4 +377,25 @@ bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo)
   XFree(visualInfoTable);
 
   return true;
+}
+
+void VideoOutputX11Base::waitForShmCompletion()
+{
+  XEvent event;
+
+  while (XPending((Display*)_display) > 0)
+  {
+    XNextEvent((Display*)_display, &event);
+     
+
+    if (event.type == XShmGetEventBase((Display*)_display) + ShmCompletion)
+    {
+      std::cout << "ShmCompletion" << std::endl; 
+      return;   
+    }
+
+
+  }
+
+  return;
 }

@@ -1,5 +1,5 @@
-#ifndef GEAR_GAIN_INCLUDED
-#define GEAR_GAIN_INCLUDED
+#ifndef GEAR_ENVELOPPE_INCLUDED
+#define GEAR_ENVELOPPE_INCLUDED
 
 #include "Gear.h"
 #include "SignalType.h"
@@ -14,9 +14,10 @@ public:
 	Gear_Enveloppe(Engine *engine, std::string name);
 	virtual ~Gear_Enveloppe();
 
-    void runAudio();
+  void runAudio();
+  
+  bool ready();
 
-    bool ready();
   virtual void prePlay();
 
 private:

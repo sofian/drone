@@ -29,7 +29,7 @@ private:
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
   PlugIn<ValueType> *_PARAM_IN;
 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_outImage; 
   RGBA *_outData;
 
   int _iterSizeY;

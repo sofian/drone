@@ -24,7 +24,7 @@ Gear_Blur::~Gear_Blur()
 
 void Gear_Blur::init()
 {
-  _table->setImage(_VIDEO_IN->type()->image());
+  _table->setImage(_VIDEO_IN->type());
 }
 
 bool Gear_Blur::ready()
@@ -34,13 +34,13 @@ bool Gear_Blur::ready()
 
 void Gear_Blur::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
+  _image = _VIDEO_IN->type();
 
-  _outImage = _VIDEO_OUT->type()->image();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
  
-  _sizeY = _image->sizeY();
-  _sizeX = _image->sizeX();
+  _sizeY = _image->height();
+  _sizeX = _image->width();
 
   ////////////////////////////
   int *iterSum;

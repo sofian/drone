@@ -15,29 +15,17 @@ class Plug : public AbstractPlug
   friend PlugOut<T>::PlugOut(Gear* parent, std::string name);
 
 protected:
-  Plug(Gear* parent, eInOut inOut, std::string name, T* type = new T())
+  Plug(Gear* parent, eInOut inOut, std::string name, T* type)
     : AbstractPlug(parent, inOut, name, type)
-  {
-    _type = _internalType = type;
+  {    
   }
 
 public:
-  virtual ~Plug() 
-  {
-    delete _type;
-  }
-
-  T* type() const { return _type;}
-  T* defaultType() const { return _internalType; }
-  T* hintType() const { return _internalType; }
-
-protected:
-  void setType(T *type)
-  {
-    _abstractType = _type = type;
-  }
-
-  T *_type, *_internalType;
+ 
+  virtual const T* type() const = 0;
+  virtual const T* defaultType() const = 0;
+  virtual const T* hintType() const = 0;
+  
 };
 
 
@@ -48,13 +36,25 @@ public:
   PlugOut(Gear* parent, std::string name, T* type = new T())
   : Plug<T>(parent, OUT, name, type)
   {
+    _type = _internalType = type;
   }
 
   virtual ~PlugOut()
   {
   }
 
+  T* type() { return _type;}
+  T* defaultType() { return _internalType; }
+  T* hintType() { return _internalType; }
+  
+  const T* type() const { return _type;}
+  const T* defaultType() const { return _internalType; }
+  const T* hintType() const { return _internalType; }
+
   void init() {}
+
+private:
+   T *_type, *_internalType;
 };
 
 
@@ -65,14 +65,15 @@ public:
   PlugIn(Gear* parent, std::string name, T* type = new T())
   : Plug<T>(parent, IN, name, type)
   {
+     _type = _internalType = type;
   }
-
+ 
   virtual ~PlugIn()
   {}
 
   virtual void onConnection(AbstractPlug *plug)
   {
-    setType(static_cast<T*>(plug->abstractType()));
+    setType(static_cast<const T*>(plug->abstractType()));
   }
 
   virtual void onDisconnection(AbstractPlug *)
@@ -81,6 +82,19 @@ public:
   }
 
   void init() {}
+
+  const T* type() const { return _type;}
+  const T* defaultType() const { return _internalType; }
+  const T* hintType() const { return _internalType; }
+
+protected:
+  void setType(const T *type)
+  {
+    _abstractType = _type = type;
+  }
+
+private:
+   const T *_type, *_internalType;
 };
 
 

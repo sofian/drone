@@ -38,7 +38,7 @@ private:
 
   //local var
 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_outImage; 
   RGBA *_outData;
   Rasterer *_rasterer;
 

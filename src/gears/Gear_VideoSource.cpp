@@ -70,7 +70,7 @@ void Gear_VideoSource::onUpdateSettings()
   //You must allocate 4 extra bytes in the last output_row. This is scratch area for the MMX routines.
   _frame[_sizeY-1] = (RGBA*) malloc((_sizeX * sizeof(RGBA)) + 4);
 
-  _VIDEO_OUT->type()->image()->resize(_sizeX, _sizeY);
+  _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
 }
 
 void Gear_VideoSource::runVideo()
@@ -82,7 +82,7 @@ void Gear_VideoSource::runVideo()
   //_outData = _image.data();
   mpeg3_read_frame(_file, (unsigned char**)_frame, 0, 0, _sizeX, _sizeY, _sizeX, _sizeY, MPEG3_RGBA8888, 0);
 
-  _outData = _VIDEO_OUT->type()->image()->data();
+  _outData = _VIDEO_OUT->type()->data();
 
   for(int y=0;y<_sizeY;y++)
     memcpy(&_outData[y*_sizeX], _frame[y], sizeof(RGBA) * _sizeX);
@@ -119,7 +119,7 @@ void Gear_VideoSource::runVideo()
 
 void Gear_VideoSource::runAudio()
 {
-  //  _audioBuffer = _AUDIO_OUT->type()->type()->buffer()->data();
+  //  _audioBuffer = _AUDIO_OUT->type()->type()->data();
 
   //mpeg3_read_audio(_file, signal, NULL, 1, 128, 0);
 }

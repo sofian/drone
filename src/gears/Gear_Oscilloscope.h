@@ -32,7 +32,7 @@ private:
   
   PlugOut<VideoTypeRGBA> *_VIDEO_OUT;
 
-  MatrixType<RGBA> *_outImage; 
+  VideoTypeRGBA *_outImage; 
   RGBA *_outData;
 
   CircularBufferSignal * circbuf;

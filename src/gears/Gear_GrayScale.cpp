@@ -29,8 +29,8 @@ bool Gear_GrayScale::ready()
 
 void Gear_GrayScale::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _image = _VIDEO_IN->type();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _size = _image->size();
 

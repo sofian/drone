@@ -9,7 +9,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-std::map<std::string, GearMaker*> *GearMaker::_registry;
+
+std::map<std::string, GearMaker*> *GearMaker::_registry=NULL;
 
 GearMaker::GearMaker(std::string type) 
 {

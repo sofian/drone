@@ -3,7 +3,7 @@
 PROGRAMS = effects
 RM = /bin/rm
 SRC_PATH = ../../src
-OBJECT_PATH = Debug
+OBJECT_PATH = Release
 vpath %.o $(OBJECT_PATH)
 
 OBJECTS	=	Stk.o Reverb.o PRCRev.o JCRev.o \
@@ -20,8 +20,8 @@ vpath %.h $(INCLUDE)
 
 CC       = g++
 DEFS     = -D__LITTLE_ENDIAN__
-DEFS    += -D_STK_DEBUG_
-CFLAGS   = -g
+DEFS    += 
+CFLAGS   = -O2
 CFLAGS  += -Wall -g -I$(INCLUDE)
 LIBRARY = -lasound -lpthread -lm 
 LIBRARY += 

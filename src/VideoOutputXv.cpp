@@ -13,6 +13,7 @@ Register_VideoOutput(MAKERVideoOutputXv, VideoOutputXv, "Xv")
 VideoOutputXv::VideoOutputXv() :
 VideoOutputX11Base(),
 _xvImage(NULL),
+_shmInfo(NULL),
 _frameSizeX(0),
 _frameSizeY(0),
 _frameSize(0)
@@ -33,7 +34,6 @@ void VideoOutputXv::destroy()
 
   destroyXvImage();
 
-  destroyShm();
 }
 
 void VideoOutputXv::fullscreen(bool fs)
@@ -41,12 +41,12 @@ void VideoOutputXv::fullscreen(bool fs)
   togglefullscreen(fs, _xRes, _yRes);
 }
 
-void VideoOutputXv::render(MatrixType<RGBA> &image)
+void VideoOutputXv::render(const MatrixType<RGBA> &image)
 {    
   processX11Events();
 
   //only recreate xvimage if framesize change
-  if (_frameSizeX!=image.width().value() || _frameSizeY!=image.height().value())
+  if (_frameSizeX!=image.width() || _frameSizeY!=image.height())
   {
     _frameSizeX=image.width();
     _frameSizeY=image.height();
@@ -69,7 +69,10 @@ void VideoOutputXv::render(MatrixType<RGBA> &image)
   }
 
   XvShmPutImage((Display*)_display, _selectedFormat.port, _window, _gc, _xvImage, 0, 0, _frameSizeX, _frameSizeY, 0, 0, _xRes, _yRes, False);
-  XFlush((Display*)_display);
+  
+  waitForShmCompletion();
+  
+  XSync((Display*)_display, False);
 }
 
 bool VideoOutputXv::init(int xRes, int yRes, bool fullscreen)
@@ -240,28 +243,33 @@ XvImage* VideoOutputXv::createXvImage(int sizeX, int sizeY)
   destroyXvImage();
 
   int size = (_selectedFormat.format.bits_per_pixel>>3) * sizeX * sizeY;
-
-  XShmSegmentInfo *shmInfo= createShmSegment(size);
-
-  if (shmInfo==NULL)
+  
+  _shmInfo = createShmSegment(size);
+  
+  if (_shmInfo==NULL)
     return NULL;
 
-  if (shmInfo->shmaddr==NULL)
+  if (_shmInfo->shmaddr==NULL)
     return NULL;
 
   _xvImage=XvShmCreateImage((Display*)_display, _selectedFormat.port, _selectedFormat.format.id,
-                            (char *)shmInfo->shmaddr, sizeX, sizeY, shmInfo);
+                            (char *)_shmInfo->shmaddr, sizeX, sizeY, _shmInfo);
+  
+  XSync((Display*)_display, False);
 
   return _xvImage;
 }
 
 void VideoOutputXv::destroyXvImage()
-{
+{  
   if (_xvImage != NULL)
-  {
+  {    
+    destroyShm();
     XFree(_xvImage);
     _xvImage = NULL;
+    XSync ((Display*)_display, False);
   };
+
 }
 
 

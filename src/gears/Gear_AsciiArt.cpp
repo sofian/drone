@@ -31,13 +31,13 @@ void Gear_AsciiArt::runVideo()
 {
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
+  _outImage->allocate(_image->width(), _image->height());
   _data = (unsigned char*)_image->_data;
   _outData = (unsigned char*)_outImage->_data;
-  float tresh = _AMOUNT_IN->buffer()[0];
+  float tresh = _AMOUNT_IN[0];
 
-  _sizeX = _image->sizeX();
-  _sizeY = _image->sizeY();
+  _sizeX = _image->width();
+  _sizeY = _image->height();
 
   int pp=0;
   for (int y=1;y<_sizeY-2;y++)

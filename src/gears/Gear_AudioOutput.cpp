@@ -90,7 +90,7 @@ void Gear_AudioOutput::onUpdateSettings()
 
 void Gear_AudioOutput::runAudio()
 {
-  MatrixType<float> left_buffer  = _AUDIO_IN_LEFT->type()->buffer();
+  float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();
   static bool started = false;
 
@@ -176,7 +176,7 @@ int Gear_AudioOutput::portAudioCallback(void *, void *output_buffer, unsigned lo
   static Gear_AudioOutput *parent = (Gear_AudioOutput*)user_data;
   static int lindex=0;
   //static int rindex=0;
-  MatrixType<float>& lbuffer = parent->_LBuffer;
+  SignalType& lbuffer = parent->_LBuffer;
 
   int ringBufferSize = parent->_RingBufferSize;
 

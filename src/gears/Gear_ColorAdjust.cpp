@@ -12,9 +12,9 @@ Gear_ColorAdjust::Gear_ColorAdjust(Engine *engine, std::string name) : Gear(engi
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoTypeRGBA>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "ImgOUT"));
-  addPlug(_RED_IN = new PlugIn<SignalType>(this, "Red", new SignalType(1.0f)));
-  addPlug(_GREEN_IN = new PlugIn<SignalType>(this, "Green", new SignalType(1.0f)));
-  addPlug(_BLUE_IN = new PlugIn<SignalType>(this, "Blue", new SignalType(1.0f)));
+  addPlug(_RED_IN = new PlugIn<ValueType>(this, "Red", new ValueType(1.0f)));
+  addPlug(_GREEN_IN = new PlugIn<ValueType>(this, "Green", new ValueType(1.0f)));
+  addPlug(_BLUE_IN = new PlugIn<ValueType>(this, "Blue", new ValueType(1.0f)));
 }
 
 Gear_ColorAdjust::~Gear_ColorAdjust()
@@ -29,15 +29,15 @@ bool Gear_ColorAdjust::ready()
 
 void Gear_ColorAdjust::runVideo()
 {
-  _image = _VIDEO_IN->type()->image();
-  _outImage = _VIDEO_OUT->type()->image();
+  _image = _VIDEO_IN->type();
+  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
   _size = _image->size();
   
   //todo : fast float to int
-  float red   = _RED_IN->type()->buffer()[0];
-  float green = _GREEN_IN->type()->buffer()[0];
-  float blue  = _BLUE_IN->type()->buffer()[0];
+  float red   = _RED_IN->type()->value();
+  float green = _GREEN_IN->type()->value();
+  float blue  = _BLUE_IN->type()->value();
 
 /*     _mmxColor=0;        */
 /*     _mmxColor |= blue;  */

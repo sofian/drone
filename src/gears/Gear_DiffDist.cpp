@@ -35,9 +35,9 @@ bool Gear_DiffDist::ready()
 
 void Gear_DiffDist::runVideo()
 {
-  _imageA = _VIDEO_IN_A->type()->image();
-  _imageB = _VIDEO_IN_B->type()->image();    
-  _outImage = _VIDEO_OUT->type()->image();
+  _imageA = _VIDEO_IN_A->type();
+  _imageB = _VIDEO_IN_B->type();    
+  _outImage = _VIDEO_OUT->type();
   float factor = _FACTOR_IN->type()->value();
 
 

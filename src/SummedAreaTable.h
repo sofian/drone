@@ -16,7 +16,7 @@ public:
   SummedAreaTable();
   ~SummedAreaTable();
 
-  void setImage(MatrixType<RGBA> *image);
+  void setImage(const MatrixType<RGBA> *image);
 
   void buildTable();
   void buildTableOfSquares();
@@ -42,9 +42,9 @@ public:
 
   RGBAint *_accSquares;
 
-  MatrixType<RGBA> *_image;
+  const MatrixType<RGBA> *_image;
 
-  RGBA *_imageData;
+  const RGBA *_imageData;
 
   int _width, _height, _size;
 

@@ -55,8 +55,8 @@ void Gear_ColorQuantizer::runVideo()
 
   _image = _VIDEO_IN->canvas();
   _outImage = _VIDEO_OUT->canvas();
-  _outImage->allocate(_image->sizeX(), _image->sizeY());
-  int size = _image->sizeX() * _image->sizeY();
+  _outImage->allocate(_image->width(), _image->height());
+  int size = _image->width() * _image->height();
   if (_mapping)
     _mapping = (unsigned short*) realloc(_mapping, size * sizeof(unsigned short));
   else
@@ -65,8 +65,8 @@ void Gear_ColorQuantizer::runVideo()
   _data = _image->_data;
   _outData = _outImage->_data;
 
-  _iterSizeX = _image->sizeX();
-  _iterSizeY = _image->sizeY();
+  _iterSizeX = _image->width();
+  _iterSizeY = _image->height();
 
   int centroidsDist;
   unsigned short *iterMapping;

@@ -32,7 +32,7 @@ bool Gear_DataOut::ready()
 
 void Gear_DataOut::runAudio()
 {
-  MatrixType<float> bufferin = _AUDIO_IN->type()->buffer();
+  SignalType& bufferin = *_AUDIO_IN->type();
 
   int signal_blocksize = Engine::signalInfo().blockSize();
   for (int i=0;i<signal_blocksize;i++)
