@@ -11,6 +11,7 @@ CONFIG += thread debug
 HEADERS += config.h \
            src/Canvas.h \
            src/CircularBufferSignal.h \
+           src/ColorSpace.h \
            src/ConnectionItem.h \
            src/Engine.h \
            src/FrequencyAnalyzer.h \
@@ -48,6 +49,7 @@ HEADERS += config.h \
            src/Gear_VideoAdd.h \
            src/Gear_VideoBlend.h \
            src/Gear_VideoInput.h \
+           src/Gear_VideoMix.h \
            src/Gear_VideoOutput.h \
            src/Gear_VideoSource.h \
            src/GearGui.h \
@@ -56,6 +58,7 @@ HEADERS += config.h \
            src/GearMaker.h \
            src/GearPropertiesDialog.h \
            src/MainWindow.h \
+           src/Math.h \
            src/Plug.h \
            src/PlugBox.h \
            src/PlugSignal.h \
@@ -131,6 +134,7 @@ SOURCES += src/Canvas.cpp \
            src/Gear_VideoAdd.cpp \
            src/Gear_VideoBlend.cpp \
            src/Gear_VideoInput.cpp \
+           src/Gear_VideoMix.cpp \
            src/Gear_VideoOutput.cpp \
            src/Gear_VideoSource.cpp \
            src/GearGui.cpp \
