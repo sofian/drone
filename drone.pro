@@ -103,7 +103,6 @@ src/gears/Gear_SmearGrid.h \
 src/gears/Gear_TouchPad.h \
 src/gears/Gear_TV.h \
 src/gears/Gear_FlatSignal.h \
-src/gears/Gear_ValueGenerator.h \
 src/gears/Gear_VideoAdd.h \
 src/gears/Gear_VideoBlend.h \
 src/gears/Gear_VideoInput.h \
@@ -112,7 +111,7 @@ src/gears/Gear_VideoLoop.h \
 src/gears/Gear_VideoMix.h \
 src/gears/Gear_VideoOutput.h \
 src/gears/Gear_VideoSource.h \
-src/gears/Gear_VideoSymmetry.h \
+#src/gears/Gear_VideoSymmetry.h \
 src/gears/Gear_VideoSwitch.h \
 src/GearGui.h \
 src/GearConverter.h \
@@ -135,6 +134,7 @@ src/PropertyControlString.h \
 src/PropertyControlBool.h \
 src/Rasterer.h \
 src/SummedAreaTable.h \
+src/Schema.h \
 src/SchemaEditor.h \
 src/SignalInfo.h \
 src/ThreadUtil.h \
@@ -159,7 +159,6 @@ src/drone.cpp \
 src/Engine.cpp \
 src/FrequencyAnalyzer.cpp \
 src/Gear.cpp \
-#src/types/VideoType.cpp \
 src/gears/Gear_AffineTransform.cpp \
 src/gears/Gear_ApplyDisplaceGrid.cpp \
 src/gears/Gear_AreaArrayMask.cpp \
@@ -202,7 +201,6 @@ src/gears/Gear_Spectrogram.cpp \
 src/gears/Gear_TV.cpp \
 src/gears/Gear_TouchPad.cpp \
 src/gears/Gear_FlatSignal.cpp \
-src/gears/Gear_ValueGenerator.cpp \
 src/gears/Gear_VideoAdd.cpp \
 src/gears/Gear_VideoBlend.cpp \
 src/gears/Gear_VideoInput.cpp \
@@ -211,7 +209,7 @@ src/gears/Gear_VideoLoop.cpp \
 src/gears/Gear_VideoMix.cpp \
 src/gears/Gear_VideoOutput.cpp \
 src/gears/Gear_VideoSource.cpp \
-src/gears/Gear_VideoSymmetry.cpp \
+#src/gears/Gear_VideoSymmetry.cpp \
 src/gears/Gear_VideoSwitch.cpp \
 src/GearGui.cpp \
 src/gears/GearGui_ListBox.cpp \
@@ -230,6 +228,7 @@ src/PropertyControlFilename.cpp \
 src/PropertyControlString.cpp \
 src/PropertyControlBool.cpp \
 src/Rasterer.cpp \
+src/Schema.cpp \
 src/SchemaEditor.cpp \
 src/SignalInfo.cpp \
 src/Timing.cpp \
