@@ -14,6 +14,7 @@ Edge \
 AffineTransform \
 ApplyDisplaceGrid \
 AreaArrayMask \
+BeatDetector \
 Brightness \
 ClusteredDither \
 ColorAdjust \

@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=512;
+const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=Engine::signalInfo().blockSize();
 const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
 
 const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
@@ -49,7 +49,7 @@ const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) : 
   Gear(schema, "AudioInput", uniqueName),
   _stream(0),
-  _ringBufferSize(512),
+  _ringBufferSize(Engine::signalInfo().blockSize() ),
   _lBuffer(),
   _rBuffer(),
   _lBufferIndex(0),
