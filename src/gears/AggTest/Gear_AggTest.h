@@ -37,9 +37,19 @@ public:
   virtual void init();
 
 private:
+
+  void newPoint(int sizex, int sizey, int pt_source=-1);
+  void animatePoints(int sizex, int sizey,float,float,float,float,float,float);
+
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
+  PlugIn<ValueType> *_BOXX1_IN;
+  PlugIn<ValueType> *_BOXX2_IN;
+  PlugIn<ValueType> *_BOXY1_IN;
+  PlugIn<ValueType> *_BOXY2_IN;
+  PlugIn<ValueType> *_FRIC_IN;
+  PlugIn<ValueType> *_REPUL_IN;
 
   //local var
   const VideoRGBAType *_image; 

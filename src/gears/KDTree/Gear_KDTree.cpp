@@ -112,7 +112,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
       _rasterer->setColor(rgba[0] / area, rgba[1] / area, rgba[2] / area);
       _rasterer->rect(x0, y0, x1, y1, true);
       _rasterer->setColor(0,0,0);
-      _rasterer->rect(x0, y0, x1, y1, false);
+      //_rasterer->rect(x0, y0, x1, y1, false);
     }
     
     // Add area to list.

@@ -17,15 +17,52 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+
+template<class T>
+T REPEAT_CLAMP2(T t,T low,T high)
+{
+  if(t>=low && t<=high)
+    return t;
+  else
+  {
+    static T range,howmuch;
+    static int howmuchtimes,flip;
+    range=high-low;
+    if(t<low)
+    {
+      howmuch=low-t;
+      flip=0;
+    }
+    else
+    {
+      howmuch=t-high;
+      flip=1;
+    }
+    howmuchtimes = (int)(howmuch/range);
+    if(!flip)
+      return high-howmuch+howmuchtimes*range;
+    else
+      return low+howmuch-howmuchtimes*range;
+  }
+}
+
+
+
+
+
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include "Math.h"
 #include "agg_basics.h"
 #include "agg_rendering_buffer.h"
 #include "agg_rasterizer_scanline_aa.h"
 #include "agg_scanline_p.h"
 #include "agg_renderer_scanline.h"
+#include "agg_renderer_outline_aa.h"
 #include "agg_path_storage.h"
+#include "agg_ellipse.h"
 #include "agg_vertex_iterator.h"
 #include "agg_conv_transform.h"
 #include "agg_bounding_rect.h"
@@ -67,10 +104,29 @@ double            g_y2 = 0;
 double            g_base_dx = 0;
 double            g_base_dy = 0;
 double            g_angle = 0;
-double            g_scale = 1.0;
+double            g_scale = 1; 
 double            g_skew_x = 0;
 double            g_skew_y = 0;
 int               g_nclick = 0;
+
+//double borderx = 60;
+//double borderx = 60;
+
+struct scatter_point
+{
+    float     x,vx,ax;
+    float     y,vy,ay;
+    float     r,vr,ar;
+    float     s,vs,as;
+
+    agg::rgba8  color;
+};
+
+scatter_point* m_points;
+int max_points=100;
+int num_points=0;
+
+
 
 unsigned parse_lion(agg::path_storage& ps, agg::rgba8* colors, unsigned* path_idx);
 void parse_lion()
@@ -323,12 +379,18 @@ Gear_AggTest::Gear_AggTest(Schema *schema, std::string uniqueName) : Gear(schema
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 10.0f)));
+  addPlug(_BOXX1_IN = new PlugIn<ValueType>(this, "bx1", new ValueType(10.0f, 0.0f, 100.0f)));
+  addPlug(_BOXX2_IN = new PlugIn<ValueType>(this, "bx2", new ValueType(10.0f, 0.0f, 100.0f)));
+  addPlug(_BOXY1_IN = new PlugIn<ValueType>(this, "by1", new ValueType(10.0f, 0.0f, 100.0f)));
+  addPlug(_BOXY2_IN = new PlugIn<ValueType>(this, "by2", new ValueType(10.0f, 0.0f, 100.0f)));
+  addPlug(_FRIC_IN = new PlugIn<ValueType>(this, "fric", new ValueType(1.1f, 1.0f, 2.0f)));
+  addPlug(_REPUL_IN = new PlugIn<ValueType>(this, "reul", new ValueType(1.0f, 0.0f, 10.0f)));
 
 }
 
 Gear_AggTest::~Gear_AggTest()
 {
-
+  delete[]m_points;
 }
 
 bool Gear_AggTest::ready()
@@ -338,8 +400,130 @@ bool Gear_AggTest::ready()
 
 void Gear_AggTest::init()
 {
-  parse_lion();
+  //parse_lion();
+
+  m_points = new scatter_point[max_points];
 }
+
+void Gear_AggTest::newPoint(int sizex, int sizey, int pt_source)
+{
+  if(num_points>=max_points)
+    return;
+  // we want a new point but not from a fork
+  //if(pt_source==-1)
+  {
+    m_points[num_points].x = rand()%sizex;
+    m_points[num_points].y = rand()%sizey;
+    m_points[num_points].r = (rand()%sizey)/4;
+    m_points[num_points].s = 0;
+
+  }
+ //  else
+//   {
+//     m_points[num_points].x = m_points[pt_source].x;
+//     m_points[num_points].y = m_points[pt_source].y;
+//     m_points[num_points].r = m_points[pt_source].r;
+//     m_points[num_points].s = m_points[pt_source].s;
+//   }
+  m_points[num_points].vx = 0;
+  m_points[num_points].vy = 0;
+  m_points[num_points].vr = 0;
+  m_points[num_points].vs = 0;
+
+  m_points[num_points].ax = 0;
+  m_points[num_points].ay = 0;
+  m_points[num_points].ar = 0;
+  m_points[num_points].as = 0;
+
+  m_points[num_points].color = agg::rgba8(255,255,255,255);
+
+  num_points++;
+}
+
+void Gear_AggTest::animatePoints(int sizex, int sizey,float borderx1,float borderx2,float bordery1,float bordery2,float fric,float repul)
+{
+  for(int i=0;i<num_points;++i)
+  {
+    // if(rand()%10==0)
+//       m_points[i].ax = (float)(rand()%10) / 10 - .45;
+//     if(rand()%10==0)
+//       m_points[i].ay = (float)(rand()%10) / 10 - .45;
+//     if(rand()%10==0)
+//       m_points[i].ar = (float)(rand()%10) / 100 - .045;
+//     if(rand()%10==0)
+//       m_points[i].as = (float)(rand()%10) / 100 - .045;
+
+    if(m_points[i].x < borderx1)
+      m_points[i].ax = (borderx1-m_points[i].x )/ borderx1;
+    if(m_points[i].y < bordery1)
+      m_points[i].ay = (bordery1-m_points[i].y) / bordery1;
+
+    if(m_points[i].x > sizex-borderx2)
+      m_points[i].ax = -(borderx2-(sizex-m_points[i].x)) / borderx2;
+    if(m_points[i].y > sizey-bordery2)
+      m_points[i].ay = -(bordery2-(sizey-m_points[i].y)) / bordery2;
+    
+    float force_factor = -.001 * repul;
+    
+    for(int j=0;j<num_points;++j)
+    {
+      if(j==i)
+        continue;
+      float dist =  sqrt((m_points[j].x-m_points[i].x)*(m_points[j].x-m_points[i].x)+
+                         (m_points[j].y-m_points[i].y)*(m_points[j].y-m_points[i].y));
+      float cx = (m_points[j].x - m_points[i].x)/(dist*dist)*force_factor;
+      float cy = (m_points[j].y - m_points[i].y)/(dist*dist)*force_factor;
+
+      if(dist<1)
+        continue;
+
+      m_points[i].ax += cx;
+      m_points[i].ay += cy;
+
+
+    }
+      
+
+    m_points[i].vx+=m_points[i].ax;
+    m_points[i].vy+=m_points[i].ay;
+    m_points[i].vr+=m_points[i].ar;
+    m_points[i].vs+=m_points[i].as;
+
+    m_points[i].vx/=fric;
+    m_points[i].vy/=fric;
+    m_points[i].vr/=fric;
+    m_points[i].vs/=fric;
+    
+    
+
+    m_points[i].x+=m_points[i].vx;
+    m_points[i].y+=m_points[i].vy;
+    m_points[i].r+=m_points[i].vr;
+    m_points[i].s+=m_points[i].vs;
+
+    
+
+
+
+
+
+//     m_points[i].vx = MIRROR_CLAMP(m_points[i].vx, -3.0f, 3.0f);
+//     m_points[i].vy = MIRROR_CLAMP(m_points[i].vy, -3.0f, 3.0f);
+
+//     m_points[i].vs = MIRROR_CLAMP(m_points[i].vs, -3.0f, 3.0f);
+//     m_points[i].s = MIRROR_CLAMP(m_points[i].s, 0.0f, 12.0f);
+//     m_points[i].vr = MIRROR_CLAMP(m_points[i].vr, -3.0f, 3.0f);
+//     m_points[i].r = MIRROR_CLAMP(m_points[i].r, 0.0f, 12.0f);
+
+
+//     m_points[i].x = REPEAT_CLAMP2(m_points[i].x,0.0f,(float)sizex);
+//     m_points[i].y = REPEAT_CLAMP2(m_points[i].y,0.0f,(float)sizey);
+
+    //std::cerr<<m_points[i].x<<" "<<m_points[i].y<<" "<<m_points[i].ax<<" "<<m_points[i].ay<<std::endl;
+  }
+
+}
+
 
 // class the_application : public agg::platform_support
 // {
@@ -484,6 +668,12 @@ void Gear_AggTest::runVideo()
   _size = (int) _image->size();
   
   float alpha = _AMOUNT_IN->type()->value();
+  float boxx1 = _BOXX1_IN->type()->value();
+  float boxx2 = _BOXX2_IN->type()->value();
+  float boxy1 = _BOXY1_IN->type()->value();
+  float boxy2 = _BOXY2_IN->type()->value();
+  float fric = _FRIC_IN->type()->value();
+  float repul = _REPUL_IN->type()->value();
   unsigned i;
   for(i = 0; i < g_npaths; i++)
   {
@@ -491,33 +681,77 @@ void Gear_AggTest::runVideo()
   }
 
   pixfmt pixf(rbuf);
-         renderer_base rb(pixf);
-         renderer_solid r(rb);
+  renderer_base rb(pixf);
+  renderer_solid r(rb);
+  agg::ellipse e1;
 
-        agg::trans_affine mtx;
-        mtx *= agg::trans_affine_translation(-g_base_dx, -g_base_dy);
-        mtx *= agg::trans_affine_scaling(g_scale, g_scale);
-        mtx *= agg::trans_affine_rotation(alpha/50 + agg::pi);
-        mtx *= agg::trans_affine_skewing(g_skew_x/1000.0, g_skew_y/1000.0);
-        mtx *= agg::trans_affine_translation(_outImage->width()/2, _outImage->height()/2);
-
-//         // This code renders the lion:
-
-//         // Variant with template converter classes - static pipeline
-//         //-------------------------------
-         agg::conv_transform<agg::path_storage, agg::trans_affine> trans(g_path, mtx);
-//         //-------------------------------
+  agg::rasterizer_scanline_aa<> pf;
+  agg::scanline_p8 sl;
 
 
-//         // Variant with static pipeline and the vertex source adaptor that
-//         // uses path_storage::const_iterator. 
-//         //-------------------------------
-//         //typedef agg::vertex_source_adaptor_with_id<agg::path_storage> source;
-//         //source src(g_path);
-//         //typedef agg::conv_transform<source, agg::trans_affine> transform;
-//         //transform trans(src, mtx);
+        
+  // if(num_points==0)
+    newPoint(_image->width(), _image->height());
 
-         agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+  //if(rand()%100==0)
+ //    int np = num_points;
+//   for(int i=0;i<np;i++)
+//     newPoint(_image->width(), _image->height(), i);
+
+  animatePoints(_image->width(), _image->height(),boxx1,boxx2,boxy1,boxy2,fric,repul);
+
+  for(int i=0;i<num_points;i++)
+  {
+      e1.init(m_points[i].x, 
+              m_points[i].y, 
+              m_points[i].r * alpha*.01,m_points[i].r * alpha*.01,
+              64);
+      pf.add_path(e1);
+      r.color(agg::rgba8(m_points[i].color.r, 
+                         m_points[i].color.g,
+                         m_points[i].color.b,
+                         alpha));
+
+      agg::render_scanlines(pf, sl, r);
+  }     
+
+
+
+//         agg::trans_affine mtx;
+//         mtx *= agg::trans_affine_translation(-g_base_dx, -g_base_dy);
+//         mtx *= agg::trans_affine_scaling(g_scale, g_scale);
+//         mtx *= agg::trans_affine_rotation(alpha/50 + agg::pi);
+//         mtx *= agg::trans_affine_skewing(g_skew_x/1000.0, g_skew_y/1000.0);
+//         mtx *= agg::trans_affine_translation(_outImage->width()/2, _outImage->height()/2);
+
+// //         // This code renders the lion:
+
+// //         // Variant with template converter classes - static pipeline
+// //         //-------------------------------
+//          agg::conv_transform<agg::path_storage, agg::trans_affine> trans(g_path, mtx);
+// //         //-------------------------------
+
+
+// //         // Variant with static pipeline and the vertex source adaptor that
+// //         // uses path_storage::const_iterator. 
+// //         //-------------------------------
+// //         //typedef agg::vertex_source_adaptor_with_id<agg::path_storage> source;
+// //         //source src(g_path);
+// //         //typedef agg::conv_transform<source, agg::trans_affine> transform;
+// //         //transform trans(src, mtx);
+
+//          agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+
+//          mtx *= agg::trans_affine_translation(10,10);
+
+//           agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+//          mtx *= agg::trans_affine_translation(10,10);
+
+//          agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+//          mtx *= agg::trans_affine_translation(10,10);
+
+//          agg::render_all_paths(g_rasterizer, g_scanline, r, trans, g_colors, g_path_idx, g_npaths);
+
 //         agg::render_ctrl(g_rasterizer, g_scanline, r, m_alpha_slider);
 
 }

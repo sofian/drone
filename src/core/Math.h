@@ -617,5 +617,21 @@ T MIRROR_CLAMP(T t,T low,T high)
   }
 }
 
+//! clamps the value in a repeating fashion :
+//! It is like the interval was infinite, but repeating himself *not* 'mirrorly'
+//! e.g: MIRROR_CLAMP(x,0,2) for x={-3,-2,-1,0,1,2,3} gives :
+//! {0,1,2,0,1,2,0}
+
+template<class T>
+T REPEAT_CLAMP(T t,T low,T high)
+{
+  static T range,off;
+  if(t>=low && t<=high)
+    return t;
+  range = high-low;
+  off=t-low;
+  return low + range * ((off/range)-((int)off/range));
+}
+
 
 #endif
