@@ -4,7 +4,7 @@
 
 // initsize : size at first initialisation
 CircularBufferSignal::CircularBufferSignal(Signal_T def, int initsize)
-  :_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
+:_default(def),_buf(NULL),_bufSize(0),computeSum(false),computeSumSquare(false)
 {
   resize(initsize);
   setDynamicResizingMaximumSize(_DYN_RESIZE_MAX);
@@ -14,23 +14,21 @@ CircularBufferSignal::CircularBufferSignal(Signal_T def, int initsize)
 // stats not implemented yet
 void CircularBufferSignal::setStat(Stats stat, bool computed)
 {
-  if(stat==STAT_SUM)
+  if (stat==STAT_SUM)
   {
-    if(!computeSum)
+    if (!computeSum)
       resize(_bufSize);
     else
       delete[]_bufSum;
     computeSum = computed;
-  }
-  else if(stat==STAT_SUMSQUARE)
+  } else if (stat==STAT_SUMSQUARE)
   {
-    if(!computeSumSquare)
+    if (!computeSumSquare)
       resize(_bufSize);
     else
       delete[]_bufSumSquare;
     computeSumSquare = computed;
-  }
-  else
+  } else
     // log something
     assert(0);
 }
@@ -46,7 +44,7 @@ void CircularBufferSignal::resize(int newsize)
 {
   // LOG something maybe?
   // we don't enable down-sizing the CircularBuffer for now 
-  if(newsize<_bufSize)
+  if (newsize<_bufSize)
     return;
 
   // make a new buffer
@@ -54,17 +52,17 @@ void CircularBufferSignal::resize(int newsize)
 
   // if we already had a buffer, we copy past signal
   // into the new one to avoid 'temporary amnesia'
-  if(_bufSize)
+  if (_bufSize)
   {
     Signal_T_ptr nptr = newbuf;
     int newSamples = newsize-_bufSize;
 
     //fill new extra-space with default value
-    for(int i=0;i<newSamples;i++)
+    for (int i=0;i<newSamples;i++)
       *(nptr++)=_default;
 
     CIRCBUF_SIGNAL_T_FORBEGIN(this,-_bufSize,-1)
-        *(nptr++)= *(cbptr++);
+    *(nptr++)= *(cbptr++);
     CIRCBUF_SIGNAL_T_FOREND
 
   }
@@ -115,24 +113,24 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
   int toEnd = _buf + _bufSize - _current;
   int firstRun = MIN(size,toEnd);
 
-  if(size > _bufSize)
+  if (size > _bufSize)
     //log_something !!
     _bufSize=_bufSize;
-    
+
 
   memcpy(_current, ptr, firstRun * sizeof(Signal_T));
   _current += firstRun;
   size -= firstRun;
   ptr += firstRun;
-  
-  if(size)
+
+  if (size)
   // some samples remaining...
   {
     memcpy(_buf, ptr, size * sizeof(Signal_T));
     _current = _buf + size;
   }
 
-  if(_current >=_buf + _bufSize)
+  if (_current >=_buf + _bufSize)
     _current -= _bufSize;
 
 }
@@ -141,7 +139,7 @@ void CircularBufferSignal::append(Signal_T * ptr, int size)
 // if append size is too big, we resize the buffer.
 void CircularBufferSignal::appendEnlarge(Signal_T * ptr, int size)
 {
-  if(size > _bufSize)
+  if (size > _bufSize)
     resize(size);
   append(ptr,size);
 }
@@ -165,56 +163,54 @@ void CircularBufferSignal::getBounds(int sample_from, int sample_to, Signal_T_pt
   int samplesWanted = sample_to - sample_from + 1;
 
   // check if we need dynamic resizing
-  if(samplesWanted > _bufSize)
-    if(samplesWanted <= _maxDynSize)
+  if (samplesWanted > _bufSize)
+    if (samplesWanted <= _maxDynSize)
     {
       resize(samplesWanted);
-    }
-    else
+    } else
       // some kind of log/error
       assert(0);
 
   Signal_T_ptr bt1 = _current + sample_from;
   Signal_T_ptr bt2 = _current + sample_to;
 
-  if( bt1 >= _buf || (bt1 < _buf && bt2 < _buf) )
+  if ( bt1 >= _buf || (bt1 < _buf && bt2 < _buf) )
   {
     // the chunk is in one single piece
-    if(bt2<_buf)
+    if (bt2<_buf)
     {
       // the piece is before buffer start so we transpose it
       bt1+=_bufSize;
       bt2+=_bufSize;
     }
-    
+
     pa1=bt1;
     pa2=bt2;  
     // make it so second chunk will never be processed
     pb1=bt2+1;
     pb2=bt2;
 
-  }
-  else
-    // start is "before" buffer start but end is after (chunk is split in 2)
+  } else
+  // start is "before" buffer start but end is after (chunk is split in 2)
   {
-    
+
     pa1 = bt1 + _bufSize;
     pa2 = _buf + _bufSize-1;
-    
+
     pb1 = _buf;
     pb2 = _buf + (samplesWanted - (pa2 - pa1 + 2));
   }
 
-  if(which_stat==STAT_NONE)
+  if (which_stat==STAT_NONE)
     return;
-  else 
+  else
   {
     int offset;
-    if(which_stat==STAT_SUM)
+    if (which_stat==STAT_SUM)
       offset = (int)_bufSum-(int)_buf;
-    else if(which_stat==STAT_SUMSQUARE)
+    else if (which_stat==STAT_SUMSQUARE)
       offset = (int)_bufSumSquare-(int)_buf;
-    else 
+    else
       // LOG SOMETHING
       assert(0);
     pa1+=offset;

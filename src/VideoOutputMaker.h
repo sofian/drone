@@ -10,14 +10,14 @@ class VideoOutput;
 class VideoOutputMaker  
 {
 public:
-    VideoOutputMaker(std::string type);
-	
-    static VideoOutput* makeVideoOutput(std::string type);
-    static void getAllVideoOutputsType(std::vector<std::string> &videoOutputTypes);
+  VideoOutputMaker(std::string type);
+
+  static VideoOutput* makeVideoOutput(std::string type);
+  static void getAllVideoOutputsType(std::vector<std::string> &videoOutputTypes);
 
 private:
-    static std::map<std::string, VideoOutputMaker*> *_Registry;
-    virtual VideoOutput* internalMakeVideoOutput()=0;
+  static std::map<std::string, VideoOutputMaker*> *_Registry;
+  virtual VideoOutput* internalMakeVideoOutput()=0;
 };
 
 #define Register_VideoOutput(MMAKERNAME, MCLASSNAME, MTYPE) \

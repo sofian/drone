@@ -9,7 +9,7 @@ FrequencyAnalyser::FrequencyAnalyser(int bufferSize)
 // _hammingWindow(NULL), _bufferSize(bufferSize), _windowSize(2*bufferSize),
 //    _inputComplex(NULL), _outputComplex(NULL)
 {
-    prepare(bufferSize);
+  prepare(bufferSize);
 }
 
 FrequencyAnalyser::~FrequencyAnalyser()
@@ -95,7 +95,7 @@ void FrequencyAnalyser::timeToFrequency(Signal_T *inputBuffer, Signal_T *outputB
 /*                                                                                                                                                      */
 /*     if (_bufferSize%2==0)                                                                                                                            */
 /*         outputBuffer[_bufferSize] = _outputComplex[_bufferSize]*_outputComplex[_bufferSize];                                                         */
-    
+
 /*     for (int i=0;i<_bufferSize;i++)                                                    */
 /*     {                                                                                  */
 /*         std::cout << 44100*i/_windowSize << " --- " << _powerSpectrum[i] << std::endl; */

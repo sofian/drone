@@ -12,25 +12,25 @@ class Property;
 
 class GearPropertiesDialog : public QDialog
 {
-Q_OBJECT
-public:
+  Q_OBJECT
+  public:
 
-    GearPropertiesDialog(QWidget *parent, Gear *gear);
-    ~GearPropertiesDialog();
+  GearPropertiesDialog(QWidget *parent, Gear *gear);
+  ~GearPropertiesDialog();
 
 public slots:
-    void slotOK();
+  void slotOK();
 
 private:
-    
-    void addControl(Property *property);
 
-    Gear* _gear;
-    QVBoxLayout* _verticalLayout;
-    std::vector<PropertyControl*> _propertyControls;
+  void addControl(Property *property);
 
-    QPushButton *_okButton;
-    QPushButton *_cancelButton;
+  Gear* _gear;
+  QVBoxLayout* _verticalLayout;
+  std::vector<PropertyControl*> _propertyControls;
+
+  QPushButton *_okButton;
+  QPushButton *_cancelButton;
 
 };
 

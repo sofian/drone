@@ -12,11 +12,11 @@
 #define FALSE 0
 
 #ifndef MIN
-#define MIN(x,y) ((x)<(y)?(x):(y))
+  #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
 
 #ifndef MAX
-#define MAX(x,y) ((x)>(y)?(x):(y))
+  #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
 // Begin LIBGIMP
@@ -26,7 +26,7 @@
 
 //! Clamp x at lower = l and upper = u
 #ifndef CLAMP
-#define CLAMP(x,l,u) ((x)<(l)?(l):((x)>(u)?(u):(x)))
+  #define CLAMP(x,l,u) ((x)<(l)?(l):((x)>(u)?(u):(x)))
 #endif
 
 // /* Use RINT() instead of rint() */
@@ -38,22 +38,22 @@
 
 //! Round
 #ifndef ROUND
-#define ROUND(x) ((int) ((x) + 0.5))
+  #define ROUND(x) ((int) ((x) + 0.5))
 #endif
 
 //! Square
 #ifndef SQR
-#define SQR(x) ((x) * (x))
+  #define SQR(x) ((x) * (x))
 #endif
 
 //! Limit a (0->511) int to 255
 #ifndef MAX255
-#define MAX255(a)  ((a) | (((a) & 256) - (((a) & 256) >> 8)))
+  #define MAX255(a)  ((a) | (((a) & 256) - (((a) & 256) >> 8)))
 #endif
 
 //! Clamp a int32-range int between 0 and 255 inclusive
 #ifndef CLAMP0255
-#define CLAMP0255(a)  CLAMP(a,0,255)
+  #define CLAMP0255(a)  CLAMP(a,0,255)
 #endif
 
 // End LIBGIMP

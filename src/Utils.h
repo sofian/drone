@@ -15,8 +15,8 @@ inline unsigned char intensity(unsigned char *rgb)
   total += *rgb++;
   total += *rgb;
   total >>= 2;
-  
-  return (unsigned char) total;
+
+  return(unsigned char) total;
 }
 
 // # Basic paint functions (from the Gimp paint-funcs-generic.h) ############
@@ -51,8 +51,8 @@ inline unsigned char intensity(unsigned char *rgb)
 //#define HAS_ALPHA(bytes) (~bytes & 1)
 #define HAS_ALPHA(bytes) 0 // XXX pour le moment on l'utilise pas, donc...
 
-static unsigned char	     add_lut[511];
-static int          	     random_table[RANDOM_TABLE_SIZE];
+static unsigned char       add_lut[511];
+static int                 random_table[RANDOM_TABLE_SIZE];
 
 inline void
 paint_funcs_setup (void)
@@ -103,8 +103,7 @@ blend_pixels (const unsigned char *src1,
       {
         for (b = 0; b < bytes; b++)
           dest[b] = 0;
-      }
-      else
+      } else
       {
         for (b = 0; b < c; b++)
           dest[b] = (src1[b] * a1 + src2[b] * a2) / a;
@@ -116,8 +115,7 @@ blend_pixels (const unsigned char *src1,
       src2 += bytes;
       dest += bytes;
     }
-  }
-  else
+  } else
   {
     const unsigned char blend1 = 255 - blend;
 
@@ -137,7 +135,7 @@ inline void
 shade_pixels (const unsigned char *src,
               const unsigned char *col,
               unsigned char       *dest,
-              unsigned char	    blend,
+              unsigned char     blend,
               unsigned int         w,
               unsigned int         bytes,
               unsigned int         has_alpha)
@@ -179,8 +177,7 @@ extract_alpha_pixels (const unsigned char *src,
       m++;
       src += bytes;
     }
-  }
-  else
+  } else
   {
     while (w--)
     {
@@ -447,8 +444,7 @@ multiply_pixels (const unsigned char *src1,
       src2 += bytes2;
       dest += bytes2;
     }
-  }
-  else if (has_alpha2)
+  } else if (has_alpha2)
   {
     while (length --)
     {
@@ -461,8 +457,7 @@ multiply_pixels (const unsigned char *src1,
       src2 += bytes2;
       dest += bytes2;
     }
-  }
-  else
+  } else
   {
     while (length --)
     {
@@ -576,7 +571,7 @@ overlay_pixels (const unsigned char *src1,
 inline void
 dodge_pixels (const unsigned char *src1,
               const unsigned char *src2,
-              unsigned char	   *dest,
+              unsigned char    *dest,
               unsigned int         length,
               unsigned int         bytes1,
               unsigned int         bytes2)
@@ -628,9 +623,9 @@ burn_pixels (const unsigned char *src1,
   {
     for (b = 0; b < alpha; b++)
     {
-	    tmp = (255 - src1[b]) << 8;
-	    tmp /= src2[b] + 1;
-	    dest[b] = (unsigned char) CLAMP (255 - tmp, 0, 255);
+      tmp = (255 - src1[b]) << 8;
+      tmp /= src2[b] + 1;
+      dest[b] = (unsigned char) CLAMP (255 - tmp, 0, 255);
     }
 
     if (has_alpha1 && has_alpha2)
@@ -662,10 +657,12 @@ hardlight_pixels (const unsigned char *src1,
   {
     for (b = 0; b < alpha; b++)
     {
-      if (src2[b] > 128) {
+      if (src2[b] > 128)
+      {
         tmp = ((int)255 - src1[b]) * ((int)255 - ((src2[b] - 128) << 1));
         dest[b] = (unsigned char) MIN (255 - (tmp >> 8), 255);
-      } else {
+      } else
+      {
         tmp = (int)src1[b] * ((int)src2[b] << 1);
         dest[b] = (unsigned char) MIN (tmp >> 8, 255);
       }
@@ -704,7 +701,7 @@ softlight_pixels (const unsigned char *src1,
       tmpM = INT_MULT (src1[b], src2[b], tmpM);
       tmpS = 255 - INT_MULT((255 - src1[b]), (255 - src2[b]), tmp1);
       dest[b] = INT_MULT ((255 - src1[b]), tmpM, tmp2) +
-        INT_MULT (src1[b], tmpS, tmp3);
+                INT_MULT (src1[b], tmpS, tmp3);
     }
 
     if (has_alpha1 && has_alpha2)
@@ -898,12 +895,12 @@ dissolve_pixels (const unsigned char *src,
                  int          length,
                  int          sb,
                  int          db,
-                 unsigned int	       has_alpha)
+                 unsigned int        has_alpha)
 {
   int    alpha, b;
   int  rand_val;
   int    combined_opacity;
-  
+
   srand(random_table[y % RANDOM_TABLE_SIZE]);
 
   /* Ignore x random values so we get a deterministic result */
@@ -929,8 +926,7 @@ dissolve_pixels (const unsigned char *src,
         combined_opacity = opacity * *mask / 255;
 
       mask++;
-    }
-    else
+    } else
     {
       if (has_alpha)
         combined_opacity = opacity * src[alpha] / 255;
@@ -982,8 +978,8 @@ replace_pixels (unsigned char   *src1,
     a_val = s1_a + mask_val * (s2_a - s1_a);
 
     if (a_val == 0) /* In any case, write out versions of the blending function */
-      /* that result when combinations of s1_a, s2_a, and         */
-      /* mask_val --> 0 (or mask_val -->1)                        */
+    /* that result when combinations of s1_a, s2_a, and         */
+    /* mask_val --> 0 (or mask_val -->1)                        */
     {
       /* Case 1: s1_a, s2_a, AND mask_val all approach 0+:               */
       /* Case 2: s1_a AND s2_a both approach 0+, regardless of mask_val: */
@@ -1016,16 +1012,15 @@ replace_pixels (unsigned char   *src1,
           dest[b] = affect[b] ? src2[b] : src1[b];
         }
       }
-    }
-    else
+    } else
     {
       a_recip = 1.0 / a_val;
       /* possible optimization: fold a_recip into s1_a and s2_a              */
       for (b = 0; b < alpha; b++)
-	    {
-	      new_val = (int) ( 0.5 + a_recip * (src1[b] * s1_a + mask_val *
+      {
+        new_val = (int) ( 0.5 + a_recip * (src1[b] * s1_a + mask_val *
                                            (src2[b] * s2_a - src1[b] * s1_a)) );
-	      dest[b] = affect[b] ? MIN (new_val, 255) : src1[b];
+        dest[b] = affect[b] ? MIN (new_val, 255) : src1[b];
       }
     }
 
@@ -1104,7 +1099,7 @@ flatten_pixels (const unsigned char *src,
   {
     for (b = 0; b < alpha; b++)
       dest[b] = INT_MULT (src[b], src[alpha], t1) +
-        INT_MULT (bg[b], (255 - src[alpha]), t2);
+                INT_MULT (bg[b], (255 - src[alpha]), t2);
 
     src += bytes;
     dest += alpha;
@@ -1156,8 +1151,7 @@ apply_mask_to_alpha_channel (unsigned char       *src,
       mask++;
       src += bytes;
     }
-  }
-  else
+  } else
   {
     while (length --)
     {
@@ -1338,7 +1332,7 @@ initial_inten_pixels (const unsigned char *src,
       destp = dest + bytes;
 
       if (opacity != 0)
-        while(length--)
+        while (length--)
         {
           dest[0] = src[0];
           dest[1] = src[1];
@@ -1349,7 +1343,7 @@ initial_inten_pixels (const unsigned char *src,
           m++;
         }
       else
-        while(length--)
+        while (length--)
         {
           dest[0] = src[0];
           dest[1] = src[1];
@@ -1368,14 +1362,14 @@ initial_inten_pixels (const unsigned char *src,
       l = length;
 
       if (affect[b])
-        while(l--)
+        while (l--)
         {
           *destp = *srcp;
           srcp  += bytes;
           destp += dest_bytes;
         }
       else
-        while(l--)
+        while (l--)
         {
           *destp = 0;
           destp += dest_bytes;
@@ -1419,15 +1413,15 @@ initial_inten_pixels (const unsigned char *src,
 
       destp = dest + bytes;
 
-      while(length--)
-	    {
-	      dest[0] = src[0];
-	      dest[1] = src[1];
-	      dest[2] = src[2];
-	      dest[3] = opacity;
-	      src  += bytes;
-	      dest += dest_bytes;
-	    }
+      while (length--)
+      {
+        dest[0] = src[0];
+        dest[1] = src[1];
+        dest[2] = src[2];
+        dest[3] = opacity;
+        src  += bytes;
+        dest += dest_bytes;
+      }
       return;
     }
 
@@ -1438,18 +1432,18 @@ initial_inten_pixels (const unsigned char *src,
       l = length;
 
       if (affect[b])
-        while(l--)
-	      {
+        while (l--)
+        {
           *destp = *srcp;
           srcp  += bytes;
           destp += dest_bytes;
-	      }
+        }
       else
-        while(l--)
-	      {
+        while (l--)
+        {
           *destp = 0;
           destp += dest_bytes;
-	      }
+        }
     }
 
     /* fill the alpha channel */
@@ -1491,15 +1485,14 @@ initial_inten_a_pixels (const unsigned char   *src,
 
       /*  Set the alpha channel  */
       dest[alpha] = affect [alpha] ? INT_MULT3(opacity, src[alpha], *m, tmp)
-        : 0;
+                    : 0;
 
       m++;
 
       dest += bytes;
       src += bytes;
     }
-  }
-  else
+  } else
   {
     while (length --)
     {

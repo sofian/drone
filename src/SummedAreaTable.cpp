@@ -1,10 +1,10 @@
 #include "SummedAreaTable.h"
 
 
-const RGBAint SummedAreaTable::ZERO = { 0, 0, 0, 0 };
+const RGBAint SummedAreaTable::ZERO = { 0, 0, 0, 0};
 
 SummedAreaTable::SummedAreaTable()
-  : _acc(0), _accSquares(0), _canvas(0), _canvasData(0), _sizeX(0), _sizeY(0), _size(0)
+: _acc(0), _accSquares(0), _canvas(0), _canvasData(0), _sizeX(0), _sizeY(0), _size(0)
 {
 }
 
@@ -44,16 +44,16 @@ void SummedAreaTable::buildTable()
   _acc = (RGBAint*)realloc(_acc, _size*sizeof(RGBAint));
 
   _canvasData = _canvas->_data;
-  
+
   register unsigned char *iterData = (unsigned char*) _canvasData;
   register int *iterAcc = (int*) _acc;
 
   int rowWidth = _sizeX * 4;
-  
+
   // upper row
   _accR = _accG = _accB = _accA = 0;
   for (int x=0; x<_sizeX; ++x)
-  { 
+  {
     _accR += (int)*(iterData++);
     _accG += (int)*(iterData++);
     _accB += (int)*(iterData++);
@@ -102,12 +102,12 @@ void SummedAreaTable::buildTableOfSquares()
   _accSquares = (RGBAint*)realloc(_accSquares, _size*sizeof(RGBAint));
 
   _canvasData = _canvas->_data;
-  
+
   register unsigned char *iterData = (unsigned char*) _canvasData;
   register int *iterAcc = (int*) _acc;
 
   int rowWidth = _sizeX * 4;
-  
+
   // upper row
   _accR = _accG = _accB = _accA = 0;
   for (int x=0; x<_sizeX; ++x)

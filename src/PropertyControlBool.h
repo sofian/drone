@@ -9,17 +9,17 @@ class QCheckBox;
 class PropertyControlBool : public PropertyControl
 {
 public:
-    PropertyControlBool(QWidget *parent, Property *property);
-    virtual ~PropertyControlBool();
+  PropertyControlBool(QWidget *parent, Property *property);
+  virtual ~PropertyControlBool();
 
-    void save();
+  void save();
 
-    
+
 private:
-    
-    QHBoxLayout *_hLayout;
-    QCheckBox *_checkBox;
+
+  QHBoxLayout *_hLayout;
+  QCheckBox *_checkBox;
 
 };
-      
+
 #endif

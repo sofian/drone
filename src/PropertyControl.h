@@ -9,15 +9,15 @@
 class PropertyControl : public QWidget
 {
 public:
-    PropertyControl(QWidget *parent, Property *property);
-    
-    virtual void save()=0;
-    
-protected:
-    QWidget *_parent;
+  PropertyControl(QWidget *parent, Property *property);
 
-    Property *_property;
+  virtual void save()=0;
+
+protected:
+  QWidget *_parent;
+
+  Property *_property;
 };
 
-      
+
 #endif

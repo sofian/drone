@@ -9,17 +9,17 @@ class QLineEdit;
 class PropertyControlString : public PropertyControl
 {
 public:
-    PropertyControlString(QWidget *parent, Property *property);
-    virtual ~PropertyControlString();
+  PropertyControlString(QWidget *parent, Property *property);
+  virtual ~PropertyControlString();
 
-    void save();
+  void save();
 
-    
+
 private:
-    
-    QHBoxLayout *_hLayout;
-    QLineEdit *_lineEdit;
+
+  QHBoxLayout *_hLayout;
+  QLineEdit *_lineEdit;
 
 };
-      
+
 #endif

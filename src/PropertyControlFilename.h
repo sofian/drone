@@ -8,24 +8,24 @@ class QPushButton;
 
 class PropertyControlFilename : public PropertyControl
 {
-Q_OBJECT
-public:
-    PropertyControlFilename(QWidget *parent, Property *property);
-    virtual ~PropertyControlFilename();
+  Q_OBJECT
+  public:
+  PropertyControlFilename(QWidget *parent, Property *property);
+  virtual ~PropertyControlFilename();
 
-    void save();
-   
-    
+  void save();
+
+
 public slots:
-    void slotBrowseClicked();    
+  void slotBrowseClicked();    
 
 private:
-    
-    QHBoxLayout *_hLayout;
-    QLineEdit *_lineEdit;
-    QPushButton *_browseButton;
-    
+
+  QHBoxLayout *_hLayout;
+  QLineEdit *_lineEdit;
+  QPushButton *_browseButton;
+
 
 };
-      
+
 #endif

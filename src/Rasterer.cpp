@@ -20,7 +20,7 @@ void Rasterer::setCanvas(Canvas *canvas)
 
   if (_canvas!=NULL)
     _canvasData = _canvas->_data;
-    
+
 }
 
 void Rasterer::setColor(unsigned char r, unsigned char g, unsigned char b)
@@ -44,7 +44,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 
   if (filled)
     for (int y=y0;y<y1;y++)
-    {    
+    {
       data = (unsigned char*)&_canvasData[y*sizeX + x0];
       for (int x=x0;x<x1;x++)
       {
@@ -77,7 +77,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
       *(data++) = g;
       *(data++) = b;
     }
-      
+
     data = (unsigned char*)&_canvasData[y1*sizeX + x0];
     for (int x=x0;x<=x1;x++)
     {
@@ -86,7 +86,7 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
       *(data++) = b;            
       data++;
     }
-      
+
   }
 }
 
@@ -96,26 +96,25 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
   {
     int radx2 = SQR(radx);
     int rady2 = SQR(rady);
-    
+
     for (int y=rady; y>=0; --y)
     {
       int xmax = (int) (radx * sqrt(1 - (float)SQR(y) / (float)rady2));
       for (int x=xmax; x>=0; --x)
         ellipsePoints(x0, y0, x, y);
     }
-  }
-  else
+  } else
   {
     double d2;
     int x = 0;
     int y = rady;
-    
+
     int radx2 = SQR(radx);
     int rady2 = SQR(rady);
-    
+
     double d1 = rady2 + (0.25 - rady) * radx2;
     ellipsePoints(x0, y0, x, y);
-    
+
     while ( radx2 * (y - 0.5) > rady2 * (x + 1) )
     {
       if (d1 < 0)
@@ -128,15 +127,15 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
       x++;
       ellipsePoints(x0, y0, x, y);
     }
-    
+
     d2 = rady2 * SQR(x + 0.5) + ( SQR(y - 1.) - rady2) * radx2;
     while (y > 0)
     {
-      if (d2 < 0) {
+      if (d2 < 0)
+      {
         d2 += rady2 * (2*x + 2) + radx2 * (-2*y + 3);
         x++;
-      }
-      else
+      } else
         d2 += radx2 * (-2* y + 3);
       y--;
       ellipsePoints(x0, y0, x, y);

@@ -17,28 +17,28 @@
 int main(int argc, char** argv)
 {
 
-    QApplication qtApp(argc, argv);
-    QApplication::setGlobalMouseTracking(TRUE);
-    
-    //QSplashScreen splash(splash_xpm);
-    //splash.show();
+  QApplication qtApp(argc, argv);
+  QApplication::setGlobalMouseTracking(TRUE);
 
-    MainWindow mainWindow;
-    qtApp.setMainWidget(&mainWindow);
-    
-    //temp just because it's too fast for now
+  //QSplashScreen splash(splash_xpm);
+  //splash.show();
+
+  MainWindow mainWindow;
+  qtApp.setMainWidget(&mainWindow);
+
+  //temp just because it's too fast for now
 //    Timing::sleep(500);
-    //
+  //
 
-    mainWindow.show();
+  mainWindow.show();
 
-    //splash.finish(&mainWindow);
+  //splash.finish(&mainWindow);
 
-    paint_funcs_setup();
-    
-    qtApp.exec();
+  paint_funcs_setup();
 
-    paint_funcs_free();
+  qtApp.exec();
+
+  paint_funcs_free();
 
 }
 

@@ -23,16 +23,16 @@ extern "C"{
 
 struct XVisualInfo_fixed
 {
-    Visual *visual;
-    VisualID visualid;
-    int screen;
-    unsigned int depth;
-    int class_fixed;
-    unsigned long red_mask;
-    unsigned long green_mask;
-    unsigned long blue_mask;
-    int colormap_size;
-    int bits_per_rgb;
+  Visual *visual;
+  VisualID visualid;
+  int screen;
+  unsigned int depth;
+  int class_fixed;
+  unsigned long red_mask;
+  unsigned long green_mask;
+  unsigned long blue_mask;
+  int colormap_size;
+  int bits_per_rgb;
 };
 
 
@@ -43,35 +43,35 @@ class Canvas;
 class VideoOutputX11Base : public VideoOutput
 {
 public:
-    VideoOutputX11Base();
-    virtual ~VideoOutputX11Base();
+  VideoOutputX11Base();
+  virtual ~VideoOutputX11Base();
 
 protected:
 
-    bool togglefullscreen(bool fs, int xRes, int yRes);
-    bool openXDisplay();
-    bool checkXShmExtension();
-    bool createXWindow(int xRes, int yRes);
-    void destroyXWindow();
-    bool mapWindow();
-    bool unMapWindow();
-    XShmSegmentInfo *createShmSegment(int size);//assign segment to _shmInfo and return the segment info
-    void destroyShm();
-    bool createGC();
-    void processX11Events();
-    virtual void onResize(int , int ){}
-    void resizeWindow(int sizeX, int sizeY);
-    
-    bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo);
-        
-    void* _display;//! handle on the X11 display
-    Window _window;//! handle on the X11 window
-    XF86VidModeModeInfo _desktopMode;//! The Desktop videomode
-    XVisualInfo _visualInfo;
+  bool togglefullscreen(bool fs, int xRes, int yRes);
+  bool openXDisplay();
+  bool checkXShmExtension();
+  bool createXWindow(int xRes, int yRes);
+  void destroyXWindow();
+  bool mapWindow();
+  bool unMapWindow();
+  XShmSegmentInfo *createShmSegment(int size);//assign segment to _shmInfo and return the segment info
+  void destroyShm();
+  bool createGC();
+  void processX11Events();
+  virtual void onResize(int , int ){}
+  void resizeWindow(int sizeX, int sizeY);
 
-    XShmSegmentInfo _shmInfo;//! the current used shm segment
-    GC _gc;
-    int _currentWindowWidth, _currentWindowHeight;
+  bool VideoOutputX11Base::findHighestDepthVisual(XVisualInfo &visualInfo);
+
+  void* _display;//! handle on the X11 display
+  Window _window;//! handle on the X11 window
+  XF86VidModeModeInfo _desktopMode;//! The Desktop videomode
+  XVisualInfo _visualInfo;
+
+  XShmSegmentInfo _shmInfo;//! the current used shm segment
+  GC _gc;
+  int _currentWindowWidth, _currentWindowHeight;
 
 };
 

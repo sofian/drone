@@ -41,39 +41,39 @@ typedef float real;
 class Timer
 {
 #ifdef _MSC_VER
-  private:
-    static time_t base_time;
+private:
+  static time_t base_time;
 #endif
-  public:
-    bool is_running;
-    real total_time;
-    real start_time;
+public:
+  bool is_running;
+  real total_time;
+  real start_time;
 
-    /// Create the timer and start it now!
-    Timer();
+  /// Create the timer and start it now!
+  Timer();
 
-    /** Reset the timer. The timer will count time starting
-        from now, and the accumulated time is erased.
-    */
-    void reset();
+  /** Reset the timer. The timer will count time starting
+      from now, and the accumulated time is erased.
+  */
+  void reset();
 
-    /// Stop the timer. Updates accumulated time.
-    void stop();
+  /// Stop the timer. Updates accumulated time.
+  void stop();
 
-    /// Resume the timer. It will count time starting from now.
-    void resume();
+  /// Resume the timer. It will count time starting from now.
+  void resume();
 
-    /** Get the total accumulated time. (Until now, if the
-        timer is still running.
-    */
-    real getTime();
+  /** Get the total accumulated time. (Until now, if the
+      timer is still running.
+  */
+  real getTime();
 
-    /** System dependent function which returns time elapsed
-        since an arbitrary point reference in the past.
-    */
-    static real getRunTime();
+  /** System dependent function which returns time elapsed
+      since an arbitrary point reference in the past.
+  */
+  static real getRunTime();
 
-    ~Timer();
+  ~Timer();
 };
 
 #endif

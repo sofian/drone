@@ -22,102 +22,104 @@ class QCanvas;
 class Gear  
 {
 public:
-    class Category
+  class Category
+  {
+  public:
+
+    Category &operator<<(std::string s)
     {
-    public:
-    
-        Category &operator<<(std::string s)
-        {
-            _category.push_back(s);
-            return *this;
-        }
-        
-        const std::vector<std::string>& path()
-        {
-            return _category;
-        }
+      _category.push_back(s);
+      return *this;
+    }
 
-        void clear();
-    
-    private:
-        std::vector<std::string> _category;
-    
-    };
-    
+    const std::vector<std::string>& path()
+    {
+      return _category;
+    }
 
-    Gear(Engine* engine, std::string type, std::string name);
-	virtual ~Gear();
-    
-    virtual void init(){};
-    virtual void prePlay(){};    
-    virtual void postPlay(){};    
-    virtual void runAudio(){};//! test pour ready doit etre fait avant
-    virtual void runVideo(){};//! test pour ready doit etre fait avant
-    GearGui* getGearGui();
-   
-    void updateSettings();//! user must call this method after settings have been modified
-     
-    void getInputs(std::list<AbstractPlug*> &inputs) const;
-    void getOutputs(std::list<AbstractPlug*> &outputs) const;
+    void clear();
 
-    AbstractPlug* getInput(std::string name) const;
-    AbstractPlug* getOutput(std::string name) const;
+  private:
+    std::vector<std::string> _category;
 
-	void getDependencies(std::vector<Gear*> & dependencies) const;
-    
-    const std::string& type() const {return _Type;};
-	const std::string& name() const {return _Name;};
+  };
 
-    Properties& settings(){return _settings;};
-    
-    virtual bool ready()=0;
-    void needSynch();
-    
-    virtual void save(QDomDocument &, QDomElement &){};
-    virtual void load(QDomElement &){};
-    
-            
-    Engine *engine(){return _engine;};
 
-    const Category &category(){return _category;};
-    
-    
+  Gear(Engine* engine, std::string type, std::string name);
+  virtual ~Gear();
+
+  virtual void init(){};
+  virtual void prePlay(){};    
+  virtual void postPlay(){};    
+  virtual void runAudio(){};//! test pour ready doit etre fait avant
+  virtual void runVideo(){};//! test pour ready doit etre fait avant
+  GearGui* getGearGui();
+
+  void updateSettings();//! user must call this method after settings have been modified
+
+  void getInputs(std::list<AbstractPlug*> &inputs) const;
+  void getOutputs(std::list<AbstractPlug*> &outputs) const;
+
+  AbstractPlug* getInput(std::string name) const;
+  AbstractPlug* getOutput(std::string name) const;
+
+  void getDependencies(std::vector<Gear*> & dependencies) const;
+
+  const std::string& type() const {return _Type;};
+  const std::string& name() const {return _Name;};
+
+  Properties& settings(){return _settings;};
+
+  virtual bool ready()=0;
+  void needSynch();
+
+  virtual void save(QDomDocument &, QDomElement &){};
+  virtual void load(QDomElement &){};
+
+
+  Engine *engine(){return _engine;};
+
+  const Category &category(){return _category;};
+
+
 protected:
-    
-    virtual GearGui* createGearGui(QCanvas *canvas);//! overload to create your own GearGui
-    virtual void onUpdateSettings(){};
-    virtual void onPlugConnected(AbstractPlug*){};
-    virtual void onPlugDisconnected(AbstractPlug*){}; 
-    friend bool AbstractPlug::connect(AbstractPlug *plug);
-    friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
-    AbstractPlug* addPlug(AbstractPlug* plug);       
-    
-    void deletePlug(AbstractPlug *plug);
-    
-    Engine *_engine;
+  //! overload to create your own GearGui
+  virtual GearGui* createGearGui(QCanvas *canvas);
 
-    std::list<AbstractPlug*> _Plugs;    
+  virtual void onUpdateSettings(){};
+  virtual void onPlugConnected(AbstractPlug*){};
+  virtual void onPlugDisconnected(AbstractPlug*){}; 
+  friend bool AbstractPlug::connect(AbstractPlug *plug);
+  friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
-    Properties _settings;
-    Category _category;
+  AbstractPlug* addPlug(AbstractPlug* plug);       
+
+  void deletePlug(AbstractPlug *plug);
+
+  Engine *_engine;
+
+  std::list<AbstractPlug*> _Plugs;    
+
+  Properties _settings;
+  Category _category;
 
 private:
-    std::string _Type;
-	std::string _Name;
-    
-    GearGui *_gearGui;
-    
-    void internalInit();
-    void internalPrePlay();    
-    void internalPostPlay();    
-    void internalSave(QDomDocument &doc, QDomElement &parent);
-    void internalLoad(QDomElement &gearElem);
+  std::string _Type;
+  std::string _Name;
 
-    friend Gear* Engine::addGear(std::string geartype, std::string name);
-    friend void *Engine::playThread(void *parent);
-    friend void Engine::loadSchema(std::string filename);
-    friend void Engine::saveSchema(std::string filename);
+  GearGui *_gearGui;
+
+  void internalInit();
+  void internalPrePlay();    
+  void internalPostPlay();    
+  void internalSave(QDomDocument &doc, QDomElement &parent);
+  void internalLoad(QDomElement &gearElem);
+
+  friend Gear* Engine::addGear(std::string geartype, std::string name);
+  friend void *Engine::playThread(void *parent);
+  friend void Engine::loadSchema(std::string filename);
+  friend void Engine::saveSchema(std::string filename);
 };
 
 

@@ -11,13 +11,13 @@ class Gear;
 class GearMaker  
 {
 public:
-    GearMaker(std::string type);
-	
-    static Gear* makeGear(Engine *engine, std::string type, std::string name);
-    static void getAllGearsName(std::vector<std::string> &gearsName);
+  GearMaker(std::string type);
+
+  static Gear* makeGear(Engine *engine, std::string type, std::string name);
+  static void getAllGearsName(std::vector<std::string> &gearsName);
 private:
-    static std::map<std::string, GearMaker*> *_Registry;
-    virtual Gear* internalMakeGear(Engine *engine, std::string name)=0;
+  static std::map<std::string, GearMaker*> *_Registry;
+  virtual Gear* internalMakeGear(Engine *engine, std::string name)=0;
 };
 
 #define Register_Gear(MMAKERNAME, MCLASSNAME, MTYPE) \

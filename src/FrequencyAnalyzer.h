@@ -8,19 +8,19 @@ class FrequencyAnalyser
 {
 public:
 
-    FrequencyAnalyser(int bufferSize);
-    ~FrequencyAnalyser();
+  FrequencyAnalyser(int bufferSize);
+  ~FrequencyAnalyser();
 
-    void prepare(int bufferSize);
-    
-    void frequencyToTime(Signal_T *inputBuffer, Signal_T *outputBuffer);
-    void timeToFrequency(Signal_T *inputBuffer, Signal_T *outputBuffer);
-    void filter(Signal_T *inputBuffer, Signal_T *outputBuffer);
+  void prepare(int bufferSize);
 
-    //int getMasterFrequency();
-    //float getBand(int lowerFreq, int higherFreq);
-    //fftw_real *powerSpectrum() {return _powerSpectrum;};
-    
+  void frequencyToTime(Signal_T *inputBuffer, Signal_T *outputBuffer);
+  void timeToFrequency(Signal_T *inputBuffer, Signal_T *outputBuffer);
+  void filter(Signal_T *inputBuffer, Signal_T *outputBuffer);
+
+  //int getMasterFrequency();
+  //float getBand(int lowerFreq, int higherFreq);
+  //fftw_real *powerSpectrum() {return _powerSpectrum;};
+
 
 private:    
 /*     rfftw_plan _fftwPlan;                                                     */
@@ -35,5 +35,5 @@ private:
 
 };
 
-      
+
 #endif

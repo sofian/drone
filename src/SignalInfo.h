@@ -6,29 +6,29 @@
 
 class SignalInfo
 {
-    static const int DEFAULT_BLOCKSIZE;
-    static const int DEFAULT_SAMPLERATE;
+  static const int DEFAULT_BLOCKSIZE;
+  static const int DEFAULT_SAMPLERATE;
 
 public:
-    SignalInfo() : _BlockSize(DEFAULT_BLOCKSIZE) {
-        SampleRate(DEFAULT_SAMPLERATE);
-    }
+  SignalInfo() : _BlockSize(DEFAULT_BLOCKSIZE) {
+    SampleRate(DEFAULT_SAMPLERATE);
+  }
 
-    void SampleRate(int samplerate){
-        _SampleRate = samplerate;
-        _TimePerSample = 1.0f / (float)samplerate;
-    }
+  void SampleRate(int samplerate){
+    _SampleRate = samplerate;
+    _TimePerSample = 1.0f / (float)samplerate;
+  }
 
-    int blockSize() const {return _BlockSize;}
+  int blockSize() const {return _BlockSize;}
 
-    int sampleRate() const {return _SampleRate;}
+  int sampleRate() const {return _SampleRate;}
 
-    Time_T timePerSample() const {return _TimePerSample;}
+  Time_T timePerSample() const {return _TimePerSample;}
 
 private:    
-    int _BlockSize;
-    int _SampleRate;
-    Time_T _TimePerSample;    
+  int _BlockSize;
+  int _SampleRate;
+  Time_T _TimePerSample;    
 };
 
 #endif

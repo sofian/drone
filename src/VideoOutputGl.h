@@ -14,33 +14,33 @@ class Canvas;
 class VideoOutputGl : public VideoOutputX11Base
 {
 public:
-    VideoOutputGl();
-    ~VideoOutputGl();
+  VideoOutputGl();
+  ~VideoOutputGl();
 
-    void fullscreen(bool fs);
-    void destroy();
-    bool init(int xRes, int yRes, bool fullscreen);
-    void render(Canvas &canvas);
-    
+  void fullscreen(bool fs);
+  void destroy();
+  bool init(int xRes, int yRes, bool fullscreen);
+  void render(Canvas &canvas);
+
 
 protected:
-    
-    void onResize(int sizeX, int sizeY);
-    bool createGLXContext();               
-    int initGl(int xRes, int yRes);
-    void resizeGl(int sizeX, int sizeY);
-    void destroyGLXContext();
-        
+
+  void onResize(int sizeX, int sizeY);
+  bool createGLXContext();               
+  int initGl(int xRes, int yRes);
+  void resizeGl(int sizeX, int sizeY);
+  void destroyGLXContext();
+
 
 private:
-                      
-    GLXContext _XGLXContext;
-    int _frameSizeX;
-    int _frameSizeY;
-    int _frameSize;
-    bool _glInitialized;
-    float _texSizeX, _texSizeY;
-    
+
+  GLXContext _XGLXContext;
+  int _frameSizeX;
+  int _frameSizeY;
+  int _frameSize;
+  bool _glInitialized;
+  float _texSizeX, _texSizeY;
+
 };
 
 #endif

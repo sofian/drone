@@ -28,8 +28,8 @@
 
 #include "Timer.h"
 #ifndef _MSC_VER
-#include <sys/times.h>
-#include <unistd.h>
+  #include <sys/times.h>
+  #include <unistd.h>
 #endif
 
 #ifdef _MSC_VER
@@ -45,7 +45,7 @@ real Timer::getRunTime()
 #else
   struct tms current;
   times(&current);
-  
+
   real norm = (real)sysconf(_SC_CLK_TCK);
   return(((real)current.tms_utime)/norm);
 #endif
@@ -54,8 +54,8 @@ real Timer::getRunTime()
 Timer::Timer()
 {
 #ifdef _MSC_VER
-	while(!base_time)
-		time(&base_time);
+  while (!base_time)
+    time(&base_time);
 #endif
   total_time = 0;
   is_running = true;
@@ -70,9 +70,9 @@ void Timer::reset()
 
 void Timer::stop()
 {
-  if(!is_running)
+  if (!is_running)
     return;
-  
+
   real current_time = getRunTime() - start_time;
   total_time += current_time;
   is_running = false;
@@ -80,7 +80,7 @@ void Timer::stop()
 
 void Timer::resume()
 {
-  if(is_running)
+  if (is_running)
     return;
 
   start_time = getRunTime();
@@ -89,12 +89,11 @@ void Timer::resume()
 
 real Timer::getTime()
 {
-  if(is_running)
+  if (is_running)
   {
     real current_time = getRunTime() - start_time;
     return(total_time+current_time);
-  }
-  else
+  } else
     return total_time;
 }
 

@@ -9,43 +9,43 @@
 #include <sstream>
 
 Gear::Gear(Engine *engine, std::string type, std::string name) : 
-    _engine(engine), 
-    _Type(type), 
-    _Name(name),
-    _gearGui(NULL)
+_engine(engine), 
+_Type(type), 
+_Name(name),
+_gearGui(NULL)
 {
 }
 
 Gear::~Gear()
 {    
-    for(std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
-	   delete (*it);
+  for (std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    delete (*it);
 }
 
 
 void Gear::internalPrePlay()
 {
-    prePlay();
+  prePlay();
 }
 
 void Gear::internalPostPlay()
 {
-    postPlay();
+  postPlay();
 }
 
 void Gear::internalInit()
 {
-    std::cout << "__________________________________________" << std::endl;
-    std::cout << _Type << std::endl;
-    std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
-    
-    for(std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
-        (*it)->init();
+  std::cout << "__________________________________________" << std::endl;
+  std::cout << _Type << std::endl;
+  std::cout << "¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯" << std::endl;
 
-    _gearGui = createGearGui(NULL);
+  for (std::list<AbstractPlug*>::iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+    (*it)->init();
 
-    //call the virtual method
-    init();
+  _gearGui = createGearGui(NULL);
+
+  //call the virtual method
+  init();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -54,128 +54,136 @@ void Gear::internalInit()
 
 void Gear::deletePlug(AbstractPlug *plug)
 {
-    delete plug;
-    _Plugs.remove(plug);
+  delete plug;
+  _Plugs.remove(plug);
 }
 
-//todo : unique name for input and for outputs!!!
+
+/**
+ * hello it's cool
+ * 
+ * @param name
+ * @param default_value
+ * 
+ * @return 
+ */
 AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 {    
-    _Plugs.push_back(plug);
-        
-    return plug;    
+  _Plugs.push_back(plug);
+
+  return plug;    
 }
 
 void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
 {
-    inputs.clear();
-    for(std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
-    {        
-        if ( ((*it)->inOut() == IN) )
-            inputs.push_back(*it);            
-    }    
+  inputs.clear();
+  for (std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  {
+    if ( ((*it)->inOut() == IN) )
+      inputs.push_back(*it);
+  }    
 }
 
 void Gear::getOutputs(std::list<AbstractPlug*> &outputs) const
 {
-    outputs.clear();
-    for(std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
-    {        
-        if ( ((*it)->inOut() == OUT) )
-            outputs.push_back(*it);            
-    }
+  outputs.clear();
+  for (std::list<AbstractPlug*>::const_iterator it=_Plugs.begin(); it != _Plugs.end(); ++it)
+  {
+    if ( ((*it)->inOut() == OUT) )
+      outputs.push_back(*it);
+  }
 }
 
 void Gear::getDependencies(std::vector<Gear*> &dependencies) const
 {
-	std::list<AbstractPlug*> inputs;
-	getInputs(inputs);
-	std::list<AbstractPlug*> lplug;
-	for(std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
-	{
-		(*it)->connectedPlugs(lplug);
-		if(lplug.size()!=0 && lplug.back()->parent()->ready())
-			dependencies.push_back(lplug.back()->parent());
-	}
+  std::list<AbstractPlug*> inputs;
+  getInputs(inputs);
+  std::list<AbstractPlug*> lplug;
+  for (std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
+  {
+    (*it)->connectedPlugs(lplug);
+    if (lplug.size()!=0 && lplug.back()->parent()->ready())
+      dependencies.push_back(lplug.back()->parent());
+  }
 }
-	
+
 void Gear::needSynch()
 {
-    _engine->needSynch();
+  _engine->needSynch();
 }
 
 GearGui* Gear::createGearGui(QCanvas *canvas)
 {
-    return new GearGui(this, canvas);    
+  return new GearGui(this, canvas);    
 }
 
 
 void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
 {               
-    QDomElement gearElem = doc.createElement("Gear");
-    parent.appendChild(gearElem);
-    
-    QDomAttr gearType = doc.createAttribute("Type");
-    gearType.setValue(_Type.c_str());
-    gearElem.setAttributeNode(gearType);
-    
-    QDomAttr gearName = doc.createAttribute("Name");
-    gearName.setValue(_Name.c_str());
-    gearElem.setAttributeNode(gearName);
+  QDomElement gearElem = doc.createElement("Gear");
+  parent.appendChild(gearElem);
 
-    _gearGui->save(doc, gearElem);
-    _settings.save(doc, gearElem);
-    
-    save(doc, gearElem);
+  QDomAttr gearType = doc.createAttribute("Type");
+  gearType.setValue(_Type.c_str());
+  gearElem.setAttributeNode(gearType);
+
+  QDomAttr gearName = doc.createAttribute("Name");
+  gearName.setValue(_Name.c_str());
+  gearElem.setAttributeNode(gearName);
+
+  _gearGui->save(doc, gearElem);
+  _settings.save(doc, gearElem);
+
+  save(doc, gearElem);
 
 }
 
 void Gear::internalLoad(QDomElement &gearElem)               
 {            
-    _Name = gearElem.attribute("Name","").ascii();
-    
-    _settings.load(gearElem);
-    updateSettings();
+  _Name = gearElem.attribute("Name","").ascii();
 
-    load(gearElem);
+  _settings.load(gearElem);
+  updateSettings();
 
-    _gearGui->load(gearElem);
-        
+  load(gearElem);
+
+  _gearGui->load(gearElem);
+
 }
 
 AbstractPlug* Gear::getInput(std::string name) const
 {
-    std::list<AbstractPlug*> inputs;
-    getInputs(inputs);
-    for(std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)    
-    {
-        if ((*it)->name() == name)
-            return (*it);        
-    }
+  std::list<AbstractPlug*> inputs;
+  getInputs(inputs);
+  for (std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
+  {
+    if ((*it)->name() == name)
+      return(*it);
+  }
 
-    return NULL;
+  return NULL;
 }
 
 AbstractPlug* Gear::getOutput(std::string name) const
 {
-    std::list<AbstractPlug*> outputs;
-    getOutputs(outputs);
-    for(std::list<AbstractPlug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)    
-    {
-        if ((*it)->name() == name)
-            return (*it);        
-    }
+  std::list<AbstractPlug*> outputs;
+  getOutputs(outputs);
+  for (std::list<AbstractPlug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)
+  {
+    if ((*it)->name() == name)
+      return(*it);
+  }
 
-    return NULL;
+  return NULL;
 }
 
 GearGui* Gear::getGearGui()
 {
-    return _gearGui;
+  return _gearGui;
 }
 
 void Gear::updateSettings()
 {
-    //call the virtual method that can be overriden
-    onUpdateSettings();
+  //call the virtual method that can be overriden
+  onUpdateSettings();
 }

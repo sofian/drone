@@ -13,33 +13,33 @@ std::map<std::string, VideoOutputMaker*> *VideoOutputMaker::_Registry;
 
 VideoOutputMaker::VideoOutputMaker(std::string type) 
 {
-    static bool registry_instanciated=false;
+  static bool registry_instanciated=false;
 
-    if (!registry_instanciated)
-    {           
-        _Registry = new std::map<std::string, VideoOutputMaker*>();
-        registry_instanciated=true;
-    }
-    
-    _Registry->insert(std::make_pair(type, this));
+  if (!registry_instanciated)
+  {
+    _Registry = new std::map<std::string, VideoOutputMaker*>();
+    registry_instanciated=true;
+  }
+
+  _Registry->insert(std::make_pair(type, this));
 }
 
 VideoOutput* VideoOutputMaker::makeVideoOutput(std::string type)
 {    
-    VideoOutputMaker *VideoOutputmaker= _Registry->find(type)->second;
+  VideoOutputMaker *VideoOutputmaker= _Registry->find(type)->second;
 
-    
-    if (VideoOutputmaker == NULL)
-        return NULL;
-    
 
-    return VideoOutputmaker->internalMakeVideoOutput();
+  if (VideoOutputmaker == NULL)
+    return NULL;
+
+
+  return VideoOutputmaker->internalMakeVideoOutput();
 }
 
 void VideoOutputMaker::getAllVideoOutputsType(std::vector<std::string> &videoOutputsType)
 {
-    for (std::map<std::string, VideoOutputMaker*>::iterator it=_Registry->begin(); it != _Registry->end(); ++it)
-    {
-        videoOutputsType.push_back(it->first);
-    }
+  for (std::map<std::string, VideoOutputMaker*>::iterator it=_Registry->begin(); it != _Registry->end(); ++it)
+  {
+    videoOutputsType.push_back(it->first);
+  }
 }

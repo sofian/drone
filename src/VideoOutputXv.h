@@ -12,37 +12,37 @@ class Canvas;
 class VideoOutputXv : public VideoOutputX11Base
 {
 public:
-    VideoOutputXv();
-    ~VideoOutputXv();
+  VideoOutputXv();
+  ~VideoOutputXv();
 
-    void fullscreen(bool fs);
-    void destroy();
-    bool init(int xRes, int yRes, bool fullscreen);
-    void render(Canvas &canvas);
+  void fullscreen(bool fs);
+  void destroy();
+  bool init(int xRes, int yRes, bool fullscreen);
+  void render(Canvas &canvas);
 
 protected:
-    struct XvImageFormatValuesPortPair
-    {
-        XvImageFormatValues format;
-        XvPortID port;
-    } ;
-    
-    bool checkXvExtension();
-    bool selectXvPort();
-    void showFormat(const XvImageFormatValues &format);
-    void unGrabXvPort();
-    XvImage* createXvImage(int sizeX, int sizeY);
-    void destroyXvImage();
-    
+  struct XvImageFormatValuesPortPair
+  {
+    XvImageFormatValues format;
+    XvPortID port;
+  } ;
+
+  bool checkXvExtension();
+  bool selectXvPort();
+  void showFormat(const XvImageFormatValues &format);
+  void unGrabXvPort();
+  XvImage* createXvImage(int sizeX, int sizeY);
+  void destroyXvImage();
+
 private:
 
-    XvImageFormatValuesPortPair _selectedFormat;
-                   
-    XvImage* _xvImage;
-    int _frameSizeX;
-    int _frameSizeY;
-    int _frameSize;
-    
+  XvImageFormatValuesPortPair _selectedFormat;
+
+  XvImage* _xvImage;
+  int _frameSizeX;
+  int _frameSizeY;
+  int _frameSize;
+
 };
 
 #endif
