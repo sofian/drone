@@ -40,8 +40,20 @@
 #include "ThreadUtil.h"
 
 
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_VideoInput(schema, uniqueName);
+}
 
-Register_Gear(MAKERGear_VideoInput, Gear_VideoInput, "VideoInput");
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoInput";
+  gearInfo.classification = GearClassifications::video().IO().instance();
+  return gearInfo;
+}
+}
 
 const std::string Gear_VideoInput::SETTING_DEVICE = "Device";
 const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video0";

@@ -33,3 +33,7 @@ SignalStat \
 SmearGrid \
 VideoDelay \
 VideoLoop
+
+#linux specific gears
+unix:!macx:SUBDIRS += VideoInput
+
