@@ -11,6 +11,10 @@
 #define HALF_PI 0.5*M_PI
 #endif
 
+#ifndef TWICE_PI
+#define TWICE_PI 2*M_PI
+#endif
+
 #ifndef TRUE
 #define TRUE  1
 #endif
@@ -69,7 +73,13 @@ inline int MAX255(int a)
 #define CLAMP0255(a)  CLAMP(a,0,255)
 #endif
 
+
 // End LIBGIMP
+
+
+#define PI_DIV_180 M_PI / 180
+inline double DEG2RAD(double d)
+{ return (d * PI_DIV_180); }
 
 
 //! Return whether is outside boundaries (x<l or x>u)
