@@ -22,11 +22,13 @@
 
 #include "frei0r.h"
 
+#define MAX_SATURATION 8.0
+
 typedef struct saturater_instance
 {
   unsigned int width;
   unsigned int height;
-  int saturation; /* the saturation [-256, 256] */
+  double saturation; /* the saturation value [0, 1] */
 } saturater_instance_t;
 
 /* Clamps a int32-range int between 0 and 255 inclusive. */
@@ -75,7 +77,7 @@ f0r_instance_t f0r_construct(unsigned int width, unsigned int height)
   saturater_instance_t* inst = 
     (saturater_instance_t*)malloc(sizeof(saturater_instance_t));
   inst->width = width; inst->height = height;
-  inst->saturation = 0;
+  inst->saturation = 0.0;
   return (f0r_instance_t)inst;
 }
 
@@ -94,7 +96,7 @@ void f0r_set_param_value(f0r_instance_t instance,
   {
   case 0:
     /* saturations */
-    inst->saturation = 256.0 * *((double*)param);
+    inst->saturation =  *((double*)param);
     break;
   }
 }
@@ -108,7 +110,7 @@ void f0r_get_param_value(f0r_instance_t instance,
   switch(param_index)
   {
   case 0:
-    *((double*)param) = inst->saturation / 256.0;
+    *((double*)param) = inst->saturation;
     break;
   }
 }
@@ -119,8 +121,7 @@ void f0r_update(f0r_instance_t instance, double time,
   assert(instance);
   saturater_instance_t* inst = (saturater_instance_t*)instance;
   unsigned int len = inst->width * inst->height;
-  double saturation = inst->saturation;
-  int p;
+  double saturation = inst->saturation * MAX_SATURATION;
   
   unsigned char* dst = (unsigned char*)outframe;
   const unsigned char* src = (unsigned char*)inframe;
@@ -134,7 +135,7 @@ void f0r_update(f0r_instance_t instance, double time,
 
   if (0 <= saturation && saturation <=1) // optimisation: no clamping needed
   {
-    for (p=0; p<len; ++p)
+    while (len--)
     {
       b = *src++;
       g = *src++;
@@ -143,15 +144,15 @@ void f0r_update(f0r_instance_t instance, double time,
       bw = (b*bwgt + g*gwgt + r*rwgt) >> 16;
       
       *dst++ = (unsigned char) (bw + b*saturation);
-      *dst++ = (unsigned char) (bw + r*saturation);
       *dst++ = (unsigned char) (bw + g*saturation);
+      *dst++ = (unsigned char) (bw + r*saturation);
 
       dst++; src++;
     }
   }
   else
   {
-    for (p=0; p<len; ++p, src+=4, dst+=4)
+    while (len--)
     {
       b = *src++;
       g = *src++;
