@@ -35,6 +35,7 @@ VideoDelay \
 VideoLoop \
 ImageShuffle \
 ImageSequence \
+AsciiArt \
 Invert 
 #Frei0r
 
