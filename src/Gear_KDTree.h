@@ -12,14 +12,14 @@
 
 class Gear_KDTree : public Gear  
 {
-  struct KDNode
-  {
-    int _x0, _x1, _y0, _y1;
-    KDNode *_left, *_right;
-    KDNode(int x0, int x1, int y0, int y1)
-      : _x0(x0), _x1(x1), _y0(y0), _y1(y1), _left(0), _right(0)
-    {}
-  };
+//   struct KDNode
+//   {
+//     int _x0, _x1, _y0, _y1;
+//     KDNode *_left, *_right;
+//     KDNode(int x0, int x1, int y0, int y1)
+//       : _x0(x0), _x1(x1), _y0(y0), _y1(y1), _left(0), _right(0)
+//     {}
+//   };
   
 public:
     Gear_KDTree(Engine *engine, std::string name);
@@ -58,15 +58,15 @@ private:
     unsigned char *_imageIn;
     unsigned char *_imageOut;
 
-    int _x1,_y1,_x2,_y2;
+  //    int _x1,_y1,_x2,_y2;
 
     Rasterer *_rasterer;
 
   void init();
   int accum(int x0, int x1, int y0, int y1);
   
-  void split(KDNode *node, int depth);
-  void del(KDNode *node);
+  void split(int x0, int x1, int y0, int y1, int depth);
+  //  void del(KDNode *node);
 
 };
 

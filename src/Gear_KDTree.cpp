@@ -61,88 +61,61 @@ void Gear_KDTree::runVideo()
   memcpy(_outData, _data, _size * sizeof(RGBA));
   
   // create splits
-  KDNode *root = new KDNode(0, _sizeX, 0, _sizeY);
-
-  //std::cout << "=====" << std::endl;
-  split(root, 0);
-  del(root);
-  
+  split(0, _sizeX, 0, _sizeY, 0);
 }
 
 int Gear_KDTree::accum(int x0, int x1, int y0, int y1)
 {
   int rgba[4];
   _table->getSum((RGBAint*)rgba, x0, y0, x1, y1);
-//   RGBAint rgbaa;
-//   _table->getSum(&rgbaa, x0, y0, x1, y1);
-//   int *rgba = (int*) &rgbaa;
-//   std::cout << rgbaa.R << "," << rgbaa.G << "," << rgbaa.B << std::endl;
-//   std::cout << "::" "(" << x0 << "," << y0 <<")(" << x1 <<"," << y1 << ") :: "<< *(rgba) << " + " << *(rgba+1) << " + " << *(rgba+2) << "=" << ( *(rgba) + *(rgba+1) + *(rgba+2) ) << std::endl << _sizeX << "," << _sizeY << std::endl;
   return ( *(rgba) + *(rgba+1) + *(rgba+2) );
 }
 
-void Gear_KDTree::split(Gear_KDTree::KDNode *node, int depth)
+
+void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth)
 {
-  if (!node || depth > MAX_DEPTH)
+  if (depth > MAX_DEPTH)
     return;
 
-  if (node->_x1 == node->_x0 || node->_y1 == node->_y0)
+  if (x1 == x0 || y1 == y0) // *** threshold to set
     return;
 
-  //std::cout << node->_x0 << "," <<  node->_x1 <<","<< node->_y0<<"," <<node->_y1 << std::endl;
-  
-  int total = accum(node->_x0, node->_x1, node->_y0, node->_y1);
+  int depthPlusOne = depth+1;
+
+  RGBAint rgba;
+  _table->getSum(&rgba, x0, y0, x1, y1);
+
+  int area = _table->getArea(x0, y0, x1, y1);
+  int total = rgba.R + rgba.G + rgba.B; //*(rgba) + *(rgba+1) + *(rgba+2);
   int cut = total / 2;
-  int gray = total / ((node->_x1-node->_x0) * (node->_y1-node->_y0) * 3);
-  _rasterer->setColor(gray, gray, gray);
-  _rasterer->rect(node->_x0, node->_y0, node->_x1, node->_y1, true);
+  
+  _rasterer->setColor(rgba.R / area, rgba.G / area, rgba.B / area);
+  _rasterer->rect(x0, y0, x1, y1, true);
   _rasterer->setColor(0,0,0);
-  _rasterer->rect(node->_x0, node->_y0, node->_x1, node->_y1, false);
+  _rasterer->rect(x0, y0, x1, y1, false);
 
   // *** pour le moment recherche stupide lineaire poche
   // *** fucking unefficient with all these "new" 
-  if (depth % 2) 
-    for(int y=node->_y0;y<node->_y1; ++y)
+  if (depth % 2)
+    // vertical split
+    for(int y=y0;y<y1; ++y)
     {
-      if (accum(node->_x0, node->_x1, node->_y0, y) >= cut)
+      if (accum(x0, x1, y0, y) >= cut)
       {
-        if (!node->_left)
-          node->_left = new KDNode(node->_x0, node->_x1, node->_y0, y);
-        else
-          *(node->_left) = KDNode(node->_x0, node->_x1, node->_y0, y);
-        if (!node->_right)
-          node->_right = new KDNode(node->_x0, node->_x1, y, node->_y1);
-        else
-          *(node->_right) = KDNode(node->_x0, node->_x1, y, node->_y1);
+        split(x0, x1, y0, y, depthPlusOne);
+        split(x0, x1, y, y1, depthPlusOne);
         break;
       }
     }
   else
-    for(int x=node->_x0;x<node->_x1; ++x)
+    // horizontal split
+    for(int x=x0;x<x1; ++x)
     {
-      if (accum(node->_x0, x, node->_y0, node->_y1) >= cut)
+      if (accum(x0, x, y0, y1) >= cut)
       {
-        if (!node->_left)
-          node->_left = new KDNode(node->_x0, x, node->_y0, node->_y1);
-        else
-          *(node->_left) = KDNode(node->_x0, x, node->_y0, node->_y1);
-        if (!node->_right)
-          node->_right = new KDNode(x, node->_x1, node->_y0, node->_y1);
-        else
-          *(node->_right) = KDNode(x, node->_x1, node->_y0, node->_y1);
+        split(x0, x, y0, y1, depthPlusOne);
+        split(x, x1, y0, y1, depthPlusOne);
         break;
       }
     }
-  split(node->_left, depth+1);
-  split(node->_right, depth+1);
-}
-
-void Gear_KDTree::del(Gear_KDTree::KDNode *node)
-{
-  if (node)
-  {
-    del(node->_left);
-    del(node->_right);
-    delete node;
-  }
 }
