@@ -1,0 +1,99 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="76" PosY="94" Type="VideoInput" Name="VideoInput1" >
+            <Properties width="352" Device="/dev/video0" height="292" />
+        </Gear>
+        <Gear PosX="980" PosY="64" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="229" PosY="241" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="361" PosY="310" Type="ColorQuantize" Name="ColorQuantize1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="466" PosY="220" Type="Edge" Name="Edge1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="738" PosY="102" Type="Saturation" Name="Saturation1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="239" PosY="58" Type="Slider" SliderPos="4.87805" Name="Slider1" >
+            <Properties Lower_Bound="-10" Higher_Bound="10" />
+        </Gear>
+        <Gear PosX="245" PosY="440" Type="Slider" SliderPos="6.39024" Name="Slider2" >
+            <Properties Lower_Bound="2" Higher_Bound="32" />
+        </Gear>
+        <Gear PosX="730" PosY="341" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="19" PosX="477" PosY="409" Type="ListBox" Name="ListBox1" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="890" PosY="231" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="763" PosY="512" Type="Slider" SliderPos="18.6585" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="873" PosY="128" Type="Contrast" Name="Contrast1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="623" PosY="211" Type="GrayScale" Name="GrayScale1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="63" PosY="519" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/foogy/movies/Mainline1957.mpg" />
+        </Gear>
+        <Gear PosX="307" PosY="175" Type="Slider" SliderPos="0" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="337" PosY="558" Type="VideoLoop" Name="VideoLoop1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="228" PosY="580" Type="PushButton" Name="PushButton1" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="215" PosY="639" Type="PushButton" Name="PushButton2" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear ListBoxPos="2" PosX="204" PosY="721" Type="ListBox" Name="ListBox2" >
+            <Properties Number_of_elements="3" Labels_of_elements="Foward,Backward,Ping pong" />
+        </Gear>
+        <Gear PosX="600" PosY="66" Type="Slider" SliderPos="-439.024" Name="Slider6" >
+            <Properties Lower_Bound="-1000" Higher_Bound="1000" />
+        </Gear>
+        <Gear PosX="57" PosY="275" Type="Slider" SliderPos="31.7073" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="-540" PosY="254" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="Blur1" GearB="ColorQuantize1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="ColorQuantize1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="ColorQuantize1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Edge1" GearB="GrayScale1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Saturation1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="Slider1" GearB="Saturation1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider2" GearB="ColorQuantize1" Input="NColors" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="Contrast1" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="ListBox1" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="VideoBlend1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoBlend1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Slider4" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="Contrast1" GearB="VideoBlend1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="GrayScale1" GearB="Saturation1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoSource1" GearB="VideoLoop1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Slider5" GearB="Edge1" Input="Amount" Output="Value" />
+        <Connection GearA="VideoLoop1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="PushButton1" GearB="VideoLoop1" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton2" GearB="VideoLoop1" Input="PunchOut" Output="Value" />
+        <Connection GearA="ListBox2" GearB="VideoLoop1" Input="Mode" Output="Value" />
+        <Connection GearA="Slider6" GearB="Contrast1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider3" GearB="Blur1" Input="Amount" Output="Value" />
+    </Connections>
+</Schema>
