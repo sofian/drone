@@ -57,6 +57,7 @@ src/gears/Gear_Osc.h \
 src/gears/Gear_Oscilloscope.h \
 src/gears/Gear_PatternGen.h \
 src/gears/Gear_Saturation.h \
+src/gears/Gear_SignalStat.h \
 src/gears/Gear_SignalMean.h \
 src/gears/Gear_SignalMin.h \
 src/gears/Gear_SignalMax.h \
@@ -140,6 +141,7 @@ src/gears/Gear_Osc.cpp \
 src/gears/Gear_Oscilloscope.cpp \
 src/gears/Gear_PatternGen.cpp \
 src/gears/Gear_Saturation.cpp \
+src/gears/Gear_SignalStat.cpp \
 src/gears/Gear_SignalMean.cpp \
 src/gears/Gear_SignalMin.cpp \
 src/gears/Gear_SignalMax.cpp \

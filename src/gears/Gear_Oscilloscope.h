@@ -36,6 +36,10 @@ private:
   RGBA *_outData;
 
   CircularBufferSignal * circbuf;
+  
+  // contains average of samples over 1 pixel
+  // must be recomputed every time zoomx or sizex is changed
+  CircularBufferSignal * pixbuf;
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "SignalInfo.h"
 #include "VideoInfo.h"
 #include "Math.h"
+#include "error.h"
 
 class Gear;
 class AbstractPlug;

@@ -13,8 +13,8 @@ Gear_Oscilloscope::Gear_Oscilloscope(Engine *engine, std::string name) : Gear(en
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
   addPlug(_ZOOM_X = new PlugIn<ValueType>(this, "ZoomX", new ValueType(44100,512,192400)));
   addPlug(_ZOOM_Y = new PlugIn<ValueType>(this, "ZoomY", new ValueType(1,0,2)));
-  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", new ValueType(256,32,768)));
-  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", new ValueType(256,32,768)));
+  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", new ValueType(512,32,768)));
+  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", new ValueType(150,32,768)));
 
   addPlug(_VIDEO_OUT = new PlugOut<VideoTypeRGBA>(this, "Out"));
 
@@ -52,7 +52,7 @@ void Gear_Oscilloscope::runVideo()
   int zoomx = (int)_ZOOM_X->type()->value();
   int signal_blocksize = Engine::signalInfo().blockSize();
 
-  // ? debug circularbuffer please .. can't get total buffer ?
+  // ? debug circularbuffer please .. crash when using 192400.. can't get total buffer ?
   zoomx=CLAMP(zoomx,signal_blocksize,191399);
 
   _outImage->fill(BLACK_RGBA);

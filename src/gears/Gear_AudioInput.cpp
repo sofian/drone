@@ -6,7 +6,7 @@
 Register_Gear(MAKERGear_AudioInput, Gear_AudioInput, "AudioInput")
 
 const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=512;
-const int Gear_AudioInput::DEFAULT_NB_BUFFERS=16;
+const int Gear_AudioInput::DEFAULT_NB_BUFFERS=2;
 
 const std::string Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const std::string Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
