@@ -41,16 +41,36 @@ class Engine
   class GearGraphManip
   {
   public :
+    class Node
+    {
+    public:
+      Node(Gear* pgear) :
+        gear(pgear),
+        order(0),
+        visited(false)
+      {
+      }
+      
+      Gear* gear;
+      int order;
+      bool visited;
+    };
+
     GearGraphManip(std::vector<Gear*> &gears);
     ~GearGraphManip();
     // test for direct or indirect dependency
-    bool hasDependencyOn(int testedGear, int dependedGear);
+    //bool hasDependencyOn(int testedGear, int dependedGear);
     void getOrderedGears(std::list<Gear*>& orderedGears);
+    void labelling(Node &node);
 
   protected:
-    signed char* _depmat;
-    uint _nboxes;
+    static bool compareNodes(const Node &a, const Node &b);
+
+    //signed char* _depmat;
+    //uint _nboxes;
+    std::vector<Node> _nodes;
     std::vector<Gear*> _gears;
+    int _depthFirstCounter;
   };
 
 public:

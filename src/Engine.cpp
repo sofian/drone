@@ -259,95 +259,159 @@ void *Engine::playThread(void *parent)
   return NULL;
 }
 
-Engine::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears):_nboxes(gears.size()),_gears(gears)
+Engine::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears) :  
+  _gears(gears),
+  _depthFirstCounter(0)
 {
-  _depmat=new signed char [_nboxes*_nboxes];
+/*   _depmat=new signed char [_nboxes*_nboxes];                                     */
+/*                                                                                  */
+/*   std::vector<Gear*> vec;                                                        */
+/*   // we simply fill depmat                                                       */
+/*   // depmat[i][j] will == 1 only if                                              */
+/*   // gears[i] depends (directly) of gears[j]                                     */
+/*                                                                                  */
+/*   for (uint i=0;i<_nboxes;i++)                                                   */
+/*   {                                                                              */
+/*     vec.clear();                                                                 */
+/*     _gears[i]->getDependencies(vec);                                             */
+/*                                                                                  */
+/*     for (uint j=0;j<_nboxes;j++)                                                 */
+/*       _depmat[_nboxes*i+j]=(find(vec.begin(),vec.end(),_gears[j]) != vec.end()); */
+/*                                                                                  */
+/*   }                                                                              */
 
-  std::vector<Gear*> vec;
-  // we simply fill depmat
-  // depmat[i][j] will == 1 only if
-  // gears[i] depends (directly) of gears[j]
+  //build nodes
+  for (int i=0;i<_gears.size();++i)  
+    _nodes.push_back(Node(_gears[i]));
 
-  for (uint i=0;i<_nboxes;i++)
-  {
-    vec.clear();
-    _gears[i]->getDependencies(vec);
-
-    for (uint j=0;j<_nboxes;j++)
-      _depmat[_nboxes*i+j]=(find(vec.begin(),vec.end(),_gears[j]) != vec.end());
-
-  }
+    
 }
 
 Engine::GearGraphManip::~GearGraphManip()
 {
-  delete[]_depmat;
+  //delete[]_depmat;
 }
 
-bool Engine::GearGraphManip::hasDependencyOn(int testedGear, int dependedGear)
-{ 
-  if (testedGear>=_nboxes)
-    return false;
+/* bool Engine::GearGraphManip::hasDependencyOn(int testedGear, int dependedGear) */
+/* {                                                                              */
+/*   if (testedGear>=_nboxes)                                                     */
+/*     return false;                                                              */
+/*                                                                                */
+/*   // test for direct dependency                                                */
+/*   if (_depmat[_nboxes * testedGear + dependedGear]!=0)                         */
+/*     return true;                                                               */
+/*                                                                                */
+/*   testedGear++;                                                                */
+/*   if (_depmat[_nboxes * testedGear]!=0)                                        */
+/*     if (hasDependencyOn(testedGear, dependedGear))                             */
+/*       return true;                                                             */
+/*                                                                                */
+/*   return false;                                                                */
+/* }                                                                              */
 
-  // test for direct dependency
-  if (_depmat[_nboxes * testedGear + dependedGear]!=0)
-    return true;
-  
-// test for indirect dependency
-/*   for (uint a=0; a < _nboxes; a++)            */
-/*     if (_depmat[_nboxes * testedGear + a]!=0) */
-/*       if (hasDependencyOn(a, dependedGear))   */
-/*         return true;                          */
-/*   return false;                               */
+void Engine::GearGraphManip::labelling(Node &node)
+{
+  if (node.visited)
+    return;
 
-  testedGear++;
-  if (_depmat[_nboxes * testedGear]!=0)
-    if (hasDependencyOn(testedGear, dependedGear))
-      return true;
+  node.visited=true;
+
+  //get depth fist dependent gears
+  std::vector<Gear*> depGears;
+  node.gear->getDependencies(depGears);
   
-  return false;
+  //build the corresponding nodes vector
+  std::vector<Node*> depNodes;
+  for (int i=0;i<depGears.size();++i)
+  {
+    bool found=false;
+    for (int j=0;j<_nodes.size() && !found;++j)
+    {
+      if (_nodes[j].gear == depGears[i])
+      {
+        depNodes.push_back(&_nodes[j]);
+        found=true;
+      }
+    }
+  }
+
+  for (int i=0;i<depNodes.size();++i)
+    labelling(*depNodes[i]);
+  
+  node.order=_depthFirstCounter;
+  _depthFirstCounter++;
 }
 
-
+bool Engine::GearGraphManip::compareNodes(const Node &a, const Node &b)
+{
+  return a.order < b.order;
+}
 
 void Engine::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
 {
+  //reset
+  _depthFirstCounter=0;
+  for (int i=0;i<_nodes.size();++i)
+  {
+    _nodes[i].order=0;
+    _nodes[i].visited=0;
+  }
+
+  for (int i=0;i<_nodes.size();++i)
+  {
+    if (!_nodes[i].visited)
+      labelling(_nodes[i]);  
+  }
+  
+  for (int i=0;i<_nodes.size();++i)
+  {
+    std::cout << _nodes[i].gear->name() << " : " << _nodes[i].order << std::endl;
+  }
+
+  //sort according to order
+  std::sort(_nodes.begin(), _nodes.end(), compareNodes);
+  
+  //fill the ordered gears vector now
   orderedGears.clear();
+  for (int i=0;i<_nodes.size();++i)
+    orderedGears.push_back(_nodes[i].gear);
 
-  bool *done;
-  done = new bool[_nboxes];
-  memset(done,0,sizeof(bool)*_nboxes);
-
-  // yes, this algorithm is not optimal at all
-  // order the box in processing order
-  for (uint k=0;k<_nboxes;k++)
-    for (uint i=0;i<_nboxes;i++)
-    {
-      bool isReady = !done[i];
-      if (isReady)
-        for (uint j=0;j<_nboxes;j++)
-          if (_depmat[_nboxes*i+j]!=0)
-          {
-            // test if the found dependency (j) has a dependency on the current gear (i)
-            // in which case we found a cycle and we ignore the dependency            
-            if (hasDependencyOn(j, i))
-              _depmat[_nboxes*i+j]=0;
-            else
-            {
-              isReady=false;
-              break;
-            }
-          }
-      //add the box in the queue
-      if (isReady)
-      {
-        orderedGears.push_back(_gears[i]);
-        done[i]=true;
-        for (uint i2=0;i2<_nboxes;i2++)
-          _depmat[_nboxes*i2+i]=0;
-      }
-    }     
-  delete []done;
+/*   orderedGears.clear();                                                                  */
+/*                                                                                          */
+/*   bool *done;                                                                            */
+/*   done = new bool[_nboxes];                                                              */
+/*   memset(done,0,sizeof(bool)*_nboxes);                                                   */
+/*                                                                                          */
+/*   // yes, this algorithm is not optimal at all                                           */
+/*   // order the box in processing order                                                   */
+/*   for (uint k=0;k<_nboxes;k++)                                                           */
+/*     for (uint i=0;i<_nboxes;i++)                                                         */
+/*     {                                                                                    */
+/*       bool isReady = !done[i];                                                           */
+/*       if (isReady)                                                                       */
+/*         for (uint j=0;j<_nboxes;j++)                                                     */
+/*           if (_depmat[_nboxes*i+j]!=0)                                                   */
+/*           {                                                                              */
+/*             // test if the found dependency (j) has a dependency on the current gear (i) */
+/*             // in which case we found a cycle and we ignore the dependency               */
+/*             if (hasDependencyOn(j, i))                                                   */
+/*               _depmat[_nboxes*i+j]=0;                                                    */
+/*             else                                                                         */
+/*             {                                                                            */
+/*               isReady=false;                                                             */
+/*               break;                                                                     */
+/*             }                                                                            */
+/*           }                                                                              */
+/*       //add the box in the queue                                                         */
+/*       if (isReady)                                                                       */
+/*       {                                                                                  */
+/*         orderedGears.push_back(_gears[i]);                                               */
+/*         done[i]=true;                                                                    */
+/*         for (uint i2=0;i2<_nboxes;i2++)                                                  */
+/*           _depmat[_nboxes*i2+i]=0;                                                       */
+/*       }                                                                                  */
+/*     }                                                                                    */
+/*   delete []done;                                                                         */
 
 }
 
