@@ -23,7 +23,7 @@ private:
   PlugIn<SignalType> *_SIGNAL_Y_IN;
 
   //locals
-  VideoTypeRGBA *_image;
+  const VideoTypeRGBA *_image;
 
   float _sizeX;
   float _sizeY;
@@ -31,8 +31,8 @@ private:
   float _texSizeX;
   float _texSizeY;
 
-  float *_signalBufferX;
-  float *_signalBufferY;
+  const float *_signalBufferX;
+  const float *_signalBufferY;
 
 };
 

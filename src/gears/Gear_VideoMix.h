@@ -57,14 +57,14 @@ private:
   PlugIn<ValueType> *_MIXFUNC_IN;
 
   //local var
-  VideoTypeRGBA *_imageA; 
-  VideoTypeRGBA *_imageB; 
+  const VideoTypeRGBA *_imageA; 
+  const VideoTypeRGBA *_imageB; 
   VideoTypeRGBA *_outImage; 
-  RGBA *_dataA;
-  RGBA *_dataB;
+  const RGBA *_dataA;
+  const RGBA *_dataB;
   RGBA *_outData;
-  RGBA *_largerImage;
-  RGBA *_tallerImage;
+  const RGBA *_largerImage;
+  const RGBA *_tallerImage;
 
   int _iterSizeY;
   int _iterSizeX;    

@@ -90,7 +90,7 @@ void Gear_AudioOutput::onUpdateSettings()
 
 void Gear_AudioOutput::runAudio()
 {
-  float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
+  const float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();
   static bool started = false;
 

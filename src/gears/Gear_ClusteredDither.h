@@ -46,9 +46,9 @@ private:
   int _width; // clusterSize * 3
 
   //local var
-  VideoTypeRGBA *_image; 
+  const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
-  RGBA *_data;
+  const RGBA *_data;
   RGBA *_outData;
 
   int _sizeY;

@@ -25,7 +25,7 @@ private:
   PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  VideoTypeRGBA *_image;     
+  const VideoTypeRGBA *_image;     
   VideoTypeRGBA *_outImage; 
   unsigned char *_data;
 

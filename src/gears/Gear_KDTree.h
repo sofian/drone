@@ -27,9 +27,9 @@ private:
   PlugIn<ValueType> *_AMOUNT_IN;
 
   //local var
-  VideoTypeRGBA *_image; 
+  const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
-  RGBA *_data;
+  const RGBA *_data;
   RGBA *_outData;
 
   SummedAreaTable *_table;

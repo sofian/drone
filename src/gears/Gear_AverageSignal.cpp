@@ -36,14 +36,14 @@ bool Gear_AverageSignal::ready()
 
 void Gear_AverageSignal::runAudio()
 {
-  SignalType& bufferin = *_AUDIO_IN->type();
-  SignalType& bufferout = *_AUDIO_OUT->type();    
+  const float *bufferin = _AUDIO_IN->type()->data();
+  float *bufferout = _AUDIO_OUT->type()->data();    
   float sqaverage=0.0f;
 
   int signal_blocksize = Engine::signalInfo().blockSize();
 
   // we assume signal_blocksize < size of circular buffer
-  _cbAudioIn->append(bufferin.data(), signal_blocksize);
+  _cbAudioIn->append(bufferin, signal_blocksize);
 
   CIRCBUF_SIGNAL_T_FORBEGIN(_cbAudioIn,-1024,-1)
   sqaverage+=*(cbptr)*(*(cbptr++));

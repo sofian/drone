@@ -27,7 +27,7 @@ private:
   PlugIn<ValueType> *_BLUE_IN;
 
   //local var
-  VideoTypeRGBA *_image; 
+  const VideoTypeRGBA *_image; 
   VideoTypeRGBA *_outImage; 
 
   int _size;

@@ -53,8 +53,8 @@ void Gear_FilterSignal::init()
 
 void Gear_FilterSignal::runAudio()
 {
-  SignalType bufferin = _AUDIO_IN->type();
-  SignalType bufferout = _AUDIO_OUT->type();
+  const float *bufferin = _AUDIO_IN->type()->data();
+  float *bufferout = _AUDIO_OUT->type()->data();
 
   float kernel[Engine::signalInfo().blockSize()];
 
@@ -72,7 +72,7 @@ void Gear_FilterSignal::runAudio()
   //_freqAnalyzer->performAnalysis(bufferin);
   //_freqAnalyzer->backward(bufferout);
 
-  _freqAnalyzer->filter(bufferin.data(), bufferout.data());
+  _freqAnalyzer->filter(bufferin, bufferout);
   //_freqAnalyzer->frequencyToTime(kernel, bufferout);
 
 }

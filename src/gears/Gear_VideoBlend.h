@@ -24,11 +24,11 @@ private:
   PlugIn<ValueType> *_ALPHA_IN;
 
   //local var
-  VideoTypeRGBA *_imageA; 
-  VideoTypeRGBA *_imageB; 
+  const VideoTypeRGBA *_imageA; 
+  const VideoTypeRGBA *_imageB; 
   VideoTypeRGBA *_outImage; 
-  RGBA *_dataA;
-  RGBA *_dataB;
+  const RGBA *_dataA;
+  const RGBA *_dataB;
   RGBA *_outData;
 
   int _iterSizeY;
