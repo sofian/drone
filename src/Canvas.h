@@ -1,47 +1,7 @@
 #ifndef CANVAS_INCLUDED
 #define CANVAS_INCLUDED
 
-struct RGBA
-{
-    unsigned char R,G,B,A;
-};
-
-struct RGBAint
-{
-  int R,G,B,A;
-  
-  void operator+=(const RGBAint& x)
-  {
-    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
-    *ptr1++ += *ptr2++; *ptr1++ += *ptr2++;
-    *ptr1++ += *ptr2++; *ptr1   += *ptr2;
-  }
-
-  void operator-=(const RGBAint& x)
-  {
-    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
-    *ptr1++ -= *ptr2++; *ptr1++ -= *ptr2++;
-    *ptr1++ -= *ptr2++; *ptr1   -= *ptr2;
-  }
-
-  void operator*=(const RGBAint& x)
-  {
-    int *ptr1 = (int*)this, *ptr2 = (int*)&x;
-    *ptr1++ *= *ptr2++; *ptr1++ *= *ptr2++;
-    *ptr1++ *= *ptr2++; *ptr1   *= *ptr2;
-  }
-
-};
-
-struct RGBAshort
-{
-    unsigned short R,G,B,A;
-};
-
-struct RGBAfloat
-{
-    float R,G,B,A;
-};
+#include "ColorSpace.h"
 
 class Canvas  
 {
