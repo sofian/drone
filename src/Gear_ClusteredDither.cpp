@@ -6,13 +6,16 @@
 #include "GearMaker.h"
 
 Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither")
+const std::string Gear_ClusteredDither::SETTING_SPOT_FUNCTION = "SPOT_FUNCTION (0=square, 1=diamond, 2=round, 3=line)";
 
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
-  : Gear(engine, "ClusteredDither", name), _threshold(0), _order(0)
+  : Gear(engine, "ClusteredDither", name), _threshold(0), _order(0), _spotType(ROUND)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN");
   _VIDEO_OUT = addPlugVideoOut("ImgOUT");
   _AMOUNT_IN = addPlugSignalIn("ClusterIN", 16);
+
+  _settings.add(Property::INT, SETTING_SPOT_FUNCTION, (int)ROUND);
 }
 
 Gear_ClusteredDither::~Gear_ClusteredDither()
@@ -25,6 +28,12 @@ void Gear_ClusteredDither::init()
 {
   _clusterSize = (int)_AMOUNT_IN->buffer()[0];
   _width = _clusterSize * 3;
+  computeThreshold();
+}
+
+void Gear_ClusteredDither::onUpdateSettings()
+{
+  _spotType = (eSpotType)_settings.getInt(SETTING_SPOT_FUNCTION);
   computeThreshold();
 }
 
@@ -75,24 +84,23 @@ void Gear_ClusteredDither::runVideo()
         // *** OPTIM : y'aurait  moyen de faire ca un peu mieux...
         iterData    = (unsigned char*)&_data[(y+yCell)*_sizeX + x];
         iterOutData = (unsigned char*)&_outData[(y+yCell)*_sizeX + x];
+
+        /* Make sure rx and ry are positive and within
+         * the range 0 .. width-1 (incl).  Can't use %
+         * operator, since its definition on negative
+         * numbers is not helpful.  Can't use ABS(),
+         * since that would cause reflection about the
+         * x- and y-axes.  Relies on integer division
+         * rounding towards zero. */
+
+        int ry = (y + yCell) * 3;
+        ry -= ((ry - ISNEG(ry)*(_width-1)) / _width) * _width;
         
         for (int xCell=0; xCell<maxClusterSizeX; ++xCell)
         {
+          int rx = (x + xCell) * 3;          
+          rx -= ((rx - ISNEG(rx)*(_width-1)) / _width) * _width;
           
-          int ry = (y + yCell) * 3;
-          int rx = (x + xCell) * 3;
-
-			    /* Make sure rx and ry are positive and within
-			     * the range 0 .. width-1 (incl).  Can't use %
-			     * operator, since its definition on negative
-			     * numbers is not helpful.  Can't use ABS(),
-			     * since that would cause reflection about the
-			     * x- and y-axes.  Relies on integer division
-			     * rounding towards zero. */
-          // *** OPTIM ici...
-			    rx -= ((rx - ISNEG(rx)*(_width-1)) / _width) * _width;
-			    ry -= ((ry - ISNEG(ry)*(_width-1)) / _width) * _width;
-
           // Grayscale.
           int total = *iterData++;
           total += *iterData;
@@ -102,33 +110,41 @@ void Gear_ClusteredDither::runVideo()
           total >>=2;
 
           // *** OPTIM : unroll loop
-          int sum = 0;
+          // int sum = 0;
 
-          for(int sy=-1; sy<=1; sy++)
-          {
-				    for(int sx=-1; sx<=1; sx++)
-				    {
-              int ty = ry + sy;
-              int tx = rx + sx;
-             
-//               if (tx < 0) tx += _width;
-//               else if (tx >= _width) tx -= _width;
-//               if (ty < 0) ty += _width;
-//               else if (ty >= _width) ty -= _width;
+//           for(int sy=-1; sy<=1; sy++)
+//           {
+// 				    for(int sx=-1; sx<=1; sx++)
+// 				    {
+//               int ty = ry + sy;
+//               int tx = rx + sx;
               
-              // *** OPTIM : precalculer les BARTLETT (en fait on se debarasse de cette macro tout simplement)
-              if (total > _threshold[ty*_width + tx])
-                sum += BARTLETT[sx+1][sy+1];
-            }
-          }
+//               while (tx < 0) tx += _width;
+//               while (tx >= _width) tx -= _width;
+//               while (ty < 0) ty += _width;
+//               while (ty >= _width) ty -= _width;
+              
+//               // *** OPTIM : precalculer les BARTLETT (en fait on se debarasse de cette macro tout simplement)
+//               if (total > _threshold[ty*_width + tx])
+//                 sum += BARTLETT[sx+1][sy+1];
+//             }
+//           }
 
-          sum >>= 4;
+//           sum >>= 4;
+
+//           memset(iterOutData, (unsigned char)sum, 4*sizeof(unsigned char));
+          memset(iterOutData, getValue(total, rx, ry), 4*sizeof(unsigned char));
+          //  *iterOutData++ = sum;
+//            *iterOutData++ = sum;
+//            *iterOutData++ = sum;
+//            iterOutData++;          
           
-          *iterOutData++ = sum;
-          *iterOutData++ = sum;
-          *iterOutData++ = sum;
-          *iterOutData++;
+//            if (total > _threshold[ry*_width + rx])
+//              memset(iterOutData, 0, 4*sizeof(unsigned char));
+//            else
+//              memset(iterOutData, 255, 4*sizeof(unsigned char));
 
+            iterOutData+=4;
         }
 
       }

@@ -24,18 +24,13 @@ order_cmp(const void *va, const void *vb)
     return (a->value < b->value)? -1 : ((a->value > b->value)? +1 : 0);
 }
 
-#define SPOT_ROUND(x, y) 1-x*x-y*y
-//#define BARTLETT(x,y)	((2-abs(x)) * (2-abs(y)))
-int BARTLETT[3][3] = {
-  { 255, 510,  255 },
-  { 510, 1020, 510 },
-  { 255, 510,  255 },
-};
-
 #define ISNEG(x)	(((x) < 0)? 1 : 0)
 
 class Gear_ClusteredDither : public Gear
 {
+  enum eSpotType { SQUARE = 0, DIAMOND = 1, ROUND = 2, LINE = 3 };
+  static const std::string SETTING_SPOT_FUNCTION;
+  
 public:
 
   Gear_ClusteredDither(Engine *engine, std::string name);
@@ -50,6 +45,9 @@ public:
   bool ready();
 
   void init();
+
+protected:
+  void onUpdateSettings();
   
 private:
   PlugVideoIn *_VIDEO_IN;
@@ -74,7 +72,11 @@ private:
   unsigned char *_threshold;
   order_t *_order;
 
+  eSpotType _spotType;
+  
   inline void computeThreshold();
+  inline unsigned char getValue(int intensity, int rx, int ry);
+  inline float spot(float x, float y);
 };
 
 void Gear_ClusteredDither::computeThreshold()
@@ -92,8 +94,8 @@ void Gear_ClusteredDither::computeThreshold()
     for (int xCell=0; xCell<_width; ++xCell)
     {
       float sx = 2*(float)xCell / (_width-1) - 1;
-      float val = SPOT_ROUND(sx, sy);
-      
+      float val = spot(sx, sy);
+
       _order[i].index = i;
       _order[i].value = val;
       ++i; 
@@ -113,6 +115,113 @@ void Gear_ClusteredDither::computeThreshold()
   int val = 0;
   for (i=0; i < width2; i++, val += 0xff)
     _threshold[_order[i].index] = val / width2; // *** pas besoin de .value dans c'cas là...
+}
+
+unsigned char Gear_ClusteredDither::getValue(int intensity, int rx, int ry)
+{
+  int sum = 0;
+
+  int ryLow = ry-1;
+  if (ryLow < 0) ryLow += _width;
+
+  int ryHigh = ry+1;
+  if (ryHigh >= _width) ryHigh -= _width;
+
+  int rxLow = rx-1;
+  if (rxLow < 0) rxLow += _width;
+
+  int rxHigh = rx+1;
+  if (rxHigh >= _width) rxHigh -= _width;
+
+  // This obscure code is based on an unrolling of the antialiasing loop. The
+  // numbers (255, 510, 1010) are taken from the Bartlett matrix.
+  
+  if (intensity > _threshold[ryLow*_width + rxLow])
+    sum += 255;
+
+  if (intensity > _threshold[ryLow*_width + rx])
+    sum += 510;
+
+  if (intensity > _threshold[ryLow*_width + rxHigh])
+    sum += 255;
+
+  if (intensity > _threshold[ry*_width + rxLow])
+    sum += 510;
+
+  if (intensity > _threshold[ry*_width + rx])
+    sum += 1010;
+
+  if (intensity > _threshold[ry*_width + rxHigh])
+    sum += 510;
+
+  if (intensity > _threshold[ryHigh*_width + rxLow])
+    sum += 255;
+  
+  if (intensity > _threshold[ryHigh*_width + rx])
+    sum += 510;
+
+  if (intensity > _threshold[ryHigh*_width + rxHigh])
+    sum += 255;
+
+  sum >>= 4;
+
+  return (unsigned char) sum;
+}
+
+float Gear_ClusteredDither::spot(float x, float y)
+{
+  switch (_spotType)
+  {
+   /* The following functions were derived from a peice of PostScript by
+    * Peter Fink and published in his book, "PostScript Screening: Adobe
+    * Accurate Screens" (Adobe Press, 1992).  Adobe Systems Incorporated
+    * allow its use, provided the following copyright message is present:
+    *
+    *  % Film Test Pages for Screenset Development
+    *  % Copyright (c) 1991 and 1992 Adobe Systems Incorporated
+    *  % All rights reserved.
+    *  %
+    *  % NOTICE: This code is copyrighted by Adobe Systems Incorporated, and
+    *  % may not be reproduced for sale except by permission of Adobe Systems
+    *  % Incorporated. Adobe Systems Incorporated grants permission to use
+    *  % this code for the development of screen sets for use with Adobe
+    *  % Accurate Screens software, as long as the copyright notice remains
+    *  % intact.
+    *  %
+    *  % By Peter Fink 1991/1992
+    */
+
+   /* Square (or Euclidean) dot.  Also very common. */
+  case SQUARE:
+    {
+      float ax = fabs(x);
+      float ay = fabs(y);
+      
+      return (ax+ay)>1? ((ay-1)*(ay-1) + (ax-1)*(ax-1)) - 1 : 1-(ay*ay + ax*ax);
+    }
+    
+    /* Diamond spot function, again from Peter Fink's PostScript
+     * original.  Copyright as for previous function. */
+  case DIAMOND:
+    {
+      float ax = fabs(x);
+      float ay = fabs(y);
+
+      return (ax+ay)<=0.75? 1-(ax*ax + ay*ay) :	// dot
+        ( (ax+ay)<=1.23?  1-((ay*0.76) + ax) :	// to diamond
+          ((ay-1)*(ay-1) + (ax-1)*(ax-1)) -1);	// back to dot
+    }
+
+    /* Another commonly seen spot function is the v-shaped wedge. Tonally
+     * balanced. */
+  case LINE:
+   return fabs(y);
+   
+   /* The classic growing dot spot function. */
+  case ROUND:
+  default:
+    return (1. - x*x - y*y);
+  }
 }
 
 #endif
