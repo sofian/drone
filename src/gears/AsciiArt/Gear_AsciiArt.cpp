@@ -26,6 +26,9 @@
 #include "GearMaker.h"
 #include "Math.h"
 
+aa_context *_aaContext;
+aa_hardware_params _aaHDParams;
+
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
@@ -36,7 +39,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "AsciiArt";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
+  gearInfo.classification = GearClassifications::video().IO().instance();
   return gearInfo;
 }
 }
@@ -44,7 +47,7 @@ GearInfo getGearInfo()
 Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) : 
   Gear(schema, "AsciiArt", uniqueName)
 {
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
+  //  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIn"));
 
   EnumType *renderingFunc = new EnumType(N_RENDERING_TYPES, FAST);
@@ -75,15 +78,13 @@ Gear_AsciiArt::~Gear_AsciiArt()
 
 void Gear_AsciiArt::init() 
 {
-  _aaHDParams = aa_defparams;
-  _aaHDParams.width = 352 / 2;
-  _aaHDParams.height = 240 / 2;
-  _aaContext = aa_init(&mem_d, &_aaHDParams, NULL);
+  aa_parseoptions (NULL, NULL, NULL, NULL);
+  _aaContext = NULL;
 }
 
 bool Gear_AsciiArt::ready()
 {
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+  return _VIDEO_IN->connected(); // && _VIDEO_OUT->connected());
 }
 
 void Gear_AsciiArt::onUpdateSettings() 
@@ -91,8 +92,7 @@ void Gear_AsciiArt::onUpdateSettings()
 }
 
 void Gear_AsciiArt::runVideo()
-{
-  
+{  
   _inImage = _VIDEO_IN->type();
   ASSERT_ERROR(_inImage);
 
@@ -102,11 +102,22 @@ void Gear_AsciiArt::runVideo()
   _sizeX = _inImage->width();
   _sizeY = _inImage->height();
 
-  _outImage = _VIDEO_OUT->type();
-  ASSERT_ERROR(_outImage);
+  _aaHDParams = aa_defparams;
+  _aaHDParams.width = _sizeX / 2 + 1;  /* ceil .. */
+  _aaHDParams.height = _sizeY / 2 + 1;
+  _aaHDParams.font = &aa_font16; /* c'est la seule qui fonctionne, apres quelques tests.. */
+  //_aaHDParams.supported = AA_EXTENDED;  /* mauvais resultats : c'est pas beau. */
 
-  //memcpy(_outImage->data(), _inImage->data(), _inImage->size()*sizeof(RGBA));
- 
+  if ( _aaContext == NULL ) {
+    //_aaContext = aa_autoinit(&_aaHDParams); /* ca, ca sort dans le terminal.. */
+    _aaContext = aa_init(&X11_d, &_aaHDParams, NULL);
+  }
+
+  if ( _aaContext == NULL ) {
+    fprintf(stderr, "error while initialising AA-Lib.\n");
+    exit(-1);  /* c'est violent, mais sinon ca jamme... */
+  }
+
   _inData = (unsigned char*)_inImage->data();
   
   for (int y=0; y<_sizeY; y++) 
@@ -120,23 +131,11 @@ void Gear_AsciiArt::runVideo()
     }
   }
   
-  //aa_fastrender(_aaContext, 0, 0, _sizeX * 2, _sizeY * 2);
+  //aa_render(_aaContext, &aa_defrenderparams, 0, 0, aa_scrwidth(_aaContext), aa_scrheight(_aaContext));
+  aa_fastrender(_aaContext, 0, 0, aa_scrwidth(_aaContext), aa_scrheight(_aaContext));
+
+  /* faire l'affichage */
+  aa_flush(_aaContext);
   
-  //unsigned char *current = aa_text(_aaContext);
-
-  //int width = _sizeX * ; //aa_imgwidth(_aaContext) / 2;
-  //int height = _sizeY / 4; //aa_imgheight(_aaContext) / 2;
-  
-//   for ( int y=0; y<height; y++ ) 
-//   {
-//     for (int x=0; x<width; x++ ) 
-//     {
-//       printf("%c", current[y * width + x]);
-//     }
-//     printf("\n");
-//   }
-
-  //_outImage->resize(_sizeX, _sizeY);
-
 }
 

@@ -84,10 +84,6 @@ private:
   int _sizeX;
   int _size;
   unsigned char *_inData;
-
-  aa_context *_aaContext;
-  unsigned char *_aaFramebuffer;
-  aa_hardware_params _aaHDParams;
  
   eRenderingSpeed _renderingSpeed;
   eDitheringType _ditheringType;

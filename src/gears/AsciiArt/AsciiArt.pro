@@ -6,7 +6,8 @@ HEADERS+=Gear_AsciiArt.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -laa
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -laa 
+#-L/usr/X11R6/lib -lX11 -lslang -lgpm
 unix:!macx:TARGET=../../../gears/Gear_AsciiArt
 
 #osx
