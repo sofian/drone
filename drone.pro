@@ -4,8 +4,8 @@
 
 TEMPLATE = app
 DEPENDPATH += src
-INCLUDEPATH += . src
-LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lsfftw -lportaudio -lGL -lsrfftw
+INCLUDEPATH += . src /usr/include/libmpeg3
+LIBS += -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lm -lportaudio -lGL
 CONFIG += thread
 # Input
 HEADERS += config.h \

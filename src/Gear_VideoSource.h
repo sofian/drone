@@ -5,7 +5,7 @@
 
 #include "Gear.h"
 
-#include "libmpeg3.h"
+#include <libmpeg3.h>
 
 class PlugVideo;
 class PlugSignal;
