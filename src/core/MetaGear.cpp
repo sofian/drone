@@ -75,17 +75,15 @@ void MetaGear::createPlugs()
     for(std::list<AbstractPlug*>::iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
-      clone->disconnectAll();
-      clone->exposed(false);
-      addPlug(clone);
+      clone->name((*plugIt)->fullName());
+			addPlug(clone);
     }
 
     (*gearIt)->getOutputs(outputs, true);
     for(std::list<AbstractPlug*>::iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
-      clone->disconnectAll();
-      clone->exposed(false);
+      clone->name((*plugIt)->fullName());
       addPlug(clone);
     }
   }

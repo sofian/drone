@@ -87,6 +87,18 @@ void Gear::deletePlug(AbstractPlug *plug)
   _plugs.remove(plug);
 }
 
+bool Gear::isPlugNameUnique(std::string name)
+{
+  //check for duplicate plug name
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  {
+    if ((*it)->name() == name)
+      return false;
+  }    
+	
+	return true;
+}
+
 
 /**
  * Adds the specified AbstractPlug to the Gear. 
@@ -101,13 +113,11 @@ void Gear::deletePlug(AbstractPlug *plug)
  */
 AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 {    
-  //check for duplicate plug name
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-  {
-    if ( ((*it)->name() == plug->name()) )
-      return NULL;
-  }    
-
+	if (!plug)
+		return NULL;
+	
+	if (!isPlugNameUnique(plug->name()))
+			return NULL;
 /*  
   //if plug is input, add only plug for main type
   if (plug->inOut()==IN)

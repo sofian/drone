@@ -108,6 +108,9 @@ public:
     return false;
   }
 
+	
+	bool isPlugNameUnique(std::string name);
+	
 protected:
 
   //! overload to create your own GearGui

@@ -72,7 +72,8 @@ public:
   std::string fullName() const;
   std::string shortName(int nbChars) const;
   std::string name() const {return _name;};
-
+	bool name(std::string newName);
+	
   bool exposed(){return _exposed;}
   void exposed(bool exp);
   

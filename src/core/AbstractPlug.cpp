@@ -189,3 +189,12 @@ void AbstractPlug::exposed(bool exp)
     this->_exposed = exp;
   }
 }
+
+bool AbstractPlug::name(std::string newName)
+{
+	if (!_parent->isPlugNameUnique(newName))
+		return false;
+	
+	_name = newName;
+	return true;
+}

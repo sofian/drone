@@ -86,9 +86,6 @@ int GearGui::renderingStartY()
 }
 
 //!create plugBoxes from the parent gear plugs
-//!plugBoxes are not created or deleted for nothing
-//!only new plugs are added has plugboxes. PlugBoxes that
-//!dont have their equivalent in plugs anymore are deleted
 void GearGui::refresh()
 {
 
@@ -96,7 +93,6 @@ void GearGui::refresh()
   //we also erase plugs in inputs that we already have
   std::list<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
-  std::cout << "there is " << (int)inputs.size() << " inputs." << std::endl;
   
 /*  std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
   for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
@@ -157,7 +153,6 @@ void GearGui::refresh()
   */
   
   removeAllPlugBoxes();
-  std::cout << "plugboxes has " << (int)_plugBoxes.size() << " entry(ies)." << std::endl;
   
   //now create missing plugboxes
   PlugBox *plugBox;
@@ -166,7 +161,6 @@ void GearGui::refresh()
     plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _inputPlugBoxes.push_back(plugBox);
-    std::cout << "creating plug box for " << (*it)->fullName() << std::endl;
   }
     
   for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
@@ -174,7 +168,6 @@ void GearGui::refresh()
     plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _outputPlugBoxes.push_back(plugBox);
-    std::cout << "creating plug box for " << (*it)->fullName() << std::endl;
   }
   
   
@@ -201,7 +194,7 @@ void GearGui::refresh()
   //we want a larger rect for shadow and rendering offset
   //since plugs get out of the gear rect
   setSize(_sizeX + SHADOW_OFFSET + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
-  
+  reDraw();
 }
 
 void GearGui::removeAllPlugBoxes()
