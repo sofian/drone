@@ -70,23 +70,14 @@ void Gear_Brightness::runVideo()
 
   _size = (int)_image->size();
 
-  int brightness = (int)_BRIGHTNESS_IN->type()->value();
-
+  if (_brightness != (int)_BRIGHTNESS_IN->type()->value())
+  {
+    _brightness = (int)_BRIGHTNESS_IN->type()->value();
+    computeLookUpTable();
+  }
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
-  
-  // Compute lookup table.
-  if (brightness < 0)
-  {
-    for (int i=0; i<256; ++i)
-      _lut[i] = CLAMP0255((i * (256 + brightness))>>8);
-  }
-  else
-  {
-    for (int i=0; i<256; ++i)
-      _lut[i] = CLAMP0255(i + (((256 - i) * brightness)>>8));
-  }
-  
+    
   // Apply on image.
   for (int p=0; p<_size; ++p)
   {
@@ -98,5 +89,26 @@ void Gear_Brightness::runVideo()
     _imageOut += SIZE_RGBA;
   }
   
+}
+
+void Gear_Brightness::init()
+{
+  _brightness = 0;
+  computeLookUpTable();
+}
+
+void Gear_Brightness::computeLookUpTable()
+{
+  // Compute lookup table.
+  if (_brightness < 0)
+  {
+    for (int i=0; i<256; ++i)
+      _lut[i] = CLAMP0255((i * (256 + _brightness))>>8);
+  }
+  else
+  {
+    for (int i=0; i<256; ++i)
+      _lut[i] = CLAMP0255(i + (((256 - i) * _brightness)>>8));
+  }
 }
 

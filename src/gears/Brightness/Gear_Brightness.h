@@ -34,7 +34,12 @@ public:
   virtual ~Gear_Brightness();
 
   void runVideo();
+  void init();
   bool ready();
+
+private:
+  // Recompute look-up-table based on contrast level.
+  void computeLookUpTable();
 
 private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
@@ -48,6 +53,7 @@ private:
   // Lookup table for brightness values.
   unsigned char _lut[256];
 
+  int _brightness; // current brightness value
   int _size;
 
   const unsigned char *_imageIn;
