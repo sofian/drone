@@ -1,4 +1,4 @@
-/* VideoType.h
+/* VideoRGBAType.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef VIDEOTYPE_INCLUDED
-#define VIDEOTYPE_INCLUDED
+#ifndef VIDEORGBATYPE_INCLUDED
+#define VIDEORGBATYPE_INCLUDED
 
 #include "ColorSpace.h"
 #include "MatrixType.h"
