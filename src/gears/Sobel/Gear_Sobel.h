@@ -49,13 +49,16 @@ private:
   int _sizeY;
   int _sizeX;    
 
+  // kernel iterators
   unsigned char
     *_p1, *_p2, *_p3,
     *_p4,       *_p6,
     *_p7, *_p8, *_p9;
-  
+
+  // output iterator
   unsigned char *_iterOutData;
 
+  // computes a single step of the kernel and updates the kernel and output pointers
   inline void singleStep();
 };
 
