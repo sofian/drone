@@ -18,6 +18,7 @@ public:
   virtual ~Gear_Oscilloscope();
 
   void runAudio();
+  void runVideo();
 
   bool ready();
 

@@ -33,8 +33,14 @@ bool Gear_Oscilloscope::ready()
 
 void Gear_Oscilloscope::runAudio()
 {
-  int sizey = CLAMP(_SIZE_Y->type()->value(),32,512);
-  int sizex = CLAMP(_SIZE_X->type()->value(),32,1440);
+  MatrixType<float> buffer = _AUDIO_IN->type()->buffer();
+  circbuf->append(buffer.data(),buffer.size());
+}
+
+void Gear_Oscilloscope::runVideo()
+{
+  int sizey = (int)CLAMP(_SIZE_Y->type()->value(),32,512);
+  int sizex = (int)CLAMP(_SIZE_X->type()->value(),32,1440);
   int midy = sizey>>1;
   int midym1 = midy-1;
 
@@ -51,7 +57,6 @@ void Gear_Oscilloscope::runAudio()
 
   MatrixType<float> buffer = _AUDIO_IN->type()->buffer();
 
-  circbuf->append(buffer.data(),buffer.size());
   _outImage->fill(BLACK_RGBA);
 
   float samples_per_pixels = zoomx / (float)sizex;
