@@ -136,7 +136,7 @@ void Gear_VideoBlend::runVideo()
 
                        : "=m" (_mmxImageOut[index])  // this is %0, output
                        : "m"  (_mmxImageInA[index]), // this is %1, image A
-                       "m"  (_mmxImageInB[index]), // this is 2, image B
+                       "m"  (_mmxImageInB[index]), // this is %2, image B
                        "m"  (tempAlpha[0]) // this is %3, Alpha
                        );
     }
