@@ -30,10 +30,23 @@ Register_Gear(MAKERGear_ClusteredDither, Gear_ClusteredDither, "ClusteredDither"
 Gear_ClusteredDither::Gear_ClusteredDither(Engine *engine, std::string name)
 : Gear(engine, "ClusteredDither", name), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
 {
+  // Video I/O
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+
+  // Cluster size
   addPlug(_CLUSTER_SIZE_IN = new PlugIn<ValueType>(this, "ClusterSize", new ValueType(2, 2, 32)));
-  addPlug(_SPOT_TYPE_IN = new PlugIn<ValueType>(this, "SpotType", new ValueType(ROUND, SQUARE, LINE)));
+
+  // Spot type
+  EnumType *spotType = new EnumType((int)N_SPOT_TYPES, (int)ROUND);
+  spotType->setLabel((int)SQUARE, "Square");
+  spotType->setLabel((int)DIAMOND, "Diamond");
+  spotType->setLabel((int)ROUND, "Round");
+  spotType->setLabel((int)LINE, "Line");
+
+  addPlug(_SPOT_TYPE_IN = new PlugIn<EnumType>(this, "SpotType", spotType));
+  
+  // Channel angles
   addPlug(_ANGLE_RED_IN = new PlugIn<ValueType>(this, "AngleRed", new ValueType(15,0,360)));
   addPlug(_ANGLE_GREEN_IN = new PlugIn<ValueType>(this, "AngleGreen", new ValueType(75,0,360)));
   addPlug(_ANGLE_BLUE_IN = new PlugIn<ValueType>(this, "AngleBlue", new ValueType(0,0,360)));

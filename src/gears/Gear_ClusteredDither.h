@@ -23,6 +23,8 @@
 #include "Gear.h"
 #include "SignalType.h"
 #include "VideoRGBAType.h"
+#include "EnumType.h"
+#include "ValueType.h"
 #include "Utils.h"
 
 #include <stdio.h>
@@ -44,7 +46,7 @@ class Gear_ClusteredDither : public Gear
   //! The spot type of the printer.
   enum eSpotType
   {
-    SQUARE, DIAMOND, ROUND, LINE
+    SQUARE, DIAMOND, ROUND, LINE, N_SPOT_TYPES
   };
 
   // Internal use.
@@ -78,7 +80,7 @@ private:
   PlugIn<ValueType> *_CLUSTER_SIZE_IN;
 
   //! The type of printer.
-  PlugIn<ValueType> *_SPOT_TYPE_IN;
+  PlugIn<EnumType> *_SPOT_TYPE_IN;
 
   //! The angle for the red channel, in degrees.
   PlugIn<ValueType> *_ANGLE_RED_IN;
