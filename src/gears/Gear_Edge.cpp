@@ -36,44 +36,43 @@ void Gear_Edge::runVideo()
   _outData = (unsigned char*)_outImage->data();
 
   unsigned char threshold = (unsigned char)CLAMP(_AMOUNT_IN->type()->value(), 0.0f, 255.0f);
-
-  unsigned char *it;
   
   _sizeX = _image->width();
   _sizeY = _image->height();
-
-  //  ASSERT_ERROR_MESSAGE(_outImage->height() >= 3, "Currently, Edge is not supported for images of height < 3");
   
+  NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
+
   for (int y=1;y<_sizeY-2;y++)
   {
-    _iterPrevRow = _image->row(y-1) + 1;
-    _iterCurrRow = _image->row(y)   + 1;
-    _iterNextRow = _image->row(y+1) + 1;
-
-    _iterOutData = _outImage->row(y) + 1;
+    // Set row iterators.
+    _iterUp =      (unsigned char*) (_image->row(y-1) +  1);
+    _iterCenter =  (unsigned char*) (_image->row(y)   +  1);
+    _iterDown =    (unsigned char*) (_image->row(y+1) +  1);
+    _iterLeft =    (unsigned char*) (_image->row(y)   +  0);
+    _iterRight =   (unsigned char*) (_image->row(y)   +  2);
+    
+    _iterOutData = (unsigned char*) (_outImage->row(y) + 1);
     
     for (int x=1;x<_sizeX-2;x++)
     {
-      *_iterOutData = *_iterCurrRow;
-      *_iterOutData *= 4;
-      *_iterOutData -= *_iterPrevRow;
-      *_iterOutData -= *_iterNextRow;
-      *_iterOutData -= *(_iterCurrRow-1);
-      *_iterOutData -= *(_iterCurrRow+1);
-
-      it = (unsigned char*) _iterOutData;
       for (int z=0; z<SIZE_RGBA; ++z)
       {
-        if (*it <= threshold)
-          *it = 0;
-        it++;
+        // Compute the kernel function.
+        *_iterOutData =
+          (*_iterCenter++ << 2)
+          - *_iterUp++
+          - *_iterDown++
+          - *_iterLeft++
+          - *_iterRight++;
+
+        // Check threshold.
+        if (*_iterOutData <= threshold)
+          *_iterOutData = 0;
+
+        // Update iterators.
+        _iterOutData++;
       }
       
-      _iterOutData++;
-      _iterPrevRow++;
-      _iterCurrRow++;
-      _iterNextRow++;
- 
       /*
       
       

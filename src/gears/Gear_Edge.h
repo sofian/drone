@@ -32,10 +32,13 @@ private:
   int _sizeY;
   int _sizeX;    
 
-  RGBA *_iterPrevRow;
-  RGBA *_iterCurrRow;
-  RGBA *_iterNextRow;
-  RGBA *_iterOutData;
+  unsigned char *_iterUp;
+  unsigned char *_iterCenter;
+  unsigned char *_iterLeft;
+  unsigned char *_iterRight;
+  unsigned char *_iterDown;
+  
+  unsigned char *_iterOutData;
 
   //  RGBA _adjust[2];
 
