@@ -4,10 +4,10 @@
 
 Rasterer::Rasterer() : _canvas(NULL), _canvasData(NULL), _brush(NULL), _rasterMode(RASTER_REPLACE)
 {
-  _color.R=255;
-  _color.G=255;
-  _color.B=255;
-  _color.A=255;
+  _color.r=255;
+  _color.g=255;
+  _color.b=255;
+  _color.a=255;
 }
 
 Rasterer::~Rasterer()
@@ -25,9 +25,9 @@ void Rasterer::setCanvas(Canvas *canvas)
 
 void Rasterer::setColor(unsigned char r, unsigned char g, unsigned char b)
 {
-  _color.R=r;
-  _color.G=g;
-  _color.B=b;
+  _color.r=r;
+  _color.g=g;
+  _color.b=b;
 }
 
 void Rasterer::line(int x0, int y0, int x1, int y1)
@@ -38,9 +38,9 @@ void Rasterer::rect(int x0, int y0, int x1, int y1, bool filled)
 {
   int sizeX = _canvas->sizeX();
   unsigned char *data;
-  unsigned char r=_color.R;
-  unsigned char g=_color.G;
-  unsigned char b=_color.B;
+  unsigned char r=_color.r;
+  unsigned char g=_color.g;
+  unsigned char b=_color.b;
 
   if (filled)
     for (int y=y0;y<y1;y++)
@@ -94,12 +94,12 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
 {
   if (filled)
   {
-    int radx2 = square(radx);
-    int rady2 = square(rady);
+    int radx2 = SQR(radx);
+    int rady2 = SQR(rady);
     
     for (int y=rady; y>=0; --y)
     {
-      int xmax = (int) radx * sqrt(1 - (float)square(y) / (float)rady2);
+      int xmax = (int) radx * sqrt(1 - (float)SQR(y) / (float)rady2);
       for (int x=xmax; x>=0; --x)
         ellipsePoints(x0, y0, x, y);
     }
@@ -110,8 +110,8 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
     int x = 0;
     int y = rady;
     
-    int radx2 = square(radx);
-    int rady2 = square(rady);
+    int radx2 = SQR(radx);
+    int rady2 = SQR(rady);
     
     double d1 = rady2 + (0.25 - rady) * radx2;
     ellipsePoints(x0, y0, x, y);
@@ -129,7 +129,7 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
       ellipsePoints(x0, y0, x, y);
     }
     
-    d2 = rady2 * square(x + 0.5) + ( square(y - 1.) - rady2) * radx2;
+    d2 = rady2 * SQR(x + 0.5) + ( SQR(y - 1.) - rady2) * radx2;
     while (y > 0)
     {
       if (d2 < 0) {
