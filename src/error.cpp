@@ -32,7 +32,7 @@ void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...)
   {
     va_list ap;
     va_start(ap, msg);
-    ERROR(msg, ap);
+    errormsg(msg, ap);
     va_end(ap);
   }
 }
@@ -45,7 +45,7 @@ void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...)
   {
     va_list ap;
     va_start(ap, msg);
-    WARNING(msg, ap);
+    warningmsg(msg, ap);
     va_end(ap);
   }
 }
@@ -58,7 +58,7 @@ void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...)
   {
     va_list ap;
     va_start(ap, msg);
-    NOTICE(msg, ap);
+    noticemsg(msg, ap);
     va_end(ap);
   }
 }

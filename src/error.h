@@ -116,11 +116,13 @@ void noticemsg(const char* msg, ...);
 
 //! Error messages/assertion.
 #if DEBUG_ERROR
-#define ERROR errormsg
+// XXX This was conflicting...
+//#define ERROR errormsg
+#define error errormsg
 void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...);
-#define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr, ERROR)
+#define ASSERT_ERROR(expr) __TRIGGER_ASSERT(expr, errormsg)
 #else
-#define ERROR dummymsg
+#define error dummymsg
 #define ASSERT_ERROR(expr) __DUMMY_ASSERT
 #define ASSERT_ERROR_MESSAGE assertdummymsg
 #endif
@@ -129,7 +131,7 @@ void ASSERT_ERROR_MESSAGE(bool expr, const char* msg, ...);
 #if DEBUG_WARNING
 #define WARNING warningmsg
 void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...);
-#define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr, WARNING)
+#define ASSERT_WARNING(expr) __TRIGGER_ASSERT(expr, warningmsg)
 #else
 #define WARNING dummymsg
 #define ASSERT_WARNING(expr) __DUMMY_ASSERT
@@ -140,7 +142,7 @@ void ASSERT_WARNING_MESSAGE(bool expr, const char* msg, ...);
 #if DEBUG_NOTICE
 #define NOTICE noticemsg
 void ASSERT_NOTICE_MESSAGE(bool expr, const char* msg, ...);
-#define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr, NOTICE)
+#define ASSERT_NOTICE(expr) __TRIGGER_ASSERT(expr, noticemsg)
 #else
 #define NOTICE dummymsg
 #define ASSERT_NOTICE(expr) __DUMMY_ASSERT
