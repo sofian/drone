@@ -38,9 +38,6 @@ public:
   void runVideo();
   void runAudio();
 
-  PlugOut<VideoRGBAType>* VIDEO_OUT(){return _VIDEO_OUT;};
-  PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
-
   bool ready();
 
 protected:
