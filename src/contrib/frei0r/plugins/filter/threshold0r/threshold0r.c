@@ -113,7 +113,6 @@ void f0r_set_param_value(f0r_instance_t instance,
     val = (unsigned char) (255.0 * *((double*)param));
     if (val != inst->threshold)
     {
-      //      printf("value changed from %d to %d\n", (int)inst->threshold, (int)val);
       inst->threshold = val;
       update_lut(inst);
     }
