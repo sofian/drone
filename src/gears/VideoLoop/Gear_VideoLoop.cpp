@@ -1,5 +1,5 @@
 /* Gear_VideoLoop.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,11 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName),
-                                                                     _recording(true),
-                                                                     _currentLoopFrame(0),
-                                                                     _nLoopFrames(1),
-                                                                     _pingpongDir(1)
+Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
@@ -72,6 +68,7 @@ void Gear_VideoLoop::init()
   _recording = true;
   _currentLoopFrame = 0;
   _nLoopFrames = 0;
+  _pingpongDir = 1;
 }
 
 bool Gear_VideoLoop::ready()
@@ -139,11 +136,14 @@ void Gear_VideoLoop::runVideo()
          _currentLoopFrame--;
       break;
     case PING_PONG:
+      if (_nLoopFrames > 1)
+      {
         if (_currentLoopFrame < 0)
           _pingpongDir=1;
         else if (_currentLoopFrame >= _nLoopFrames)
           _pingpongDir=-1;
         _currentLoopFrame+=_pingpongDir;
+      }
       break;
     }
 
