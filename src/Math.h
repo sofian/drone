@@ -26,17 +26,16 @@
 
 //! Basic definitions
 
-// XXX ça devrait être des constantes statiques (sinon on fait le calcul à chaque fois...)
-#ifndef PI
-#define PI M_PI
+#ifndef PI 
+#define PI 3.14159265358979323846
 #endif
 
 #ifndef HALF_PI
-#define HALF_PI 0.5*PI
+#define HALF_PI 1.57079632679489661923
 #endif
 
 #ifndef TWICE_PI
-#define TWICE_PI 2*PI
+#define TWICE_PI 6.28318530717958623200
 #endif
 
 #ifndef TRUE
