@@ -6,8 +6,8 @@ import re
 from os.path import basename
 
 if (len(sys.argv) < 3):
-    print "Usage: addpreamble <preamble> [file(s) ...]\n"
-    exit
+    print "Usage: addpreamble <preamble> [file(s) ...]"
+    sys.exit(0)
 
 fpreamble = open(sys.argv[1], "r")
 if fpreamble:

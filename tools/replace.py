@@ -23,7 +23,6 @@ for i in range(3,len(sys.argv)):
             line = f.readline()
             if (line == ""):
                 break
-            p = re.compile(line)
             line = line.replace(stext, rtext)
             s += line
         f.seek(0)
