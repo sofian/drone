@@ -3,24 +3,26 @@
 ######################################################################
 
 # Uncomment to use gprof
-#QMAKE_CFLAGS+=-pg
 #QMAKE_CXXFLAGS+=-pg
-#QMAKE_LFLAGS+=-pg
 
+# Optimized settings
+QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=-1 -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -pipe
+# P4
+QMAKE_CXXFLAGS += -march=pentium4
+# Athlon
+#QMAKE_CXXFLAGS += -march=athlon
 
-#QMAKE_CFLAGS   +=-DDEBUG_LEVEL=0
-#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=0 -march=pentium4 -funroll-loops -fprefetch-loop-arrays -fomit-frame-pointer -pipe
-#QMAKE_LFLAGS   +=-DDEBUG_LEVEL=0
-
-QMAKE_CFLAGS   +=-DDEBUG_LEVEL=2
-QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=2
-QMAKE_LFLAGS   +=-DDEBUG_LEVEL=2
+# Debug settings
+#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=0
+#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=1
+#QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=2
+#CONFIG += debug
 
 TEMPLATE = app
 DEPENDPATH += src
 INCLUDEPATH += . src src/gears src/types /usr/include/libmpeg3 src/stk-4.1.3/include
 LIBS += -Lsrc/stk-4.1.3/src/ -lsndfile -lfftw3 -lXxf86vm -lmpeg3 -lGLU -lportaudio -lGL -lXv
-CONFIG += thread debug
+CONFIG += thread
 
 HEADERS += config.h \
 src/error.h \
@@ -36,6 +38,10 @@ src/types/VideoType.h \
 src/types/SignalType.h \
 src/types/DisplaceGrid.h \
 src/types/MatrixType.h \
+src/types/VideoChannelType.h \
+src/types/VideoBinaryType.h \
+src/types/PaletteRGBAType.h \
+src/types/EnumType.h \
 src/gears/Gear_AffineTransform.h \
 src/gears/Gear_AudioInput.h \
 src/gears/Gear_AudioOutput.h \
