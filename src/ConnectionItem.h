@@ -37,7 +37,7 @@ public:
     DISCONNECTED, CONNECTING, CONNECTED
   };
 
-  ConnectionItem(Engine *engine, QCanvas *canvas);
+  ConnectionItem(QCanvas *canvas);
   virtual ~ConnectionItem();
 
   int rtti () const {return CANVAS_RTTI_CONNECTION;};
@@ -69,8 +69,6 @@ protected:
 
   PlugBox* _sourcePlugBox;
   PlugBox* _destPlugBox;
-
-  Engine *_engine;
 
   QPen* _pen;
 

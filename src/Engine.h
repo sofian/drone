@@ -29,6 +29,7 @@
 #include "VideoInfo.h"
 #include "Math.h"
 #include "error.h"
+#include "Schema.h"
 
 class Gear;
 class AbstractPlug;
@@ -38,64 +39,8 @@ class QDomElement;
 class Engine  
 {
 
-  class GearGraphManip
-  {
-  public :
-    class Node
-    {
-    public:
-      Node(Gear* pgear) :
-        gear(pgear),
-        order(0),
-        visited(false){}
-
-      Gear* gear;
-      int order;
-      bool visited;
-    };
-
-    GearGraphManip(std::vector<Gear*> &gears);    
-    void getOrderedGears(std::list<Gear*>& orderedGears);
-    void labelling(Node &node);
-
-  protected:
-    static bool compareNodes(const Node &a, const Node &b);
-
-    std::vector<Node> _nodes;
-    std::vector<Gear*> _gears;
-    int _depthFirstCounter;
-  };
-
 public:
 
-  class Connection
-  {
-  public:
-    Connection(){};        
-    Connection(std::string gearA, std::string output, std::string gearB, std::string input) :
-      _gearA(gearA),
-      _input(input),
-      _gearB(gearB),
-      _output(output)
-    {
-    }
-
-    std::string gearA(){return _gearA;};
-    std::string input(){return _input;};
-    std::string gearB(){return _gearB;};
-    std::string output(){return _output;};
-
-    void save(QDomDocument &doc, QDomElement &parent);
-    void load(QDomElement &connectionElem);
-
-  private:
-    std::string _gearA;
-    std::string _input;
-    std::string _gearB;
-    std::string _output;
-
-  };
-        
   class ScheduledConnectDisconnect
   {
   public:
@@ -120,27 +65,16 @@ public:
   Engine(int hwnd);
   virtual ~Engine();
 
-  void saveSchema(std::string filename);
-  void clearSchema();
-  void loadSchema(std::string filename);
-
-  Gear* addGear(std::string geartype, std::string name);
-  Gear* addGear(std::string gearname);    
-  void removeGear(Gear* gear);
-  void removeAllGears();
-
-  void getAllGears(std::list<Gear*> &gears);
-  Gear* getGear(std::string name) const;
-
-  void getAllConnections(std::list<Connection*> &connections);
-
-  void connectPlugs(Connection &connection);
-
-
   static const SignalInfo& signalInfo() {return _signalInfo;};
   static const VideoInfo& videoInfo() {return _videoInfo;};
 
   std::string getNewGearName(std::string prefix);
+
+  Schema* mainSchema() {return &_mainSchema;}
+
+  void loadMainSchema(std::string filename);
+  void saveMainSchema(std::string filename);
+  void clearMainSchema();
 
   void startPlaying();
   void stopPlaying();
@@ -164,6 +98,7 @@ protected:
   void performScheduledConnectDisconnect();
   void performScheduledGearDeletion();
   void performScheduledGearUpdateSettings();
+  void performAllScheduledTasks();
 
   int _hWnd;
 
@@ -172,12 +107,12 @@ protected:
   static SignalInfo _signalInfo;
   static VideoInfo _videoInfo;
 
-  void synchGraph();
-
   Time_T _currentTime;
 
 
 private:
+
+  Schema _mainSchema;
 
   bool _playing;
   bool _graphSynched;

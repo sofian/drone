@@ -23,41 +23,6 @@
 #include "GearMaker.h"
 #include <iostream>
 #include <unistd.h>
-#include <qdom.h>
-#include <qfile.h>
-#include <qtextstream.h>
-
-
-void Engine::Connection::save(QDomDocument &doc, QDomElement &parent)
-{
-  QDomElement connectionElem = doc.createElement("Connection");
-  parent.appendChild(connectionElem);
-
-  QDomAttr gearA = doc.createAttribute("GearA");
-  gearA.setValue(_gearA.c_str());
-  connectionElem.setAttributeNode(gearA);
-
-  QDomAttr input = doc.createAttribute("Input");
-  input.setValue(_input.c_str());
-  connectionElem.setAttributeNode(input);
-
-  QDomAttr gearB = doc.createAttribute("GearB");
-  gearB.setValue(_gearB.c_str());
-  connectionElem.setAttributeNode(gearB);
-
-  QDomAttr output = doc.createAttribute("Output");
-  output.setValue(_output.c_str());
-  connectionElem.setAttributeNode(output);
-
-}
-
-void Engine::Connection::load(QDomElement &connectionElem)
-{
-  _gearA = connectionElem.attribute("GearA","").ascii();
-  _input = connectionElem.attribute("Input","").ascii();
-  _gearB = connectionElem.attribute("GearB","").ascii();
-  _output = connectionElem.attribute("Output","").ascii();
-}
 
 
 SignalInfo Engine::_signalInfo;
@@ -77,72 +42,7 @@ Engine::Engine(int hwnd) :
 
 Engine::~Engine()
 {
-  removeAllGears();
 }
-
-void Engine::removeAllGears()
-{
-  for (std::list<Gear*>::iterator it = _gears.begin(); it != _gears.end(); ++it)
-    delete *it;
-
-  _gears.clear();
-}
-
-void Engine::removeGear(Gear* gear)
-{
-  delete gear;
-  _gears.remove(gear);
-}
-
-
-Gear* Engine::addGear(std::string geartype, std::string name)
-{
-  Gear * gear = GearMaker::makeGear(this, geartype, name);
-
-  if (gear==NULL)
-    std::cout << "Engine addGear: " << geartype << " unknown" << std::endl;
-  else
-  {
-    gear->internalInit();
-    
-    if (_playing)
-      gear->prePlay();
-    
-    _gears.push_back(gear);
-  }
-
-  return gear;
-}
-
-Gear* Engine::addGear(std::string gearType)
-  //auto-naming
-{
-  return addGear(gearType, getNewGearName(gearType));
-}
-
-
-std::string Engine::getNewGearName(std::string prefix)
-{
-  int i=1;
-  std::string tmp;
-  bool ok=false;
-  char buf[10];
-  while (!ok && i<200)
-  {
-    ok=true;
-    sprintf(buf,"%i",i);
-    tmp=prefix + buf;
-    for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
-      if ((*it)->name() == tmp)
-      {
-        ok=false;
-        break;
-      }
-    i++;
-  }
-  return tmp; 
-}
-
 
 Time_T Engine::currentTime()
 {
@@ -199,11 +99,9 @@ void *Engine::playThread(void *parent)
 #endif    
     block_starttime = Timing::time();
 
-    engine->performScheduledConnectDisconnect();
-    engine->performScheduledGearDeletion();
-    engine->performScheduledGearUpdateSettings();
+    engine->performAllScheduledTasks();
 
-    engine->synchGraph();
+    engine->_orderedGears = engine->_mainSchema.getDeepOrderedReadyGears();
 
     //process audio
     for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
@@ -252,126 +150,32 @@ void *Engine::playThread(void *parent)
   }
 #endif               
 
+  engine->performAllScheduledTasks();
 
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();
 
 
-
   return NULL;
 }
 
-Engine::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears) :  
-  _gears(gears),
-  _depthFirstCounter(0)
+void Engine::clearMainSchema()
 {
-  //build nodes
-  for (unsigned int i=0;i<_gears.size();++i)  
-    _nodes.push_back(Node(_gears[i]));    
+  stopPlaying(); 
+  _mainSchema.clear();
 }
 
-void Engine::GearGraphManip::labelling(Node &node)
+void Engine::loadMainSchema(std::string filename)
 {
-  if (node.visited)
-    return;
-
-  //tag the node has visited to avoid infinit recursion
-  node.visited=true;
-
-  //get depth fist dependent gears
-  std::vector<Gear*> depGears;
-  node.gear->getDependencies(depGears);
-  
-  //build the corresponding nodes vector
-  std::vector<Node*> depNodes;
-  bool found=false;
-  for (unsigned int i=0;i<depGears.size();++i)
-  {
-    found=false;
-       
-    for (unsigned int j=0;j<_nodes.size() && !found;++j)
-    {
-      if (_nodes[j].gear == depGears[i])
-      {
-        depNodes.push_back(&_nodes[j]);
-        found=true;
-      }
-    }
-  }
-
-  //label depending nodes
-  for (unsigned int i=0;i<depNodes.size();++i)
-    labelling(*depNodes[i]);
-  
-  //assign order
-  node.order=_depthFirstCounter;
-  
-  //inc global counter
-  _depthFirstCounter++;
+  clearMainSchema();
+  _mainSchema.load(this, filename);
 }
 
-bool Engine::GearGraphManip::compareNodes(const Node &a, const Node &b)
+void Engine::saveMainSchema(std::string filename)
 {
-  return a.order < b.order;
-}
-
-
-/**
- * perform a topological sort of a cyclic graph
- * return vector of ordered gears
- * 
- * @param orderedGears
- */
-void Engine::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
-{
-  //reset
-  _depthFirstCounter=0;
-  for (unsigned int i=0;i<_nodes.size();++i)
-  {
-    _nodes[i].order=0;
-    _nodes[i].visited=false;
-  }
-
-  for (unsigned int i=0;i<_nodes.size();++i)
-  {
-    if (!_nodes[i].visited)
-      labelling(_nodes[i]);  
-  }
-  
-  //sort according to order
-  std::sort(_nodes.begin(), _nodes.end(), compareNodes);
-  
-  //fill the ordered gears vector now
-  orderedGears.clear();
-  for (unsigned int i=0;i<_nodes.size();++i)
-    orderedGears.push_back(_nodes[i].gear);
-}
-
-
-void Engine::synchGraph()
-{
-
-  if (_graphSynched)
-    return;
-
-
-  std::vector<Gear*> gears;
-
-  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
-  {
-    if ((*it)->ready())
-      gears.push_back(*it);
-  }
-
-  GearGraphManip ggm(gears);
-  ggm.getOrderedGears(_orderedGears);
-  
-  for (std::list<Gear*>::iterator it=_orderedGears.begin();it!=_orderedGears.end();++it)
-  {
-    std::cerr << (*it)->name() << std::endl;        
-  }
-
-  _graphSynched=true;
+//TODO : make a scheduled save to allow synch  
+//performAllScheduledTask();
+  _mainSchema.save(filename);
 }
 
 void Engine::scheduleConnection(AbstractPlug *plugA, AbstractPlug *plugB)
@@ -413,7 +217,7 @@ void Engine::scheduleGearUpdateSettings(Gear *gear)
 void Engine::performScheduledGearDeletion()
 {
   for (std::vector<Gear*>::iterator it=_scheduledsGearDeletion.begin(); it!=_scheduledsGearDeletion.end(); ++it)
-    removeGear(*it);
+    _mainSchema.removeDeepGear(*it);
 
   _scheduledsGearDeletion.clear();
 }
@@ -442,216 +246,9 @@ void Engine::performScheduledGearUpdateSettings()
   _scheduledsGearUpdateSettings.clear();
 }
 
-
-void Engine::getAllConnections(std::list<Connection*> &connections)
+void Engine::performAllScheduledTasks()
 {
-  std::list<AbstractPlug*> outputs;
-  std::list<AbstractPlug*> connectedPlugs;
-  for (std::list<Gear*>::iterator itGear = _gears.begin(); itGear != _gears.end(); ++itGear)
-  {
-    (*itGear)->getOutputs(outputs);
-    for (std::list<AbstractPlug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
-    {
-      (*itOutput)->connectedPlugs(connectedPlugs);
-
-      for (std::list<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
-      {
-        connections.push_back( new Connection((*itGear)->name(), (*itOutput)->name(), 
-                                              (*itConnectedPlug)->parent()->name(), 
-                                              (*itConnectedPlug)->name()));
-      }            
-    }
-  }
-}
-
-void Engine::saveSchema(std::string filename)
-{
-  QDomDocument doc("DroneSchema");
-  QDomElement rootElem = doc.createElement("Schema");
-  doc.appendChild(rootElem);
-
-
-  //save all gears
-  QDomElement gearsElem = doc.createElement("Gears");
-  rootElem.appendChild(gearsElem);
-
-  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
-  {
-    (*it)->internalSave(doc, gearsElem);            
-  }
-
-
-  //save all connections
-  QDomElement connectionsElem = doc.createElement("Connections");
-  rootElem.appendChild(connectionsElem);
-
-  std::list<Connection*> connections;
-  getAllConnections(connections);
-
-  for (std::list<Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
-  {
-    (*it)->save(doc, connectionsElem);
-    delete (*it);//free
-  }
-
-  //save to file  
-       
-  QFile file(filename.c_str());
-  if (file.open(IO_WriteOnly))
-  {
-    QTextStream stream(&file);
-    doc.save(stream,4);
-    file.close();
-  }
-  else
-    std::cout << "file io error, cannot save!" << std::endl;
-
-}
-
-void Engine::clearSchema()
-{
-  //stop playing first
-  stopPlaying();
-
-  removeAllGears();
-
-}
-
-
-void Engine::loadSchema(std::string filename)
-{        
-  QDomDocument doc("DroneSchema");
-
-  QFile file(filename.c_str());
-
-  if (!file.open(IO_ReadOnly))
-  {
-    std::cout << "Fail to open file " << filename << std::endl;
-    return;
-  }
-
-  clearSchema();
-
-  QString errMsg;
-  int errLine;
-  int errColumn;
-  if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
-  {
-    std::cout << "parsing error in " << filename << std::endl;
-    std::cout << errMsg.ascii() << std::endl;
-    std::cout << "Line: " <<  errLine << std::endl;
-    std::cout << "Col: " <<  errColumn << std::endl;
-    file.close();
-    return;
-  }
-
-  file.close();
-
-  //load gears
-  QDomNodeList gearsNode = doc.elementsByTagName("Gears");
-
-  //be sure we have exactly one Gears tag
-  if (gearsNode.count()==1)
-  {
-    //iteration on all gears
-    QDomNode gearNode = gearsNode.item(0).firstChild();
-    Gear *pgear=NULL;
-    while (!gearNode.isNull())
-    {
-      QDomElement gearElem = gearNode.toElement();
-      if (!gearElem.isNull())
-      {
-        pgear = addGear(gearElem.attribute("Type","").ascii());
-        if (pgear!=NULL)
-        {
-          pgear->internalLoad(gearElem);                                
-        }
-
-      }
-      gearNode = gearNode.nextSibling();
-    }                
-  } else
-    std::cout << "Bad DroneSchema : problem with <Gears>" << std::endl;
-
-
-  //load connections    
-  QDomNodeList connectionsNode = doc.elementsByTagName("Connections");
-
-  //be sure we have exactly one Connections tag
-  if (connectionsNode.count()==1)
-  {
-    //iteration on all connections
-    QDomNode connectionNode = connectionsNode.item(0).firstChild();
-    Connection connection;
-    while (!connectionNode.isNull())
-    {
-      QDomElement connectionElem = connectionNode.toElement();
-
-      if (!connectionElem.isNull())
-      {
-        connection.load(connectionElem);            
-        connectPlugs(connection);
-      }
-
-      connectionNode = connectionNode.nextSibling();
-    }               
-  } else
-    std::cout << "Bad DroneSchema : problem with <Connections>" << std::endl;
-
-}
-
-void Engine::getAllGears(std::list<Gear*> &gears)
-{
-  gears.clear();
-  gears.assign(_gears.begin(), _gears.end());
-}
-
-Gear* Engine::getGear(std::string name) const
-{
-  for (std::list<Gear*>::const_iterator it = _gears.begin();it!=_gears.end();++it)
-  {
-    if ((*it)->name() == name)
-      return(*it);
-  }
-
-  return NULL;
-}
-
-void Engine::connectPlugs(Connection &connection)
-{
-  Gear *gearA;
-  Gear *gearB;
-  AbstractPlug *input;
-  AbstractPlug *output;
-
-  if ( (gearA=getGear(connection.gearA())) == NULL)
-  {
-    std::cout << "connectPlugs fail: " + connection.gearA() + " not found!" << std::endl;
-    return;
-  }
-
-
-  if ( (gearB=getGear(connection.gearB())) == NULL)
-  {
-    std::cout << "connectPlugs fail: " + connection.gearB() + " not found!" << std::endl;
-    return;
-  }
-
-  if ( (output=gearA->getOutput(connection.output())) == NULL)
-  {
-    std::cout << "connectPlugs fail: " + connection.output() + " not found!" << std::endl;
-    return;
-  }
-
-  if ( (input=gearB->getInput(connection.input())) == NULL)
-  {
-    std::cout << "connectPlugs fail: " + connection.input() + " not found!" << std::endl;
-    return;
-  }
-
-  if (!output->connect(input))
-  {
-    std::cout << "connectPlugs fail!" << std::endl;
-  }
-
+  performScheduledGearDeletion();
+  performScheduledConnectDisconnect();
+  performScheduledGearUpdateSettings();
 }

@@ -37,6 +37,7 @@ class GearGui;
 class QDomDocument;
 class QDomElement;
 class QCanvas;
+class Schema;
 
 class Gear  
 {
@@ -62,6 +63,9 @@ public:
   AbstractPlug* getOutput(std::string name) const;
 
   void getDependencies(std::vector<Gear*> & dependencies) const;
+
+  virtual Schema* getInternalSchema(){return NULL;}
+
 
   const std::string& type() const {return _Type;};
   const std::string& name() const {return _Name;};
@@ -118,10 +122,10 @@ private:
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &gearElem);
 
-  friend Gear* Engine::addGear(std::string geartype, std::string name);
+  friend Gear* Schema::addGear(Engine * engine, std::string geartype, std::string name);
   friend void *Engine::playThread(void *parent);
-  friend void Engine::loadSchema(std::string filename);
-  friend void Engine::saveSchema(std::string filename);
+  friend void Schema::load(Engine * engine, std::string filename);
+  friend void Schema::save(std::string filename);
 };
 
 

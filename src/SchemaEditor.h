@@ -28,7 +28,7 @@
 class GearGui;
 class ConnectionItem;
 class Engine;
-
+class Schema;
 class SchemaEditor : public QCanvasView
 {
   Q_OBJECT
@@ -41,21 +41,20 @@ class SchemaEditor : public QCanvasView
     IDLE, MOVING_GEAR, CONNECTING
   };
 
-  SchemaEditor(QCanvas *canvas, QWidget *parent, Engine *engine);
+  SchemaEditor(QCanvas *canvas, QWidget *parent, Engine * engine, Schema * schema);
   ~SchemaEditor();
 
 
   void addGear(std::string type, std::string name, int x, int y);
   void addGear(std::string type, int x, int y);
   void removeGear(GearGui* gearGui);
-  void recreateSchemaFromEngine();
+  void setSchema(Schema *schema);
   void zoomIn();
   void zoomOut();
   void zoom(float factor);
   void clearSchema();
   void loadSchema(std::string filename);
-  //void saveSchema(std::string filename);
-  //void loadSchema(std::string filename);
+  void saveSchema(std::string filename);
 
 public slots:
   void slotMenuItemSelected(int id);
@@ -85,6 +84,7 @@ private:
   static const double ZOOM_FACTOR;
 
   Engine *_engine;
+  Schema *_schema;
   eStatus _state;
   GearGui *_movingGear;
   QPoint _movingGearStartPos;

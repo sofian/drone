@@ -54,7 +54,7 @@ _menuFirstRecentSchemaId(-1)
   _schemaCanvas = new QCanvas(CANVAS_SIZE_X, CANVAS_SIZE_Y);
   _schemaCanvas->setBackgroundColor(QColor(107,124,153));
 
-  _schemaEditor = new SchemaEditor(_schemaCanvas, this, _engine);               
+  _schemaEditor = new SchemaEditor(_schemaCanvas, this, _engine, _engine->mainSchema());               
 
   setCentralWidget(_schemaEditor);   
 
@@ -172,6 +172,7 @@ void MainWindow::slotMenuNew()
 
   _currentSchemaFilename="";
   _schemaEditor->clearSchema();
+  _engine->clearMainSchema();
   _fileMenu->setItemEnabled(_menuSaveItemId, false);
 }
 
@@ -191,7 +192,8 @@ void MainWindow::load(std::string filename)
   //stop before loading
   slotPlay(false);
 
-  _schemaEditor->loadSchema(filename);
+  _engine->loadMainSchema(filename);
+  _schemaEditor->setSchema(_engine->mainSchema());
   _currentSchemaFilename=filename;
   _fileMenu->setItemEnabled(_menuSaveItemId, true);
   
@@ -207,7 +209,7 @@ void MainWindow::load(std::string filename)
 void MainWindow::slotMenuSave()
 {
   ASSERT_ERROR(_currentSchemaFilename.size());
-  _engine->saveSchema(_currentSchemaFilename);    
+  _engine->saveMainSchema(_currentSchemaFilename);    
 }
 
 void MainWindow::slotMenuSaveAs()
@@ -221,7 +223,7 @@ void MainWindow::slotMenuSaveAs()
     if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
       filename.append(SCHEMA_EXTENSION);  
     
-    _engine->saveSchema(filename);
+    _engine->saveMainSchema(filename);
     _currentSchemaFilename=filename;
     _fileMenu->setItemEnabled(_menuSaveItemId, true);
 
