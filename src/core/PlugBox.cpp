@@ -29,7 +29,13 @@
 const int PlugBox::PLUGBOX_SIZE = 10;
 const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_SIZE - 2;
 const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_SIZE / 2;
+
+#if defined(Q_OS_MACX)
 const QFont PlugBox::SHORTNAME_FONT(QFont("Verdana", 9, QFont::Normal));
+#else
+const QFont PlugBox::SHORTNAME_FONT(QFont("Verdana", 8, QFont::Normal));
+#endif
+
 const int PlugBox::MAX_HILIGHTSCALING = 2;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
 
