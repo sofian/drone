@@ -159,13 +159,14 @@ void SummedAreaTable<Type, AccType, SIZE>::buildTable(const Type *table, size_t 
       *iterAcc++ = (_tmpAcc[i] += *iterData++);
   }
 
-  // other rows
+  // Process other rows.
   for (int y=1; y<_height; ++y)
   {
-    // copy upper line
+    // Copy upper line.
     memcpy(iterAcc, iterAcc - _rowWidth, _rowWidth * sizeof(AccType));
+
+    // Process row.
     clear(_tmpAcc, SIZE);
-    
     for (int x=0; x<_width; ++x)
     {
       for (i=0; i<SIZE; ++i)
