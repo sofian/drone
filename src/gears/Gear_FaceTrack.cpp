@@ -32,21 +32,25 @@ Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 
 Gear_FaceTrack::Gear_FaceTrack(Engine *engine, std::string name) : Gear(engine, "FaceTrack", name),
                                                                    _pCascadeFeatures(0),
-                                                                   _threshold(0)
+                                                                   _threshold(0),
+                                                                   _deltaS(2)
 {
   addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Area"));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_THRESHOLD_IN = new PlugIn<ValueType>(this, "Thresh", new ValueType(0, -1, 1)));
+  //  addPlug(_SHIFTING_IN = new PlugIn<ValueType>(this, "Shift", new ValueType(3, 1, 5)));
 }
 
 Gear_FaceTrack::~Gear_FaceTrack()
 {
   _keepLooping = false;
+  NOTICE("Trying to join");
+  int val = pthread_join(_detectorThread, NULL);
+  NOTICE("Joining result: %s", ( val == EINVAL ? "EINVAL": (val == ESRCH ? "ESRCH" : "OK" ) ));
   pthread_attr_destroy(&_detectorAttr);
   pthread_mutex_destroy(&_inputMutex);
   pthread_mutex_destroy(&_outputMutex);
   pthread_cond_destroy(&_inputCond);
-  pthread_exit(NULL);
 }
 
 void Gear_FaceTrack::init()
@@ -62,6 +66,7 @@ void Gear_FaceTrack::init()
 
   pthread_attr_init(&_detectorAttr);
   pthread_attr_setdetachstate(&_detectorAttr, PTHREAD_CREATE_JOINABLE);
+
   pthread_create(&_detectorThread, &_detectorAttr, threadStartup, this);
 }
 
@@ -72,6 +77,8 @@ bool Gear_FaceTrack::ready()
 
 void Gear_FaceTrack::runVideo()
 {
+  //std::cout << "Image received " << std::endl;
+  
   pthread_mutex_lock(&_inputMutex);
 
   // Wait until the frame is ready
@@ -134,39 +141,13 @@ const double  Gear_FaceTrack::_thresholdList[] = {-0.5,   // features bloc 1
 };
 #endif
 
-const int     Gear_FaceTrack::_deltaS = 3; 
-
-//bool    Gear_FaceTrack::_askForFrame = true;
-
-// std::vector< Gear_FaceTrack::Feature >   Gear_FaceTrack::_selFeatures;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_foundFaces;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_mergedFaces;
-// std::vector< Gear_FaceTrack::FaceArea >  Gear_FaceTrack::_drawingFoundFaces; // the current faces drawn
-
-//Gear_FaceTrack::Cascade*            Gear_FaceTrack::_pCascadeFeatures = NULL;
-
-//std::vector< Gear_FaceTrack::PrecompWindows >  Gear_FaceTrack::_precWinSizes;
-
-// // VERY IMPORTANT!!!
-// #if defined(USING_CREATIVE_WEBCAM)
-// unsigned int Gear_FaceTrack::_picWidth = 320;
-// unsigned int Gear_FaceTrack::_picHeight = 240;
-// #elif defined(USING_DV)
-// unsigned int Gear_FaceTrack::_picWidth = 360;
-// unsigned int Gear_FaceTrack::_picHeight = 240;
-// #endif
-
-// unsigned int Gear_FaceTrack::_detector_x = 0;
-// unsigned int Gear_FaceTrack::_detector_y = 0;
-
-
 void *threadStartup(void *obj_)
 {
+  //  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
   Gear_FaceTrack *obj = (Gear_FaceTrack *)obj_;
   void *threadResult = obj->loopThread();
   return threadResult;
 }
-
 
 void *Gear_FaceTrack::loopThread()
 {
@@ -175,9 +156,9 @@ void *Gear_FaceTrack::loopThread()
   while (_keepLooping)
   {
     // Tell the filter that we want a new frame
-    //_askForFrame = true; 
-
     pthread_cond_wait(&_inputCond, &_inputMutex);
+    if ( !_keepLooping )
+      break;
     
     _pCurrentFrame = (unsigned char*) _grayImage.data();
     rgba2grayscale(_pCurrentFrame, (unsigned char*)_image->data(), _image->size());
@@ -186,11 +167,13 @@ void *Gear_FaceTrack::loopThread()
     findFaces();
     
     pthread_mutex_lock(&_outputMutex);
-    mergeFaces();
-    _drawingFoundFaces = _mergedFaces; //_foundFaces;
+    //    mergeFaces();
+    _drawingFoundFaces =  _foundFaces;
     pthread_mutex_unlock(&_outputMutex);
   }
 
+  NOTICE("Exiting thread");
+//   pthread_mutex_unlock(&_exitMutex);
   pthread_exit(NULL);
   return NULL;
 }
@@ -304,6 +287,11 @@ void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
 
   }
 
+//   std::cout << "precomputed win sizes: " << std::endl;
+  
+//   for (std::vector< PrecompWindows >::iterator it = _precWinSizes.begin(); it != _precWinSizes.end(); ++it)
+//     std::cout << it->winSize << " " << it->shifting << std::endl;
+//   std::cout << "=========== " << std::endl;
 }
 
 void Gear_FaceTrack::mergeFaces()
@@ -500,7 +488,11 @@ bool Gear_FaceTrack::detector(unsigned int*& pCurrWindow, unsigned int*& pCurrWi
 
   f = sumAlphaAndH / sumAlpha;
 
+#if NEW_VERSION
   if (f > _threshold)// * _thresholdList[blockNumber])
+#else
+  if (f > _threshold + _thresholdList[blockNumber])
+#endif
   {
     //cout << "confidence: " << f << endl;
     return true;

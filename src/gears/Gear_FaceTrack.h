@@ -66,7 +66,7 @@ private:
   unsigned char*   _pCurrentFrame;
 
   //static const float   _threshold;
-  static const int     _deltaS;
+  int     _deltaS;
 
   //  bool    _askForFrame;
 
@@ -74,6 +74,8 @@ private:
   pthread_mutex_t _inputMutex;
   pthread_cond_t  _inputCond;
   pthread_mutex_t _outputMutex;
+//   pthread_mutex_t _exitMutex;
+//   pthread_cond_t  _exitCond;
   pthread_t       _detectorThread;
   pthread_attr_t  _detectorAttr;
 
@@ -178,6 +180,7 @@ private:
   PlugOut<AreaArrayType> *_AREA_OUT;
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugIn<ValueType> *_THRESHOLD_IN;
+  //  PlugIn<ValueType> *_SHIFT_IN;
   
   const VideoRGBAType *_image;
   AreaArrayType *_faces;
