@@ -38,7 +38,7 @@ void MetaGear::load(QDomElement &parent)
   
   //find the schema node under the metagear
   QDomNode schemaNode = XMLHelper::findChildNode(parent, Schema::XML_TAGNAME);
-     
+    
   if (schemaNode.isNull())
   {
     std::cout << "Bad DroneSchema : <Schema> tag not found for metagear!" << std::endl;
@@ -48,38 +48,38 @@ void MetaGear::load(QDomElement &parent)
   QDomElement schemaElem = schemaNode.toElement();  
   _schema.load(schemaElem);
   
-	createPlugs();
+  createPlugs();
 }
 
 void MetaGear::createPlugs()
 {
-	//for now we will expose all inputs and outputs
-	
-	//clear plugs first, we will recreate them
-	_plugs.clear();
-	
-	
-	std::list<Gear*> gears = _schema.getGears();
-	
-	std::list<AbstractPlug*> inputs;
-	std::list<AbstractPlug*> outputs;
+  //for now we will expose all inputs and outputs
+  
+  //clear plugs first, we will recreate them
+  _plugs.clear();
+  
+  
+  std::list<Gear*> gears = _schema.getGears();
+  
+  std::list<AbstractPlug*> inputs;
+  std::list<AbstractPlug*> outputs;
 
-	for(std::list<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
-	{
-		(*gearIt)->getInputs(inputs);
-		for(std::list<AbstractPlug*>::iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
-		{
-			addPlug(*plugIt);
-		}
+  for(std::list<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
+  {
+    (*gearIt)->getInputs(inputs, true);
+    for(std::list<AbstractPlug*>::iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
+    {
+      addPlug(*plugIt);
+    }
 
-		(*gearIt)->getOutputs(outputs);
-		for(std::list<AbstractPlug*>::iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
-		{
-			addPlug(*plugIt);
-		}
-		
-	}
-	
-	getGearGui()->refresh();
-	
+    (*gearIt)->getOutputs(outputs, true);
+    for(std::list<AbstractPlug*>::iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
+    {
+      addPlug(*plugIt);
+    }
+    
+  }
+  
+  getGearGui()->refresh();
+  
 }

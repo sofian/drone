@@ -77,8 +77,8 @@ public:
 
   void updateSettings();//! user must call this method after settings have been modified
 
-  void getInputs(std::list<AbstractPlug*> &inputs) const;
-  void getOutputs(std::list<AbstractPlug*> &outputs) const;
+  void getInputs(std::list<AbstractPlug*> & inputs, bool onlyExposed=false) const;
+  void getOutputs(std::list<AbstractPlug*> &outputs, bool onlyExposed=false) const;
 
   AbstractPlug* getInput(std::string name) const;
   AbstractPlug* getOutput(std::string name) const;
@@ -142,7 +142,7 @@ private:
   void internalPostPlay();    
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &gearElem);
-
+  
   friend void Schema::initGear(Gear* gear) const;
   //friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
   //friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);

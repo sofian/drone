@@ -1,21 +1,21 @@
 /* GearGui.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
- * This file is part of Drone.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+* Copyright (C) 2004 Mathieu Guindon, Julien Keable
+* This file is part of Drone.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
 
 #include "GearGui.h"
 #include "Gear.h"   
@@ -63,8 +63,8 @@ _boxNameColor(color)
   if (updateRate>=0)
     startTimer(updateRate);
 
-	refresh();
-	
+  refresh();
+  
 }
 
 GearGui::~GearGui()
@@ -78,12 +78,12 @@ GearGui::~GearGui()
 
 int GearGui::renderingStartX()
 {
-	return x() + RENDERING_OFFSET;
+  return x() + RENDERING_OFFSET;
 }
 
 int GearGui::renderingStartY()
 {
-	return y() + RENDERING_OFFSET;
+  return y() + RENDERING_OFFSET;
 }
 
 //!create plugBoxes from the parent gear plugs
@@ -93,109 +93,109 @@ int GearGui::renderingStartY()
 void GearGui::refresh()
 {
 
-	//delete and remove inputplugboxes that we dont have anymore
-	//we also erase plugs in inputs that we already have
+  //delete and remove inputplugboxes that we dont have anymore
+  //we also erase plugs in inputs that we already have
   std::list<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
-	
-	std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
-	for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
-	{
-		bool found=false;
-		std::list<AbstractPlug*>::iterator it;
-		for (it = inputs.begin(); it != inputs.end(); ++it)
-		{
-				if ((*plugBoxit)->plug() == (*it))
-				{
-					found=true;
-					inputs.erase(it);
-					break;
-				}
-		}	
-		
-		if (!found)
-		{
-			inputsToRemove.push_back(plugBoxit);
-			delete (*it);
-		}
-	}
-
-	for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = inputsToRemove.begin(); it != inputsToRemove.end(); ++it)
-		_inputPlugBoxes.erase(*it);
-
-	
-	//delete and remove output plugboxes that we dont have anymore
-	//we also erase plugs in outputs that we already have
-	std::list<AbstractPlug*> outputs;
-  _gear->getOutputs(outputs);
-	
-	std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
-	for (std::vector<PlugBox*>::iterator plugBoxit = _outputPlugBoxes.begin(); plugBoxit != _outputPlugBoxes.end(); ++plugBoxit)
-	{
-		bool found=false;
-		std::list<AbstractPlug*>::iterator it;
-		for (it = outputs.begin(); it != outputs.end(); ++it)
-		{
-			if ((*plugBoxit)->plug() == (*it))
-			{
-				found=true;
-				outputs.erase(it);
-				break;
-			}
-		}	
-		
-		if (!found)
-		{
-			outputsToRemove.push_back(plugBoxit);
-			delete (*it);
-		}
-	}
-
-	for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = outputsToRemove.begin(); it != outputsToRemove.end(); ++it)
-		_outputPlugBoxes.erase(*it);
-	 
-	 
-  //now create missing plugboxes
-	PlugBox *plugBox;
-	for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
+  
+  std::vector<std::vector<PlugBox*>::iterator> inputsToRemove;
+  for (std::vector<PlugBox*>::iterator plugBoxit = _inputPlugBoxes.begin(); plugBoxit != _inputPlugBoxes.end(); ++plugBoxit)
   {
-		plugBox = new PlugBox(*it, this);
+    bool found=false;
+    std::list<AbstractPlug*>::iterator it;
+    for (it = inputs.begin(); it != inputs.end(); ++it)
+    {
+        if ((*plugBoxit)->plug() == (*it))
+        {
+          found=true;
+          inputs.erase(it);
+          break;
+        }
+    }
+    
+    if (!found)
+    {
+      inputsToRemove.push_back(plugBoxit);
+      delete (*it);
+    }
+  }
+
+  for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = inputsToRemove.begin(); it != inputsToRemove.end(); ++it)
+    _inputPlugBoxes.erase(*it);
+
+  
+  //delete and remove output plugboxes that we dont have anymore
+  //we also erase plugs in outputs that we already have
+  std::list<AbstractPlug*> outputs;
+  _gear->getOutputs(outputs);
+  
+  std::vector<std::vector<PlugBox*>::iterator> outputsToRemove;
+  for (std::vector<PlugBox*>::iterator plugBoxit = _outputPlugBoxes.begin(); plugBoxit != _outputPlugBoxes.end(); ++plugBoxit)
+  {
+    bool found=false;
+    std::list<AbstractPlug*>::iterator it;
+    for (it = outputs.begin(); it != outputs.end(); ++it)
+    {
+      if ((*plugBoxit)->plug() == (*it))
+      {
+        found=true;
+        outputs.erase(it);
+        break;
+      }
+    }	
+    
+    if (!found)
+    {
+      outputsToRemove.push_back(plugBoxit);
+      delete (*it);
+    }
+  }
+
+  for (std::vector<std::vector<PlugBox*>::iterator>::iterator it = outputsToRemove.begin(); it != outputsToRemove.end(); ++it)
+    _outputPlugBoxes.erase(*it);
+  
+  
+  //now create missing plugboxes
+  PlugBox *plugBox;
+  for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
+  {
+    plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _inputPlugBoxes.push_back(plugBox);
   }
-		
+    
   for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
   {
     plugBox = new PlugBox(*it, this);
     _plugBoxes.push_back(plugBox);
     _outputPlugBoxes.push_back(plugBox);
   }
-	
-	
+  
+  
   //calculate _sizeY for plugboxes fitting
   int maxPlugs = _inputPlugBoxes.size() > _outputPlugBoxes.size() ? _inputPlugBoxes.size() : _outputPlugBoxes.size();
-	
+  
   int newSizeY = ((maxPlugs+1) * PLUGBOXES_NOMINAL_INTERVAL) + NAME_SIZEY;
-	
+  
   //fit to desired sizeY
   if (newSizeY > _sizeY)
     _sizeY = newSizeY;
-	
+  
   if (_inputPlugBoxes.size())
     _inputsInterval = (_sizeY - NAME_SIZEY) / (_inputPlugBoxes.size()+1);
   else
     _inputsInterval = 0;
-	
+  
   if (_outputPlugBoxes.size())
     _outputsInterval = (_sizeY - NAME_SIZEY) / (_outputPlugBoxes.size()+1);
   else
     _outputsInterval = 0;
-	
+  
   //now set the size for this QCanvasItem
-	//we want a larger rect for shadow and rendering offset
-	//since plugs get out of the gear rect
+  //we want a larger rect for shadow and rendering offset
+  //since plugs get out of the gear rect
   setSize(_sizeX + SHADOW_OFFSET + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
-	
+  
 }
 
 void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
@@ -294,7 +294,7 @@ void GearGui::performPlugHighligthing(const QPoint &p)
     plugbox = *it;
 
     if (plugbox->hitted(p.x(), p.y()))
-       plugbox->hilight(true);
+      plugbox->hilight(true);
     else
       plugbox->hilight(false);
   }
@@ -309,10 +309,10 @@ void GearGui::performPlugHighligthing(PlugBox *plugBox)
     if ((*it)!=plugBox)    
       (*it)->hilight(false);
   
-   if (plugBox)
-     plugBox->hilight(true);
+  if (plugBox)
+    plugBox->hilight(true);
   
- reDraw();
+reDraw();
 }
 
 void GearGui::unHilightAllPlugBoxes()

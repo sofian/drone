@@ -1,21 +1,21 @@
 /* AbstractPlug.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
- * This file is part of Drone.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+* Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+* This file is part of Drone.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
 
 #include <assert.h>
 #include <iostream>
@@ -33,7 +33,7 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const A
   _parent(parent), 
   _inOut(inOut), 
   _name(name),
-	_exposed(false)
+  _exposed(false)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);
@@ -42,19 +42,6 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const A
 AbstractPlug::~AbstractPlug()
 {
   disconnectAll();
-}
-
-
-bool AbstractPlug::canStartConnection()
-{
-  //assurer seulement une connection par input
-  if (_inOut == IN)
-  {
-    if (!_connectedPlugs.empty())
-      return false;
-  }
-
-  return true;
 }
 
 bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
@@ -82,8 +69,12 @@ bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
       if (!_connectedPlugs.empty())
         return false;
     } else
+    {
       if (!plug->_connectedPlugs.empty())
-      return false;
+      {
+        return false;
+      }
+    }
   }
   return true;
 }
@@ -94,6 +85,13 @@ bool AbstractPlug::connect(AbstractPlug *plug)
 
   if (!canConnect(plug))
     return false;
+    
+  //remove exposition
+  if(this->inOut() == IN)
+    exposed(false);
+    
+  if(plug->inOut() == IN)
+    plug->exposed(false);
 
   //ajouter la nouvelle plug a nos connections
   _connectedPlugs.push_back(plug);        
@@ -173,4 +171,21 @@ std::string AbstractPlug::shortName(int nbChars) const
   }
 
   return abbrev;
+}
+
+/**
+* Change the metagear exposition status of the plug.
+*
+* @param exp The new metagear expose for the plug. The status will remain unchange
+*            if the plug is plug <code>IN</code> type and actually connected.
+*/
+void AbstractPlug::exposed(bool exp)
+{
+  if((this->inOut() == IN) && (this->connected()))
+  {
+    return;
+  } else
+  {
+    this->_exposed = exp;
+  }
 }

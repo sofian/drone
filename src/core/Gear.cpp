@@ -140,22 +140,22 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
   }
 }
 
-void Gear::getInputs(std::list<AbstractPlug*> &inputs) const
+void Gear::getInputs(std::list<AbstractPlug*> &inputs, bool onlyExposed) const
 {
   inputs.clear();
   for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
-    if ( ((*it)->inOut() == IN) )
+    if ( ((*it)->inOut() == IN && ((onlyExposed && (*it)->exposed()) || !onlyExposed)) )
       inputs.push_back(*it);
   }    
 }
 
-void Gear::getOutputs(std::list<AbstractPlug*> &outputs) const
+void Gear::getOutputs(std::list<AbstractPlug*> &outputs, bool onlyExposed) const
 {
   outputs.clear();
   for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
-    if ( ((*it)->inOut() == OUT) )
+    if ( ((*it)->inOut() == OUT) && ((onlyExposed && (*it)->exposed()) || !onlyExposed) )
       outputs.push_back(*it);
   }
 }

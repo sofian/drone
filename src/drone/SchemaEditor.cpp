@@ -31,6 +31,7 @@
 #include <qmainwindow.h>
 
 #include <qcursor.h>
+#include <qlayout.h>
 
 #include <iostream>
 #include <qpainter.h>
@@ -303,11 +304,12 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     //handle double-click on metagear
     if (gearGui!=NULL && gearGui->gear()->isMeta())
     {
-      QMainWindow *wnd = new QMainWindow();  
+      QDialog *wnd = new QDialog();  
+      QBoxLayout *layout = new QVBoxLayout(wnd, 1);
       SchemaGui *tschemaGui = new SchemaGui(gearGui->gear()->getInternalSchema(), _engine);
       SchemaEditor *schemaEditor = new SchemaEditor(wnd, tschemaGui, _engine);
-      wnd->setCentralWidget(schemaEditor); 
-      wnd->show();
+      layout->addWidget(schemaEditor);
+      wnd->exec();
       
       //todo : temp...
       ((MetaGear*)(gearGui->gear()))->createPlugs();

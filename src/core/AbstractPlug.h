@@ -73,9 +73,9 @@ public:
   std::string shortName(int nbChars) const;
   std::string name() const {return _name;};
 
-	bool exposed(){return _exposed;}
-	void exposed(bool exp){_exposed=exp;}
-	
+  bool exposed(){return _exposed;}
+  void exposed(bool exp);
+  
   //virtual ePlugState plugState()=0;
 
 protected:
