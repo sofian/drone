@@ -57,12 +57,9 @@ void SummedAreaTable::getSum(RGBAint *sum, int x0, int y0, int x1, int y1) const
   if (!sum)
     return;
 
-  memset(sum, 0, sizeof(RGBAint)); // reset
-  
   // it is assumed that (x0,y0) <= (x1,y1)
+  *sum = _acc[y1 * _sizeX + x1];
 
-  *sum += _acc[y1 * _sizeX + x1];
-  
   if (x0 >= 0)
     *sum -= _acc[y1 * _sizeX + x0];
   if (y0 >= 0)
@@ -78,11 +75,8 @@ void SummedAreaTable::getSumOfSquares(RGBAint *sumSquares, int x0, int y0, int x
   if (!sumSquares)
     return;
 
-  memset(sumSquares, 0, sizeof(RGBAint)); // reset
-  
   // it is assumed that (x0,y0) <= (x1,y1)
-
-  *sumSquares += _accSquares[y1 * _sizeX + x1];
+  *sumSquares = _accSquares[y1 * _sizeX + x1];
   
   if (x0 >= 0)
     *sumSquares -= _accSquares[y1 * _sizeX + x0];
