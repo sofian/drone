@@ -7,10 +7,10 @@
 #include <stdio.h>
 
 /**
- * This class implements Xialin Wu's color quantizer. The code was taken from his website
+ * This class implements Xiaolin Wu's color quantizer. The code was taken from his website
  * (see http://www.ece.mcmaster.ca/~xwu/cq.c).
  *
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sébastien Senécal, Xiaolin Wu
  * @version %I% %G%
  */
 class Gear_ColorQuantize : public Gear  
