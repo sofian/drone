@@ -27,6 +27,7 @@
 #include "SignalType.h"
 #include "EnumType.h"
 
+
 #include <libmpeg3.h>
 
 class Gear_VideoSource : public Gear
@@ -61,6 +62,7 @@ private:
 
   VideoRGBAType *_imageOut;
   
+
   mpeg3_t* _file;
 
   int _sizeX, _sizeY;
@@ -70,6 +72,7 @@ private:
   float *_audioBuffer;
   RGBA *_frame[1024];
   //RGBA *_outData;  
+  long _previousFramePos;
 
   int64_t _bytes;
   

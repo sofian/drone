@@ -23,13 +23,16 @@ release {
   p4 {
     QMAKE_CXXFLAGS += -march=pentium4
   }
-  p3 {
-    QMAKE_CXXFLAGS += -march=pentium3
-  }
   athlon {
-    QMAKE_CXXFLAGS += -march=athlon
+    QMAKE_CXXFLAGS += -march=athlon    
   }
+
+  ppc {
+    QMAKE_CXXFLAGS += -march=ppc
+  }
+  
 }
+
 
 TEMPLATE = app
 DEPENDPATH += src
@@ -46,6 +49,7 @@ src/Engine.h \
 src/FrequencyAnalyzer.h \
 src/Gear.h \
 src/types/AbstractType.h \
+src/types/AreaArrayType.h \
 src/types/FFTType.h \
 src/types/ValueType.h \
 src/types/VideoRGBAType.h \
@@ -84,7 +88,7 @@ src/gears/Gear_ImageSource.h \
 src/gears/Gear_KDTree.h \
 src/gears/Gear_ListBox.h \
 src/gears/Gear_MedianFilter.h \
-src/gears/Gear_MotionTrack.h \
+#src/gears/Gear_MotionTrack.h \
 src/gears/Gear_Osc.h \
 src/gears/Gear_Oscilloscope.h \
 src/gears/Gear_PlaceArea.h \
@@ -92,13 +96,14 @@ src/gears/Gear_Rescale.h \
 src/gears/Gear_Spectrogram.h \
 src/gears/Gear_PushButton.h \
 src/gears/Gear_Saturation.h \
-src/gears/Gear_SmearGrid.h \
 src/gears/Gear_SignalStat.h \
 src/gears/Gear_SimpleDelay.h \
 src/gears/Gear_Slider.h \
+src/gears/Gear_SmearGrid.h \
 src/gears/Gear_TouchPad.h \
 src/gears/Gear_TV.h \
 src/gears/Gear_FlatSignal.h \
+src/gears/Gear_ValueGenerator.h \
 src/gears/Gear_VideoAdd.h \
 src/gears/Gear_VideoBlend.h \
 src/gears/Gear_VideoInput.h \
@@ -107,6 +112,7 @@ src/gears/Gear_VideoLoop.h \
 src/gears/Gear_VideoMix.h \
 src/gears/Gear_VideoOutput.h \
 src/gears/Gear_VideoSource.h \
+src/gears/Gear_VideoSymmetry.h \
 src/gears/Gear_VideoSwitch.h \
 src/GearGui.h \
 src/GearConverter.h \
@@ -134,6 +140,7 @@ src/SignalInfo.h \
 src/ThreadUtil.h \
 src/Timing.h \
 src/Typedefs.h \
+src/Utils.h \
 src/VideoInfo.h \	   
 src/VideoOutput.h \
 src/VideoOutputMaker.h \
@@ -180,7 +187,7 @@ src/gears/Gear_ImageSource.cpp \
 src/gears/Gear_KDTree.cpp \
 src/gears/Gear_ListBox.cpp \
 src/gears/Gear_MedianFilter.cpp \
-src/gears/Gear_MotionTrack.cpp \
+#src/gears/Gear_MotionTrack.cpp \
 src/gears/Gear_Osc.cpp \
 src/gears/Gear_Oscilloscope.cpp \
 src/gears/Gear_PlaceArea.cpp \
@@ -195,6 +202,7 @@ src/gears/Gear_Spectrogram.cpp \
 src/gears/Gear_TV.cpp \
 src/gears/Gear_TouchPad.cpp \
 src/gears/Gear_FlatSignal.cpp \
+src/gears/Gear_ValueGenerator.cpp \
 src/gears/Gear_VideoAdd.cpp \
 src/gears/Gear_VideoBlend.cpp \
 src/gears/Gear_VideoInput.cpp \
@@ -203,6 +211,7 @@ src/gears/Gear_VideoLoop.cpp \
 src/gears/Gear_VideoMix.cpp \
 src/gears/Gear_VideoOutput.cpp \
 src/gears/Gear_VideoSource.cpp \
+src/gears/Gear_VideoSymmetry.cpp \
 src/gears/Gear_VideoSwitch.cpp \
 src/GearGui.cpp \
 src/gears/GearGui_ListBox.cpp \

@@ -44,11 +44,11 @@
 Register_Gear(MAKERGear_VideoInput, Gear_VideoInput, "VideoInput");
 
 const std::string Gear_VideoInput::SETTING_DEVICE = "Device";
-const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video1";
+const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video0";
 const std::string Gear_VideoInput::SETTING_WIDTH = "width";
 const std::string Gear_VideoInput::SETTING_HEIGHT = "height";
-const int Gear_VideoInput::DEFAULT_WIDTH = 320;
-const int Gear_VideoInput::DEFAULT_HEIGHT = 240;
+const int Gear_VideoInput::DEFAULT_WIDTH = 640;
+const int Gear_VideoInput::DEFAULT_HEIGHT = 480;
 
 unsigned char *Gear_VideoInput::_data=NULL;
 
@@ -179,12 +179,14 @@ void Gear_VideoInput::postPlay()
 void *Gear_VideoInput::playThread(void *parent)
 {
   Gear_VideoInput *videoInput = (Gear_VideoInput*)parent;
+  
 
   while(videoInput->_playing)
   {  
     if (!videoInput->_frameGrabbed)
     {      
       pthread_mutex_lock(videoInput->_mutex);
+
 
       if (ioctl(videoInput->_device, VIDIOCMCAPTURE, &(videoInput->_vidMMap))<0)
         perror("VIDIOCMCAPTURE");

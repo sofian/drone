@@ -30,9 +30,9 @@
 
 #define NEW_VERSION 1
 #if NEW_VERSION
-#define FILENAME "/home/tatien/faces/Features/featuresFound"
+#define FILENAME "/home/foogy/devel/drone/data/featuresFound/featuresFound"
 #else
-#define FILENAME "/home/tatien/faces/OldFeatures/featuresFound"
+#define FILENAME "/home/foogy/devel/drone/data/featuresFound/featuresFound"
 #endif
 
 class Gear_FaceTrack;

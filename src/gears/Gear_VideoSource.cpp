@@ -36,6 +36,7 @@ Gear_VideoSource::Gear_VideoSource(Engine *engine, std::string name) :
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
+  
   addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
   
   EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, NORMAL);
@@ -85,7 +86,7 @@ void Gear_VideoSource::onUpdateSettings()
   _sizeX = mpeg3_video_width(_file, 0);
   _sizeY = mpeg3_video_height(_file, 0);
 
-  _bytes = mpeg3_get_bytes(_file);
+  _bytes = mpeg3_video_frames(_file,0);
 
   std::cout << "movie size X : " << _sizeX << std::endl;
   std::cout << "movie size Y : " << _sizeY << std::endl;
@@ -111,8 +112,8 @@ void Gear_VideoSource::runVideo()
 
   if ((int)_RESET_IN->type()->value() == 1 ||
       ((ePlaybackMode)_MODE_IN->type()->value() == LOOP &&
-       mpeg3_tell_byte(_file) >= _bytes))
-    mpeg3_seek_byte(_file, 0); // reset
+       mpeg3_get_frame(_file,0) == _bytes))
+    mpeg3_set_frame(_file, 0, 0); // reset
 
   //_image = _VIDEO_OUT->type().image();
   //_outData = _image.data();

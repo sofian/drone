@@ -252,8 +252,10 @@ void *Engine::playThread(void *parent)
   }
 #endif               
 
+
   for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
     (*it)->internalPostPlay();
+
 
 
   return NULL;

@@ -200,8 +200,8 @@ void SchemaEditor::zoom(float factor)
   setWorldMatrix(wm);
 
   
-  worldMatrix().map(x, y, &x, &y);
-  setContentsPos(x-oldcenterx, y-oldcentery);
+  //worldMatrix().map(x, y, &x, &y);
+  //setContentsPos(x-oldcenterx, y-oldcentery);
 
 }
 
@@ -396,6 +396,7 @@ QPopupMenu* SchemaEditor::createGearsMenu()
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
 {    
   QPoint p = inverseWorldMatrix().map(contextMenuEvent->pos());
+  
 
   GearGui *gearGui = testForGearCollision(p);
 

@@ -49,9 +49,7 @@ void Gear_Osc::runAudio()
   float freq  = _PARAM_FREQ->type()->value();
   float amp  = _PARAM_AMP->type()->value();
   
-  int signal_blocksize = Engine::signalInfo().blockSize();
-
-  _currentTime = _engine->currentTime();;
+   _currentTime = _engine->currentTime();
   
   if (_oldFreq!=freq)
   {             

@@ -222,7 +222,10 @@ void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
 
     std::ifstream inFile(fileName, std::ios::binary | std::ios::in);
     if (!inFile.is_open())
+    {   
+      std::cout << "!!!!!!!!!" << std::endl;
       break;
+    }
 
     inFile.seekg(0, std::ios::end);
     int tmp = sizeof(Feature);
