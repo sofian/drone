@@ -99,13 +99,13 @@ void Gear_Saturation::runVideo()
     
       bw = (_r*rwgt + _g*gwgt + _b*bwgt) >> 16;
     
-      _r = (short) (bw + _r*amount);
-      _g = (short) (bw + _g*amount);
-      _b = (short) (bw + _b*amount);
+      _r = (int) (bw + _r*amount);
+      _g = (int) (bw + _g*amount);
+      _b = (int) (bw + _b*amount);
     
-      _imageOut[0] = (unsigned char) CLAMP(_r, (short)0, (short)255);
-      _imageOut[1] = (unsigned char) CLAMP(_g, (short)0, (short)255);
-      _imageOut[2] = (unsigned char) CLAMP(_b, (short)0, (short)255);
+      _imageOut[0] = (unsigned char) CLAMP0255(_r);
+      _imageOut[1] = (unsigned char) CLAMP0255(_g);
+      _imageOut[2] = (unsigned char) CLAMP0255(_b);
     
       _imageIn+=SIZE_RGBA;
       _imageOut+=SIZE_RGBA;

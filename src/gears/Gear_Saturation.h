@@ -46,9 +46,9 @@ private:
 
   int _size;
 
-  short _r;
-  short _g;
-  short _b;
+  int _r;
+  int _g;
+  int _b;
 
   const unsigned char *_imageIn;
   unsigned char *_imageOut;
