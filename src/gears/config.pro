@@ -38,6 +38,7 @@ release {
   }  
 }
 
+INCLUDEPATH += ../contrib/frei0r
 agg {
   QMAKE_CXXFLAGS += -I../../agg2/include
 }

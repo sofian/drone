@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_VIDEOSOURCE_INCLUDED
-#define GEAR_VIDEOSOURCE_INCLUDED
+#ifndef GEAR_IMAGESOURCE_INCLUDED
+#define GEAR_IMAGESOURCE_INCLUDED
 
 
 #include "Gear.h"
