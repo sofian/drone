@@ -41,6 +41,7 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_CONTRAST_IN;
+  PlugIn<ValueType> *_BRIGHTNESS_IN;
 
   //local var
   const VideoRGBAType *_image; 

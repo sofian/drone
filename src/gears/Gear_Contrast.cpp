@@ -33,7 +33,10 @@ Gear_Contrast::Gear_Contrast(Engine *engine, std::string name) : Gear(engine, "C
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127, 0, 255)));
+  addPlug(_CONTRAST_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(255, 0, 1000)));
+  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Bright", new ValueType(0, -255, 255)));
+
+
 }
 
 Gear_Contrast::~Gear_Contrast()
@@ -61,7 +64,7 @@ void Gear_Contrast::runVideo()
   _iterSizeY = _image->height();
 
   int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), -1000.0f, 1000.0f);
-
+  int brightness = _BRIGHTNESS_IN->type()->intValue();
   for (int y=0;y<_iterSizeY;y++)
   {
     _imageIn = (unsigned char*)&_data[y*_iterSizeX];
@@ -69,9 +72,9 @@ void Gear_Contrast::runVideo()
 
     for (int x=0;x<_iterSizeX;x++)
     {
-      _r = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
-      _g = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
-      _b = 128 + ((((contrast) * ( *_imageIn++ - 128)))>>8);
+      _r = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
+      _g = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
+      _b = 128 + ((((contrast) * ( (*_imageIn++ + brightness) - 128)))>>8) ;
 
       *_imageOut++ = CLAMP(_r, (short)0, (short)255);
       *_imageOut++ = CLAMP(_g, (short)0, (short)255);
