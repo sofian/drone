@@ -571,6 +571,31 @@ inline float fastAngle(float x, float y)
   return atan2f(y,x);
 }
 
+extern void initMath();
+
+// Begin fast trigonometric functions.
+
+// This implementation of fast trigonometric functions was taken from
+// the source of Fluxus and is distributed under the GPL.
+// (c) 2005 David Griffiths <dave@pawfal.org>
+
+const int SINCOS_TABLESIZE = 2048;
+extern float sinLut[SINCOS_TABLESIZE];
+extern float cosLut[SINCOS_TABLESIZE];
+extern float SINCOS_LOOKUP;
+
+inline float fastsin(float a)
+{
+  return sinLut[ (int)rint(a*SINCOS_LOOKUP)&SINCOS_TABLESIZE-1 ];
+}
+
+inline float fastcos(float a)
+{
+  return cosLut[ (int)rint(a*SINCOS_LOOKUP)&SINCOS_TABLESIZE-1 ];
+}
+
+// End fast trigonometric functions.
+
 // // warning : theta must be clamped inside some range 0..2PI (see fastcos)
 // inline float fastPolarToX(float rho, float theta)
 // {
@@ -584,7 +609,7 @@ inline float fastAngle(float x, float y)
 // }
 
 //! clamps the value in a mirror fashion :
-//! It is like the interval was infinite, but repeating himself 'mirrorly'
+//! It is like the interval was infinite, but repeating itself 'mirrorly'
 //! e.g: MIRROR_CLAMP(x,0,2) for x={-3,-2,-1,0,1,2,3} gives :
 //! {1,2,1,0,1,2,1}
 //! WARNING : not thread safe because of static variables
@@ -618,19 +643,20 @@ T MIRROR_CLAMP(T t,T low,T high)
 }
 
 //! clamps the value in a repeating fashion :
-//! It is like the interval was infinite, but repeating himself *not* 'mirrorly'
-//! e.g: MIRROR_CLAMP(x,0,2) for x={-3,-2,-1,0,1,2,3} gives :
+//! It is like the interval was infinite, but repeating itself *not* 'mirrorly'
+//! e.g: REPEAT_CLAMP(x,0,2) for x={-3,-2,-1,0,1,2,3} gives :
 //! {0,1,2,0,1,2,0}
 
 template<class T>
 T REPEAT_CLAMP(T t,T low,T high)
 {
-  static T range,off;
-  if(t>=low && t<=high)
-    return t;
-  range = high-low;
-  off=t-low;
-  return low + range * ((off/range)-((int)off/range));
+  ++high; // high = high+1
+  T range = high-low;
+  while (t < low)
+    t += range;
+  while (t >= high)
+    t -= range;
+  return t;
 }
 
 

@@ -131,6 +131,7 @@ GearFrei0r.cpp \
 types/VideoRGBAType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
+Math.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
 MetaGear.cpp \
