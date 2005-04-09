@@ -43,8 +43,8 @@ GearInfo getGearInfo()
 
 Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gear(schema, "VideoRecord", uniqueName)
 {
+  // Inputs.
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
   addPlug(_RECORD = new PlugIn<ValueType>(this, "Record", new ValueType(0, 0, 1)));
   addPlug(_RESET = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
   addPlug(_SEEK = new PlugIn<ValueType>(this, "Seek", new ValueType(0, -125, 125)));
@@ -56,6 +56,10 @@ Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gea
   playbackMode->setLabel(PING_PONG,"Ping pong");
   addPlug(_MODE = new PlugIn<EnumType>(this, "Mode", playbackMode));
 
+  // Outputs.
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+
+  // Internal objects.
   _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
 }
 

@@ -49,13 +49,16 @@ public:
 
 private:
 
+  // Inputs.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_RECORD;
   PlugIn<ValueType> *_RESET;
   PlugIn<ValueType> *_MEMORY;
   PlugIn<ValueType> *_SEEK;
   PlugIn<EnumType> *_MODE;
+
+  // Outputs.
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   //local var
   const VideoRGBAType *_image;
