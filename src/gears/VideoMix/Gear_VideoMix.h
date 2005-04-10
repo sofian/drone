@@ -65,9 +65,7 @@ public:
 
   void runVideo();
 
-  PlugIn<VideoRGBAType>* VIDEO_IN_A(){return _VIDEO_IN_A;}
-  PlugIn<VideoRGBAType>* VIDEO_IN_B(){return _VIDEO_IN_B;}
-  PlugOut<VideoRGBAType>* VIDEO_OUT(){return _VIDEO_OUT;}  bool ready();
+  bool ready();
 
 private:
 
