@@ -5,6 +5,7 @@ SUBDIRS= Osc \
 TV \
 Oscilloscope \
 VideoOutput \
+AlphaMix \
 Blur \
 VideoSource \
 Slider \
@@ -31,6 +32,7 @@ GenDisplaceGrid \
 GrayScale \
 HalfToning \
 Saturation \
+SetAlpha \
 SignalStat \
 SmearGrid \
 Sobel \
@@ -38,8 +40,9 @@ Sobel \
 #VideoLoop \
 ImageShuffle \
 ImageSequence \
-Invert
-#VideoRecord 
+Invert \
+InvertAlpha \
+VideoRecord 
 
 agg {
 SUBDIRS+=AggTest
