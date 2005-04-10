@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef ALPHA_INCLUDED
-#define ALPHA_INCLUDED
+#ifndef ALPHACOMPOSITE_INCLUDED
+#define ALPHACOMPOSITE_INCLUDED
 
 // Unary operators ///////////////////////////////////////////////////////////
 
