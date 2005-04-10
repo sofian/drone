@@ -28,28 +28,55 @@
 #include "ColorSpace.h"
 #include "error.h"
 
-inline unsigned char intensity(const unsigned char *rgb)
-{
-  unsigned int total = *rgb++;
-  total += *rgb;
-  total += *rgb++;
-  total += *rgb;
-  total >>= 2;
+// # RGB to grayscale operations ############################################
 
-  return(unsigned char) total;
+//! Transforms a RGB color to gray.
+inline unsigned char rgb2gray(unsigned char r, unsigned char g, unsigned char b)
+{
+  return
+    (unsigned char) ( ( 19595*(unsigned int)r +
+                        38470*(unsigned int)g +
+                        7471 *(unsigned int)b   ) >> 16 );
 }
 
-#define rgb2gray(r,g,b)  \
-  (unsigned char) ( ( 19595*(unsigned int)(unsigned char)(r) +  \
-             38470*(unsigned int)(unsigned char)(g) +  \
-              7471*(unsigned int)(unsigned char)(b)   ) >> 16 )
+//! Fast version.
+inline unsigned char fastrgb2gray(unsigned char r, unsigned char g, unsigned char b)
+{
+  return (unsigned char) ( ((unsigned int)(r + (g<<1) + b)) >> 2 );
+}
 
-inline void rgba2grayscale(unsigned char *dstGray, const unsigned char *srcRGBA, size_t size)
+//! Vector version. Sets #dst# to the grayscale of #src#.
+inline void grayscaleRGBA(RGBA *dst, const RGBA *src, size_t size)
+{
+  unsigned int gray;
+  unsigned int *it = (unsigned int *)dst;
+  while (size--)
+  {
+    gray = rgb2gray(src->r, src->g, src->b);
+    *it++ = gray | gray<<8 | gray<<16;
+    src++;
+  }
+}
+
+//! Puts in #dst# the grayscale values of #src#.
+inline void grayscaleChannel(unsigned char *dst, const RGBA *src, size_t size)
 {
   while (size--)
   {
-    *dstGray++ = rgb2gray(srcRGBA[0], srcRGBA[1], srcRGBA[2]);
-    srcRGBA+=4;
+    *dst++ = rgb2gray(src->r, src->g, src->b);
+    src++;
+  }
+}
+
+//! Puts the #channelIdx#-th channel of #src# (i.e. one of the IDX_RGBA_{R,G,B,A} constants) in #dst#.
+inline void extractChannel(unsigned char *dst, const RGBA *src, size_t size, int channelIdx)
+{
+  ASSERT_ERROR(0 <= channelIdx && channelIdx < SIZE_RGBA);
+  unsigned char *it = (unsigned char*)(src) + channelIdx; // offset
+  while (size--)
+  {
+    *dst++ = *it;
+    it += SIZE_RGBA;
   }
 }
 
