@@ -98,8 +98,12 @@ void Gear_AlphaMix::runVideo()
   _iterSizeX = MIN(_imageASizeX,_imageBSizeX);
   _iterSizeY = MIN(_imageASizeY,_imageBSizeY);
 
-  _imageInA = (unsigned char *)_imageA->data();
-  _imageInB = (unsigned char *)_imageB->data();
+  _imageASizeX *= SIZE_RGBA;
+  _imageBSizeX *= SIZE_RGBA;
+  _imageOutSizeX *= SIZE_RGBA;
+
+  _imageInA = (const unsigned char *)_imageA->data();
+  _imageInB = (const unsigned char *)_imageB->data();
   _imageOut = (unsigned char *)_outImage->data();
   
   switch (_mixType)
