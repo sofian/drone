@@ -68,10 +68,10 @@ void alpha_opaque(unsigned char *src,
   }  
 }
 
-void alpha_over(const unsigned char *src1,
+void alpha_over(unsigned char *dst,
+                const unsigned char *src1,
                 const unsigned char *src2,
-                unsigned int n,
-                unsigned char *dst)
+                unsigned int n)
 {
   unsigned int b;
   unsigned char w2;
@@ -87,10 +87,10 @@ void alpha_over(const unsigned char *src1,
   }
 }
 
-void alpha_in(const unsigned char *src1,
+void alpha_in(unsigned char *dst,
+              const unsigned char *src1,
               const unsigned char *src2,
-              unsigned int n,
-              unsigned char *dst)
+              unsigned int n)
 {
   unsigned int b;
   unsigned char w1;
@@ -106,10 +106,10 @@ void alpha_in(const unsigned char *src1,
   }
 }
 
-void alpha_out(const unsigned char *src1,
+void alpha_out(unsigned char *dst,
+               const unsigned char *src1,
                const unsigned char *src2,
-               unsigned int n,
-               unsigned char *dst)
+               unsigned int n)
 {
   unsigned int b;
   unsigned char w1;
@@ -125,10 +125,10 @@ void alpha_out(const unsigned char *src1,
   }
 }
 
-void alpha_atop(const unsigned char *src1,
+void alpha_atop(unsigned char *dst,
+                const unsigned char *src1,
                 const unsigned char *src2,
-                unsigned int n,
-                unsigned char *dst)
+                unsigned int n)
 {
   unsigned int b;
   unsigned char w1, w2;
@@ -145,10 +145,10 @@ void alpha_atop(const unsigned char *src1,
   }
 }
 
-void alpha_xor(const unsigned char *src1,
+void alpha_xor(unsigned char *dst,
+               const unsigned char *src1,
                const unsigned char *src2,
-               unsigned int n,
-               unsigned char *dst)
+               unsigned int n)
 {
   unsigned int b;
   unsigned char w1, w2;
