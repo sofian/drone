@@ -69,7 +69,7 @@ private:
   int _nColors;
 
   
-  // Begin Wu' code.
+  // Begin Wu's code.
   
   /**********************************************************************
 	    C Implementation of Wu's Color Quantizer (v. 2)
