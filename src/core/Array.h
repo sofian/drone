@@ -88,6 +88,8 @@ public:
    */
   pointer data() { return &front(); }
 
+  // DEPRECATED : use std::vector::empty() method instead.
+  bool isNull() const { return empty(); }
 };
 
 #endif
