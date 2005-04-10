@@ -270,8 +270,8 @@ void Gear_ClusteredDither::updateAngle(int channel)
     {
       double theta_c = *thetaIt + angle;
       
-      int rx = (int)rint(*rIt * cos(theta_c) );
-      int ry = (int)rint(*rIt * sin(theta_c) );
+      int rx = (int)rint(*rIt * fastcos(theta_c) );
+      int ry = (int)rint(*rIt * fastsin(theta_c) );
       
       /* Make sure rx and ry are positive and within
        * the range 0 .. width-1 (incl).  Can't use %
