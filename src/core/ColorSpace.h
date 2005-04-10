@@ -35,6 +35,13 @@
 #define SIZE_CMYKA 5
 #define SIZE_GRAYSCALE_ALPHA 2
 
+#define IDX_RGBA_R 0
+#define IDX_RGBA_G 1
+#define IDX_RGBA_B 2
+#define IDX_RGBA_A 3
+
+// XXX il manque des definitions...
+
 // RGBA
 
 struct RGBA
@@ -100,12 +107,15 @@ struct RGBAfloat
   float r, g, b, a;
 };
 
-const RGBA BLACK_RGBA = RGBA( 0, 0, 0, 0 );
-const RGBA WHITE_RGBA = RGBA( 255, 255, 255, 0 );
-const RGBAint BLACK_RGBAint = RGBAint( 0, 0, 0, 0 );
-const RGBAint WHITE_RGBAint = RGBAint( 255, 255, 255, 0 );
-const RGBAfloat BLACK_RGBAfloat = RGBAfloat( 0, 0, 0, 0 );
-const RGBAfloat WHITE_RGBAfloat = RGBAfloat( 255, 255, 255, 0 );
+const RGBA BLACK_RGBA = RGBA( 0, 0, 0, 255 );
+const RGBA WHITE_RGBA = RGBA( 255, 255, 255, 255 );
+const RGBA CLEAR_RGBA = RGBA( 0, 0, 0, 0 );
+const RGBAint BLACK_RGBAint = RGBAint( 0, 0, 0, 255 );
+const RGBAint WHITE_RGBAint = RGBAint( 255, 255, 255, 255 );
+const RGBA CLEAR_RGBAint = RGBA( 0, 0, 0, 0 );
+const RGBAfloat BLACK_RGBAfloat = RGBAfloat( 0, 0, 0, 255 );
+const RGBAfloat WHITE_RGBAfloat = RGBAfloat( 255, 255, 255, 255 );
+const RGBA CLEAR_RGBAfloat = RGBA( 0, 0, 0, 0 );
 
 // HSVA
 
