@@ -19,6 +19,7 @@
 
 #include "Gear_GrayScale.h"
 #include "Engine.h"
+#include "Utils.h"
 
 #include "Array2DType.h"
 
@@ -46,6 +47,7 @@ Gear_GrayScale::Gear_GrayScale(Schema *schema, std::string uniqueName) : Gear(sc
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT"));
+  addPlug(_CHANNEL_OUT = new PlugOut<VideoChannelType>(this,"ChOUT"));
 }
 
 Gear_GrayScale::~Gear_GrayScale()
@@ -55,7 +57,7 @@ Gear_GrayScale::~Gear_GrayScale()
 
 bool Gear_GrayScale::ready()
 {
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
+  return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _CHANNEL_OUT->connected()));
 }
 
 void Gear_GrayScale::runVideo()
@@ -67,38 +69,31 @@ void Gear_GrayScale::runVideo()
 
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
-  _size = _image->size();
+  _outChannel->resize(_image->width(), _image->height());
 
-  if (_image->isGray()) // already gray
-    memcpy(_outImage->data(), _image->data(), _image->size() * sizeof(RGBA));
-  else
+  //! XXX si les deux sont connectés, y a moyen de faire ça plus vite...
+  
+  if (_CHANNEL_OUT->connected())
   {
-    _imageIn  = (unsigned char*)_image->data();
-    _imageOut = (unsigned int*) _outImage->data();
-
-    int total;
-    
-    for (int p=0; p<_size; ++p)
-    {
-      // add everything
-      // 0.25 * R + 0.5 * G + 0.25 * B
-      // XXX another option (a little less efficient) comes from Qt : they use (r*11 + g*16 + b*5)/32 (division could be obtained with a shift)
-      total = *_imageIn++;
-      total += *_imageIn;
-      total += *_imageIn++;
-      total += *_imageIn++;
-      _imageIn++;
-      
-      // divide by 4
-      total >>= 2;
-      
-      //        R = total | G = total | B = total
-      *_imageOut++ = total | total<<8 | total <<16;
-    }
+    if (_image->isGray()) // already gray
+      extractChannel((unsigned char*)_outChannel->data(), _image->data(), _image->size(), IDX_RGBA_R); // extract one of the channels
+    else
+      grayscaleChannel((unsigned char*)_outChannel->data(), _image->data(), _image->size());
   }
 
-  // Output image is now gray.
-  _outImage->setIsGray(true);
+  if (_VIDEO_OUT->connected())
+  {
+    if (_image->isGray()) // already gray
+      memcpy(_outImage->data(), _image->data(), _image->size() * sizeof(RGBA));
+    else
+      grayscaleRGBA(_outImage->data(), _image->data(), _image->size());
+
+    // XXX si c'est trop slow, utiliser fastrgb2gray
+
+    // Output image is now gray.
+    _outImage->setIsGray(true);
+  }
+  
 }
 
 

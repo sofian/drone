@@ -12,5 +12,5 @@ unix:!macx:TARGET=../../../gears/Gear_GrayScale
 #osx
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_GrayScale
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
-
+macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 

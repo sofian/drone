@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 #include "VideoRGBAType.h"
-
+#include "VideoChannelType.h"
 
 class Gear_GrayScale : public Gear
 {
@@ -40,15 +40,18 @@ private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugOut<VideoChannelType> *_CHANNEL_OUT;
   
   //local var
   const VideoRGBAType *_image; 
-  VideoRGBAType *_outImage; 
+  VideoRGBAType *_outImage;
+  VideoChannelType *_outChannel; 
 
-  int _size;
+//   //  int _size;
 
-  unsigned int *_imageOut;
-  unsigned char *_imageIn;
+//   unsigned int *_imageOut;
+//   unsigned char *_channelOut;
+//   unsigned char *_imageIn;
 
 
 
