@@ -53,10 +53,16 @@ public:
   
 private:
 
+  inline void decimate(float* destIt, float* source, unsigned
+  int source_size);
+                                        
   inline void addSample(float sample); // add sample to buffer and autocorrelation
   inline void applyDecay();
 
   PlugIn<SignalType>*   _AUDIO_IN;
+  PlugIn<ValueType>*    _SMOOTH_DECAY;
+  PlugIn<ValueType>*    _ACORR_DECAY;
+  PlugIn<ValueType>*    _ACORR_DECAY_STEP;
   
   PlugOut<VideoRGBAType> *_ACORR_VIDEO_OUT;
   VideoRGBAType*          _pOutImage;
@@ -86,6 +92,8 @@ private:
   unsigned int          _acorrDecayCounter;
   unsigned int          _acorrDecayStep;
   
+  float                 _workingSampleRate;
+  unsigned int          _factor;
   
   unsigned int  _whenChkStep;
   unsigned int  _whenChkSize;
@@ -93,6 +101,8 @@ private:
   unsigned int  _dbgStep;
   unsigned int  _dbgSize;
 };
+
+
 
 
 template <typename T, typename ItSource, typename ItDest>
