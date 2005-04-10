@@ -73,7 +73,7 @@ void Gear_SetAlpha::runVideo()
   _outImage->resize(_image->width(), _image->height());
   std::copy(_image->begin(), _image->end(), _outImage->begin());
   
-  alpha_set((unsigned char*)_outImage->data(), _mask->data(), _image->size());
+  alpha_set((unsigned char*)_outImage->data(), _mask->data(), _outImage->size());
 }
 
 
