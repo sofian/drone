@@ -27,6 +27,7 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "Math.h"
 #include "Utils.h"
 #include <qsettings.h>
 
@@ -34,6 +35,7 @@ QSettings globalSettings;
 
 void global_init(void)
 {
+  initMath();
   paint_funcs_setup();
 }
 
