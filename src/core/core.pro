@@ -71,8 +71,8 @@ Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
 ConnectionItem.h \
-Control.h \
 ControlPanel.h \
+Control.h \
 Engine.h \
 Gear.h \
 GearFrei0r.h \
@@ -119,12 +119,13 @@ XMLHelper.h \
 RtMidi/RtMidi.h \
 RtMidi/RtError.h \
 composite/Composite.h \
-composite/CompositeGeneric.h
+composite/CompositeGeneric.h \
+composite/AlphaComposite.h
  
 SOURCES += error.cpp \
 ConnectionItem.cpp \
-Control.cpp \
 ControlPanel.cpp \
+Control.cpp \
 Engine.cpp \
 Gear.cpp \
 GearFrei0r.cpp \
@@ -150,5 +151,5 @@ VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
 composite/Composite.cpp \
-composite/CompositeGeneric.cpp
-
+composite/CompositeGeneric.cpp \
+composite/AlphaComposite.cpp
