@@ -64,7 +64,7 @@ void Gear_SetAlpha::runVideo()
   _image = _VIDEO_IN->type();
   _mask = _ALPHA_MASK_IN->type();
   
-  if (_image->isNull())
+  if (_image->isNull() || _mask->isNull())
     return;
 
   ASSERT_ERROR(_image->width() == _mask->width() && _image->height() == _mask->height());
