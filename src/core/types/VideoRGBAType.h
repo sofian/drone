@@ -46,8 +46,7 @@ public:
 
   bool isGray() const { return _isGray; }
   void setIsGray(bool isGray) { _isGray = isGray; }
-  bool isNull() const {return  (width()<=0 || height()<=0);} 
-  
+    
   unsigned int toTexture(bool forceRecreate=false) const;
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
