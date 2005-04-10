@@ -1,5 +1,5 @@
 /* Gear_VideoRecord.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004--2005 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,30 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_VideoRecord_INCLUDED
-#define GEAR_VideoRecord_INCLUDED
+#ifndef GEAR_VIDEORECORD_INCLUDED
+#define GEAR_VIDEORECORD_INCLUDED
 
 
 #include "Gear.h"
-#include "VideoRGBAType.h"
-#include "ValueType.h"
 #include "SignalType.h"
+#include "VideoRGBAType.h"
 #include "EnumType.h"
 
-#include "avcodec.h"
-#include "avformat.h"
+template <class T>
+class CircularBuffer;
 
 class Gear_VideoRecord : public Gear
 {
 public:
   enum ePlaybackMode
   {
-    NORMAL,
-    LOOP,
+    FORWARD,
+    BACKWARD,
+    PING_PONG,
     N_PLAYBACK_MODE
   };
-  
-  static const std::string SETTING_FILENAME;
 
   Gear_VideoRecord(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoRecord();
@@ -49,35 +47,32 @@ public:
 
   bool ready();
 
-protected:
-  void onUpdateSettings();
-
 private:
 
-  void freeResources();
-
+  // Inputs.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
-  PlugIn<SignalType> *_AUDIO_IN;
-  PlugIn<ValueType> *_RESET_IN;
+  PlugIn<ValueType> *_RECORD;
+  PlugIn<ValueType> *_RESET;
+  PlugIn<ValueType> *_MEMORY;
+  PlugIn<ValueType> *_SEEK;
+  PlugIn<EnumType> *_MODE;
 
-  VideoRGBAType *_imageOut;
+  // Outputs.
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
-  //locals
+  //local var
+  const VideoRGBAType *_image;
+  VideoRGBAType *_outImage;
+
+  CircularBuffer<RGBA> * _circbuf;
+
+  int _currentLoopFrame;
+  int _currentSeekFrame;
+  int _nLoopFrames;
+  int _memory;
+  int _playbackMode;
   
-  float *_audioBuffer;
-  //RGBA *_outData;  
-  long _previousFramePos;
-
-  //ffmpeg
-  AVFormatContext *_formatContext;  
-  AVCodecContext *_codecContext;
-  AVCodec *_codec;
-  AVPacket _packet;
-  AVFrame *_frame;
-  AVFrame *_frameRGBA;
-  uint8_t *_buffer;
-  int _videoStreamIndex;
-  int64_t _firstFrameTime;
+  void init();
 };
 
 #endif

@@ -1,5 +1,5 @@
 /* Gear_VideoRecord.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2004--2005 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,207 +16,126 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//inspired from Using libavformat and libavcodec by Martin Böhme (boehme@inb.uni-luebeckREMOVETHIS.de) 
 
-
-#include <iostream>
 #include "Gear_VideoRecord.h"
 #include "Engine.h"
+#include "CircularBuffer.h"
+
+#include <iostream>
 
 #include "GearMaker.h"
 
-extern "C" {           
-  Gear* makeGear(Schema *schema, std::string uniqueName)
-  {
-    return new Gear_VideoRecord(schema, uniqueName);
-  }  
-  GearInfo getGearInfo()
-  {
-    GearInfo gearInfo;
-    gearInfo.name = "VideoRecord";
-    gearInfo.classification = GearClassifications::video().IO().instance();
-    return gearInfo;
-  }
+
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_VideoRecord(schema, uniqueName);
 }
 
-const std::string Gear_VideoRecord::SETTING_FILENAME = "Filename";
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoRecord";
+  gearInfo.classification = GearClassifications::video().time().instance();
+  return gearInfo;
+}
+}
 
-Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : 
-Gear(schema, "VideoRecord", uniqueName),
-_formatContext(NULL),
-_codecContext(NULL),
-_codec(NULL),
-_frame(NULL),
-_frameRGBA(NULL),
-_buffer(NULL)
-{    
-  addPlug(_VIDEO_IN = new PlugOut<VideoRGBAType>(this, "ImgIn"));
-  addPlug(_AUDIO_IN = new PlugOut<SignalType>(this, "AudioIn"));
+Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gear(schema, "VideoRecord", uniqueName)
+{
+  // Inputs.
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_RECORD = new PlugIn<ValueType>(this, "Record", new ValueType(0, 0, 1)));
+  addPlug(_RESET = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
+  addPlug(_SEEK = new PlugIn<ValueType>(this, "Seek", new ValueType(0, -125, 125)));
+  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
 
-  addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
+  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
+  playbackMode->setLabel(FORWARD,"Foward");
+  playbackMode->setLabel(BACKWARD,"Backward");
+  playbackMode->setLabel(PING_PONG,"Ping pong");
+  addPlug(_MODE = new PlugIn<EnumType>(this, "Mode", playbackMode));
 
-  _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
+  // Outputs.
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
 
-  av_register_all();
+  // Internal objects.
+  _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
 }
 
 Gear_VideoRecord::~Gear_VideoRecord()
 {
-  freeResources();
+}
+
+void Gear_VideoRecord::init()
+{
+  _currentLoopFrame = 0;
+  _nLoopFrames = 0;
 }
 
 bool Gear_VideoRecord::ready()
 {
-  return(_VIDEO_OUT->connected() || _AUDIO_OUT->connected());
-}
-
-void Gear_VideoRecord::freeResources()
-{
-  if (_buffer)  
-    delete [] _buffer;
-  
-  if (_frameRGBA)  
-    av_free(_frameRGBA);
-  
-  if (_frame)  
-    av_free(_frame);
-  
-  if (_codecContext)
-    avcodec_close(_codecContext);
-  
-  if (_formatContext)
-    av_close_input_file(_formatContext);
-}
-
-void Gear_VideoRecord::onUpdateSettings()
-{
-
-  std::cout << "opening movie : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
-
-  //free previously allocated structures
-  freeResources();
-
-  if (av_open_input_file(&_formatContext, _settings.get(SETTING_FILENAME)->valueStr().c_str(), NULL, 0, NULL)<0)
-  {
-    std::cout << "fail to open movie!" << std::endl;
-    return;
-  }
-
-  if (av_find_stream_info(_formatContext)<0)
-  {
-    std::cout << "fail to find stream info!" << std::endl;
-    return;
-  }
-
-  dump_format(_formatContext, 0, _settings.get(SETTING_FILENAME)->valueStr().c_str(), 0);
-
-  _videoStreamIndex=-1;
-  for (int i=0; i<_formatContext->nb_streams; i++)
-    if (_formatContext->streams[i]->codec.codec_type == CODEC_TYPE_VIDEO)
-    {
-      _videoStreamIndex=i;
-      break;
-    }
-
-  if (_videoStreamIndex<0)
-  {
-    std::cout << "no video stream!" << std::endl;
-    return;
-  }
-
-  _codecContext=&(_formatContext->streams[_videoStreamIndex]->codec);       
-  _codec = avcodec_find_decoder(_codecContext->codec_id);
-  if (!_codec)
-  {
-    std::cout << "no appropriate codec found!" << std::endl;
-    return;
-  }
-
-  std::cout << "using codec : " << _codec->name << std::endl;
-  if (avcodec_open(_codecContext, _codec ) < 0)
-  {
-    std::cout << "fail to open codec!" << std::endl;
-    return;       
-  }
-
-  // Hack to correct wrong frame rates that seem to be generated by some 
-  // codecs
-  if (_codecContext->frame_rate>1000 && _codecContext->frame_rate_base==1)
-    _codecContext->frame_rate_base=1000;
-
-  // Allocate video frame
-  _frame=avcodec_alloc_frame();
-  if (_frame==NULL)
-  {
-    std::cout << "fail to allocate frame!" << std::endl;
-    return;
-  }
-
-  // Allocate rgba frame
-  _frameRGBA=avcodec_alloc_frame();
-  if (_frameRGBA==NULL)
-  {
-    std::cout << "fail to allocate frame!" << std::endl;
-    return;
-  }
-
-  // Determine required buffer size and allocate buffer
-  int numBytes=avpicture_get_size(PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
-  _buffer=new uint8_t[numBytes];
-
-  // Assign appropriate parts of buffer to image planes in _frameRGBA
-  avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
-
-  _firstFrameTime=_formatContext->start_time;
+  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoRecord::runVideo()
 {
-  int frameFinished=0;
+  _image = _VIDEO_IN->type();
+  if (_image->isNull())
+    return;
 
+  _outImage = _VIDEO_OUT->type();
+  _outImage->resize(_image->width(), _image->height());
+
+  _playbackMode = CLAMP((ePlaybackMode)_MODE->type()->value(), FORWARD, PING_PONG);
+  _memory = MAX(_MEMORY->type()->intValue(), 0);
+
+  // Resize circular buffer to memory size.
+  _circbuf->resize((int)_image->size(), _memory);
+
+  // Reset switch.
+  if ((int)_RESET->type()->value() == 1)
+  {
+    NOTICE("Reset");
+    _currentLoopFrame = 0;
+    _nLoopFrames = 0;
+  }
+
+  // Record switch.
+  if ((int)_RECORD->type()->value() == 1)
+  {
+    // Now recording...
+    _circbuf->append(_image->data()); // append current image
+    _nLoopFrames++; // update number of frames
+  }
+
+  // Make sure number of frames fit in memory
+  _nLoopFrames = MIN(_nLoopFrames,_memory);
+
+  // Playback.
+  if (_nLoopFrames > 0)
+  {
+    // Play it.
+    switch (_playbackMode)
+    {
+    case FORWARD:
+      _currentSeekFrame = REPEAT_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
+      _currentLoopFrame = (_currentLoopFrame + 1 % _nLoopFrames);
+      break;
+    case BACKWARD:
+      _currentSeekFrame = REPEAT_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
+      _currentLoopFrame = (_currentLoopFrame==0? _nLoopFrames-1 : _currentLoopFrame-1);
+      break;
+    case PING_PONG:
+      _currentSeekFrame = MIRROR_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
+      _currentLoopFrame = (_currentLoopFrame + 1 % _nLoopFrames);
+      break;
+    }
+
+    // Fill output image with current frame.
+    _circbuf->fillVectorFromBlock(_outImage, _currentSeekFrame -_nLoopFrames + 1);
+  }
+  else // default: play input image
+    std::copy(_image->begin(), _image->end(), _outImage->begin());
   
-  _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
-
-  if ((int)_RESET_IN->type()->value() == 1)
-  {
-    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
-  }
-    
-  //loop until we get a videoframe
-  //if we reach end, return to the beginning
-  if (av_read_frame(_formatContext, &_packet)<0)
-    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
-  while (_packet.stream_index!=_videoStreamIndex)
-  {    
-    av_free_packet(&_packet);
-    if (av_read_frame(_formatContext, &_packet)<0)
-      av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
-  }
-  
-  // Decode video frame
-  do
-  {
-    avcodec_decode_video(_codecContext, _frame, &frameFinished, _packet.data, _packet.size);
-  } while (!frameFinished);
-
-
-  // Convert the image from its native format to RGBA
-  img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGB24, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);
-
-  register char *out=(char*)_VIDEO_OUT->type()->data();
-  register char *in=(char*)_frameRGBA->data[0];  
-  register int size=_codecContext->width*_codecContext->height;
-  for (register int i=0;i<size;i++)
-  {
-    *out++=*in++;
-    *out++=*in++;
-    *out++=*in++;
-    out++;
-  }
-
-  // Free the packet that was allocated by av_read_frame
-  av_free_packet(&_packet);
 }
-
-
-
