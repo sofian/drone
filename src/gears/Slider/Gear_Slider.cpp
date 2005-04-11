@@ -101,7 +101,7 @@ void Gear_Slider::onUpdateSettings()
   getGearGui()->reDraw();
 
   //tell the control slider to update his range and value
-  getControl()->onUpdate();
+  //getControl()->onUpdate();
 
   _acceptHint = false;
 }

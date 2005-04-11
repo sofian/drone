@@ -503,5 +503,5 @@ void SchemaEditor::removeGear(GearGui *gear)
 void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
 {
   //create and associate a control panel with this metagear
-  _panelScrollView->addControlPanel(metaGear);    
+  //_panelScrollView->addControlPanel(metaGear);    
 }

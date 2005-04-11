@@ -13,8 +13,9 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 {  
   QBoxLayout *layout = new QVBoxLayout(this, 1);
 
-  SchemaGui *_schemaGui = new SchemaGui(_metaGear->getInternalSchema(), engine);
+  _schemaGui = new SchemaGui(_metaGear->getInternalSchema(), engine);
 
+/*  
   _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
 
   _panelScrollView = new PanelScrollView(_horizontalSplitter);
@@ -26,6 +27,10 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 
   //add the edited metagear to the panelScrollView
   _panelScrollView->addControlPanel(metaGear);
+*/
+
+  _schemaEditor = new SchemaEditor(this, _schemaGui, engine, _panelScrollView);  
+  layout->addWidget(_schemaEditor);
 }
 
 MetaGearEditor::~MetaGearEditor()

@@ -179,7 +179,6 @@ void SchemaGui::clear()
   //now remove gearGuis
   for (std::vector<GearGui*>::iterator it=gearGuis.begin();it!=gearGuis.end();++it)  
     removeGear((*it));
-    
 }
 
 bool SchemaGui::load(QDomElement& parent)
