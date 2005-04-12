@@ -2,7 +2,6 @@ include(config.pro)
 
 TEMPLATE=subdirs
 SUBDIRS= Osc \
-AmuseOeil \
 TV \
 Oscilloscope \
 VideoOutput \
@@ -48,7 +47,8 @@ VideoRecord \
 VideoOffset \
 ValueMix
 agg {
-SUBDIRS+=AggTest
+SUBDIRS+=AggTest \
+AmuseOeil
 }
 
 #linux specific gears
