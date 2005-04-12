@@ -61,21 +61,22 @@ const std::string Gear_VideoInput::SETTING_WIDTH = "width";
 const std::string Gear_VideoInput::SETTING_HEIGHT = "height";
 const int Gear_VideoInput::DEFAULT_WIDTH = 640;
 const int Gear_VideoInput::DEFAULT_HEIGHT = 480;
+std::list<std::string> Gear_VideoInput::_lockedDevices;
 
-unsigned char *Gear_VideoInput::_data=NULL;
 
 Gear_VideoInput::Gear_VideoInput(Schema *schema, std::string uniqueName) : Gear(schema, "VideoInput", uniqueName),
 _sizeX(0),
 _sizeY(0),
 _device(0),
-_bufferBGRA(NULL)
+_bufferBGRA(NULL),
+_ownedDevice("")
 {      
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
 
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
   _settings.add(Property::INT, SETTING_WIDTH)->valueInt(DEFAULT_WIDTH);    
   _settings.add(Property::INT, SETTING_HEIGHT)->valueInt(DEFAULT_HEIGHT);    
-
+  
   _mutex = new pthread_mutex_t();
   pthread_mutex_init(_mutex, NULL);
 
@@ -118,6 +119,12 @@ void Gear_VideoInput::resetInputDevice()
     memset(&_vidCap, 0, sizeof(video_capability));
     memset(&_vidWin, 0, sizeof(video_window));
     memset(&_vidPic, 0, sizeof(video_picture));    
+
+    //unlock our device if we have one
+    if (_ownedDevice.length())    
+      _lockedDevices.remove(_ownedDevice);
+
+    _ownedDevice="";
 }
 
 void Gear_VideoInput::initInputDevice()
@@ -126,8 +133,14 @@ void Gear_VideoInput::initInputDevice()
 
   resetInputDevice();
 
+  if (std::find(_lockedDevices.begin(), _lockedDevices.end(), _settings.get(SETTING_DEVICE)->valueStr()) != _lockedDevices.end())
+  {
+    std::cout << "the device : " <<  _settings.get(SETTING_DEVICE)->valueStr() << " is already open!" << std::endl;
+    return;
+  }
+     
   _device = open(_settings.get(SETTING_DEVICE)->valueStr().c_str(), O_RDWR | O_NONBLOCK);
-
+  
   if (_device<=0)
   {
       std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
@@ -138,10 +151,23 @@ void Gear_VideoInput::initInputDevice()
   ioctl(_device, VIDIOCGCAP, &_vidCap);
   ioctl(_device, VIDIOCGPICT, &_vidPic);
   
-  std::cout << "palette : " << _vidPic.palette << std::endl;
-
   _vidPic.palette = VIDEO_PALETTE_RGB32;    
   ioctl(_device, VIDIOCSPICT, &_vidPic);
+      
+  //try to set ntsc
+  //todo : parametrisation
+  for (int i=0;i<_vidCap.channels;i++)
+  {
+    _vidChannel.channel=i;
+    ioctl(_device, VIDIOCGCHAN, &_vidChannel);
+    if (_vidChannel.norm==VIDEO_MODE_NTSC)
+    {
+       ioctl(_device, VIDIOCSCHAN, &_vidChannel);
+       break;
+    }
+  }
+  
+  ioctl(_device, VIDIOCSCHAN, &_vidChannel);
 
   //get and adjust resolution settings
   _sizeX = CLAMP(_settings.get(SETTING_WIDTH)->valueInt(), _vidCap.minwidth, _vidCap.maxwidth);
@@ -173,10 +199,14 @@ void Gear_VideoInput::initInputDevice()
 
 
   _VIDEO_OUT->type()->resize(_sizeX, _sizeY);
+
+  //we successfuly open this device lock it
+  _ownedDevice = _settings.get(SETTING_DEVICE)->valueStr();
+  _lockedDevices.push_back(_ownedDevice);
 }
 
 void Gear_VideoInput::prePlay()
-{
+{  
   _playing=true;
   _frameGrabbed=false;
   pthread_create(&_playThreadHandle, NULL, playThread, this);
@@ -195,7 +225,7 @@ void *Gear_VideoInput::playThread(void *parent)
 
   while(videoInput->_playing)
   {  
-    if (!videoInput->_frameGrabbed)
+    if (videoInput->_device && !videoInput->_frameGrabbed)
     {      
       pthread_mutex_lock(videoInput->_mutex);
 
@@ -215,10 +245,14 @@ void *Gear_VideoInput::playThread(void *parent)
       Timing::sleep(5);
   }
 
+  return 0;
 }
 
 void Gear_VideoInput::runVideo()
 {
+  if (!_device)
+    return;
+  
   if (!_frameGrabbed)
     return;
 

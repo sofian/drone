@@ -75,6 +75,8 @@ public:
   void debugStopPlay();
 #endif
 
+  static bool _playing;
+
 protected:
 
   void performScheduledGearUpdateSettings();
@@ -92,11 +94,9 @@ protected:
 private:
 
   MetaGear *_mainMetaGear;
-  
-  bool _playing;
+    
   bool _graphSynched;
-  std::list<Gear*> _gears;
-
+  
   //is sorted in processing order when _GraphSynched==true
   //only contain gears->ready()    
   std::list<Gear*> _orderedGears;

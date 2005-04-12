@@ -23,6 +23,7 @@
 
 #include "Gear.h"
 #include <pthread.h>
+#include <map>
 
 #include "VideoRGBAType.h"
 
@@ -80,7 +81,8 @@ private:
   struct video_window _vidWin;
   struct video_picture _vidPic;
   struct video_clip _vidClips[32];
-  struct video_capture _vidCapture;
+  struct video_capture _vidCapture;  
+  struct video_channel _vidChannel;
 
   //mmap
   struct video_mbuf _vidMBuf;    
@@ -99,13 +101,13 @@ private:
   double *_mmxImageIn;
   double *_mmxImageOut;
 
-  //lavrec_t *_lavrecInfo;
-  static unsigned char *_data;
-
   pthread_t _playThreadHandle;
   pthread_mutex_t *_mutex;
   bool _frameGrabbed;
   bool _playing;
+                                    
+  static std::list<std::string> _lockedDevices;
+  std::string _ownedDevice;
 
 };
 

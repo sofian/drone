@@ -221,7 +221,7 @@ void Gear::internalLoad(QDomElement &gearElem)
 {            
   _name = gearElem.attribute("Name","").ascii();
 
-  _settings.load(gearElem);
+  _settings.load(gearElem);  
   updateSettings();
 
   load(gearElem);

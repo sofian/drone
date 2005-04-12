@@ -117,6 +117,9 @@ public:
 
   Control* createControl(ControlPanel* parent);
   
+  void internalPrePlay();    
+  void internalPostPlay();    
+
 protected:
 
   //! overload to create your own GearGui
@@ -154,8 +157,6 @@ protected:
 private:
   
   void internalInit();
-  void internalPrePlay();    
-  void internalPostPlay();    
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &gearElem);
   

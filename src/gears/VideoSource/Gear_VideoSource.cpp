@@ -48,7 +48,8 @@ _codecContext(NULL),
 _codec(NULL),
 _frame(NULL),
 _frameRGBA(NULL),
-_buffer(NULL)
+_buffer(NULL),
+_movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
@@ -86,6 +87,8 @@ void Gear_VideoSource::freeResources()
   
   if (_formatContext)
     av_close_input_file(_formatContext);
+
+  _movieReady=false;
 }
 
 void Gear_VideoSource::onUpdateSettings()
@@ -168,13 +171,17 @@ void Gear_VideoSource::onUpdateSettings()
   avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
 
   _firstFrameTime=_formatContext->start_time;
+
+  _movieReady=true;
 }
 
 void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
 
-  
+  if (!_movieReady)
+    return;
+
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 
   if ((int)_RESET_IN->type()->value() == 1)
@@ -182,10 +189,12 @@ void Gear_VideoSource::runVideo()
     av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
   }
     
+
   //loop until we get a videoframe
   //if we reach end, return to the beginning
   if (av_read_frame(_formatContext, &_packet)<0)
-    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
+    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD); 
+
   while (_packet.stream_index!=_videoStreamIndex)
   {    
     av_free_packet(&_packet);
@@ -195,10 +204,9 @@ void Gear_VideoSource::runVideo()
   
   // Decode video frame
   do
-  {
+  {    
     avcodec_decode_video(_codecContext, _frame, &frameFinished, _packet.data, _packet.size);
   } while (!frameFinished);
-
 
   // Convert the image from its native format to RGBA
   img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGB24, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);

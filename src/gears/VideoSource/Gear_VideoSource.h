@@ -78,6 +78,7 @@ private:
   uint8_t *_buffer;
   int _videoStreamIndex;
   int64_t _firstFrameTime;
+  bool _movieReady;
 };
 
 #endif

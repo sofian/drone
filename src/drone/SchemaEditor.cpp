@@ -106,8 +106,6 @@ void SchemaEditor::keyPressEvent(QKeyEvent *e)
 {     
   QCanvasItemList l=canvas()->allItems();
 
-  std::cerr<<"!!!!!!!!!!!!!!"<<e->ascii()<<" "<<e->stateAfter()<<std::endl;
-
   for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)

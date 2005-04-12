@@ -2,6 +2,7 @@
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearMaker.h"
+#include "Engine.h"
 
 #include <qdom.h>
 #include <qfile.h>
@@ -314,8 +315,13 @@ bool Schema::removeDeepGear(Gear* gear)
   if(find(_gears.begin(),_gears.end(),gear) != _gears.end())
   {   
     _parentMetaGear->onGearRemoved(gear);
+    _gears.remove(gear);
+    
+    if (Engine::_playing)        
+      gear->internalPostPlay();
+        
     delete gear;
-    _gears.remove(gear);    
+    
     return true;
   }
 
@@ -353,6 +359,9 @@ MetaGear* Schema::addMetaGear(std::string filename)
     return NULL;
   }
   
+  if (Engine::_playing)        
+    metaGear->internalPrePlay();
+
   _gears.push_back(metaGear);
   _parentMetaGear->onGearAdded(metaGear);
 
@@ -371,6 +380,10 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
 {
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
   initGear(metaGear);
+  
+  if (Engine::_playing)        
+    metaGear->internalPrePlay();
+
   _gears.push_back(metaGear);
   
   _parentMetaGear->onGearAdded(metaGear);
@@ -402,7 +415,10 @@ Gear* Schema::addGear(std::string geartype, std::string uniqueName)
   else
   {
     initGear(gear);    
-    //gear->internalInit();
+    
+    if (Engine::_playing)        
+      gear->internalPrePlay();
+    
     _gears.push_back(gear);
     _parentMetaGear->onGearAdded(gear);
   }

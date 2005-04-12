@@ -30,11 +30,11 @@
 SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
 Time_T Engine::_currentTime=0.0;
+bool Engine::_playing=false;
 
 Engine::Engine(int hwnd) :
   _hWnd(hwnd),
   _averageLoad(0.0f),
-  _playing(false),
   _graphSynched(false)
 
 {  
@@ -100,13 +100,11 @@ void *Engine::playThread(void *parent)
   float cumul_load = 0.0f;
   engine->_averageLoad=0.0f;
 
-  engine->_orderedGears = mainSchema->getDeepOrderedReadyGears();
-
-
   int currentFrame = 0;
 
 #ifndef SINGLE_THREADED_PLAYBACK
-  for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
+  std::list<Gear*> allGears = mainSchema->getDeepGears();
+  for (std::list<Gear*>::iterator it=engine->allGears.begin();it!=engine->allGears.end();++it)
     (*it)->internalPrePlay();
 
   while (engine->_playing)
@@ -170,7 +168,8 @@ void *Engine::playThread(void *parent)
     engine->performScheduledGearUpdateSettings();
 #ifndef SINGLE_THREADED_PLAYBACK
   }
-  for (std::list<Gear*>::iterator it=engine->_gears.begin();it!=engine->_gears.end();++it)
+  allGears = mainSchema->getDeepGears();
+  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPostPlay();
 
 #endif
@@ -183,15 +182,17 @@ void *Engine::playThread(void *parent)
 
 void Engine::debugStartPlay()
 {
-  _orderedGears = _mainMetaGear->getInternalSchema()->getDeepOrderedReadyGears();
-  for (std::list<Gear*>::iterator it=_orderedGears.begin();it!=_orderedGears.end();++it)
+  _playing=true;
+  std::list<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
+  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPrePlay();
 }
 
 void Engine::debugStopPlay()
 {
-  _orderedGears = _mainMetaGear->getInternalSchema()->getDeepOrderedReadyGears();
-  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
+  _playing=false;
+  std::list<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
+  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPostPlay();
 }
 #endif
@@ -207,7 +208,7 @@ void Engine::scheduleGearUpdateSettings(Gear *gear)
 void Engine::performScheduledGearUpdateSettings()
 {
   for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)
-  {
+  {    
     (*it)->updateSettings();
   }
   _scheduledsGearUpdateSettings.clear();
