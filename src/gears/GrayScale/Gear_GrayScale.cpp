@@ -60,6 +60,8 @@ bool Gear_GrayScale::ready()
   return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _CHANNEL_OUT->connected()));
 }
 
+#include <iostream>
+
 void Gear_GrayScale::runVideo()
 {
   _image = _VIDEO_IN->type();
@@ -67,22 +69,27 @@ void Gear_GrayScale::runVideo()
   if (_image->isNull())
     return;
 
-  _outImage = _VIDEO_OUT->type();
-  _outImage->resize(_image->width(), _image->height());
-  _outChannel->resize(_image->width(), _image->height());
-
   //! XXX si les deux sont connectés, y a moyen de faire ça plus vite...
+  //return;
   
   if (_CHANNEL_OUT->connected())
   {
+    _outChannel = _CHANNEL_OUT->type();
+    _outChannel->resize(_image->width(), _image->height());
+
+    //    std::cout << "Channel out connected" << std::endl;
     if (_image->isGray()) // already gray
-      extractChannel((unsigned char*)_outChannel->data(), _image->data(), _image->size(), IDX_RGBA_R); // extract one of the channels
+      extractChannel(_outChannel->data(), _image->data(), _image->size(), IDX_RGBA_R); // extract one of the channels
     else
-      grayscaleChannel((unsigned char*)_outChannel->data(), _image->data(), _image->size());
+      grayscaleChannel(_outChannel->data(), _image->data(), _image->size());
+      //std::cout << "Out channel: (" << _outChannel->width() << "," << _outChannel->height() << ") = " << _outChannel->data() << ". Done." << std::endl;
   }
 
   if (_VIDEO_OUT->connected())
   {
+    _outImage = _VIDEO_OUT->type();
+    _outImage->resize(_image->width(), _image->height());
+        
     if (_image->isGray()) // already gray
       memcpy(_outImage->data(), _image->data(), _image->size() * sizeof(RGBA));
     else
