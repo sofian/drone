@@ -30,6 +30,7 @@
 #include "Math.h"
 #include "error.h"
 #include "Schema.h"
+#include <sys/time.h>
 
 
 class Gear;
@@ -54,7 +55,13 @@ public:
   void startPlaying();
   void stopPlaying();
 
+  // This returns the time in seconds since the play button was
+  // started. Warning : the time returned NOT the real time : it is
+  // incremented each frame by the normal duration of a frame. So if your
+  // CPU is overloaded, this is not accurate at all use currentRealTime
   static Time_T currentTime();
+  // returns number of sec (at milliseconds resolution) sinc 1 Jan 1970 00:00:00 UTC
+  static float currentRealTime();
 
   int hWnd(){return _hWnd;};
   static void *playThread(void *parent);

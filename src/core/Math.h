@@ -659,5 +659,6 @@ T REPEAT_CLAMP(T t,T low,T high)
   return t;
 }
 
+float uniform_bounded(float a,float b);
 
 #endif

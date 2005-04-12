@@ -153,3 +153,11 @@ RtMidi/RtMidi.cpp \
 composite/Composite.cpp \
 composite/CompositeGeneric.cpp \
 composite/AlphaComposite.cpp
+
+agg {
+
+INCLUDEPATH += ../agg2/include
+LIBS += -L../agg2/src/ -lagg
+HEADER += AggWrapper.h
+SOURCES += AggWrapper.cpp
+}

@@ -50,6 +50,16 @@ Time_T Engine::currentTime()
   return _currentTime;
 }
 
+float Engine::currentRealTime()
+{
+  timeval t;
+  //timezone tz;
+  
+  gettimeofday(&t,NULL);
+  
+  return -1.112e09 +t.tv_sec + (float)t.tv_usec/1000000;
+}
+
 void Engine::startPlaying()
 {
   _playing=true;

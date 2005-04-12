@@ -13,3 +13,8 @@ void initMath()
 		cosLut[n]=cos(a);
 	}
 }
+
+float uniform_bounded(float a,float b)
+{
+  return ((float)((rand() % 32000) / 32000.0f) * (b-a)) + a;
+}

@@ -2,6 +2,7 @@ include(config.pro)
 
 TEMPLATE=subdirs
 SUBDIRS= Osc \
+AmuseOeil \
 TV \
 Oscilloscope \
 VideoOutput \
@@ -26,6 +27,7 @@ ListBox \
 PushButton \
 Rescale \
 TouchPad \
+TapTempo \
 ColorQuantize \
 Gamma \
 GenDisplaceGrid \
@@ -42,8 +44,9 @@ ImageShuffle \
 ImageSequence \
 Invert \
 InvertAlpha \
-VideoRecord 
-
+VideoRecord \
+VideoOffset \
+ValueMix
 agg {
 SUBDIRS+=AggTest
 }
