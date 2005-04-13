@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <limits.h>
+#include <float.h>
 
 //! Basic definitions
 
