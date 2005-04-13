@@ -23,6 +23,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <limits.h>
 
 //! Basic definitions
 
@@ -120,7 +121,7 @@ template <typename T, typename U, typename V>
 inline void addVecVec(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ + *src2++;
+    *dst++ = static_cast<T>(*src1++ + *src2++);
 }
 
 //! Adds #n# elements of #src# to #dst#.
@@ -136,7 +137,7 @@ template <typename T, typename U, typename V>
 inline void addVecVal(T *dst, const U *src, const V val, size_t n)
 {
   while (n--)
-    *dst++ = *src++ + val;
+    *dst++ = static_cast<T>(*src++ + val);
 }
 
 //! Adds #val# to #n# elements of #src#.
@@ -155,7 +156,7 @@ template <typename T, typename U, typename V>
 inline void subtractVecVec(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ - *src2++;
+    *dst++ = static_cast<T>(*src1++ - *src2++);
 }
 
 //! Subtracts #n# elements of #src# from #dst#.
@@ -171,7 +172,7 @@ template <typename T, typename U, typename V>
 inline void subtractVecVal(T *dst, const U *src, const V val, size_t n)
 {
   while (n--)
-    *dst++ = *src++ - val;
+    *dst++ = static_cast<T>(*src++ - val);
 }
 
 //! Subtracts #val# to #n# elements of #src#.
@@ -190,7 +191,7 @@ template <typename T, typename U, typename V>
 inline void multiplyVecVec(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ * *src2++;
+    *dst++ = static_cast<T>(*src1++ * *src2++);
 }
 
 //! Multiplies #n# elements of #dst# by #src#.
@@ -203,10 +204,10 @@ inline void multiplyAccVecVec(T *dst, const U *src, size_t n)
 
 //! Subtracts #val# to #n# elements of #src# and puts the result in #dst#. 
 template <typename T, typename U, typename V>
-inline void mutliplyVecVal(T *dst, const U *src, const V val, size_t n)
+inline void multiplyVecVal(T *dst, const U *src, const V val, size_t n)
 {
   while (n--)
-    *dst++ = *src++ * val;
+    *dst++ = static_cast<T>(*src++ * val);
 }
 
 //! Multiplies #val# with #n# elements of #src#.
@@ -225,7 +226,7 @@ template <typename T, typename U, typename V>
 inline void divideVecVec(T *dst, const U *src1, const V *src2, size_t n)
 {
   while (n--)
-    *dst++ = *src1++ / *src2++;
+    *dst++ = static_cast<T>(*src1++ / *src2++);
 }
 
 //! Divides #n# elements of #dst# by #src#.
@@ -241,7 +242,7 @@ template <typename T, typename U, typename V>
 inline void divideVecVal(T *dst, const U *src, const V val, size_t n)
 {
   while (n--)
-    *dst++ = *src++ / val;
+    *dst++ = static_cast<T>(*src++ / val);
 }
 
 //! Divides #n# elements of #src# by #val#.
@@ -260,7 +261,7 @@ template <typename T, typename U>
 inline void copy(T *dst, const U *src, size_t n)
 {
   while (n--)
-    *dst++ = static_cast<T>(*src++);
+    *dst++ = static_cast<T>(static_cast<T>(*src++));
 }
 
 //! Fills #n# values of #src# with value #val#.
