@@ -22,6 +22,7 @@ ColorAdjust \
 Contrast \
 Enveloppe \
 FlatSignal \
+FillAlpha \
 ListBox \
 PushButton \
 Rescale \
@@ -32,17 +33,19 @@ Gamma \
 GenDisplaceGrid \
 GrayScale \
 HalfToning \
+ImageSource \
+Invert \
+InvertAlpha \
 Saturation \
+SelectFrame \
 SetAlpha \
 SignalStat \
 SmearGrid \
 Sobel \
 #VideoDelay \
 #VideoLoop \
-ImageShuffle \
-ImageSequence \
-Invert \
-InvertAlpha \
+#ImageShuffle \
+#ImageSequence \
 VideoRecord \
 VideoOffset \
 ValueMix
