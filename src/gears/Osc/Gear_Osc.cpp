@@ -60,8 +60,14 @@ bool Gear_Osc::ready()
   return _VALUE_OUT->connected();
 }
 
+void Gear_Osc::internalInit()
+{
+  _oldFreq = 440.0f;
+  _phaseCorrection = 0.0f;
+}
+
 void Gear_Osc::runAudio()
-{          
+{
   float freq  = _FREQ_IN->type()->value();
   float amp   = _AMP_IN->type()->value();
 

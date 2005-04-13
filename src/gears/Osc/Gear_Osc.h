@@ -34,10 +34,14 @@ public:
 
   bool ready();
 
+protected:
+  void internalInit();
+  
 private:
   // Inputs.
   PlugIn<ValueType> *_FREQ_IN;
   PlugIn<ValueType> *_AMP_IN;
+  PlugIn<ValueType> *_PHASE_IN;
   
   // Outputs.
   PlugOut<ValueType> *_VALUE_OUT;
@@ -47,4 +51,4 @@ private:
 
 };
 
-#endif 
+#endif
