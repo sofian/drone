@@ -20,8 +20,8 @@
 #include "Gear_Osc.h"
 #include "Engine.h"
 #include "GearMaker.h"
-#include <iostream>
-#include <math.h>
+#include "Math.h"
+#include "Engine.h"
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
@@ -39,11 +39,14 @@ GearInfo getGearInfo()
 }
 
 Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
-Gear(schema, "Osc", uniqueName),
-_phaseCorrection(0.0f)
+  Gear(schema, "Osc", uniqueName),
+  _phaseCorrection(0.0f)
 {
-  addPlug(_PARAM_FREQ = new PlugIn<ValueType>(this, "Freq", new ValueType(440.0f,0.0f,1000.0f)));
-  addPlug(_PARAM_AMP = new PlugIn<ValueType>(this, "Amp", new ValueType(1.0f,0.0f,2.0f)));
+  // Inputs.
+  addPlug(_FREQ_IN = new PlugIn<ValueType>(this, "Freq", new ValueType(440.0f,0.0f,1000.0f)));
+  addPlug(_AMP_IN = new PlugIn<ValueType>(this, "Amp", new ValueType(1.0f,0.0f,2.0f)));
+
+  // Outputs.
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
 }
 
@@ -59,16 +62,16 @@ bool Gear_Osc::ready()
 
 void Gear_Osc::runAudio()
 {          
-  float freq  = _PARAM_FREQ->type()->value();
-  float amp  = _PARAM_AMP->type()->value();
-  
-   _currentTime = Engine::currentTime();
+  float freq  = _FREQ_IN->type()->value();
+  float amp   = _AMP_IN->type()->value();
+
+  _currentTimeTimesTwicePi = Engine::currentTime()*(float)(TWICE_PI);
   
   if (_oldFreq!=freq)
-  {             
-    _phaseCorrection = (_oldFreq*_currentTime* 6.28318f) - (freq*_currentTime* 6.28318f) + _phaseCorrection;
+  {
+    _phaseCorrection += (_oldFreq-freq)*_currentTimeTimesTwicePi;
     _oldFreq=freq;
   }
 
-  _VALUE_OUT->type()->setValue(amp * cos(freq * _currentTime * 6.28318f + _phaseCorrection));
+  _VALUE_OUT->type()->setValue(amp * fastcos(freq * _currentTimeTimesTwicePi + _phaseCorrection));
 }

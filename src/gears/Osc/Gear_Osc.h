@@ -35,9 +35,13 @@ public:
   bool ready();
 
 private:
-  PlugIn<ValueType> *_PARAM_FREQ, *_PARAM_AMP;
+  // Inputs.
+  PlugIn<ValueType> *_FREQ_IN;
+  PlugIn<ValueType> *_AMP_IN;
+  
+  // Outputs.
   PlugOut<ValueType> *_VALUE_OUT;
-  Time_T _currentTime;
+  float _currentTimeTimesTwicePi;
   float _oldFreq;
   float _phaseCorrection;
 
