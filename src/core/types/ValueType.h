@@ -41,6 +41,7 @@ public:
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
   int intValue() const { return (int)_value; }
+  bool boolValue() const { return (bool)_value; }
   
   //operator float () const {return _value;}
   
