@@ -67,7 +67,7 @@ Gear_VideoRecord::~Gear_VideoRecord()
 {
 }
 
-void Gear_VideoRecord::init()
+void Gear_VideoRecord::internalInit()
 {
   _currentLoopFrame = 0;
   _nLoopFrames = 0;

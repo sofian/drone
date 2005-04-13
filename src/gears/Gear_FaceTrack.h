@@ -46,11 +46,14 @@ public:
   Gear_FaceTrack(Schema *schema, std::string uniqueName);
   virtual ~Gear_FaceTrack();
 
-  void init();
+  
   void runVideo();
   bool ready();
 
   void   *loopThread();
+
+protected:
+  void internalInit();
 
 private:
 

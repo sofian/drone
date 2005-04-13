@@ -33,9 +33,6 @@ public:
   Gear_VideoOutput(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoOutput();
 
-  void prePlay();
-  void postPlay();
-  void init();
   void runVideo();
 
 
@@ -43,7 +40,10 @@ public:
 
   bool ready();
 
+protected:
+  void internalInit();  
   void onUpdateSettings();
+
 private:
   static const std::string SETTING_XRES;
   static const std::string SETTING_YRES;

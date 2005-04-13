@@ -93,6 +93,7 @@ GearClassification.h \
 GearGui.h \
 GearConverter.h \
 GearMaker.h \
+ISchemaEventListener.h \
 Math.h \
 Media.h \
 MediaPool.h \

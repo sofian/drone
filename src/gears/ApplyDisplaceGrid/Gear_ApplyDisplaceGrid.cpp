@@ -52,10 +52,6 @@ Gear_ApplyDisplaceGrid::~Gear_ApplyDisplaceGrid()
 {
 }
 
-void Gear_ApplyDisplaceGrid::init()
-{
-}
-
 bool Gear_ApplyDisplaceGrid::ready()
 {
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());

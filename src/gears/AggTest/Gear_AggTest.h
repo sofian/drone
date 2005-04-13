@@ -34,7 +34,9 @@ public:
   virtual ~Gear_AggTest();
 
   void runVideo();  bool ready();
-  virtual void init();
+  
+protected:
+  void internalInit();
 
 private:
 

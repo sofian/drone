@@ -162,7 +162,7 @@ void Gear_Slider::runAudio()
           lastStamp = msg->getStamp();
         }
       }
-      static int isad=0;
+      
       if(lastValue!=-1)
       {
         //std::cout<<"set Value !! :"<<lastValue<<" "<<lastStamp<<std::endl;
@@ -185,7 +185,7 @@ Control* Gear_Slider::createCustomControl(ControlPanel* parent)
   return new ControlSlider(this, parent);  
 }
 
-void Gear_Slider::save(QDomDocument &doc, QDomElement &gearElem)
+void Gear_Slider::internalSave(QDomDocument &doc, QDomElement &gearElem)
 {
   std::ostringstream strValue;
 
@@ -196,7 +196,7 @@ void Gear_Slider::save(QDomDocument &doc, QDomElement &gearElem)
 
 }
 
-void Gear_Slider::load(QDomElement &gearElem)
+void Gear_Slider::internalLoad(QDomElement &gearElem)
 {
   setValue(gearElem.attribute("SliderPos","").toFloat());        
   _acceptHint=false;

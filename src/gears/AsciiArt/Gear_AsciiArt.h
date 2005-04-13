@@ -58,14 +58,15 @@ class Gear_AsciiArt : public Gear
 public:
   Gear_AsciiArt(Schema *schema, std::string name);
   virtual ~Gear_AsciiArt();
-
-  void init();
   
   void runVideo();
 
   bool ready();
 
   void onUpdateSettings();
+
+protected:
+  void internalInit();
 
 private:
   

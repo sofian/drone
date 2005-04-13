@@ -16,11 +16,14 @@ _metaGearName(vname),
 _associatedControlPanel(0)
 {
   _schema = new Schema(this);
+  _schema->addSchemaEventListener(this);
 }
 
 MetaGear::~MetaGear()
 {
+  //TODOFOO: check this!!?
   //_schema.removeAllGears();
+  //_schema->removeSchemaEventListener(this);
 }
 
 GearGui* MetaGear::createGearGui(QCanvas *canvas)
@@ -175,16 +178,23 @@ bool MetaGear::load(std::string filename)
   return true;
 }
 
-void MetaGear::onGearAdded(Gear *gear)
+void MetaGear::onGearAdded(Schema *schema, Gear *gear)
 {
+  //if this event is not for our schema (it's from a child schema), do nothing
+  if (schema!=_schema)
+    return;
+  
   if (!_associatedControlPanel)
     return;
   
   _associatedControlPanel->addControl(gear);
 }
 
-void MetaGear::onGearRemoved(Gear *gear)
+void MetaGear::onGearRemoved(Schema *schema, Gear*)
 {
-
+  //if this event is not for our schema (it's from a child schema), do nothing
+  if (schema!=_schema)
+    return;
 }
+
 

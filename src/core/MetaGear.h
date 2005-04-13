@@ -3,12 +3,13 @@
 
 #include "Gear.h"
 #include "Schema.h"
+#include "ISchemaEventListener.h"
 
 #include <map>
 
 class ControlPanel;
 
-class MetaGear : public Gear
+class MetaGear : public Gear, public ISchemaEventListener
 {
 public:  
   MetaGear(Schema *parentSchema, std::string name, std::string uniqueName);
@@ -31,8 +32,8 @@ public:
 
   std::string fullPath(){return _fullPath;}
   
-  void onGearAdded(Gear *gear);
-  void onGearRemoved(Gear *gear);
+  void onGearAdded(Schema *schema, Gear *gear);
+  void onGearRemoved(Schema *schema, Gear *gear);
 
   void associateControlPanel(ControlPanel *controlPanel) {_associatedControlPanel = controlPanel;}
   

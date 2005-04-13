@@ -62,10 +62,6 @@ Gear_GenDisplaceGrid::~Gear_GenDisplaceGrid()
 {
 }
 
-void Gear_GenDisplaceGrid::init()
-{
-}
-
 bool Gear_GenDisplaceGrid::ready()
 {
   return(_GRID_OUT->connected() );
@@ -108,8 +104,6 @@ void Gear_GenDisplaceGrid::runVideo()
 
   fy = - _ysize/2;
   
-  double _scale2,xx,yy;
-
   switch(_type)
   {
   case 0:

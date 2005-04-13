@@ -10,6 +10,7 @@ class MetaGear;
 class Gear;
 class AbstractPlug;
 class Engine; 
+class ISchemaEventListener;
 
 class Schema
 {
@@ -129,10 +130,19 @@ public:
     
   void initGear(Gear * gear) const;
 
+  void addSchemaEventListener(ISchemaEventListener *schemaEventListener);
+  void removeSchemaEventListener(ISchemaEventListener *schemaEventListener);
+
+  Schema *getParentSchema();
+
  private:
 
   Gear* addGear(std::string geartype, std::string uniqueName);
   MetaGear* addMetaGear(std::string name, std::string uniqueName);
+
+  void onGearAdded(Gear *gear);
+  void onGearRemoved(Gear *gear);
+
 
   bool needSynch();
   void synch();
@@ -150,6 +160,7 @@ public:
   std::vector<ScheduledConnection> _scheduledConnections;
   std::vector<ScheduledConnection> _scheduledDisconnections;
   std::vector<Gear*> _scheduledDeletes;
+  std::list<ISchemaEventListener*> _schemaEventListeners;
 
     
 };

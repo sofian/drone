@@ -34,14 +34,16 @@ public:
   virtual ~Gear_Gamma();
 
   void runVideo();
-  void init();
+  
   bool ready();
+
+protected:
+  void internalInit();
 
 private:
   // Recompute look-up-table based on current gamma level.
   void computeLookUpTable();
 
-private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_GAMMA_IN;

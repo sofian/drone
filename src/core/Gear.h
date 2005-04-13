@@ -71,9 +71,9 @@ public:
   Gear(Schema *parentSchema, std::string type, std::string uniqueName);
   virtual ~Gear();
 
-  virtual void init(){};
-  virtual void prePlay(){};    
-  virtual void postPlay(){};    
+  void init();
+  void prePlay();    
+  void postPlay();    
   virtual void runAudio(){};//! test pour ready doit etre fait avant
   virtual void runVideo(){};//! test pour ready doit etre fait avant
   GearGui* getGearGui();
@@ -102,8 +102,8 @@ public:
   void unSynch();
   
   //todo make bool
-  virtual void save(QDomDocument &, QDomElement &){};
-  virtual void load(QDomElement &){};
+  void save(QDomDocument &, QDomElement &);
+  void load(QDomElement &);
 
   virtual bool canConvert(const AbstractType& , const AbstractType& ,
                           std::pair<const AbstractPlug*, const AbstractPlug*>& plugs) const
@@ -116,12 +116,20 @@ public:
   bool isPlugNameUnique(std::string name);
 
   Control* createControl(ControlPanel* parent);
+
+  Schema *parentSchema(){return _parentSchema;}
   
-  void internalPrePlay();    
-  void internalPostPlay();    
+  
 
 protected:
 
+  virtual void internalInit(){}
+  virtual void internalSave(QDomDocument&, QDomElement&){}
+  virtual void internalLoad(QDomElement &){}
+  
+  virtual void internalPrePlay(){}  
+  virtual void internalPostPlay(){}    
+  
   //! overload to create your own GearGui
   virtual GearGui* createGearGui(QCanvas *canvas);
 
@@ -155,11 +163,7 @@ protected:
   Control *_control;
 
 private:
-  
-  void internalInit();
-  void internalSave(QDomDocument &doc, QDomElement &parent);
-  void internalLoad(QDomElement &gearElem);
-  
+    
   friend void Schema::initGear(Gear* gear) const;
   //friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
   //friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);

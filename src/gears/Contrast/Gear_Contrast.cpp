@@ -92,7 +92,7 @@ void Gear_Contrast::runVideo()
   
 }
 
-void Gear_Contrast::init()
+void Gear_Contrast::internalInit()
 {
   _contrast = 0;
   computeLookUpTable();

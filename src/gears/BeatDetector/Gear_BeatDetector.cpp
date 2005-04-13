@@ -64,7 +64,7 @@ Gear_BeatDetector::Gear_BeatDetector(Schema *schema, std::string uniqueName)
   addPlug(_ACORR_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ACorrOut") );
 }
 
-void Gear_BeatDetector::init()
+void Gear_BeatDetector::internalInit()
 {
   float originalSampleRate = (float)Engine::signalInfo().sampleRate();
   // 44100/factor(16)

@@ -89,6 +89,11 @@ void Gear_ListBox::onUpdateSettings()
     _labels.push_back(tok);
     tok = strtok (NULL, ",");
   }
+  
+  std::cout << "labels : " << _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr() << std::endl;
+  std::cout << "value out type: " << _VALUE_OUT->type()->size() <<std::endl;
+  std::cout << "label: " << _labels.size() <<std::endl;
+
   ASSERT_ERROR(_labels.size() == _VALUE_OUT->type()->size());
 
   _acceptHint = false;
@@ -148,7 +153,7 @@ GearGui *Gear_ListBox::createGearGui(QCanvas *canvas)
   return new GearGui_ListBox(this, canvas);
 }
 
-void Gear_ListBox::save(QDomDocument &doc, QDomElement &gearElem)
+void Gear_ListBox::internalSave(QDomDocument &doc, QDomElement &gearElem)
 {
   std::ostringstream strValue;
 
@@ -159,7 +164,7 @@ void Gear_ListBox::save(QDomDocument &doc, QDomElement &gearElem)
 
 }
 
-void Gear_ListBox::load(QDomElement &gearElem)
+void Gear_ListBox::internalLoad(QDomElement &gearElem)
 {
   setValue(gearElem.attribute("ListBoxPos","").toInt());        
   _acceptHint=false;

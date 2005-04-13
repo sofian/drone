@@ -34,14 +34,15 @@ public:
   virtual ~Gear_Saturation();
 
   void runVideo();
-  void init();
   bool ready();
+
+protected:
+  void internalInit();
 
 private:
   // Recompute look-up-table based on current saturation level.
   void computeLookUpTable();
 
-private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_SATURATION_IN;

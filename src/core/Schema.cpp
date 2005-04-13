@@ -2,7 +2,7 @@
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearMaker.h"
-#include "Engine.h"
+#include "ISchemaEventListener.h"
 
 #include <qdom.h>
 #include <qfile.h>
@@ -314,12 +314,10 @@ bool Schema::removeDeepGear(Gear* gear)
   // if the gear to be removed is at the current schema level, remove it here
   if(find(_gears.begin(),_gears.end(),gear) != _gears.end())
   {   
-    _parentMetaGear->onGearRemoved(gear);
-    _gears.remove(gear);
+    onGearRemoved(gear);
     
-    if (Engine::_playing)        
-      gear->internalPostPlay();
-        
+    _gears.remove(gear);
+            
     delete gear;
     
     return true;
@@ -335,7 +333,7 @@ bool Schema::removeDeepGear(Gear* gear)
 
 void Schema::initGear(Gear * gear) const
 {
-  gear->internalInit();
+  gear->init();
 }
 
 MetaGear* Schema::newMetaGear()
@@ -359,11 +357,8 @@ MetaGear* Schema::addMetaGear(std::string filename)
     return NULL;
   }
   
-  if (Engine::_playing)        
-    metaGear->internalPrePlay();
-
   _gears.push_back(metaGear);
-  _parentMetaGear->onGearAdded(metaGear);
+  onGearAdded(metaGear);
 
   return metaGear;
 }
@@ -381,12 +376,9 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
   initGear(metaGear);
   
-  if (Engine::_playing)        
-    metaGear->internalPrePlay();
-
   _gears.push_back(metaGear);
   
-  _parentMetaGear->onGearAdded(metaGear);
+  onGearAdded(metaGear);
 
   return metaGear;
 }
@@ -415,12 +407,9 @@ Gear* Schema::addGear(std::string geartype, std::string uniqueName)
   else
   {
     initGear(gear);    
-    
-    if (Engine::_playing)        
-      gear->internalPrePlay();
-    
+        
     _gears.push_back(gear);
-    _parentMetaGear->onGearAdded(gear);
+    onGearAdded(gear);    
   }
 
   return gear;
@@ -556,7 +545,7 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
 
   for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
   {
-    (*it)->internalSave(doc, gearsElem);            
+    (*it)->save(doc, gearsElem);            
   }
 
 
@@ -603,7 +592,7 @@ bool Schema::load(QDomElement& parent)
       
       if (pgear!=NULL)
       {
-        pgear->internalLoad(gearElem);                                
+        pgear->load(gearElem);                                
       }                                
 
     }
@@ -667,3 +656,50 @@ void Schema::unlock()
   _scheduledDisconnections.clear();  
 }
 
+void Schema::onGearAdded(Gear *gear)
+{
+  for (std::list<ISchemaEventListener*>::iterator it=_schemaEventListeners.begin();it!=_schemaEventListeners.end();++it)
+  {
+    (*it)->onGearAdded(this, gear);
+  }
+
+  //foward up the event to the parent schema
+  Schema *parentSchema = getParentSchema();
+  if (parentSchema)
+    parentSchema->onGearAdded(gear);
+}
+
+void Schema::onGearRemoved(Gear *gear)
+{
+  for (std::list<ISchemaEventListener*>::iterator it=_schemaEventListeners.begin();it!=_schemaEventListeners.end();++it)
+  {
+    (*it)->onGearRemoved(this, gear);
+  }
+  
+  //foward up the event to the parent schema
+  Schema *parentSchema = getParentSchema();
+  if (parentSchema)
+    parentSchema->onGearRemoved(gear);
+  
+}
+
+void Schema::addSchemaEventListener(ISchemaEventListener *schemaEventListener)
+{
+  if (!schemaEventListener)
+    return;
+
+  _schemaEventListeners.push_back(schemaEventListener);
+}
+
+void Schema::removeSchemaEventListener(ISchemaEventListener *schemaEventListener)
+{
+  if (!schemaEventListener)
+    return;
+
+  _schemaEventListeners.remove(schemaEventListener);
+}
+
+Schema *Schema::getParentSchema()
+{
+  return _parentMetaGear->parentSchema();
+}

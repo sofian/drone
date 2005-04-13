@@ -38,15 +38,15 @@ public:
   Gear_AudioInput(Schema *schema, std::string uniqueName);
   virtual ~Gear_AudioInput();
 
-  void prePlay();    
-  void postPlay();    
-  
-  void init();
   void runAudio();
 
   bool ready();
 
 protected:
+  void internalPrePlay();    
+  void internalPostPlay();      
+  void internalInit();
+  
   void onUpdateSettings();
 
 

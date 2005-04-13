@@ -81,7 +81,7 @@ bool Gear_AudioOutput::ready()
   return(_AUDIO_IN_LEFT->connected() || _AUDIO_IN_RIGHT->connected());
 }
 
-void Gear_AudioOutput::init()
+void Gear_AudioOutput::internalInit()
 {
   std::cout << "Initializing AudioOutput..." << std::endl;
 
@@ -109,12 +109,12 @@ void Gear_AudioOutput::runAudio()
 
 }
 
-void Gear_AudioOutput::prePlay()
+void Gear_AudioOutput::internalPrePlay()
 {
    Pa_StartStream(_stream);
 }    
 
-void Gear_AudioOutput::postPlay()
+void Gear_AudioOutput::internalPostPlay()
 {
    Pa_AbortStream(_stream);
 }    

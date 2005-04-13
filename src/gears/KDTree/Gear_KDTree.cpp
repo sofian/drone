@@ -72,7 +72,7 @@ bool Gear_KDTree::ready()
   return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _AREA_OUT->connected()));
 }
 
-void Gear_KDTree::init()
+void Gear_KDTree::internalInit()
 {
   _rasterer->setImage(_VIDEO_OUT->type());
   _rasterer->setColor(0, 0, 0); // black lines only
@@ -118,8 +118,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   int y0minus1 = y0-1;
   
   // Get the total values in the area.
-  int rgba[SIZE_RGBA];
-  int intensity;
+  int rgba[SIZE_RGBA];  
   int area;
   _table->getSum(rgba, area, x0minus1, y0minus1, x1, y1);
   //_intensitiesTable->getSum(&intensity, area, x0minus1, y0minus1, x1, y1);
@@ -159,7 +158,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   if (hSplit)
   {
     // horizontal split
-    int mid;    
+    int mid=0;    
     for (int i=1; i<currentNCells; ++i)
     {
       int cut = i*cellValue;

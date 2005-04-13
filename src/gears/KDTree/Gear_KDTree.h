@@ -39,7 +39,8 @@ public:
   void runVideo();
   bool ready();
 
-  void init();
+protected:  
+  void internalInit();
 
 private:
 

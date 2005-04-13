@@ -53,10 +53,6 @@ Gear_SmearGrid::~Gear_SmearGrid()
 {
 }
 
-void Gear_SmearGrid::init()
-{
-}
-
 bool Gear_SmearGrid::ready()
 {
   return(_VIDEO_IN->connected() && _GRID_OUT->connected() );
@@ -85,9 +81,9 @@ void Gear_SmearGrid::runVideo()
 
   _gridData = _gridOut->data();
   
-  float xx,yy,theta,rho;
+  float xx,yy;
   
-  char idx1,idx2;
+  char idx1=0,idx2=0;
   switch(_param2)
   {
   case 0: 

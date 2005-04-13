@@ -41,18 +41,18 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
-{
-  return new Gear_VideoInput(schema, uniqueName);
-}
+  Gear* makeGear(Schema *schema, std::string uniqueName)
+  {
+    return new Gear_VideoInput(schema, uniqueName);
+  }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoInput";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+  GearInfo getGearInfo()
+  {
+    GearInfo gearInfo;
+    gearInfo.name = "VideoInput";
+    gearInfo.classification = GearClassifications::video().IO().instance();
+    return gearInfo;
+  }
 }
 
 const std::string Gear_VideoInput::SETTING_DEVICE = "Device";
@@ -76,7 +76,7 @@ _ownedDevice("")
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
   _settings.add(Property::INT, SETTING_WIDTH)->valueInt(DEFAULT_WIDTH);    
   _settings.add(Property::INT, SETTING_HEIGHT)->valueInt(DEFAULT_HEIGHT);    
-  
+
   _mutex = new pthread_mutex_t();
   pthread_mutex_init(_mutex, NULL);
 
@@ -95,7 +95,7 @@ bool Gear_VideoInput::ready()
   return(_VIDEO_OUT->connected());
 }
 
-void Gear_VideoInput::init()
+void Gear_VideoInput::internalInit()
 {
   initInputDevice();
 }
@@ -107,24 +107,26 @@ void Gear_VideoInput::onUpdateSettings()
 
 void Gear_VideoInput::resetInputDevice()
 {
-    if (_device!=0)
-        close(_device);
-    
-    if (_bufferBGRA!=NULL)
-    {
-         munmap(_bufferBGRA, _sizeX*_sizeY*VIDEO_PALETTE_RGB32);
-        _bufferBGRA=NULL;
-    }
+  if (_device!=0)
+    close(_device);
 
-    memset(&_vidCap, 0, sizeof(video_capability));
-    memset(&_vidWin, 0, sizeof(video_window));
-    memset(&_vidPic, 0, sizeof(video_picture));    
+  _device=0;
 
-    //unlock our device if we have one
-    if (_ownedDevice.length())    
-      _lockedDevices.remove(_ownedDevice);
+  if (_bufferBGRA!=NULL)
+  {
+    munmap(_bufferBGRA, _sizeX*_sizeY*VIDEO_PALETTE_RGB32);
+    _bufferBGRA=NULL;
+  }
 
-    _ownedDevice="";
+  memset(&_vidCap, 0, sizeof(video_capability));
+  memset(&_vidWin, 0, sizeof(video_window));
+  memset(&_vidPic, 0, sizeof(video_picture));    
+
+  //unlock our device if we have one
+  if (_ownedDevice.length())
+    _lockedDevices.remove(_ownedDevice);
+
+  _ownedDevice="";
 }
 
 void Gear_VideoInput::initInputDevice()
@@ -138,22 +140,23 @@ void Gear_VideoInput::initInputDevice()
     std::cout << "the device : " <<  _settings.get(SETTING_DEVICE)->valueStr() << " is already open!" << std::endl;
     return;
   }
-     
+
   _device = open(_settings.get(SETTING_DEVICE)->valueStr().c_str(), O_RDWR | O_NONBLOCK);
-  
+
   if (_device<=0)
   {
-      std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
-      return;
+    std::cout << "fail to open device " << _settings.get(SETTING_DEVICE)->valueStr().c_str() << std::endl;
+    _device=0;
+    return;
   }
 
   //get info
   ioctl(_device, VIDIOCGCAP, &_vidCap);
   ioctl(_device, VIDIOCGPICT, &_vidPic);
-  
+
   _vidPic.palette = VIDEO_PALETTE_RGB32;    
   ioctl(_device, VIDIOCSPICT, &_vidPic);
-      
+
   //try to set ntsc
   //todo : parametrisation
   for (int i=0;i<_vidCap.channels;i++)
@@ -162,11 +165,11 @@ void Gear_VideoInput::initInputDevice()
     ioctl(_device, VIDIOCGCHAN, &_vidChannel);
     if (_vidChannel.norm==VIDEO_MODE_NTSC)
     {
-       ioctl(_device, VIDIOCSCHAN, &_vidChannel);
-       break;
+      ioctl(_device, VIDIOCSCHAN, &_vidChannel);
+      break;
     }
   }
-  
+
   ioctl(_device, VIDIOCSCHAN, &_vidChannel);
 
   //get and adjust resolution settings
@@ -189,7 +192,7 @@ void Gear_VideoInput::initInputDevice()
   ioctl(_device, VIDIOCGMBUF, &_vidMBuf);
 
   std::cout << "buffer size :" << _vidMBuf.size << std::endl;
-  
+
   _vidMMap.format = VIDEO_PALETTE_RGB32;
   _vidMMap.frame  = 0;
   _vidMMap.width  = _sizeX;
@@ -205,14 +208,14 @@ void Gear_VideoInput::initInputDevice()
   _lockedDevices.push_back(_ownedDevice);
 }
 
-void Gear_VideoInput::prePlay()
+void Gear_VideoInput::internalPrePlay()
 {  
   _playing=true;
   _frameGrabbed=false;
   pthread_create(&_playThreadHandle, NULL, playThread, this);
 }
 
-void Gear_VideoInput::postPlay()
+void Gear_VideoInput::internalPostPlay()
 {
   _playing=false;
   pthread_join(_playThreadHandle, NULL);
@@ -221,27 +224,26 @@ void Gear_VideoInput::postPlay()
 void *Gear_VideoInput::playThread(void *parent)
 {
   Gear_VideoInput *videoInput = (Gear_VideoInput*)parent;
-  
 
-  while(videoInput->_playing)
-  {  
+
+  while (videoInput->_playing)
+  {
     if (videoInput->_device && !videoInput->_frameGrabbed)
-    {      
+    {
       pthread_mutex_lock(videoInput->_mutex);
 
 
       if (ioctl(videoInput->_device, VIDIOCMCAPTURE, &(videoInput->_vidMMap))<0)
         perror("VIDIOCMCAPTURE");
-      
-    
-      if (ioctl(videoInput->_device, VIDIOCSYNC, &(videoInput->_vidMMap.frame))<0)      
+
+
+      if (ioctl(videoInput->_device, VIDIOCSYNC, &(videoInput->_vidMMap.frame))<0)
         perror("VIDIOCSYNC");
-      
+
       videoInput->_frameGrabbed=true;      
-      
+
       pthread_mutex_unlock(videoInput->_mutex);
-    }
-    else
+    } else
       Timing::sleep(5);
   }
 
@@ -252,30 +254,30 @@ void Gear_VideoInput::runVideo()
 {
   if (!_device)
     return;
-  
+
   if (!_frameGrabbed)
     return;
 
   _outData = (unsigned char*) _VIDEO_OUT->type()->data();
-                   
+
   int len=_sizeX*_sizeY;      
-            
+
   //convert BGRA -> RGBA
   //need optimisation
   if (len)
-  {                
-      int imgSize=_sizeX*_sizeY;
-      _tempOutData = _outData;
-      _tempInData = _bufferBGRA;
-      for (int i=0;i<imgSize;i++)
-      {
-          *(_tempOutData) = *(_tempInData+2);
-          *(_tempOutData+1) = *(_tempInData+1);
-          *(_tempOutData+2) = *(_tempInData);
+  {
+    int imgSize=_sizeX*_sizeY;
+    _tempOutData = _outData;
+    _tempInData = _bufferBGRA;
+    for (int i=0;i<imgSize;i++)
+    {
+      *(_tempOutData) = *(_tempInData+2);
+      *(_tempOutData+1) = *(_tempInData+1);
+      *(_tempOutData+2) = *(_tempInData);
 
-          _tempOutData+=4;
-          _tempInData+=4;
-      }
+      _tempOutData+=4;
+      _tempInData+=4;
+    }
   }
 
   _frameGrabbed=false;

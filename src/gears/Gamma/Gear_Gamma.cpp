@@ -94,7 +94,7 @@ void Gear_Gamma::runVideo()
   
 }
 
-void Gear_Gamma::init()
+void Gear_Gamma::internalInit()
 {
   _gamma = FLT_MIN;
   computeLookUpTable();

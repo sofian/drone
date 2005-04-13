@@ -4033,7 +4033,7 @@ MediaMovie::MediaMovie() :
   _thumbnail->resize(64,64);
 }
 
-void MediaMovie::load(std::string filename)
+void MediaMovie::load(std::string)
 {
 }
 

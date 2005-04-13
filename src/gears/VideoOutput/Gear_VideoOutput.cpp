@@ -93,7 +93,7 @@ void Gear_VideoOutput::onUpdateSettings()
   _videoOutput->toggleFullscreen(true, 1024, 768, 0,0);
 }
 
-void Gear_VideoOutput::init()
+void Gear_VideoOutput::internalInit()
 { 
 //osx version dont use the VideoOutputMaker strategy and directly use the GL Output
 #if defined(Q_OS_MACX)
@@ -129,16 +129,6 @@ void Gear_VideoOutput::init()
   std::cout << "sac a papier! fail to find a video output!!!" << std::endl;
 #endif
 }
-
-void Gear_VideoOutput::prePlay()
-{
-
-}
-
-void Gear_VideoOutput::postPlay()
-{
-}
-
 
 void Gear_VideoOutput::runVideo()
 {       

@@ -59,9 +59,7 @@ private:
   int _delay;
   int _memory;
 
-  CircularBuffer<RGBA> * circbuf;
-
-  void init();    
+  CircularBuffer<RGBA> * circbuf;  
 };
 
 #endif

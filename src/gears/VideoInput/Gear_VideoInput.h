@@ -50,11 +50,7 @@ public:
   Gear_VideoInput(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoInput();
 
-  void runVideo();
-  void init();
-  void prePlay();
-  void postPlay();
-  
+  void runVideo();  
 
   PlugOut<VideoRGBAType> *VIDEO_OUT(){return _VIDEO_OUT;};
 
@@ -63,6 +59,10 @@ public:
   static void *playThread(void *parent);
 
 protected:
+  void internalInit();
+  void internalPrePlay();
+  void internalPostPlay();
+  
   void onUpdateSettings();
 //  static void videoCallback(uint8_t *video, long size, long count);
 

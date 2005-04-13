@@ -53,7 +53,7 @@ Gear_FaceTrack::~Gear_FaceTrack()
   pthread_cond_destroy(&_inputCond);
 }
 
-void Gear_FaceTrack::init()
+void Gear_FaceTrack::internalInit()
 {
   _keepLooping = true;
   

@@ -38,9 +38,12 @@ public:
   Gear_MotionTrack(Schema *schema, std::string uniqueName);
   virtual ~Gear_MotionTrack();
 
-  void init();
+
   void runVideo();
   bool ready();
+
+protected:
+  void internalInit();
 
 private:
 

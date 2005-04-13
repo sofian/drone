@@ -40,9 +40,6 @@ public:
   Gear_Slider(Schema *schema, std::string uniqueName);
   virtual ~Gear_Slider();
 
-  void save(QDomDocument &doc, QDomElement &gearElem);
-  void load(QDomElement &gearElem);
-
   void runAudio();
 
   void setValue(float  value);
@@ -50,9 +47,11 @@ public:
 
   bool ready();
 
-  
-
 protected:
+
+  void internalSave(QDomDocument &doc, QDomElement &gearElem);
+  void internalLoad(QDomElement &gearElem);
+
   GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
   Control* createCustomControl(ControlPanel *parent);
   void onUpdateSettings();

@@ -65,7 +65,6 @@ private:
   int _gridsizeY;
   int _gridsizeX;
 
-  void init();    
 };
 
 #endif

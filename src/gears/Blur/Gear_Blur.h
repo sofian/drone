@@ -58,8 +58,7 @@ private:
 
   int _blurSize;
   int _area;
-  
-  void init();    
+ 
 };
 
 #endif

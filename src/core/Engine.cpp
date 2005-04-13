@@ -30,15 +30,15 @@
 SignalInfo Engine::_signalInfo;
 VideoInfo Engine::_videoInfo;
 Time_T Engine::_currentTime=0.0;
-bool Engine::_playing=false;
 
 Engine::Engine(int hwnd) :
   _hWnd(hwnd),
   _averageLoad(0.0f),
-  _graphSynched(false)
-
+  _graphSynched(false),
+  _playing(false)
 {  
   _mainMetaGear = new MetaGear(NULL, "Main", "Main");  
+  _mainMetaGear->getInternalSchema()->addSchemaEventListener(this);
 }
 
 Engine::~Engine()
@@ -104,7 +104,7 @@ void *Engine::playThread(void *parent)
 
 #ifndef SINGLE_THREADED_PLAYBACK
   std::list<Gear*> allGears = mainSchema->getDeepGears();
-  for (std::list<Gear*>::iterator it=engine->allGears.begin();it!=engine->allGears.end();++it)
+  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPrePlay();
 
   while (engine->_playing)
@@ -212,5 +212,17 @@ void Engine::performScheduledGearUpdateSettings()
     (*it)->updateSettings();
   }
   _scheduledsGearUpdateSettings.clear();
+}
+
+void Engine::onGearAdded(Schema *, Gear *gear)
+{  
+  if (_playing)
+    gear->prePlay();  
+}
+
+void Engine::onGearRemoved(Schema *, Gear *gear)
+{
+  if (_playing)
+    gear->postPlay();
 }
 

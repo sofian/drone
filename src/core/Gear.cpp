@@ -50,17 +50,17 @@ void Gear::unSynch()
   _parentSchema->unSynch();
 }
 
-void Gear::internalPrePlay()
+void Gear::prePlay()
 {
-  prePlay();
+  internalPrePlay();
 }
 
-void Gear::internalPostPlay()
+void Gear::postPlay()
 {
-  postPlay();
+  internalPostPlay();
 }
 
-void Gear::internalInit()
+void Gear::init()
 {
   std::cout << "__________________________________________" << std::endl;
   std::cout << _Type << std::endl;
@@ -72,7 +72,7 @@ void Gear::internalInit()
   _gearGui = createGearGui(NULL);
 
   //call the virtual method
-  init();
+  internalInit();
 }
 
 
@@ -192,7 +192,7 @@ GearGui* Gear::createGearGui(QCanvas *canvas)
 }
 
 
-void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
+void Gear::save(QDomDocument &doc, QDomElement &parent)
 {               
   QDomElement gearElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(gearElem);
@@ -214,17 +214,17 @@ void Gear::internalSave(QDomDocument &doc, QDomElement &parent)
 	for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
 		(*it)->save(doc, plugElem);
 	
-  save(doc, gearElem);
+  internalSave(doc, gearElem);
 }
 
-void Gear::internalLoad(QDomElement &gearElem)               
+void Gear::load(QDomElement &gearElem)               
 {            
   _name = gearElem.attribute("Name","").ascii();
 
   _settings.load(gearElem);  
   updateSettings();
 
-  load(gearElem);
+  internalLoad(gearElem);
 
   _gearGui->load(gearElem);
 

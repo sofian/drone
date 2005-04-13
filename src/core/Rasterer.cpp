@@ -49,7 +49,7 @@ void Rasterer::setColor(unsigned char r, unsigned char g, unsigned char b)
   _color.b=b;
 }
 
-void Rasterer::line(int x0, int y0, int x1, int y1)
+void Rasterer::line(int , int , int , int )
 {
 }
 
@@ -161,7 +161,7 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
   }
 }
 
-void Rasterer::fill(int x0, int y0)
+void Rasterer::fill(int , int )
 {
 }
 

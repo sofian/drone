@@ -71,7 +71,7 @@ Gear_ClusteredDither::~Gear_ClusteredDither()
   free(_order);
 }
 
-void Gear_ClusteredDither::init()
+void Gear_ClusteredDither::internalInit()
 {
   _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, 512);
   _spotType = (eSpotType)CLAMP((int)_SPOT_TYPE_IN->type()->value(), (int)SQUARE, (int)LINE);

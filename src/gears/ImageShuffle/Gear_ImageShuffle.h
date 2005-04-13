@@ -34,14 +34,15 @@ public:
 
   Gear_ImageShuffle(Schema *schema, std::string name);
   virtual ~Gear_ImageShuffle();
-
-  void init();
   
   void runVideo();
 
   bool ready();
 
   void onUpdateSettings();
+
+protected:
+  void internalInit();
 
 private:
   void loadImage(const std::string& filename, Array2D<RGBA>& image);

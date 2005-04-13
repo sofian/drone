@@ -124,7 +124,7 @@ void Gear_Saturation::runVideo()
 
 }
 
-void Gear_Saturation::init()
+void Gear_Saturation::internalInit()
 {
   _saturation = 0.0f;
   computeLookUpTable();

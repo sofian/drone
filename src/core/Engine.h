@@ -30,6 +30,7 @@
 #include "Math.h"
 #include "error.h"
 #include "Schema.h"
+#include "ISchemaEventListener.h"
 #include <sys/time.h>
 
 
@@ -39,9 +40,8 @@ class QDomDocument;
 class QDomElement;
 class MetaGear;
 
-class Engine  
+class Engine : public ISchemaEventListener
 {
-
 public:
 
   Engine(int hwnd);
@@ -75,7 +75,10 @@ public:
   void debugStopPlay();
 #endif
 
-  static bool _playing;
+
+  //ISchemaEventListener Interface implementation
+  void onGearAdded(Schema *schema, Gear *gear);
+  void onGearRemoved(Schema *schema, Gear *gear);
 
 protected:
 
@@ -104,6 +107,8 @@ private:
   pthread_t _playThreadHandle;
 
   std::vector<Gear*> _scheduledsGearUpdateSettings;
+
+  bool _playing;
 
 };
 

@@ -82,7 +82,7 @@ Gear_AsciiArt::~Gear_AsciiArt()
   }
 }
 
-void Gear_AsciiArt::init() 
+void Gear_AsciiArt::internalInit() 
 {
   aa_parseoptions (NULL, NULL, NULL, NULL);
   _aaContext = NULL;

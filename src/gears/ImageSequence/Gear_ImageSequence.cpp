@@ -85,7 +85,7 @@ void Gear_ImageSequence::onUpdateSettings()
   
 }
 
-void Gear_ImageSequence::init()
+void Gear_ImageSequence::internalInit()
 {
   _current = 0;
   _nFramesCurrent = 0;

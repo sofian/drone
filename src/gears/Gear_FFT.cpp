@@ -37,7 +37,7 @@ bool Gear_FFT::ready()
   return(_AUDIO_IN->connected());
 }                                           
 
-void Gear_FFT::init()
+void Gear_FFT::internalInit()
 {    
   int fftSize = _FFT_OUT->type()->fftSize();
       

@@ -40,7 +40,7 @@ Gear_PlaceArea::~Gear_PlaceArea()
 
 }
 
-void Gear_PlaceArea::init()
+void Gear_PlaceArea::internalInit()
 {
   _AREA_OUT->type()->resize(1);
   _AREA_OUT->type()->operator[](0) = Area();

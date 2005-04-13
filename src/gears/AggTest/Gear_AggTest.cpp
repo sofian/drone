@@ -398,7 +398,7 @@ bool Gear_AggTest::ready()
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
-void Gear_AggTest::init()
+void Gear_AggTest::internalInit()
 {
   //parse_lion();
 

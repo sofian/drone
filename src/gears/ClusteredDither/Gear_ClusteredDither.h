@@ -64,9 +64,8 @@ public:
 
   bool ready();
 
-  void init();
-
 protected:
+  void internalInit();
   void onUpdateSettings();
 
 private:

@@ -8,35 +8,35 @@ template<class T>
 class CircularBuffer;
 
 #include <fftw3.h>
-                            
+
 class Gear_FFT : public Gear
 {
 public:
   Gear_FFT(Schema *schema, std::string uniqueName);
   virtual ~Gear_FFT();
-  
+
   bool ready();  
-  //void postPlay();
-  void init();
-  //void prePlay();
   void runVideo();
 
+protected:
+  void internalInit();
+
 private:  
-    static const int DEFAULT_FFT_SIZE;  
-    
-    PlugIn<SignalType> *_AUDIO_IN;  
-    PlugOut<FFTType> *_FFT_OUT;  
+  static const int DEFAULT_FFT_SIZE;  
 
-    //fftw
-    double *_fftIn;        
-    fftw_plan _fftPlan;
+  PlugIn<SignalType> *_AUDIO_IN;  
+  PlugOut<FFTType> *_FFT_OUT;  
 
-    double *_hammingWindow;
-    
-    CircularBuffer<Signal_T> *_circBuf;
+  //fftw
+  double *_fftIn;        
+  fftw_plan _fftPlan;
 
-    
+  double *_hammingWindow;
+
+  CircularBuffer<Signal_T> *_circBuf;
+
+
 
 };
-      
+
 #endif

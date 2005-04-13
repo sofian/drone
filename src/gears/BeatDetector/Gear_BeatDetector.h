@@ -49,8 +49,10 @@ public:
 
   bool ready();
   void runAudio();
-  void init();
   
+protected:
+  void internalInit();
+
 private:
 
   inline void decimate(float* destIt, float* source, unsigned

@@ -34,9 +34,6 @@ public:
   Gear_ListBox(Schema *schema, std::string uniqueName);
   virtual ~Gear_ListBox();
 
-  void save(QDomDocument &doc, QDomElement &gearElem);
-  void load(QDomElement &gearElem);
-
   void runAudio();
 
   void setValue(int value);
@@ -46,7 +43,11 @@ public:
   bool ready();
 
 protected:
-  GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
+
+  void internalSave(QDomDocument &doc, QDomElement &gearElem);
+  void internalLoad(QDomElement &gearElem);
+
+  GearGui* createGearGui(QCanvas *canvas);//we want a listbox so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug *);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug *);

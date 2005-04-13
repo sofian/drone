@@ -61,8 +61,7 @@ private:
   const VideoRGBAType *_image;     
 
   unsigned char* _data; // pointer on input image
-
-  void init();    
+  
 };
 
 #endif

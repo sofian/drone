@@ -54,7 +54,7 @@ Gear_MotionTrack::~Gear_MotionTrack()
     cvReleaseImage(&_image_rgb);
 }
 
-void Gear_MotionTrack::init()
+void Gear_MotionTrack::internalInit()
 {
   //  _firstRun = true;
   ASSERT_ERROR(_tracker);

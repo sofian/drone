@@ -47,6 +47,9 @@ public:
 
   bool ready();
 
+protected:
+  void internalInit();    
+
 private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;
@@ -75,7 +78,6 @@ private:
   int _playbackMode;
   int _pingpongDir;
   
-  void init();    
 };
 
 #endif

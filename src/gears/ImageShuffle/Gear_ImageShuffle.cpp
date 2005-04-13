@@ -78,7 +78,7 @@ void Gear_ImageShuffle::onUpdateSettings()
   
 }
 
-void Gear_ImageShuffle::init()
+void Gear_ImageShuffle::internalInit()
 {
   if (_imageBuffers.size() == 0)
     _current = 0;

@@ -54,11 +54,6 @@ Gear_Blur::~Gear_Blur()
   delete _table;
 }
 
-void Gear_Blur::init()
-{
-  //  _table->setImage(_VIDEO_IN->type());
-}
-
 bool Gear_Blur::ready()
 {
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());

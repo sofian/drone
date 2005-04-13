@@ -47,6 +47,9 @@ public:
 
   bool ready();
 
+protected:
+  void internalInit();
+
 private:
 
   // Inputs.
@@ -71,8 +74,7 @@ private:
   int _nLoopFrames;
   int _memory;
   int _playbackMode;
-  
-  void init();
+ 
 };
 
 #endif

@@ -91,7 +91,7 @@ void Gear_Brightness::runVideo()
   
 }
 
-void Gear_Brightness::init()
+void Gear_Brightness::internalInit()
 {
   _brightness = 0;
   computeLookUpTable();

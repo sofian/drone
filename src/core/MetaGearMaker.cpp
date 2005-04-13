@@ -44,8 +44,9 @@ MetaGearMaker::~MetaGearMaker()
   delete _registry;
 }
 
-MetaGear* MetaGearMaker::makeMetaGear(Schema *schema, std::string type, std::string uniqueName)
+MetaGear* MetaGearMaker::makeMetaGear(Schema *, std::string , std::string )
 {
+  //TODOFOO: where used?
   return NULL;
 }
 

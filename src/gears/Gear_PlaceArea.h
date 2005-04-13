@@ -33,9 +33,11 @@ public:
   Gear_PlaceArea(Schema *schema, std::string uniqueName);
   virtual ~Gear_PlaceArea();
 
-  void init();
   void runVideo();
   bool ready();
+
+protected:
+  void internalInit();
 
 private:
   PlugOut<AreaArrayType> *_AREA_OUT;

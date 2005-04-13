@@ -56,10 +56,6 @@ Gear_VideoDelay::~Gear_VideoDelay()
 {
 }
 
-void Gear_VideoDelay::init()
-{
-}
-
 bool Gear_VideoDelay::ready()
 {
   return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());

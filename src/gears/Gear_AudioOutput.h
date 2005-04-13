@@ -40,10 +40,6 @@ public:
   Gear_AudioOutput(Schema *schema, std::string uniqueName);
   virtual ~Gear_AudioOutput();
 
-  void prePlay();    
-  void postPlay();    
-
-  void init();
   void runAudio();    
 
   PlugIn<SignalType>* AUDIO_IN_LEFT(){return _AUDIO_IN_LEFT;};
@@ -52,6 +48,10 @@ public:
   bool ready();
 
 protected:
+  void internalPrePlay();    
+  void internalPostPlay();    
+  void internalInit();
+  
   void onUpdateSettings();
 
 private:
