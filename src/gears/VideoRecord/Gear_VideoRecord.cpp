@@ -21,8 +21,6 @@
 #include "Engine.h"
 #include "CircularBuffer.h"
 
-#include <iostream>
-
 #include "GearMaker.h"
 
 
@@ -45,19 +43,13 @@ Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gea
 {
   // Inputs.
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_RECORD = new PlugIn<ValueType>(this, "Record", new ValueType(0, 0, 1)));
-  addPlug(_RESET = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
-  addPlug(_SEEK = new PlugIn<ValueType>(this, "Seek", new ValueType(0, -125, 125)));
-  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
-
-  EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
-  playbackMode->setLabel(FORWARD,"Foward");
-  playbackMode->setLabel(BACKWARD,"Backward");
-  playbackMode->setLabel(PING_PONG,"Ping pong");
-  addPlug(_MODE = new PlugIn<EnumType>(this, "Mode", playbackMode));
+  addPlug(_RECORD_IN = new PlugIn<ValueType>(this, "Record", new ValueType(0, 0, 1)));
+  addPlug(_MEMORY_IN = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
+  addPlug(_FRAME_IN = new PlugIn<ValueType>(this, "Frame", new ValueType(0, 0, 0)));
 
   // Outputs.
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+  addPlug(_N_FRAMES_OUT = new PlugOut<ValueType>(this, "NFrames"));
 
   // Internal objects.
   _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
@@ -67,10 +59,9 @@ Gear_VideoRecord::~Gear_VideoRecord()
 {
 }
 
-void Gear_VideoRecord::internalInit()
+void Gear_VideoRecord::init()
 {
-  _currentLoopFrame = 0;
-  _nLoopFrames = 0;
+  _nFrames = 0;
 }
 
 bool Gear_VideoRecord::ready()
@@ -87,55 +78,29 @@ void Gear_VideoRecord::runVideo()
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 
-  _playbackMode = CLAMP((ePlaybackMode)_MODE->type()->value(), FORWARD, PING_PONG);
-  _memory = MAX(_MEMORY->type()->intValue(), 0);
+  _memory = MAX(_MEMORY_IN->type()->intValue(), 0);
 
   // Resize circular buffer to memory size.
   _circbuf->resize((int)_image->size(), _memory);
 
-  // Reset switch.
-  if ((int)_RESET->type()->value() == 1)
-  {
-    NOTICE("Reset");
-    _currentLoopFrame = 0;
-    _nLoopFrames = 0;
-  }
-
   // Record switch.
-  if ((int)_RECORD->type()->value() == 1)
+  if (_RECORD_IN->type()->intValue())
   {
     // Now recording...
     _circbuf->append(_image->data()); // append current image
-    _nLoopFrames++; // update number of frames
+    _nFrames++; // update number of frames
   }
 
   // Make sure number of frames fit in memory
-  _nLoopFrames = MIN(_nLoopFrames,_memory);
+  _nFrames = MIN(_nFrames,_memory);
 
   // Playback.
-  if (_nLoopFrames > 0)
-  {
-    // Play it.
-    switch (_playbackMode)
-    {
-    case FORWARD:
-      _currentSeekFrame = REPEAT_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
-      _currentLoopFrame = (_currentLoopFrame + 1 % _nLoopFrames);
-      break;
-    case BACKWARD:
-      _currentSeekFrame = REPEAT_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
-      _currentLoopFrame = (_currentLoopFrame==0? _nLoopFrames-1 : _currentLoopFrame-1);
-      break;
-    case PING_PONG:
-      _currentSeekFrame = MIRROR_CLAMP(_currentLoopFrame + _SEEK->type()->intValue(), 0, _nLoopFrames-1);
-      _currentLoopFrame = (_currentLoopFrame + 1 % _nLoopFrames);
-      break;
-    }
-
+  if (_nFrames > 0)
     // Fill output image with current frame.
-    _circbuf->fillVectorFromBlock(_outImage, _currentSeekFrame -_nLoopFrames + 1);
-  }
+    _circbuf->fillVectorFromBlock(_outImage, CLAMP(_FRAME_IN->type()->intValue(), 0, _nFrames-1) - _nFrames + 1);
   else // default: play input image
     std::copy(_image->begin(), _image->end(), _outImage->begin());
-  
+
+  // Output number of frames.
+  _N_FRAMES_OUT->type()->setValue(_nFrames);
 }
