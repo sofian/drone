@@ -11,8 +11,6 @@ if (len(sys.argv) < 4):
 stext = sys.argv[1]
 rtext = sys.argv[2]
 
-print len(sys.argv)
-
 for i in range(3,len(sys.argv)):
     f = open(sys.argv[i], "r+")
     print "Opening file : " + sys.argv[i]
