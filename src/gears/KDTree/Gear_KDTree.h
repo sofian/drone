@@ -82,6 +82,14 @@ private:
   int _cuts[1024];
 
   void split(int x0, int x1, int y0, int y1, int depth, bool hSplit);
+  static inline unsigned int intensity(unsigned int r, unsigned int g, unsigned int b);
 };
+
+#include <iostream>
+// XXX ça devrait aller à une seule place
+inline unsigned int Gear_KDTree::intensity(unsigned int r, unsigned int g, unsigned int b)
+{
+  return (r + (g>>1) + b)  >> 2;
+}
 
 #endif 

@@ -118,7 +118,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   int y0minus1 = y0-1;
   
   // Get the total values in the area.
-  int rgba[SIZE_RGBA];  
+  unsigned int rgba[SIZE_RGBA];  
   int area;
   _table->getSum(rgba, area, x0minus1, y0minus1, x1, y1);
   //_intensitiesTable->getSum(&intensity, area, x0minus1, y0minus1, x1, y1);
@@ -152,18 +152,18 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
     return;
   }
 
-  int cellValue = rgb2gray(rgba[0], rgba[1], rgba[2]) / currentNCells; // XXX should calculate luminance for better effect
+  unsigned int cellValue = intensity(rgba[0], rgba[1], rgba[2]) / currentNCells; // XXX should calculate luminance for better effect
   
   // Now split.
   if (hSplit)
   {
     // horizontal split
-    int mid=0;    
+    unsigned int mid=0;    
     for (int i=1; i<currentNCells; ++i)
     {
-      int cut = i*cellValue;
-      int upper = x1;
-      int lower = x0;
+      unsigned int cut = i*cellValue;
+      unsigned int upper = x1;
+      unsigned int lower = x0;
       mid = lower;
       // binary search
       while (lower != upper)
@@ -171,7 +171,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         mid = (lower+upper) / 2; // take the mean
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, mid, y1);
-        if (rgb2gray(rgba[0], rgba[1], rgba[2]) < cut)
+        if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
           lower = mid+1; // look right //*** attention risque d'erreur : vérifier
         else
           upper = mid;  // look left
@@ -184,15 +184,14 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
   }
   else
   {
-
     // vertical split
-    int mid;
+    unsigned int mid=0;
     
     for (int i=1; i<currentNCells; ++i)
     {
-      int cut = i*cellValue;
-      int upper = y1;
-      int lower = y0;
+      unsigned int cut = i*cellValue;
+      unsigned int upper = y1;
+      unsigned int lower = y0;
       mid = lower;
       // binary search
       while (lower != upper)
@@ -200,7 +199,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         mid = (lower+upper) / 2; // take the mean
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, x1, mid);
-        if (rgb2gray(rgba[0], rgba[1], rgba[2]) < cut)
+        if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
           lower = mid+1; // look up //*** attention risque d'erreur : vérifier
         else
           upper = mid;  // look down
