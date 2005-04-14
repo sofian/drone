@@ -41,7 +41,7 @@
  * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
-template <typename Type = unsigned char, typename AccType = int, size_t SIZE = SIZE_RGBA>
+template <typename Type = unsigned char, typename AccType = unsigned int, size_t SIZE = SIZE_RGBA>
 class SummedAreaTable : public Array2D<AccType*>
 {
 public:
