@@ -1,0 +1,189 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="45" PosY="46" Type="VideoSource" Name="VideoSource1" >
+                <Properties Filename="/home/julien/dev/drone_pre_25_sept/media/panorama_ephemera2004.mpg" />
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="808" PosY="209" Type="VideoOutput" Name="VideoOutput1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="429" PosY="50" Type="VideoRecord" Name="VideoRecord1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="Record" Exposed="0" />
+                    <Plug Name="Memory" Exposed="0" />
+                    <Plug Name="Frame" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="NFrames" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="461" PosY="453" Type="VideoRecord" Name="VideoRecord2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="Record" Exposed="0" />
+                    <Plug Name="Memory" Exposed="0" />
+                    <Plug Name="Frame" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="NFrames" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="650" PosY="413" Type="VideoMix" Name="VideoMix1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgA" Exposed="0" />
+                    <Plug Name="ImgB" Exposed="0" />
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="ArgA" Exposed="0" />
+                    <Plug Name="MixFunc" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear ListBoxPos="10" PosX="774" PosY="577" Type="ListBox" Name="ListBox1" >
+                <Properties Number_of_elements="21" Labels_of_elements="Blend,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference,Scale" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="55" PosY="142" Type="PushButton" Name="PushButton1" >
+                <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="225" PosY="452" Type="PushButton" Name="PushButton2" >
+                <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="437" PosY="157" Type="SelectFrame" Name="SelectFrame1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Next" Exposed="0" />
+                    <Plug Name="NFrames" Exposed="0" />
+                    <Plug Name="Seek" Exposed="0" />
+                    <Plug Name="Mode" Exposed="0" />
+                    <Plug Name="Frame" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="503" PosY="579" Type="SelectFrame" Name="SelectFrame2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Next" Exposed="0" />
+                    <Plug Name="NFrames" Exposed="0" />
+                    <Plug Name="Seek" Exposed="0" />
+                    <Plug Name="Mode" Exposed="0" />
+                    <Plug Name="Frame" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="259" PosY="186" Type="Osc" Name="Osc1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Freq" Exposed="0" />
+                    <Plug Name="Amp" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="175" PosY="389" Type="Slider" SliderPos="1" Name="Slider1" >
+                <Properties Lower_Bound="0" Higher_Bound="100" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="116" PosY="274" Type="TouchPad" Name="TouchPad1" >
+                <Properties Horizontal_higher_Bound="1000" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="125" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="180" PosY="516" Type="Osc" Name="Osc2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Freq" Exposed="0" />
+                    <Plug Name="Amp" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="183" PosY="641" Type="PushButton" Name="PushButton3" >
+                <Properties On_Value="122" One_Shot="0" Off_Value="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="18" PosY="535" Type="TouchPad" Name="TouchPad2" >
+                <Properties Horizontal_higher_Bound="1000" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="125" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="184" PosY="690" Type="PushButton" Name="PushButton4" >
+                <Properties On_Value="122" One_Shot="0" Off_Value="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="498" PosY="272" Type="ValueMix" Name="ValueMix1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In1" Exposed="0" />
+                    <Plug Name="In2" Exposed="0" />
+                    <Plug Name="Blend" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="409" PosY="362" Type="Slider" SliderPos="0.231707" Name="Slider2" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="346" PosY="614" Type="ValueMix" Name="ValueMix2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In1" Exposed="0" />
+                    <Plug Name="In2" Exposed="0" />
+                    <Plug Name="Blend" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoSource1" GearB="VideoRecord1" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="VideoSource1" GearB="VideoRecord2" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="VideoRecord1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+            <Connection GearA="VideoRecord1" GearB="SelectFrame1" Input="NFrames" Output="NFrames" />
+            <Connection GearA="VideoRecord2" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
+            <Connection GearA="VideoRecord2" GearB="SelectFrame2" Input="NFrames" Output="NFrames" />
+            <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="IN" Output="ImgOut" />
+            <Connection GearA="ListBox1" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+            <Connection GearA="PushButton1" GearB="VideoRecord1" Input="Record" Output="Value" />
+            <Connection GearA="PushButton2" GearB="VideoRecord2" Input="Record" Output="Value" />
+            <Connection GearA="SelectFrame1" GearB="VideoRecord1" Input="Frame" Output="Frame" />
+            <Connection GearA="SelectFrame2" GearB="VideoRecord2" Input="Frame" Output="Frame" />
+            <Connection GearA="TouchPad1" GearB="Osc1" Input="Freq" Output="HValue" />
+            <Connection GearA="TouchPad1" GearB="Osc1" Input="Amp" Output="VValue" />
+            <Connection GearA="PushButton3" GearB="ValueMix2" Input="In1" Output="Value" />
+            <Connection GearA="TouchPad2" GearB="Osc2" Input="Freq" Output="HValue" />
+            <Connection GearA="TouchPad2" GearB="Osc2" Input="Amp" Output="VValue" />
+            <Connection GearA="PushButton4" GearB="ValueMix1" Input="In1" Output="Value" />
+            <Connection GearA="ValueMix1" GearB="ValueMix1" Input="In2" Output="Out" />
+            <Connection GearA="ValueMix1" GearB="SelectFrame1" Input="Seek" Output="Out" />
+            <Connection GearA="Slider2" GearB="ValueMix1" Input="Blend" Output="Value" />
+            <Connection GearA="Slider2" GearB="ValueMix2" Input="Blend" Output="Value" />
+            <Connection GearA="ValueMix2" GearB="ValueMix2" Input="In2" Output="Out" />
+            <Connection GearA="ValueMix2" GearB="SelectFrame2" Input="Seek" Output="Out" />
+        </Connections>
+    </Schema>
+</Project>
