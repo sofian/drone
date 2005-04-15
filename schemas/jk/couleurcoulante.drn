@@ -49,21 +49,21 @@
                     <Plug Name="Amount" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="375" PosY="419" Type="Slider" SliderPos="438.585" Name="Slider2" >
-                <Properties Lower_Bound="-999" Higher_Bound="999" Midi_Channel="" Midi_controller="" Accept_Midi="" />
+            <Gear PosX="375" PosY="419" Type="Slider" SliderPos="1162.44" Name="Slider2" >
+                <Properties Lower_Bound="73" Higher_Bound="9999" Midi_Channel="" Midi_controller="" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="224" PosY="538" Type="Slider" SliderPos="1.21951" Name="Slider3" >
+            <Gear PosX="99" PosY="380" Type="Slider" SliderPos="2.43902" Name="Slider3" >
                 <Properties Lower_Bound="0" Higher_Bound="100" Midi_Channel="" Midi_controller="" Accept_Midi="" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="221" PosY="603" Type="Slider" SliderPos="1.41463" Name="Slider4" >
+            <Gear PosX="213" PosY="649" Type="Slider" SliderPos="0.865854" Name="Slider4" >
                 <Properties Lower_Bound=".5" Higher_Bound="2" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -93,7 +93,7 @@
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="563" PosY="649" Type="Slider" SliderPos="1.53659" Name="Slider6" >
+            <Gear PosX="563" PosY="649" Type="Slider" SliderPos="2.92683" Name="Slider6" >
                 <Properties Lower_Bound="0" Higher_Bound="3" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -108,7 +108,7 @@
                     <Plug Name="Amount" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="880" PosY="594" Type="Slider" SliderPos="0.5" Name="Slider7" >
+            <Gear PosX="880" PosY="594" Type="Slider" SliderPos="0.951219" Name="Slider7" >
                 <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -123,7 +123,7 @@
                     <Plug Name="Hue" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="558" PosY="238" Type="Slider" SliderPos="0.926829" Name="Slider8" >
+            <Gear PosX="558" PosY="238" Type="Slider" SliderPos="0.0365854" Name="Slider8" >
                 <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -173,31 +173,77 @@
                     <Plug Name="SCALE" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="583" PosY="3" Type="Slider" SliderPos="1.70732" Name="Slider14" >
+            <Gear PosX="583" PosY="3" Type="Slider" SliderPos="0.487805" Name="Slider14" >
                 <Properties Lower_Bound="0" Higher_Bound="4" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="428" PosY="107" Type="Slider" SliderPos="-73.0244" Name="Slider15" >
+            <Gear PosX="428" PosY="107" Type="Slider" SliderPos="462.488" Name="Slider15" >
                 <Properties Lower_Bound="-499" Higher_Bound="499" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="427" PosY="168" Type="Slider" SliderPos="110.683" Name="Slider16" >
+            <Gear PosX="427" PosY="168" Type="Slider" SliderPos="-197.293" Name="Slider16" >
                 <Properties Lower_Bound="-599" Higher_Bound="499" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                     <Plug Name="Rand" Exposed="0" />
                 </Plugs>
             </Gear>
+            <Gear PosX="372" PosY="224" Type="Slider" SliderPos="2" Name="Slider9" >
+                <Properties Lower_Bound="0" Higher_Bound="2" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                    <Plug Name="Rand" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="382" PosY="62" Type="Blur" Name="Blur2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Amount" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="385" PosY="274" Type="VideoMix" Name="VideoMix2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgA" Exposed="0" />
+                    <Plug Name="ImgB" Exposed="0" />
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="ArgA" Exposed="0" />
+                    <Plug Name="MixFunc" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="297" PosY="147" Type="Slider" SliderPos="62.1951" Name="Slider11" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                    <Plug Name="Rand" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="357" PosY="42" Type="Slider" SliderPos="9.14634" Name="Slider12" >
+                <Properties Lower_Bound="0" Higher_Bound="50" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                    <Plug Name="Rand" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="114" PosY="548" Type="VideoOutput" Name="VideoOutput2" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
         </Gears>
         <Connections>
             <Connection GearA="Contrast1" GearB="Saturation1" Input="ImgIN" Output="ImgOUT" />
             <Connection GearA="VideoSource1" GearB="VideoMix1" Input="ImgA" Output="ImgOut" />
+            <Connection GearA="VideoSource1" GearB="VideoOutput2" Input="IN" Output="ImgOut" />
             <Connection GearA="Slider1" GearB="VideoMix1" Input="ArgA" Output="Value" />
             <Connection GearA="VideoMix1" GearB="Blur1" Input="ImgIN" Output="ImgOut" />
             <Connection GearA="Blur1" GearB="Gamma1" Input="ImgIN" Output="ImgOUT" />
@@ -211,17 +257,23 @@
             <Connection GearA="Saturation2" GearB="f0r::Hueshift0r1" Input="ImgIN" Output="ImgOUT" />
             <Connection GearA="Slider7" GearB="Saturation2" Input="Amount" Output="Value" />
             <Connection GearA="f0r::Hueshift0r1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
-            <Connection GearA="f0r::Hueshift0r1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
             <Connection GearA="Slider8" GearB="ValueMix1" Input="In1" Output="Value" />
             <Connection GearA="PushButton1" GearB="Slider4" Input="Rand" Output="Value" />
             <Connection GearA="ValueMix1" GearB="ValueMix1" Input="In2" Output="Out" />
             <Connection GearA="ValueMix1" GearB="f0r::Hueshift0r1" Input="Hue" Output="Out" />
             <Connection GearA="Slider10" GearB="ValueMix1" Input="Blend" Output="Value" />
             <Connection GearA="ApplyDisplaceGrid1" GearB="VideoOutput1" Input="IN" Output="ImgOUT" />
+            <Connection GearA="ApplyDisplaceGrid1" GearB="Blur2" Input="ImgIN" Output="ImgOUT" />
             <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
             <Connection GearA="Slider14" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
             <Connection GearA="Slider15" GearB="GenDisplaceGrid1" Input="PARAM1" Output="Value" />
             <Connection GearA="Slider16" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Value" />
+            <Connection GearA="Slider9" GearB="GenDisplaceGrid1" Input="SCALE" Output="Value" />
+            <Connection GearA="Blur2" GearB="VideoMix2" Input="ImgA" Output="ImgOUT" />
+            <Connection GearA="VideoMix2" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="VideoMix2" GearB="VideoMix2" Input="ImgB" Output="ImgOut" />
+            <Connection GearA="Slider11" GearB="VideoMix2" Input="ArgA" Output="Value" />
+            <Connection GearA="Slider12" GearB="Blur2" Input="Amount" Output="Value" />
         </Connections>
     </Schema>
 </Project>
