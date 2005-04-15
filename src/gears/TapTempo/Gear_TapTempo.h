@@ -31,24 +31,22 @@ public:
   Gear_TapTempo(Schema *schema, std::string uniqueName);
   virtual ~Gear_TapTempo();
 
-  void runVideo();
+  void runAudio();
 
   bool ready();
 
-private:
-  PlugIn<ValueType> *_TAP_IN,*_RESET,*_OFFSET;
-  PlugOut<ValueType> *_VALUE_OUT;
+protected:
+  void internalInit();
   
+private:
+  PlugIn<ValueType> *_TAP_IN;
+  PlugIn<ValueType> *_DECAY_IN;
+  
+  PlugOut<ValueType> *_VALUE_OUT;
 
-
-  std::deque<float> _tapSpacings;
   float _lastTapTime;
-  float _lastTapValue;
-
-  float _scheduledTapTimeStamp;
-  float _scheduledTapTimeStampNext;
   float _estimatedTempo;
-  int _framesUp;
+  float _scheduledBeatTimeStamp;
 
 };
 

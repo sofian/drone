@@ -41,12 +41,11 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_TapTempo::Gear_TapTempo(Schema *schema, std::string uniqueName) : Gear(schema, "TapTempo", uniqueName),_lastTapTime(-1),_lastTapValue(0),_scheduledTapTimeStamp(-1),_scheduledTapTimeStampNext(-1),_estimatedTempo(-1),_framesUp(4)
+Gear_TapTempo::Gear_TapTempo(Schema *schema, std::string uniqueName) : Gear(schema, "TapTempo", uniqueName)
 {
 
-  addPlug(_TAP_IN = new PlugIn<ValueType>(this, "Tap", new ValueType(0.0f)));
-  addPlug(_RESET= new PlugIn<ValueType>(this, "Reset", new ValueType(0.0f)));
-  addPlug(_OFFSET= new PlugIn<ValueType>(this, "Offset", new ValueType(0.0f,-10.0f,10.0f)));
+  addPlug(_TAP_IN   = new PlugIn<ValueType>(this, "Tap", new ValueType(0.0f)));
+  addPlug(_DECAY_IN = new PlugIn<ValueType>(this, "Decay", new ValueType(0.9f, 0.0f, 1.0f)));
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
 }
@@ -61,88 +60,94 @@ bool Gear_TapTempo::ready()
   return(_VALUE_OUT->connected());
 }
 
-void Gear_TapTempo::runVideo()
-{ 
-  // we have a tap
-  if(_TAP_IN->type()->value() && _lastTapValue==0)
-  {
-    if(_lastTapTime!=-1 && (Engine::currentRealTime() - _lastTapTime) > .3)
-      _tapSpacings.push_back(Engine::currentRealTime() - _lastTapTime);
-    _lastTapTime=Engine::currentRealTime();
-    if(_tapSpacings.size()>10)
-      _tapSpacings.pop_front();
-  }
-  
-  float lagOffset = -.23;
-//  cerr<<setprecision(20)<<setw(20)<<(Engine::currentRealTime())<<endl;
-  float divisor;
+void Gear_TapTempo::internalInit()
+{
+  _estimatedTempo = -1;
+  _lastTapTime = -1;
+  _scheduledBeatTimeStamp = FLT_MAX;
+}
 
-  if(_tapSpacings.size()>4)
+void Gear_TapTempo::runAudio()
+{
+  float currentTime = Engine::currentTime();
+  
+  // We have a tap.
+  if(_TAP_IN->type()->boolValue())
   {
-    if(_estimatedTempo==-1)
+    if (_lastTapTime <= 0)
+      // This is the very first tap.
     {
-      float shortest = 10E10;
-      for(std::deque<float>::iterator it = _tapSpacings.begin(); it!=_tapSpacings.end();++it)
-      {
-        if((*it) < shortest)
-          shortest=*it;
-      }
-      divisor=shortest;
+      // Beat now!
+      _scheduledBeatTimeStamp = currentTime;
+
+      // Memorize the tap time.
+      _lastTapTime = currentTime;
     }
     else
-      divisor = _estimatedTempo;
-   
-  
-    float avg =0;
-    float avgcnt=0;
-    for(std::deque<float>::iterator it = _tapSpacings.begin(); it!=_tapSpacings.end();++it)
     {
-      float nbeatsInTapLength = MAX(1.0,round(*it/divisor));
-      std::cerr<< *it << " "<<nbeatsInTapLength <<"* (" << *it / nbeatsInTapLength << ")" << std::endl;
-      avg += *it / nbeatsInTapLength * MIN(nbeatsInTapLength,10.0f);
-      avgcnt += MIN(nbeatsInTapLength,10.0f);
-    }
+      // The interval between two taps.
+      float interval = currentTime - _lastTapTime;
 
+      // Memorize the tap time.
+      _lastTapTime = currentTime;
 
-    _estimatedTempo = avg/avgcnt;
-    std::cerr<<"AVG:"<<_estimatedTempo<<std::endl;
-
-    if(_scheduledTapTimeStamp == -1)
-    {
-      _scheduledTapTimeStamp = Engine::currentRealTime() + _estimatedTempo;
-    }
-
-    // if(_framesUp)
-//     {
-//       --_framesUp;
-//       _VALUE_OUT->type()->setValue(1);
-//     }
-     if(_TAP_IN->type()->value() && _lastTapValue==0)
-    {
-      _framesUp = 4;
-      //_VALUE_OUT->type()->setValue(1);
-      _scheduledTapTimeStampNext = Engine::currentRealTime() + _estimatedTempo - lagOffset;
-    }
-    else 
-    {
-      
-      if(Engine::currentRealTime() >= _scheduledTapTimeStamp)
+      //    std::cout << "Tap in: " << currentTime << ", " << interval << ", " << _lastTapTime << std::endl;
+      if (_estimatedTempo >= 0)
+        // There already was an estimated tempo.
       {
-        _framesUp = 4;
-        _VALUE_OUT->type()->setValue(1);
-        if(_scheduledTapTimeStampNext != -1)
+        if (interval < (2*_estimatedTempo))
+          // Tapped inside limited interval => just readjust tempo.
         {
-          _scheduledTapTimeStamp = _scheduledTapTimeStampNext;
-          _scheduledTapTimeStampNext =-1;
+          //std::cout << "Tap < 2*estimatedTempo";
+          float decay = CLAMP( _DECAY_IN->type()->value(), 0.0f, 1.0f );
+          float preestimatedTempo = _estimatedTempo;
+          // Adjust estimated tempo using moving average.
+          _estimatedTempo = (1.0f-decay)*_estimatedTempo + decay*interval; // reestimate tempo w/ moving average
+          _scheduledBeatTimeStamp += (_estimatedTempo - preestimatedTempo); // readjust schedule
         }
         else
-          _scheduledTapTimeStamp += _estimatedTempo;
+          // Tapped far away from last sequence => reset tempo.
+        {
+          //std::cout << "Tap > 2*estimatedTempo : reset";
+          // Reset tempo.
+          _estimatedTempo = -1;
+          // Beat now!
+          _scheduledBeatTimeStamp = currentTime;
+        }
       }
       else
-        _VALUE_OUT->type()->setValue(0);
-      _scheduledTapTimeStampNext =-1;
-      
+        // We have no estimated tempo yet.
+      {
+        //std::cout << "Tap estimatedTempo < 0 : new";
+        // Estimate tempo with current interval.
+        _estimatedTempo = interval;
+
+        // Beat now!
+        _scheduledBeatTimeStamp = currentTime;
+      }
     }
+
   }
-  _lastTapValue = _TAP_IN->type()->value();
+
+  //std::cout << " currentTime = " << currentTime << ", scheduled = " << _scheduledBeatTimeStamp << ", tempo = " << _estimatedTempo;
+  if (currentTime >= _scheduledBeatTimeStamp)
+    // Beat now!
+  {
+    //std::cout << " ### Beat it! : " << (_estimatedTempo >= 0 ? "ok":"infinite") << std::endl;
+    // Schedule next beat.
+    if (_estimatedTempo >= 0)
+      _scheduledBeatTimeStamp += _estimatedTempo;
+    else
+      _scheduledBeatTimeStamp = FLT_MAX;
+    // Beat it!
+    _VALUE_OUT->type()->setValue(1.0f);
+  }
+  else
+  {
+    //std::cout << " ### No beat." << std::endl;
+    // No beat.
+    _VALUE_OUT->type()->setValue(0.0f);
+  }
+  
+  //std::cout << _estimatedTempo << "," << _scheduledBeatTimeStamp << "," << _lastTapTime << "," << _VALUE_OUT->type()->value() << "," << currentTime() << std::endl;
 }
