@@ -219,7 +219,7 @@ void Gear_VideoSource::runVideo()
     *out++=*in++;
     *out++=*in++;
     *out++=*in++;
-    out++;
+    *out++=255;
   }
 
   // Free the packet that was allocated by av_read_frame
