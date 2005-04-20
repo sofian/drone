@@ -312,3 +312,48 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
   _schema->disconnectAll(plugBox->plug());
 }
 
+
+void SchemaGui::unselectAllGears()
+{
+  QCanvasItemList l=allItems();
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
+      ((GearGui*)(*it))->setSelected(false);
+  update();
+}
+
+void SchemaGui::selectOneGear(GearGui* gear)
+{
+  QCanvasItemList l=allItems();
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
+      ((GearGui*)(*it))->setSelected( ((GearGui*)(*it)) == gear );
+  update();
+}
+
+void SchemaGui::toggleGearSelection(GearGui* gear)
+{
+  gear->toggleSelection();
+  update();
+}
+
+void SchemaGui::moveSelectedGearsBy(int x, int y)
+{
+  QCanvasItemList l=allItems();
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR 
+         && ((GearGui*)(*it))->isSelected())    
+      ((GearGui*)(*it))->moveBy(x,y);
+  update();
+}
+
+void SchemaGui::selectGearsInRectangle(QRect rect)
+{
+  QCanvasItemList l=allItems();
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
+    {
+      ((GearGui*)(*it))->setSelected(((GearGui*)(*it))->boundingRect().intersects(rect));
+    }
+  update();
+}

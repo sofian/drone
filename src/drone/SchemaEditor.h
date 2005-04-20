@@ -52,7 +52,7 @@ public:
 
   enum eStatus
   {
-    IDLE, MOVING_GEAR, CONNECTING
+    IDLE, MOVING_GEAR, CONNECTING, DRAGGING_SELECT_BOX
   };
 
   SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
@@ -113,6 +113,7 @@ private:
   eStatus _state;
   GearGui *_movingGear;
   QPoint _movingGearStartPos;
+  QPoint _selectBoxStartPos;
   double _zoom;
 
   ConnectionItem* _activeConnection;
@@ -131,6 +132,9 @@ private:
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
 
   PanelScrollView *_panelScrollView;
+
+
+  QCanvasRectangle *_selectBox;
 };
 
 #endif

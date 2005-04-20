@@ -38,6 +38,7 @@ const int GearGui::SHADOW_OFFSET = 4;
 const int GearGui::RENDERING_OFFSET = 4;
 
 const QColor GearGui::BOX_COLOR(207,207,209);
+const QColor GearGui::SELECTED_BOX_COLOR(255,255,255);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
 
@@ -52,6 +53,7 @@ GearGui::GearGui(Gear *pgear, QCanvas *canvas, QColor color, int sizeX, int size
 QCanvasRectangle(canvas),
 QObject(),
 _gear(pgear),
+_selected(false),
 _sizeX(sizeX),
 _sizeY(sizeY),
 _inputsInterval(0),
@@ -265,7 +267,7 @@ void GearGui::drawShape(QPainter &painter)
 
   //box
   painter.setPen(Qt::black);
-  painter.setBrush(BOX_COLOR);
+  painter.setBrush(_selected?SELECTED_BOX_COLOR : BOX_COLOR);
   painter.drawRoundRect(startX, startY, _sizeX, _sizeY);
 
   //name

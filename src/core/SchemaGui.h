@@ -57,6 +57,14 @@ public:
   void unHilightAllConnections();
   void unHilightAllPlugBoxes();
 
+  // selection 
+  void unselectAllGears();
+  void selectGearsInRectangle(QRect rect);
+  void moveSelectedGearsBy(int x, int y);
+  void selectOneGear(GearGui* gear);
+  void toggleGearSelection(GearGui* gear);
+
+
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;

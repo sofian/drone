@@ -44,6 +44,7 @@ public:
 
   //colors    
   static const QColor BOX_COLOR;  
+  static const QColor SELECTED_BOX_COLOR;  
   static const QColor BOXNAME_COLOR;
   static const QColor SHADOW_COLOR;
 	
@@ -83,7 +84,11 @@ public:
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
   void setTitle(std::string title){_title=title;}
-  
+ 
+  void setSelected(bool state){_selected=state;QCanvasRectangle::setSelected(state);}
+  void toggleSelection(){setSelected(!_selected);}
+  bool isSelected() const {return _selected;}
+
 protected:
 				
   void timerEvent(QTimerEvent*);
@@ -97,6 +102,8 @@ protected:
   std::vector<PlugBox*> _inputPlugBoxes;
   std::vector<PlugBox*> _outputPlugBoxes;
   std::vector<PlugBox*> _plugBoxes;//!contain all inputs and outputs
+
+  bool _selected;
 
   // the effective Size (can be stretched by user)
   int _sizeX;

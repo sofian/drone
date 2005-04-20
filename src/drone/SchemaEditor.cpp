@@ -58,7 +58,9 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _activeConnection(0),
   _contextMenuPos(0,0),
   _contextGear(NULL),
-  _panelScrollView(panelScrollView)
+  _panelScrollView(panelScrollView),
+  _selectBox(NULL)
+
 {
   viewport()->setMouseTracking(TRUE);
 
@@ -152,13 +154,31 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 
       } else if (gearGui->titleBarHitted(p))
       {
-        _state = MOVING_GEAR;            
-        _movingGear = gearGui;
-        _movingGearStartPos = p;            
+        // select only the clicked gear
+        if(mouseEvent->state()&Qt::ControlButton || mouseEvent->state()&Qt::ShiftButton)
+          _schemaGui->toggleGearSelection(gearGui);
+        else if(!gearGui->isSelected())
+            _schemaGui->selectOneGear(gearGui);
+    
+        // start moving it (but only if it has not been unselected, in
+        // which case it is weird to move remaining gears.. (well, in my opinion JK)
+        if(gearGui->isSelected())
+        {
+          _state = MOVING_GEAR;            
+          _movingGear = gearGui;
+          _movingGearStartPos = p;            
+        }
       }
     }
   } else
+  {
+    delete _selectBox;
+    _selectBox=NULL;
     _movingGear=NULL;
+    _schemaGui->unselectAllGears();
+    _state = DRAGGING_SELECT_BOX;
+    _selectBoxStartPos = p;
+  }
 
 }
 
@@ -235,7 +255,8 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case MOVING_GEAR:
     if (_movingGear!=NULL)
     {
-      _schemaGui->moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
+      _schemaGui->moveSelectedGearsBy(p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
+//    _schemaGui->moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
       _movingGearStartPos = p;        
     }
     break;
@@ -258,7 +279,21 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
         gearGui->unHilightAllPlugBoxes();
     }
 
-    break;            
+    break;           
+
+  case DRAGGING_SELECT_BOX:
+    //delete _selectBox;
+    if(!_selectBox)
+      _selectBox = new QCanvasRectangle(QRect(_selectBoxStartPos, p),_schemaGui);
+    else 
+      _selectBox->setSize(p.x()-_selectBoxStartPos.x(),p.y()-_selectBoxStartPos.y());
+    _selectBox->setSelected(!_selectBox->isSelected());
+    _selectBox->show();
+    _schemaGui->setUpdatePeriod(100);
+    update();
+    _schemaGui->selectGearsInRectangle(_selectBox->boundingRect());
+    break;
+
   }
 }
 
@@ -296,6 +331,12 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
     
     _state=IDLE;
     break;
+  case DRAGGING_SELECT_BOX:
+    delete _selectBox;
+    _selectBox=NULL;
+    _state=IDLE;
+    break;
+
   }
 }
 
@@ -305,6 +346,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   GearGui *gearGui;
 
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
+  gearGui = _schemaGui->testForGearCollision(p);
 
   switch (_state)
   {
@@ -332,6 +374,10 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       //todo : temp...
       ((MetaGear*)(gearGui->gear()))->createPlugs();
     }
+
+    if (gearGui->titleBarHitted(p))
+        _schemaGui->selectOneGear(gearGui);
+    
     break;
   }  
       
