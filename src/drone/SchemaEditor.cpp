@@ -44,6 +44,7 @@
 #include <qpainter.h>
 #include <qwmatrix.h>
 
+#include <qdom.h>
 
 const std::string SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 0.1;
@@ -53,7 +54,6 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _engine(engine),
   _schemaGui(schemaGui),
   _state(IDLE),
-  _movingGear(NULL),
   _zoom(1),
   _activeConnection(0),
   _contextMenuPos(0,0),
@@ -138,7 +138,13 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox;
-    
+
+
+  if(_state==MOVING_GEAR)
+  {
+    _state=IDLE;
+    return;
+  }
   
   if (gearGui!=NULL)
   {    
@@ -173,7 +179,6 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
         if(gearGui->isSelected())
         {
           _state = MOVING_GEAR;            
-          _movingGear = gearGui;
           _movingGearStartPos = p;            
         }
       }
@@ -183,7 +188,6 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
   {
     delete _selectBox;
     _selectBox=NULL;
-    _movingGear=NULL;
     unselectAllGears();
     _state = DRAGGING_SELECT_BOX;
     _selectBoxStartPos = p;
@@ -262,12 +266,8 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
     break;
 
   case MOVING_GEAR:
-    if (_movingGear!=NULL)
-    {
-      moveSelectedGearsBy(p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
-//    _schemaGui->moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
-      _movingGearStartPos = p;        
-    }
+    moveSelectedGearsBy(p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
+    _movingGearStartPos = p;        
     break;
 
   case CONNECTING:    
@@ -574,6 +574,30 @@ void SchemaEditor::selectGearsInRectangle(QRect rect)
   _schemaGui->update();
 }
 
+QRect SchemaEditor::getBoundingBoxOfAllSelectedGears()
+{
+  QRect bbox;
+  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    if(bbox.isValid())
+      bbox.unite(allGears[i]->boundingRect());
+    else
+      bbox=allGears[i]->boundingRect();
+  return bbox;
+}
+
+Gear* SchemaEditor::getTopLeftSelectedGear()
+{
+  Gear * topleft = NULL;
+
+  QRect getBoundingBoxOfAllSelectedGears();
+
+  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    _schemaGui->removeGear(allGears[i]);
+}
+
+
 void SchemaEditor::selectOneGear(GearGui* gear)
 {
   std::vector<GearGui*> allGears = _schemaGui->getAllGears();
@@ -608,6 +632,19 @@ void SchemaEditor::slotGearCopy()
   
   QDomElement clipboardElem = doc.createElement("Clipboard");
   doc.appendChild(clipboardElem);
+
+//   QDomElement cornerElem = doc.createElement("SelectedBoxUpperLeftCorner");
+//   doc.appendChild(cornerElem);
+
+//   QRect box = getBoundingBoxOfAllSelectedGears();
+
+//   QDomAttr xcoord = doc.createAttribute("X");
+//   xcoord.setValue(QString("%1").arg(box.left()));
+//   clipboardElem.setAttributeNode(xcoord);
+
+//   QDomAttr ycoord = doc.createAttribute("Y");
+//   ycoord.setValue(QString("%1").arg(box.top()));
+//   clipboardElem.setAttributeNode(ycoord);
 
   if(!_schemaGui->save(doc, clipboardElem,true))
     return;
@@ -660,6 +697,10 @@ void SchemaEditor::slotGearPaste()
   _schemaGui->getSchema()->load(schemaElem, true);
   _schemaGui->rebuildSchema();
 
+  _state = MOVING_GEAR; 
+  QRect rect = getBoundingBoxOfAllSelectedGears();
+  _movingGearStartPos = rect.center();
+  
 }
 
 void SchemaEditor::slotGearSelectAll()

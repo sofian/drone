@@ -29,6 +29,7 @@ react properly
 #ifndef SCHEMAEDITOR_INCLUDED
 #define SCHEMAEDITOR_INCLUDED
 
+#include <qrect.h>
 #include <qpopupmenu.h>
 #include <qfileinfo.h>
 #include <string>
@@ -107,7 +108,9 @@ protected:
   void selectAllGears();
   void selectOneGear(GearGui* gear);
   void selectGearsInRectangle(QRect rect);
-
+  QRect getBoundingBoxOfAllSelectedGears();
+  // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
+  Gear* SchemaEditor::getTopLeftSelectedGear();
   void moveSelectedGearsBy(int x, int y);
   void toggleGearSelection(GearGui* gear);
 
