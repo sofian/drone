@@ -49,10 +49,13 @@ SchemaGui::~SchemaGui()
 
 void SchemaGui::setSchema(Schema *schema)
 {
-  clear();
-
+  clear(); 
   _schema = schema;
+  rebuildSchema();
+}
 
+void SchemaGui::rebuildSchema()
+{
   //add gearguis
   std::list<Gear*> gears = _schema->getGears();
 
@@ -76,7 +79,7 @@ void SchemaGui::setSchema(Schema *schema)
   for (std::list<Schema::Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
   {   
     gearA = _schema->getGearByName((*it)->gearA());
-		gearB = _schema->getGearByName((*it)->gearB());
+    gearB = _schema->getGearByName((*it)->gearB());
 
     if (gearA && gearB)
 		{
@@ -128,15 +131,12 @@ MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
   return metaGear;
 }
 
-void SchemaGui::renameMetaGear(GearGui *metaGearGui, std::string newName)
+void SchemaGui::renameGear(GearGui *gearGui, std::string newName)
 {
-  if (!metaGearGui)
+  if (!gearGui)
     return;
 
-  if (!metaGearGui->gear()->isMeta())
-    return;
-  
-  _schema->renameMetaGear((MetaGear*)(metaGearGui->gear()), newName);
+  _schema->renameGear(gearGui->gear(), newName);
 }
 
 MetaGear* SchemaGui::newMetaGear(int x, int y)
@@ -184,7 +184,6 @@ void SchemaGui::clear()
 bool SchemaGui::load(QDomElement& parent)
 {
   clear();
-
   if(_schema->load(parent))
   {
     setSchema(_schema);
@@ -193,9 +192,9 @@ bool SchemaGui::load(QDomElement& parent)
   return false;
 }
 
-bool SchemaGui::save(QDomDocument& doc, QDomElement &parent)
+bool SchemaGui::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 {
-  return _schema->save(doc, parent);
+  return _schema->save(doc, parent,onlySelected);
 }
 
 GearGui* SchemaGui::testForGearCollision(const QPoint &p)
@@ -312,48 +311,23 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
   _schema->disconnectAll(plugBox->plug());
 }
 
-
-void SchemaGui::unselectAllGears()
+std::vector<GearGui*> SchemaGui::getAllGears()
 {
+  std::vector<GearGui*> vec;
   QCanvasItemList l=allItems();
   for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
-      ((GearGui*)(*it))->setSelected(false);
-  update();
+      vec.push_back((GearGui*)(*it));
+  return vec;
 }
 
-void SchemaGui::selectOneGear(GearGui* gear)
+std::vector<GearGui*> SchemaGui::getSelectedGears()
 {
+  std::vector<GearGui*> vec;
   QCanvasItemList l=allItems();
   for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
-      ((GearGui*)(*it))->setSelected( ((GearGui*)(*it)) == gear );
-  update();
-}
-
-void SchemaGui::toggleGearSelection(GearGui* gear)
-{
-  gear->toggleSelection();
-  update();
-}
-
-void SchemaGui::moveSelectedGearsBy(int x, int y)
-{
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR 
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR
          && ((GearGui*)(*it))->isSelected())    
-      ((GearGui*)(*it))->moveBy(x,y);
-  update();
-}
-
-void SchemaGui::selectGearsInRectangle(QRect rect)
-{
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
-    {
-      ((GearGui*)(*it))->setSelected(((GearGui*)(*it))->boundingRect().intersects(rect));
-    }
-  update();
+      vec.push_back((GearGui*)(*it));
+  return vec;
 }

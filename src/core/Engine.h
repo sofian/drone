@@ -80,6 +80,9 @@ public:
   void onGearAdded(Schema *schema, Gear *gear);
   void onGearRemoved(Schema *schema, Gear *gear);
 
+  void setClipboardText(std::string txt){_clipboard=txt;}
+  std::string getClipboardText(){return _clipboard;}
+
 protected:
 
   void performScheduledGearUpdateSettings();
@@ -110,6 +113,7 @@ private:
 
   bool _playing;
 
+  std::string _clipboard;
 };
 
 #endif

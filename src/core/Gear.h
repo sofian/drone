@@ -168,8 +168,8 @@ private:
   //friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
   //friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);
   friend void *Engine::playThread(void *parent);
-  friend bool Schema::load(QDomElement& parent);
-  friend bool Schema::save(QDomDocument& doc, QDomElement &parent);
+  friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);
+  friend bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected);
 
   #ifdef SINGLE_THREADED_PLAYBACK  
   friend void Engine::debugStartPlay();

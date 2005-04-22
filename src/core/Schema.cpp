@@ -3,6 +3,7 @@
 #include "MetaGear.h"
 #include "GearMaker.h"
 #include "ISchemaEventListener.h"
+#include "GearGui.h"
 
 #include <qdom.h>
 #include <qfile.h>
@@ -41,6 +42,17 @@ void Schema::Connection::load(QDomElement &connectionElem)
   _input = connectionElem.attribute("Input","").ascii();
   _gearB = connectionElem.attribute("GearB","").ascii();
   _output = connectionElem.attribute("Output","").ascii();
+}
+
+void Schema::Connection::updateWithRenameMapping(std::map<std::string,std::string> map)
+{
+  std::map<std::string,std::string>::iterator renA(map.find(_gearA));
+  std::map<std::string,std::string>::iterator renB(map.find(_gearB));
+  if(renA!=map.end())
+    _gearA = map[_gearA];
+  if(renB!=map.end())
+    _gearB = map[_gearB];
+  std::cerr<<_gearA<<" "<<_gearB<<std::endl;
 }
 
 Schema::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears) :  
@@ -236,10 +248,11 @@ std::string Schema::getUniqueGearName(std::string prefix)
   std::string tmp;
   bool ok=false;
   char buf[10];
-  while (!ok && i<200)
+  // in drone specs : drone supports up to 123456 gears 
+  while (!ok && i<123456)
   {
     ok=true;
-    sprintf(buf,"%i",i);
+    sprintf(buf,".%i",i);
     tmp=prefix + buf;
     for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
       if ((*it)->name() == tmp)
@@ -363,12 +376,12 @@ MetaGear* Schema::addMetaGear(std::string filename)
   return metaGear;
 }
 
-void Schema::renameMetaGear(MetaGear* metaGear, std::string newName)
+void Schema::renameGear(Gear* gear, std::string newName)
 {
-  if (!metaGear)
+  if (!gear)
     return;
   
-  metaGear->name(getUniqueGearName(newName));
+  gear->name(getUniqueGearName(newName));
 }
 
 MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
@@ -533,11 +546,10 @@ bool Schema::connect(Schema::Connection &connection)
    return output->connect(input);
 }
 
-bool Schema::save(QDomDocument& doc, QDomElement &parent)
+bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 {
   QDomElement rootElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(rootElem);
-
 
   //save all gears
   QDomElement gearsElem = doc.createElement("Gears");
@@ -545,6 +557,10 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
 
   for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
   {
+    GearGui* ggui = (*it)->getGearGui();
+    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
+      continue;
+    std::cerr<<"About to save!"<<std::endl;
     (*it)->save(doc, gearsElem);            
   }
 
@@ -558,6 +574,15 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
 
   for (std::list<Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
   {
+    Gear * gA = getGearByName((*it)->gearA());
+    Gear * gB = getGearByName((*it)->gearB());
+    GearGui* ggA = (gA==NULL?NULL:gA->getGearGui());
+    GearGui* ggB = (gB==NULL?NULL:gB->getGearGui());
+    
+    if(onlySelected 
+       && (ggA == NULL || !ggA->isSelected() || ggB == NULL || !ggB->isSelected()))
+      continue;
+       
     (*it)->save(doc, connectionsElem);
     delete (*it);//free
   }
@@ -565,10 +590,12 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
   return true;
 }
 
-bool Schema::load(QDomElement& parent)
-{          
+bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
+{    
+  std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
-
+  // when pasting, gears have to be renamed
+  std::map<std::string,std::string> renameMap;
   if (gearsNode.isNull())
   {
     std::cout << "Bad DroneSchema : <Gears> tag not found!" << std::endl;
@@ -593,13 +620,25 @@ bool Schema::load(QDomElement& parent)
       if (pgear!=NULL)
       {
         pgear->load(gearElem);                                
-      }                                
+      }              
+                  
+      addedGears.push_back(pgear);
 
     }
     gearNode = gearNode.nextSibling();
   }                
+  
+  if(pasting)
+    for(int i=0;i<addedGears.size();++i)
+    {
+      addedGears[i]->getGearGui()->setSelected(true);
+      std::string newname = getUniqueGearName(addedGears[i]->type());
+      renameMap[addedGears[i]->name()] = getUniqueGearName(addedGears[i]->type());
+      std::cerr<<"rename : "<<addedGears[i]->name()<<" to "<<renameMap[addedGears[i]->name()]<<" (newname:) "<<newname<<std::endl;
 
-
+      addedGears[i]->name(renameMap[addedGears[i]->name()]);
+    }
+    
   //load connections    
   QDomNode connectionsNode = XMLHelper::findChildNode(parent, "Connections");
 
@@ -619,6 +658,8 @@ bool Schema::load(QDomElement& parent)
     if (!connectionElem.isNull())
     {
       connection.load(connectionElem);            
+      if(pasting)
+        connection.updateWithRenameMapping(renameMap);
       connect(connection);
     }
 

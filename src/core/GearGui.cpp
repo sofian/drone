@@ -272,7 +272,7 @@ void GearGui::drawShape(QPainter &painter)
 
   //name
   painter.setPen(Qt::black);  
-  painter.setBrush(_boxNameColor);
+  painter.setBrush(_boxNameColor.light(_selected?200:100));
 
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);

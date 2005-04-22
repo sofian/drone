@@ -74,6 +74,9 @@ public slots:
   //common slots
   void slotGearProperties();
   void slotGearDelete();
+  void slotGearSelectAll();
+  void slotGearCopy();
+  void slotGearPaste();
   void slotNewMetaGear();
 
   //plug editing slots
@@ -95,6 +98,15 @@ protected:
   void contentsWheelEvent(QWheelEvent *wheelEvent);    
   void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
+
+  void deleteSelectedGears();
+  void unselectAllGears();
+  void selectAllGears();
+  void selectOneGear(GearGui* gear);
+  void selectGearsInRectangle(QRect rect);
+
+  void moveSelectedGearsBy(int x, int y);
+  void toggleGearSelection(GearGui* gear);
 
 private:
   

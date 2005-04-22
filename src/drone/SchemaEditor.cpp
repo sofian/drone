@@ -85,14 +85,17 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _gearContextMenu->insertItem("About");    
   
   _metaGearContextMenu = new QPopupMenu(this);
-  _metaGearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
+  _metaGearContextMenu->insertItem("delete", this, SLOT(slotGearDelete()),Key_Delete);
+  _metaGearContextMenu->insertItem("Select All", this, SLOT(slotGearSelectAll()),CTRL + Key_A);
+  _metaGearContextMenu->insertItem("Copy", this, SLOT(slotGearCopy()),CTRL + Key_C);
+  _metaGearContextMenu->insertItem("Paste", this, SLOT(slotGearPaste()),CTRL + Key_V);
   _metaGearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));  
   _metaGearContextMenu->insertItem("About");    
   _metaGearContextMenu->insertSeparator();
   _metaGearContextMenu->insertItem("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
 
 
-   // plug context menu initialization
+  // plug context menu initialization
   _plugContextMenu = new QPopupMenu(this);
   _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
   _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
@@ -114,6 +117,7 @@ void SchemaEditor::keyPressEvent(QKeyEvent *e)
       if(((GearGui*)(*it))->keyEvent(e))
         e->accept();
   }
+  std::cerr<<"Keypress:"<<e->ascii()<<std::endl;
 }
 
 void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
@@ -141,6 +145,16 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     //send mouse events
     gearGui->mouseEvent(p, mouseEvent->button());
 
+
+    if (gearGui->titleBarHitted(p))
+    {
+      // select only the clicked gear
+      if(mouseEvent->state()&Qt::ControlButton || mouseEvent->state()&Qt::ShiftButton)
+        toggleGearSelection(gearGui);
+      else if(!gearGui->isSelected())
+        selectOneGear(gearGui);
+    }
+
     //on left button we...
     if (mouseEvent->button() == Qt::LeftButton)
     {      
@@ -154,12 +168,6 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 
       } else if (gearGui->titleBarHitted(p))
       {
-        // select only the clicked gear
-        if(mouseEvent->state()&Qt::ControlButton || mouseEvent->state()&Qt::ShiftButton)
-          _schemaGui->toggleGearSelection(gearGui);
-        else if(!gearGui->isSelected())
-            _schemaGui->selectOneGear(gearGui);
-    
         // start moving it (but only if it has not been unselected, in
         // which case it is weird to move remaining gears.. (well, in my opinion JK)
         if(gearGui->isSelected())
@@ -170,12 +178,13 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
         }
       }
     }
-  } else
+  } 
+  else if (mouseEvent->button() == Qt::LeftButton)
   {
     delete _selectBox;
     _selectBox=NULL;
     _movingGear=NULL;
-    _schemaGui->unselectAllGears();
+    unselectAllGears();
     _state = DRAGGING_SELECT_BOX;
     _selectBoxStartPos = p;
   }
@@ -255,7 +264,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case MOVING_GEAR:
     if (_movingGear!=NULL)
     {
-      _schemaGui->moveSelectedGearsBy(p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
+      moveSelectedGearsBy(p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
 //    _schemaGui->moveGearBy(_movingGear, p.x() -_movingGearStartPos.x(), p.y() - _movingGearStartPos.y());
       _movingGearStartPos = p;        
     }
@@ -289,9 +298,9 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
       _selectBox->setSize(p.x()-_selectBoxStartPos.x(),p.y()-_selectBoxStartPos.y());
     _selectBox->setSelected(!_selectBox->isSelected());
     _selectBox->show();
-    _schemaGui->setUpdatePeriod(100);
-    update();
-    _schemaGui->selectGearsInRectangle(_selectBox->boundingRect());
+    //_schemaGui->setUpdatePeriod(100);
+    _schemaGui->update();
+    selectGearsInRectangle(_selectBox->boundingRect());
     break;
 
   }
@@ -335,6 +344,7 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
     delete _selectBox;
     _selectBox=NULL;
     _state=IDLE;
+    _schemaGui->update();
     break;
 
   }
@@ -358,8 +368,6 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     if (connectionItem!=NULL)
       _schemaGui->disconnect(connectionItem->sourcePlugBox(), connectionItem->destPlugBox());      
     
-    gearGui = _schemaGui->testForGearCollision(p);   
-
     //handle double-click on metagear
     if (gearGui!=NULL && gearGui->gear()->isMeta())
     {
@@ -375,8 +383,8 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       ((MetaGear*)(gearGui->gear()))->createPlugs();
     }
 
-    if (gearGui->titleBarHitted(p))
-        _schemaGui->selectOneGear(gearGui);
+    if (gearGui!=NULL && gearGui->titleBarHitted(p))
+        selectOneGear(gearGui);
     
     break;
   }  
@@ -457,10 +465,8 @@ void SchemaEditor::slotGearProperties()
 
 void SchemaEditor::slotGearDelete()
 {
-  if (_contextGear == NULL)
-    return;
-
-  removeGear(_contextGear);
+  deleteSelectedGears();
+  _contextGear = NULL;
 }
 
 /**
@@ -513,7 +519,8 @@ void SchemaEditor::slotSaveMetaGear()
     
     //rename the metagear to the new saved name
     QFileInfo fileInfo(filename);
-    _schemaGui->renameMetaGear(_contextGear, fileInfo.baseName());
+    _schemaGui->renameGear(_contextGear, fileInfo.baseName());
+    
   }
 
 }
@@ -536,16 +543,127 @@ void SchemaEditor::addNewMetaGear(int posX, int posY)
   associateControlPanelWithMetaGear(metaGear);
 }
 
-void SchemaEditor::removeGear(GearGui *gear)
+void SchemaEditor::deleteSelectedGears()
 {
-  if (gear == NULL)
-    return;
+  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    _schemaGui->removeGear(allGears[i]);
+}
 
-  _schemaGui->removeGear(gear);
+void SchemaEditor::unselectAllGears()
+{
+  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    allGears[i]->setSelected(false);
+  _schemaGui->update();
+}
+
+void SchemaEditor::selectAllGears()
+{
+  std::vector<GearGui*> allGears = _schemaGui->getAllGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    allGears[i]->setSelected(true);
+  _schemaGui->update();
+}
+
+void SchemaEditor::selectGearsInRectangle(QRect rect)
+{
+  std::vector<GearGui*> allGears = _schemaGui->getAllGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    allGears[i]->setSelected(allGears[i]->boundingRect().intersects(rect));
+  _schemaGui->update();
+}
+
+void SchemaEditor::selectOneGear(GearGui* gear)
+{
+  std::vector<GearGui*> allGears = _schemaGui->getAllGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    allGears[i]->setSelected(allGears[i]==gear);
+  _schemaGui->update();
+}
+
+void SchemaEditor::moveSelectedGearsBy(int x, int y)
+{
+  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
+  for(unsigned int i=0;i<allGears.size();++i)
+    _schemaGui->moveGearBy( allGears[i],x,y);
+  _schemaGui->update();
+}
+
+void SchemaEditor::toggleGearSelection(GearGui* gear)
+{
+  gear->toggleSelection();
+  _schemaGui->update();
 }
 
 void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
 {
   //create and associate a control panel with this metagear
   //_panelScrollView->addControlPanel(metaGear);    
+}
+
+void SchemaEditor::slotGearCopy()
+{
+  QDomDocument doc("Clipboard");
+  
+  QDomElement clipboardElem = doc.createElement("Clipboard");
+  doc.appendChild(clipboardElem);
+
+  if(!_schemaGui->save(doc, clipboardElem,true))
+    return;
+
+  //save to file  
+  QString str;
+  QTextStream stream(str,IO_WriteOnly);
+  doc.save(stream,4);
+  _engine->setClipboardText(str.latin1());
+  std::cerr<<_engine->getClipboardText()<<std::endl;
+  
+}
+
+void SchemaEditor::slotGearPaste()
+{
+  unselectAllGears();
+  QDomDocument doc("Clipboard");
+
+  QString str(_engine->getClipboardText());
+
+  QString errMsg;
+  int errLine;
+  int errColumn;
+  if (!doc.setContent(str, true, &errMsg, &errLine, &errColumn))
+  {
+    std::cout << "parsing error in clipboard"<< std::endl;
+    std::cout << errMsg.ascii() << std::endl;
+    std::cout << "Line: " <<  errLine << std::endl;
+    std::cout << "Col: " <<  errColumn << std::endl;
+    return;
+  }
+  
+  QDomNode clipboardNode = doc.firstChild();
+  QDomNode schemaNode = clipboardNode.firstChild();
+  
+  if (schemaNode.isNull())
+  {
+    std::cout << "Bad drone project, main schema node isNull" << std::endl;
+    return;
+  }
+  
+  QDomElement schemaElem = schemaNode.toElement();
+  
+  if (schemaElem.isNull())
+  {
+    std::cout << "Bad drone project, main schema elem isNull" << std::endl;
+    return;
+  }
+  
+  _schemaGui->getSchema()->load(schemaElem, true);
+  _schemaGui->rebuildSchema();
+
+}
+
+void SchemaEditor::slotGearSelectAll()
+{
+  std::cerr<<"select all!!!"<<std::endl;
+  selectAllGears();
 }

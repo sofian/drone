@@ -45,6 +45,7 @@ public:
   //colors    
   static const QColor BOX_COLOR;  
   static const QColor SELECTED_BOX_COLOR;  
+  static const QColor CUTTED_BOX_COLOR;  
   static const QColor BOXNAME_COLOR;
   static const QColor SHADOW_COLOR;
 	
@@ -88,7 +89,7 @@ public:
   void setSelected(bool state){_selected=state;QCanvasRectangle::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
   bool isSelected() const {return _selected;}
-
+ 
 protected:
 				
   void timerEvent(QTimerEvent*);

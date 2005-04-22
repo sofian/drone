@@ -2,6 +2,7 @@
 #define SCHEMA_INCLUDED
 
 #include <qdom.h>
+#include <map>
 #include <list>
 #include <vector>
 #include <string>
@@ -66,6 +67,7 @@ public:
 
     void save(QDomDocument &doc, QDomElement &parent);
     void load(QDomElement &connectionElem);
+    void updateWithRenameMapping(std::map<std::string,std::string> map);
 
   private:
     std::string _gearA;
@@ -88,9 +90,10 @@ public:
   virtual ~Schema();
 
  
-  bool save(QDomDocument& doc, QDomElement &parent);
+  bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
   void clear();
-  bool load(QDomElement& doc);
+  // dx,dy are offsets added to the gears coordinates (used when pasting clipboard)
+  bool load(QDomElement& doc, bool pasting=false, int dx=0, int dy=0);
 
   //! Returns a list of unordered gears, but not expanded. Metagears are left as is.
   virtual std::list<Gear*> getGears(){return _gears;}
@@ -114,7 +117,7 @@ public:
 
   MetaGear* newMetaGear();
   MetaGear* addMetaGear(std::string filename);
-  void renameMetaGear(MetaGear* metaGear, std::string newName);
+  void renameGear(Gear* gear, std::string newName);
   Gear* addGear(std::string geartype);
   
   bool removeDeepGear(Gear* gear);

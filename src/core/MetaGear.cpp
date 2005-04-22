@@ -39,6 +39,7 @@ bool MetaGear::ready()
 
 void MetaGear::save(QDomDocument &doc, QDomElement &parent)
 {
+  std::cerr<<"metagear savEW!!"<<std::endl;
   _schema->save(doc, parent);
 }
 

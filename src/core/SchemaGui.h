@@ -40,7 +40,7 @@ public:
   Gear* addGear(std::string type, int x, int y);
   MetaGear* addMetaGear(std::string filename, int x, int y);  
   MetaGear* newMetaGear(int x, int y);  
-  void renameMetaGear(GearGui *metaGearGui, std::string newName);
+  void renameGear(GearGui *gearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     
   bool connect(PlugBox *plugA, PlugBox *plugB);
@@ -49,7 +49,7 @@ public:
 
   void clear();
   bool load(QDomElement& parent);
-  bool save(QDomDocument& doc, QDomElement &parent);
+  bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
 
   void moveGearBy(GearGui *gearItem, int x, int y);
   GearGui* testForGearCollision(const QPoint &p);
@@ -57,14 +57,12 @@ public:
   void unHilightAllConnections();
   void unHilightAllPlugBoxes();
 
-  // selection 
-  void unselectAllGears();
-  void selectGearsInRectangle(QRect rect);
-  void moveSelectedGearsBy(int x, int y);
-  void selectOneGear(GearGui* gear);
-  void toggleGearSelection(GearGui* gear);
+  std::vector<GearGui*> getAllGears();
+  std::vector<GearGui*> getSelectedGears();
 
-
+  Schema * getSchema(){return _schema;}
+  void rebuildSchema();
+  
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;
