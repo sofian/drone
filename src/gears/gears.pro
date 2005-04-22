@@ -5,6 +5,7 @@ SUBDIRS= Osc \
 TV \
 Oscilloscope \
 VideoOutput \
+AudioPushButton \
 AlphaMix \
 Blur \
 VideoSource \
@@ -33,6 +34,7 @@ Gamma \
 GenDisplaceGrid \
 GrayScale \
 HalfToning \
+#ImageShuffle \
 ImageSource \
 Invert \
 InvertAlpha \
@@ -42,6 +44,7 @@ SetAlpha \
 SignalStat \
 SmearGrid \
 Sobel \
+Tempo \
 #VideoDelay \
 #VideoLoop \
 #ImageShuffle \

@@ -47,8 +47,12 @@ Gear_SelectFrame::Gear_SelectFrame(Schema *schema, std::string uniqueName) :
   //  addPlug(_RESET_IN    = new PlugIn<ValueType>(this, "Reset",   new ValueType(0, 0, 1)));
   addPlug(_N_FRAMES_IN = new PlugIn<ValueType>(this, "NFrames", new ValueType(0, 0, 0)));
   addPlug(_SEEK_IN     = new PlugIn<ValueType>(this, "Seek",    new ValueType(0, -125, 125)));
+  addPlug(_RESET_IN     = new PlugIn<ValueType>(this, "Reset",    new ValueType(0, 0, 1)));
+
 
   EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
+  playbackMode->setLabel(LOOPFORWARD,"LoopFoward");
+  playbackMode->setLabel(LOOPBACKWARD,"LoopBackward");
   playbackMode->setLabel(FORWARD,"Foward");
   playbackMode->setLabel(BACKWARD,"Backward");
   playbackMode->setLabel(PING_PONG,"Ping pong");
@@ -63,7 +67,7 @@ Gear_SelectFrame::~Gear_SelectFrame()
 {
 }
 
-void Gear_SelectFrame::init()
+void Gear_SelectFrame::internalInit()
 {
   _currentFrame = 0;
   _nFrames = 0;
@@ -76,36 +80,73 @@ bool Gear_SelectFrame::ready()
 
 void Gear_SelectFrame::runVideo()
 {
-  _nFrames = MAX( _N_FRAMES_IN->type()->intValue(), 0 );
-  
+    _nFrames = MAX( _N_FRAMES_IN->type()->intValue(), 0 );
   // Playback.
   if (_nFrames > 0)
   {
-    if (_NEXT_IN->type()->boolValue())
+    bool next = _NEXT_IN->type()->boolValue();
+    bool reset =_RESET_IN->type()->boolValue();
+       
+    // Step.
+    switch ((ePlaybackMode)_MODE_IN->type()->value())
     {
-      // Step.
-      switch ((ePlaybackMode)_MODE_IN->type()->value())
-      {
-      case BACKWARD:
-        _currentSeekFrame = REPEAT_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
-        _currentFrame = (_currentFrame==0? _nFrames-1 : _currentFrame-1);
-        break;
-      case PING_PONG:
-        _currentSeekFrame = MIRROR_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
-        _currentFrame = (_currentFrame + 1 % _nFrames);
-        break;
-      case RANDOM:
-        // For the moment the reset and seek buttons do nothing with random.
-        _currentSeekFrame = _currentFrame = rand() % _nFrames;
-        break;
-      case FORWARD:
-      default:
-        _currentSeekFrame = REPEAT_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
-        _currentFrame = (_currentFrame + 1 % _nFrames);
-        break;
-      }
-    }
+    case PING_PONG:
+      _currentSeekFrame = MIRROR_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
+      if(reset)
+        _currentFrame = 0;
+      else if (next)
+      _currentFrame = (_currentFrame + 1 % _nFrames);
+      break;
+    case RANDOM:
+      // For the moment the reset and seek buttons do nothing with random.
+      _currentSeekFrame = rand() % _nFrames;
+      if(reset)
+        _currentFrame = 0;
+      else if (next)
+        _currentFrame = rand() % _nFrames;
+      break;
+    
+    case BACKWARD:
+      _currentSeekFrame = CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
+      if(reset)
+        _currentFrame = _nFrames-1;
+      else if (next)
+        _currentFrame = CLAMP(_currentFrame-1,-1,_nFrames-1);
+      // if video is finished, set _currentSeekFrame to -1
+      if(_currentFrame==-1)
+        _currentSeekFrame=-1;
+      break;
+    case FORWARD:
+      _currentSeekFrame = CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
 
+      if(reset)
+        _currentFrame = 0;
+      else if (next)
+        _currentFrame = CLAMP(_currentFrame+1,0,_nFrames);
+      
+      
+      // if video is finished, set _currentSeekFrame to -1
+      if(_currentFrame==_nFrames)
+        _currentSeekFrame=-1;
+      break;
+
+    case LOOPBACKWARD:
+      _currentSeekFrame = REPEAT_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
+      if(reset)
+        _currentFrame = _nFrames-1;
+      else if (next)
+        _currentFrame = (_currentFrame==0? _nFrames-1 : _currentFrame-1);
+      break;
+    case LOOPFORWARD:
+    default:
+      _currentSeekFrame = REPEAT_CLAMP(_currentFrame + _SEEK_IN->type()->intValue(), 0, _nFrames-1);
+      if(reset)
+        _currentFrame = 0;
+      else if (next)
+        _currentFrame = (_currentFrame + 1 % _nFrames);
+      break;
+    }
+  
     // Set seek frame to output.
     _FRAME_OUT->type()->setValue(_currentSeekFrame);
   }

@@ -36,14 +36,15 @@ public:
   bool save();
   bool saveAs(std::string filename);
   bool load(std::string filename);
-
+  std::string projectName(){return _projectName;}
+        
   void newProject();
 
 protected:
 
   SchemaGui* _mainSchemaGui;
   std::string _projectName;
-
+  
 };
 
 #endif

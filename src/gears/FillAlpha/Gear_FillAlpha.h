@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 #include "VideoRGBAType.h"
-#include "ValueTYpe.h"
+#include "ValueType.h"
 
 
 class Gear_FillAlpha : public Gear

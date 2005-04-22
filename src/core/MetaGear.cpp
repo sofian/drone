@@ -37,13 +37,13 @@ bool MetaGear::ready()
   return true;
 }
 
-void MetaGear::save(QDomDocument &doc, QDomElement &parent)
+void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
 {
   std::cerr<<"metagear savEW!!"<<std::endl;
   _schema->save(doc, parent);
 }
 
-void MetaGear::load(QDomElement &parent)
+void MetaGear::internalLoad(QDomElement &parent)
 {
 
   //find the schema node under the metagear
@@ -115,7 +115,7 @@ void MetaGear::save(std::string filename)
   QDomElement metaGearElem = doc.createElement("MetaGear");
   doc.appendChild(metaGearElem);
     
-  save(doc, metaGearElem);
+  Gear::save(doc, metaGearElem);
 
   QFile file(filename.c_str());
   if (file.open(IO_WriteOnly))
@@ -174,7 +174,7 @@ bool MetaGear::load(std::string filename)
   _fullPath = filename;
   
   //load
-  load(metagearElem);
+  Gear::load(metagearElem);
 
   return true;
 }

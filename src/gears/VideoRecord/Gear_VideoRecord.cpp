@@ -94,12 +94,15 @@ void Gear_VideoRecord::runVideo()
   // Make sure number of frames fit in memory
   _nFrames = MIN(_nFrames,_memory);
 
+  int frame = _FRAME_IN->type()->intValue();
+std::cerr << "!!!!!!!!!" << frame << std::endl;
   // Playback.
-  if (_nFrames > 0)
+  if (_nFrames > 0 && frame>=0)
     // Fill output image with current frame.
-    _circbuf->fillVectorFromBlock(_outImage, CLAMP(_FRAME_IN->type()->intValue(), 0, _nFrames-1) - _nFrames + 1);
+    _circbuf->fillVectorFromBlock(_outImage, CLAMP(frame, 0, _nFrames-1) - _nFrames + 1);
   else // default: play input image
-    std::copy(_image->begin(), _image->end(), _outImage->begin());
+    //std::copy(_image->begin(), _image->end(), _outImage->begin());
+    _outImage->fill(CLEAR_RGBA);
 
   // Output number of frames.
   _N_FRAMES_OUT->type()->setValue(_nFrames);

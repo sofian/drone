@@ -44,6 +44,9 @@ class GearListMenu;
 class MetaGearListMenu;
 class PanelScrollView;
 
+/**
+ * SchemaEditor maintain synchronization between Schema and SchemaGui
+ */ 
 class SchemaEditor : public QCanvasView
 {
   Q_OBJECT

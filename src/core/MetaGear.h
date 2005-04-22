@@ -24,9 +24,6 @@ public:
   
   void save(std::string filename);
   bool load(std::string filename);
-
-  void save(QDomDocument &doc, QDomElement &parent);
-  void load(QDomElement &parent);
   
   void createPlugs();
 
@@ -38,6 +35,10 @@ public:
   void associateControlPanel(ControlPanel *controlPanel) {_associatedControlPanel = controlPanel;}
   
 protected:
+  
+  void internalSave(QDomDocument &doc, QDomElement &parent);
+  void internalLoad(QDomElement &parent);
+  
   GearGui* createGearGui(QCanvas *canvas);
   	
   Schema *_schema;

@@ -67,7 +67,7 @@ void Gear_TapTempo::internalInit()
   _scheduledBeatTimeStamp = FLT_MAX;
 }
 
-void Gear_TapTempo::runAudio()
+void Gear_TapTempo::runVideo()
 {
   float currentTime = Engine::currentTime();
   

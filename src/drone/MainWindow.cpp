@@ -102,7 +102,7 @@ _menuFirstRecentSchemaId(-1)
   _fileMenu->insertSeparator();
   
   _toolsMenu = new QPopupMenu(this);
-  _menuSaveItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
+  _menuPrefsItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
 
   _viewMenu = new QPopupMenu(this);
@@ -207,7 +207,7 @@ void MainWindow::load(std::string filename)
   _fileMenu->setItemEnabled(_menuSaveItemId, true);
   
   //save the last load path
-  _lastLoadPath=filename;
+  _lastLoadPath=_project->projectName();
   globalSettings.writeEntry("/drone/Schema/LastLoadPath", _lastLoadPath);
 
   //add to recent schema
@@ -222,7 +222,7 @@ void MainWindow::slotMenuSave()
 
 void MainWindow::slotMenuSaveAs()
 {
-  std::string filename = QFileDialog::getSaveFileName(_lastSavePath, "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
+  std::string filename = QFileDialog::getSaveFileName(_project->projectName(), "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
                                                       this, "Save as", "Save as");
   
   if (!filename.empty())
@@ -232,6 +232,7 @@ void MainWindow::slotMenuSaveAs()
       filename.append(SCHEMA_EXTENSION);  
     
     _project->saveAs(filename);
+    
     _fileMenu->setItemEnabled(_menuSaveItemId, true);
 
     //save the last save path

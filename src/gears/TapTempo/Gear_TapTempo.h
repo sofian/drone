@@ -31,7 +31,7 @@ public:
   Gear_TapTempo(Schema *schema, std::string uniqueName);
   virtual ~Gear_TapTempo();
 
-  void runAudio();
+  void runVideo();
 
   bool ready();
 

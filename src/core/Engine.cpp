@@ -18,7 +18,7 @@
  */
 
 #include "Engine.h"
-// #include "MidiEngine.h"
+ #include "MidiEngine.h"
 #include "Gear.h"
 #include "Plug.h"
 #include "GearMaker.h"
@@ -120,12 +120,13 @@ void *Engine::playThread(void *parent)
     for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       (*it)->runAudio();
 
-//     MidiEngine::getInstance().purgeAndGetNew();
-
-    //process video
+       
+        //process video
     //std::cout << real_time << std::endl;
     if (real_time >= (currentFrame*_videoInfo.timePerFrame()*1000.0f))
     {
+      MidiEngine::getInstance().purgeAndGetNew();
+
 
       for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       {

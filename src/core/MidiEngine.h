@@ -68,6 +68,11 @@ public :
   unsigned char getController(){return _byte1;}
   unsigned char getControllerValue(){return _byte2;}
   
+  unsigned char isNoteEvent(){return (_status == 144);}
+  unsigned char getNote(){return _byte1;}
+  unsigned char getNoteValue(){return _byte2;}
+
+
   float getStamp(){return _stamp;}
 
 protected:

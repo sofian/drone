@@ -34,6 +34,10 @@ public:
   static const std::string SETTING_ONVALUE;
   static const std::string SETTING_ONESHOT;
 
+  static const std::string SETTING_ACCEPTMIDI;
+  static const std::string SETTING_MIDICHANNEL;
+  static const std::string SETTING_MIDINOTE;
+
   Gear_PushButton(Schema *schema, std::string uniqueName);
   virtual ~Gear_PushButton();
 

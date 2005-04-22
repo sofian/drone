@@ -29,6 +29,8 @@ class Gear_SelectFrame : public Gear
 public:
   enum ePlaybackMode
   {
+    LOOPFORWARD,
+    LOOPBACKWARD,
     FORWARD,
     BACKWARD,
     PING_PONG,
@@ -46,6 +48,7 @@ public:
 private:
   // Inputs.
   PlugIn<ValueType>  *_NEXT_IN;
+  PlugIn<ValueType>  *_RESET_IN;
   //  PlugIn<ValueType>  *_RESET_IN;
   PlugIn<ValueType>  *_N_FRAMES_IN;
   PlugIn<ValueType>  *_SEEK_IN;
@@ -60,8 +63,9 @@ private:
   int _currentSeekFrame;
   bool _next;
 
+protected:
   // functions
-  void init();
+  void internalInit();
 };
 
 #endif

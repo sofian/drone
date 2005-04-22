@@ -49,7 +49,7 @@ private:
   unsigned char *_outData;
 
   SummedAreaTable<> *_table;
-  int _sum[SIZE_RGBA];
+  unsigned int _sum[SIZE_RGBA];
 
   int _sizeY;
   int _sizeX;
