@@ -43,7 +43,7 @@ Time_T Timing::time()
 
   gettimeofday(&tv, NULL);
 
-  return((tv.tv_sec*1000000) + tv.tv_usec) / 1000.0f;
+  return (tv.tv_sec*1000.0) + tv.tv_usec / 1000.0;
 }
 
 void Timing::sleep(int msec)

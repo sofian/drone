@@ -85,13 +85,13 @@ void *Engine::playThread(void *parent)
 
   engine->_currentTime=0;
 
-  float block_starttime, block_endtime, block_targettime;
+  Time_T block_starttime, block_endtime, block_targettime;
 
-  float block_time;
+  Time_T block_time;
 
-  float real_starttime;
-  float real_time=0.0f;
-  float sleeptime=0.0f;
+  Time_T real_starttime;
+  Time_T real_time=0.0;
+  Time_T sleeptime=0.0f;
   long blockIt=1;
   block_targettime = _signalInfo.blockSize() * _signalInfo.timePerSample() * 1000.0f;
 
@@ -120,13 +120,11 @@ void *Engine::playThread(void *parent)
     for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       (*it)->runAudio();
 
-       
-        //process video
-    //std::cout << real_time << std::endl;
+    //process video
+    
     if (real_time >= (currentFrame*_videoInfo.timePerFrame()*1000.0f))
     {
       MidiEngine::getInstance().purgeAndGetNew();
-
 
       for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       {
