@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=invert0r.c
 INCLUDEPATH+=../../../spec/
 

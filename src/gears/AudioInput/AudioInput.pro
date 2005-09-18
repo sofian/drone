@@ -1,4 +1,4 @@
-include (../config.pro)
+include (../../../config.pro)
 
 CONFIG += thread
 

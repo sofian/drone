@@ -102,6 +102,8 @@ protected:
   void contentsWheelEvent(QWheelEvent *wheelEvent);    
   void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
+  void dropEvent(QDropEvent* event);
+  void dragEnterEvent(QDragEnterEvent* event);
 
   void deleteSelectedGears();
   void unselectAllGears();

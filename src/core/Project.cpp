@@ -15,6 +15,7 @@ void Project::newProject()
 {
   _mainSchemaGui->clear();
   _projectName="";
+  //todo:
 }
 
 bool Project::save()

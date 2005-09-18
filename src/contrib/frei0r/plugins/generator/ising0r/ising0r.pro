@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=ising0r.c
 INCLUDEPATH+=../../../spec/
 

@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=nosync0r.cpp
 INCLUDEPATH+=../../../spec/ ../../common/
 

@@ -34,7 +34,7 @@ class GearPropertiesDialog : public QDialog
 {
   Q_OBJECT
   public:
-
+	
   GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *engine);
   ~GearPropertiesDialog();
 
@@ -50,10 +50,9 @@ private:
 
   QVBoxLayout* _verticalLayout;
   std::vector<PropertyControl*> _propertyControls;
-
   QPushButton *_okButton;
-  QPushButton *_cancelButton;
 
+  QPushButton *_cancelButton;
 };
 
 #endif

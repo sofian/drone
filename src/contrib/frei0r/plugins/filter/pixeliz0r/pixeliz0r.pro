@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=pixeliz0r.c
 INCLUDEPATH+=../../../spec/
 

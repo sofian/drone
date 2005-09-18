@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=onecol0r.cpp
 INCLUDEPATH+=../../../spec/ ../../common/
 

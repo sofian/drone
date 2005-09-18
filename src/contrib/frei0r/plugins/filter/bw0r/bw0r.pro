@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=bw0r.c
 INCLUDEPATH+=../../../spec/
 

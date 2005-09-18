@@ -50,9 +50,6 @@ class MainWindow : public QMainWindow
 public slots:
   void slotPlay(bool);
 
-  void slotZoomIn();
-  void slotZoomOut();
-
   void slotMenuNew();
   void slotMenuLoad();
   void slotMenuSave();

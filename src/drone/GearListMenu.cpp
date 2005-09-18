@@ -11,7 +11,7 @@ GearListMenu::GearListMenu(QWidget *parent) :
 }
 
 /**
- * create the GearListMenu by consulting the gearsInfos in the GearMaker registry
+ * create the GearListMenu by consulting the gearsInfos in the GearMaker registry
  */
 void GearListMenu::create()
 {

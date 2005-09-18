@@ -390,7 +390,7 @@ int GearGui::rtti() const
   return CANVAS_RTTI_GEAR;
 }
 
-void GearGui::timerEvent(QTimerEvent*)
+void GearGui::timerEvent(QTimerEvent* timerEvent)
 {
   //cannot update if not on a canvas
   if (canvas()==NULL)

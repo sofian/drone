@@ -3,48 +3,10 @@
 ######################################################################
 
 CONFIG = qt warn_on thread 
-include (../../flags.pro)
+include (../../config.pro)
  
 message(Core : Builing Makefile with the following config flags : $$CONFIG)
  
-unix:!macx:QMAKE_CXXFLAGS += -rdynamic
-# Use gprof
-gprof {
-  QMAKE_CXXFLAGS+=-pg
-}
-
-# Debug settings
-debug {
-  OBJECTS_DIR = debug
-  #QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=0
-  QMAKE_CXXFLAGS +=-DDEBUG_LEVEL=2 -DSINGLE_THREADED_PLAYBACK
-}
-
-# Optimized settings
-release {
-  OBJECTS_DIR = release  
-  QMAKE_CXXFLAGS_RELEASE -= -O2 -Os
-  
-  unix:!macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -fomit-frame-pointer -pipe -O3
-  macx:QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -funroll-loops -Os
-  
-  p4 {
-    QMAKE_CXXFLAGS += -march=pentium4
-  }
-  p3 {
-    QMAKE_CXXFLAGS += -march=pentium3
-  }
-  athlon {
-    QMAKE_CXXFLAGS += -march=athlon    
-  }
-
-  G5 {
-	QMAKE_CXXFLAGS += -DDEBUG_LEVEL=-1 -fast
-  }
-  
-}
-
-
 TEMPLATE = lib
 INCLUDEPATH += . types ../contrib/frei0r/spec
 
@@ -162,3 +124,4 @@ LIBS += -L../agg2/src/ -lagg
 HEADER += AggWrapper.h
 SOURCES += AggWrapper.cpp
 }
+  

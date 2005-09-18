@@ -9,6 +9,7 @@ class SchemaEditor;
 class SchemaGui;
 class Engine;
 class QSplitter;
+class GearListView;
 
 class MetaGearEditor : public QWidget
 {
@@ -24,6 +25,7 @@ private:
 
   QSplitter *_horizontalSplitter;
 
+  GearListView *_gearListView;
   PanelScrollView *_panelScrollView;
   SchemaEditor *_schemaEditor;    
 

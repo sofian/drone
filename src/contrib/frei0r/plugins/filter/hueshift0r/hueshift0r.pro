@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=hueshift0r.c
 INCLUDEPATH+=../../../spec/ ../../common/
 

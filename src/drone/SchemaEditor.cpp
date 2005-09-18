@@ -34,6 +34,7 @@
 #include "PanelScrollView.h"
 #include "ControlPanel.h"
 
+#include <qdragobject.h>
 #include <qmainwindow.h>
 #include <qfiledialog.h>
 
@@ -63,7 +64,8 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 
 {
   viewport()->setMouseTracking(TRUE);
-
+  setAcceptDrops(TRUE); 
+    
   _contextMenu = new QPopupMenu(this);
   _gearListMenu = new GearListMenu(this);    
   _gearListMenu->create();
@@ -708,3 +710,22 @@ void SchemaEditor::slotGearSelectAll()
   std::cerr<<"select all!!!"<<std::endl;
   selectAllGears();
 }
+
+
+void SchemaEditor::dragEnterEvent(QDragEnterEvent* event)
+{
+  event->accept(QTextDrag::canDecode(event));
+}
+
+void SchemaEditor::dropEvent(QDropEvent* event)
+{
+  QString text;
+  
+  if ( QTextDrag::decode(event, text) )
+  {
+    event->accept(true);
+    addGear(text, event->pos().x(), event->pos().y());
+  }
+}
+
+

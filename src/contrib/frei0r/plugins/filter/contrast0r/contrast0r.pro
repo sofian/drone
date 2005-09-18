@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=contrast0r.c
 INCLUDEPATH+=../../../spec/
 

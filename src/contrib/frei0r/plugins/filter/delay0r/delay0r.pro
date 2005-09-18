@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=delay0r.cpp
 INCLUDEPATH+=../../../spec/ ../../common/
 

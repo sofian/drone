@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=flippo.c
 INCLUDEPATH+=../../../spec/
 

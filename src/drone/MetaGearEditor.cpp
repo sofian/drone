@@ -3,6 +3,7 @@
 #include "MetaGear.h"
 #include "SchemaEditor.h"
 #include "PanelScrollView.h"
+#include "GearListView.h"
 
 #include <qsplitter.h>
 #include <qlayout.h>
@@ -15,7 +16,7 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 
   _schemaGui = new SchemaGui(_metaGear->getInternalSchema(), engine);
 
-/*  
+/*
   _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
 
   _panelScrollView = new PanelScrollView(_horizontalSplitter);
@@ -29,8 +30,21 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   _panelScrollView->addControlPanel(metaGear);
 */
 
-  _schemaEditor = new SchemaEditor(this, _schemaGui, engine, _panelScrollView);  
-  layout->addWidget(_schemaEditor);
+  _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
+  
+  //_panelScrollView = new PanelScrollView(_horizontalSplitter);
+  _panelScrollView = NULL;
+  _gearListView = new GearListView(_horizontalSplitter);
+  _gearListView->create();
+  _schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine, _panelScrollView);  
+  
+  _horizontalSplitter->moveToFirst(_gearListView);
+  
+  layout->addWidget(_horizontalSplitter);
+  
+  //add the edited metagear to the panelScrollView
+  //_panelScrollView->addControlPanel(metaGear);
+  
 }
 
 MetaGearEditor::~MetaGearEditor()

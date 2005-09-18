@@ -1,4 +1,4 @@
-include (../config.pro)
+include (../../../config.pro)
 
 TEMPLATE=lib
 SOURCES+=Gear_TouchPad.cpp GearGui_TouchPad.cpp

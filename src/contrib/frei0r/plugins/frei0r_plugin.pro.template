@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=PLUGINNAME.c
 INCLUDEPATH+=../../../spec/
 

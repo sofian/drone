@@ -1,4 +1,6 @@
 TEMPLATE=lib
+include (../../../../../../config.pro)
+
 SOURCES+=distort0r.c
 INCLUDEPATH+=../../../spec/
 

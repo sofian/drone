@@ -18,6 +18,8 @@ ControlPanel::ControlPanel(QWidget *panelContainerWidget, MetaGear *parentMetage
 
   _labelName = new QLabel(parentMetagear->name().c_str(), _mainFrame);
   _mainLayout->addWidget(_labelName, 0, 0);
+  //TODO fddsfsdfsd
+  
 }
 
 ControlPanel::~ControlPanel()

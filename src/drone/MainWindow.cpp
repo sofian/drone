@@ -69,12 +69,6 @@ _menuFirstRecentSchemaId(-1)
   _playPause = new QToolButton(_toolBar);    
   _playPause->setToggleButton(true);
 
-  _toolBar->addSeparator();
-  QToolButton *zoomOut = new QToolButton(_toolBar);    
-  zoomOut->setText("-");    
-  QToolButton *zoomIn = new QToolButton(_toolBar);    
-  zoomIn->setText("+");    
-
   QIconSet playPauseIcon;
   playPauseIcon.setPixmap(Play_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
   playPauseIcon.setPixmap(Pause_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
@@ -82,11 +76,6 @@ _menuFirstRecentSchemaId(-1)
 
   QObject::connect(_playPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
   
-  //temp
-  QObject::connect(zoomIn, SIGNAL(pressed()), this, SLOT(slotZoomIn()));
-  QObject::connect(zoomOut, SIGNAL(pressed()), this, SLOT(slotZoomOut()));
-  //
-
   //menu    
   _fileMenu = new QPopupMenu(this);
   _fileMenu->insertItem("New", this, SLOT(slotMenuNew()));
@@ -138,17 +127,6 @@ MainWindow::~MainWindow()
 {
 
 }
-
-void MainWindow::slotZoomIn()
-{
-  //_schemaEditor->zoomIn();
-}
-
-void MainWindow::slotZoomOut()
-{
-  //_schemaEditor->zoomOut();
-}
-
 
 void MainWindow::slotPlay(bool play)
 {
