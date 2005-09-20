@@ -34,8 +34,7 @@ Gear::Gear(Schema *parentSchema, std::string type, std::string name) :
 _parentSchema(parentSchema), 
 _Type(type), 
 _name(name),
-_gearGui(NULL),
-_control(NULL)
+_gearGui(NULL)
 {
 }
 
@@ -297,19 +296,17 @@ GearGui* Gear::getGearGui()
   return _gearGui;
 }
 
-Control* Gear::getControl()
-{
-  return _control;
-}
 
+/**
+ * Updates everything that need to be changed after settings have been changed.
+ * Actually this method call onUpdateSettings which can be overloaded
+ * to perform update operations.
+ * User must call this method after settings have been modified
+ */
 void Gear::updateSettings()
 {
   //call the virtual method that can be overriden
   onUpdateSettings();
 }
 
-Control* Gear::createControl(ControlPanel* parent)
-{
-  _control = createCustomControl(parent);
-  return _control;
-}
+

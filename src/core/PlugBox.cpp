@@ -31,14 +31,15 @@ const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_SIZE - 2;
 const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_SIZE / 2;
 
 #if defined(Q_OS_MACX)
-const QFont PlugBox::SHORTNAME_FONT(QFont("Verdana", 9, QFont::Normal));
+const QFont PlugBox::SHORTNAME_FONT(QFont("Sans Serif", 9, QFont::Normal));
 #else
-const QFont PlugBox::SHORTNAME_FONT(QFont("Verdana", 8, QFont::Normal));
+const QFont PlugBox::SHORTNAME_FONT(QFont("Sans Serif", 9, QFont::Normal));
 #endif
 
-const int PlugBox::MAX_HILIGHTSCALING = 2;
+const int PlugBox::PLUGBOX_EXTRUDE = 4;
+const int PlugBox::MAX_HILIGHTSCALING = 1;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
-const int PlugBox::ROUNDING_FACTOR=100;
+const int PlugBox::ROUNDING_FACTOR=150;
 
 
 const QColor PlugBox::EXPOSED_COLOR(196,8,8);
@@ -63,7 +64,7 @@ QColor PlugBox::color()
   return _plug->abstractType()->color();
 }
 
-void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
+void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected)
 {    
   int halfGearSizeX = gearSizeX / 2;    
   _x = x;
@@ -73,24 +74,34 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
 
   //set color of the round box according to exposition
   if (_plug->exposed())
-    painter.setBrush(EXPOSED_COLOR);
+    _extrudedRoundBoxColor = EXPOSED_COLOR;
   else
-    painter.setBrush(GearGui::BOX_COLOR);
+    if (parentGearselected)
+      _extrudedRoundBoxColor = GearGui::SELECTED_BOX_COLOR;
+    else
+      _extrudedRoundBoxColor = GearGui::BOX_COLOR;
     
   //the round box around the plug
-  if (_plug->inOut() == IN)
-    painter.drawRoundRect(_x - MAX_HILIGHTSCALING*2, _y - MAX_HILIGHTSCALING, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, ROUNDING_FACTOR, ROUNDING_FACTOR);    
+  if (_plug->inOut() == IN)    
+  {
+    painter.setBrush(_extrudedRoundBoxColor);
+    painter.drawPie(_x - 4, _y - 1, 12, 12, 1440, 2880);
+  }
   else
-    painter.drawRoundRect(_x, _y - MAX_HILIGHTSCALING, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, PLUGBOX_SIZE + MAX_HILIGHTSCALING*2, ROUNDING_FACTOR, ROUNDING_FACTOR);		
+  {
+    painter.setBrush(GearGui::SHADOW_COLOR); 
+    painter.drawPie(_x + 2 + GearGui::SHADOW_OFFSET, _y - 1 + GearGui::SHADOW_OFFSET, 12, 12, 1440, -2880);
+    
+    painter.setBrush(_extrudedRoundBoxColor);
+    painter.drawPie(_x + 2, _y - 1, 12, 12, 1440, -2880);
+  }
+   
       
   painter.setPen(Qt::black);
   painter.setBrush(color());
   
   //the plugbox
-  if (_plug->inOut() == IN)
-    painter.drawRoundRect(_x, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2, ROUNDING_FACTOR, ROUNDING_FACTOR);
-  else
-    painter.drawRoundRect(_x - _hilightScaling*2, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2, ROUNDING_FACTOR, ROUNDING_FACTOR);    
+  painter.drawEllipse(_x - _hilightScaling, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);
   
   painter.setFont(SHORTNAME_FONT);  
   
@@ -101,9 +112,9 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter)
 
   //align text left or right if In or Out
   if (_plug->inOut() == IN)
-    painter.drawText(_x + PLUGBOX_SIZE + 5, _y - 4, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+    painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 5, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
   else
-    painter.drawText(_x - halfGearSizeX, _y - 4, halfGearSizeX - 5, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+    painter.drawText(_x - halfGearSizeX, _y - 5, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
 
 }
 

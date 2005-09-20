@@ -50,14 +50,17 @@ ConnectionItem::~ConnectionItem()
 
 void ConnectionItem::drawShape(QPainter &painter)
 {
+  
   int sourceX, sourceY, destX, destY;
 
   getOrigin(&sourceX, &sourceY);
   getDest(&destX, &destY);
 
   setPoints(sourceX, sourceY, destX, destY);
+  //std::cout << sourceX << ":" << sourceY << ":" << destX << ":" << destY << std::endl;
   
   QCanvasLine::drawShape(painter);
+  
 }
 
 void ConnectionItem::getOrigin(int *x, int *y)

@@ -63,8 +63,6 @@ void MetaGear::internalLoad(QDomElement &parent)
 
 void MetaGear::createPlugs()
 {
-  //for now we will expose all inputs and outputs
-
   //clear plugs first, we will recreate them
   std::list<AbstractPlug*>::iterator plugIt;
   for(plugIt = _plugs.begin(); plugIt != _plugs.end(); ++plugIt)
@@ -188,7 +186,8 @@ void MetaGear::onGearAdded(Schema *schema, Gear *gear)
   if (!_associatedControlPanel)
     return;
   
-  _associatedControlPanel->addControl(gear);
+  if (gear->kind() == Gear::CONTROL)  
+    _associatedControlPanel->addControl((GearControl*)gear);
 }
 
 void MetaGear::onGearRemoved(Schema *schema, Gear*)

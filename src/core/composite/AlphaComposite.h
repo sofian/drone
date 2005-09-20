@@ -20,6 +20,19 @@
 #ifndef ALPHACOMPOSITE_INCLUDED
 #define ALPHACOMPOSITE_INCLUDED
 
+#include "Math.h"
+#include "ColorSpace.h"
+
+// XXX penser à la possibilité de mettre des RGBA
+
+// Precomputing alpha operations /////////////////////////////////////////////
+
+void alpha_premultiply(unsigned char *src,
+                      unsigned int n);
+
+void alpha_demultiply(unsigned char *src,
+                      unsigned int n);  
+
 // Unary operators ///////////////////////////////////////////////////////////
 
 //! Sets the alpha channel of #src# to the values specified in #mask#.

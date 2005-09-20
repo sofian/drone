@@ -53,11 +53,15 @@ Gear_AlphaMix::Gear_AlphaMix(Schema *schema, std::string uniqueName) : Gear(sche
   mixFunc->setLabel(ATOP,"Atop");
   mixFunc->setLabel(XOR,"Xor");
   addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", mixFunc));
+
+  _imageA = new VideoRGBAType();
+  _imageB = new VideoRGBAType();
 }
 
 Gear_AlphaMix::~Gear_AlphaMix()
 {
-
+  delete _imageA;
+  delete _imageB;
 }
 
 bool Gear_AlphaMix::ready()
@@ -67,8 +71,44 @@ bool Gear_AlphaMix::ready()
 
 void Gear_AlphaMix::runVideo()
 {
-  _imageA = _VIDEO_IN_A->type();
-  _imageB = _VIDEO_IN_B->type();
+//   _imageA = _VIDEO_IN_A->type();
+//   _imageB = _VIDEO_IN_B->type();
+
+//   _outImage = _VIDEO_OUT->type();
+//   _outImage->resize(_imageA->width(), _imageA->height());
+
+//   for (int i=0; i<(int)_outImage->size(); ++i)
+//   {
+//     const RGBA& inA = _imageA->operator[](i);
+//     const RGBA& inB = _imageB->operator[](i);
+//     RGBA& out = _outImage->operator[](i);
+
+//     // premultiply
+//     float 
+//     out.r = inA + inB * (255 - inA.a);
+    
+//     _outImage.r = _imageA[i] (255 - _imageA[i].a) 
+//     w2 = (255 - (float)src1[IDX_RGBA_A]);
+//     for (b=0; b<SIZE_RGB; ++b)
+//       dst[b] = CLAMP0255( (int) (src1[b] + ((int)src2[b] * w2) / 255) ); // XXX le clamping est pas necessaire, normalement...
+//     dst[IDX_RGBA_A] = CLAMP0255( (int) (src1[IDX_RGBA_A] + ((int)src2[IDX_RGBA_A] * w2) / 255) );
+//     src1+=SIZE_RGBA;
+//     src2+=SIZE_RGBA;
+//     dst+=SIZE_RGBA;
+//   }
+  _imageA->setIsAlphaPremultiplied(false);
+  _imageB->setIsAlphaPremultiplied(false);
+  _imageA->resize(_VIDEO_IN_A->type()->width(), _VIDEO_IN_A->type()->height());
+  std::copy(_VIDEO_IN_A->type()->begin(), _VIDEO_IN_A->type()->end(), _imageA->begin());
+  _imageB->resize(_VIDEO_IN_B->type()->width(), _VIDEO_IN_B->type()->height());
+  std::copy(_VIDEO_IN_B->type()->begin(), _VIDEO_IN_B->type()->end(), _imageB->begin());
+  //std::cout << (int)_imageA->operator[](0).r << " " << (int)_imageA->operator[](0).a << " ";
+
+  _imageA->premultiplyAlpha();
+  _imageB->premultiplyAlpha();
+
+  //  std::cout << (int)_imageA->operator[](0).r << " " << (int)_imageA->operator[](0).a << std::endl;
+    
   _outImage = _VIDEO_OUT->type();
 
   _imageOutSizeX = MAX(_imageA->width(), _imageB->width());
@@ -105,7 +145,7 @@ void Gear_AlphaMix::runVideo()
   _imageInA = (const unsigned char *)_imageA->data();
   _imageInB = (const unsigned char *)_imageB->data();
   _imageOut = (unsigned char *)_outImage->data();
-  
+
   switch (_mixType)
   {
   case OVER:
@@ -157,5 +197,6 @@ void Gear_AlphaMix::runVideo()
    memcpy(_imageOut, _imageInA, _outImage->size() * sizeof(RGBA));
   }
 
+  _outImage->demultiplyAlpha(); // XXX on devrait pas avoir à faire ça...
 }
 

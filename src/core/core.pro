@@ -8,7 +8,7 @@ include (../../config.pro)
 message(Core : Builing Makefile with the following config flags : $$CONFIG)
  
 TEMPLATE = lib
-INCLUDEPATH += . types ../contrib/frei0r/spec
+INCLUDEPATH += . types ../contrib/frei0r/spec composite
 
 #mac
 macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
@@ -37,6 +37,7 @@ ControlPanel.h \
 Control.h \
 Engine.h \
 Gear.h \
+GearControl.h \
 GearFrei0r.h \
 types/AbstractType.h \
 types/AreaArrayType.h \
@@ -91,6 +92,7 @@ ControlPanel.cpp \
 Control.cpp \
 Engine.cpp \
 Gear.cpp \
+GearControl.cpp \
 GearFrei0r.cpp \
 types/VideoRGBAType.cpp \
 GearGui.cpp \

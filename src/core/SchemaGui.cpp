@@ -40,7 +40,6 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   setBackgroundColor(QColor(107,124,153));
   
   setSchema(schema);
-
 }
 
 SchemaGui::~SchemaGui()

@@ -18,18 +18,44 @@
  */
 
 #include "AlphaComposite.h"
-#include "Math.h"
-#include "ColorSpace.h"
+#include "Utils.h"
+
+void alpha_premultiply(unsigned char *src,
+                       unsigned int n)
+{
+  unsigned int tmp;
+  while (n--)
+  {
+    for (int i=0; i<SIZE_RGB; ++i)
+      src[i] = INT_MULT(src[i], src[IDX_RGBA_A], tmp);
+    src += SIZE_RGBA;
+  }
+}
+
+void alpha_demultiply(unsigned char *src,
+                      unsigned int n)
+{
+  float mult;
+  while (n--)
+  {
+    mult = (src[IDX_RGBA_A] == 0 ? 255.0f : 255.0f / (float)src[IDX_RGBA_A]);
+    for (int i=0; i<SIZE_RGB; ++i)
+      src[i] = CLAMP0255( (unsigned int) ((float)src[i] * mult ) );
+    src += SIZE_RGBA;
+  }
+}
+
+// XXX faut un argument "bool recompute_colors"
 
 void alpha_set(unsigned char *src,
                const unsigned char *mask,
                unsigned int n)
 {
-  src += IDX_RGBA_A; // offset
+  src += SIZE_RGB;
   while (n--)
   {
     *src = *mask++;
-    src+=SIZE_RGBA;
+    src += SIZE_RGBA;
   }
 }
 
@@ -37,22 +63,25 @@ void alpha_fill(unsigned char *src,
                 unsigned char alpha,
                 unsigned int n)
 {
-  src += IDX_RGBA_A; // offset
+  src += SIZE_RGB;
   while (n--)
   {
     *src = alpha;
-    src+=SIZE_RGBA;
-  }  
+    src += SIZE_RGBA;
+  }
 }
 
 void alpha_invert(unsigned char *src,
                   unsigned int n)                  
 {
-  src += IDX_RGBA_A; // offset
+  unsigned int b;
+  unsigned  alpha;
   while (n--)
   {
-    *src ^= 0xff;
-    src+=SIZE_RGBA;
+    alpha = (255 - src[IDX_RGBA_A]);
+    multiplyVecVal(src, src, (float)alpha / (float)src[IDX_RGBA_A] , SIZE_RGB);
+    src[IDX_RGBA_A] = alpha;
+    src += SIZE_RGBA;
   }
 }
 
@@ -65,7 +94,7 @@ void alpha_opaque(unsigned char *src,
   {
     *src = ((int)(*src * opaqueness) / 255);
     src+=SIZE_RGBA;
-  }  
+  }
 }
 
 void alpha_over(unsigned char *dst,
@@ -74,13 +103,14 @@ void alpha_over(unsigned char *dst,
                 unsigned int n)
 {
   unsigned int b;
+  unsigned int tmp;
   unsigned char w2;
   while (n--)
   {
     w2 = (255 - src1[IDX_RGBA_A]);
-    for (b=0; b<SIZE_RGB; ++b)
-      dst[b] = CLAMP0255( src1[b] + src2[b] * w2 ); // XXX le clamping est pas necessaire, normalement...
-    dst[IDX_RGBA_A] = src1[IDX_RGBA_A] + src2[IDX_RGBA_A] * w2;
+    for (b=0; b<SIZE_RGBA; ++b)
+      dst[b] = src1[b] + INT_MULT(src2[b], w2, tmp);
+//     dst[IDX_RGBA_A] = src1[IDX_RGBA_A] + INT_MULT(src2[IDX_RGBA_A], w2, tmp);
     src1+=SIZE_RGBA;
     src2+=SIZE_RGBA;
     dst+=SIZE_RGBA;
@@ -93,13 +123,14 @@ void alpha_in(unsigned char *dst,
               unsigned int n)
 {
   unsigned int b;
+  unsigned int tmp;
   unsigned char w1;
   while (n--)
   {
     w1 = src2[IDX_RGBA_A];
-    for (b=0; b<SIZE_RGB; ++b)
-      dst[b] = CLAMP0255( src1[b] * w1 ); // XXX le clamping est pas necessaire, normalement...
-    dst[IDX_RGBA_A] = CLAMP0255( src1[IDX_RGBA_A] * w1 );
+    for (b=0; b<SIZE_RGBA; ++b)
+      dst[b] = INT_MULT(src1[b], w1, tmp);
+//     dst[IDX_RGBA_A] = INT_MULT(src1[b], w1, tmp);CLAMP0255( ((int)(src1[IDX_RGBA_A] * w1)) / 255 );
     src1+=SIZE_RGBA;
     src2+=SIZE_RGBA;
     dst+=SIZE_RGBA;
@@ -112,13 +143,13 @@ void alpha_out(unsigned char *dst,
                unsigned int n)
 {
   unsigned int b;
+  unsigned int tmp;
   unsigned char w1;
   while (n--)
   {
     w1 = (255 - src2[IDX_RGBA_A]);
-    for (b=0; b<SIZE_RGB; ++b)
-      dst[b] = CLAMP0255( src1[b] * w1 ); // XXX le clamping est pas necessaire, normalement...
-    dst[IDX_RGBA_A] = CLAMP0255( src1[IDX_RGBA_A] * w1 );
+    for (b=0; b<SIZE_RGBA; ++b)
+      dst[b] = INT_MULT(src1[b], w1, tmp);
     src1+=SIZE_RGBA;
     src2+=SIZE_RGBA;
     dst+=SIZE_RGBA;
@@ -131,13 +162,14 @@ void alpha_atop(unsigned char *dst,
                 unsigned int n)
 {
   unsigned int b;
+  unsigned int tmp;
   unsigned char w1, w2;
   while (n--)
   {
     w1 = src2[IDX_RGBA_A];
     w2 = (255 - src1[IDX_RGBA_A]);
     for (b=0; b<SIZE_RGB; ++b)
-      dst[b] = CLAMP0255( src1[b] * w1 + src2[b] * w2 ); // XXX le clamping est pas necessaire, normalement...
+      dst[b] = INT_MULT(src1[b], w1, tmp) + INT_MULT(src2[b], w2, tmp);
     dst[IDX_RGBA_A] = w1;
     src1+=SIZE_RGBA;
     src2+=SIZE_RGBA;
@@ -151,14 +183,14 @@ void alpha_xor(unsigned char *dst,
                unsigned int n)
 {
   unsigned int b;
+  unsigned int tmp;
   unsigned char w1, w2;
   while (n--)
   {
     w1 = (255 - src2[IDX_RGBA_A]);
     w2 = (255 - src1[IDX_RGBA_A]);
-    for (b=0; b<SIZE_RGB; ++b)
-      dst[b] = CLAMP0255( src1[b] * w1 + src2[b] * w2 ); // XXX le clamping est pas necessaire, normalement...
-    dst[IDX_RGBA_A] = src1[IDX_RGBA_A] * w1 + src2[IDX_RGBA_A] * w2;
+    for (b=0; b<SIZE_RGBA; ++b)
+      dst[b] = INT_MULT(src1[b], w1, tmp) + INT_MULT(src2[b], w2, tmp);
     src1+=SIZE_RGBA;
     src2+=SIZE_RGBA;
     dst+=SIZE_RGBA;

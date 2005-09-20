@@ -50,9 +50,10 @@ const std::string Gear_TouchPad::SETTING_HORIZONTAL_HIGHERBOUND = "Horizontal hi
 const std::string Gear_TouchPad::SETTING_VERTICAL_LOWERBOUND = "Vertical lower Bound";
 const std::string Gear_TouchPad::SETTING_VERTICAL_HIGHERBOUND = "Vertical higher Bound";
 
-Gear_TouchPad::Gear_TouchPad(Schema *schema, std::string uniqueName) : Gear(schema, "TouchPad", uniqueName),
-                                                                 _acceptHorizontalHint(true),
-                                                                 _acceptVerticalHint(true)
+Gear_TouchPad::Gear_TouchPad(Schema *schema, std::string uniqueName) : 
+  GearControl(schema, "TouchPad", uniqueName),
+ _acceptHorizontalHint(true),
+ _acceptVerticalHint(true)
 {
   addPlug(_VALUE_H_OUT = new PlugOut<ValueType>(this, "HValue"));
   addPlug(_VALUE_V_OUT = new PlugOut<ValueType>(this, "VValue"));

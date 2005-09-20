@@ -20,12 +20,12 @@
 #ifndef GEAR_PUSHBUTTON_INCLUDED
 #define GEAR_PUSHBUTTON_INCLUDED
 
-#include "Gear.h"
+#include "GearControl.h"
 #include "SignalType.h"
 
 enum eButtonState {ON, OFF};
 
-class Gear_PushButton : public Gear  
+class Gear_PushButton : public GearControl  
 {
 public:
   static const float  DEFAULT_VALUE;
@@ -54,7 +54,9 @@ protected:
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
-
+  
+  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO: finish this
+  
 private:
   PlugOut<ValueType>* _VALUE_OUT;  
   

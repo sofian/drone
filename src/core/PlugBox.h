@@ -43,7 +43,7 @@ public:
   virtual ~PlugBox();
 
   QColor color();
-  void draw(int x, int y, int gearSizeX, QPainter &painter);
+  void draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected);
   bool hitted(int x, int y);
   void hilight(bool hiLight);
 
@@ -77,6 +77,7 @@ private:
   int _x, _y;    
   eStatus _status;
   int _hilightScaling;
+  QColor _extrudedRoundBoxColor;
 
   std::vector<ConnectionItem*> _connectionItems;
 
@@ -84,13 +85,14 @@ private:
   static const int CONNECTION_HANDLE_OFFSETY;
   static const int PLUG_NAME_NB_CHARS;
   static const int MAX_HILIGHTSCALING;
-	static const int ROUNDING_FACTOR;
+  static const int ROUNDING_FACTOR;
+  static const int PLUGBOX_EXTRUDE;
 	
   //fonts
   static const QFont SHORTNAME_FONT;
 	
-	//colors
-	static const QColor EXPOSED_COLOR;  
+  //colors
+  static const QColor EXPOSED_COLOR;  
 	
 
 };

@@ -39,9 +39,6 @@ class QDomDocument;
 class QDomElement;
 class QCanvas;
 class Schema;
-class Control;
-class ControlPanel;
-
 
 struct GearInfo
 {
@@ -56,30 +53,33 @@ struct GearInfo
   void *data; // optional, additional information concerning the gear
 };
 
+
+/**
+ * Gear is the atomic processing unit of the dataflow and the base class for all gears.
+ * 
+ * 
+ */
 class Gear  
 {
 public:
   
+  enum GearKind {GEAR, METAGEAR, CONTROL, EXPOSE_ANCHOR};
+  
   static const std::string XML_TAGNAME;
 
-  //! is this gear a MetaGear? 
-  virtual bool isMeta() const {return false;}
-
-  //! is the gear a control gear ?
-  virtual bool isControl() const {return false;}
-
+  virtual GearKind kind() const {return GEAR;}
+  
   Gear(Schema *parentSchema, std::string type, std::string uniqueName);
   virtual ~Gear();
 
   void init();
   void prePlay();    
   void postPlay();    
-  virtual void runAudio(){};//! test pour ready doit etre fait avant
-  virtual void runVideo(){};//! test pour ready doit etre fait avant
+  virtual void runAudio(){};
+  virtual void runVideo(){};
   GearGui* getGearGui();
-  Control* getControl();
 
-  void updateSettings();//! user must call this method after settings have been modified
+  void updateSettings();
 
   void getInputs(std::list<AbstractPlug*> & inputs, bool onlyExposed=false) const;
   void getOutputs(std::list<AbstractPlug*> &outputs, bool onlyExposed=false) const;
@@ -113,14 +113,10 @@ public:
   }
 
 	
-  bool isPlugNameUnique(std::string name);
-
-  Control* createControl(ControlPanel* parent);
+  bool isPlugNameUnique(std::string name);  
 
   Schema *parentSchema(){return _parentSchema;}
   
-  
-
 protected:
 
   virtual void internalInit(){}
@@ -132,9 +128,6 @@ protected:
   
   //! overload to create your own GearGui
   virtual GearGui* createGearGui(QCanvas *canvas);
-
-  //! overload to create your own control if needed
-  virtual Control* createCustomControl(ControlPanel*){return NULL;}  
   
   virtual void onUpdateSettings(){};
   virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug
@@ -160,13 +153,9 @@ protected:
 
   GearGui *_gearGui;
 
-  Control *_control;
-
 private:
     
   friend void Schema::initGear(Gear* gear) const;
-  //friend Gear* Schema::addGear(std::string geartype, std::string uniqueName);
-  //friend MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName);
   friend void *Engine::playThread(void *parent);
   friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);
   friend bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected);

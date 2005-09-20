@@ -16,7 +16,7 @@ public:
   virtual ~MetaGear();
   virtual Schema* getInternalSchema(){return _schema;}
   
-  virtual bool isMeta() const {return true;}
+  GearKind kind() const {return METAGEAR;}
   bool ready();
 
   static const std::string TYPE;

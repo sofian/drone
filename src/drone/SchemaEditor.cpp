@@ -371,7 +371,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       _schemaGui->disconnect(connectionItem->sourcePlugBox(), connectionItem->destPlugBox());      
     
     //handle double-click on metagear
-    if (gearGui!=NULL && gearGui->gear()->isMeta())
+    if (gearGui!=NULL && (gearGui->gear()->kind() == Gear::METAGEAR))
     {
       QDialog metaGearEditorDialog(this);  
       QVBoxLayout layout(&metaGearEditorDialog, 1);
@@ -422,7 +422,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
       
     } else
     {
-      if (_contextGear->gear()->isMeta())
+      if (_contextGear->gear()->kind() == Gear::METAGEAR)
       {
         _metaGearContextMenu->popup(QCursor::pos());
       }
@@ -494,7 +494,7 @@ void SchemaEditor::slotNewMetaGear()
 
 void SchemaEditor::slotSaveMetaGear()
 {
-  if (!_contextGear->gear()->isMeta())
+  if (!_contextGear->gear()->kind() == Gear::METAGEAR)
   {
     std::cout << "not a metagear, cannot save!!!" << std::endl; 
     return;

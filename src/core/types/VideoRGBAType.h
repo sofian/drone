@@ -28,9 +28,10 @@ class VideoRGBAType : public Array2DType<RGBA>
 public:
   VideoRGBAType(int width = 0,
                 int height = 0,
-                const RGBA fillValue = BLACK_RGBA)
+                const RGBA fillValue = CLEAR_RGBA)
     : Array2DType<RGBA>(width, height, fillValue),
       _isGray(false),
+      _isAlphaPremultiplied(false),
       _texture(0),
       _textureSizeX(512),
       _textureSizeY(512)
@@ -46,20 +47,31 @@ public:
 
   bool isGray() const { return _isGray; }
   void setIsGray(bool isGray) { _isGray = isGray; }
-    
+  void toGray();
+
+  bool isAlphaPremultiplied() const { return _isAlphaPremultiplied; }
+  void setIsAlphaPremultiplied(bool isAlphaPremultiplied) { _isAlphaPremultiplied = isAlphaPremultiplied; }
+  void premultiplyAlpha();
+  void demultiplyAlpha();
+  void setAlpha(const Array<unsigned char>& mask);
+  void fillAlpha(unsigned char alpha);
+//   void clear();
+//   void transparent();
+//   void opacity(unsigned char a);
+  
   unsigned int toTexture(bool forceRecreate=false) const;
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
-  
-  
+    
 protected:
-  // GetAAPixel related functions ////////////////////
-  // fractionnary part of coords for getAAPixel
-  mutable float _fracx,_fracy,_fp1,_fp2,_fp3,_fp4;
-  mutable int _intx,_inty;
-  // pixels #1 and #3 for getAAPixel
-  mutable RGBA* _p1,_p2,_p3,_p4;
+//   // GetAAPixel related functions ////////////////////
+//   // fractionnary part of coords for getAAPixel
+//   mutable float _fracx,_fracy,_fp1,_fp2,_fp3,_fp4;
+//   mutable int _intx,_inty;
+//   // pixels #1 and #3 for getAAPixel
+//   mutable RGBA* _p1,_p2,_p3,_p4;
   bool _isGray;
+  bool _isAlphaPremultiplied;
   unsigned int _texture;
   unsigned int _textureSizeX;
   unsigned int _textureSizeY;

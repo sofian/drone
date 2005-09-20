@@ -46,7 +46,8 @@ GearInfo getGearInfo()
 const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
 const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
-Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) : Gear(schema, "ListBox", uniqueName),_acceptHint(true)
+Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) : 
+  GearControl(schema, "ListBox", uniqueName),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value"));
 

@@ -10,7 +10,7 @@
 
 class Control;
 class MetaGear;
-class Gear;
+class GearControl;
 
 class ControlPanel : public QWidget
 {
@@ -19,7 +19,7 @@ public:
   ~ControlPanel();
 
   
-  Control *addControl(Gear* gear);
+  Control *addControl(GearControl* gear);
   void addControlPanel(ControlPanel* controlPanel);
   QWidget *mainWidget(){return _mainFrame;}
   

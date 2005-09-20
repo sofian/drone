@@ -43,7 +43,7 @@ Time_T Timing::time()
 
   gettimeofday(&tv, NULL);
 
-  return (tv.tv_sec*1000.0) + tv.tv_usec / 1000.0;
+  return(tv.tv_sec*1000.0) + tv.tv_usec / 1000.0;
 }
 
 void Timing::sleep(int msec)
@@ -75,10 +75,10 @@ void Timing::sleep(int msec)
 
 int Timing::setProcessFullPriority()
 {
-	int ecode=0;
+  int ecode=0;
 #ifdef LINUX
   struct sched_param priority;
-  
+
   //Give the current process full priority
   priority.sched_priority = 99;
   ecode = sched_setscheduler(getpid(), SCHED_FIFO, &priority);

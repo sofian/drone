@@ -37,7 +37,7 @@ GearInfo getGearInfo()
 {
   GearInfo gearInfo;
   gearInfo.name = "VideoOffset";
-  gearInfo.classification = GearClassifications::video().color().instance();
+  gearInfo.classification = GearClassifications::video().distortion().instance();
   return gearInfo;
 }
 }
@@ -81,20 +81,31 @@ void Gear_VideoOffset::runVideo()
 //  _imageIn = (unsigned char*)_data;
 //  _imageOut = (unsigned char*)&_outData[y*_iterSizeX];
 
-  int xoff = _XOFF_IN->type()->value();
-  int yoff = _YOFF_IN->type()->value();
- 
-  int xsrc = -MIN(0,xoff);
-  int ysrc = -MIN(0,yoff);
+  int xoff = _XOFF_IN->type()->intValue();
+  int yoff = _YOFF_IN->type()->intValue();
+  
+  xoff = REPEAT_CLAMP(-xoff, 0, (int)_image->width()-1);
+  int xoffRest = (int)_image->width()-xoff;
+  for (int y=0; y<_image->height(); ++y)
+  {
+    const RGBA *inRow = _image->row( REPEAT_CLAMP(y-yoff, 0, (int)_image->height()-1) );
+    memcpy(_outImage->row(y), inRow + xoff,
+	   xoffRest*sizeof(RGBA));
+    memcpy(_outImage->row(y) + xoffRest, inRow,
+	   xoff*sizeof(RGBA));
+  }
 
-  int xdest = MAX(0,xoff);
-  int ydest = MAX(0,yoff);
+//  int xsrc = -MIN(0,xoff);
+//  int ysrc = -MIN(0,yoff);
 
-  int xspan = _image->width() - MAX(xsrc,xdest);
-  int yspan = _image->height() - MAX(ysrc,ydest);
+//  int xdest = MAX(0,xoff);
+//  int ydest = MAX(0,yoff);
 
-  for (int y=ysrc;y<ysrc+yspan-1;++y,++ydest)
-    memcpy(_outImage->row(y)+xdest,_image->row(ydest)+xsrc,xspan*sizeof(RGBA));
+//  int xspan = _image->width() - MAX(xsrc,xdest);
+//  int yspan = _image->height() - MAX(ysrc,ydest);
+
+//  for (int y=ysrc;y<ysrc+yspan-1;++y,++ydest)
+//    memcpy(_outImage->row(y)+xdest,_image->row(ydest)+xsrc,xspan*sizeof(RGBA));
 
 }
 

@@ -20,12 +20,12 @@
 #ifndef GEAR_LISTBOX_INCLUDED
 #define GEAR_LISTBOX_INCLUDED
 
-#include "Gear.h"
+#include "GearControl.h"
 #include "EnumType.h"
 
 #include <string>
 
-class Gear_ListBox : public Gear  
+class Gear_ListBox : public GearControl
 {
 public:
   static const std::string SETTING_NELEMS;
@@ -51,6 +51,7 @@ protected:
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug *);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug *);
+  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
   
 private:
   PlugOut<EnumType>* _VALUE_OUT;  

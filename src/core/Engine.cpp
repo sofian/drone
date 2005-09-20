@@ -92,6 +92,7 @@ void *Engine::playThread(void *parent)
   Time_T real_starttime;
   Time_T real_time=0.0;
   Time_T sleeptime=0.0f;
+
   long blockIt=1;
   block_targettime = _signalInfo.blockSize() * _signalInfo.timePerSample() * 1000.0f;
 

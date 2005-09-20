@@ -24,7 +24,6 @@
 #include "Gear.h"
 #include "VideoRGBAType.h"
 
-
 class Gear_VideoOffset : public Gear
 {
 public:

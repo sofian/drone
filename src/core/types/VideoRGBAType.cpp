@@ -10,6 +10,8 @@ namespace GL
 }
 
 #include <iostream>
+#include "Utils.h"
+#include "AlphaComposite.h"
 
 using namespace GL;
 
@@ -17,6 +19,58 @@ VideoRGBAType::~VideoRGBAType()
 {
   if (_texture)  
     glDeleteTextures(1, (GLuint*)&_texture);
+}
+
+void VideoRGBAType::toGray()
+{
+  if (!isGray())
+  {
+    grayscaleRGBA(data(), data(), size());
+    setIsGray(true);
+  }
+}
+
+void VideoRGBAType::premultiplyAlpha()
+{
+  if (!isAlphaPremultiplied())
+  {
+    alpha_premultiply((unsigned char*)data(), size());
+    setIsAlphaPremultiplied(true);
+  }
+}
+
+void VideoRGBAType::demultiplyAlpha()
+{
+  if (isAlphaPremultiplied())
+  {
+    alpha_demultiply((unsigned char*)data(), size());
+    setIsAlphaPremultiplied(false);
+  }
+}
+
+void VideoRGBAType::setAlpha(const Array<unsigned char>& mask)
+{
+  ASSERT_ERROR (size() != mask.size());
+  if (isAlphaPremultiplied())
+  {
+    demultiplyAlpha();
+    alpha_set((unsigned char*)data(), mask.data(), size());
+    premultiplyAlpha();
+  }
+  else
+    alpha_set((unsigned char*)data(), mask.data(), size());
+}
+
+void VideoRGBAType::fillAlpha(unsigned char alpha)
+{
+  if (isAlphaPremultiplied())
+  {
+    demultiplyAlpha();
+    alpha_fill((unsigned char*)data(), alpha, size());
+    premultiplyAlpha();
+  }
+  else
+    alpha_fill((unsigned char*)data(), alpha, size());
 }
 
 unsigned int VideoRGBAType::toTexture(bool forceRecreate) const

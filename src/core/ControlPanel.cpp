@@ -1,5 +1,6 @@
 #include "ControlPanel.h"
 #include "Control.h"
+#include "GearControl.h"
 
 #include "MetaGear.h"
 
@@ -27,7 +28,7 @@ ControlPanel::~ControlPanel()
 
 }
 
-Control *ControlPanel::addControl(Gear* gear)
+Control *ControlPanel::addControl(GearControl* gear)
 {
   if (!gear)
     return NULL;

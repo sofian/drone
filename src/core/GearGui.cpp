@@ -194,7 +194,7 @@ void GearGui::refresh()
   //now set the size for this QCanvasItem
   //we want a larger rect for shadow and rendering offset
   //since plugs get out of the gear rect
-  setSize(_sizeX + SHADOW_OFFSET + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
+  setSize(_sizeX + SHADOW_OFFSET+4 + RENDERING_OFFSET, _sizeY + SHADOW_OFFSET + RENDERING_OFFSET);
   reDraw();
 }
 
@@ -221,7 +221,7 @@ void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
 
 bool GearGui::titleBarHitted(const QPoint& p)
 {
-  return(p.y() < y() + NAME_SIZEY);    
+  return(p.y() < y() + GearGui::RENDERING_OFFSET + NAME_SIZEY);    
 }
 
 void GearGui::drawPlugBoxes(QPainter &painter)
@@ -236,7 +236,7 @@ void GearGui::drawPlugBoxes(QPainter &painter)
     by=startY + _inputsInterval - PLUGBOXES_STARTING_OFFSET;
     for (std::vector<PlugBox*>::iterator it = _inputPlugBoxes.begin(); it != _inputPlugBoxes.end(); ++it)
     {
-      (*it)->draw(startX, by, _sizeX, painter);
+      (*it)->draw(startX, by, _sizeX, painter, _selected);
       by+=_inputsInterval;
     }
   }
@@ -247,7 +247,7 @@ void GearGui::drawPlugBoxes(QPainter &painter)
     bx=startX + _sizeX - PlugBox::PLUGBOX_SIZE;
     for (std::vector<PlugBox*>::iterator it = _outputPlugBoxes.begin(); it != _outputPlugBoxes.end(); ++it)
     {
-      (*it)->draw(bx, by, _sizeX, painter);
+      (*it)->draw(bx, by, _sizeX, painter, _selected);
       by+=_outputsInterval;
     }
   }
@@ -390,7 +390,7 @@ int GearGui::rtti() const
   return CANVAS_RTTI_GEAR;
 }
 
-void GearGui::timerEvent(QTimerEvent* timerEvent)
+void GearGui::timerEvent(QTimerEvent*)
 {
   //cannot update if not on a canvas
   if (canvas()==NULL)

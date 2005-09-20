@@ -19,6 +19,11 @@ GearListView::GearListView(QWidget *parent) :
     addColumn("Gears");
     setAcceptDrops(true);
     setRootIsDecorated(true);
+    setResizeMode(QListView::AllColumns);
+    setColumnWidthMode(0, QListView::Manual);
+    setMinimumWidth(175);
+    setTreeStepSize(10);
+
 }
 
 /**
@@ -48,6 +53,7 @@ void GearListView::create()
       if (parentItem==NULL)
         parentItem = new QListViewItem(this, path[0]);
 
+      parentItem->setOpen(true);
       //search or create subItems path for this gear
       for (std::vector<std::string>::iterator it2 = path.begin()+1; it2!=path.end();++it2)
       {

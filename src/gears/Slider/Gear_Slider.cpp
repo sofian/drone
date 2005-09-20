@@ -56,7 +56,7 @@ const std::string Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
 const std::string Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
 const std::string Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
 
-Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : Gear(schema, "Slider", uniqueName),_acceptHint(true)
+Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
@@ -153,7 +153,7 @@ void Gear_Slider::runAudio()
       float low = _settings.get(Gear_Slider::SETTING_LOWERBOUND)->valueFloat();
       float hi = _settings.get(Gear_Slider::SETTING_HIGHERBOUND)->valueFloat();    
       float lastValue = -1,lastStamp;
-      for(int i=0;i<messages.size();i++)
+      for(unsigned int i=0;i<messages.size();i++)
       {
         msg = messages[i];
         if(msg->isControllerChange() && msg->getChannel()==channel  && msg->getController()==controller)
@@ -180,7 +180,7 @@ GearGui *Gear_Slider::createGearGui(QCanvas *canvas)
   return new GearGui_Slider(this, canvas);
 }
 
-Control* Gear_Slider::createCustomControl(ControlPanel* parent)
+Control* Gear_Slider::internalCreateControl(ControlPanel* parent)
 {
   return new ControlSlider(this, parent);  
 }

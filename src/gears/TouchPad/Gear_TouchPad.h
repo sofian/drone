@@ -20,11 +20,11 @@
 #ifndef GEAR_TOUCHPAD_INCLUDED
 #define GEAR_TOUCHPAD_INCLUDED
 
-#include "Gear.h"
+#include "GearControl.h"
 #include "ValueType.h"
 
 
-class Gear_TouchPad : public Gear  
+class Gear_TouchPad : public GearControl
 {
 public:
   static const float  DEFAULT_VALUE;
@@ -54,6 +54,7 @@ protected:
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
+  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
 
 private:
   PlugOut<ValueType>* _VALUE_H_OUT;

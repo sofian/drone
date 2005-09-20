@@ -56,8 +56,8 @@ private:
   PlugIn<EnumType> *_MIXFUNC_IN;
 
   //local var
-  const VideoRGBAType *_imageA; 
-  const VideoRGBAType *_imageB; 
+  VideoRGBAType *_imageA; 
+  VideoRGBAType *_imageB; 
   VideoRGBAType *_outImage; 
 //   const RGBA *_dataA;
 //   const RGBA *_dataB;

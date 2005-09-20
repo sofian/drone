@@ -51,7 +51,8 @@ const std::string Gear_PushButton::SETTING_ACCEPTMIDI = "Accept Midi";
 const std::string Gear_PushButton::SETTING_MIDICHANNEL = "Midi Channel";
 const std::string Gear_PushButton::SETTING_MIDINOTE = "Midi Note";
 
-Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) : Gear(schema, "PushButton", uniqueName),_acceptHint(true)
+Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) : 
+  GearControl(schema, "PushButton", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));

@@ -18,6 +18,7 @@ ApplyDisplaceGrid \
 AreaArrayMask \
 #BeatDetector \
 Brightness \
+ChannelStat \
 ClusteredDither \
 ColorAdjust \
 Contrast \
@@ -45,7 +46,7 @@ SignalStat \
 SmearGrid \
 Sobel \
 Tempo \
-#VideoDelay \
+VideoDelay \
 #VideoLoop \
 #ImageShuffle \
 #ImageSequence \

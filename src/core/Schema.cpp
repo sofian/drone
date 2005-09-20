@@ -394,7 +394,7 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
   onGearAdded(metaGear);
 
   return metaGear;
-}
+}                         
 
 Gear* Schema::addGear(std::string geartype)
 {
@@ -629,7 +629,7 @@ bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
   }                
   
   if(pasting)
-    for(int i=0;i<addedGears.size();++i)
+    for(unsigned int i=0;i<addedGears.size();++i)
     {
       addedGears[i]->getGearGui()->setSelected(true);
       std::string newname = getUniqueGearName(addedGears[i]->type());
