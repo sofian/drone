@@ -34,7 +34,6 @@ public:
   virtual ~Gear_Saturation();
 
   void runVideo();
-  bool ready();
 
 protected:
   void internalInit();

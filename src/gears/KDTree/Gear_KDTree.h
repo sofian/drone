@@ -37,7 +37,6 @@ public:
   virtual ~Gear_KDTree();
 
   void runVideo();
-  bool ready();
 
 protected:  
   void internalInit();

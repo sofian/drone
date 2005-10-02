@@ -42,21 +42,16 @@ GearInfo getGearInfo()
 
 Gear_ColorAdjust::Gear_ColorAdjust(Schema *schema, std::string uniqueName) : Gear(schema, "ColorAdjust", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_RED_IN = new PlugIn<ValueType>(this, "Red", new ValueType(1.0f)));
-  addPlug(_GREEN_IN = new PlugIn<ValueType>(this, "Green", new ValueType(1.0f)));
-  addPlug(_BLUE_IN = new PlugIn<ValueType>(this, "Blue", new ValueType(1.0f)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_RED_IN = new PlugIn<ValueType>(this, "Red", false, new ValueType(1.0f)));
+  addPlug(_GREEN_IN = new PlugIn<ValueType>(this, "Green", false, new ValueType(1.0f)));
+  addPlug(_BLUE_IN = new PlugIn<ValueType>(this, "Blue", false, new ValueType(1.0f)));
 }
 
 Gear_ColorAdjust::~Gear_ColorAdjust()
 {
 
-}
-
-bool Gear_ColorAdjust::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_ColorAdjust::runVideo()

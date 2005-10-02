@@ -33,7 +33,6 @@ public:
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
   void runVideo();
-  bool ready();
 
 protected:
   GearGui *createGearGui(QCanvas *canvas);

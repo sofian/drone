@@ -33,7 +33,6 @@ public:
   virtual ~Gear_Invert();
 
   void runVideo();  
-  bool ready();
 
 private:
 

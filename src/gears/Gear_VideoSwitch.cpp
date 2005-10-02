@@ -24,48 +24,69 @@
 
 #include "GearMaker.h"
 
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+	return new Gear_VideoSwitch(schema, uniqueName);
+}
 
-Register_Gear(MAKERGear_VideoSwitch, Gear_VideoSwitch, "VideoSwitch")
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "VideoSwitch";
+  gearInfo.classification = GearClassifications::video().instance();
+  return gearInfo;
+}
+}
 
 Gear_VideoSwitch::Gear_VideoSwitch(Schema *schema, std::string uniqueName) : Gear(schema, "VideoSwitch", uniqueName)
 {
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgO"));
+  addPlug(_VIDEO_OUT_A = new PlugOut<VideoRGBAType>(this, "ImgA", false));
+  addPlug(_VIDEO_OUT_B = new PlugOut<VideoRGBAType>(this, "ImgB", false));
+  addPlug(_VIDEO_IN = new PlugIN<VideoRGBAType>(this, "ImgO", true));
 
   EnumType *switchIn = new EnumType(2, 0);
   switchIn->setLabel(0, "Play A");
   switchIn->setLabel(1, "Play B");
   
-  addPlug(_SWITCH_IN = new PlugIn<EnumType>(this, "Switch", switchIn));
+  addPlug(_SWITCH_IN = new PlugIn<EnumType>(this, "Switch", false, switchIn));
 }
 
 Gear_VideoSwitch::~Gear_VideoSwitch()
 {
 }
 
-bool Gear_VideoSwitch::ready()
-{
-  return (((_VIDEO_IN_A->connected() && _SWITCH_IN->type()->value()==0) ||
-           (_VIDEO_IN_B->connected() && _SWITCH_IN->type()->value()==1)) &&
-          _VIDEO_OUT->connected());
-}
-
 void Gear_VideoSwitch::runVideo()
 {
   _playA = (_SWITCH_IN->type()->value() == 0);
 
+	if(!(_VIDEO_OUT_A->connected() && _playA) ||
+		 !(_VIDEO_OUT_B->connected() && !_playA))
+	{
+		_VIDEO_OUT_A->sleeping(false);
+		_VIDEO_OUT_B->sleeping(true);
+		return;
+	}
+	
   if (_playA)
-    _image = _VIDEO_IN_A->type();
-  else
-    _image = _VIDEO_IN_B->type();
+	{  
+		_outImage = _VIDEO_OUT_A->type();
+		_VIDEO_OUT_A->sleeping(false);
+		_VIDEO_OUT_B->sleeping(true);
+  }
+	else
+	{	
+		_outImage = _VIDEO_OUT_B->type();
+		_VIDEO_OUT_A->sleeping(true);
+		_VIDEO_OUT_B->sleeping(false);
+	}	
+	
+	_image = _VIDEO_IN->type();
 
   if (_image->isNull())
     return;
   
-  _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
 
   memcpy(_outImage->data(), _image->data(), _image->size()*sizeof(RGBA));
-
 }

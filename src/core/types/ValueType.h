@@ -28,7 +28,8 @@ public:
   ValueType(float defaultValue=0.0f,
             float minValue=-1.0f,
             float maxValue=1.0f)
-    : _value(defaultValue),
+    : AbstractType("Value"),
+			_value(defaultValue),
       _minValue(minValue),
       _maxValue(maxValue)
     {}

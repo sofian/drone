@@ -44,21 +44,16 @@ GearInfo getGearInfo()
 Gear_Tempo::Gear_Tempo(Schema *schema, std::string uniqueName) : Gear(schema, "Tempo", uniqueName)
 {
   // Inputs.
-  addPlug(_FREQUENCY_IN = new PlugIn<ValueType>(this, "Freq", new ValueType(1, 0, 1)));
-  addPlug(_AMPLITUDE_IN = new PlugIn<ValueType>(this, "Amp", new ValueType(1, 0, 1)));
-  addPlug(_RESET_PHASE_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 0)));
+  addPlug(_FREQUENCY_IN = new PlugIn<ValueType>(this, "Freq", false, new ValueType(1, 0, 1)));
+  addPlug(_AMPLITUDE_IN = new PlugIn<ValueType>(this, "Amp", false, new ValueType(1, 0, 1)));
+  addPlug(_RESET_PHASE_IN = new PlugIn<ValueType>(this, "Reset", false, new ValueType(0, 0, 0)));
   
   // Outputs.
-  addPlug(_BEAT_OUT = new PlugOut<ValueType>(this, "Beat"));
+  addPlug(_BEAT_OUT = new PlugOut<ValueType>(this, "Beat", true));
 }
 
 Gear_Tempo::~Gear_Tempo()
 {
-}
-
-bool Gear_Tempo::ready()
-{
-  return (_BEAT_OUT->connected());
 }
 
 void Gear_Tempo::internalInit()

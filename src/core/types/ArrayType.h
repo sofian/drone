@@ -30,7 +30,8 @@ public:
   typedef typename Array<T>::size_type size_type;
 
   ArrayType(int size = 0,
-             T fillValue = T())
+						T fillValue = T()) :
+		AbstractType("Array")
   {
     addSubType(_typeSize);
     resize(size);

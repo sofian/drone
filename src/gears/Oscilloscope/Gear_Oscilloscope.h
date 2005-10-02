@@ -40,8 +40,6 @@ public:
   void runAudio();
   void runVideo();
 
-  bool ready();
-
 private:
 
   PlugIn<SignalType> *_AUDIO_IN;

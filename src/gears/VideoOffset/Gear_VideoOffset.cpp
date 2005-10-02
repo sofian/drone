@@ -45,21 +45,16 @@ GearInfo getGearInfo()
 Gear_VideoOffset::Gear_VideoOffset(Schema *schema, std::string uniqueName) : 
   Gear(schema, "VideoOffset", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_XOFF_IN = new PlugIn<ValueType>(this, "XOff", new ValueType(1,-10,10)));
-  addPlug(_YOFF_IN = new PlugIn<ValueType>(this, "YOff", new ValueType(1,-10,10)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_XOFF_IN = new PlugIn<ValueType>(this, "XOff", false, new ValueType(1,-10,10)));
+  addPlug(_YOFF_IN = new PlugIn<ValueType>(this, "YOff", false, new ValueType(1,-10,10)));
   
 }
 
 Gear_VideoOffset::~Gear_VideoOffset()
 {
 
-}
-
-bool Gear_VideoOffset::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoOffset::runVideo()

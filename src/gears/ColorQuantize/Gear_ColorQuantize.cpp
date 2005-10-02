@@ -45,9 +45,9 @@ Gear_ColorQuantize::Gear_ColorQuantize(Schema *schema, std::string uniqueName)
   : Gear(schema, "ColorQuantize", uniqueName), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", new ValueType(16, 2, 32)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "NColors", false, new ValueType(16, 2, 32)));
 }
 
 Gear_ColorQuantize::~Gear_ColorQuantize()
@@ -56,11 +56,6 @@ Gear_ColorQuantize::~Gear_ColorQuantize()
   free(Ig);
   free(Ib);
   free(Ir);
-}
-
-bool Gear_ColorQuantize::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_ColorQuantize::runVideo()

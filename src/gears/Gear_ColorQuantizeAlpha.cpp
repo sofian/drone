@@ -29,8 +29,8 @@ Register_Gear(MAKERGear_ColorQuantizeAlpha, Gear_ColorQuantizeAlpha, "ColorQuant
 Gear_ColorQuantizeAlpha::Gear_ColorQuantizeAlpha(Schema *schema, std::string uniqueName)
 : Gear(schema, "ColorQuantizeAlpha", uniqueName), _nColors(DEFAULT_N_COLORS), _clusters(0)
 {
-  _VIDEO_IN = addPlugVideoIn("ImgIN");
-  _VIDEO_OUT = addPlugVideoOut("ImgOUT");
+  _VIDEO_IN = addPlugVideoIn("ImgIN", true);
+  _VIDEO_OUT = addPlugVideoOut("ImgOUT", true);
 
   _centroids = new RGBAint[_nColors];
 #if MAX_ITER
@@ -60,11 +60,6 @@ Gear_ColorQuantizeAlpha::~Gear_ColorQuantizeAlpha()
 #endif
   free(_clusters);
   free(_clusterSizes);
-}
-
-bool Gear_ColorQuantizeAlpha::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_ColorQuantizeAlpha::runVideo()

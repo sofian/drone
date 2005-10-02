@@ -41,19 +41,14 @@ GearInfo getGearInfo()
 
 Gear_AreaArrayMask::Gear_AreaArrayMask(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayMask", uniqueName)
 {    
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(352, 1, 1024)));
-  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", new ValueType(288, 1, 768)));
-  addPlug(_AREA_ARRAY_IN = new PlugIn<AreaArrayType>(this, "AreaIN"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));
+  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(288, 1, 768)));
+  addPlug(_AREA_ARRAY_IN = new PlugIn<AreaArrayType>(this, false, "AreaIN"));
 }
 
 Gear_AreaArrayMask::~Gear_AreaArrayMask()
 {
-}
-
-bool Gear_AreaArrayMask::ready()
-{
-  return(_VIDEO_OUT->connected());
 }
 
 void Gear_AreaArrayMask::runVideo()

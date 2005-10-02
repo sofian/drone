@@ -35,10 +35,10 @@ Register_Gear(MAKERGear_SimpleDelay, Gear_SimpleDelay, "SimpleDelay")
 
 Gear_SimpleDelay::Gear_SimpleDelay(Schema *schema, std::string uniqueName) : Gear(schema, "SimpleDelay", uniqueName)
 {
-  addPlug(_PARAM_FEEDBACK = new PlugIn<SignalType>(this, "Feedback", new SignalType(0.3f)));
-  addPlug(_PARAM_TIME = new PlugIn<SignalType>(this, "Time", new SignalType(0.3f)));
-  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "Input", new SignalType(0.0f)));
-  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Output"));  
+  addPlug(_PARAM_FEEDBACK = new PlugIn<SignalType>(this, "Feedback", false, new SignalType(0.3f)));
+  addPlug(_PARAM_TIME = new PlugIn<SignalType>(this, "Time", false, new SignalType(0.3f)));
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "Input", true, new SignalType(0.0f)));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Output", true));  
   _SmoothTime=false;
 }
 
@@ -47,10 +47,6 @@ Gear_SimpleDelay::~Gear_SimpleDelay()
 
 }
 
-bool Gear_SimpleDelay::ready()
-{
-  return(_AUDIO_IN->connected() && _AUDIO_OUT->connected());
-}
 
 float _HARDCLIP(float X, float MIN, float MAX) 
 {

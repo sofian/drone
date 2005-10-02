@@ -30,8 +30,6 @@ public:
   virtual ~Gear_SimpleDelay();
 
   void runAudio();
-
-  bool ready();
   
 private:
   PlugIn<SignalType> *_PARAM_FEEDBACK, *_PARAM_TIME,*_AUDIO_IN;

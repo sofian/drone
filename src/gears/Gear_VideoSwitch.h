@@ -34,15 +34,13 @@ public:
   Gear_VideoSwitch(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoSwitch();
 
-  bool ready();
-
   void runVideo();
   
 private:
 
-  PlugIn<VideoRGBAType> *_VIDEO_IN_A;
-  PlugIn<VideoRGBAType> *_VIDEO_IN_B;
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugIn<VideoRGBAType> *_VIDEO_OUT_A;
+  PlugIn<VideoRGBAType> *_VIDEO_OUT_B;
+  PlugOut<VideoRGBAType> *_VIDEO_IN;
   PlugIn<EnumType> *_SWITCH_IN;
 
   //local var

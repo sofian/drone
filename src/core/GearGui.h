@@ -31,8 +31,9 @@ class Engine;
 class QDomElement;
 class QDomDocument;
 
-class GearGui : public QCanvasRectangle, QObject
+class GearGui : public QObject, public QCanvasRectangle
 {
+Q_OBJECT	
 public:
   static const int CANVAS_RTTI_GEAR;
   static const int DEFAULT_SIZEX;
@@ -48,6 +49,9 @@ public:
   static const QColor CUTTED_BOX_COLOR;  
   static const QColor BOXNAME_COLOR;
   static const QColor SHADOW_COLOR;
+	static const QColor GEAR_READY_COLOR;
+	static const QColor GEAR_NOT_READY_COLOR;
+
 	
   //fonts
   static const QFont NAME_FONT;
@@ -74,8 +78,6 @@ public:
   void performPlugHighligthing(PlugBox *plugBox);
   void unHilightAllPlugBoxes();
   
-  void reDraw();
-
   virtual void save(QDomDocument &doc, QDomElement &gearElem);
   virtual void load(QDomElement &gearElem);
 
@@ -89,7 +91,10 @@ public:
   void setSelected(bool state){_selected=state;QCanvasRectangle::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
   bool isSelected() const {return _selected;}
- 
+
+public slots:
+	void reDraw();
+	
 protected:
 				
   void timerEvent(QTimerEvent*);

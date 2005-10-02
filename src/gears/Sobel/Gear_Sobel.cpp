@@ -43,19 +43,14 @@ GearInfo getGearInfo()
 
 Gear_Sobel::Gear_Sobel(Schema *schema, std::string uniqueName) : Gear(schema, "Sobel", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
   NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
 }
 
 Gear_Sobel::~Gear_Sobel()
 {
 
-}
-
-bool Gear_Sobel::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Sobel::runVideo()

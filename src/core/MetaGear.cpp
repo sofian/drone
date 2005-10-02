@@ -32,11 +32,6 @@ GearGui* MetaGear::createGearGui(QCanvas *canvas)
   return new GearGui(this, canvas, METAGEAR_COLOR);
 }
 
-bool MetaGear::ready()
-{
-  return true;
-}
-
 void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
 {
   std::cerr<<"metagear savEW!!"<<std::endl;

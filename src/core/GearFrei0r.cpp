@@ -69,14 +69,14 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
   // Set all plugs.
 
   if (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_FILTER)
-    addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+    addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   else
   {
-    addPlug(_VIDEO_X_IN = new PlugIn<ValueType>(this, "Width", new ValueType(320, 0, 640)));
-    addPlug(_VIDEO_Y_IN = new PlugIn<ValueType>(this, "Height", new ValueType(240, 0, 480)));
+    addPlug(_VIDEO_X_IN = new PlugIn<ValueType>(this, "Width", true, new ValueType(320, 0, 640)));
+    addPlug(_VIDEO_Y_IN = new PlugIn<ValueType>(this, "Height", true, new ValueType(240, 0, 480)));
   }
 
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
     
   for (int i=0; i<_pluginInfo.num_params; ++i)
   {
@@ -86,23 +86,23 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
     {
     case F0R_PARAM_BOOL:
     {    
-      PlugIn<ValueType> *param = new PlugIn<ValueType>(this, param_info.name, new ValueType(0, 0, 1));
+      PlugIn<ValueType> *param = new PlugIn<ValueType>(this, param_info.name, false, new ValueType(0, 0, 1));
       addPlug(param);
       _params.push_back(param);
     }
     break;
     case F0R_PARAM_DOUBLE:
     {    
-      PlugIn<ValueType> *param = new PlugIn<ValueType>(this, param_info.name, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *param = new PlugIn<ValueType>(this, param_info.name, false, new ValueType(0.5, 0, 1));
       addPlug(param);
       _params.push_back(param);
     }
       break;
     case F0R_PARAM_COLOR:
     {    
-      PlugIn<ValueType> *b = new PlugIn<ValueType>(this, std::string(param_info.name) + " B", new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *g = new PlugIn<ValueType>(this, std::string(param_info.name) + " G", new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *r = new PlugIn<ValueType>(this, std::string(param_info.name) + " R", new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *b = new PlugIn<ValueType>(this, std::string(param_info.name) + " B", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *g = new PlugIn<ValueType>(this, std::string(param_info.name) + " G", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *r = new PlugIn<ValueType>(this, std::string(param_info.name) + " R", false, new ValueType(0.5, 0, 1));
       addPlug(r);
       addPlug(g);
       addPlug(b);
@@ -113,8 +113,8 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
       break;
     case F0R_PARAM_POSITION:
     {    
-      PlugIn<ValueType> *x = new PlugIn<ValueType>(this, std::string(param_info.name) + " X", new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *y = new PlugIn<ValueType>(this, std::string(param_info.name) + " Y", new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *x = new PlugIn<ValueType>(this, std::string(param_info.name) + " X", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *y = new PlugIn<ValueType>(this, std::string(param_info.name) + " Y", false, new ValueType(0.5, 0, 1));
       addPlug(x);
       addPlug(y);
       _params.push_back(x);
@@ -132,13 +132,6 @@ GearFrei0r::~GearFrei0r()
 {
   (*f0r_destruct)(_instance);
   dlclose(_handle);
-}
-
-bool GearFrei0r::ready()
-{
-  return
-    ( (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_FILTER && _VIDEO_IN->connected() && _VIDEO_OUT->connected()) ||
-      (_pluginInfo.plugin_type == F0R_PLUGIN_TYPE_SOURCE && _VIDEO_OUT->connected()) );
 }
 
 void GearFrei0r::runVideo()

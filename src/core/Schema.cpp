@@ -183,19 +183,15 @@ std::list<Gear*> Schema::getDeepOrderedReadyGears()
   if(!needSynch())
     return _lastDeepOrderedReadyGears;
 
-  std::vector<Gear*> readyGears;
+  std::list<Gear*> deepOrderedGears;
   std::list<Gear*> orderedGears;
   std::list<Gear*> internalSchemaOrderedGears;
 
   _lastDeepOrderedReadyGears.clear();
 
-  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
-  {
-    if ((*it)->ready())
-      readyGears.push_back(*it);
-  }
-
-  GearGraphManip ggm(readyGears);
+	std::vector<Gear*> gearList(_gears.begin(), _gears.end()); 
+  GearGraphManip ggm(gearList);
+	
   ggm.getOrderedGears(orderedGears);
 
   for(std::list<Gear*>::iterator it=orderedGears.begin();it!=orderedGears.end();++it)
@@ -204,13 +200,28 @@ std::list<Gear*> Schema::getDeepOrderedReadyGears()
     {
       internalSchemaOrderedGears.clear();
       internalSchemaOrderedGears = (*it)->getInternalSchema()->getDeepOrderedReadyGears();
-      _lastDeepOrderedReadyGears.insert(_lastDeepOrderedReadyGears.end(), internalSchemaOrderedGears.begin(), internalSchemaOrderedGears.end());  
+      deepOrderedGears.insert(deepOrderedGears.end(), internalSchemaOrderedGears.begin(), internalSchemaOrderedGears.end());  
     }
     else
-      _lastDeepOrderedReadyGears.push_back(*it);
+      deepOrderedGears.push_back(*it);
   }
 
-  _needSynch=false;
+
+	//filter on ready gears only
+	//first pass, evaluateReady for all gears
+	for(std::list<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
+	{
+		(*it)->evaluateReady();
+	}
+		
+	//finally, filter
+	for(std::list<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
+	{
+		if ((*it)->ready())
+			_lastDeepOrderedReadyGears.push_back(*it);
+	}
+  
+	_needSynch=false;
 
   return _lastDeepOrderedReadyGears;
 }

@@ -45,8 +45,6 @@ public:
   void setValue(float  value);
   float getValue(){return _VALUE_OUT->type()->value();};
 
-  bool ready();
-
 protected:
 
   void internalSave(QDomDocument &doc, QDomElement &gearElem);

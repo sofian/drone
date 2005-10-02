@@ -34,7 +34,6 @@ public:
   virtual ~Gear_PlaceArea();
 
   void runVideo();
-  bool ready();
 
 protected:
   void internalInit();

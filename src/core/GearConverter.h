@@ -29,8 +29,8 @@ public:
   GearConverter(Schema *schema, std::string type, std::string uniqueName)
     : Gear(schema, type, uniqueName)
   {
-    addPlug(_PLUG_IN  = new PlugIn<TypeIn>(this, "In"));
-    addPlug(_PLUG_OUT = new PlugOut<TypeOut>(this, "Out"));
+    addPlug(_PLUG_IN  = new PlugIn<TypeIn>(this, "In", true));
+    addPlug(_PLUG_OUT = new PlugOut<TypeOut>(this, "Out", true));
   }
   
   virtual ~GearConverter() {}
@@ -56,9 +56,7 @@ public:
   
   void runAudio() { convert(); }
   void runVideo() { convert(); }
-  
-  bool ready() { return _PLUG_OUT->connected(); }
-  
+    
 protected:
   PlugIn<TypeIn> *_PLUG_IN;
   PlugOut<TypeOut> *_PLUG_OUT;

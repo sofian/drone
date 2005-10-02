@@ -47,8 +47,6 @@ public:
   void setVerticalValue(float value);
   float getVerticalValue(){return _VALUE_V_OUT->type()->value();};
 
-  bool ready();
-
 protected:
   GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
   void onUpdateSettings();

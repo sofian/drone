@@ -26,13 +26,14 @@
 
 const std::string AbstractPlug::XML_TAGNAME = "Plug";
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type) :
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type, bool mandatory) :
   _abstractType(type),
   _abstractInternalType(type),
   _parent(parent),
   _inOut(inOut),
-  _name(name),
-  _exposed(false)
+	_mandatory(mandatory),
+	_name(name),
+	_exposed(false)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);

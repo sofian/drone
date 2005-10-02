@@ -45,7 +45,6 @@ public:
   virtual ~Gear_ColorQuantize();
 
   void runVideo();
-  bool ready();
 
 private:
   //! Video input.

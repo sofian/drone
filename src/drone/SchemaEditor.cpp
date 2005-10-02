@@ -153,6 +153,8 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     //send mouse events
     gearGui->mouseEvent(p, mouseEvent->button());
 
+		//signal
+		emit gearSelected(gearGui);
 
     if (gearGui->titleBarHitted(p))
     {

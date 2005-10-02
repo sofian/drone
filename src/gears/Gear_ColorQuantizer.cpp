@@ -63,11 +63,6 @@ Gear_ColorQuantizer::~Gear_ColorQuantizer()
   free(_logNInMapping);
 }
 
-bool Gear_ColorQuantizer::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
-}
-
 void Gear_ColorQuantizer::runVideo()
 {
   // init

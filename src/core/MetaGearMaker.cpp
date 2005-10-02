@@ -33,13 +33,11 @@ std::vector<QFileInfo*> *MetaGearMaker::_registry;
 MetaGearMaker::MetaGearMaker() 
 {  
   _registry = new std::vector<QFileInfo*>;
-  parseMetaGears();
 }
 
 MetaGearMaker::~MetaGearMaker()
 {  
-  for (std::vector<QFileInfo*>::iterator it=_registry->begin();it!=_registry->end();++it)  
-    delete *it;
+  emptyRegistry();
   
   delete _registry;
 }
@@ -55,6 +53,11 @@ const std::vector<QFileInfo*> &MetaGearMaker::getAllMetaGearsPath()
   return *_registry;
 }
 
+void MetaGearMaker::emptyRegistry()
+{
+	for (std::vector<QFileInfo*>::iterator it=_registry->begin();it!=_registry->end();++it)  
+    delete *it;	
+}
 
 /**
  * parse relative to metagears path
@@ -62,7 +65,8 @@ const std::vector<QFileInfo*> &MetaGearMaker::getAllMetaGearsPath()
 void MetaGearMaker::parseMetaGears()
 {           
   std::cout << "--- parsing MetaGears ---" << std::endl;
-  
+  emptyRegistry();
+	
   QDir dir("metagears");
         
   parseSubDirs(dir);

@@ -9,17 +9,6 @@
 
 #include <qlistview.h>
 
-/*
-class GearClassificationListViewItem : QListViewItem
-{
-public:
-  GearClassificationListViewItem(QListView *parent, QString label) : QListViewItem(parent, label){}
-  GearClassificationListViewItem(QListViewItem *parent, QString label) : QListViewItem(parent, label){}
-
-private:
-  std::map<std::string, GearClassificationListViewItem*> _subClassifications;
-};
-*/
 class GearListView : public QListView
 {
 public:

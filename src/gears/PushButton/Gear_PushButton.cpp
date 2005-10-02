@@ -55,7 +55,7 @@ Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) :
   GearControl(schema, "PushButton", uniqueName),_acceptHint(true)
 {
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
 
   _settings.add(Property::FLOAT, SETTING_ONVALUE)->valueFloat(1.0f);
   _settings.add(Property::FLOAT, SETTING_OFFVALUE)->valueFloat(0.0f);
@@ -75,11 +75,6 @@ Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) :
 Gear_PushButton::~Gear_PushButton()
 {
 
-}
-
-bool Gear_PushButton::ready()
-{
-  return(_VALUE_OUT->connected());
 }
 
 void Gear_PushButton::onUpdateSettings()

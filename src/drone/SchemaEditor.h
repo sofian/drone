@@ -90,6 +90,8 @@ public slots:
   //metagear editing slots
   void slotSaveMetaGear();
 
+signals:
+		void gearSelected(GearGui *gearGui);
 
 protected:
 

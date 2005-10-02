@@ -1,4 +1,7 @@
 TEMPLATE = subdirs
 system( ./buildlibs )
-SUBDIRS = src/core src/gears src/drone src/contrib
+macx:system( ./bundlelibs.osx )
+SUBDIRS = src/core src/gears src/drone 
+#src/contrib
+
 

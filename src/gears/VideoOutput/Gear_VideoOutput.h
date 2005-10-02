@@ -38,8 +38,6 @@ public:
 
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
-  bool ready();
-
 protected:
   void internalInit();  
   void onUpdateSettings();

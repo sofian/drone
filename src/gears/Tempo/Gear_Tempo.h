@@ -30,7 +30,6 @@ public:
   virtual ~Gear_Tempo();
 
   void runAudio();
-  bool ready();
 
 protected:
   void internalInit();

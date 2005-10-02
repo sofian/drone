@@ -49,24 +49,19 @@ Gear_ImageSequence::Gear_ImageSequence(Schema *schema, std::string uniqueName) :
   _current(0),
   _nFramesCurrent(0)
 {
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
-  addPlug(_SPEED_IN = new PlugIn<ValueType>(this, "Speed", new ValueType(1, 0, 1)));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", true));
+  addPlug(_SPEED_IN = new PlugIn<ValueType>(this, "Speed", false, new ValueType(1, 0, 1)));
 
   EnumType *orderingFunc = new EnumType(N_ORDERING_TYPES, SHUFFLE);
   orderingFunc->setLabel(SHUFFLE, "Shuffle"); 
   orderingFunc->setLabel(SEQUENCE, "Sequence");
-  addPlug(_ORDERING_IN =  new PlugIn<EnumType>(this, "ordType", orderingFunc));
+  addPlug(_ORDERING_IN =  new PlugIn<EnumType>(this, "ordType", false, orderingFunc));
 
   _settings.add(Property::FILENAMES, SETTING_FILENAME)->valueStr("");
 }
 
 Gear_ImageSequence::~Gear_ImageSequence()
 {
-}
-
-bool Gear_ImageSequence::ready()
-{
-  return(_VIDEO_OUT->connected());
 }
 
 void Gear_ImageSequence::onUpdateSettings()

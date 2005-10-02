@@ -48,22 +48,17 @@ Gear_ImageSource::Gear_ImageSource(Schema *schema, std::string uniqueName) :
   _current(0)
 {
   // Inputs.
-  addPlug(_FRAME_IN = new PlugIn<ValueType>(this, "Frame", new ValueType(0, 0, 0)));
+  addPlug(_FRAME_IN = new PlugIn<ValueType>(this, "Frame", false, new ValueType(0, 0, 0)));
 
   // Outputs.
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_N_FRAMES_OUT = new PlugOut<ValueType>(this, "NFrames"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_N_FRAMES_OUT = new PlugOut<ValueType>(this, "NFrames", false));
 
   _settings.add(Property::FILENAMES, SETTING_FILENAME)->valueStr("");
 }
 
 Gear_ImageSource::~Gear_ImageSource()
 {
-}
-
-bool Gear_ImageSource::ready()
-{
-  return(_VIDEO_OUT->connected());
 }
 
 void Gear_ImageSource::onUpdateSettings()

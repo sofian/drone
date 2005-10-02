@@ -40,8 +40,6 @@ public:
 
   void runAudio();
 
-  bool ready();
-
 protected:
   void internalPrePlay();    
   void internalPostPlay();      

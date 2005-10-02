@@ -180,7 +180,7 @@ void Gear::getDependencies(std::vector<Gear*> &dependencies) const
   for (std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
   {
     (*it)->connectedPlugs(lplug);
-    if (lplug.size()!=0 && lplug.back()->parent()->ready())
+    if (lplug.size()!=0)
       dependencies.push_back(lplug.back()->parent());
   }
 }
@@ -309,4 +309,41 @@ void Gear::updateSettings()
   onUpdateSettings();
 }
 
+/**
+ * Is gear ready to be processed.
+ * A gear is ready when all plugs are ready.
+ */
+void Gear::evaluateReady()
+{
+	std::cout << "checking ready for : " << name() << std::endl;
+	bool _oldStatus = _ready;
+	_ready=true;
+	std::list<AbstractPlug*> inputs;
+	getInputs(inputs);
+	for(std::list<AbstractPlug*>::iterator it=inputs.begin();it!=inputs.end();++it)
+	{
+		if (!(*it)->ready())
+		{
+			_ready=false;
+			if (_ready!=_oldStatus)
+				emit readyStatusChanged();
+			return;
+		}
+	}
 
+	std::list<AbstractPlug*> outputs;
+	getOutputs(outputs);
+	for(std::list<AbstractPlug*>::iterator it=outputs.begin();it!=outputs.end();++it)
+	{
+		if (!(*it)->ready())
+		{
+			_ready=false;
+			if (_ready!=_oldStatus)
+				emit readyStatusChanged();
+			return;
+		}
+	}
+
+	if (_ready!=_oldStatus)
+		emit readyStatusChanged();
+}

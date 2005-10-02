@@ -41,11 +41,11 @@ GearInfo getGearInfo()
 Gear_AffineTransform::Gear_AffineTransform(Schema *schema, std::string uniqueName) : Gear(schema, "AffineTransform", uniqueName)
 {
 
-  addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "In", new ValueType(0.0f)));
-  addPlug(_SCALE= new PlugIn<ValueType>(this, "Scale", new ValueType(1.0f,0.0f,10.0f)));
-  addPlug(_OFFSET= new PlugIn<ValueType>(this, "Offset", new ValueType(0.0f,-10.0f,10.0f)));
+  addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "In", true, new ValueType(0.0f)));
+  addPlug(_SCALE= new PlugIn<ValueType>(this, "Scale", false, new ValueType(1.0f,0.0f,10.0f)));
+  addPlug(_OFFSET= new PlugIn<ValueType>(this, "Offset", false, new ValueType(0.0f,-10.0f,10.0f)));
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out", true));
 }
 
 Gear_AffineTransform::~Gear_AffineTransform()
@@ -53,10 +53,6 @@ Gear_AffineTransform::~Gear_AffineTransform()
 
 }
 
-bool Gear_AffineTransform::ready()
-{
-  return(_VALUE_IN->connected() && _VALUE_OUT->connected());
-}
 
 void Gear_AffineTransform::runVideo()
 {

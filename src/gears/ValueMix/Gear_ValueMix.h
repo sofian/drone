@@ -34,8 +34,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
   PlugIn<ValueType> *_VALUE_IN1,*_VALUE_IN2,*_BLEND;
   PlugOut<ValueType> *_VALUE_OUT;

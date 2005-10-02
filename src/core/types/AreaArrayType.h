@@ -58,8 +58,8 @@ public:
    *
    * @param size the number of areas in the vector
    */
-  AreaArrayType(int size = 0)
-    : ArrayType<Area>(size)
+  AreaArrayType(int size = 0) : 
+		ArrayType<Area>(size)
   {
   }
 

@@ -34,8 +34,6 @@ public:
 
   void runAudio();
   
-  bool ready();
-
   virtual void prePlay();
 
 private:

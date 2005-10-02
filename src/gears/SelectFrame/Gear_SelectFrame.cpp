@@ -43,11 +43,11 @@ Gear_SelectFrame::Gear_SelectFrame(Schema *schema, std::string uniqueName) :
   Gear(schema, "SelectFrame", uniqueName)
 {
   // Inputs.
-  addPlug(_NEXT_IN     = new PlugIn<ValueType>(this, "Next",    new ValueType(1, 0, 1)));
+  addPlug(_NEXT_IN = new PlugIn<ValueType>(this, "Next", false, new ValueType(1, 0, 1)));
   //  addPlug(_RESET_IN    = new PlugIn<ValueType>(this, "Reset",   new ValueType(0, 0, 1)));
-  addPlug(_N_FRAMES_IN = new PlugIn<ValueType>(this, "NFrames", new ValueType(0, 0, 0)));
-  addPlug(_SEEK_IN     = new PlugIn<ValueType>(this, "Seek",    new ValueType(0, -125, 125)));
-  addPlug(_RESET_IN     = new PlugIn<ValueType>(this, "Reset",    new ValueType(0, 0, 1)));
+  addPlug(_N_FRAMES_IN = new PlugIn<ValueType>(this, "NFrames", false, new ValueType(0, 0, 0)));
+  addPlug(_SEEK_IN = new PlugIn<ValueType>(this, "Seek", false, new ValueType(0, -125, 125)));
+  addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", false, new ValueType(0, 0, 1)));
 
 
   EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
@@ -57,10 +57,10 @@ Gear_SelectFrame::Gear_SelectFrame(Schema *schema, std::string uniqueName) :
   playbackMode->setLabel(BACKWARD,"Backward");
   playbackMode->setLabel(PING_PONG,"Ping pong");
   playbackMode->setLabel(RANDOM,"Random");
-  addPlug(_MODE_IN     = new PlugIn<EnumType>(this, "Mode",     playbackMode));
+  addPlug(_MODE_IN = new PlugIn<EnumType>(this, "Mode", playbackMode));
 
   // Outputs.
-  addPlug(_FRAME_OUT   = new PlugOut<ValueType>(this, "Frame",  new ValueType(0, 0, 0)));
+  addPlug(_FRAME_OUT = new PlugOut<ValueType>(this, "Frame",  true, new ValueType(0, 0, 0)));
 }
 
 Gear_SelectFrame::~Gear_SelectFrame()
@@ -73,10 +73,6 @@ void Gear_SelectFrame::internalInit()
   _nFrames = 0;
 }
 
-bool Gear_SelectFrame::ready()
-{
-  return(_N_FRAMES_IN->connected() || _FRAME_OUT->connected());
-}
 
 void Gear_SelectFrame::runVideo()
 {

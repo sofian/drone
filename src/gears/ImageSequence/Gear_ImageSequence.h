@@ -44,11 +44,7 @@ public:
   Gear_ImageSequence(Schema *schema, std::string name);
   virtual ~Gear_ImageSequence();
 
-  
   void runVideo();
-
-  bool ready();
-
   void onUpdateSettings();
 
 protected:

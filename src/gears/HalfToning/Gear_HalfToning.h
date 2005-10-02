@@ -55,8 +55,6 @@ public:
   virtual ~Gear_HalfToning();
 
   void runVideo();
-  bool ready();
-
 private:
   //! Video input.
   PlugIn<VideoRGBAType> *_VIDEO_IN;

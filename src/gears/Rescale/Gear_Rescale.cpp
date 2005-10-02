@@ -43,20 +43,15 @@ GearInfo getGearInfo()
 
 Gear_Rescale::Gear_Rescale(Schema *schema, std::string uniqueName) : Gear(schema, "Rescale", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(352, 1, 1024)));
-  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", new ValueType(288, 1, 768)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT",true ));
+  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));
+  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(288, 1, 768)));
 }
 
 Gear_Rescale::~Gear_Rescale()
 {
 
-}
-
-bool Gear_Rescale::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Rescale::runVideo()

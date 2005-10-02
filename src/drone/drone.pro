@@ -19,13 +19,12 @@ macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:TARGET = ../../drone.app/Contents/MacOS/drone
+RC_FILE = drone.icns
+QMAKE_INFO_PLIST = Info.plist
 
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
 unix:!macx:LIBS += -L../../lib -ldroneCore
-
-
-unix:!macx:TARGET = ../../drone
 
 
 HEADERS += config.h \
@@ -44,6 +43,8 @@ PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
 PropertyControlBool.h \
+PlugListView.h \
+PlugListViewItem.h \
 SchemaEditor.h \
 Play.xpm \
 Pause.xpm \
@@ -64,6 +65,8 @@ PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \
 PropertyControlBool.cpp \
+PlugListView.cpp \
+PlugListViewItem.cpp \
 #PreferencesDialog.cpp \
 SchemaEditor.cpp
 

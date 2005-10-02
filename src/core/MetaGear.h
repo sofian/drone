@@ -17,7 +17,6 @@ public:
   virtual Schema* getInternalSchema(){return _schema;}
   
   GearKind kind() const {return METAGEAR;}
-  bool ready();
 
   static const std::string TYPE;
   static const std::string EXTENSION;

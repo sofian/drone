@@ -55,8 +55,8 @@ Gear_TouchPad::Gear_TouchPad(Schema *schema, std::string uniqueName) :
  _acceptHorizontalHint(true),
  _acceptVerticalHint(true)
 {
-  addPlug(_VALUE_H_OUT = new PlugOut<ValueType>(this, "HValue"));
-  addPlug(_VALUE_V_OUT = new PlugOut<ValueType>(this, "VValue"));
+  addPlug(_VALUE_H_OUT = new PlugOut<ValueType>(this, "HValue", false));
+  addPlug(_VALUE_V_OUT = new PlugOut<ValueType>(this, "VValue", false));
 
   _settings.add(Property::FLOAT, SETTING_HORIZONTAL_HIGHERBOUND)->valueFloat(1.0f);
   _settings.add(Property::FLOAT, SETTING_HORIZONTAL_LOWERBOUND)->valueFloat(0.0f);
@@ -70,11 +70,6 @@ Gear_TouchPad::Gear_TouchPad(Schema *schema, std::string uniqueName) :
 Gear_TouchPad::~Gear_TouchPad()
 {
 
-}
-
-bool Gear_TouchPad::ready()
-{
-  return(_VALUE_H_OUT->connected() || _VALUE_V_OUT->connected());
 }
 
 void Gear_TouchPad::onUpdateSettings()

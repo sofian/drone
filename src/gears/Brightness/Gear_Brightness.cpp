@@ -44,19 +44,14 @@ GearInfo getGearInfo()
 
 Gear_Brightness::Gear_Brightness(Schema *schema, std::string uniqueName) : Gear(schema, "Brightness", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(0, -256, 256)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_BRIGHTNESS_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(0, -256, 256)));
 }
 
 Gear_Brightness::~Gear_Brightness()
 {
 
-}
-
-bool Gear_Brightness::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Brightness::runVideo()

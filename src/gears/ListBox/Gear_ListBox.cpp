@@ -49,7 +49,7 @@ const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";
 Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) : 
   GearControl(schema, "ListBox", uniqueName),_acceptHint(true)
 {
-  addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value"));
+  addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value", true));
 
   _settings.add(Property::FLOAT, SETTING_NELEMS)->valueInt(1);
    // XXX temporary hack to save labels
@@ -63,11 +63,6 @@ Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) :
 Gear_ListBox::~Gear_ListBox()
 {
 
-}
-
-bool Gear_ListBox::ready()
-{
-  return(_VALUE_OUT->connected());
 }
 
 void Gear_ListBox::onUpdateSettings()

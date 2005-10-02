@@ -23,6 +23,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <qobject.h>
 
 #include "Engine.h"
 
@@ -59,8 +60,9 @@ struct GearInfo
  * 
  * 
  */
-class Gear  
+class Gear : public QObject
 {
+Q_OBJECT
 public:
   
   enum GearKind {GEAR, METAGEAR, CONTROL, EXPOSE_ANCHOR};
@@ -98,7 +100,8 @@ public:
     
   Properties& settings(){return _settings;};
 
-  virtual bool ready()=0;
+  bool ready(){return _ready;}
+	void evaluateReady();
   void unSynch();
   
   //todo make bool
@@ -116,12 +119,15 @@ public:
   bool isPlugNameUnique(std::string name);  
 
   Schema *parentSchema(){return _parentSchema;}
-  
+
+signals:
+	void readyStatusChanged();
+		
 protected:
 
   virtual void internalInit(){}
   virtual void internalSave(QDomDocument&, QDomElement&){}
-  virtual void internalLoad(QDomElement &){}
+  virtual void internalLoad(QDomElement &){};
   
   virtual void internalPrePlay(){}  
   virtual void internalPostPlay(){}    
@@ -154,7 +160,8 @@ protected:
   GearGui *_gearGui;
 
 private:
-    
+
+	bool _ready;
   friend void Schema::initGear(Gear* gear) const;
   friend void *Engine::playThread(void *parent);
   friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);

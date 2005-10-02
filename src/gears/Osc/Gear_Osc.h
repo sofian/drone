@@ -32,8 +32,6 @@ public:
 
   void runAudio();
 
-  bool ready();
-
 protected:
   void internalInit();
   

@@ -22,7 +22,7 @@
 #include "GearGui_Slider.h"
 #include "ControlSlider.h"
 #include "Math.h"
-
+	
 #include "MidiEngine.h"
 
 #include "Engine.h"
@@ -59,7 +59,7 @@ const std::string Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
 Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
 
   _settings.add(Property::FLOAT, SETTING_HIGHERBOUND)->valueFloat(100.0f);
   _settings.add(Property::FLOAT, SETTING_LOWERBOUND)->valueFloat(0.0f);
@@ -75,11 +75,6 @@ Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : GearControl(s
 Gear_Slider::~Gear_Slider()
 {
 
-}
-
-bool Gear_Slider::ready()
-{
-  return(_VALUE_OUT->connected());
 }
 
 void Gear_Slider::onUpdateSettings()

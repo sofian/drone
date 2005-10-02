@@ -43,8 +43,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
   // Inputs.
   PlugIn<ValueType>  *_NEXT_IN;

@@ -33,11 +33,6 @@ enum eInOut
   IN, OUT
 };
 
-enum ePlugState
-{
-  ACTIVE, SLEEPING
-};
-
 class Gear;
 
 class AbstractPlug
@@ -45,7 +40,7 @@ class AbstractPlug
 public:
   static const std::string XML_TAGNAME;
 
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type);
+  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -59,7 +54,10 @@ public:
   void load(QDomElement &plugElem);
 
   bool connected() const { return !_connectedPlugs.empty();};
-  //bool active() const { return plugState()==ACTIVE;};
+	virtual void sleeping(bool ){};//!behavior defined in input and output plug
+	
+	virtual bool sleeping(){return false;}//!behavior defined in input and output plug
+	virtual bool ready() const =0;	//!behavior defined in input and output plug
 
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
@@ -70,7 +68,7 @@ public:
   eInOut inOut() const {return _inOut;};
 
   int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
-  AbstractPlug* firstConnectedPlug(){return _connectedPlugs.front();}
+  AbstractPlug* firstConnectedPlug() const {return _connectedPlugs.front();}
   int nbConnectedPlugs() const {return _connectedPlugs.size();};
   Gear* parent() const {return _parent;};
 
@@ -85,7 +83,6 @@ public:
   void forwardPlug(AbstractPlug * forwardPlug) { _forwardPlug = forwardPlug; }
   AbstractPlug* forwardPlug(){ return _forwardPlug; }
 
-  //virtual ePlugState plugState()=0;
   virtual AbstractPlug* clone(Gear* parent)=0;
 
 protected:
@@ -93,13 +90,17 @@ protected:
   const AbstractType *_abstractType;
   const AbstractType *_abstractInternalType;
   AbstractPlug* _forwardPlug;
-
-private:
+	
+	//! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
+	bool _mandatory;
   Gear *_parent;
+	
+private:
   eInOut _inOut;
   std::string _name;
 
   bool _exposed;//! the plug is exposed outside of a metagear
+
 };
 
 #endif //__ABSTRACTPLUG_INCLUDED

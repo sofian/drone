@@ -29,18 +29,13 @@ Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 
 Gear_MedianFilter::Gear_MedianFilter(Schema *schema, std::string uniqueName) : Gear(schema, "MedianFilter", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 7)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(1, 0, 7)));
 }
 
 Gear_MedianFilter::~Gear_MedianFilter()
 {
-}
-
-bool Gear_MedianFilter::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_MedianFilter::runVideo()

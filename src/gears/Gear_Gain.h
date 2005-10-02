@@ -34,8 +34,6 @@ public:
 
   void runAudio();
 
-  bool ready();
-
 private:
   PlugIn<SignalType> *_AUDIO_IN;
   PlugIn<SignalType> *_PARAM_GAIN;

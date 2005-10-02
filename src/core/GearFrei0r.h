@@ -34,7 +34,6 @@ public:
   virtual ~GearFrei0r();
 
   void runVideo();  
-  bool ready();
 
 private:
   // for F0R_PLUGIN_TYPE_FILTER

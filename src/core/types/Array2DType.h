@@ -34,7 +34,8 @@ public:
   Array2DType(int width = 0,
              int height = 0, 
              T fillValue = T())
-    : Array2D<T>(width, height)      
+    : AbstractType("Array2D"), 
+			Array2D<T>(width, height)
   {
     addSubType(_typeWidth);
     addSubType(_typeHeight);

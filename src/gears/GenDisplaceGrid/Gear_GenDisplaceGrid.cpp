@@ -42,13 +42,13 @@ GearInfo getGearInfo()
 
 Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Schema *schema, std::string uniqueName) : Gear(schema, "GenDisplaceGrid", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID"));
-  addPlug(_TYPE = new PlugIn<ValueType>(this, "TYPE", new ValueType(0,0,1)));
-  addPlug(_PARAM1 = new PlugIn<ValueType>(this, "PARAM1", new ValueType(3, 0, 50)));
-  addPlug(_PARAM2 = new PlugIn<ValueType>(this, "PARAM2", new ValueType(0, -M_PI, M_PI)));
-  addPlug(_PARAM3 = new PlugIn<ValueType>(this, "PARAM3", new ValueType(2*M_PI, 0, 2*M_PI)));
-  addPlug(_SCALE = new PlugIn<ValueType>(this, "SCALE", new ValueType(1,0,2)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", false));
+  addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID", true));
+  addPlug(_TYPE = new PlugIn<ValueType>(this, "TYPE", false, new ValueType(0,0,1)));
+  addPlug(_PARAM1 = new PlugIn<ValueType>(this, "PARAM1", false, new ValueType(3, 0, 50)));
+  addPlug(_PARAM2 = new PlugIn<ValueType>(this, "PARAM2", false, new ValueType(0, -M_PI, M_PI)));
+  addPlug(_PARAM3 = new PlugIn<ValueType>(this, "PARAM3", false, new ValueType(2*M_PI, 0, 2*M_PI)));
+  addPlug(_SCALE = new PlugIn<ValueType>(this, "SCALE", false, new ValueType(1,0,2)));
 
   // hum.. ugly
   _lastparam1=_param1+1;
@@ -60,11 +60,6 @@ Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Schema *schema, std::string uniqueNam
 
 Gear_GenDisplaceGrid::~Gear_GenDisplaceGrid()
 {
-}
-
-bool Gear_GenDisplaceGrid::ready()
-{
-  return(_GRID_OUT->connected() );
 }
 
 void Gear_GenDisplaceGrid::runVideo()

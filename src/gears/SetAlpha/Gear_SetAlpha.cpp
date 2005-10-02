@@ -44,19 +44,14 @@ GearInfo getGearInfo()
 
 Gear_SetAlpha::Gear_SetAlpha(Schema *schema, std::string uniqueName) : Gear(schema, "SetAlpha", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_ALPHA_MASK_IN = new PlugIn<VideoChannelType>(this, "Mask"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_ALPHA_MASK_IN = new PlugIn<VideoChannelType>(this, "Mask", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT", true));
 }
 
 Gear_SetAlpha::~Gear_SetAlpha()
 {
 
-}
-
-bool Gear_SetAlpha::ready()
-{
-  return(_ALPHA_MASK_IN->connected() && _VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_SetAlpha::runVideo()

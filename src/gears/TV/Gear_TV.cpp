@@ -43,17 +43,12 @@ GearInfo getGearInfo()
 
 Gear_TV::Gear_TV(Schema *schema, std::string uniqueName) : GearControl(schema, "TV", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
 }
 
 Gear_TV::~Gear_TV()
 {
 
-}
-
-bool Gear_TV::ready()
-{
-  return(_VIDEO_IN->connected());
 }
 
 void Gear_TV::runVideo()

@@ -45,9 +45,9 @@ GearInfo getGearInfo()
                   
 Gear_Gamma::Gear_Gamma(Schema *schema, std::string uniqueName) : Gear(schema, "Gamma", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1, 0, 10)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(1, 0, 10)));
 }
 
 Gear_Gamma::~Gear_Gamma()
@@ -55,10 +55,6 @@ Gear_Gamma::~Gear_Gamma()
 
 }
 
-bool Gear_Gamma::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
-}
 
 void Gear_Gamma::runVideo()
 {

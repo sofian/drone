@@ -33,8 +33,6 @@ public:
   virtual ~Gear_Sobel();
 
   void runVideo();
-  bool ready();
-
 private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;

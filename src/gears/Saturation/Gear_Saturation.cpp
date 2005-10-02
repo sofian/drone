@@ -43,20 +43,15 @@ GearInfo getGearInfo()
 
 Gear_Saturation::Gear_Saturation(Schema *schema, std::string uniqueName) : Gear(schema, "Saturation", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_SATURATION_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(1.0f, 0.0f, 10.0f)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_SATURATION_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(1.0f, 0.0f, 10.0f)));
 
 }
 
 Gear_Saturation::~Gear_Saturation()
 {
 
-}
-
-bool Gear_Saturation::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Saturation::runVideo()

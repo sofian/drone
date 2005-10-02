@@ -35,8 +35,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
 
   PlugOut<DisplaceGrid> *_GRID_OUT;

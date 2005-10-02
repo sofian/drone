@@ -42,9 +42,9 @@ GearInfo getGearInfo()
 
 Gear_Edge::Gear_Edge(Schema *schema, std::string uniqueName) : Gear(schema, "Edge", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(127.0f, 0.0f, 255.0f)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(127.0f, 0.0f, 255.0f)));
   NOTICE("For now, this edger is imperfect since it doesn't iterates through all points for efficiency reasons.");
 }
 
@@ -52,13 +52,6 @@ Gear_Edge::~Gear_Edge()
 {
 
 }
-
-bool Gear_Edge::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
-}
-
-
 
 void Gear_Edge::runVideo()
 {

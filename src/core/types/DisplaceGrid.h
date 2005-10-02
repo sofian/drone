@@ -36,7 +36,8 @@ public:
   DisplaceGrid(int width = 0,
                 int height = 0,
                 XYDisp fillValue = XYDisp_STILL)
-    : Array2DType<XYDisp>(width, height, fillValue)
+    : 
+		Array2DType<XYDisp>(width, height, fillValue)
   {
   }
 

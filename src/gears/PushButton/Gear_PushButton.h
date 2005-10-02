@@ -47,8 +47,6 @@ public:
   eButtonState getState(){return _state;}
   float getValue(){return _VALUE_OUT->type()->value();}
 
-  bool ready();
-
 protected:
   GearGui* createGearGui(QCanvas *canvas);//we want a PushButton so we overload
   void onUpdateSettings();

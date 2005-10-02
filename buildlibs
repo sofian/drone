@@ -6,4 +6,7 @@ cd lib/ffmpeg
 make
 cd ../../
 
+cd lib/liblo
+./configure
+make
 

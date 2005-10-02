@@ -35,8 +35,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;

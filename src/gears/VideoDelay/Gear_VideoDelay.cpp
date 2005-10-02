@@ -42,11 +42,11 @@ GearInfo getGearInfo()
 
 Gear_VideoDelay::Gear_VideoDelay(Schema *schema, std::string uniqueName) : Gear(schema, "VideoDelay", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
-  addPlug(_DELAY = new PlugIn<ValueType>(this, "Delay", new ValueType(0,-124,0)));
-  addPlug(_RECORD = new PlugIn<ValueType>(this, "Rec", new ValueType(1,0,1)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", false, new ValueType(125, 0, 125)));
+  addPlug(_DELAY = new PlugIn<ValueType>(this, "Delay", false, new ValueType(0,-124,0)));
+  addPlug(_RECORD = new PlugIn<ValueType>(this, "Rec", false, new ValueType(1,0,1)));
 
   circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
 
@@ -54,11 +54,6 @@ Gear_VideoDelay::Gear_VideoDelay(Schema *schema, std::string uniqueName) : Gear(
 
 Gear_VideoDelay::~Gear_VideoDelay()
 {
-}
-
-bool Gear_VideoDelay::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoDelay::runVideo()

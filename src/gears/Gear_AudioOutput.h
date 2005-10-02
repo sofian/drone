@@ -45,8 +45,6 @@ public:
   PlugIn<SignalType>* AUDIO_IN_LEFT(){return _AUDIO_IN_LEFT;};
   PlugIn<SignalType>* AUDIO_IN_RIGHT(){return _AUDIO_IN_RIGHT;};
 
-  bool ready();
-
 protected:
   void internalPrePlay();    
   void internalPostPlay();    

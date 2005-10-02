@@ -42,19 +42,14 @@ GearInfo getGearInfo()
 
 Gear_ApplyDisplaceGrid::Gear_ApplyDisplaceGrid(Schema *schema, std::string uniqueName) : Gear(schema, "ApplyDisplaceGrid", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_GRID = new PlugIn<DisplaceGrid>(this, "Grid"));
-  addPlug(_MODE = new PlugIn<ValueType>(this, "Mode", new ValueType(0.0f,0.0f,1.0f)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_GRID = new PlugIn<DisplaceGrid>(this, "Grid", false));
+  addPlug(_MODE = new PlugIn<ValueType>(this, "Mode", false, new ValueType(0.0f,0.0f,1.0f)));
 }
 
 Gear_ApplyDisplaceGrid::~Gear_ApplyDisplaceGrid()
 {
-}
-
-bool Gear_ApplyDisplaceGrid::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_ApplyDisplaceGrid::runVideo()

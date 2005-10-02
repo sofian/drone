@@ -31,7 +31,7 @@ const std::string Gear_AudioSource::SETTING_FILENAME = "Filename";
 Gear_AudioSource::Gear_AudioSource(Schema *schema, std::string uniqueName) : Gear(schema, "AudioSource", uniqueName),
 _File(NULL)
 {        
-  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));       
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));       
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 }
@@ -41,11 +41,6 @@ Gear_AudioSource::~Gear_AudioSource()
   if (_File!=NULL)
     sf_close(_File);
 
-}
-
-bool Gear_AudioSource::ready()
-{
-  return(_File!=NULL && _AUDIO_OUT->connected());
 }
 
 void Gear_AudioSource::onUpdateSettings()
@@ -66,7 +61,15 @@ void Gear_AudioSource::onUpdateSettings()
 
 void Gear_AudioSource::runAudio()
 {
-  if ( sf_readf_float(_File, _AUDIO_OUT->type()->data(), Engine::signalInfo().blockSize()) == 0)
+  if (!_File)
+	{
+		_AUDIO_OUT->ready(false);
+		return;
+	}
+	else
+		_AUDIO_OUT->ready(true);
+	
+	if ( sf_readf_float(_File, _AUDIO_OUT->type()->data(), Engine::signalInfo().blockSize()) == 0)
   {
     //go back to the beginning, loop
     sf_seek(_File, 0, SEEK_SET);

@@ -34,8 +34,6 @@ public:
   
   void runVideo();
 
-  bool ready();
-
 private:
 
   PlugIn<FFTType> *_FFT_IN;  

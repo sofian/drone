@@ -32,7 +32,6 @@ public:
   virtual ~Gear_VideoOffset();
 
   void runVideo();  
-  bool ready();
 
 private:
 

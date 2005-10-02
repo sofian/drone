@@ -45,9 +45,9 @@ GearInfo getGearInfo()
 
 Gear_GrayScale::Gear_GrayScale(Schema *schema, std::string uniqueName) : Gear(schema, "GrayScale", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT"));
-  addPlug(_CHANNEL_OUT = new PlugOut<VideoChannelType>(this,"ChOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT", false));
+  addPlug(_CHANNEL_OUT = new PlugOut<VideoChannelType>(this,"ChOUT", false));
 }
 
 Gear_GrayScale::~Gear_GrayScale()
@@ -55,17 +55,12 @@ Gear_GrayScale::~Gear_GrayScale()
 
 }
 
-bool Gear_GrayScale::ready()
-{
-  return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _CHANNEL_OUT->connected()));
-}
-
 #include <iostream>
 
 void Gear_GrayScale::runVideo()
 {
   _image = _VIDEO_IN->type();
-  
+	  
   if (_image->isNull())
     return;
 

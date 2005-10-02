@@ -71,7 +71,7 @@ _device(0),
 _bufferBGRA(NULL),
 _ownedDevice("")
 {      
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out", true));
 
   _settings.add(Property::STRING, SETTING_DEVICE)->valueStr(DEFAULT_DEVICE);    
   _settings.add(Property::INT, SETTING_WIDTH)->valueInt(DEFAULT_WIDTH);    
@@ -88,11 +88,6 @@ Gear_VideoInput::~Gear_VideoInput()
   resetInputDevice();
   pthread_mutex_destroy(_mutex);
   delete _mutex;
-}
-
-bool Gear_VideoInput::ready()
-{
-  return(_VIDEO_OUT->connected());
 }
 
 void Gear_VideoInput::internalInit()

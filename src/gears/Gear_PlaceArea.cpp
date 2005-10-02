@@ -28,11 +28,11 @@ Register_Gear(MAKERGear_PlaceArea, Gear_PlaceArea, "PlaceArea")
 
 Gear_PlaceArea::Gear_PlaceArea(Schema *schema, std::string uniqueName) : Gear(schema, "PlaceArea", uniqueName)
 {
-  addPlug(_H_POSITION_IN = new PlugIn<ValueType>(this, "X", new ValueType(0, 0, 352)));
-  addPlug(_V_POSITION_IN = new PlugIn<ValueType>(this, "Y", new ValueType(0, 0, 288)));
-  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", new ValueType(352, 1, 1024)));
-  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", new ValueType(288, 1, 768)));
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Area"));
+  addPlug(_H_POSITION_IN = new PlugIn<ValueType>(this, "X", false, new ValueType(0, 0, 352)));
+  addPlug(_V_POSITION_IN = new PlugIn<ValueType>(this, "Y", false, new ValueType(0, 0, 288)));
+  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));
+  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(288, 1, 768)));
+  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Area", true));
 }
 
 Gear_PlaceArea::~Gear_PlaceArea()
@@ -44,11 +44,6 @@ void Gear_PlaceArea::internalInit()
 {
   _AREA_OUT->type()->resize(1);
   _AREA_OUT->type()->operator[](0) = Area();
-}
-
-bool Gear_PlaceArea::ready()
-{
-  return(_AREA_OUT->connected());
 }
 
 void Gear_PlaceArea::runVideo()

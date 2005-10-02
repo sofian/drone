@@ -34,7 +34,6 @@ public:
   virtual ~Gear_VideoRecord();
 
   void runVideo();
-  bool ready();
 
 protected:
   void internalInit();

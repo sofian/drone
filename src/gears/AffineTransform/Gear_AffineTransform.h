@@ -34,8 +34,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
   PlugIn<ValueType> *_VALUE_IN,*_SCALE,*_OFFSET;
   PlugOut<ValueType> *_VALUE_OUT;

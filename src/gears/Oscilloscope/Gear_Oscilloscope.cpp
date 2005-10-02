@@ -40,13 +40,13 @@ GearInfo getGearInfo()
 
 Gear_Oscilloscope::Gear_Oscilloscope(Schema *schema, std::string uniqueName) : Gear(schema, "Oscilloscope", uniqueName)
 {
-  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
-  addPlug(_ZOOM_X = new PlugIn<ValueType>(this, "ZoomX", new ValueType(44100,512,192400)));
-  addPlug(_ZOOM_Y = new PlugIn<ValueType>(this, "ZoomY", new ValueType(1,0,2)));
-  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", new ValueType(512,32,768)));
-  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", new ValueType(150,32,768)));
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true));
+  addPlug(_ZOOM_X = new PlugIn<ValueType>(this, "ZoomX", false, new ValueType(44100,512,192400)));
+  addPlug(_ZOOM_Y = new PlugIn<ValueType>(this, "ZoomY", false, new ValueType(1,0,2)));
+  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", false, new ValueType(512,32,768)));
+  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", false, new ValueType(150,32,768)));
 
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out", true));
 
   circbuf = new CircularBuffer<Signal_T>(0.0f);
 }
@@ -54,11 +54,6 @@ Gear_Oscilloscope::Gear_Oscilloscope(Schema *schema, std::string uniqueName) : G
 Gear_Oscilloscope::~Gear_Oscilloscope()
 {
   delete circbuf;
-}
-
-bool Gear_Oscilloscope::ready()
-{
-  return(_AUDIO_IN->connected());// && _VIDEO_OUT->connected());
 }
 
 void Gear_Oscilloscope::runAudio()

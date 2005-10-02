@@ -43,7 +43,8 @@ public:
   // Destructor.
   virtual ~Gear_MedianFilter();
 
-  void runVideo();  bool ready();
+  void runVideo();
+	
 
 private:
   //! Video input.

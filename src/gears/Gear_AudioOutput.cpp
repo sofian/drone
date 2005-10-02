@@ -43,8 +43,8 @@ _lBufferIndex(0),
 _readIndex(0)
 
 {
-  addPlug(_AUDIO_IN_LEFT = new PlugIn<SignalType>(this, "Left", new SignalType(0.0f)));    
-  addPlug(_AUDIO_IN_RIGHT = new PlugIn<SignalType>(this, "Right", new SignalType(0.0f)));    
+  addPlug(_AUDIO_IN_LEFT = new PlugIn<SignalType>(this, "Left", false, new SignalType(0.0f)));    
+  addPlug(_AUDIO_IN_RIGHT = new PlugIn<SignalType>(this, "Right", false, new SignalType(0.0f)));    
 
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(DEFAULT_FRAMES_PER_BUFFER);
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
@@ -76,11 +76,6 @@ Gear_AudioOutput::~Gear_AudioOutput()
 
 }
 
-bool Gear_AudioOutput::ready()
-{
-  return(_AUDIO_IN_LEFT->connected() || _AUDIO_IN_RIGHT->connected());
-}
-
 void Gear_AudioOutput::internalInit()
 {
   std::cout << "Initializing AudioOutput..." << std::endl;
@@ -97,6 +92,9 @@ void Gear_AudioOutput::onUpdateSettings()
 
 void Gear_AudioOutput::runAudio()
 {
+	if (!_AUDIO_IN_LEFT->connected() && !_AUDIO_IN_RIGHT->connected())
+		return;
+	
   ScopedLock scopedLock(_mutex);
   
   const float *left_buffer  = _AUDIO_IN_LEFT->type()->data();

@@ -43,21 +43,16 @@ Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) :
   _phaseCorrection(0.0f)
 {
   // Inputs.
-  addPlug(_FREQ_IN = new PlugIn<ValueType>(this, "Freq", new ValueType(440.0f,0.0f,1000.0f)));
-  addPlug(_AMP_IN = new PlugIn<ValueType>(this, "Amp", new ValueType(1.0f,0.0f,2.0f)));
+  addPlug(_FREQ_IN = new PlugIn<ValueType>(this, "Freq", false, new ValueType(440.0f,0.0f,1000.0f)));
+  addPlug(_AMP_IN = new PlugIn<ValueType>(this, "Amp", false, new ValueType(1.0f,0.0f,2.0f)));
 
   // Outputs.
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out", true));
 }
 
 Gear_Osc::~Gear_Osc()
 {
 
-}
-
-bool Gear_Osc::ready()
-{
-  return _VALUE_OUT->connected();
 }
 
 void Gear_Osc::internalInit()

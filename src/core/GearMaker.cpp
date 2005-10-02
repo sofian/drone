@@ -36,10 +36,15 @@ std::map<std::string, GearMaker::GearPluginDefinition*> *GearMaker::_registry;
 GearMaker::GearMaker() 
 {  
   _registry = new std::map<std::string, GearMaker::GearPluginDefinition*>;
-  parseGears();
 }
 
 GearMaker::~GearMaker()
+{
+  emptyRegistry();
+  delete _registry;
+}
+
+void GearMaker::emptyRegistry()
 {
   //delete GearPluginDefinitions
   for(std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it!=_registry->end();++it)
@@ -47,9 +52,7 @@ GearMaker::~GearMaker()
     if (it->second->pluginType() == FREI0R_PLUGIN)
       free(it->second->gearInfo().data);
     delete it->second;
-  }
-  
-  delete _registry;
+  }	
 }
 
 Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
@@ -90,6 +93,7 @@ void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
 void GearMaker::parseGears()
 {           
   std::cout << "--- loading gears ---" << std::endl;
+	emptyRegistry();
 #if defined(Q_OS_MACX)
 	//on osx we have to first find the bundle full path
 	CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());

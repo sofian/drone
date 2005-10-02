@@ -42,9 +42,9 @@ GearInfo getGearInfo()
 
 Gear_AlphaMix::Gear_AlphaMix(Schema *schema, std::string uniqueName) : Gear(schema, "AlphaMix", uniqueName)
 {
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", true));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", true));
 
   EnumType *mixFunc = new EnumType(N_ALPHAMIX_TYPES, OVER);
   mixFunc->setLabel(OVER,"Over");
@@ -62,11 +62,6 @@ Gear_AlphaMix::~Gear_AlphaMix()
 {
   delete _imageA;
   delete _imageB;
-}
-
-bool Gear_AlphaMix::ready()
-{
-  return(_VIDEO_IN_A->connected() && _VIDEO_IN_B->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_AlphaMix::runVideo()

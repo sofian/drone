@@ -33,17 +33,12 @@ Gear_ImageSource::Gear_ImageSource(Schema *schema, std::string uniqueName) :
   _sizeX(0),
   _sizeY(0)
 {
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", true));
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");
 }
 
 Gear_ImageSource::~Gear_ImageSource()
 {
-}
-
-bool Gear_ImageSource::ready()
-{
-  return(_VIDEO_OUT->connected());
 }
 
 void Gear_ImageSource::onUpdateSettings()

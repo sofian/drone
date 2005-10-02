@@ -47,11 +47,11 @@ GearInfo getGearInfo()
 
 Gear_Enveloppe::Gear_Enveloppe(Schema *schema, std::string uniqueName) : Gear(schema, "Enveloppe", uniqueName)
 {    
-  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In"));
-  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out"));
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));
 
-  addPlug(_PARAM_RELEASE = new PlugIn<ValueType>(this, "Rel", new ValueType(.07f,0,1)));
-  addPlug(_PARAM_ATTACK = new PlugIn<ValueType>(this, "Att", new ValueType(.07f,0,1)));
+  addPlug(_PARAM_RELEASE = new PlugIn<ValueType>(this, "Rel", false, new ValueType(.07f,0,1)));
+  addPlug(_PARAM_ATTACK = new PlugIn<ValueType>(this, "Att", false, new ValueType(.07f,0,1)));
 }
 
 Gear_Enveloppe::~Gear_Enveloppe()
@@ -64,11 +64,6 @@ void Gear_Enveloppe::prePlay()
   _lastenvel=0;
 
 }    
-
-bool Gear_Enveloppe::ready()
-{
-  return(_AUDIO_IN->connected() && _AUDIO_OUT->connected());
-}
 
 void Gear_Enveloppe::runAudio()
 {

@@ -232,6 +232,21 @@ public:
     std::string toString(){return "Control";}     
   };
 
+  //PROTOCOL
+  class GearClassification_Protocol: public GearClassificationT<GearClassification_Protocol, Root>
+  {
+	public: 
+    std::string toString(){return "Protocol";}     
+		
+		//PROTOCOL/OSC
+    class GearClassification_Osc: public GearClassificationT<GearClassification_Osc, GearClassification_Protocol>
+		{
+		public: std::string toString(){return "Osc";} 
+		};
+		GearClassification_Osc osc(){return GearClassification_Osc();}
+		
+  };
+	
   //UNCLASSIFIED
   class GearClassification_Unclassified: public GearClassificationT<GearClassification_Unclassified, Root>
   {
@@ -244,6 +259,7 @@ public:
   static GearClassification_Video video(){return GearClassification_Video();}    
   static GearClassification_Signal signal(){return GearClassification_Signal();}    
   static GearClassification_Control control(){return GearClassification_Control();}    
+	static GearClassification_Protocol protocol(){return GearClassification_Protocol();}    
   static GearClassification_Unclassified unclassified(){return GearClassification_Unclassified();}    
 
 };

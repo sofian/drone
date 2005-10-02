@@ -43,20 +43,15 @@ GearInfo getGearInfo()
 
 Gear_Blur::Gear_Blur(Schema *schema, std::string uniqueName) : Gear(schema, "Blur", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", new ValueType(3, 0, 50)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "Amount", false, new ValueType(3, 0, 50)));
   _table = new SummedAreaTable<>();
 }
 
 Gear_Blur::~Gear_Blur()
 {
   delete _table;
-}
-
-bool Gear_Blur::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Blur::runVideo()

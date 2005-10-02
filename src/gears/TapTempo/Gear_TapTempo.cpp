@@ -44,20 +44,15 @@ GearInfo getGearInfo()
 Gear_TapTempo::Gear_TapTempo(Schema *schema, std::string uniqueName) : Gear(schema, "TapTempo", uniqueName)
 {
 
-  addPlug(_TAP_IN   = new PlugIn<ValueType>(this, "Tap", new ValueType(0.0f)));
-  addPlug(_DECAY_IN = new PlugIn<ValueType>(this, "Decay", new ValueType(0.9f, 0.0f, 1.0f)));
+  addPlug(_TAP_IN   = new PlugIn<ValueType>(this, "Tap", false, new ValueType(0.0f)));
+  addPlug(_DECAY_IN = new PlugIn<ValueType>(this, "Decay", false, new ValueType(0.9f, 0.0f, 1.0f)));
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out", true));
 }
 
 Gear_TapTempo::~Gear_TapTempo()
 {
 
-}
-
-bool Gear_TapTempo::ready()
-{
-  return(_VALUE_OUT->connected());
 }
 
 void Gear_TapTempo::internalInit()

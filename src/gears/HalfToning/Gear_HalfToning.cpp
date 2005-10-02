@@ -301,8 +301,8 @@ GearInfo getGearInfo()
 Gear_HalfToning::Gear_HalfToning(Schema *schema, std::string uniqueName)
 : Gear(schema, "HalfToning", uniqueName), _carryLine0(0), _carryLine1(0)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
   NOTICE("Pour le moment les coeffs tables ne sont pas pré-calculées... à corriger un jour.");
 }
 
@@ -310,11 +310,6 @@ Gear_HalfToning::~Gear_HalfToning()
 {
   free(_carryLine0);
   free(_carryLine1);
-}
-
-bool Gear_HalfToning::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_HalfToning::runVideo()

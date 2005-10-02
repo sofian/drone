@@ -42,10 +42,10 @@ GearInfo getGearInfo()
 
 Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(schema, "VideoMix", uniqueName)
 {
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
-  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", new ValueType(127, 0, 255)));
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", true));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut",true));
+  addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", false, new ValueType(127, 0, 255)));
 
   EnumType *mixFunc = new EnumType(N_VIDEOMIX_TYPES, BLEND);
   mixFunc->setLabel(BLEND,"Blend");
@@ -75,11 +75,6 @@ Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(sche
 Gear_VideoMix::~Gear_VideoMix()
 {
 
-}
-
-bool Gear_VideoMix::ready()
-{
-  return(_VIDEO_IN_A->connected() && _VIDEO_IN_B->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoMix::runVideo()

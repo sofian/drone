@@ -48,8 +48,6 @@ public:
   PlugVideoIn* VIDEO_IN(){return _VIDEO_IN;};
   PlugVideoOut* VIDEO_OUT(){return _VIDEO_OUT;};
 
-  bool ready();
-
 private:
 
   PlugVideoIn *_VIDEO_IN;

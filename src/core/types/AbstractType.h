@@ -21,13 +21,16 @@
 #define __ABSTRACTTYPE_INCLUDED
 
 #include <qcolor.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
 class AbstractType
 {
 public:
-  AbstractType() {}
+  AbstractType(std::string typeName, const AbstractType *parentType=NULL) :
+		_typeName(typeName), _parentType(parentType) {}
+	
   virtual ~AbstractType() {}
 
   virtual std::string name() const = 0;
@@ -40,9 +43,25 @@ public:
     _subTypes.push_back(&subType);
     return &subType;
   }
+	
+	std::string typeName() const {return _typeName;}
+	bool typeOf(AbstractType &other) const
+	{
+		return other.typeName() == _typeName;
+	}
+	
+	bool subTypeOf(AbstractType &other) const
+	{
+		std::cout << "not implemted yet..." << std::endl;
+		return false;
+	}
 
 protected:
   std::vector<const AbstractType*> _subTypes;
+	
+private:
+	std::string _typeName;
+	const AbstractType *_parentType;	
 };
 
 

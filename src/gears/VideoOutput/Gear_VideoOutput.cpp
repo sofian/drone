@@ -69,7 +69,7 @@ _videoOutput(NULL)
 #endif  
   //
 
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "IN"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "IN", true));
 
   _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
@@ -80,12 +80,6 @@ _videoOutput(NULL)
 Gear_VideoOutput::~Gear_VideoOutput()
 {    
   delete _videoOutput;
-}
-
-
-bool Gear_VideoOutput::ready()
-{
-  return _VIDEO_IN->connected();
 }
 
 void Gear_VideoOutput::onUpdateSettings()

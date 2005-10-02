@@ -45,18 +45,13 @@ GearInfo getGearInfo()
 Gear_Invert::Gear_Invert(Schema *schema, std::string uniqueName) : 
   Gear(schema, "Invert", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
 }
 
 Gear_Invert::~Gear_Invert()
 {
 
-}
-
-bool Gear_Invert::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_Invert::runVideo()

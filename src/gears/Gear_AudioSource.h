@@ -37,8 +37,6 @@ public:
 
   PlugOut<SignalType>* AUDIO_OUT(){return _AUDIO_OUT;};
 
-  bool ready();
-
 protected:
   void onUpdateSettings();
 

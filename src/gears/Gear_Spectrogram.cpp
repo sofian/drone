@@ -26,22 +26,17 @@ Register_Gear(MAKERGear_Spectrogram, Gear_Spectrogram, "Spectrogram")
 
 Gear_Spectrogram::Gear_Spectrogram(Schema *schema, std::string uniqueName) : Gear(schema, "Spectrogram", uniqueName)
 {
-  addPlug(_FFT_IN = new PlugIn<FFTType>(this, "In"));
-  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", new ValueType(512,32,768)));
-  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", new ValueType(150,32,768)));
+  addPlug(_FFT_IN = new PlugIn<FFTType>(this, "In", true));
+  addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", false, new ValueType(512,32,768)));
+  addPlug(_SIZE_Y = new PlugIn<ValueType>(this, "SizeY", false, new ValueType(150,32,768)));
 
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "Out", true));
   
   _rasterer = new Rasterer();
 }
 
 Gear_Spectrogram::~Gear_Spectrogram()
 {
-}
-
-bool Gear_Spectrogram::ready()
-{
-  return(_FFT_IN->connected());// && _VIDEO_OUT->connected());
 }
 
 void Gear_Spectrogram::runVideo()

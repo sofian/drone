@@ -47,8 +47,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 private:
   //! Output mask.
   PlugOut<VideoRGBAType> *_VIDEO_OUT;

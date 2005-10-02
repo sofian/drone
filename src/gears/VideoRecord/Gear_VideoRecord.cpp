@@ -42,14 +42,14 @@ GearInfo getGearInfo()
 Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gear(schema, "VideoRecord", uniqueName)
 {
   // Inputs.
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_RECORD_IN = new PlugIn<ValueType>(this, "Record", new ValueType(0, 0, 1)));
-  addPlug(_MEMORY_IN = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
-  addPlug(_FRAME_IN = new PlugIn<ValueType>(this, "Frame", new ValueType(0, 0, 0)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_RECORD_IN = new PlugIn<ValueType>(this, "Record", false, new ValueType(0, 0, 1)));
+  addPlug(_MEMORY_IN = new PlugIn<ValueType>(this, "Memory", false, new ValueType(125, 0, 125)));
+  addPlug(_FRAME_IN = new PlugIn<ValueType>(this, "Frame", false, new ValueType(0, 0, 0)));
 
   // Outputs.
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_N_FRAMES_OUT = new PlugOut<ValueType>(this, "NFrames"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_N_FRAMES_OUT = new PlugOut<ValueType>(this, "NFrames", false));
 
   // Internal objects.
   _circbuf = new CircularBuffer<RGBA>(BLACK_RGBA);
@@ -62,11 +62,6 @@ Gear_VideoRecord::~Gear_VideoRecord()
 void Gear_VideoRecord::internalInit()
 {
   _nFrames = 0;
-}
-
-bool Gear_VideoRecord::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoRecord::runVideo()

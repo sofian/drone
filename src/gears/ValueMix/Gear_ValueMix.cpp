@@ -41,21 +41,16 @@ GearInfo getGearInfo()
 Gear_ValueMix::Gear_ValueMix(Schema *schema, std::string uniqueName) : Gear(schema, "ValueMix", uniqueName)
 {
 
-  addPlug(_VALUE_IN1 = new PlugIn<ValueType>(this, "In1", new ValueType(0.0f)));
-  addPlug(_VALUE_IN2 = new PlugIn<ValueType>(this, "In2", new ValueType(0.0f)));
-  addPlug(_BLEND= new PlugIn<ValueType>(this, "Blend", new ValueType(0.0f,0.0f,1.0f)));
+  addPlug(_VALUE_IN1 = new PlugIn<ValueType>(this, "In1", true, new ValueType(0.0f)));
+  addPlug(_VALUE_IN2 = new PlugIn<ValueType>(this, "In2", true, new ValueType(0.0f)));
+  addPlug(_BLEND= new PlugIn<ValueType>(this, "Blend", false, new ValueType(0.0f,0.0f,1.0f)));
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out", true));
 }
 
 Gear_ValueMix::~Gear_ValueMix()
 {
 
-}
-
-bool Gear_ValueMix::ready()
-{
-  return(_VALUE_IN1->connected() && _VALUE_IN2->connected() && _VALUE_OUT->connected());
 }
 
 void Gear_ValueMix::runVideo()

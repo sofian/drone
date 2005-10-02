@@ -42,6 +42,9 @@ const QColor GearGui::SELECTED_BOX_COLOR(255,255,255);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
 
+const QColor GearGui::GEAR_READY_COLOR(200, 0, 10);
+const QColor GearGui::GEAR_NOT_READY_COLOR(78, 88, 99);
+
 
 #if defined(Q_OS_MACX)
 const QFont GearGui::NAME_FONT("Verdana", 12, QFont::Bold);
@@ -50,8 +53,8 @@ const QFont GearGui::NAME_FONT("Verdana", 9, QFont::Bold);
 #endif
 
 GearGui::GearGui(Gear *pgear, QCanvas *canvas, QColor color, int sizeX, int sizeY, int updateRate) :
-QCanvasRectangle(canvas),
 QObject(),
+QCanvasRectangle(canvas),
 _gear(pgear),
 _selected(false),
 _sizeX(sizeX),
@@ -65,7 +68,8 @@ _boxNameColor(color)
     startTimer(updateRate);
 
   refresh();
-  
+ 
+	QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(reDraw()));
 }
 
 GearGui::~GearGui()
@@ -269,7 +273,8 @@ void GearGui::drawShape(QPainter &painter)
   painter.setPen(Qt::black);
   painter.setBrush(_selected?SELECTED_BOX_COLOR : BOX_COLOR);
   painter.drawRoundRect(startX, startY, _sizeX, _sizeY);
-
+	
+	
   //name
   painter.setPen(Qt::black);  
   painter.setBrush(_boxNameColor.light(_selected?200:100));
@@ -277,14 +282,19 @@ void GearGui::drawShape(QPainter &painter)
   painter.drawRect(startX, startY, _sizeX, NAME_SIZEY);
   painter.setFont(NAME_FONT);
   painter.setPen(Qt::white);
-  
+
   //title default to gear name if not explicitly setted
   std::string title=_title;
   if (title.empty())
     title=gear()->name();
-    
+	
   painter.drawText(startX, startY, _sizeX, NAME_SIZEY, Qt::AlignHCenter | Qt::AlignVCenter, title.c_str());
-
+	
+	//ready box
+  painter.setPen(Qt::black);
+  painter.setBrush(gear()->ready() ? GEAR_READY_COLOR : GEAR_NOT_READY_COLOR);
+  painter.drawRoundRect(startX + _sizeX - 10, startY + 2, 8, 8, 50, 50);
+	
   //plugs
   drawPlugBoxes(painter);
 

@@ -20,6 +20,7 @@
 #include <qapplication.h>
 #include <qsplashscreen.h>
 #include "Timing.h"
+#include "DroneCore.h"
 #include "splash.xpm"
 
 #include "MainWindow.h"
@@ -27,22 +28,10 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "Math.h"
-#include "Utils.h"
 #include <qsettings.h>
 
 QSettings globalSettings;
 
-void global_init(void)
-{
-  initMath();
-  paint_funcs_setup();
-}
-
-void global_free(void)
-{
-  paint_funcs_free();
-}
 
 int main(int argc, char** argv)
 {
@@ -52,16 +41,16 @@ int main(int argc, char** argv)
   QSplashScreen splash(splash_xpm);
   splash.show();
 
+  //init the drone core
+	DroneCore::init();
+	
   MainWindow mainWindow;
   mainWindow.adjustSize();
   qtApp.setMainWidget(&mainWindow);
 
-
   splash.hide();
   mainWindow.show();
   
-
-
   if(argc>1)
   {
     if(argc==2)
@@ -71,13 +60,10 @@ int main(int argc, char** argv)
   }
 
 
-  // init globals
-  global_init();
-
   qtApp.exec();
 
-  // free globals
-  global_free();
-
+  //release the core
+	DroneCore::release();
+  
 }
 

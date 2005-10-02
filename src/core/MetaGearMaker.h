@@ -27,11 +27,13 @@
 
 #include "MetaGear.h"
 
+/**
+* note : parseMetaGears have to be called to discover gears in path and populate the 
+ * factory. In drone, this task is handled by calling DroneCore::init().
+ */ 
 class MetaGearMaker  
 {
 public:
-  MetaGearMaker();
-  ~MetaGearMaker();
 
   static const std::string METAGEAR_PATH;
 
@@ -40,6 +42,11 @@ public:
   static void parseMetaGears();  
   static void parseSubDirs(QDir dir);
 private:
+	MetaGearMaker();
+  ~MetaGearMaker();
+	
+	static void emptyRegistry();
+		
   static std::vector<QFileInfo*> *_registry;//!qfileinfo  containing relative path to metagears
   static MetaGearMaker _registerMyself;  
 };

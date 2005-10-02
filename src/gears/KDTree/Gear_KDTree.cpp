@@ -43,16 +43,17 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
 : Gear(schema, "KDTree", uniqueName)
 {
   // Inputs.
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_DEPTH_IN = new PlugIn<ValueType>(this, "Depth", new ValueType(4, 0, 16)));
-  addPlug(_H_FIRST_IN = new PlugIn<ValueType>(this, "HFirst", new ValueType(0, 0, 1)));
-  addPlug(_H_CELLS_IN = new PlugIn<ValueType>(this, "HCells", new ValueType(2, 2, 16)));
-  addPlug(_V_CELLS_IN = new PlugIn<ValueType>(this, "VCells", new ValueType(2, 2, 16)));
-  addPlug(_MIN_CELLSIZE_IN = new PlugIn<ValueType>(this, "MinSize", new ValueType(1, 1, 16)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_DEPTH_IN = new PlugIn<ValueType>(this, "Depth", false, new ValueType(4, 0, 16)));
+  addPlug(_H_FIRST_IN = new PlugIn<ValueType>(this, "HFirst", false, new ValueType(0, 0, 1)));
+  addPlug(_H_CELLS_IN = new PlugIn<ValueType>(this, "HCells", false, new ValueType(2, 2, 16)));
+  addPlug(_V_CELLS_IN = new PlugIn<ValueType>(this, "VCells", false, new ValueType(2, 2, 16)));
+  addPlug(_MIN_CELLSIZE_IN = new PlugIn<ValueType>(this, "MinSize", false, new ValueType(1, 1, 16)));
 
   // Outputs.
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Segm"));
+  // at least one of them need to be connected. determined at runtime
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, false, "ImgOUT"));
+  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, false, "Segm"));
   
   // Internal objects.
   _rasterer = new Rasterer();
@@ -67,11 +68,6 @@ Gear_KDTree::~Gear_KDTree()
   //delete _intensitiesTable;
 }
 
-bool Gear_KDTree::ready()
-{
-  return(_VIDEO_IN->connected() && (_VIDEO_OUT->connected() || _AREA_OUT->connected()));
-}
-
 void Gear_KDTree::internalInit()
 {
   _rasterer->setImage(_VIDEO_OUT->type());
@@ -81,7 +77,11 @@ void Gear_KDTree::internalInit()
 void Gear_KDTree::runVideo()
 {
   _image = _VIDEO_IN->type();
-  if (_image->isNull())
+	
+	if (!_AREA_OUT->connected() && !_VIDEO_OUT->connected())
+		return;
+  
+	if (_image->isNull())
     return;
 
   _outImage = _VIDEO_OUT->type();

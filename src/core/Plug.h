@@ -30,8 +30,9 @@ template <class T>
 class PlugOut : public AbstractPlug
 {
 public:
-  PlugOut(Gear* parent, std::string name, T* type = new T())
-  : AbstractPlug(parent, OUT, name, type)
+  PlugOut(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  : AbstractPlug(parent, OUT, name, type, mandatory),
+	_sleeping(false)
   {
     _type = _internalType = type;
     _forwardPlug = 0;
@@ -50,23 +51,35 @@ public:
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
 
-//  void setPlugState(ePlugState ps){_plugState=ps;}
-//  ePlugState plugState(){return _plugState;}
+	bool sleeping(){return _sleeping;}
+	void sleeping(bool s)
+	{
+		if (s!=_sleeping)
+			_parent->unSynch();
+		
+		_sleeping=s;
+	}
 
+	
+	virtual bool ready() const
+	{
+		if (_mandatory)
+			if (!connected())
+				return false;
+		
+		return true;
+	}
+	
   void init() {}
 
   AbstractPlug *clone(Gear* parent)
   {
-    return new PlugOut<T>(parent, name());
+    return new PlugOut<T>(parent, name(), _mandatory);
   }
 
 private:
   T *_type, *_internalType;
-  //! state of the plug : when gears don't update a plug, _plugState is == SLEEPING to tell the plug is inactive.
-  //! (e.g for a switch, all plugs other than active one are == SLEEPING) If the plug is an out, the value is
-  //! updated by the parent gear. If its an in, the value is copied from the connected out plug.
-  ePlugState _plugState;
-
+	bool _sleeping;
 };
 
 
@@ -74,8 +87,8 @@ template <class T>
 class PlugIn : public AbstractPlug
 {
 public:
-  PlugIn(Gear* parent, std::string name, T* type = new T())
-  : AbstractPlug(parent, IN, name, type)
+  PlugIn(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  : AbstractPlug(parent, IN, name, type, mandatory)
   {
      _type = _internalType = type;
      _forwardPlug = 0;
@@ -84,6 +97,25 @@ public:
   virtual ~PlugIn()
   {}
 
+
+	virtual bool ready() const
+	{		
+		if (_mandatory)
+			if (!connected())
+				return false;
+
+		if (connected())
+		{
+			if (!firstConnectedPlug()->parent()->ready())
+				return false;
+			
+			return !(firstConnectedPlug()->sleeping());	
+		}
+				
+		//not mandatory and not connected
+		return true;
+	}
+	
   virtual void onConnection(AbstractPlug *plug)
   {
     // for other plug
@@ -119,19 +151,13 @@ public:
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
 
-//   ePlugState plugState()
-//     {
-//       if(connected())
-//       return {
-//       }
-//     }
-
   AbstractPlug *clone(Gear* parent)
   {
-    PlugIn<T>* clonePlug = new PlugIn<T>(parent, name());
+    PlugIn<T>* clonePlug = new PlugIn<T>(parent, name(), _mandatory);
     return clonePlug;
   }
 
+	
 protected:
   void setType(const T *type)
   {
@@ -140,7 +166,9 @@ protected:
 
 private:
   const T *_type;
-  T *_internalType;
+  T *_internalType;	
+	
+	
 };
 
 #endif  //  __PLUG_INCLUDED

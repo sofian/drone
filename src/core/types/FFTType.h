@@ -28,6 +28,7 @@ class FFTType : public AbstractType
 {
 public:
   FFTType(int fftSize=Engine::signalInfo().blockSize()) :
+		AbstractType("FFT"),
     _fftSize(fftSize),
     _spectrumSize(fftSize/2+1)
   {

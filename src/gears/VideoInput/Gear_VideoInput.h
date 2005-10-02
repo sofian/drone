@@ -54,8 +54,6 @@ public:
 
   PlugOut<VideoRGBAType> *VIDEO_OUT(){return _VIDEO_OUT;};
 
-  bool ready();
-
   static void *playThread(void *parent);
 
 protected:

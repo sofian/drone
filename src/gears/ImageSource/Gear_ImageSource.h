@@ -36,8 +36,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
   void onUpdateSettings();
 
 private:

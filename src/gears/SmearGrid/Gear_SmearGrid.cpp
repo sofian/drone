@@ -42,20 +42,15 @@ GearInfo getGearInfo()
 
 Gear_SmearGrid::Gear_SmearGrid(Schema *schema, std::string uniqueName) : Gear(schema, "SmearGrid", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID"));
-  addPlug(_PARAM1 = new PlugIn<ValueType>(this, "PARAM1", new ValueType(0, -M_PI, M_PI)));
-  addPlug(_PARAM2 = new PlugIn<ValueType>(this, "PARAM2", new ValueType(0, 0, 2)));
-  addPlug(_SCALE = new PlugIn<ValueType>(this, "SCALE", new ValueType(1,0,2)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID", true));
+  addPlug(_PARAM1 = new PlugIn<ValueType>(this, "PARAM1", false, new ValueType(0, -M_PI, M_PI)));
+  addPlug(_PARAM2 = new PlugIn<ValueType>(this, "PARAM2", false, new ValueType(0, 0, 2)));
+  addPlug(_SCALE = new PlugIn<ValueType>(this, "SCALE", false, new ValueType(1,0,2)));
 }
 
 Gear_SmearGrid::~Gear_SmearGrid()
 {
-}
-
-bool Gear_SmearGrid::ready()
-{
-  return(_VIDEO_IN->connected() && _GRID_OUT->connected() );
 }
 
 void Gear_SmearGrid::runVideo()

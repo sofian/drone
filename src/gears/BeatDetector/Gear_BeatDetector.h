@@ -47,7 +47,6 @@ public:
   // Destructor.
   virtual ~Gear_BeatDetector() { /*_outTestFile.close();*/ }
 
-  bool ready();
   void runAudio();
   
 protected:

@@ -43,11 +43,11 @@ GearInfo getGearInfo()
 
 Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName)
 {
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));
-  addPlug(_PUNCH_IN = new PlugIn<ValueType>(this, "PunchIn", new ValueType(0, 0, 1)));
-  addPlug(_PUNCH_OUT = new PlugIn<ValueType>(this, "PunchOut", new ValueType(0, 0, 1)));
-  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", new ValueType(125, 0, 125)));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
+  addPlug(_PUNCH_IN = new PlugIn<ValueType>(this, "PunchIn", false, new ValueType(0, 0, 1)));
+  addPlug(_PUNCH_OUT = new PlugIn<ValueType>(this, "PunchOut", false, new ValueType(0, 0, 1)));
+  addPlug(_MEMORY = new PlugIn<ValueType>(this, "Memory", false, new ValueType(125, 0, 125)));
 
   EnumType *playbackMode = new EnumType(N_PLAYBACK_MODE, FORWARD);
   playbackMode->setLabel(FORWARD,"Foward");
@@ -69,11 +69,6 @@ void Gear_VideoLoop::internalInit()
   _currentLoopFrame = 0;
   _nLoopFrames = 0;
   _pingpongDir = 1;
-}
-
-bool Gear_VideoLoop::ready()
-{
-  return(_VIDEO_IN->connected() && _VIDEO_OUT->connected());
 }
 
 void Gear_VideoLoop::runVideo()

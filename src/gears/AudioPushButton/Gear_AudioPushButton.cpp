@@ -50,7 +50,7 @@ const std::string Gear_AudioPushButton::SETTING_ONESHOT = "One Shot";
 Gear_AudioPushButton::Gear_AudioPushButton(Schema *schema, std::string uniqueName) : Gear(schema, "AudioPushButton", uniqueName),_acceptHint(true)
 {
 
-  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value"));
+  addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
 
   _settings.add(Property::FLOAT, SETTING_ONVALUE)->valueFloat(1.0f);
   _settings.add(Property::FLOAT, SETTING_OFFVALUE)->valueFloat(0.0f);
@@ -64,11 +64,6 @@ Gear_AudioPushButton::Gear_AudioPushButton(Schema *schema, std::string uniqueNam
 Gear_AudioPushButton::~Gear_AudioPushButton()
 {
 
-}
-
-bool Gear_AudioPushButton::ready()
-{
-  return(_VALUE_OUT->connected());
 }
 
 void Gear_AudioPushButton::onUpdateSettings()

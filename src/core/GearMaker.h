@@ -26,6 +26,10 @@
 
 #include "Gear.h"
 
+/**
+ * note : parseGears have to be called to discover gears in path and populate the 
+ * factory. In drone, this task is handled by calling DroneCore::init().
+*/ 
 class GearMaker  
 {
 public:
@@ -58,14 +62,17 @@ public:
     void* _handle;
   };
 
-  GearMaker();
-  ~GearMaker();
 
   static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
   static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
   static void parseGears();
   static void parseFrei0rPlugins();
 private:  
+	GearMaker();
+  ~GearMaker();
+	
+	static void emptyRegistry();
+	
   static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
   static GearMaker _registerMyself;   
 };

@@ -62,8 +62,6 @@ public:
 
   void runVideo();
 
-  bool ready();
-
 protected:
   void internalInit();
   void onUpdateSettings();

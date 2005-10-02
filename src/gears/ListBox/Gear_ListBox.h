@@ -40,8 +40,6 @@ public:
   int getValue(){ return _VALUE_OUT->type()->value(); }
   const std::string& getLabel() { return _labels[getValue()]; }
 
-  bool ready();
-
 protected:
 
   void internalSave(QDomDocument &doc, QDomElement &gearElem);

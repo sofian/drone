@@ -57,11 +57,11 @@ GearInfo getGearInfo()
 Gear_BeatDetector::Gear_BeatDetector(Schema *schema, std::string uniqueName)
   : Gear(schema, "BeatDetector", uniqueName)
 {
-  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "AudioIn") );
-  addPlug(_SMOOTH_DECAY = new PlugIn<ValueType>(this, "SDecay", new ValueType(DEFAULT_SMOOTH_DECAY, 0.5, 1)));
-  addPlug(_ACORR_DECAY = new PlugIn<ValueType>(this, "ADecay", new ValueType(DEFAULT_ACORR_DECAY, 0.7, 1)));
-  addPlug(_ACORR_DECAY_STEP = new PlugIn<ValueType>(this, "ADecStep", new ValueType(DEFAULT_ACORR_DECAY_STEP, 1, 100)));
-  addPlug(_ACORR_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ACorrOut") );
+  addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "AudioIn", true) );
+  addPlug(_SMOOTH_DECAY = new PlugIn<ValueType>(this, "SDecay", false,  new ValueType(DEFAULT_SMOOTH_DECAY, 0.5, 1)));
+  addPlug(_ACORR_DECAY = new PlugIn<ValueType>(this, "ADecay", false, new ValueType(DEFAULT_ACORR_DECAY, 0.7, 1)));
+  addPlug(_ACORR_DECAY_STEP = new PlugIn<ValueType>(this, "ADecStep", false, new ValueType(DEFAULT_ACORR_DECAY_STEP, 1, 100)));
+  addPlug(_ACORR_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ACorrOut", true) );
 }
 
 void Gear_BeatDetector::internalInit()
@@ -110,11 +110,6 @@ void Gear_BeatDetector::internalInit()
   std::cout << "Input samples: " << (float)Engine::signalInfo().blockSize() << " -> " << _downSampledSig.size() << std::endl;
   std::cout << "Samples in buffer: " << (int)_downSampledSig.size() << std::endl;
   std::cout << "Checking every " << _whenChkSize+1 << " calls of runAudio" << std::endl;
-}
-
-bool Gear_BeatDetector::ready()
-{
-  return (_AUDIO_IN->connected() /* && _ACORR_VIDEO_OUT->connected()*/);
 }
 
 void Gear_BeatDetector::runAudio()

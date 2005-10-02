@@ -51,10 +51,10 @@ _frameRGBA(NULL),
 _buffer(NULL),
 _movieReady(false)
 {    
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
-  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
+  addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut", false));
 
-  addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", new ValueType(0, 0, 1)));
+  addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", false, new ValueType(0, 0, 1)));
 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
@@ -64,11 +64,6 @@ _movieReady(false)
 Gear_VideoSource::~Gear_VideoSource()
 {
   freeResources();
-}
-
-bool Gear_VideoSource::ready()
-{
-  return(_VIDEO_OUT->connected() || _AUDIO_OUT->connected());
 }
 
 void Gear_VideoSource::freeResources()
@@ -179,9 +174,17 @@ void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
 
+	if (!_VIDEO_OUT->connected() && !_AUDIO_OUT->connected())
+		return;
+	
   if (!_movieReady)
-    return;
-
+	{
+    _VIDEO_OUT->ready(false);
+		return;
+	}
+	else
+		_VIDEO_OUT->ready(true);
+	
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 
   if ((int)_RESET_IN->type()->value() == 1)

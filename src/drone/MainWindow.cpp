@@ -78,16 +78,16 @@ _menuFirstRecentSchemaId(-1)
   
   //menu    
   _fileMenu = new QPopupMenu(this);
-  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()));
-  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()));
+  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), CTRL+Key_N);
+  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()), CTRL+Key_O);
   
   //we need to keep this id to enable/disable the save item
-  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()));    
+  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()), CTRL+Key_S);    
   _fileMenu->setItemEnabled(_menuSaveItemId, false);  
   
   _fileMenu->insertItem("Save as", this, SLOT(slotMenuSaveAs()));    
   _fileMenu->insertSeparator();
-  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()));    
+  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), CTRL+Key_Q);    
   _fileMenu->insertSeparator();
   
   _toolsMenu = new QPopupMenu(this);
