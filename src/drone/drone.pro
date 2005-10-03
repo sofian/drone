@@ -25,6 +25,7 @@ QMAKE_INFO_PLIST = Info.plist
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
 unix:!macx:LIBS += -L../../lib -ldroneCore
+unix:!macx:TARGET = ../../drone
 
 
 HEADERS += config.h \

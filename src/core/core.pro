@@ -77,6 +77,7 @@ SummedAreaTable.h \
 Schema.h \
 SchemaGui.h \
 SignalInfo.h \
+TextureGl.h \
 ThreadUtil.h \
 Timing.h \
 Typedefs.h \
@@ -115,6 +116,7 @@ Rasterer.cpp \
 Schema.cpp \
 SchemaGui.cpp \
 SignalInfo.cpp \
+TextureGl.cpp \
 Timing.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \

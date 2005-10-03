@@ -83,8 +83,8 @@ void DroneQGLWidget::paintGL()
     _parentWidget->resize(_frameSizeX, _frameSizeY);    
   }
 
-  _texSizeX = (float)_frameSizeX / (float)_currentImage->textureSizeX();
-  _texSizeY = (float)_frameSizeY / (float)_currentImage->textureSizeY();
+  _texSizeX = (float)_frameSizeX / (float)_textureGl.textureSizeX();
+  _texSizeY = (float)_frameSizeY / (float)_textureGl.textureSizeY();
 
   glEnable(GL_TEXTURE_2D);
   
@@ -92,11 +92,11 @@ void DroneQGLWidget::paintGL()
   //a newly created gl context
   if (_firstDraw)
   { 
-    glBindTexture(GL_TEXTURE_2D, _currentImage->toTexture(true));
+    glBindTexture(GL_TEXTURE_2D, _textureGl.createFromVideoRGBA(*_currentImage, true));
     _firstDraw=false;   
   }   
   else
-    glBindTexture(GL_TEXTURE_2D, _currentImage->toTexture());
+    glBindTexture(GL_TEXTURE_2D, _textureGl.createFromVideoRGBA(*_currentImage));
   
   glBegin(GL_QUADS);
   glColor3f(1.0f, 1.0f, 1.0f);

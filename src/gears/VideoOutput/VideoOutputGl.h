@@ -23,6 +23,7 @@
 #include <qgl.h>
 #include <qdialog.h>
 #include "VideoOutput.h"
+#include "TextureGl.h"
 
 class DroneQGLWidget : public QGLWidget
 {
@@ -48,6 +49,7 @@ private:
 
   float _texSizeX, _texSizeY;
   QWidget *_parentWidget;
+  TextureGl _textureGl;
 
   bool _firstDraw;
   RGBA _buffer[352*480];
