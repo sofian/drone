@@ -409,6 +409,19 @@ inline float fastsqrt(float a)
   return sqrtLut[ (int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE-1 ];
 }
 
+inline unsigned int ceilingPowerOfTwo(unsigned int x)
+{
+	unsigned int result = x - 1;
+	
+	result |= (result >>  1);
+	result |= (result >>  2);
+	result |= (result >>  4);
+	result |= (result >>  8);
+	result |= (result >> 16);
+	
+	return result + 1;
+} 
+
 // End fast trigonometric functions.
 
 #endif

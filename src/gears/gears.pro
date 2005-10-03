@@ -4,7 +4,7 @@ TEMPLATE=subdirs
 SUBDIRS= Osc \
 TV \
 Oscilloscope \
-#VideoOutput \
+VideoOutput \
 #AudioPushButton \
 #AlphaMix \
 #Blur \
@@ -33,7 +33,7 @@ PushButton \
 #GenDisplaceGrid \
 #GrayScale \
 #HalfToning \
-#ImageSource \
+ImageSource \
 #Invert \
 #InvertAlpha \
 #OscInput \

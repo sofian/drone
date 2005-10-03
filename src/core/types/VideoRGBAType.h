@@ -33,8 +33,10 @@ public:
       _isGray(false),
       _isAlphaPremultiplied(false),
       _texture(0),
-      _textureSizeX(512),
-      _textureSizeY(512)
+      _textureSizeX(0),
+      _textureSizeY(0),
+			_oldWidth(0),
+			_oldHeight(0)
   {
   }
 
@@ -59,10 +61,10 @@ public:
 //   void transparent();
 //   void opacity(unsigned char a);
   
-  unsigned int toTexture(bool forceRecreate=false) const;
+  unsigned int toTexture(bool forceRecreate=false);
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
-    
+	
 protected:
 //   // GetAAPixel related functions ////////////////////
 //   // fractionnary part of coords for getAAPixel
@@ -75,6 +77,8 @@ protected:
   unsigned int _texture;
   unsigned int _textureSizeX;
   unsigned int _textureSizeY;
+	unsigned int _oldWidth;
+	unsigned int _oldHeight;
  
   ////////////////////////////////////////////////
 };

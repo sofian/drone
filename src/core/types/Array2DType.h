@@ -43,12 +43,12 @@ public:
     fill(fillValue);
   }
 
-  void resize(size_type size)
+  virtual void resize(size_type size)
   {
     Array2D<T>::resize(size);
   }
 
-  void resize(size_type width, size_type height)
+  virtual void resize(size_type width, size_type height)
   {
     Array2D<T>::resize(width, height);
     _typeWidth.setValue(width);

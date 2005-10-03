@@ -73,11 +73,20 @@ void VideoRGBAType::fillAlpha(unsigned char alpha)
     alpha_fill((unsigned char*)data(), alpha, size());
 }
 
-unsigned int VideoRGBAType::toTexture(bool forceRecreate) const
+unsigned int VideoRGBAType::toTexture(bool forceRecreate)
 {
-  if (!_texture || forceRecreate)
+  if (!_texture || forceRecreate ||
+			_oldWidth!=width() || _oldHeight!=height())
   {
-    std::cout << "create texture" << std::endl;
+		std::cout << "create texture" << std::endl;
+
+		_oldWidth=width();
+		_oldHeight=height();
+		_textureSizeX = ceilingPowerOfTwo(width());
+		_textureSizeY = ceilingPowerOfTwo(height());
+		
+		std::cout << "Texture size : " << _textureSizeX << "x" << _textureSizeY << std::endl;
+		
     if (_texture)
       glDeleteTextures(1, (GLuint*)&_texture);
     
