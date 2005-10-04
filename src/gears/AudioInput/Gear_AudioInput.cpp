@@ -60,6 +60,11 @@ Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) :
   addPlug(_AUDIO_OUT_LEFT = new PlugOut<SignalType>(this, "Left", false));    
   addPlug(_AUDIO_OUT_RIGHT = new PlugOut<SignalType>(this, "Right", false));    
 
+  std::vector<AbstractPlug*> atLeastOneOfThem;
+  atLeastOneOfThem.push_back(_AUDIO_OUT_LEFT);
+  atLeastOneOfThem.push_back(_AUDIO_OUT_RIGHT);
+  setPlugAtLeastOneNeeded(atLeastOneOfThem);
+
   _settings.add(Property::INT, SETTING_FRAMES_PER_BUFFER)->valueInt(Engine::signalInfo().blockSize());
   _settings.add(Property::INT, SETTING_NB_BUFFERS)->valueInt(DEFAULT_NB_BUFFERS);    
 
@@ -105,11 +110,9 @@ void Gear_AudioInput::onUpdateSettings()
 
 void Gear_AudioInput::runAudio()
 {
-	//TODO: merge with stereo one
-	if (!_AUDIO_OUT_LEFT->connected() && !_AUDIO_OUT_RIGHT->connected())
-		return;
+  //TODO: merge with stereo one
   
-	ScopedLock scopedLock(_mutex);
+  ScopedLock scopedLock(_mutex);
 
   float *left_buffer = _AUDIO_OUT_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();

@@ -56,5 +56,5 @@ AmuseOeil
 }
 
 #linux specific gears
-	unix:!macx:SUBDIRS += VideoInput AudioInput
+unix:!macx:SUBDIRS += VideoInput AudioInput
 

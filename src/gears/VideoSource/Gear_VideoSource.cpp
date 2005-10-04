@@ -53,6 +53,11 @@ _movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut", false));
+  
+  std::vector<AbstractPlug*> atLeastOneOfThem;
+  atLeastOneOfThem.push_back(_VIDEO_OUT);
+  atLeastOneOfThem.push_back(_AUDIO_OUT);
+  setPlugAtLeastOneNeeded(atLeastOneOfThem);
 
   addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", false, new ValueType(0, 0, 1)));
 
@@ -173,17 +178,14 @@ void Gear_VideoSource::onUpdateSettings()
 void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
-
-  if (!_VIDEO_OUT->connected() && !_AUDIO_OUT->connected())
-      return;
 	
   if (!_movieReady)
-	{
-      _VIDEO_OUT->sleeping(true);
-      return;
-	}
-	else
-      _VIDEO_OUT->sleeping(false);
+  {
+    _VIDEO_OUT->sleeping(true);
+    return;
+  }
+  else
+    _VIDEO_OUT->sleeping(false);
 	
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 

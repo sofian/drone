@@ -42,7 +42,7 @@ const QColor GearGui::SELECTED_BOX_COLOR(255,255,255);
 const QColor GearGui::SHADOW_COLOR(87,102,125);
 const QColor GearGui::BOXNAME_COLOR(0,31,68);
 
-const QColor GearGui::GEAR_READY_COLOR(200, 0, 10);
+const QColor GearGui::GEAR_READY_COLOR(36, 179, 42);
 const QColor GearGui::GEAR_NOT_READY_COLOR(78, 88, 99);
 
 

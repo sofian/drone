@@ -54,11 +54,14 @@ public:
   void load(QDomElement &plugElem);
 
   bool connected() const { return !_connectedPlugs.empty();};
-	virtual void sleeping(bool ){};//!behavior defined in input and output plug
+  virtual void sleeping(bool ){};//!behavior defined in input and output plug
 	
-	virtual bool sleeping(){return false;}//!behavior defined in input and output plug
-	virtual bool ready() const =0;	//!behavior defined in input and output plug
+  virtual bool sleeping(){return false;}//!behavior defined in input and output plug
+  virtual bool ready() const =0;	//!behavior defined in input and output plug
 
+  bool mandatory(){return _mandatory;}
+  void mandatory(bool v){_mandatory=v;}  
+  
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
 
@@ -91,8 +94,8 @@ protected:
   const AbstractType *_abstractInternalType;
   AbstractPlug* _forwardPlug;
 	
-	//! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
-	bool _mandatory;
+  //! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
+  bool _mandatory;
   Gear *_parent;
 	
 private:

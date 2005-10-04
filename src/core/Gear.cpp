@@ -318,7 +318,34 @@ void Gear::evaluateReady()
 	std::cout << "checking ready for : " << name() << std::endl;
 	bool _oldStatus = _ready;
 	_ready=true;
-	std::list<AbstractPlug*> inputs;
+	
+    //manage the "at least one of them connected mechanism" by setting connected plugs
+    //in the vector to mandatory and the others to not mandatory
+    if (_atLeastOneOfThemNeeded.size()>0)
+    {    
+      bool atLeastOneConnected=false;
+      for(std::vector<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
+      {
+        if ((*it)->connected())
+        {
+          atLeastOneConnected=true;
+          (*it)->mandatory(true);
+        }
+        else
+          (*it)->mandatory(false);      
+      }
+       
+      if (!atLeastOneConnected)
+      {
+        _ready=false;
+        if (_ready!=_oldStatus)
+            emit readyStatusChanged();
+        return;
+      }
+    }
+    
+      
+    std::list<AbstractPlug*> inputs;
 	getInputs(inputs);
 	for(std::list<AbstractPlug*>::iterator it=inputs.begin();it!=inputs.end();++it)
 	{
@@ -346,4 +373,9 @@ void Gear::evaluateReady()
 
 	if (_ready!=_oldStatus)
 		emit readyStatusChanged();
+}
+
+void Gear::setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs)
+{
+  _atLeastOneOfThemNeeded = plugs;
 }

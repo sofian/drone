@@ -101,7 +101,7 @@ public:
   Properties& settings(){return _settings;};
 
   bool ready(){return _ready;}
-	void evaluateReady();
+void evaluateReady();
   void unSynch();
   
   //todo make bool
@@ -142,6 +142,7 @@ protected:
   friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
   AbstractPlug* addPlug(AbstractPlug* plug);       
+  void setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs);
   //void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
   void deletePlug(AbstractPlug *plug);
@@ -161,7 +162,9 @@ protected:
 
 private:
 
-	bool _ready;
+  bool _ready;
+  std::vector<AbstractPlug*> _atLeastOneOfThemNeeded;
+
   friend void Schema::initGear(Gear* gear) const;
   friend void *Engine::playThread(void *parent);
   friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);

@@ -55,6 +55,11 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, false, "ImgOUT"));
   addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, false, "Segm"));
   
+  std::vector<AbstractPlug*> atLeastOneOfThem;
+  atLeastOneOfThem.push_back(_VIDEO_OUT);
+  atLeastOneOfThem.push_back(_AREA_OUT);
+  setPlugAtLeastOneNeeded(atLeastOneOfThem);
+
   // Internal objects.
   _rasterer = new Rasterer();
   //_intensitiesTable = new SummedAreaTable<unsigned char, int, 1>();

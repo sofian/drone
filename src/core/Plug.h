@@ -51,27 +51,27 @@ public:
   const T* defaultType() const { return _internalType; }
   const T* hintType() const { return _internalType; }
 
-	bool sleeping(){return _sleeping;}
-	void sleeping(bool s)
-	{
-		if (s!=_sleeping)
-			_parent->unSynch();
-		
-		_sleeping=s;
-	}
+  bool sleeping(){return _sleeping;}
+  void sleeping(bool s)
+  {
+    if (s!=_sleeping)
+        _parent->unSynch();
+    
+    _sleeping=s;
+  }
 
-	
-	virtual bool ready() const
-	{
-		if (_mandatory)
-			if (!connected())
-				return false;
-		
-        if (_mandatory && _sleeping)
-          return false;
-        
-		return true;
-	}
+  
+  virtual bool ready() const
+  {
+    if (_mandatory)
+      if (!connected())
+        return false;
+    
+    if (_mandatory && _sleeping)
+      return false;
+    
+    return true;
+  }
 	
   void init() {}
 
