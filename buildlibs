@@ -12,6 +12,5 @@ make
 cd ../../
 
 cd lib/agg23
-./configure
 make
 cd ../../
