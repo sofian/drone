@@ -24,6 +24,7 @@ Enveloppe \
 FlatSignal \
 FillAlpha \
 ListBox \
+ImageCapture \
 PushButton \
 Rescale \
 TouchPad \
