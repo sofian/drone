@@ -247,12 +247,14 @@ void *Gear_VideoInput::playThread(void *parent)
 
 void Gear_VideoInput::runVideo()
 {
-  if (!_device)
-    return;
+  if (!_device)  
+    _VIDEO_OUT->sleeping(true);  
+  else
+    _VIDEO_OUT->sleeping(false);
 
   if (!_frameGrabbed)
     return;
-
+  
   _outData = (unsigned char*) _VIDEO_OUT->type()->data();
 
   int len=_sizeX*_sizeY;      

@@ -69,7 +69,7 @@ Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(sche
   mixFunc->setLabel(SUBTRACT,"Subtract");
   mixFunc->setLabel(DIFFERENCE,"Difference");
   mixFunc->setLabel(SCALE,"Scale");
-  addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", mixFunc));
+  addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", false, mixFunc));
 }
 
 Gear_VideoMix::~Gear_VideoMix()

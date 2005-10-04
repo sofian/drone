@@ -174,16 +174,16 @@ void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
 
-	if (!_VIDEO_OUT->connected() && !_AUDIO_OUT->connected())
-		return;
+  if (!_VIDEO_OUT->connected() && !_AUDIO_OUT->connected())
+      return;
 	
   if (!_movieReady)
 	{
-    _VIDEO_OUT->ready(false);
-		return;
+      _VIDEO_OUT->sleeping(true);
+      return;
 	}
 	else
-		_VIDEO_OUT->ready(true);
+      _VIDEO_OUT->sleeping(false);
 	
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 

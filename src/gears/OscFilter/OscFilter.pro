@@ -5,10 +5,10 @@ SOURCES+=Gear_OscFilter.cpp
 HEADERS+=Gear_OscFilter.h
 INCLUDEPATH+=../../core/ ../../core/types ../../../lib/liblo
 
-QMAKE_CXXFLAGS += -Wno-long-double
+macx:QMAKE_CXXFLAGS += -Wno-long-double
 
 #linux
-unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -llo
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../../lib/liblo/src/.libs -llo
 unix:!macx:TARGET=../../../gears/Gear_OscFilter
 
 #osx

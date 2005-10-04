@@ -67,6 +67,9 @@ public:
 			if (!connected())
 				return false;
 		
+        if (_mandatory && _sleeping)
+          return false;
+        
 		return true;
 	}
 	

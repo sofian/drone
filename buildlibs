@@ -7,7 +7,7 @@ make
 cd ../../
 
 cd lib/liblo
-./configure
+./configure --enable-shared
 make
 
 cd lib/agg23
