@@ -79,9 +79,9 @@ T REPEAT_CLAMP2(T t,T low,T high)
 // //#define AGG_RGB555
 // #include "pixel_formats.h"  <--- this is normally in agg2/example/
 
-#include "agg_pixfmt_rgba32.h"
-#define pix_format agg::pix_format_rgba32
-typedef agg::pixfmt_rgba32 pixfmt;
+#include "agg_pixfmt_rgba.h"
+#define pix_format agg::pix_format_rgba
+typedef agg::pixfmt_rgba pixfmt;
 typedef agg::rgba8 color_type;
 typedef agg::order_rgba32 component_order;
 typedef agg::renderer_base<pixfmt> renderer_base;

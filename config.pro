@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread release
+CONFIG = qt warn_on thread release agg
 
 
 
@@ -49,5 +49,5 @@ INCLUDEPATH += ../contrib/frei0r
 macx:QMAKE_LFLAGS_SHLIB -= -prebind
 
 agg {
-  QMAKE_CXXFLAGS += -I../../agg2/include
+  QMAKE_CXXFLAGS += -I../../../lib/agg23/include
 }

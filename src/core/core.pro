@@ -127,8 +127,8 @@ composite/AlphaComposite.cpp
 
 agg {
 
-INCLUDEPATH += ../agg2/include
-LIBS += -L../agg2/src/ -lagg
+INCLUDEPATH += ../../lib/agg23/include
+LIBS += -L../../lib/agg23/src/ -lagg
 HEADER += AggWrapper.h
 SOURCES += AggWrapper.cpp
 }

@@ -10,3 +10,6 @@ cd lib/liblo
 ./configure
 make
 
+cd lib/agg23
+./configure
+make

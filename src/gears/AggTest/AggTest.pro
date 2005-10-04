@@ -6,7 +6,7 @@ HEADERS+=Gear_AggTest.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../agg2/src/ -lagg
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../../lib/agg23/src/ -lagg
 unix:!macx:TARGET=../../../gears/Gear_AggTest
 
 #osx
