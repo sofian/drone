@@ -34,7 +34,8 @@ Gear::Gear(Schema *parentSchema, std::string type, std::string name) :
 _parentSchema(parentSchema), 
 _Type(type), 
 _name(name),
-_gearGui(NULL)
+_gearGui(NULL),
+_ready(false)
 {
 }
 
