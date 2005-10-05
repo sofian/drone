@@ -7,13 +7,13 @@
  *
  */
 
-#include <qlistview.h>
+#include <qtable.h>
 
 
 class Gear;
 class GearGui;
 
-class PlugListView : public QListView
+class PlugListView : public QTable
 {
 	Q_OBJECT
 public:

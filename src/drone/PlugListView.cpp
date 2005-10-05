@@ -13,22 +13,17 @@
 #include "GearGui.h"
 
 PlugListView::PlugListView(QWidget *parent) :
-	QListView(parent),
+	QTable(parent),
 	_gear(NULL)
 {
 	
-	addColumn(".",15);
-	addColumn("Plug");
-	addColumn("Value");
-	setRootIsDecorated(true);
-	setResizeMode(QListView::LastColumn);
-	setColumnWidthMode(0, QListView::Manual);
-	setColumnWidthMode(1, QListView::Manual);
-	setColumnWidthMode(2, QListView::Manual);
-	setAllColumnsShowFocus(true);
-
+	QHeader *header = horizontalHeader();
+	header->setLabel( 0, QObject::tr( "V" ), 40 );
+	header->setLabel( 1, QObject::tr( "Property" ) );
+	header->setLabel( 2, QObject::tr( "Value" ) );
+	setColumnMovingEnabled(TRUE);
+		
 	setMinimumWidth(175);
-	setTreeStepSize(10);	
 }
 
 void PlugListView::slotGearSelected(GearGui *gearGui)
@@ -44,12 +39,14 @@ void PlugListView::slotGearSelected(GearGui *gearGui)
 
 void PlugListView::refresh(Gear *gear)
 {
+/*
   if (gear==NULL)
 	{
 		std::cout << "warning, null passed to refresh plug listview" << std::endl;	
 		return;
 	}
-	
+
+	clear();
 	_gear=gear;
 	
 	std::list<AbstractPlug*> inputs;
@@ -59,5 +56,5 @@ void PlugListView::refresh(Gear *gear)
 		PlugListViewItem *plugListViewItem = new PlugListViewItem(this, *it);
 		insertItem(plugListViewItem);
   }
-	
+*/	
 }

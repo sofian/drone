@@ -19,7 +19,7 @@ macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:TARGET = ../../drone.app/Contents/MacOS/drone
-RC_FILE = drone.icns
+RC_FILE = myapp.icns
 QMAKE_INFO_PLIST = Info.plist
 
 #linux

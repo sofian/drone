@@ -64,6 +64,8 @@ _movieReady(false)
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
   av_register_all();
+	_VIDEO_OUT->sleeping(true);
+	_AUDIO_OUT->sleeping(true);
 }
 
 Gear_VideoSource::~Gear_VideoSource()
@@ -89,6 +91,8 @@ void Gear_VideoSource::freeResources()
     av_close_input_file(_formatContext);
 
   _movieReady=false;
+	_VIDEO_OUT->sleeping(true);
+	unSynch();
 }
 
 void Gear_VideoSource::onUpdateSettings()
@@ -173,20 +177,14 @@ void Gear_VideoSource::onUpdateSettings()
   _firstFrameTime=_formatContext->start_time;
 
   _movieReady=true;
+	_VIDEO_OUT->sleeping(false);
+	unSynch();
 }
 
 void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
-	
-  if (!_movieReady)
-  {
-    _VIDEO_OUT->sleeping(true);
-    return;
-  }
-  else
-    _VIDEO_OUT->sleeping(false);
-	
+		
   _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
 
   if ((int)_RESET_IN->type()->value() == 1)
