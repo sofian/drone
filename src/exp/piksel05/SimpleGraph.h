@@ -3,6 +3,7 @@
 
 #include "error.h"
 #include "Array.h"
+#include "Array2D.h"
 
 template <class T>
 class SimpleGraph : Array<T>
