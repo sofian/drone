@@ -11,8 +11,8 @@ class SimpleGraph : Array<T>
 public:
   SimpleGraph(size_type n = 0) : Array<T>(n)
   {
-    edges.resize(n,n);
-    edges.fill(false);
+    _edges.resize(n,n);
+    _edges.fill(false);
   }
   
   ~SimpleGraph() {}
@@ -20,27 +20,27 @@ public:
   void clear()
   {
     Array<T>::clear();
-    edges.clear();
+    _edges.clear();
   }
 
   void resize(size_type n, T t = T());
   {
     Array<T>::resize(n, t);
-    edges.resize(n, n);
-    edges.fill(false);
+    _edges.resize(n, n);
+    _edges.fill(false);
   }
   
   void addEdge(int i, int j, bool twoWays = true)
   {
-    edges(i,j) = true;
+    _edges(i,j) = true;
     if (twoWays)
-      edges(j,i) = true;
+      _edges(j,i) = true;
   }
   
-  bool hasEdge(int i, int j) { return edges(i,j); }
+  bool hasEdge(int i, int j) { return _edges(i,j); }
   
 protected:
-  Array2D<bool> edges;
+  Array2D<bool> _edges;
 };
 
 #endif
