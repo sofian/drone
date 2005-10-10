@@ -221,6 +221,15 @@ namespace svg
             agg::bounding_rect(trans, *this, 0, m_attr_storage.size(), x1, y1, x2, y2);
         }
 
+	void setGlobalTransform(trans_affine& mtx)
+	  {
+	    m_global_trans = mtx;
+	  }
+	void mulGlobalTransform(trans_affine& mtx)
+	  {
+	    m_global_trans *= mtx;
+	  }
+
         // Rendering. One can specify two additional parameters: 
         // trans_affine and opacity. They can be used to transform the whole
         // image and/or to make it translucent.
@@ -241,7 +250,7 @@ namespace svg
             {
                 const path_attributes& attr = m_attr_storage[i];
                 m_transform = attr.transform;
-                m_transform *= mtx;
+                m_transform *= m_global_trans;
                 double scl = m_transform.scale();
                 //m_curved.approximation_method(curve_inc);
                 m_curved.approximation_scale(scl);
@@ -303,6 +312,7 @@ namespace svg
         attr_storage   m_attr_storage;
         attr_storage   m_attr_stack;
         trans_affine   m_transform;
+	trans_affine   m_global_trans;
 
         curved                       m_curved;
         curved_count                 m_curved_count;

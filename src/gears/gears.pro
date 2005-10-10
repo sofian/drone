@@ -52,8 +52,9 @@ VideoOffset \
 VideoSwitch \
 ValueMix
 agg {
-SUBDIRS+=AggTest \
-AmuseOeil
+SUBDIRS+= SVGLoader \
+Vectorial2Raster \
+VecAffineTrans
 }
 
 #linux specific gears

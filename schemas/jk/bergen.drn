@@ -1,0 +1,77 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="571" PosY="188" Type="Vectorial2Raster" Name="Vectorial2Raster.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VecIN" Exposed="0" />
+                    <Plug Name="BackG" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="132" PosY="125" Type="SVGLoader" Name="SVGLoader.1" >
+                <Properties Filename="/home/julien/dev/drone/media/bergen.svg" />
+                <Plugs>
+                    <Plug Name="VecOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="44" PosY="408" Type="ImageSource" Name="ImageSource.1" >
+                <Properties Filename="/home/julien/show_image_cache.php.jpg" />
+                <Plugs>
+                    <Plug Name="Frame" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="NFrames" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="609" PosY="273" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="288" PosY="326" Type="Rescale" Name="Rescale.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="22" PosY="214" Type="Slider" SliderPos="1.09634" Name="Slider.1" >
+                <Properties Lower_Bound="0.1" Higher_Bound="2" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="360" PosY="150" Type="VecAffineTrans" Name="VecAffineTrans.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VecOUT" Exposed="0" />
+                    <Plug Name="VecIn" Exposed="0" />
+                    <Plug Name="x" Exposed="0" />
+                    <Plug Name="y" Exposed="0" />
+                    <Plug Name="scale" Exposed="0" />
+                    <Plug Name="rotat" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="234" PosY="482" Type="Slider" SliderPos="362.793" Name="Slider.2" >
+                <Properties Lower_Bound="1" Higher_Bound="1024" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="Vectorial2Raster.1" GearB="VideoOutput.1" Input="IN" Output="ImgOUT" />
+            <Connection GearA="SVGLoader.1" GearB="VecAffineTrans.1" Input="VecIn" Output="VecOUT" />
+            <Connection GearA="ImageSource.1" GearB="Rescale.1" Input="ImgIN" Output="ImgOUT" />
+            <Connection GearA="Rescale.1" GearB="Vectorial2Raster.1" Input="BackG" Output="ImgOUT" />
+            <Connection GearA="Slider.1" GearB="VecAffineTrans.1" Input="scale" Output="Value" />
+            <Connection GearA="VecAffineTrans.1" GearB="Vectorial2Raster.1" Input="VecIN" Output="VecOUT" />
+            <Connection GearA="Slider.2" GearB="Rescale.1" Input="Width" Output="Value" />
+            <Connection GearA="Slider.2" GearB="Rescale.1" Input="Height" Output="Value" />
+        </Connections>
+    </Schema>
+</Project>
