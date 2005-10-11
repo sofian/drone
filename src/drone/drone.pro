@@ -44,8 +44,9 @@ PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
 PropertyControlBool.h \
-PlugListView.h \
-PlugListViewItem.h \
+PlugPropertiesTable.h \
+PlugPropertiesTableItem.h \
+PlugPropertiesTableItemValue.h \
 SchemaEditor.h \
 Play.xpm \
 Pause.xpm \
@@ -66,8 +67,9 @@ PropertyControl.cpp \
 PropertyControlFilename.cpp \
 PropertyControlString.cpp \
 PropertyControlBool.cpp \
-PlugListView.cpp \
-PlugListViewItem.cpp \
+PlugPropertiesTable.cpp \
+PlugPropertiesTableItem.cpp \
+PlugPropertiesTableItemValue.cpp \
 #PreferencesDialog.cpp \
 SchemaEditor.cpp
 

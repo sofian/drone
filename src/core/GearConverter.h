@@ -38,8 +38,8 @@ public:
   bool canConvert(const AbstractType& fromType, const AbstractType& toType,
                   std::pair<const AbstractPlug*, const AbstractPlug*>& plugs) const
   {
-    if (_PLUG_IN->type()->name()  == fromType.name() &&
-        _PLUG_OUT->type()->name() == toType.name() )
+    if (_PLUG_IN->type()->typeName()  == fromType.typeName() &&
+        _PLUG_OUT->type()->typeName() == toType.typeName() )
     {
       plugs.first  = _PLUG_IN;
       plugs.second = _PLUG_OUT;
@@ -49,7 +49,7 @@ public:
     {
       plugs.first = plugs.second = 0;
       return false;
-    }
+    }                                                 
   }
 
   virtual void convert() = 0;

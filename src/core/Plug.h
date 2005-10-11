@@ -32,9 +32,8 @@ class PlugOut : public AbstractPlug
 public:
   PlugOut(Gear* parent, std::string name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, OUT, name, type, mandatory),
-	_sleeping(false)
-  {
-    _type = _internalType = type;
+  _sleeping(false)
+  {    
     _forwardPlug = 0;
   }
 
@@ -42,37 +41,37 @@ public:
   {
   }
 
-  T* type() { return _type; }
+  T* type() { return static_cast<T*>(_abstractType);}
 
-  T* defaultType() { return _internalType; }
-  T* hintType() { return _internalType; }
+  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
+  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
 
-  const T* type() const { return _type; }
-  const T* defaultType() const { return _internalType; }
-  const T* hintType() const { return _internalType; }
+  const T* type() const { return static_cast<const T*>(_abstractType);}
+  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
+  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
   bool sleeping(){return _sleeping;}
   void sleeping(bool s)
   {
     if (s!=_sleeping)
-        _parent->unSynch();
-    
+      _parent->unSynch();
+
     _sleeping=s;
   }
 
-  
+
   virtual bool ready() const
   {
     if (_mandatory)
       if (!connected())
         return false;
-    
+
     if (_mandatory && _sleeping)
       return false;
-    
+
     return true;
   }
-	
+
   void init() {}
 
   AbstractPlug *clone(Gear* parent)
@@ -81,8 +80,7 @@ public:
   }
 
 private:
-  T *_type, *_internalType;
-	bool _sleeping;
+  bool _sleeping;
 };
 
 
@@ -93,51 +91,54 @@ public:
   PlugIn(Gear* parent, std::string name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, IN, name, type, mandatory)
   {
-     _type = _internalType = type;
-     _forwardPlug = 0;
+    _forwardPlug = 0;
   }
 
   virtual ~PlugIn()
   {}
 
 
-	virtual bool ready() const
-	{		
-		if (_mandatory)
-			if (!connected())
-				return false;
+  virtual bool ready() const
+  {   
+    if (_mandatory)
+      if (!connected())
+        return false;
 
-		if (connected())
-		{
-			if (!firstConnectedPlug()->parent()->ready())
-				return false;
-			
-			return !(firstConnectedPlug()->sleeping());	
-		}
-				
-		//not mandatory and not connected
-		return true;
-	}
-	
+    if (connected())
+    {
+      if (_mandatory && !firstConnectedPlug()->parent()->ready())
+        return false;
+
+      return !(firstConnectedPlug()->sleeping()); 
+    }
+
+    //not mandatory and not connected
+    return true;
+  }
+
   virtual void onConnection(AbstractPlug *plug)
   {
     // for other plug
     AbstractPlug * deepestOtherPlug = 0;
-    for(deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
+    for (deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
 
     //for this plug
     AbstractPlug * deepestPlug = 0;
-    for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
 
-    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(static_cast<const T*>(deepestOtherPlug->abstractType()));
+    std::cout << "!!!!!!!patate" << std::endl;
+    std::cout << deepestOtherPlug->name() << std::endl;
+    std::cout << deepestOtherPlug->abstractType()->typeName() << std::endl;
+
+    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(deepestOtherPlug->abstractType());
   }
 
   virtual void onDisconnection(AbstractPlug *)
   {
     AbstractPlug * deepestPlug = 0;
-    for(deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
 
-    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(_internalType);
+    dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(_abstractDefaultType);
 
 /*    if(_forwardPlug)
       dynamic_cast<PlugIn<T>*>(_forwardPlug)->setType(_internalType);
@@ -147,12 +148,12 @@ public:
 
   void init() {}
 
-  T* defaultType() { return _internalType; }
-  T* hintType() { return _internalType; }
+  T* defaultType() { return static_cast<const T*>(_abstractDefaultType);}
+  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
 
-  const T* type() const { return _type;}
-  const T* defaultType() const { return _internalType; }
-  const T* hintType() const { return _internalType; }
+  const T* type() const { return static_cast<const T*>(_abstractType);}
+  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
+  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
   AbstractPlug *clone(Gear* parent)
   {
@@ -160,18 +161,13 @@ public:
     return clonePlug;
   }
 
-	
+
 protected:
-  void setType(const T *type)
+  void setType(AbstractType *type)
   {
-    _abstractType = _type = type;
+    _abstractType = type;
   }
 
-private:
-  const T *_type;
-  T *_internalType;	
-	
-	
 };
 
 #endif  //  __PLUG_INCLUDED

@@ -38,7 +38,7 @@ public:
 
   virtual ~VideoBinaryType() {}
 
-  std::string name() const { return "VideoBinaryType";}
+  virtual std::string typeName() const {} { return "VideoBinaryType";}
   QColor color() const { return QColor(255,255,255);}
 };
 

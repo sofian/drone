@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef GEARLISTVIEW_INCLUDED
+#define GEARLISTVIEW_INCLUDED
+
 #include <qlistview.h>
 
 class GearListView : public QListView
@@ -18,3 +21,5 @@ public:
 protected:
   QDragObject *dragObject();
 };
+
+#endif

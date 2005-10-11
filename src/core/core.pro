@@ -100,6 +100,8 @@ Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
 types/VideoRGBAType.cpp \
+types/ValueType.cpp \
+types/StringType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
 Math.cpp \

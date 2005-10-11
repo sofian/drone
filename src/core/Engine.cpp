@@ -125,7 +125,7 @@ void *Engine::playThread(void *parent)
     
     if (real_time >= (currentFrame*_videoInfo.timePerFrame()*1000.0f))
     {
-      MidiEngine::getInstance().purgeAndGetNew();
+      //MidiEngine::getInstance().purgeAndGetNew();
 
       for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       {

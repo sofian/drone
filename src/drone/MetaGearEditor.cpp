@@ -4,7 +4,7 @@
 #include "SchemaEditor.h"
 #include "PanelScrollView.h"
 #include "GearListView.h"
-#include "PlugListView.h"
+#include "PlugPropertiesTable.h"
 
 #include <qsplitter.h>
 #include <qlayout.h>
@@ -32,14 +32,14 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 */
 
   _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
-	_verticalSplitter = new QSplitter(QSplitter::Vertical, _horizontalSplitter);
+  _verticalSplitter = new QSplitter(QSplitter::Vertical, _horizontalSplitter);
 
   
   //_panelScrollView = new PanelScrollView(_horizontalSplitter);
   _panelScrollView = NULL;
   _gearListView = new GearListView(_verticalSplitter);
-	_gearListView->create();
-	_plugListView = new PlugListView(_verticalSplitter);
+  _gearListView->create();
+  _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
   _schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine, _panelScrollView);  
   
   _horizontalSplitter->moveToFirst(_verticalSplitter);
@@ -49,7 +49,7 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   //add the edited metagear to the panelScrollView
   //_panelScrollView->addControlPanel(metaGear);
 	
-	QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugListView, SLOT(slotGearSelected(GearGui*)));
+  QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
   
 }
 

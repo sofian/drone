@@ -27,24 +27,23 @@
 class OscMessageType : public AbstractType
 {
 public:
-  OscMessageType()
-	: AbstractType("OscMessage")
-	{
+  OscMessageType() : 
+    AbstractType()
+  {
     addSubType(_path);
-		addSubType(_argList);
-	}
+    addSubType(_argList);
+  }
   
   virtual ~OscMessageType() 
-	{
-	}
+  {
+  }
   
-  virtual std::string name() const { return "OscMessageType"; }
+  virtual std::string typeName() const { return "OscMessageType"; }
   virtual QColor color() const { return QColor(149, 153, 162); }
-
 	
 private:
-	StringType _path;
-	ListType _argList;
+  StringType _path;
+  ListType _argList;
 };
 
 #endif

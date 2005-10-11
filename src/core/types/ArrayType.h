@@ -31,7 +31,7 @@ public:
 
   ArrayType(int size = 0,
 						T fillValue = T()) :
-		AbstractType("Array")
+		AbstractType()
   {
     addSubType(_typeSize);
     resize(size);

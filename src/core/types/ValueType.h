@@ -25,18 +25,20 @@
 class ValueType : public AbstractType
 {
 public:
+  static const std::string TYPENAME;
+
   ValueType(float defaultValue=0.0f,
             float minValue=-1.0f,
             float maxValue=1.0f)
-    : AbstractType("Value"),
-			_value(defaultValue),
+    : AbstractType(),
+	  _value(defaultValue),
       _minValue(minValue),
       _maxValue(maxValue)
     {}
   
   virtual ~ValueType() {}
-  
-  virtual std::string name() const { return "ValueType"; }
+    
+  virtual std::string typeName() const { return TYPENAME;}
   virtual QColor color() const { return QColor(157, 208, 50); }
   
   void setValue(float value) { _value = value; }

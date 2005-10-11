@@ -132,7 +132,4 @@ void Gear_ApplyDisplaceGrid::runVideo()
     }   
 
   }
-    
-  
-
 }

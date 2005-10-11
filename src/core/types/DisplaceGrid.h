@@ -33,17 +33,14 @@ const XYDisp XYDisp_STILL = {0.0f, 0.0f};
 class DisplaceGrid : public Array2DType<XYDisp>
 {
 public:
-  DisplaceGrid(int width = 0,
-                int height = 0,
-                XYDisp fillValue = XYDisp_STILL)
-    : 
-		Array2DType<XYDisp>(width, height, fillValue)
+  DisplaceGrid(int width = 0, int height = 0, XYDisp fillValue = XYDisp_STILL) : 
+    Array2DType<XYDisp>(width, height, fillValue)
   {
   }
 
   virtual ~DisplaceGrid() {}
   
-  std::string name() const { return "DisplaceGrid";}
+  virtual std::string typeName() const { return "DisplaceGrid";}
   QColor color() const { return QColor(240,255,14);}
 };
 

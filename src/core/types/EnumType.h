@@ -34,7 +34,7 @@ public:
   
   virtual ~EnumType() {}
   
-  virtual std::string name() const { return "EnumType"; }
+  virtual std::string typeName() const { return "EnumType"; }  
   virtual QColor color() const { return QColor(238,19,19); }
   
   void setValue(int value) {

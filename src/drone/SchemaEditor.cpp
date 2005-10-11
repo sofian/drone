@@ -592,8 +592,6 @@ QRect SchemaEditor::getBoundingBoxOfAllSelectedGears()
 
 Gear* SchemaEditor::getTopLeftSelectedGear()
 {
-  Gear * topleft = NULL;
-
   QRect getBoundingBoxOfAllSelectedGears();
 
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();

@@ -28,12 +28,12 @@
 class AbstractType
 {
 public:
-  AbstractType(std::string typeName, const AbstractType *parentType=NULL) :
-		_typeName(typeName), _parentType(parentType) {}
+  AbstractType(){}
+  
+		
 	
   virtual ~AbstractType() {}
 
-  virtual std::string name() const = 0;
   virtual QColor color() const = 0;
 
   int nSubTypes() const { return _subTypes.size();}
@@ -44,24 +44,16 @@ public:
     return &subType;
   }
 	
-	std::string typeName() const {return _typeName;}
-	bool typeOf(AbstractType &other) const
-	{
-		return other.typeName() == _typeName;
-	}
-	
-	bool subTypeOf(AbstractType &other) const
-	{
-		std::cout << "not implemted yet..." << std::endl;
-		return false;
-	}
-
+  virtual std::string typeName() const=0;
+  bool typeOf(AbstractType &other) const
+  {
+      return other.typeName() == typeName();
+  }
+  
 protected:
   std::vector<const AbstractType*> _subTypes;
 	
 private:
-	std::string _typeName;
-	const AbstractType *_parentType;	
 };
 
 

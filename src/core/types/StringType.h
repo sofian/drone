@@ -26,14 +26,15 @@
 class StringType : public AbstractType
 {
 public:
+  static const std::string TYPENAME;
   StringType(std::string defaultValue="")
-	: AbstractType("String"),
+	: AbstractType(),
 	_value(defaultValue)
 {}
   
   virtual ~StringType() {}
   
-  virtual std::string name() const { return "StringType"; }
+  virtual std::string typeName() const { return TYPENAME; }
   virtual QColor color() const { return QColor(123, 173, 241); }
   
   void setValue(std::string value) { _value = value; }

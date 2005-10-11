@@ -40,7 +40,7 @@ class AbstractPlug
 public:
   static const std::string XML_TAGNAME;
 
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type, bool mandatory);
+  AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
 
   virtual void init(){};
@@ -65,9 +65,9 @@ public:
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
 
-  const AbstractType* abstractType() const { return _abstractType;}
-  const AbstractType* abstractDefaultType() const { return _abstractInternalType;}
-  const AbstractType* abstractHintType() const { return _abstractInternalType;}
+  AbstractType* abstractType() const { return _abstractType;}
+  AbstractType* abstractDefaultType() const { return _abstractDefaultType;}
+  AbstractType* abstractHintType() const { return _abstractDefaultType;}
   eInOut inOut() const {return _inOut;};
 
   int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
@@ -90,8 +90,8 @@ public:
 
 protected:
   std::list<AbstractPlug*> _connectedPlugs;
-  const AbstractType *_abstractType;
-  const AbstractType *_abstractInternalType;
+  AbstractType *_abstractType;
+  AbstractType *_abstractDefaultType;
   AbstractPlug* _forwardPlug;
 	
   //! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.

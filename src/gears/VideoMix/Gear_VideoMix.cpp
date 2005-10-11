@@ -41,9 +41,9 @@ GearInfo getGearInfo()
 }
 
 Gear_VideoMix::Gear_VideoMix(Schema *schema, std::string uniqueName) : Gear(schema, "VideoMix", uniqueName)
-{
-  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", true));
-  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));
+{                                                                     
+  addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", false));
+  addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", false));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut",true));
   addPlug(_AMOUNT_IN = new PlugIn<ValueType>(this, "ArgA", false, new ValueType(127, 0, 255)));
 

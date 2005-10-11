@@ -31,7 +31,7 @@ public:
 
 	virtual ~ListType(){}
 
-	std::string name() const { return "ListType";}
+	virtual std::string typeName() const { return "ListType";}
 	QColor color() const { return QColor(255,255,255);}
 };
 

@@ -26,14 +26,14 @@
 
 const std::string AbstractPlug::XML_TAGNAME = "Plug";
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, const AbstractType* type, bool mandatory) :
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory) :
   _abstractType(type),
-  _abstractInternalType(type),
+  _abstractDefaultType(type),
   _parent(parent),
+  _mandatory(mandatory),
   _inOut(inOut),
-	_mandatory(mandatory),
-	_name(name),
-	_exposed(false)
+  _name(name),
+  _exposed(false)
 {
   //une plug a besoin d'un parent
   assert(parent!=NULL);
@@ -56,7 +56,7 @@ bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
     return false;
 
   //est-ce que ce sont des plugs de meme type
-  if (_abstractType->name() != plug->abstractType()->name())
+  if (_abstractType->typeName() != plug->abstractType()->typeName())
     return false;
 
   //avons-nous bien une connection d'un in dans un out ou vice-versa

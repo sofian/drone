@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 Gear_SignalStat::Gear_SignalStat(Schema *schema, std::string uniqueName)
   : GearConverter<SignalType, ValueType>(schema, "SignalStat", uniqueName)
 {
-  addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", new ValueType(0, 0, 6)));
+  addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", false, new ValueType(0, 0, 6)));
 
 }
 

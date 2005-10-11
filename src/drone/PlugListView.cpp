@@ -1,5 +1,5 @@
 /*
- *  PlugListView.cpp
+ *  PlugPropertiesTable.cpp
  *  drone
  *
  *  Created by foogy on 20/09/05.
@@ -7,12 +7,12 @@
  *
  */
 #include <iostream>
-#include "PlugListView.h"
-#include "PlugListViewItem.h"
+#include "PlugPropertiesTable.h"
+#include "PlugPropertiesTableItem.h"
 #include "Gear.h"
 #include "GearGui.h"
 
-PlugListView::PlugListView(QWidget *parent) :
+PlugPropertiesTable::PlugPropertiesTable(QWidget *parent) :
 	QTable(parent),
 	_gear(NULL)
 {
@@ -20,13 +20,17 @@ PlugListView::PlugListView(QWidget *parent) :
 	QHeader *header = horizontalHeader();
 	header->setLabel( 0, QObject::tr( "V" ), 40 );
 	header->setLabel( 1, QObject::tr( "Property" ) );
-	header->setLabel( 2, QObject::tr( "Value" ) );
+	header->setLabel( 2, QObject::tr( "Value" ) );    
 	setColumnMovingEnabled(TRUE);
 		
+    //hide vertical labels
+    verticalHeader()->hide();
+    setLeftMargin(0);
+
 	setMinimumWidth(175);
 }
 
-void PlugListView::slotGearSelected(GearGui *gearGui)
+void PlugPropertiesTable::slotGearSelected(GearGui *gearGui)
 {
 	if (gearGui==NULL)
 	{
@@ -37,7 +41,7 @@ void PlugListView::slotGearSelected(GearGui *gearGui)
 	refresh(gearGui->gear());
 }
 
-void PlugListView::refresh(Gear *gear)
+void PlugPropertiesTable::refresh(Gear *gear)
 {
 /*
   if (gear==NULL)
@@ -53,8 +57,8 @@ void PlugListView::refresh(Gear *gear)
   _gear->getInputs(inputs);
   for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
   {
-		PlugListViewItem *plugListViewItem = new PlugListViewItem(this, *it);
-		insertItem(plugListViewItem);
+		PlugPropertiesTableItem *PlugPropertiesTableItem = new PlugPropertiesTableItem(this, *it);
+		insertItem(PlugPropertiesTableItem);
   }
 */	
 }
