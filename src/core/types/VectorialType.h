@@ -36,14 +36,14 @@ class VectorialType : public AbstractType
 {
 public:
   VectorialType()
-	: AbstractType("vectorial")
+	: AbstractType()
 {
   m_path = new agg::svg::path_renderer();
 }
   
   virtual ~VectorialType() {delete m_path;}
   
-  virtual std::string name() const { return "VectorialType"; }
+  virtual std::string typeName() const { return "VectorialType"; }
   virtual QColor color() const { return QColor(123, 13, 241); }
   
   void setPath(agg::svg::path_renderer *path) const {m_path=path;}

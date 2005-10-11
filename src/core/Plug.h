@@ -126,10 +126,6 @@ public:
     AbstractPlug * deepestPlug = 0;
     for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
 
-    std::cout << "!!!!!!!patate" << std::endl;
-    std::cout << deepestOtherPlug->name() << std::endl;
-    std::cout << deepestOtherPlug->abstractType()->typeName() << std::endl;
-
     dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(deepestOtherPlug->abstractType());
   }
 
