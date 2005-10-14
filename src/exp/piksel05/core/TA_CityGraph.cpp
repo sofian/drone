@@ -1,5 +1,5 @@
 #include "TA_CityGraph.h"
-#include <iostream>
+#include <fstream>
 
 // foreach i
 //   E_i = 0
@@ -55,17 +55,18 @@ void TA_CityGraph::update(TA_Grid *grid)
   {
     Array<float> energy(size());
     float sum = 0;
-    for (size_type i=0; i<size(); ++i)
+    int i = 0;
+    for (iterator it = begin(); it != end(); ++it, ++i)
     {
-      energy[i] = 1.0f / distance( *centroid, this->operator[](i) );
+      energy[i] = 1.0f / distance( *centroid, it->second );
       sum += energy[i];
     }
-    for (size_type i=0; i<size(); ++i)
-      this->operator[](i)->energy += energy[i] / sum;    
+    i = 0;
+    for (iterator it = begin(); it != end(); ++it, ++i)
+      it->second->energy += energy[i] / sum;    
   }
 }
 
-#include <iostream>
 void TA_CityGraph::load(const std::string& filename)
 {
   std::cout << "loading file : " << filename << std::endl;
@@ -105,8 +106,8 @@ void TA_CityGraph::load(const std::string& filename)
           std::cout << f.text() << std::endl;
           if (f.tagName() == "oscfile")
           {
-//             ifstream f(f.text());
-//             ASSERT_WARNING( f );
+            std::ifstream f(f.text(), std::ios::in);
+            ASSERT_WARNING( f );
           }
           else if (f.tagName() == "moviefile")
           {
