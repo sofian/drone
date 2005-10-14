@@ -92,17 +92,34 @@ void TA_CityGraph::load(const std::string& filename)
     {
       if (e.tagName() == "spot")
       {
-        TA_CityVertex *vertex = new TA_CityVertex;
         std::string id = e.attribute("id");
         ASSERT_WARNING( id != "" );
-        //        insert(make_pair(, vertex));
+        
+        // Create vertex.
+        TA_CityVertex *vertex = new TA_CityVertex;
+        
         QDomNode m = e.firstChild();
         while (!m.isNull())
         {
           QDomElement f = m.toElement();
+          std::cout << f.text() << std::endl;
+          if (f.tagName() == "oscfile")
+          {
+//             ifstream f(f.text());
+//             ASSERT_WARNING( f );
+          }
+          else if (f.tagName() == "moviefile")
+          {
+
+          }
+          else
+            WARNING("Unknown tag: %s.", (char*)f.tagName());
+          
           std::cout << f.tagName() << std::endl;
           m = m.nextSibling();
         }
+        // Add it.
+        insert(std::make_pair(id, vertex));
         
       }
       else if (e.tagName() == "connection")

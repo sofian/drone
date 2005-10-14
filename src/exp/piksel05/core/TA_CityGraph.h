@@ -3,6 +3,7 @@
 
 #include "SimpleGraph.h"
 #include "Array2D.h"
+#include "OSCUtils.h"
 #include <string>
 #include <cmath>
 
