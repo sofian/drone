@@ -31,6 +31,7 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, Abstrac
   _abstractDefaultType(type),
   _parent(parent),
   _mandatory(mandatory),
+  _sleeping(false),
   _inOut(inOut),
   _name(name),
   _exposed(false)
@@ -250,3 +251,10 @@ void AbstractPlug::load(QDomElement &plugElem)
   exposed(val == "1" ? true : false);
 }
 
+void AbstractPlug::sleeping(bool s)
+{
+  if (s!=_sleeping)
+     _parent->unSynch();
+
+   _sleeping=s;
+}

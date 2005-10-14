@@ -54,9 +54,9 @@ public:
   void load(QDomElement &plugElem);
 
   bool connected() const { return !_connectedPlugs.empty();};
-  virtual void sleeping(bool ){};//!behavior defined in input and output plug
+  void sleeping(bool );
 	
-  virtual bool sleeping(){return false;}//!behavior defined in input and output plug
+  bool sleeping(){return _sleeping;}
   virtual bool ready() const =0;	//!behavior defined in input and output plug
 
   bool mandatory(){return _mandatory;}
@@ -97,6 +97,7 @@ protected:
   //! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
   bool _mandatory;
   Gear *_parent;
+  bool _sleeping;
 	
 private:
   eInOut _inOut;

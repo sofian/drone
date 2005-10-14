@@ -17,7 +17,7 @@ class AbstractPlug;
 class PlugPropertiesTableItem : public QTableItem
 {
 public:  
-  PlugPropertiesTableItem(AbstractPlug *plug, QTable *table, EditType et);
+  PlugPropertiesTableItem(AbstractPlug *plug, QTable *table, EditType et, const QString &text);
   virtual ~PlugPropertiesTableItem();
 
 protected:

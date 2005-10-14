@@ -3,7 +3,7 @@
 #include "ValueType.h"
 
 PlugPropertiesTableItemValue::PlugPropertiesTableItemValue(AbstractPlug *plug, QTable * table, EditType et) :
-  PlugPropertiesTableItem(plug, table, et),
+  PlugPropertiesTableItem(plug, table, et, QString::number(static_cast<ValueType*>(plug->abstractDefaultType())->value())),
   _lineEdit(NULL)
 {
   setReplaceable(false);  
@@ -19,11 +19,7 @@ QWidget *PlugPropertiesTableItemValue::createEditor() const
   std::cout << "createEditor" << std::endl;
   //create a lineedit
   ((PlugPropertiesTableItemValue*)this)->_lineEdit = new QLineEdit(table()->viewport());
-  ValueType *data = static_cast<ValueType*>(_plug->abstractDefaultType());
-  
-  QString valueStr;
-  valueStr.setNum(data->value());
-  _lineEdit->setText(valueStr);  
+  _lineEdit->setText(QString::number(static_cast<ValueType*>(_plug->abstractDefaultType())->value()));  
   
   QObject::connect(_lineEdit, SIGNAL( textChanged(const QString&)), table(), SLOT( doValueChanged()) );
   return _lineEdit;

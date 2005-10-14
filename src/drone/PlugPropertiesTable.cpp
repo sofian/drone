@@ -12,9 +12,10 @@
 #include "GearGui.h"
 
 #include "PlugPropertiesTableItemValue.h"
-#include "ValueType.h"
-//#include "PlugPropertiesTableItemString.h"
+#include "PlugPropertiesTableItemString.h"
 
+#include "ValueType.h"
+#include "StringType.h"
 
 
 PlugPropertiesTable::PlugPropertiesTable(QWidget *parent) :
@@ -28,11 +29,13 @@ _gear(NULL)
   setMinimumWidth(185);
   setColumnReadOnly(0,true);
 
+
   setNumCols(2);
   setNumRows(0);
   QHeader *header = horizontalHeader();
   header->setLabel( 0, QObject::tr("Property"), 90);
   header->setLabel( 1, QObject::tr("Value"), 90);            
+  setColumnStretchable(1,true);
 }
 
 void PlugPropertiesTable::slotGearSelected(GearGui *gearGui)
@@ -54,10 +57,13 @@ void PlugPropertiesTable::refresh(Gear *gear)
     return;
   }
 
+/*
   int nbRows = numRows();
   for(int i=0; i<nbRows;i++)
     removeRow(i);
+*/
 
+  setNumRows(0);
   _gear=gear;
 
   std::list<AbstractPlug*> inputs;
@@ -79,6 +85,11 @@ void PlugPropertiesTable::insertPlug(AbstractPlug *plug, int row)
     PlugPropertiesTableItemValue *valueItem = new PlugPropertiesTableItemValue(plug, this, QTableItem::WhenCurrent);
     setText(row,0,plug->name());
     setItem(row,1,valueItem);
+  } 
+  else if (plug->abstractType()->typeName() == StringType::TYPENAME)
+  {
+    PlugPropertiesTableItemString *stringItem = new PlugPropertiesTableItemString(plug, this, QTableItem::WhenCurrent);
+    setText(row,0,plug->name());
+    setItem(row,1,stringItem);  
   }
-  
 }

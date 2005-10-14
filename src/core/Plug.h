@@ -31,8 +31,7 @@ class PlugOut : public AbstractPlug
 {
 public:
   PlugOut(Gear* parent, std::string name, bool mandatory, T* type = new T())
-  : AbstractPlug(parent, OUT, name, type, mandatory),
-  _sleeping(false)
+  : AbstractPlug(parent, OUT, name, type, mandatory)
   {    
     _forwardPlug = 0;
   }
@@ -50,24 +49,12 @@ public:
   const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
   const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
-  bool sleeping(){return _sleeping;}
-  void sleeping(bool s)
-  {
-    if (s!=_sleeping)
-      _parent->unSynch();
-
-    _sleeping=s;
-  }
-
 
   virtual bool ready() const
   {
     if (_mandatory)
       if (!connected())
         return false;
-
-    if (_mandatory && _sleeping)
-      return false;
 
     return true;
   }
@@ -79,8 +66,6 @@ public:
     return new PlugOut<T>(parent, name(), _mandatory);
   }
 
-private:
-  bool _sleeping;
 };
 
 
@@ -147,7 +132,7 @@ public:
   T* defaultType() { return static_cast<const T*>(_abstractDefaultType);}
   T* hintType() { return static_cast<T*>(_abstractDefaultType);}
 
-  const T* type() const { return static_cast<const T*>(_abstractType);}
+  T* type() const { return static_cast<const T*>(_abstractType);}
   const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
   const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 

@@ -25,6 +25,7 @@
 #include "VideoRGBAType.h"
 #include "ValueType.h"
 #include "SignalType.h"
+#include "StringType.h"
 #include "EnumType.h"
 
 #include "avcodec.h"
@@ -48,7 +49,7 @@ public:
   void runVideo();
 
 protected:
-  void onUpdateSettings();
+  bool loadMovie(std::string filename);
 
 private:
 
@@ -57,14 +58,16 @@ private:
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
   PlugIn<ValueType> *_RESET_IN;
+  PlugIn<StringType> *_MOVIE_IN;
 
   VideoRGBAType *_imageOut;
 
   //locals
-  
+  std::string _currentMovie;  
   float *_audioBuffer;
   //RGBA *_outData;  
   long _previousFramePos;
+	
 
   //ffmpeg
   AVFormatContext *_formatContext;  

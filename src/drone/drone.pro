@@ -47,6 +47,7 @@ PropertyControlBool.h \
 PlugPropertiesTable.h \
 PlugPropertiesTableItem.h \
 PlugPropertiesTableItemValue.h \
+PlugPropertiesTableItemString.h \
 SchemaEditor.h \
 Play.xpm \
 Pause.xpm \
@@ -70,6 +71,7 @@ PropertyControlBool.cpp \
 PlugPropertiesTable.cpp \
 PlugPropertiesTableItem.cpp \
 PlugPropertiesTableItemValue.cpp \
+PlugPropertiesTableItemString.cpp \
 #PreferencesDialog.cpp \
 SchemaEditor.cpp
 
