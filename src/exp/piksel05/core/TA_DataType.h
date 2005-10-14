@@ -30,7 +30,8 @@ public:
   static const std::string TYPENAME;
   
   TA_DataType()
-    : AbstractType()
+    : AbstractType(),
+      TA_CityGraph()
   {}
   
   virtual ~TA_DataType() {}

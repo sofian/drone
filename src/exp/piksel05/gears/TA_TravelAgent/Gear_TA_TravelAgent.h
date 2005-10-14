@@ -23,21 +23,24 @@
 
 #include "Gear.h"
 #include "TA_DataType.h"
+#include "ChannelType.h"
 
 class Gear_TA_TravelAgent : public Gear
 {
 public:  
-  static const std::string SETTING_FILENAME;
-
   Gear_TA_TravelAgent(Schema *schema, std::string uniqueName);
   virtual ~Gear_TA_TravelAgent();
 
   void runVideo();
 
-protected:
-  void onUpdateSettings();
-
 public:
+  PlugIn<TA_DataType> *_TA_DATA_IN;
+  PlugIn<ChannelType> *_GRID_IN;
+  PlugIn<ValueType> *_ENERGY_DECAY;
+  PlugIn<ValueType> *_ENERGY_CONSUMPTION;
+  PlugIn<ValueType> *_ENERGY_GRID;
+  
+  
   PlugOut<TA_DataType> *_TA_DATA_OUT;
 };
 

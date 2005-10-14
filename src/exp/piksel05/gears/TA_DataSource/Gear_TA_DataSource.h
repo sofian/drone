@@ -20,9 +20,9 @@
 #ifndef GEAR_TA_DATASOURCE_INCLUDED
 #define GEAR_TA_DATASOURCE_INCLUDED
 
-
 #include "Gear.h"
 #include "TA_DataType.h"
+#include "StringType.h"
 
 class Gear_TA_DataSource : public Gear
 {

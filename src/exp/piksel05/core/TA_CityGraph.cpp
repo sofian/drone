@@ -30,16 +30,23 @@ float distance(TA_CityVertex *a, TA_CityVertex *b)
   return sqrt( xdiff*xdiff + ydiff*ydiff );
 }
 
-TA_CityGraph::TA_CityGraph(size_type nHotSpots, size_type nCentroids)
- : SimpleGraph<TA_CityVertex*>(nHotSpots),
-   _gridCentroids(nCentroids,nCentroids)
-{
+// TA_CityGraph::TA_CityGraph(size_type nHotSpots, size_type nCentroids)
+//  : SimpleGraph<TA_CityVertex*>(nHotSpots),
+//    _gridCentroids(nCentroids,nCentroids)
+// {
   
-}
+// }
 
 TA_CityGraph::TA_CityGraph(const std::string& filename)
 {
+  load(filename);
+}
 
+TA_CityGraph::~TA_CityGraph()
+{
+  // Clear up.
+  for (iterator it = begin(); it != end(); ++it)
+    delete it->second;
 }
 
 void TA_CityGraph::update(TA_Grid *grid)
@@ -58,13 +65,16 @@ void TA_CityGraph::update(TA_Grid *grid)
   }
 }
 
+#include <iostream>
 void TA_CityGraph::load(const std::string& filename)
 {
+  std::cout << "loading file : " << filename << std::endl;
   QDomDocument doc;
   QFile file(filename);
   if (!file.open(IO_ReadOnly))
     return;
-  if (!doc.setContent(&file)) {
+  if (!doc.setContent(&file))
+  {
     file.close();
     return;
   }
@@ -75,10 +85,30 @@ void TA_CityGraph::load(const std::string& filename)
   QDomElement docElem = doc.documentElement();
 
   QDomNode n = docElem.firstChild();
-  while(!n.isNull()) {
+  while(!n.isNull())
+  {
     QDomElement e = n.toElement(); // try to convert the node to an element.
-    if(!e.isNull()) {
-      std::cout << e.tagName() << std::endl; // the node really is an element.
+    if(!e.isNull())
+    {
+      if (e.tagName() == "spot")
+      {
+        TA_CityVertex *vertex = new TA_CityVertex;
+        std::string id = e.attribute("id");
+        ASSERT_WARNING( id != "" );
+        //        insert(make_pair(, vertex));
+        QDomNode m = e.firstChild();
+        while (!m.isNull())
+        {
+          QDomElement f = m.toElement();
+          std::cout << f.tagName() << std::endl;
+          m = m.nextSibling();
+        }
+        
+      }
+      else if (e.tagName() == "connection")
+      {
+        
+      }
     }
     n = n.nextSibling();
   }

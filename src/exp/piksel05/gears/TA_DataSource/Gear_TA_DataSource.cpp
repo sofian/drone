@@ -57,13 +57,19 @@ void Gear_TA_DataSource::onUpdateSettings()
 {
   std::cout << "opening file : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
 
-  _TA_DATA_OUT->type()->loadData(_settings.get(SETTING_FILENAME)->valueStr());
+  _TA_DATA_OUT->type()->load(_settings.get(SETTING_FILENAME)->valueStr());
   
 	_TA_DATA_OUT->sleeping(false);
 }
 
 void Gear_TA_DataSource::runVideo()
 {
+  // dummy
+  TA_DataType *out = _TA_DATA_OUT->type();
+  out->clear();
+  out->insert(std::make_pair("cire", new TA_CityVertex(3,0)));
+  out->insert(std::make_pair("gry", new TA_CityVertex(1,5)));
+  out->addEdge("cire", "gry");
 }
 
 

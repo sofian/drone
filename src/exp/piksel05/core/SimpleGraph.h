@@ -2,60 +2,67 @@
 #define SIMPLEGRAPH_INCLUDED
 
 #include "error.h"
-#include "Array.h"
-#include "Array2D.h"
+#include <map>
+#include <set>
+#include <string>
+
 
 template <class T>
-class SimpleGraph : public Array<T>
+class SimpleGraph : public std::map<std::string, T>
 {
-public:
-  //! Inner type definitions.
-  typedef typename std::vector<T>::size_type size_type;
-  typedef typename std::vector<T>::iterator iterator;
-  typedef typename std::vector<T>::const_iterator const_iterator;
-  typedef typename std::vector<T>::reference reference;
-  typedef typename std::vector<T>::const_reference const_reference;
-  typedef typename std::vector<T>::pointer pointer;
-
+  typedef std::set<std::pair<std::string, std::string> > SimpleEdges;
+  typedef std::map<std::string, T> parent;
   
 public:
-  // using (as suggested by Norm)
-  using std::vector<T>::end;
-  using std::vector<T>::begin;
-  using std::vector<T>::front;
+//   //! Inner type definitions.
+//   typedef typename std::map<string, T>::size_type size_type;
+//   typedef typename std::map<string, T>::iterator iterator;
+//   typedef typename std::map<string, T>::const_iterator const_iterator;
+//   typedef typename std::map<string, T>::reference reference;
+//   typedef typename std::map<string, T>::const_reference const_reference;
+//   typedef typename std::map<string, T>::pointer pointer;
 
-  SimpleGraph(size_type n = 0) : Array<T>(n)
-  {
-    _edges.resize(n,n);
-    _edges.fill(false);
-  }
   
-  ~SimpleGraph() {}
+// public:
+//   // using (as suggested by Norm)
+//   using std::map<string, T>::end;
+//   using std::map<string, T>::begin;
+//   using std::map<string, T>::front;
+
+  SimpleGraph() : parent() {}
+  
+  virtual ~SimpleGraph() {}
 
   void clear()
   {
-    Array<T>::clear();
+    parent::clear();
     _edges.clear();
   }
 
-  void resize(size_type n, T t = T())
+  void addEdge(const std::string& from, const std::string& to, bool twoWays = true)
   {
-    Array<T>::resize(n, t);
-    _edges.resize(n, n);
-    _edges.fill(false);
-  }
-  
-  void addEdge(int i, int j, bool twoWays = true)
-  {
-    _edges(i,j) = true;
+    // Check that they exist.
+    ASSERT_ERROR( find(from) != end() );
+    ASSERT_ERROR( find(to) != end() );
+
+    // Add it.
+    _edges.insert(std::make_pair(from, to));
+    
     if (twoWays)
-      _edges(j,i) = true;
+      _edges.insert(std::make_pair(to, from));
   }
   
-  bool hasEdge(int i, int j) { return _edges(i,j); }
+  bool hasEdge(const std::string& from, const std::string& to)
+  {
+    // Check that they exist.
+    ASSERT_ERROR( find(from) != end() );
+    ASSERT_ERROR( find(to) != end() );
+
+    return (_edges.find(std::make_pair(from, to)) != _edges.end());
+  }
   
 protected:
-  Array2D<bool> _edges;
+  SimpleEdges _edges;
 };
 
 #endif

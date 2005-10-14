@@ -15,7 +15,11 @@ struct TA_CityVertex
   float y;
   float energy;
   std::vector<std::string> clipFileNames;
-  
+
+  TA_CityVertex() {}
+  TA_CityVertex(float x, float y)
+    : energy(0)
+  { this->x = x; this->y = y; }
   void *data;
 };
 
@@ -27,13 +31,14 @@ typedef Array2D<TA_CityVertex*> TA_CentroidGrid;
 class TA_CityGraph : public SimpleGraph<TA_CityVertex*>
 {
 public:
-  TA_CityGraph(size_type nHotSpots = 0, size_type nCentroids = 0);
+  //  TA_CityGraph(size_type nHotSpots = 0, size_type nCentroids = 0);
+  TA_CityGraph() {}
   TA_CityGraph(const std::string& filename);
-  ~TA_CityGraph() {}
+  virtual ~TA_CityGraph() ;
 
   void update(TA_Grid *grid);
 
-  void load(const std::string& filename);
+  virtual void load(const std::string& filename);
 
 protected:
   TA_CentroidGrid _gridCentroids;
