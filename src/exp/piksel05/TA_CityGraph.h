@@ -3,6 +3,7 @@
 
 #include "SimpleGraph.h"
 #include "Array2D.h"
+#include <string>
 
 struct CityVertex
 {
@@ -28,6 +29,7 @@ class TA_CityGraph : public SimpleGraph<CityVertex*>
 {
 public:
   TA_CityGraph(size_type nHotSpots, size_type nCentroids);
+  TA_CityGraph(const std::string& filename);
   ~TA_CityGraph() {}
 
   void update(Grid *grid);

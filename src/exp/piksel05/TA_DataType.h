@@ -38,7 +38,7 @@ public:
   virtual std::string typeName() const { return TYPENAME; }
   virtual QColor color() const { return QColor(204, 87, 71); }
   
-  void loadData(const string& filename);
+  void loadData(const std::string& filename);
   
 public:
   float xOrigin, yOrigin, xSize, ySize;

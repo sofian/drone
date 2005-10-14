@@ -29,6 +29,10 @@ TA_CityGraph::TA_CityGraph(size_type nHotSpots, size_type nCentroids)
   
 }
 
+TA_CityGraph::TA_CityGraph(const std::string& filename)
+{
+
+}
 
 void TA_CityGraph::update(Grid *grid)
 {
