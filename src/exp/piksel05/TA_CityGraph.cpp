@@ -23,7 +23,7 @@
 //   E_p -= decay_agent
 
 TA_CityGraph::TA_CityGraph(size_type nHotSpots, size_type nCentroids)
- : SimpleGraph<CityVertex*>(n),
+ : SimpleGraph<TA_CityVertex*>(n),
    _gridCentroids(nCentroids)
 {
   
@@ -34,9 +34,9 @@ TA_CityGraph::TA_CityGraph(const std::string& filename)
 
 }
 
-void TA_CityGraph::update(Grid *grid)
+void TA_CityGraph::update(TA_Grid *grid)
 {
-  for (CentroidGrid::iterator centroid = _gridCentroids.begin(); centroid != _gridCentroids.end(); ++centroid)
+  for (TA_CentroidGrid::iterator centroid = _gridCentroids.begin(); centroid != _gridCentroids.end(); ++centroid)
   {
     Array<float> energy(size());
     float sum = 0;

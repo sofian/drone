@@ -5,7 +5,7 @@
 #include "Array2D.h"
 #include <string>
 
-struct CityVertex
+struct TA_CityVertex
 {
   float x;
   float y;
@@ -15,27 +15,27 @@ struct CityVertex
   void *data;
 };
 
-float distance(CityVertex *a, CityVertex *b)
+float distance(TA_CityVertex *a, TA_CityVertex *b)
 {
   float xdiff = (a->x - b->x);
   float ydiff = (a->y - b->y);
   return sqrt( xdiff*xdiff + ydiff*ydiff );
 }
 
-typedef Array2D<bool> Grid;
-typedef Array2D<CityVertex*> CentroidGrid;
+typedef Array2D<bool> TA_Grid;
+typedef Array2D<TA_CityVertex*> TA_CentroidGrid;
 
-class TA_CityGraph : public SimpleGraph<CityVertex*>
+class TA_CityGraph : public SimpleGraph<TA_CityVertex*>
 {
 public:
   TA_CityGraph(size_type nHotSpots, size_type nCentroids);
   TA_CityGraph(const std::string& filename);
   ~TA_CityGraph() {}
 
-  void update(Grid *grid);
+  void update(TA_Grid *grid);
 
 protected:
-  CentroidGrid _gridCentroids;
+  TA_CentroidGrid _gridCentroids;
 };
 
 #endif
