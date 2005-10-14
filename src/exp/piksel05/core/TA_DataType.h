@@ -32,7 +32,12 @@ public:
   TA_DataType()
     : AbstractType(),
       TA_CityGraph()
-  {}
+  {
+    xOrigin = 0;
+    yOrigin = 0;
+    xSize = 6;
+    ySize = 6;
+  }
   
   virtual ~TA_DataType() {}
   
