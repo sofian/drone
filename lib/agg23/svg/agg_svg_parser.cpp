@@ -18,6 +18,7 @@
 //----------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include <ctype.h>
 #include "agg_svg_parser.h"
@@ -219,6 +220,7 @@ namespace svg
 	    XML_Parser p = XML_ParserCreate(NULL);
 	    if(p == 0) 
 	    {
+	std::cerr<<"memeromrmr"<<std::endl;
 		    throw exception("Couldn't allocate memory for parser");
 	    }
 
@@ -230,6 +232,7 @@ namespace svg
         if(fd == 0)
         {
             sprintf(msg, "Couldn't open file %s", fname);
+	std::cerr<<msg<<std::endl;
 		    throw exception(msg);
         }
 
@@ -244,6 +247,7 @@ namespace svg
                     "%s at line %d\n",
                     XML_ErrorString(XML_GetErrorCode(p)),
                     XML_GetCurrentLineNumber(p));
+std::cerr<<msg<<std::endl;
                 throw exception(msg);
             }
         }
@@ -265,6 +269,7 @@ namespace svg
     {
         parser& self = *(parser*)data;
 
+	std::cerr<<"Start element:"<<el<<std::endl;
         if(strcmp(el, "title") == 0)
         {
             self.m_title_flag = true;
@@ -280,6 +285,7 @@ namespace svg
         {
             if(self.m_path_flag)
             {
+		std::cerr<<"start_element: Nested path"<<std::endl;
                 throw exception("start_element: Nested path");
             }
             self.m_path.begin_path();
@@ -319,7 +325,7 @@ namespace svg
     void parser::end_element(void* data, const char* el)
     {
         parser& self = *(parser*)data;
-
+std::cerr<<"End elem : "<<el<<std::endl;
         if(strcmp(el, "title") == 0)
         {
             self.m_title_flag = false;
@@ -432,6 +438,7 @@ namespace svg
             unsigned len = strlen(str);
             if(len > sizeof(c.name) - 1)
             {
+		std::cerr<<"parse_color: Invalid color name "<<str<<std::endl;
                 throw exception("parse_color: Invalid color name '%s'", str);
             }
             strcpy(c.name, str);
@@ -442,6 +449,7 @@ namespace svg
                                     cmp_color);
             if(p == 0)
             {
+		std::cerr<<"parse_color: Invalid color name2"<<str<<std::endl	;
                 throw exception("parse_color: Invalid color name '%s'", str);
             }
             const named_color* pc = (const named_color*)p;
@@ -644,8 +652,8 @@ namespace svg
 
         if(w != 0.0 && h != 0.0)
         {
-            if(w < 0.0) throw exception("parse_rect: Invalid width: %f", w);
-            if(h < 0.0) throw exception("parse_rect: Invalid height: %f", h);
+            if(w < 0.0) {std::cerr<<"parse_color: Invalid width"<<std::endl;throw exception("parse_rect: Invalid width: %f", w);}
+            if(h < 0.0) {std::cerr<<"parse_color: Invalid height"<<std::endl;throw exception("parse_rect: Invalid height: %f", h);}
 
             m_path.move_to(x,     y);
             m_path.line_to(x + w, y);

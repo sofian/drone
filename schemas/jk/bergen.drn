@@ -10,8 +10,8 @@
                     <Plug Name="ImgOUT" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="132" PosY="125" Type="SVGLoader" Name="SVGLoader.1" >
-                <Properties Filename="/home/julien/dev/drone/media/bergen.svg" />
+            <Gear PosX="117" PosY="84" Type="SVGLoader" Name="SVGLoader.1" >
+                <Properties Filename="/home/julien/dev/drone/schemas/jk/bussiness_woman_donna_i_01.svg" />
                 <Plugs>
                     <Plug Name="VecOUT" Exposed="0" />
                 </Plugs>
@@ -24,13 +24,13 @@
                     <Plug Name="NFrames" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="609" PosY="273" Type="VideoOutput" Name="VideoOutput.1" >
+            <Gear PosX="764" PosY="292" Type="VideoOutput" Name="VideoOutput.1" >
                 <Properties YRes="240" XRes="352" FullScreen="0" />
                 <Plugs>
                     <Plug Name="IN" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="288" PosY="326" Type="Rescale" Name="Rescale.1" >
+            <Gear PosX="286" PosY="314" Type="Rescale" Name="Rescale.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgIN" Exposed="0" />
@@ -39,13 +39,13 @@
                     <Plug Name="Height" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="22" PosY="214" Type="Slider" SliderPos="1.09634" Name="Slider.1" >
+            <Gear PosX="85" PosY="189" Type="Slider" SliderPos="1.11951" Name="Slider.1" >
                 <Properties Lower_Bound="0.1" Higher_Bound="2" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="360" PosY="150" Type="VecAffineTrans" Name="VecAffineTrans.1" >
+            <Gear PosX="366" PosY="103" Type="VecAffineTrans" Name="VecAffineTrans.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="VecOUT" Exposed="0" />

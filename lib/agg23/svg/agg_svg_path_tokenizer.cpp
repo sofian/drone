@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include "agg_svg_exception.h"
 #include "agg_svg_path_tokenizer.h"
 
@@ -76,7 +77,8 @@ namespace svg
             {
                 char buf[100];
                 sprintf(buf, "path_tokenizer::next : Invalid Character %c", *m_path);
-                throw exception(buf);
+	std::cerr<<buf<<std::endl;
+	        throw exception(buf);
             }
             m_path++;
         }
@@ -102,11 +104,12 @@ namespace svg
     //------------------------------------------------------------------------
     double path_tokenizer::next(char cmd)
     {
-        if(!next()) throw exception("parse_path: Unexpected end of path");
+        if(!next()) {std::cerr<<"!!!!!!!!!"<<std::endl;throw exception("parse_path: Unexpected end of path");}
         if(last_command() != cmd)
         {
             char buf[100];
             sprintf(buf, "parse_path: Command %c: bad or missing parameters", cmd);
+	std::cerr<<buf<<std::endl;
             throw exception(buf);
         }
         return last_number();

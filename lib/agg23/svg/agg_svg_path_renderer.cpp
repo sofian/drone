@@ -18,6 +18,7 @@
 //----------------------------------------------------------------------------
 
 #include <stdio.h>
+#include <iostream>
 #include "agg_svg_path_renderer.h"
 
 namespace agg
@@ -62,6 +63,7 @@ namespace svg
     {
         if(m_attr_storage.size() == 0) 
         {
+	std::cerr<<("end_path : The path was not begun");
             throw exception("end_path : The path was not begun");
         }
         path_attributes attr = cur_attr();
@@ -175,6 +177,7 @@ namespace svg
     {
         if(m_attr_stack.size() == 0)
         {
+	std::cerr<<("cur_attr : Attribute stack is empty");
             throw exception("cur_attr : Attribute stack is empty");
         }
         return m_attr_stack[m_attr_stack.size() - 1];
@@ -193,6 +196,7 @@ namespace svg
     {
         if(m_attr_stack.size() == 0)
         {
+	std::cerr<<("pop_attr : Attribute stack is empty");
             throw exception("pop_attr : Attribute stack is empty");
         }
         m_attr_stack.remove_last();
@@ -340,8 +344,9 @@ namespace svg
                     break;
 
                 case 'A': case 'a':
-                    throw exception("parse_path: Command A: NOT IMPLEMENTED YET");
-
+	std::cerr<<("parse_path: Command A: NOT IMPLEMENTED YET");
+                    //throw exception("parse_path: Command A: NOT IMPLEMENTED YET");
+			break;
                 case 'Z': case 'z':
                     close_subpath();
                     break;
@@ -350,6 +355,7 @@ namespace svg
                 {
                     char buf[100];
                     sprintf(buf, "parse_path: Invalid Command %c", cmd);
+		    std::cerr<<buf<<std::endl;
                     throw exception(buf);
                 }
             }
