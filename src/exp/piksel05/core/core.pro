@@ -25,7 +25,7 @@ macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 
 #linux
 unix:!macx:LIBS += -L/usr/X11R6/lib -lGL -lasound -lpthread
-unix:!macx:TARGET = ../lib/droneTACore
+unix:!macx:TARGET = ../../../../lib/droneTACore
 unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
 
 HEADERS += SimpleGraph.h \

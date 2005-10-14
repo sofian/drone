@@ -12,7 +12,7 @@ unix:!macx:TARGET=../../../../../gears/Gear_TA_MapNavigator
 QMAKE_RPATH = -Wl,-rpath,src/exp/piksel05/lib/,-rpath,
 
 #osx
-macx:LIBS+=-L../../../../../drone.app/Contents/Frameworks -ldroneCore -ldroneTACore -L../../../../../lib/ -L../../lib
+macx:LIBS+=-L../../../../../drone.app/Contents/Frameworks -ldroneCore -ldroneTACore -L../../../../../lib/
 macx:TARGET=../../../../../drone.app/Contents/PlugIns/Gear_TA_MapNavigator
 macx:QMAKE_LFLAGS+=-read_only_relocs suppress
 
