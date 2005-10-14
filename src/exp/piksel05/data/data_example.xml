@@ -1,0 +1,12 @@
+<spot id="0" enabled="true">
+<oscfile></oscfile>
+<clip></clip>
+<clip enabled="false"></clip>
+</spot>
+
+<spot id="1">
+<oscfile></oscfile>
+<clip></clip>
+</spot>
+
+<connection from="0" to="1" />
