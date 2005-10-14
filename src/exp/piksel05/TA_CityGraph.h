@@ -1,5 +1,5 @@
-#ifndef CITYGRAPH_INCLUDED
-#define CITYGRAPH_INCLUDED
+#ifndef TA_CITYGRAPH_INCLUDED
+#define TA_CITYGRAPH_INCLUDED
 
 #include "SimpleGraph.h"
 #include "Array2D.h"
