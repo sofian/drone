@@ -26,6 +26,6 @@ struct OSCData
 };
 
 OSCData string2data(const std::string& line);
-std::vector<OSCData> get_data_from_path(const std::string& path);
+std::vector<OSCData> get_data_from_path(const std::string& path, std::istream& in);
 
 #endif

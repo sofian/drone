@@ -36,6 +36,7 @@ float distance(TA_CityVertex *a, TA_CityVertex *b)
 // {
   
 // }
+const std::string TA_CityGraph::OSC_PATH_LOCATION = "/kismet/loc";
 
 TA_CityGraph::TA_CityGraph(const std::string& filename)
 {
@@ -108,6 +109,7 @@ void TA_CityGraph::load(const std::string& filename)
           {
             std::ifstream f(f.text(), std::ios::in);
             ASSERT_WARNING( f );
+            std::vector<std::string> values = get_data_from_path(OSC_PATH_LOCATION, f)[0].values;
           }
           else if (f.tagName() == "moviefile")
           {

@@ -9,13 +9,16 @@ OSCData string2data(const std::string& line)
                  split(splitted[OSC_INDEX_VALUES]));
 }
 
-std::vector<OSCData> get_data_from_path(const std::string& path, const std::string& in)
+std::vector<OSCData> get_data_from_path(const std::string& path, std::istream& in)
 {
   std::vector<OSCData> vec;
-  std::vector<std::string> lines = getNonBlankLines(in);
-  for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
+  char buffer[1024];
+  while (!in.eof())
   {
-    OSCData data = string2data(*it);
+    std::string line = pgetline(in);
+    if (line == "")
+      continue;
+    OSCData data = string2data(line);
     if (data.path == path)
       vec.push_back(data);
   }

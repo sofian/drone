@@ -31,6 +31,7 @@ typedef Array2D<TA_CityVertex*> TA_CentroidGrid;
 
 class TA_CityGraph : public SimpleGraph<TA_CityVertex*>
 {
+  static const std::string OSC_PATH_LOCATION;
 public:
   //  TA_CityGraph(size_type nHotSpots = 0, size_type nCentroids = 0);
   TA_CityGraph() {}
