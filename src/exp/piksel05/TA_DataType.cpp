@@ -21,7 +21,7 @@
 
 const std::string TA_DataType::TYPENAME="TA_Data";
 
-void TA_DataType::loadData(const string& filename)
+void TA_DataType::loadData(const std::string& filename)
 {
 
 }

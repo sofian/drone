@@ -1,4 +1,5 @@
 #include "TA_CityGraph.h"
+#include <iostream>
 
 // foreach i
 //   E_i = 0
@@ -22,9 +23,16 @@
 //   // lower energy where the agent is (p being the agent's position)
 //   E_p -= decay_agent
 
+float distance(TA_CityVertex *a, TA_CityVertex *b)
+{
+  float xdiff = (a->x - b->x);
+  float ydiff = (a->y - b->y);
+  return sqrt( xdiff*xdiff + ydiff*ydiff );
+}
+
 TA_CityGraph::TA_CityGraph(size_type nHotSpots, size_type nCentroids)
- : SimpleGraph<TA_CityVertex*>(n),
-   _gridCentroids(nCentroids)
+ : SimpleGraph<TA_CityVertex*>(nHotSpots),
+   _gridCentroids(nCentroids,nCentroids)
 {
   
 }
@@ -48,4 +56,35 @@ void TA_CityGraph::update(TA_Grid *grid)
     for (size_type i=0; i<size(); ++i)
       this->operator[](i)->energy += energy[i] / sum;    
   }
+}
+
+void TA_CityGraph::load(const std::string& filename)
+{
+  QDomDocument doc;
+  QFile file(filename);
+  if (!file.open(IO_ReadOnly))
+    return;
+  if (!doc.setContent(&file)) {
+    file.close();
+    return;
+  }
+  file.close();
+
+  // print out the element names of all elements that are direct children
+  // of the outermost element.
+  QDomElement docElem = doc.documentElement();
+
+  QDomNode n = docElem.firstChild();
+  while(!n.isNull()) {
+    QDomElement e = n.toElement(); // try to convert the node to an element.
+    if(!e.isNull()) {
+      std::cout << e.tagName() << std::endl; // the node really is an element.
+    }
+    n = n.nextSibling();
+  }
+
+  // Here we append a new element to the end of the document
+  QDomElement elem = doc.createElement("img");
+  elem.setAttribute("src", "myimage.png");
+  docElem.appendChild(elem);  
 }
