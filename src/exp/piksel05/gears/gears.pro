@@ -1,4 +1,4 @@
 include(../../../../config.pro)
 
 TEMPLATE=subdirs
-SUBDIRS= TA_DataSource TA_MapNavigator
+SUBDIRS= TA_DataSource TA_TravelAgent TA_MapNavigator

@@ -42,21 +42,32 @@ const std::string Gear_TA_TravelAgent::SETTING_FILENAME = "Filename";
 
 Gear_TA_TravelAgent::Gear_TA_TravelAgent(Schema *schema, std::string uniqueName) : 
 Gear(schema, "TA_TravelAgent", uniqueName)
-{    
+{
   addPlug(_TA_DATA_IN = new PlugIn<TA_DataType>(this, "DataIn", false));
-  addPlug(_GRID_IN = new PlugIn<ChannelType>(this, "GridIn", false));
+  addPlug(_GRID_IN = new PlugIn<VideoChannelType>(this, "GridIn", false));
   
   addPlug(_ENERGY_DECAY = new PlugIn<ValueType>(this, "E-Decay", false, new ValueType(0.001, 0, 1)));
   addPlug(_ENERGY_CONSUMPTION = new PlugIn<ValueType>(this, "E-Consum", false, new ValueType(0.001, 0, 1)));
   addPlug(_ENERGY_GRID = new PlugIn<ValueType>(this, "E-Grid", false, new ValueType(0.001, 0, 1)));
+  addPlug(_MOVE_ALLOWED = new PlugIn<ValueType>(this, "MoveOK", false, new ValueType(1, 0, 1)));
 
   addPlug(_TA_DATA_OUT = new PlugOut<TA_DataType>(this, "DataOut", false));
   
+  _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 	_TA_DATA_OUT->sleeping(true);
 }
 
 Gear_TA_TravelAgent::~Gear_TA_TravelAgent()
 {
+}
+
+void Gear_TA_TravelAgent::onUpdateSettings()
+{
+  std::cout << "opening file : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
+
+  _TA_DATA_OUT->type()->load(_settings.get(SETTING_FILENAME)->valueStr());
+  
+	_TA_DATA_OUT->sleeping(false);
 }
 
 void Gear_TA_TravelAgent::runVideo()
