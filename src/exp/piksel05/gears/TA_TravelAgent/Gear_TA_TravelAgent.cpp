@@ -52,6 +52,7 @@ Gear(schema, "TA_TravelAgent", uniqueName)
   addPlug(_MOVE_ALLOWED = new PlugIn<ValueType>(this, "MoveOK", false, new ValueType(1, 0, 1)));
 
   addPlug(_TA_DATA_OUT = new PlugOut<TA_DataType>(this, "DataOut", false));
+  addPlug(_CURRENT_SPOT_OUT = new PlugOut<ValueType>(this, "CurrSpot", false));
   
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 	_TA_DATA_OUT->sleeping(true);
@@ -99,6 +100,8 @@ void Gear_TA_TravelAgent::runVideo()
   }
   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
     it->second.energy -= _ENERGY_DECAY->type()->value();
+
+  _CURRENT_SPOT_OUT->type()->setValue(_currentSpot);
 }
 
 

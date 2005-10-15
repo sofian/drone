@@ -46,6 +46,7 @@ public:
   PlugIn<ValueType> *_MOVE_ALLOWED;
   
   PlugOut<TA_DataType> *_TA_DATA_OUT;
+  PlugOut<ValueType> *_CURRENT_SPOT_OUT;
 
 private:
   int _currentSpot;
