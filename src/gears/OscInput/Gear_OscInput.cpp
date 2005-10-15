@@ -57,13 +57,13 @@ Gear_OscInput::~Gear_OscInput()
 
 void Gear_OscInput::runAudio()
 {
-	if (_forceOscServerInit ||
-			_currentPort != _PORT->type()->value())
-	{
-		_currentPort = _PORT->type()->value();
-		_forceOscServerInit=false;
-		startOscServer(_currentPort);
-	}
+  if (_forceOscServerInit ||
+       _currentPort != _PORT->type()->value())
+  {
+     _currentPort = _PORT->type()->value();
+     _forceOscServerInit=false;
+     startOscServer(_currentPort);
+  }
 }
 
 void Gear_OscInput::internalPostPlay()
