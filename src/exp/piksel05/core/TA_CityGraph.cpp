@@ -127,7 +127,7 @@ void TA_CityGraph::load(const std::string& filename)
       }
       else if (e.tagName() == "connection")
       {
-        
+        addEdge(toint(e.attribute("from")), toint(e.attribute("to")));
       }
     }
     n = n.nextSibling();
