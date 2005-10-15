@@ -15,6 +15,7 @@ INCLUDEPATH += ../../../core/ ../../../core/types/
 
 #mac
 macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
+macx:LIBS += -L../../../../drone.app/Contents/Frameworks -ldroneCore
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS += -lz
@@ -24,6 +25,7 @@ macx:TARGET = ../drone.app/Contents/Frameworks/droneTACore
 macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 
 #linux
+unix:!macx:LIBS += -L../../../../lib -ldroneCore
 unix:!macx:LIBS += -L/usr/X11R6/lib -lGL -lasound -lpthread
 unix:!macx:TARGET = ../../../../lib/droneTACore
 unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__

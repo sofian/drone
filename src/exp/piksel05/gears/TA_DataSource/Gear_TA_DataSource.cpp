@@ -67,8 +67,8 @@ void Gear_TA_DataSource::runVideo()
   // dummy
   TA_DataType *out = _TA_DATA_OUT->type();
   out->clear();
-  out->insert(std::make_pair("cire", new TA_CityVertex(3,0)));
-  out->insert(std::make_pair("gry", new TA_CityVertex(1,5)));
+  out->insert(std::make_pair("cire", TA_CityVertex(3,0)));
+  out->insert(std::make_pair("gry", TA_CityVertex(1,5)));
   out->addEdge("cire", "gry");
 }
 

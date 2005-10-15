@@ -14,24 +14,9 @@ class SimpleGraph : public std::map<std::string, T>
   typedef std::map<std::string, T> parent;
   
 public:
-//   //! Inner type definitions.
-//   typedef typename std::map<string, T>::size_type size_type;
-//   typedef typename std::map<string, T>::iterator iterator;
-//   typedef typename std::map<string, T>::const_iterator const_iterator;
-//   typedef typename std::map<string, T>::reference reference;
-//   typedef typename std::map<string, T>::const_reference const_reference;
-//   typedef typename std::map<string, T>::pointer pointer;
-
-  
-// public:
-//   // using (as suggested by Norm)
-//   using std::map<string, T>::end;
-//   using std::map<string, T>::begin;
-//   using std::map<string, T>::front;
-
   SimpleGraph() : parent() {}
   
-  virtual ~SimpleGraph() {}
+  ~SimpleGraph() {}
 
   void clear()
   {

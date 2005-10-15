@@ -23,10 +23,10 @@
 //   // lower energy where the agent is (p being the agent's position)
 //   E_p -= decay_agent
 
-float distance(TA_CityVertex *a, TA_CityVertex *b)
+float distance(TA_Point& a, TA_Point& b)
 {
-  float xdiff = (a->x - b->x);
-  float ydiff = (a->y - b->y);
+  float xdiff = (a.x - b.x);
+  float ydiff = (a.y - b.y);
   return sqrt( xdiff*xdiff + ydiff*ydiff );
 }
 
@@ -45,9 +45,6 @@ TA_CityGraph::TA_CityGraph(const std::string& filename)
 
 TA_CityGraph::~TA_CityGraph()
 {
-  // Clear up.
-  for (iterator it = begin(); it != end(); ++it)
-    delete it->second;
 }
 
 void TA_CityGraph::update(TA_Grid *grid)
@@ -59,12 +56,12 @@ void TA_CityGraph::update(TA_Grid *grid)
     int i = 0;
     for (iterator it = begin(); it != end(); ++it, ++i)
     {
-      energy[i] = 1.0f / distance( *centroid, it->second );
+      energy[i] = 1.0f / distance( centroid->second, it->second );
       sum += energy[i];
     }
     i = 0;
     for (iterator it = begin(); it != end(); ++it, ++i)
-      it->second->energy += energy[i] / sum;    
+      it->second.energy += energy[i] / sum;    
   }
 }
 
@@ -98,7 +95,7 @@ void TA_CityGraph::load(const std::string& filename)
         ASSERT_WARNING( id != "" );
         
         // Create vertex.
-        TA_CityVertex *vertex = new TA_CityVertex;
+        TA_CityVertex vertex;
         
         QDomNode m = e.firstChild();
         while (!m.isNull())
@@ -116,7 +113,7 @@ void TA_CityGraph::load(const std::string& filename)
 
           }
           else
-            WARNING("Unknown tag: %s.", (char*)f.tagName());
+            WARNING("Unknown tag: %s.", (const char*)f.tagName());
           
           std::cout << f.tagName() << std::endl;
           m = m.nextSibling();

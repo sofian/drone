@@ -10,30 +10,47 @@
 #include <qdom.h>
 #include <qfile.h>
 
-struct TA_CityVertex
+// A point in the city.
+class TA_Point
 {
+public:
   float x;
   float y;
-  float energy;
-  std::vector<std::string> clipFileNames;
 
-  TA_CityVertex() {}
-  TA_CityVertex(float x, float y)
-    : energy(0)
-  { this->x = x; this->y = y; }
-  void *data;
+  TA_Point() : x(0), y(0) {}
+  TA_Point(float x_, float y_) : x(x_), y(y_) { }
 };
 
-float distance(TA_CityVertex *a, TA_CityVertex *b);
+// A point that is part of the city graph (usually refered to as a "spot"), with attached information.
+class TA_CityVertex : public TA_Point
+{
+  typedef TA_Point parent;
+
+public:
+  float energy;
+  std::vector<std::string> clipFileNames;
+  void *data;
+
+  TA_CityVertex() : parent() {}
+  TA_CityVertex(float x_, float y_, float start_energy = 0.0f)
+    : parent(x_, y_), energy(start_energy), data(0)
+  { }
+  
+};
+
+typedef TA_Point TA_Centroid;
+
+// Distance between two points.
+float distance(TA_Point& a, TA_Point& b);
 
 typedef Array2D<bool> TA_Grid;
-typedef Array2D<TA_CityVertex*> TA_CentroidGrid;
+typedef SimpleGraph<TA_Centroid> TA_CentroidGrid;
 
-class TA_CityGraph : public SimpleGraph<TA_CityVertex*>
+// The graph of the city.
+class TA_CityGraph : public SimpleGraph<TA_CityVertex>
 {
   static const std::string OSC_PATH_LOCATION;
 public:
-  //  TA_CityGraph(size_type nHotSpots = 0, size_type nCentroids = 0);
   TA_CityGraph() {}
   TA_CityGraph(const std::string& filename);
   virtual ~TA_CityGraph() ;
