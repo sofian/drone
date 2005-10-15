@@ -17,13 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_TA_MAPNAVIGATOR_INCLUDED
-#define GEAR_TA_MAPNAVIGATOR_INCLUDED
+#ifndef GEAR_TA_GRAPHDISPLAY_INCLUDED
+#define GEAR_TA_GRAPHDISPLAY_INCLUDED
 
 
 #include "Gear.h"
 #include "Rasterer.h"
 #include "ValueType.h"
+#include "VideoRGBAType.h"
 #include "TA_DataType.h"
 
 class Gear_TA_GraphDisplay : public Gear
@@ -38,9 +39,10 @@ public:
 public:
   PlugIn<TA_DataType> *_DATA_IN;
   PlugIn<ValueType> *_HOTSPOT;
+  PlugIn<ValueType> *_WIDTH;
+  PlugIn<ValueType> *_HEIGHT;
 
-  PlugOut<ValueType> *_WIDTH;
-  PlugOut<ValueType> *_HEIGHT;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 };
 
 #endif

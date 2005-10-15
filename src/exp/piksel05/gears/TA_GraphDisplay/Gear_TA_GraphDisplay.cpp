@@ -43,10 +43,11 @@ Gear(schema, "TA_GraphDisplay", uniqueName)
 {
 
   addPlug(_DATA_IN = new   PlugIn<TA_DataType>(this,"DATA",true)); 
-  addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",true));
-  
-  addPlug(_WIDTH  = new   PlugOut<ValueType>(this,"WIDTH",true, new ValueType(400, 100, 1000)));
-  addPlug(_HEIGHT  = new   PlugOut<ValueType>(this,"HEIGHT",true, new ValueType(400, 100, 1000)));
+  addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",false));
+  addPlug(_WIDTH  = new   PlugIn<ValueType>(this,"WIDTH",false, new ValueType(400, 100, 1000)));
+  addPlug(_HEIGHT  = new   PlugIn<ValueType>(this,"HEIGHT",false, new ValueType(400, 100, 1000)));
+
+  addPlug(_VIDEO_OUT  = new PlugOut<VideoRGBAType>(this,"ImgOUT",true));
 }
 
 Gear_TA_GraphDisplay::~Gear_TA_GraphDisplay()
@@ -56,8 +57,23 @@ Gear_TA_GraphDisplay::~Gear_TA_GraphDisplay()
 void Gear_TA_GraphDisplay::runVideo()
 {
   const TA_DataType *data = _DATA_IN->type();
+  int currentSpot = _HOTSPOT->type()->intValue();
+  VideoRGBAType *out = _VIDEO_OUT->type();
 
+  out->resize(_WIDTH->type()->intValue(), _HEIGHT->type()->intValue());
   
+  Rasterer r;
+  r.setImage(out);
+  r.setColor(RGBA(255,0,0,0));
+  for (TA_DataType::const_iterator it = data->begin(); it != data->end(); ++it)
+  {
+    const TA_CityVertex& v = it->second;
+    int x0 = (int)((v.x - data->xOrigin) * ( out->width() / data->xSize) );
+    int y0 = (int)((v.y - data->yOrigin) * ( out->height() / data->ySize ) );
+    NOTICE("(%d, %d)", x0, y0);
+    (*out)(x0, y0) = RGBA(255,0,0,255);
+
+  }
 }
 
 

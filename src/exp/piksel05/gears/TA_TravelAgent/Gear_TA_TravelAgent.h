@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_TA_DATASOURCE_INCLUDED
-#define GEAR_TA_DATASOURCE_INCLUDED
+#ifndef GEAR_TA_TRAVELAGENT_INCLUDED
+#define GEAR_TA_TRAVELAGENT_INCLUDED
 
 
 #include "Gear.h"
@@ -39,13 +39,11 @@ protected:
   void onUpdateSettings();
 
 public:
-  // PlugIn<TA_DataType> *_TA_DATA_IN;
   PlugIn<VideoChannelType> *_GRID_IN;
   PlugIn<ValueType> *_ENERGY_DECAY;
   PlugIn<ValueType> *_ENERGY_CONSUMPTION;
   PlugIn<ValueType> *_ENERGY_GRID;
   PlugIn<ValueType> *_MOVE_ALLOWED;
-  
   
   PlugOut<TA_DataType> *_TA_DATA_OUT;
 
