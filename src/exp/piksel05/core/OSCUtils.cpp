@@ -16,6 +16,7 @@ std::vector<OSCData> get_data_from_path(const std::string& path, std::istream& i
   while (!in.eof())
   {
     std::string line = pgetline(in);
+    std::cout << "line : [" << line << "]" << std::endl;
     if (line == "")
       continue;
     OSCData data = string2data(line);
