@@ -39,7 +39,7 @@ protected:
   void onUpdateSettings();
 
 public:
-  PlugIn<TA_DataType> *_TA_DATA_IN;
+  // PlugIn<TA_DataType> *_TA_DATA_IN;
   PlugIn<VideoChannelType> *_GRID_IN;
   PlugIn<ValueType> *_ENERGY_DECAY;
   PlugIn<ValueType> *_ENERGY_CONSUMPTION;
@@ -48,6 +48,9 @@ public:
   
   
   PlugOut<TA_DataType> *_TA_DATA_OUT;
+
+private:
+  int _currentSpot;
 };
 
 #endif

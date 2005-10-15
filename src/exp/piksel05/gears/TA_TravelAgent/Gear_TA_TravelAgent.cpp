@@ -43,7 +43,7 @@ const std::string Gear_TA_TravelAgent::SETTING_FILENAME = "Filename";
 Gear_TA_TravelAgent::Gear_TA_TravelAgent(Schema *schema, std::string uniqueName) : 
 Gear(schema, "TA_TravelAgent", uniqueName)
 {
-  addPlug(_TA_DATA_IN = new PlugIn<TA_DataType>(this, "DataIn", false));
+  //  addPlug(_TA_DATA_IN = new PlugIn<TA_DataType>(this, "DataIn", false));
   addPlug(_GRID_IN = new PlugIn<VideoChannelType>(this, "GridIn", false));
   
   addPlug(_ENERGY_DECAY = new PlugIn<ValueType>(this, "E-Decay", false, new ValueType(0.001, 0, 1)));
@@ -55,6 +55,8 @@ Gear(schema, "TA_TravelAgent", uniqueName)
   
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 	_TA_DATA_OUT->sleeping(true);
+
+  _currentSpot = 0;
 }
 
 Gear_TA_TravelAgent::~Gear_TA_TravelAgent()
@@ -72,6 +74,31 @@ void Gear_TA_TravelAgent::onUpdateSettings()
 
 void Gear_TA_TravelAgent::runVideo()
 {
+  TA_DataType *graph = _TA_DATA_OUT->type();
+
+  // Dummy agent, just goes from one point to the other, consuming all the energy there.
+  if (_MOVE_ALLOWED->type()->boolValue() && (*graph)[_currentSpot].energy <= 0)
+  {
+    (*graph)[_currentSpot].energy = 100;
+    std::set<int> neighbors = graph->neighbors(_currentSpot);
+    float maxEnergy = -1000;
+    int next = _currentSpot;
+    for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+    {
+      if ((*graph)[*it].energy > maxEnergy)
+      {
+        maxEnergy = (*graph)[*it].energy;
+        next = *it;
+      }
+    }
+    _currentSpot = next;
+  }
+  else
+  {
+    (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
+  }
+  for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
+    it->second.energy -= _ENERGY_DECAY->type()->value();
 }
 
 
