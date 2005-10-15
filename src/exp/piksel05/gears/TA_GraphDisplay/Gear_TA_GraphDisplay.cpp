@@ -19,7 +19,7 @@
 //inspired from Using libavformat and libavcodec by Martin Böhme (boehme@inb.uni-luebeckREMOVETHIS.de) 
 
 #include <iostream>
-#include "Gear_TA_DataSource.h"
+#include "Gear_TA_GraphDisplay.h"
 #include "Engine.h"
 
 #include "GearMaker.h"
@@ -27,49 +27,37 @@
 extern "C" {           
   Gear* makeGear(Schema *schema, std::string uniqueName)
   {
-    return new Gear_TA_DataSource(schema, uniqueName);
+    return new Gear_TA_GraphDisplay(schema, uniqueName);
   }  
   GearInfo getGearInfo()
   {
     GearInfo gearInfo;
-    gearInfo.name = "TA_DataSource";
+    gearInfo.name = "TA_GraphDisplay";
     gearInfo.classification = GearClassifications::unclassified().instance();
     return gearInfo;
   }
 }
 
-const std::string Gear_TA_DataSource::SETTING_FILENAME = "Filename";
+Gear_TA_GraphDisplay::Gear_TA_GraphDisplay(Schema *schema, std::string uniqueName) : 
+Gear(schema, "TA_GraphDisplay", uniqueName)
+{
 
-Gear_TA_DataSource::Gear_TA_DataSource(Schema *schema, std::string uniqueName) : 
-Gear(schema, "TA_DataSource", uniqueName)
-{    
-  addPlug(_TA_DATA_OUT = new PlugOut<TA_DataType>(this, "DataOut", false));
+  addPlug(_DATA_IN = new   PlugIn<TA_DataType>(this,"DATA",true)); 
+  addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",true));
   
-  _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
-	_TA_DATA_OUT->sleeping(true);
+  addPlug(_WIDTH  = new   PlugOut<ValueType>(this,"WIDTH",true, new ValueType(400, 100, 1000)));
+  addPlug(_HEIGHT  = new   PlugOut<ValueType>(this,"HEIGHT",true, new ValueType(400, 100, 1000)));
 }
 
-Gear_TA_DataSource::~Gear_TA_DataSource()
+Gear_TA_GraphDisplay::~Gear_TA_GraphDisplay()
 {
 }
 
-void Gear_TA_DataSource::onUpdateSettings()
+void Gear_TA_GraphDisplay::runVideo()
 {
-  std::cout << "opening file : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
+  const TA_DataType *data = _DATA_IN->type();
 
-  _TA_DATA_OUT->type()->load(_settings.get(SETTING_FILENAME)->valueStr());
   
-	_TA_DATA_OUT->sleeping(false);
-}
-
-void Gear_TA_DataSource::runVideo()
-{
-  // dummy
-  TA_DataType *out = _TA_DATA_OUT->type();
-  out->clear();
-  out->insert(std::make_pair(0, TA_CityVertex(3,0)));
-  out->insert(std::make_pair(1, TA_CityVertex(1,5)));
-  out->addEdge(0,1);
 }
 
 

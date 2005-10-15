@@ -6,12 +6,11 @@
 #include <set>
 #include <string>
 
-
-template <class T>
-class SimpleGraph : public std::map<std::string, T>
+template <class K, class T>
+class SimpleGraph : public std::map<K, T>
 {
-  typedef std::set<std::pair<std::string, std::string> > SimpleEdges;
-  typedef std::map<std::string, T> parent;
+  typedef std::set<std::pair<K, K> > SimpleEdges;
+  typedef std::map<K, T> parent;
   
 public:
   SimpleGraph() : parent() {}
@@ -24,7 +23,7 @@ public:
     _edges.clear();
   }
 
-  void addEdge(const std::string& from, const std::string& to, bool twoWays = true)
+  void addEdge(const K& from, const K& to, bool twoWays = true)
   {
     // Check that they exist.
     ASSERT_ERROR( find(from) != end() );
@@ -37,7 +36,7 @@ public:
       _edges.insert(std::make_pair(to, from));
   }
   
-  bool hasEdge(const std::string& from, const std::string& to)
+  bool hasEdge(const K& from, const K& to)
   {
     // Check that they exist.
     ASSERT_ERROR( find(from) != end() );

@@ -91,9 +91,9 @@ void TA_CityGraph::load(const std::string& filename)
     {
       if (e.tagName() == "spot")
       {
-        std::string id = e.attribute("id");
-        ASSERT_WARNING( id != "" );
-        
+        ASSERT_WARNING( e.attribute("id") );
+       int id = toint(e.attribute("id"));
+         
         // Create vertex.
         TA_CityVertex vertex;
         

@@ -44,10 +44,10 @@ typedef TA_Point TA_Centroid;
 float distance(TA_Point& a, TA_Point& b);
 
 typedef Array2D<bool> TA_Grid;
-typedef SimpleGraph<TA_Centroid> TA_CentroidGrid;
+typedef SimpleGraph<int, TA_Centroid> TA_CentroidGrid;
 
 // The graph of the city.
-class TA_CityGraph : public SimpleGraph<TA_CityVertex>
+class TA_CityGraph : public SimpleGraph<int, TA_CityVertex>
 {
   static const std::string OSC_PATH_LOCATION;
 public:
