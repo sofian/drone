@@ -77,30 +77,33 @@ void Gear_TA_TravelAgent::runVideo()
 {
   TA_DataType *graph = _TA_DATA_OUT->type();
 
-  // Dummy agent, just goes from one point to the other, consuming all the energy there.
-  if (_MOVE_ALLOWED->type()->boolValue() && (*graph)[_currentSpot].energy <= 0)
-  {
-    (*graph)[_currentSpot].energy = 100;
-    std::set<int> neighbors = graph->neighbors(_currentSpot);
-    float maxEnergy = -1000;
-    int next = _currentSpot;
-    for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
-    {
-      if ((*graph)[*it].energy > maxEnergy)
-      {
-        maxEnergy = (*graph)[*it].energy;
-        next = *it;
-      }
-    }
-    _currentSpot = next;
-  }
-  else
-  {
-    (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
-  }
-  for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
-    it->second.energy -= _ENERGY_DECAY->type()->value();
+//   // Dummy agent, just goes from one point to the other, consuming all the energy there.
+//   if (_MOVE_ALLOWED->type()->boolValue() && (*graph)[_currentSpot].energy <= 0)
+//   {
+//     (*graph)[_currentSpot].energy = 100;
+//     std::set<int> neighbors = graph->neighbors(_currentSpot);
+//     float maxEnergy = -1000;
+//     int next = _currentSpot;
+//     for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+//     {
+//       if ((*graph)[*it].energy > maxEnergy)
+//       {
+//         maxEnergy = (*graph)[*it].energy;
+//         next = *it;
+//       }
+//     }
+//     _currentSpot = next;
+//   }
+//   else
+//   {
+//     (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
+//   }
+//   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
+//     it->second.energy -= _ENERGY_DECAY->type()->value();
 
+  if (_MOVE_ALLOWED->type()->boolValue())
+    _currentSpot = (_currentSpot == 0 ? 1 : 0); // swap
+  
   _CURRENT_SPOT_OUT->type()->setValue(_currentSpot);
 }
 
