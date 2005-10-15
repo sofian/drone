@@ -83,6 +83,11 @@ void TA_CityGraph::load(const std::string& filename)
   // of the outermost element.
   QDomElement docElem = doc.documentElement();
 
+  xOrigin = tofloat(docElem.attribute("x0"));
+  yOrigin = tofloat(docElem.attribute("y0"));
+  xSize = tofloat(docElem.attribute("width"));
+  ySize = tofloat(docElem.attribute("height"));
+
   QDomNode n = docElem.firstChild();
   while(!n.isNull())
   {
@@ -149,14 +154,15 @@ void TA_CityGraph::printDebug() const
   for (const_iterator it = begin(); it != end(); ++it)
   {
     const TA_CityVertex& v = it->second;
-    std::cerr << "<node id=" << it->first << ">" << std::endl;
-    std::cerr << "  position: (" << v.x << "," << v.y << ")" << std::endl;
-    std::cerr << "  energy:   " << v.energy << std::endl;
-    std::cerr << "  clips:   (";
+    std::cerr << "<graph x0=" << xOrigin << " y0=" << yOrigin << " width=" << xSize << " height=" << ySize << std::endl;
+    std::cerr << "  <node id=" << it->first << ">" << std::endl;
+    std::cerr << "    position: (" << v.x << "," << v.y << ")" << std::endl;
+    std::cerr << "    energy:   " << v.energy << std::endl;
+    std::cerr << "    clips:   (";
     for (std::vector<std::string>::const_iterator it2 = v.clipFileNames.begin(); it2 != v.clipFileNames.end(); ++it2)
       std::cerr << *it2 << " ";
     std::cerr << ")" << std::endl;
-    std::cerr << "</node>" << std::endl;
-    
+    std::cerr << "  </node>" << std::endl;
+    std::cerr << "</graph>" << std::endl;
   }
 }

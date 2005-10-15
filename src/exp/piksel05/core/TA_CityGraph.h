@@ -66,6 +66,7 @@ public:
   
 protected:
   TA_CentroidGrid _gridCentroids;
+  float xOrigin, yOrigin, xSize, ySize;
 };
 
 #endif

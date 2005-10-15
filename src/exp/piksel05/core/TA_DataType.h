@@ -33,10 +33,6 @@ public:
     : AbstractType(),
       TA_CityGraph()
   {
-    xOrigin = 0;
-    yOrigin = 0;
-    xSize = 6;
-    ySize = 6;
   }
   
   virtual ~TA_DataType() {}
@@ -45,9 +41,6 @@ public:
   virtual QColor color() const { return QColor(204, 87, 71); }
   
   void loadData(const std::string& filename);
-  
-public:
-  float xOrigin, yOrigin, xSize, ySize;
   
 };
 
