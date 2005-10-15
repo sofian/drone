@@ -21,7 +21,7 @@ macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS += -lz
 macx:LIBS += -framework OpenGL -framework CoreAudio -framework CoreMidi
 macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-macx:TARGET = ../drone.app/Contents/Frameworks/droneTACore
+macx:TARGET = ../../../../drone.app/Contents/Frameworks/droneTACore
 macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 
 #linux
