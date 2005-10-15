@@ -69,7 +69,7 @@ void Gear_TA_TravelAgent::onUpdateSettings()
   std::cout << "opening file : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
 
   _TA_DATA_OUT->type()->load(_settings.get(SETTING_FILENAME)->valueStr());
-  
+  _TA_DATA_OUT->type()->printDebug();
 	_TA_DATA_OUT->sleeping(false);
 }
 

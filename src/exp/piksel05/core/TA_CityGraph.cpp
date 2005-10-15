@@ -102,13 +102,18 @@ void TA_CityGraph::load(const std::string& filename)
         {
           QDomElement f = m.toElement();
           std::cout << f.text() << std::endl;
-          if (f.tagName() == "oscfile")
+//           if (f.tagName() == "oscfile")
+//           {
+//             std::string oscfile = (std::string)(TA_OSC_PATH) + f.text();
+//             std::cout << "Found osc: " << oscfile << std::endl;
+//             std::ifstream f(oscfile.c_str(), std::ios::in);
+//             ASSERT_WARNING( f );
+//             std::vector<std::string> values = get_data_from_path(OSC_PATH_LOCATION, f)[0].values;
+//           }
+          if (f.tagName() == "position")
           {
-            std::string oscfile = (std::string)(TA_OSC_PATH) + f.text();
-            std::cout << "Found osc: " << oscfile << std::endl;
-            std::ifstream f(oscfile.c_str(), std::ios::in);
-            ASSERT_WARNING( f );
-            std::vector<std::string> values = get_data_from_path(OSC_PATH_LOCATION, f)[0].values;
+            vertex.x = todouble(f.attribute("x"));
+            vertex.y = todouble(f.attribute("y"));
           }
           else if (f.tagName() == "moviefile")
           {

@@ -15,7 +15,11 @@ std::vector<OSCData> get_data_from_path(const std::string& path, std::istream& i
   char buffer[1024];
   while (!in.eof())
   {
-    std::string line = pgetline(in);
+    std::string word;
+    in >> word;
+    //std::string line = pgetline(in);
+    in.getline(buffer, 1024);
+    std::string line (buffer);
     std::cout << "line : [" << line << "]" << std::endl;
     if (line == "")
       continue;

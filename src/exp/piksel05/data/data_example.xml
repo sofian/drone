@@ -1,12 +1,12 @@
 <data>
   <spot id="0" enabled="true">
-    <oscfile>day1-shot01.txt</oscfile>
+    <position x="60.396389" y="5.328600" z="61.709999" />
     <moviefile>shot01_01</moviefile>
     <moviefile enabled="false"></moviefile>
   </spot>
   
   <spot id="1">
-    <oscfile>day1-shot02.txt</oscfile>
+    <position x="60.398117" y="5.328063" z="146.850006" />
     <moviefile>shot01_02</moviefile>
   </spot>
   
