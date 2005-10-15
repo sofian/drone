@@ -57,7 +57,7 @@ Gear(schema, "TA_TravelAgent", uniqueName)
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 	_TA_DATA_OUT->sleeping(true);
 
-  _currentSpot = 0;
+  _currentSpot = -1;
 }
 
 Gear_TA_TravelAgent::~Gear_TA_TravelAgent()
@@ -68,8 +68,12 @@ void Gear_TA_TravelAgent::onUpdateSettings()
 {
   std::cout << "opening file : " << _settings.get(SETTING_FILENAME)->valueStr().c_str() << std::endl;
 
-  _TA_DATA_OUT->type()->load(_settings.get(SETTING_FILENAME)->valueStr());
-  _TA_DATA_OUT->type()->printDebug();
+  TA_DataType *graph = _TA_DATA_OUT->type();
+    
+  graph->load(_settings.get(SETTING_FILENAME)->valueStr());
+  graph->printDebug();
+  _currentSpot = graph->begin()->first;
+  (*graph)[_currentSpot].energy = 100;
 	_TA_DATA_OUT->sleeping(false);
 }
 
@@ -77,33 +81,36 @@ void Gear_TA_TravelAgent::runVideo()
 {
   TA_DataType *graph = _TA_DATA_OUT->type();
 
-//   // Dummy agent, just goes from one point to the other, consuming all the energy there.
-//   if (_MOVE_ALLOWED->type()->boolValue() && (*graph)[_currentSpot].energy <= 0)
-//   {
-//     (*graph)[_currentSpot].energy = 100;
-//     std::set<int> neighbors = graph->neighbors(_currentSpot);
-//     float maxEnergy = -1000;
-//     int next = _currentSpot;
-//     for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
-//     {
-//       if ((*graph)[*it].energy > maxEnergy)
-//       {
-//         maxEnergy = (*graph)[*it].energy;
-//         next = *it;
-//       }
-//     }
-//     _currentSpot = next;
-//   }
-//   else
-//   {
-//     (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
-//   }
-//   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
-//     it->second.energy -= _ENERGY_DECAY->type()->value();
+  // Dummy agent, just goes from one point to the other, consuming all the energy there.
+  if (_MOVE_ALLOWED->type()->boolValue() && (*graph)[_currentSpot].energy <= 0)
+  {
+    (*graph)[_currentSpot].energy = 100;
+    std::set<int> neighbors = graph->neighbors(_currentSpot);
+    float maxEnergy = -1000;
+    int next = _currentSpot;
+    for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+    {
+      if ((*graph)[*it].energy > maxEnergy)
+      {
+        maxEnergy = (*graph)[*it].energy;
+        next = *it;
+      }
+    }
+    _currentSpot = next;
+  }
+  else
+  {
+    (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
+  }
+  for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
+    it->second.energy -= _ENERGY_DECAY->type()->value();
 
-  if (_MOVE_ALLOWED->type()->boolValue())
-    _currentSpot = (_currentSpot == 0 ? 1 : 0); // swap
-  
+//   if (_MOVE_ALLOWED->type()->boolValue())
+//   {
+//     NOTICE("Switch %d ...", _currentSpot);
+//     _currentSpot = (_currentSpot == 1 ? 2 : 1); // swap
+//     NOTICE("...to %d", _currentSpot);
+//   }
   _CURRENT_SPOT_OUT->type()->setValue(_currentSpot);
 }
 

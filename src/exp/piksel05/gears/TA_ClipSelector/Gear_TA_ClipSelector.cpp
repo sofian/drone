@@ -39,7 +39,7 @@ extern "C" {
 }
 
 Gear_TA_ClipSelector::Gear_TA_ClipSelector(Schema *schema, std::string uniqueName) : 
-Gear(schema, "TA_ClipSelector", uniqueName)
+  Gear(schema, "TA_ClipSelector", uniqueName), _currentSpot(-1)
 {
   addPlug(_DATA_IN = new   PlugIn<TA_DataType>(this,"DATA",true)); 
   addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",true));
@@ -59,6 +59,10 @@ void Gear_TA_ClipSelector::runVideo()
   const TA_DataType *data = _DATA_IN->type();
   int spot = _HOTSPOT->type()->intValue();
 
+  if (_currentSpot == -1)
+    _previousSpot = _currentSpot = spot;
+  
+  NOTICE("Spot: %d; current: %d", spot, _currentSpot);
   if (spot != _currentSpot) // just changed!
   {
     _CLIP_CHANGED->type()->setValue(1);

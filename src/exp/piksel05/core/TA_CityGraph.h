@@ -34,7 +34,7 @@ public:
   std::vector<std::string> clipFileNames;
   void *data;
 
-  TA_CityVertex() : parent() {}
+  TA_CityVertex(float start_energy = 0.0f) : parent(), energy(start_energy) {}
   TA_CityVertex(float x_, float y_, float start_energy = 0.0f)
     : parent(x_, y_), energy(start_energy), data(0)
   { }
