@@ -38,6 +38,7 @@ ImageSource \
 Invert \
 InvertAlpha \
 OscInput \
+OscOutput \
 OscFilter \
 Saturation \
 SelectFrame \

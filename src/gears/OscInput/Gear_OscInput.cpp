@@ -39,15 +39,15 @@ GearInfo getGearInfo()
 }
 
 Gear_OscInput::Gear_OscInput(Schema *schema, std::string uniqueName) : 
-	Gear(schema, "OscInput", uniqueName),
-	_forceOscServerInit(true),
-	_currentPort(""),
-	_loServerThread(NULL)
+  Gear(schema, "OscInput", uniqueName),
+  _forceOscServerInit(true),
+  _currentPort(""),
+  _loServerThread(NULL)
 {
 
-  addPlug(_PORT = new PlugIn<StringType>(this, "Port", true, new StringType("7770")));
+  addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("7770")));
 
-  addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", true));
+  addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", false));
 }
 
 Gear_OscInput::~Gear_OscInput()
