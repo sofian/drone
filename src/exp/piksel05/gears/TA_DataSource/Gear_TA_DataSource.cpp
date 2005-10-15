@@ -70,6 +70,7 @@ void Gear_TA_DataSource::runVideo()
   out->insert(std::make_pair(0, TA_CityVertex(3,0)));
   out->insert(std::make_pair(1, TA_CityVertex(1,5)));
   out->addEdge(0,1);
+  out->printDebug();
 }
 
 

@@ -10,6 +10,9 @@
 #include <qdom.h>
 #include <qfile.h>
 
+#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
+#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
+
 // A point in the city.
 class TA_Point
 {
@@ -55,10 +58,12 @@ public:
   TA_CityGraph(const std::string& filename);
   virtual ~TA_CityGraph() ;
 
-  void update(TA_Grid *grid);
+  //  void update(TA_Grid *grid);
 
   virtual void load(const std::string& filename);
 
+  virtual void printDebug() const;
+  
 protected:
   TA_CentroidGrid _gridCentroids;
 };

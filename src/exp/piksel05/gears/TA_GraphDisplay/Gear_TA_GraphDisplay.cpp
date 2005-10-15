@@ -70,7 +70,7 @@ void Gear_TA_GraphDisplay::runVideo()
     const TA_CityVertex& v = it->second;
     int x0 = (int)((v.x - data->xOrigin) * ( out->width() / data->xSize) );
     int y0 = (int)((v.y - data->yOrigin) * ( out->height() / data->ySize ) );
-    NOTICE("(%d, %d)", x0, y0);
+    //    NOTICE("(%d, %d)", x0, y0);
     (*out)(x0, y0) = RGBA(255,0,0,255);
 
   }

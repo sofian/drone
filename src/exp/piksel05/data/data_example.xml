@@ -1,13 +1,13 @@
 <data>
   <spot id="0" enabled="true">
-    <oscfile></oscfile>
-    <clip></clip>
-    <clip enabled="false"></clip>
+    <oscfile>day1-shot01.txt</oscfile>
+    <moviefile>shot01_01</moviefile>
+    <moviefile enabled="false"></moviefile>
   </spot>
   
   <spot id="1">
-    <oscfile></oscfile>
-    <clip></clip>
+    <oscfile>day1-shot02.txt</oscfile>
+    <moviefile>shot01_02</moviefile>
   </spot>
   
   <connection from="0" to="1" />

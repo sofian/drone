@@ -36,7 +36,7 @@ float distance(TA_Point& a, TA_Point& b)
 // {
   
 // }
-const std::string TA_CityGraph::OSC_PATH_LOCATION = "/kismet/loc";
+const std::string TA_CityGraph::OSC_PATH_LOCATION = "/kismet/gps/pos";
 
 TA_CityGraph::TA_CityGraph(const std::string& filename)
 {
@@ -47,23 +47,23 @@ TA_CityGraph::~TA_CityGraph()
 {
 }
 
-void TA_CityGraph::update(TA_Grid *grid)
-{
-  for (TA_CentroidGrid::iterator centroid = _gridCentroids.begin(); centroid != _gridCentroids.end(); ++centroid)
-  {
-    Array<float> energy(size());
-    float sum = 0;
-    int i = 0;
-    for (iterator it = begin(); it != end(); ++it, ++i)
-    {
-      energy[i] = 1.0f / distance( centroid->second, it->second );
-      sum += energy[i];
-    }
-    i = 0;
-    for (iterator it = begin(); it != end(); ++it, ++i)
-      it->second.energy += energy[i] / sum;    
-  }
-}
+// void TA_CityGraph::update(const Array2D<unsigned char>& grid)
+// {
+//   for (TA_CentroidGrid::iterator centroid = _gridCentroids.begin(); centroid != _gridCentroids.end(); ++centroid)
+//   {
+//     Array<float> energy(size());
+//     float sum = 0;
+//     int i = 0;
+//     for (iterator it = begin(); it != end(); ++it, ++i)
+//     {
+//       energy[i] = 1.0f / distance( centroid->second, it->second );
+//       sum += energy[i];
+//     }
+//     i = 0;
+//     for (iterator it = begin(); it != end(); ++it, ++i)
+//       it->second.energy += energy[i] / sum;
+//   }
+// }
 
 void TA_CityGraph::load(const std::string& filename)
 {
@@ -92,7 +92,7 @@ void TA_CityGraph::load(const std::string& filename)
       if (e.tagName() == "spot")
       {
         ASSERT_WARNING( e.attribute("id") );
-       int id = toint(e.attribute("id"));
+        int id = toint(e.attribute("id"));
          
         // Create vertex.
         TA_CityVertex vertex;
@@ -104,13 +104,16 @@ void TA_CityGraph::load(const std::string& filename)
           std::cout << f.text() << std::endl;
           if (f.tagName() == "oscfile")
           {
-            std::ifstream f(f.text(), std::ios::in);
+            std::string oscfile = (std::string)(TA_OSC_PATH) + f.text();
+            std::cout << "Found osc: " << oscfile << std::endl;
+            std::ifstream f(oscfile.c_str(), std::ios::in);
             ASSERT_WARNING( f );
             std::vector<std::string> values = get_data_from_path(OSC_PATH_LOCATION, f)[0].values;
           }
           else if (f.tagName() == "moviefile")
           {
-
+            std::cout << "Found movie: " << f.text() << std::endl;
+            vertex.clipFileNames.push_back((std::string)(TA_MOVIES_PATH) + f.text());
           }
           else
             WARNING("Unknown tag: %s.", (const char*)f.tagName());
@@ -118,9 +121,9 @@ void TA_CityGraph::load(const std::string& filename)
           std::cout << f.tagName() << std::endl;
           m = m.nextSibling();
         }
+
         // Add it.
         insert(std::make_pair(id, vertex));
-        
       }
       else if (e.tagName() == "connection")
       {
@@ -130,8 +133,25 @@ void TA_CityGraph::load(const std::string& filename)
     n = n.nextSibling();
   }
 
-  // Here we append a new element to the end of the document
-  QDomElement elem = doc.createElement("img");
-  elem.setAttribute("src", "myimage.png");
-  docElem.appendChild(elem);  
+  //   // Here we append a new element to the end of the document
+  //   QDomElement elem = doc.createElement("img");
+  //   elem.setAttribute("src", "myimage.png");
+  //   docElem.appendChild(elem);  
+}
+
+void TA_CityGraph::printDebug() const
+{
+  for (const_iterator it = begin(); it != end(); ++it)
+  {
+    const TA_CityVertex& v = it->second;
+    std::cerr << "<node id=" << it->first << ">" << std::endl;
+    std::cerr << "  position: (" << v.x << "," << v.y << ")" << std::endl;
+    std::cerr << "  energy:   " << v.energy << std::endl;
+    std::cerr << "  clips:   (";
+    for (std::vector<std::string>::const_iterator it2 = v.clipFileNames.begin(); it2 != v.clipFileNames.end(); ++it2)
+      std::cerr << *it2 << " ";
+    std::cerr << ")" << std::endl;
+    std::cerr << "</node>" << std::endl;
+    
+  }
 }

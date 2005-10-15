@@ -12,6 +12,6 @@ unix:!macx:TARGET=../../../../../gears/Gear_TA_GraphDisplay
 
 #osx
 macx:LIBS+=-L../../../../../drone.app/Contents/Frameworks -ldroneCore -ldroneTACore -L../../../../../lib/
-macx:TARGET=../../../../../drone.app/Contents/PlugIns/Gear_TA_TravelAgent
+macx:TARGET=../../../../../drone.app/Contents/PlugIns/Gear_TA_GraphDisplay
 macx:QMAKE_LFLAGS+=-read_only_relocs suppress
 
