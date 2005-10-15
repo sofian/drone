@@ -37,6 +37,8 @@ HalfToning \
 ImageSource \
 Invert \
 InvertAlpha \
+PackList \
+OscMessage \
 OscInput \
 OscOutput \
 OscFilter \
@@ -46,11 +48,13 @@ SetAlpha \
 SignalStat \
 SmearGrid \
 Sobel \
+StringOutput \
 Tempo \
 VideoDelay \
 VideoRecord \
 VideoOffset \
 VideoSwitch \
+StringGen \
 ValueMix
 agg {
 SUBDIRS+= SVGLoader \

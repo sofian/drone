@@ -1,4 +1,4 @@
-/* Gear_OscOutput.cpp
+/* Gear_PackList.cpp
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -18,7 +18,7 @@
  */
 
 
-#include "Gear_OscOutput.h"
+#include "Gear_PackList.h"
 #include "Engine.h"
 
 #include "GearMaker.h"
@@ -26,50 +26,51 @@
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_OscOutput(schema, uniqueName);
+  return new Gear_PackList(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
 {
   GearInfo gearInfo;
-  gearInfo.name = "OscOutput";
+  gearInfo.name = "PackList";
   gearInfo.classification = GearClassifications::protocol().osc().instance();
   return gearInfo;
 }
 }
 
-Gear_OscOutput::Gear_OscOutput(Schema *schema, std::string uniqueName) : 
-	Gear(schema, "OscOutput", uniqueName)
+Gear_PackList::Gear_PackList(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "PackList", uniqueName)
 {
 
-  addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("7770")));
-  addPlug(_IP = new PlugIn<StringType>(this, "IP", false, new StringType("127.0.0.1")));	
-
-  addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));
+  addPlug(_STR1 = new PlugIn<StringType>(this, "Str1", true, new StringType("")));
+	addPlug(_STR2 = new PlugIn<StringType>(this, "Str2", true, new StringType("")));
+  addPlug(_LIST_OUT = new PlugOut<ListType>(this, "List", true));
 }
 
-Gear_OscOutput::~Gear_OscOutput()
+Gear_PackList::~Gear_PackList()
 {
-
-}
-
-void Gear_OscOutput::runVideo()
-{
-  		
-  lo_address t = lo_address_new(_IP->type()->value().c_str(), _PORT->type()->value().c_str());
-
-  OscMessageType* oscMessage = _OSC_IN->type();
-
-  StringType *str1 = (StringType*)oscMessage->args()[0];
-  StringType *str2 = (StringType*)oscMessage->args()[1];
-
-
-  if (lo_send(t, oscMessage->path().value().c_str(), "ss", str1->value().c_str(), str2->value().c_str()) == -1) 
-  {
-     std::cout << "OSC error " << lo_address_errno(t) << " " << lo_address_errstr(t);
-  }
-  
-  lo_address_free(t);
 
 }
 
+void Gear_PackList::runVideo()
+{
+	ListType *listType = _LIST_OUT->type();
+
+	listType->push_back(_STR1->type());
+	listType->push_back(_STR2->type());
+}
+
+
+void Gear_PackList::clearList()
+{
+	ListType *listType = _LIST_OUT->type();
+	
+	
+	for(ListType::iterator it=listType->begin(); it!=listType->end(); ++it)
+	{
+		delete (*it);
+	}
+	
+	listType->clear();
+	
+}

@@ -26,13 +26,15 @@ class ListType : public ArrayType<AbstractType*>
 {
 public:
   ListType()
-	{
-	}
+  {
+  }
 
-	virtual ~ListType(){}
+  virtual ~ListType(){}
 
-	virtual std::string typeName() const { return "ListType";}
-	QColor color() const { return QColor(255,255,255);}
+  virtual std::string typeName() const { return "ListType";}
+  QColor color() const { return QColor(255,255,255);}
+
+  
 };
 
 #endif 

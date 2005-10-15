@@ -17,8 +17,8 @@
 * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef __OscType_INCLUDED
-#define __OscType_INCLUDED
+#ifndef __OSCMESSAGETYPE_INCLUDED
+#define __OSCMESSAGETYPE_INCLUDED
 
 #include "AbstractType.h"
 #include "StringType.h"
@@ -40,6 +40,12 @@ public:
   
   virtual std::string typeName() const { return "OscMessageType"; }
   virtual QColor color() const { return QColor(149, 153, 162); }
+	
+	void setPath(const StringType &path) {_path = path;}
+	void setArgs(const ListType &args) {_argList = args;}
+	
+	StringType path(){return _path;}
+	ListType args(){return _argList;}
 	
 private:
   StringType _path;

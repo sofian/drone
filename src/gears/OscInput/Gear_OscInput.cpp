@@ -99,8 +99,7 @@ void Gear_OscInput::stopOscServer()
 	_loServerThread=NULL;
 }
 
-int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_arg **argv, int argc,
-																				void *data, void *user_data)
+int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
 	std::cout << "Osc message received : " << std::endl;
 	std::cout << "path: " << path << std::endl;

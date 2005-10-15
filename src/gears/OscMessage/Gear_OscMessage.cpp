@@ -1,4 +1,4 @@
-/* Gear_OscOutput.cpp
+/* Gear_OscMessage.cpp
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -18,7 +18,7 @@
  */
 
 
-#include "Gear_OscOutput.h"
+#include "Gear_OscMessage.h"
 #include "Engine.h"
 
 #include "GearMaker.h"
@@ -26,50 +26,36 @@
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_OscOutput(schema, uniqueName);
+  return new Gear_OscMessage(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
 {
   GearInfo gearInfo;
-  gearInfo.name = "OscOutput";
+  gearInfo.name = "OscMessage";
   gearInfo.classification = GearClassifications::protocol().osc().instance();
   return gearInfo;
 }
 }
 
-Gear_OscOutput::Gear_OscOutput(Schema *schema, std::string uniqueName) : 
-	Gear(schema, "OscOutput", uniqueName)
+Gear_OscMessage::Gear_OscMessage(Schema *schema, std::string uniqueName) : 
+  Gear(schema, "OscMessage", uniqueName)
 {
 
-  addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("7770")));
-  addPlug(_IP = new PlugIn<StringType>(this, "IP", false, new StringType("127.0.0.1")));	
-
-  addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));
+  addPlug(_path = new PlugIn<StringType>(this, "Path", false, new StringType("/")));
+  addPlug(_args = new PlugIn<ListType>(this, "Args", true));
+	
+  addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", true));
 }
 
-Gear_OscOutput::~Gear_OscOutput()
+Gear_OscMessage::~Gear_OscMessage()
 {
 
 }
 
-void Gear_OscOutput::runVideo()
+void Gear_OscMessage::runVideo()
 {
-  		
-  lo_address t = lo_address_new(_IP->type()->value().c_str(), _PORT->type()->value().c_str());
-
-  OscMessageType* oscMessage = _OSC_IN->type();
-
-  StringType *str1 = (StringType*)oscMessage->args()[0];
-  StringType *str2 = (StringType*)oscMessage->args()[1];
-
-
-  if (lo_send(t, oscMessage->path().value().c_str(), "ss", str1->value().c_str(), str2->value().c_str()) == -1) 
-  {
-     std::cout << "OSC error " << lo_address_errno(t) << " " << lo_address_errstr(t);
-  }
-  
-  lo_address_free(t);
-
+	_OSC_OUT->type()->setPath(*(_path->type()));
+	_OSC_OUT->type()->setArgs(*(_args->type()));
 }
 
