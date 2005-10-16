@@ -23,8 +23,6 @@
 
 #include "GearMaker.h"
 
-#include <vector>
-#include <string>
 #include <stdio.h>
 
 extern "C" {
