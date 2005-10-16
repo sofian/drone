@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//inspired from Using libavformat and libavcodec by Martin Böhme (boehme@inb.uni-luebeckREMOVETHIS.de) 
 
 #include <iostream>
 #include "Gear_TA_ClipSelector.h"
@@ -60,7 +59,11 @@ void Gear_TA_ClipSelector::runVideo()
   int spot = _HOTSPOT->type()->intValue();
 
   if (_currentSpot == -1)
+  {
     _previousSpot = _currentSpot = spot;
+  }
+
+  std::string savedClipFileName = (*data)[_currentSpot].getCurrentClip();
   
   NOTICE("Spot: %d; current: %d", spot, _currentSpot);
   if (spot != _currentSpot) // just changed!
@@ -68,15 +71,17 @@ void Gear_TA_ClipSelector::runVideo()
     _CLIP_CHANGED->type()->setValue(1);
     _previousSpot = _currentSpot;
     _currentSpot = spot;
+
+    _CURRENT_CLIP->type()->setValue( (*data)[_currentSpot].getCurrentClip() );
+    _PREVIOUS_CLIP->type()->setValue( savedClipFileName );
   }
   else
   {
+    _CURRENT_CLIP->type()->setValue( (*data)[_currentSpot].getCurrentClip() );
+    _PREVIOUS_CLIP->type()->setValue( (*data)[_previousSpot].getCurrentClip() );
     _CLIP_CHANGED->type()->setValue(0);
   }
-
-  _CURRENT_CLIP->type()->setValue( (*data)[_currentSpot].clipFileNames[0] );
-  _PREVIOUS_CLIP->type()->setValue( (*data)[_previousSpot].clipFileNames[0] );
-
+  
   NOTICE("Current clip: %s.", _CURRENT_CLIP->type()->value().c_str());
   NOTICE("Prevous clip: %s.", _PREVIOUS_CLIP->type()->value().c_str());
 }

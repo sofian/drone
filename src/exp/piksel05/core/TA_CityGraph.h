@@ -10,9 +10,9 @@
 #include <qdom.h>
 #include <qfile.h>
 
-//#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
+#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
-#define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
+//#define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
 
 // A point in the city.
@@ -34,13 +34,15 @@ class TA_CityVertex : public TA_Point
 public:
   float energy;
   std::vector<std::string> clipFileNames;
-  void *data;
+  int currentClipIndex;
+  //  void *data;
 
-  TA_CityVertex(float start_energy = 0.0f) : parent(), energy(start_energy) {}
+  TA_CityVertex(float start_energy = 0.0f) : parent(), energy(start_energy), currentClipIndex(0) {}
   TA_CityVertex(float x_, float y_, float start_energy = 0.0f)
-    : parent(x_, y_), energy(start_energy), data(0)
+    : parent(x_, y_), energy(start_energy), currentClipIndex(0)
   { }
-  
+
+  std::string getCurrentClip() const { return clipFileNames[currentClipIndex]; }
 };
 
 typedef TA_Point TA_Centroid;

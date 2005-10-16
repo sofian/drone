@@ -82,12 +82,17 @@ void Gear_TA_TravelAgent::runVideo()
 {
   TA_DataType *graph = _TA_DATA_OUT->type();
   VideoChannelType *grid = _GRID_IN->type();
+  TA_CityVertex& v = (*graph)[_currentSpot];
 
   // Dummy agent, just goes from one point to the other, consuming all the energy there.
-  if ((*graph)[_currentSpot].energy <= 0)
+  if (v.energy <= 0)
   {
     if (_MOVE_ALLOWED->type()->boolValue())
     {
+      // Change next clip of this spot.
+      v.currentClipIndex = (v.currentClipIndex+1) % v.clipFileNames.size();
+      
+      // Choose next spot.
       std::set<int> neighbors = graph->neighbors(_currentSpot);
       float maxEnergy = -1000000.0f;
       int next = _currentSpot;
@@ -104,7 +109,7 @@ void Gear_TA_TravelAgent::runVideo()
   }
   else
   {
-    (*graph)[_currentSpot].energy -= _ENERGY_CONSUMPTION->type()->value();    
+    v.energy -= _ENERGY_CONSUMPTION->type()->value();    
   }
 
   // Decay energy of every point.
