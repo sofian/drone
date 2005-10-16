@@ -1,4 +1,4 @@
-/* Gear_PlaceArea.h
+/* Gear_AreaCreate.h
  * Copyright (C) 2004 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -26,12 +26,12 @@
 #include "AreaArrayType.h"
 
 
-class Gear_PlaceArea : public Gear
+class Gear_AreaCreate : public Gear
 {
 public:
 
-  Gear_PlaceArea(Schema *schema, std::string uniqueName);
-  virtual ~Gear_PlaceArea();
+  Gear_AreaCreate(Schema *schema, std::string uniqueName);
+  virtual ~Gear_AreaCreate();
 
   void runVideo();
 
