@@ -16,6 +16,7 @@ Edge \
 AffineTransform \
 ApplyDisplaceGrid \
 #AreaArrayMask \
+AreaArrayVideoSelect \
 Brightness \
 ClusteredDither \
 ColorAdjust \
@@ -53,6 +54,7 @@ Tempo \
 VideoDelay \
 VideoRecord \
 VideoOffset \
+VideoReplaceAreas \
 VideoSwitch \
 StringGen \
 StringFormat \
