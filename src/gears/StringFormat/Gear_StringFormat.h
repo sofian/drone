@@ -36,8 +36,6 @@ public:
 
 protected:
 
-  void clearList();
-  
   PlugIn<StringType> *_FORMAT;
   PlugIn<ListType> *_PARAMS;
 	

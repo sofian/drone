@@ -55,6 +55,7 @@ VideoRecord \
 VideoOffset \
 VideoSwitch \
 StringGen \
+StringFormat \
 ValueMix
 agg {
 SUBDIRS+= SVGLoader \

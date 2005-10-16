@@ -55,8 +55,6 @@ Gear_AudioInput::Gear_AudioInput(Schema *schema, std::string uniqueName) :
   _lBufferIndex(0),
   _readIndex(0)
 {
-  //  _category << Category::AUDIO << Category::IO;
-
   addPlug(_AUDIO_OUT_LEFT = new PlugOut<SignalType>(this, "Left", false));    
   addPlug(_AUDIO_OUT_RIGHT = new PlugOut<SignalType>(this, "Right", false));    
 

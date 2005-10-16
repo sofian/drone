@@ -23,9 +23,9 @@
 
 #include "GearMaker.h"
 
+#include <vector>
+#include <string>
 #include <stdio.h>
-#include <stdlib.h>
-
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
@@ -59,19 +59,36 @@ Gear_StringFormat::~Gear_StringFormat()
 void Gear_StringFormat::runVideo()
 {
   const ListType *listType = _PARAMS->type();
+  std::string format = _FORMAT->type()->value();
   
-  sprintf(_buffer, _FORMAT->type()->value(), 
-}
+  std::string outputString = "";
 
-
-void Gear_StringFormat::clearList()
-{
-  ListType *listType = _LIST_OUT->type();
-  
-  for(ListType::iterator it=listType->begin(); it!=listType->end(); ++it)
+  for (ListType::iterator it = listType->begin(); it != listType->end(); ++it)
+  {
+    int pos1, pos2;
+    if ((*it)->typeName() == StringType::TYPENAME)
     {
-      delete (*it);
+      pos1 = format.find('%');
+      pos2 = format.find('s', pos1);
+      StringType *type = (StringType*)*it;
+      sprintf(_buffer, format.c_str(), type->value().c_str());
     }
+    else if ((*it)->typeName() == ValueType::TYPENAME)
+    {
+      pos1 = format.find('%');
+      pos2 = format.find('f', pos1);
+      ValueType *type = (ValueType*)*it;
+      sprintf(_buffer, format.c_str(), type->value());
+    }
+
+    outputString += _buffer;
+    format = format.substr(pos2+1);
+
+    NOTICE("Outputstring: %s, format: %s.", outputString.c_str(), format.c_str());
+  }
+
+  outputString += format;
   
-  listType->clear();
+  _STRING->type()->setValue(outputString);
 }
+

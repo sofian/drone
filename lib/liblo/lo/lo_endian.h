@@ -100,7 +100,7 @@ static inline uint64_t lo_swap64(uint64_t x)
 
 /* Host to OSC and OSC to Host conversion macros */
 
-#if 0
+#if 1
 #define lo_htoo16(x) (x)
 #define lo_htoo32(x) (x)
 #define lo_htoo64(x) (x)

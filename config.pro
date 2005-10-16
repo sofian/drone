@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread release agg
+CONFIG = qt warn_on thread debug
 
 
 
