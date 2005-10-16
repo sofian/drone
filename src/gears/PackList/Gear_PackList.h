@@ -22,7 +22,6 @@
 
 #include "Gear.h"
 #include "StringType.h"
-#include "ValueType.h"
 #include "ListType.h"
 
 
@@ -36,12 +35,13 @@ public:
 
 protected:
 
+  void internalPrePlay();
+
   void clearList();
 		
   PlugIn<StringType> *_STR1;
-  PlugIn<StringType> *_STR2;
 
-	
+  PlugIn<ListType> *_LIST_IN;	
   PlugOut<ListType> *_LIST_OUT;
 	
 };

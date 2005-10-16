@@ -61,10 +61,13 @@ void Gear_OscOutput::runVideo()
   OscMessageType* oscMessage = _OSC_IN->type();
 
   StringType *str1 = (StringType*)oscMessage->args()[0];
-  StringType *str2 = (StringType*)oscMessage->args()[1];
+  //StringType *str2 = (StringType*)oscMessage->args()[1];
+
+  std::cout << oscMessage->args().size() << std::endl;
 
 
-  if (lo_send(t, oscMessage->path().value().c_str(), "ss", str1->value().c_str(), str2->value().c_str()) == -1) 
+  if (lo_send(t, oscMessage->path().value().c_str(), "s", str1->value().c_str()
+  ) == -1) 
   {
      std::cout << "OSC error " << lo_address_errno(t) << " " << lo_address_errstr(t);
   }

@@ -43,8 +43,8 @@ Gear_PackList::Gear_PackList(Schema *schema, std::string uniqueName) :
 {
 
   addPlug(_STR1 = new PlugIn<StringType>(this, "Str1", true, new StringType("")));
-	addPlug(_STR2 = new PlugIn<StringType>(this, "Str2", true, new StringType("")));
-  addPlug(_LIST_OUT = new PlugOut<ListType>(this, "List", true));
+  addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", false));
+  addPlug(_LIST_OUT = new PlugOut<ListType>(this, "ListO", true));
 }
 
 Gear_PackList::~Gear_PackList()
@@ -54,10 +54,15 @@ Gear_PackList::~Gear_PackList()
 
 void Gear_PackList::runVideo()
 {
-	ListType *listType = _LIST_OUT->type();
+  ListType *listType = _LIST_OUT->type();
+  
+  if (_LIST_IN->connected())
+    listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
+  else 
+    clearList();  
 
-	listType->push_back(_STR1->type());
-	listType->push_back(_STR2->type());
+  listType->push_back(_STR1->type());
+
 }
 
 
@@ -65,12 +70,17 @@ void Gear_PackList::clearList()
 {
 	ListType *listType = _LIST_OUT->type();
 	
-	
+/*	
 	for(ListType::iterator it=listType->begin(); it!=listType->end(); ++it)
 	{
-		delete (*it);
+	  delete (*it);
 	}
-	
+*/	
 	listType->clear();
 	
 }
+
+void Gear_PackList::internalPrePlay()
+{
+  clearList();
+}  
