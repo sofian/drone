@@ -33,13 +33,13 @@ struct Area
   /**
    * Default constructor. Initializes all points to origin (0,0) (void area).
    */
-  Area() : x0(0), y0(0), x1(0), y1(0) {}
+  Area() : x0(0), y0(0), width(0), height(0) {}
 
   //! The upper-left point.
-  float x0, y0;
+  int x0, y0;
 
-  //! The lower-right point.
-  float x1, y1;
+  //! The width and height
+  unsigned int width, height;
 };
 
 /**

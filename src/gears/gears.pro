@@ -15,6 +15,7 @@ VideoMix \
 Edge \
 AffineTransform \
 ApplyDisplaceGrid \
+AreaCreate \
 #AreaArrayMask \
 AreaArrayVideoSelect \
 Brightness \

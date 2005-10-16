@@ -51,10 +51,8 @@ void Gear_PlaceArea::runVideo()
   _area = _AREA_OUT->type()->data();
   _area->x0 = MAX(_H_POSITION_IN->type()->value(), 0.0f);
   _area->y0 = MAX(_V_POSITION_IN->type()->value(), 0.0f);
-  _area->x1 = _area->x0 + MAX(_WIDTH_IN->type()->value(), 0.0f);
-  _area->y1 = _area->y0 + MAX(_HEIGHT_IN->type()->value(), 0.0f);
-  //_AREA_OUT->type()->operator[](0) = _area;
-  //  NOTICE("Area placed: (%f,%f) - (%f,%f)", _area.x0, _area.y0, _area.x1, _area.y1);
+  _area->x1 = MAX(_WIDTH_IN->type()->value(), 0.0f);
+  _area->y1 = MAX(_HEIGHT_IN->type()->value(), 0.0f);
 }
 
 
