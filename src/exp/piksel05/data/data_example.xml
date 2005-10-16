@@ -18,7 +18,6 @@
 
   <spot id="3">
     <position x="60.397144" y="5.329805" z="182.160004"/>
-    <moviefile>shot03_01</moviefile>
     <moviefile>shot03_02</moviefile>
     <moviefile>shot03_03</moviefile>
     <moviefile>shot03_04</moviefile>

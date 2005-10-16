@@ -46,8 +46,8 @@ typedef TA_Point TA_Centroid;
 // Distance between two points.
 float distance(TA_Point& a, TA_Point& b);
 
-typedef Array2D<bool> TA_Grid;
-typedef SimpleGraph<int, TA_Centroid> TA_CentroidGrid;
+//typedef Array2D<bool> TA_Grid;
+//typedef SimpleGraph<int, TA_Centroid> TA_CentroidGrid;
 
 // The graph of the city.
 class TA_CityGraph : public SimpleGraph<int, TA_CityVertex>
@@ -64,8 +64,8 @@ public:
 
   virtual void printDebug() const;
   
-protected:
-  TA_CentroidGrid _gridCentroids;
+public:
+  //  TA_CentroidGrid _gridCentroids;
   float xOrigin, yOrigin, xSize, ySize;
 };
 
