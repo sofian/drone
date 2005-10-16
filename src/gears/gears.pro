@@ -17,6 +17,7 @@ AffineTransform \
 ApplyDisplaceGrid \
 AreaCreate \
 #AreaArrayMask \
+AreaArrayClip \
 AreaArrayVideoSelect \
 Brightness \
 ClusteredDither \

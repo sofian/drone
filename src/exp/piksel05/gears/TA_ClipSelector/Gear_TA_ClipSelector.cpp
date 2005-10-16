@@ -59,9 +59,7 @@ void Gear_TA_ClipSelector::runVideo()
   int spot = _HOTSPOT->type()->intValue();
 
   if (_currentSpot == -1)
-  {
     _previousSpot = _currentSpot = spot;
-  }
 
   std::string savedClipFileName = (*data)[_currentSpot].getCurrentClip();
   
@@ -85,6 +83,3 @@ void Gear_TA_ClipSelector::runVideo()
   NOTICE("Current clip: %s.", _CURRENT_CLIP->type()->value().c_str());
   NOTICE("Prevous clip: %s.", _PREVIOUS_CLIP->type()->value().c_str());
 }
-
-
-
