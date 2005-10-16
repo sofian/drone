@@ -125,6 +125,7 @@ protected:
   std::string _title;
 private:
   void removeAllPlugBoxes();
+  pthread_mutex_t *_reDrawMutex;
 
 };
 

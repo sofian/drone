@@ -33,9 +33,7 @@ unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
 HEADERS += SimpleGraph.h \
 TA_CityGraph.h \
 TA_DataType.h \
-StringUtils.h \
 OSCUtils.h
 SOURCES += TA_CityGraph.cpp \
 TA_DataType.cpp \
-StringUtils.cpp \
 OSCUtils.cpp

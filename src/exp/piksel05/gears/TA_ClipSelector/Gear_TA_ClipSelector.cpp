@@ -56,7 +56,7 @@ Gear_TA_ClipSelector::~Gear_TA_ClipSelector()
 
 void Gear_TA_ClipSelector::runVideo()
 {
-  const TA_DataType *data = _DATA_IN->type();
+  TA_DataType *data = _DATA_IN->type();
   int spot = _HOTSPOT->type()->intValue();
 
   if (_currentSpot == -1)

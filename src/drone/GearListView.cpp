@@ -21,7 +21,7 @@ GearListView::GearListView(QWidget *parent) :
     setRootIsDecorated(true);
     setResizeMode(QListView::AllColumns);
     setColumnWidthMode(0, QListView::Manual);
-    setMinimumWidth(185);
+    setMinimumWidth(200);
     setMinimumHeight(450);
     setTreeStepSize(10);
 

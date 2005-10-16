@@ -77,6 +77,7 @@ SummedAreaTable.h \
 Schema.h \
 SchemaGui.h \
 SignalInfo.h \
+StringUtils.h \
 TextureGl.h \
 ThreadUtil.h \
 Timing.h \
@@ -118,6 +119,7 @@ Rasterer.cpp \
 Schema.cpp \
 SchemaGui.cpp \
 SignalInfo.cpp \
+StringUtils.cpp \
 TextureGl.cpp \
 Timing.cpp \
 VideoInfo.cpp \

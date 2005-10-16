@@ -21,12 +21,14 @@
 #include "Gear.h"   
 #include "Engine.h"
 #include "PlugBox.h"
+#include "ThreadUtil.h"
 
 #include <iostream>
 #include <sstream>
 
 #include <qpainter.h>
 #include <qdom.h>
+
 
 const int GearGui::CANVAS_RTTI_GEAR = 2000;
 const int GearGui::DEFAULT_SIZEX = 125;
@@ -63,13 +65,15 @@ _inputsInterval(0),
 _outputsInterval(0),
 _boxNameColor(color)
 {
+  //_reDrawMutex = new pthread_mutex_t();
+  //pthread_mutex_init(_reDrawMutex, NULL);
 
   if (updateRate>=0)
     startTimer(updateRate);
 
   refresh();
  
-	QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(reDraw()));
+  QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(reDraw()));
 }
 
 GearGui::~GearGui()
@@ -411,6 +415,8 @@ void GearGui::timerEvent(QTimerEvent*)
 
 void GearGui::reDraw()
 {
+//  ScopedLock scopedLock(_reDrawMutex);
+  
   if (canvas()!=NULL)
   {
     update();    

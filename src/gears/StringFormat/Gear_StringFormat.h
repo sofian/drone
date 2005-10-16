@@ -1,5 +1,5 @@
-/* Gear_PackList.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+/* Gear_StringFormat.h
+ * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_PACKLIST_INCLUDED
-#define GEAR_PACKLIST_INCLUDED
+#ifndef GEAR_STRINGFORMAT_INCLUDED
+#define GEAR_STRINGFORMAT_INCLUDED
 
 #include "Gear.h"
 #include "StringType.h"
@@ -26,24 +26,24 @@
 #include "ListType.h"
 
 
-class Gear_PackList : public Gear  
+class Gear_StringFormat : public Gear  
 {
 public:
-  Gear_PackList(Schema *schema, std::string uniqueName);
-  virtual ~Gear_PackList();
+  Gear_StringFormat(Schema *schema, std::string uniqueName);
+  virtual ~Gear_StringFormat();
 
   void runVideo();
 
 protected:
 
   void clearList();
-		
-  PlugIn<StringType> *_STR1;
-  PlugIn<StringType> *_STR2;
-
+  
+  PlugIn<StringType> *_FORMAT;
+  PlugIn<ListType> *_PARAMS;
 	
-  PlugOut<ListType> *_LIST_OUT;
-	
+  PlugOut<StringType> *_STRING;
+  
+  char _buffer[1024];
 };
 
 #endif 
