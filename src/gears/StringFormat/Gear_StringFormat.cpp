@@ -76,9 +76,9 @@ void Gear_StringFormat::runVideo()
     else if ((*it)->typeName() == ValueType::TYPENAME)
     {
       pos1 = format.find('%');
-      pos2 = format.find('f', pos1);
+      pos2 = format.find('d', pos1);
       ValueType *type = (ValueType*)*it;
-      sprintf(_buffer, format.c_str(), type->value());
+      sprintf(_buffer, format.c_str(), type->intValue());
     }
 
     outputString += _buffer;
