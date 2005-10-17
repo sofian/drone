@@ -15,12 +15,12 @@ VideoMix \
 Edge \
 AffineTransform \
 ApplyDisplaceGrid \
-AreaCreate \
-AreaScale \
-AreaTranslate \
+#AreaCreate \
+#AreaScale \
+#AreaTranslate \
 #AreaArrayMask \
-AreaArrayClip \
-AreaArrayVideoSelect \
+#AreaArrayClip \
+#AreaArrayVideoSelect \
 Brightness \
 ClusteredDither \
 ColorAdjust \
