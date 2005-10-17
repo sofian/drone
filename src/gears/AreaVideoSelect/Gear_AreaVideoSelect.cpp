@@ -1,4 +1,4 @@
-/* Gear_AreaArrayClip.cpp
+/* Gear_AreaVideoSelect.cpp
  * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -18,9 +18,8 @@
  */
 
 #include <iostream>
-#include "Gear_AreaArrayClip.h"
+#include "Gear_AreaVideoSelect.h"
 #include "Engine.h"
-#include "Math.h"
 
 #include "GearMaker.h"
 
@@ -28,49 +27,41 @@
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_AreaArrayClip(schema, uniqueName);
+  return new Gear_AreaVideoSelect(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
 {
   GearInfo gearInfo;
-  gearInfo.name = "AreaArrayClip";
+  gearInfo.name = "AreaVideoSelect";
   gearInfo.classification = GearClassifications::video().mask().instance();
   return gearInfo;
 }
 }
 
-Gear_AreaArrayClip::Gear_AreaArrayClip(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayClip", uniqueName)
+Gear_AreaVideoSelect::Gear_AreaVideoSelect(Schema *schema, std::string uniqueName) : Gear(schema, "AreaVideoSelect", uniqueName)
 {    
-  addPlug(_AREA_ARRAY_OUT = new PlugOut<AreaArrayType>(this, "AreaOut", true));
-  addPlug(_AREA_ARRAY_IN = new PlugIn<AreaArrayType>(this, "AreaIn", true));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoOut", true));
+  addPlug(_SELECT_IN = new PlugIn<AreaType>(this, "Select", true));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "Video", true));
 }
 
-Gear_AreaArrayClip::~Gear_AreaArrayClip()
+Gear_AreaVideoSelect::~Gear_AreaVideoSelect()
 {
 }
 
-void Gear_AreaArrayClip::runVideo()
+void Gear_AreaVideoSelect::runVideo()
 {
-  _areaArrayIn = _AREA_ARRAY_IN->type();
-  _areaArrayOut = _AREA_ARRAY_OUT->type();
-
-  _areaArrayOut->resize(_areaArrayIn->size());
-
-  _sizeX = _VIDEO_IN->type()->width();
-  _sizeY = _VIDEO_IN->type()->height();
+  _area = _SELECT_IN->type();
+  _imageIn = _VIDEO_IN->type();
+  _imageOut = _VIDEO_OUT->type();
   
-  AreaArrayType::const_iterator in = _areaArrayIn->begin();
-  AreaArrayType::iterator out = _areaArrayOut->begin();
+  ASSERT_ERROR(0 <= _area->x0() && _area->x0() + _area->width() <= _imageIn->width() &&
+               0 <= _area->y0() && _area->y0() + _area->height() <= _imageIn->height());
+
+  int x = _area->x0();
+  int width = (int)_area->width();
   
-  for ( ; in != _areaArrayIn->end(); ++in, ++out)
-  {
-    out->x0 = MAX(in->x0, 0);
-    out->y0 = MAX(in->y0, 0);
-    out->width = MIN((int)in->width, _sizeX - in->x0);
-    out->height = MIN((int)in->height, _sizeY - in->y0);
-  }
+  for (int y=0; y<(int)_area->height(); ++y)
+    memcpy(_imageOut->row(y), &_imageIn->operator()(x, y), width);
 }
-
-

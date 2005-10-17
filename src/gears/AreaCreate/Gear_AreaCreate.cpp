@@ -54,17 +54,11 @@ Gear_AreaCreate::~Gear_AreaCreate()
 
 }
 
-void Gear_AreaCreate::internalInit()
-{
-  _AREA_OUT->type()->resize(1);
-  _AREA_OUT->type()->operator[](0) = Area();
-}
-
 void Gear_AreaCreate::runVideo()
 {
-  _area = _AREA_OUT->type();
-  _area->setOrigin(_H_POSITION_IN->type()->intValue(), _V_POSITION_IN->type()->intValue());
-  _area->resize(MAX(_WIDTH_IN->type()->intValue(), 0), MAX(_HEIGHT_IN->type()->intValue(), 0));
+  _areaOut = _AREA_OUT->type();
+  _areaOut->setOrigin(_H_POSITION_IN->type()->intValue(), _V_POSITION_IN->type()->intValue());
+  _areaOut->resize(MAX(_WIDTH_IN->type()->intValue(), 0), MAX(_HEIGHT_IN->type()->intValue(), 0));
 }
 
 

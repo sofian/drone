@@ -1,4 +1,4 @@
-/* Gear_AreaArrayClip.cpp
+/* Gear_AreaClip.cpp
  * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -18,7 +18,7 @@
  */
 
 #include <iostream>
-#include "Gear_AreaArrayClip.h"
+#include "Gear_AreaClip.h"
 #include "Engine.h"
 #include "Math.h"
 
@@ -28,49 +28,37 @@
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
 {
-  return new Gear_AreaArrayClip(schema, uniqueName);
+  return new Gear_AreaClip(schema, uniqueName);
 }
 
 GearInfo getGearInfo()
 {
   GearInfo gearInfo;
-  gearInfo.name = "AreaArrayClip";
+  gearInfo.name = "AreaClip";
   gearInfo.classification = GearClassifications::video().mask().instance();
   return gearInfo;
 }
 }
 
-Gear_AreaArrayClip::Gear_AreaArrayClip(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayClip", uniqueName)
+Gear_AreaClip::Gear_AreaClip(Schema *schema, std::string uniqueName) : Gear(schema, "AreaClip", uniqueName)
 {    
-  addPlug(_AREA_ARRAY_OUT = new PlugOut<AreaArrayType>(this, "AreaOut", true));
-  addPlug(_AREA_ARRAY_IN = new PlugIn<AreaArrayType>(this, "AreaIn", true));
+  addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
+  addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "Video", true));
 }
 
-Gear_AreaArrayClip::~Gear_AreaArrayClip()
+Gear_AreaClip::~Gear_AreaClip()
 {
 }
 
-void Gear_AreaArrayClip::runVideo()
+void Gear_AreaClip::runVideo()
 {
-  _areaArrayIn = _AREA_ARRAY_IN->type();
-  _areaArrayOut = _AREA_ARRAY_OUT->type();
+  _areaIn = _AREA_IN->type();
+  _areaOut = _AREA_OUT->type();
 
-  _areaArrayOut->resize(_areaArrayIn->size());
-
-  _sizeX = _VIDEO_IN->type()->width();
-  _sizeY = _VIDEO_IN->type()->height();
-  
-  AreaArrayType::const_iterator in = _areaArrayIn->begin();
-  AreaArrayType::iterator out = _areaArrayOut->begin();
-  
-  for ( ; in != _areaArrayIn->end(); ++in, ++out)
-  {
-    out->x0 = MAX(in->x0, 0);
-    out->y0 = MAX(in->y0, 0);
-    out->width = MIN((int)in->width, _sizeX - in->x0);
-    out->height = MIN((int)in->height, _sizeY - in->y0);
-  }
+  _areaOut->setOrigin(MAX(_areaIn->x0(), 0), MAX(_areaIn->y0(), 0));
+  _areaOut->resize(MIN(_areaIn->width(), (size_t)(_VIDEO_IN->type()->width() - _areaIn->x0())),
+                   MIN(_areaIn->height(), (size_t)(_VIDEO_IN->type()->height() - _areaIn->y0())));
 }
 
 

@@ -1,4 +1,4 @@
-/* Gear_AreaArrayClip.h
+/* Gear_AreaVideoReplace.h
  * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -17,51 +17,54 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_AREAARRAYCLIP_INCLUDED
-#define GEAR_AREAARRAYCLIP_INCLUDED
+#ifndef GEAR_AREAVIDEOREPLACE_INCLUDED
+#define GEAR_AREAVIDEOREPLACE_INCLUDED
 
 
 #include "Gear.h"
 #include "VideoRGBAType.h"
-#include "AreaArrayType.h"
-#include "ListType.h"
-//#include "ValueType.h"
+#include "AreaType.h"
+
 #include "error.h"
 
 /**
- * This gear creates an output mask from an array of area (AreaArrayType).
+ * This gear creates an output mask from an  of area (AreaType).
  * The mask is false (black) in every point where no area falls and is true
  * (white) wherever lies an area.
  *
- * @see AreaArrayType
+ * @see AreaType
  * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
-class Gear_AreaArrayClip : public Gear
+class Gear_AreaVideoReplace : public Gear
 {
 public:
   //! Default constructor.
-  Gear_AreaArrayClip(Schema *schema, std::string uniqueName);
+  Gear_AreaVideoReplace(Schema *schema, std::string uniqueName);
 
   //! Destructor.
-  virtual ~Gear_AreaArrayClip();
+  virtual ~Gear_AreaVideoReplace();
 
   void runVideo();
 
 private:
-  //! Output area array.
-  PlugOut<AreaArrayType> *_AREA_ARRAY_OUT;
+  //! Output video list.
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
-  //! Intput area array.
-  PlugIn<AreaArrayType> *_AREA_ARRAY_IN;
+  //!  of areas.
+  PlugIn<AreaType> *_REPLACE_AREA_IN;
 
   //! Input video.
+  PlugIn<VideoRGBAType> *_REPLACE_VIDEO_IN;
+
+    //! Input video.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
-  
+
   // Internal use.
-  const AreaArrayType *_areaArrayIn;
-  AreaArrayType *_areaArrayOut;
-  int _sizeX, _sizeY;
+  const VideoRGBAType *_imageIn;
+  const VideoRGBAType *_imageReplaceIn;
+  const AreaType *_replaceArea;
+  VideoRGBAType *_imageOut;
 };
 
 #endif

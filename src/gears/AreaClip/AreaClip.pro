@@ -1,16 +1,16 @@
 include (../../../config.pro)
 
 TEMPLATE=lib
-SOURCES+=Gear_AreaArrayClip.cpp
-HEADERS+=Gear_AreaArrayClip.h
+SOURCES+=Gear_AreaClip.cpp
+HEADERS+=Gear_AreaClip.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_AreaArrayClip
+unix:!macx:TARGET=../../../gears/Gear_AreaClip
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_AreaArrayClip
+macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_AreaClip
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

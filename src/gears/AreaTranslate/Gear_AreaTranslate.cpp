@@ -41,9 +41,9 @@ GearInfo getGearInfo()
 
 Gear_AreaTranslate::Gear_AreaTranslate(Schema *schema, std::string uniqueName) : Gear(schema, "AreaTranslate", uniqueName)
 {
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "AreaOut", true));
+  addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 
-  addPlug(_AREA_IN = new PlugIn<AreaArrayType>(this, "AreaIn", true));
+  addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));
   addPlug(_X_IN = new PlugIn<ValueType>(this, "X", false, new ValueType(0, -10, 10)));
   addPlug(_Y_IN = new PlugIn<ValueType>(this, "Y", false, new ValueType(0, -10, 10)));
 }
@@ -59,18 +59,11 @@ void Gear_AreaTranslate::internalInit()
 
 void Gear_AreaTranslate::runVideo()
 {
-  _areaArrayIn = _AREA_IN->type();
-  _areaArrayOut = _AREA_OUT->type();
-  _AREA_OUT->type()->resize(_AREA_IN->type()->size());
-
-  AreaArrayType::const_iterator in = _areaArrayIn->begin();
-  AreaArrayType::iterator out = _areaArrayOut->begin();
+  _areaIn = _AREA_IN->type();
+  _areaOut = _AREA_OUT->type();
   
-  for ( ; in != _areaArrayIn->end(); ++in, ++out)
-  {
-    out->x0 = in->x0 + _X_IN->type()->intValue();
-    out->y0 = in->y0 + _Y_IN->type()->intValue();
-  }
+  _areaOut->setOrigin(_areaIn->x0() + _X_IN->type()->intValue(),
+                      _areaIn->y0() + _Y_IN->type()->intValue());
 }
 
 

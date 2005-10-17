@@ -15,9 +15,12 @@ VideoMix \
 Edge \
 AffineTransform \
 ApplyDisplaceGrid \
-#AreaCreate \
-#AreaScale \
-#AreaTranslate \
+AreaClip \
+AreaCreate \
+AreaScale \
+AreaTranslate \
+AreaVideoSelect \
+AreaVideoReplace \
 #AreaArrayMask \
 #AreaArrayClip \
 #AreaArrayVideoSelect \

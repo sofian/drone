@@ -35,9 +35,6 @@ public:
 
   void runVideo();
 
-protected:
-  void internalInit();
-
 private:
   PlugOut<AreaType> *_AREA_OUT;
   PlugIn<ValueType> *_H_POSITION_IN;
@@ -45,7 +42,7 @@ private:
   PlugIn<ValueType> *_WIDTH_IN;
   PlugIn<ValueType> *_HEIGHT_IN;
 
-  Area *_area;
+  AreaType *_areaOut;
 };
 
 #endif

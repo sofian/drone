@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 #include "ValueType.h"
-#include "AreaArrayType.h"
+#include "AreaType.h"
 
 
 class Gear_AreaScale : public Gear
@@ -39,14 +39,14 @@ protected:
   void internalInit();
 
 private:
-  PlugOut<AreaArrayType> *_AREA_OUT;
+  PlugOut<AreaType> *_AREA_OUT;
 
-  PlugIn<AreaArrayType> *_AREA_IN;
+  PlugIn<AreaType> *_AREA_IN;
   PlugIn<ValueType> *_X_SCALE_IN;
   PlugIn<ValueType> *_Y_SCALE_IN;
 
-  const AreaArrayType *_areaArrayIn;
-  AreaArrayType *_areaArrayOut;
+  const AreaType *_areaIn;
+  AreaType *_areaOut;
 };
 
 #endif

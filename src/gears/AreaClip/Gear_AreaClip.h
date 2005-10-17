@@ -1,4 +1,4 @@
-/* Gear_AreaArrayClip.h
+/* Gear_AreaClip.h
  * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -17,13 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_AREAARRAYCLIP_INCLUDED
-#define GEAR_AREAARRAYCLIP_INCLUDED
+#ifndef GEAR_AREACLIP_INCLUDED
+#define GEAR_AREACLIP_INCLUDED
 
 
 #include "Gear.h"
 #include "VideoRGBAType.h"
-#include "AreaArrayType.h"
+#include "AreaType.h"
 #include "ListType.h"
 //#include "ValueType.h"
 #include "error.h"
@@ -33,35 +33,34 @@
  * The mask is false (black) in every point where no area falls and is true
  * (white) wherever lies an area.
  *
- * @see AreaArrayType
+ * @see AreaType
  * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
-class Gear_AreaArrayClip : public Gear
+class Gear_AreaClip : public Gear
 {
 public:
-  //! Default constructor.
-  Gear_AreaArrayClip(Schema *schema, std::string uniqueName);
+  //! Default constructor.l
+  Gear_AreaClip(Schema *schema, std::string uniqueName);
 
   //! Destructor.
-  virtual ~Gear_AreaArrayClip();
+  virtual ~Gear_AreaClip();
 
   void runVideo();
 
 private:
-  //! Output area array.
-  PlugOut<AreaArrayType> *_AREA_ARRAY_OUT;
+  //! Output area .
+  PlugOut<AreaType> *_AREA_OUT;
 
-  //! Intput area array.
-  PlugIn<AreaArrayType> *_AREA_ARRAY_IN;
+  //! Intput area .
+  PlugIn<AreaType> *_AREA_IN;
 
   //! Input video.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   
   // Internal use.
-  const AreaArrayType *_areaArrayIn;
-  AreaArrayType *_areaArrayOut;
-  int _sizeX, _sizeY;
+  const AreaType *_areaIn;
+  AreaType *_areaOut;
 };
 
 #endif

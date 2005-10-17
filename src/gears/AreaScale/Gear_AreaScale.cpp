@@ -41,9 +41,9 @@ GearInfo getGearInfo()
 
 Gear_AreaScale::Gear_AreaScale(Schema *schema, std::string uniqueName) : Gear(schema, "AreaScale", uniqueName)
 {
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "AreaOut", true));
+  addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 
-  addPlug(_AREA_IN = new PlugIn<AreaArrayType>(this, "AreaIn", true));
+  addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));
   addPlug(_X_SCALE_IN = new PlugIn<ValueType>(this, "XScale", false, new ValueType(1, 0, 2)));
   addPlug(_Y_SCALE_IN = new PlugIn<ValueType>(this, "YScale", false, new ValueType(1, 0, 2)));
 }
@@ -59,18 +59,11 @@ void Gear_AreaScale::internalInit()
 
 void Gear_AreaScale::runVideo()
 {
-  _areaArrayIn = _AREA_IN->type();
-  _areaArrayOut = _AREA_OUT->type();
-  _AREA_OUT->type()->resize(_AREA_IN->type()->size());
+  _areaIn = _AREA_IN->type();
+  _areaOut = _AREA_OUT->type();
 
-  AreaArrayType::const_iterator in = _areaArrayIn->begin();
-  AreaArrayType::iterator out = _areaArrayOut->begin();
-  
-  for ( ; in != _areaArrayIn->end(); ++in, ++out)
-  {
-    out->width  = ((float)in->width) * _X_SCALE_IN->type()->intValue();
-    out->height = ((float)in->height) * _Y_SCALE_IN->type()->intValue();
-  }
+  _areaOut->resize((size_t) (((float)_areaIn->width()) * _X_SCALE_IN->type()->value()),
+                   (size_t) (((float)_areaIn->height()) * _Y_SCALE_IN->type()->value()));
 }
 
 
