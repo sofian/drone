@@ -25,7 +25,7 @@
 #include "VideoRGBAType.h"
 #include "AreaType.h"
 #include "ListType.h"
-//#include "ValueType.h"
+#include "ValueType.h"
 #include "error.h"
 
 /**
@@ -57,10 +57,14 @@ private:
 
   //! Input video.
   PlugIn<VideoRGBAType> *_VIDEO_IN;
-  
+
+  //! Border to which to clip.
+  PlugIn<ValueType> *_BORDER_IN;
+
   // Internal use.
   const AreaType *_areaIn;
   AreaType *_areaOut;
+  int _borderX, _borderY;
 };
 
 #endif

@@ -45,6 +45,7 @@ Gear_AreaClip::Gear_AreaClip(Schema *schema, std::string uniqueName) : Gear(sche
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
   addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "Video", true));
+  addPlug(_BORDER_IN = new PlugIn<ValueType>(this, "Border", false, new ValueType(0, 0, 10)));
 }
 
 Gear_AreaClip::~Gear_AreaClip()
@@ -55,10 +56,12 @@ void Gear_AreaClip::runVideo()
 {
   _areaIn = _AREA_IN->type();
   _areaOut = _AREA_OUT->type();
-
-  _areaOut->setOrigin(MAX(_areaIn->x0(), 0), MAX(_areaIn->y0(), 0));
-  _areaOut->resize(MIN(_areaIn->width(), (size_t)(_VIDEO_IN->type()->width() - _areaIn->x0())),
-                   MIN(_areaIn->height(), (size_t)(_VIDEO_IN->type()->height() - _areaIn->y0())));
+  _borderX = MAX(0, MIN(_BORDER_IN->type()->intValue(), (int)_areaIn->width()));
+  _borderY = MAX(0, MIN(_BORDER_IN->type()->intValue(), (int)_areaIn->height()));
+  
+  _areaOut->setOrigin(MAX(_areaIn->x0(), _borderX), MAX(_areaIn->y0(), _borderY));
+  _areaOut->resize(MIN(_areaIn->width(), (size_t)MAX(0, (int)(_VIDEO_IN->type()->width() - _areaIn->x0() - 2*_borderX))),
+                   MIN(_areaIn->height(), (size_t)MAX(0, (int)(_VIDEO_IN->type()->height() - _areaIn->y0() - 2*_borderY))));
 }
 
 

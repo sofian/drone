@@ -64,6 +64,7 @@ void Gear_AreaTranslate::runVideo()
   
   _areaOut->setOrigin(_areaIn->x0() + _X_IN->type()->intValue(),
                       _areaIn->y0() + _Y_IN->type()->intValue());
+  _areaOut->resize(_areaIn->width(), _areaIn->height());
 }
 
 

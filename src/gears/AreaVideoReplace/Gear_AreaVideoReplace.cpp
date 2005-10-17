@@ -45,7 +45,7 @@ Gear_AreaVideoReplace::Gear_AreaVideoReplace(Schema *schema, std::string uniqueN
 
   addPlug(_REPLACE_AREA_IN = new PlugIn<AreaType>(this, "ReplaceArea", true));
   addPlug(_REPLACE_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ReplaceVideo", true));
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "Video", true));
+  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "VideoIn", true));
 }
 
 Gear_AreaVideoReplace::~Gear_AreaVideoReplace()
@@ -58,19 +58,21 @@ void Gear_AreaVideoReplace::runVideo()
   _imageReplaceIn = _REPLACE_VIDEO_IN->type();
   _imageIn = _VIDEO_IN->type();
   _imageOut = _VIDEO_OUT->type();
+
   _imageOut->resize(_imageIn->width(), _imageIn->height());
   
   ASSERT_ERROR(0 <= _replaceArea->x0() && _replaceArea->x0() + _replaceArea->width() <= _imageIn->width() &&
                0 <= _replaceArea->y0() && _replaceArea->y0() + _replaceArea->height() <= _imageIn->height());
+  //  NOTICE("%d %d %d %d",  _replaceArea->width(),_imageReplaceIn->width(),_replaceArea->height(), _imageReplaceIn->height());
   ASSERT_ERROR(_replaceArea->width() == _imageReplaceIn->width() && _replaceArea->height() == _imageReplaceIn->height());
   
   int x = _replaceArea->x0();
-  int width = (int)_replaceArea->width();
+  size_t rowWidth = (int)_replaceArea->width() * sizeof(RGBA);
 
   // Copy everything.
-  memcpy(_imageOut->data(), _imageIn->data(), _imageIn->size());
+  memcpy(_imageOut->data(), _imageIn->data(), _imageIn->size() * sizeof(RGBA));
 
   // Copy the subwindow.
-  for (int y=0; y<(int)_replaceArea->height(); ++y)
-    memcpy(&_imageOut->operator()(x,y), _imageReplaceIn->row(y), width);
+  for (int i=0, y=_replaceArea->y0(); i<(int)_replaceArea->height(); ++i, ++y)
+    memcpy(&_imageOut->operator()(x,y), _imageReplaceIn->row(i), rowWidth);
 }

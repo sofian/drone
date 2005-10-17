@@ -51,12 +51,12 @@ public:
   QColor color() const { return QColor(221,46,33); }
 
   void setOrigin(int x0, int y0) { _x0 = x0; _y0 = y0; }
-  void resize(int width, int height) { _width = width; _height = height; }
+  void resize(size_t width, size_t height) { _width = width; _height = height; }
   
   int x0() const { return _x0; }
   int y0() const { return _y0; }
-  int width() const { return _width; }
-  int height() const { return _height; }
+  size_t width() const { return _width; }
+  size_t height() const { return _height; }
   
 protected:
   //! The upper-left point.

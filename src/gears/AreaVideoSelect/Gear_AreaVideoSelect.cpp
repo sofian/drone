@@ -55,13 +55,14 @@ void Gear_AreaVideoSelect::runVideo()
   _area = _SELECT_IN->type();
   _imageIn = _VIDEO_IN->type();
   _imageOut = _VIDEO_OUT->type();
-  
+
+  _imageOut->resize(_area->width(), _area->height());
   ASSERT_ERROR(0 <= _area->x0() && _area->x0() + _area->width() <= _imageIn->width() &&
                0 <= _area->y0() && _area->y0() + _area->height() <= _imageIn->height());
 
   int x = _area->x0();
-  int width = (int)_area->width();
-  
-  for (int y=0; y<(int)_area->height(); ++y)
-    memcpy(_imageOut->row(y), &_imageIn->operator()(x, y), width);
+  size_t rowWidth = (int)_area->width() * sizeof(RGBA);
+
+  for (int i=0, y=_area->y0(); i<(int)_area->height(); ++i, ++y)
+    memcpy(_imageOut->row(i), &_imageIn->operator()(x,y), rowWidth);
 }

@@ -62,6 +62,7 @@ void Gear_AreaScale::runVideo()
   _areaIn = _AREA_IN->type();
   _areaOut = _AREA_OUT->type();
 
+  _areaOut->setOrigin(_areaIn->x0(),_areaIn->y0());
   _areaOut->resize((size_t) (((float)_areaIn->width()) * _X_SCALE_IN->type()->value()),
                    (size_t) (((float)_areaIn->height()) * _Y_SCALE_IN->type()->value()));
 }

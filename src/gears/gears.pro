@@ -65,6 +65,7 @@ VideoReplaceAreas \
 VideoSwitch \
 StringGen \
 StringFormat \
+StringSource \
 ValueMix
 agg {
 SUBDIRS+= SVGLoader \
