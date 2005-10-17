@@ -46,7 +46,7 @@ Gear_AreaCreate::Gear_AreaCreate(Schema *schema, std::string uniqueName) : Gear(
   addPlug(_V_POSITION_IN = new PlugIn<ValueType>(this, "Y", false, new ValueType(0, 0, 288)));
   addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));
   addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(288, 1, 768)));
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Area", true));
+  addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "Area", true));
 }
 
 Gear_AreaCreate::~Gear_AreaCreate()
@@ -62,11 +62,9 @@ void Gear_AreaCreate::internalInit()
 
 void Gear_AreaCreate::runVideo()
 {
-  _area = _AREA_OUT->type()->data();
-  _area->x0 = _H_POSITION_IN->type()->intValue();
-  _area->y0 = _V_POSITION_IN->type()->intValue();
-  _area->width = MAX(_WIDTH_IN->type()->intValue(), 0);
-  _area->height = MAX(_HEIGHT_IN->type()->intValue(), 0);
+  _area = _AREA_OUT->type();
+  _area->setOrigin(_H_POSITION_IN->type()->intValue(), _V_POSITION_IN->type()->intValue());
+  _area->resize(MAX(_WIDTH_IN->type()->intValue(), 0), MAX(_HEIGHT_IN->type()->intValue(), 0));
 }
 
 

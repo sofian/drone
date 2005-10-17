@@ -23,7 +23,7 @@
 
 #include "Gear.h"
 #include "ValueType.h"
-#include "AreaArrayType.h"
+#include "AreaType.h"
 
 
 class Gear_AreaCreate : public Gear
@@ -39,7 +39,7 @@ protected:
   void internalInit();
 
 private:
-  PlugOut<AreaArrayType> *_AREA_OUT;
+  PlugOut<AreaType> *_AREA_OUT;
   PlugIn<ValueType> *_H_POSITION_IN;
   PlugIn<ValueType> *_V_POSITION_IN;
   PlugIn<ValueType> *_WIDTH_IN;
