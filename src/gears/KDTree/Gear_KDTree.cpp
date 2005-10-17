@@ -150,7 +150,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
     {
       Area a;
       a.x0 = x0; a.y0 = y0;
-      a.x1 = x1; a.y1 = y1;
+      a.width = x1-x0; a.height = y1-y0;
       _AREA_OUT->type()->push_back(a);
     }
 
