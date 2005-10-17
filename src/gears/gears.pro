@@ -16,6 +16,8 @@ Edge \
 AffineTransform \
 ApplyDisplaceGrid \
 AreaCreate \
+AreaScale \
+AreaTranslate \
 #AreaArrayMask \
 AreaArrayClip \
 AreaArrayVideoSelect \

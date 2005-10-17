@@ -63,8 +63,8 @@ void Gear_AreaCreate::internalInit()
 void Gear_AreaCreate::runVideo()
 {
   _area = _AREA_OUT->type()->data();
-  _area->x0 = MAX(_H_POSITION_IN->type()->intValue(), 0);
-  _area->y0 = MAX(_V_POSITION_IN->type()->intValue(), 0);
+  _area->x0 = _H_POSITION_IN->type()->intValue();
+  _area->y0 = _V_POSITION_IN->type()->intValue();
   _area->width = MAX(_WIDTH_IN->type()->intValue(), 0);
   _area->height = MAX(_HEIGHT_IN->type()->intValue(), 0);
 }
