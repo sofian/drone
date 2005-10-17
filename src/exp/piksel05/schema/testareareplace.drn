@@ -1,0 +1,85 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="352" PosY="205" Type="VideoReplaceAreas" Name="VideoReplaceAreas.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoOut" Exposed="0" />
+                    <Plug Name="VideoList" Exposed="0" />
+                    <Plug Name="Replace" Exposed="0" />
+                    <Plug Name="VideoIn" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="349" PosY="66" Type="AreaArrayVideoSelect" Name="AreaArrayVideoSelect.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoList" Exposed="0" />
+                    <Plug Name="Select" Exposed="0" />
+                    <Plug Name="Video" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="511" PosY="221" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="183" PosY="374" Type="VideoSource" Name="VideoSource.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                    <Plug Name="Movie" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="-1" PosY="130" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="288" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="30" PosY="317" Type="TouchPad" Name="TouchPad.2" >
+                <Properties Horizontal_higher_Bound="1024" Horizontal_lower_Bound="1" Vertical_lower_Bound="1" Vertical_higher_Bound="768" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="165" PosY="69" Type="AreaCreate" Name="AreaCreate.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="X" Exposed="0" />
+                    <Plug Name="Y" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                    <Plug Name="Area" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="176" PosY="206" Type="AreaArrayClip" Name="AreaArrayClip.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="AreaOut" Exposed="0" />
+                    <Plug Name="AreaIn" Exposed="0" />
+                    <Plug Name="Video" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoReplaceAreas.1" GearB="VideoOutput.1" Input="IN" Output="VideoOut" />
+            <Connection GearA="AreaArrayVideoSelect.1" GearB="VideoReplaceAreas.1" Input="VideoList" Output="VideoList" />
+            <Connection GearA="VideoSource.1" GearB="AreaArrayVideoSelect.1" Input="Video" Output="ImgOut" />
+            <Connection GearA="VideoSource.1" GearB="AreaArrayClip.1" Input="Video" Output="ImgOut" />
+            <Connection GearA="VideoSource.1" GearB="VideoReplaceAreas.1" Input="VideoIn" Output="ImgOut" />
+            <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="X" Output="HValue" />
+            <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="Y" Output="VValue" />
+            <Connection GearA="TouchPad.2" GearB="AreaCreate.1" Input="Width" Output="HValue" />
+            <Connection GearA="TouchPad.2" GearB="AreaCreate.1" Input="Height" Output="VValue" />
+            <Connection GearA="AreaCreate.1" GearB="AreaArrayClip.1" Input="AreaIn" Output="Area" />
+            <Connection GearA="AreaArrayClip.1" GearB="VideoReplaceAreas.1" Input="Replace" Output="AreaOut" />
+            <Connection GearA="AreaArrayClip.1" GearB="AreaArrayVideoSelect.1" Input="Select" Output="AreaOut" />
+        </Connections>
+    </Schema>
+</Project>
