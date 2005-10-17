@@ -1,4 +1,4 @@
-/* VideoChannelType.h
+/* VideoChannelType.cpp
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -16,29 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+#include "VideoChannelType.h"
 
-#ifndef VIDEOCHANNELTYPE_INCLUDED
-#define VIDEOCHANNELTYPE_INCLUDED
-
-#include "ColorSpace.h"
-#include "Array2DType.h"
-
-class VideoChannelType : public Array2DType<unsigned char>
-{
-public:
-  static const std::string TYPENAME;
-  
-  VideoChannelType(int width = 0,
-                   int height = 0,
-                   unsigned char fillValue = 0)
-    : Array2DType<unsigned char>(width, height, fillValue)
-  {
-  }
-
-  virtual ~VideoChannelType() {}
-
-  virtual std::string typeName() const { return "VideoChannelType";}
-  QColor color() const { return QColor(63,63,63);}
-};
-
-#endif //VIDEOCHANNELTYPE_INCLUDED
+const std::string VideoChannelType::TYPENAME = "VideoChannel";

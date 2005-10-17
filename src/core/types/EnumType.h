@@ -26,6 +26,8 @@
 class EnumType : public ArrayType<std::string>
 {
 public:
+  static const std::string TYPENAME;
+  
   EnumType(int size = 1, int defaultValue=0)
     : ArrayType<std::string>(size)
   {

@@ -42,6 +42,7 @@ GearControl.h \
 GearFrei0r.h \
 types/AbstractType.h \
 types/AreaArrayType.h \
+types/AreaType.h \
 types/FFTType.h \
 types/StringType.h \
 types/OscMessageType.h \
@@ -100,6 +101,9 @@ Engine.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
+types/AreaType.cpp \
+types/EnumType.cpp \
+types/VideoChannelType.cpp \
 types/VideoRGBAType.cpp \
 types/ValueType.cpp \
 types/StringType.cpp \
