@@ -1,0 +1,9 @@
+#!/bin/bash
+cp -r $1/ $2/
+rm -rf $2/.svn $2/Makefile $2/debug $2/release $2/*~
+cd $2
+mv $1.pro $2.pro
+mv Gear_$1.h Gear_$2.h
+mv Gear_$1.cpp Gear_$2.cpp
+replace.py $1 $2 *
+cd ..
