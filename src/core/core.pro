@@ -74,6 +74,7 @@ PlugBox.h \
 Properties.h \
 Project.h \
 Rasterer.h \
+Random.h \
 SummedAreaTable.h \
 Schema.h \
 SchemaGui.h \
@@ -120,6 +121,7 @@ PlugBox.cpp \
 Properties.cpp \
 Project.cpp \
 Rasterer.cpp \
+Random.cpp \
 Schema.cpp \
 SchemaGui.cpp \
 SignalInfo.cpp \

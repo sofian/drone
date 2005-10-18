@@ -1,5 +1,5 @@
-/* Gear_AreaScale.h
- * Copyright (C) 2004 Jean-Sebastien Senecal
+/* Gear_RandomValue.h
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,33 +17,25 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_AREASCALE_INCLUDED
-#define GEAR_AREASCALE_INCLUDED
-
+#ifndef GEAR_RandomValue_INCLUDED
+#define GEAR_RandomValue_INCLUDED
 
 #include "Gear.h"
 #include "ValueType.h"
-#include "AreaType.h"
+#include "Random.h"
 
-
-class Gear_AreaScale : public Gear
+class Gear_RandomValue : public Gear  
 {
 public:
-
-  Gear_AreaScale(Schema *schema, std::string uniqueName);
-  virtual ~Gear_AreaScale();
+  Gear_RandomValue(Schema *schema, std::string uniqueName);
+  virtual ~Gear_RandomValue();
 
   void runVideo();
 
-private:
-  PlugOut<AreaType> *_AREA_OUT;
+protected:
+  PlugIn<ValueType> *_NEXT;
 
-  PlugIn<AreaType> *_AREA_IN;
-  PlugIn<ValueType> *_X_SCALE_IN;
-  PlugIn<ValueType> *_Y_SCALE_IN;
-
-  const AreaType *_areaIn;
-  AreaType *_areaOut;
+  PlugOut<ValueType> *_NUMBER;
 };
 
-#endif
+#endif 

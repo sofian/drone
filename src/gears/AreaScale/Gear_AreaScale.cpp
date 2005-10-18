@@ -53,10 +53,6 @@ Gear_AreaScale::~Gear_AreaScale()
 
 }
 
-void Gear_AreaScale::internalInit()
-{
-}
-
 void Gear_AreaScale::runVideo()
 {
   _areaIn = _AREA_IN->type();

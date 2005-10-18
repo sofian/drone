@@ -57,15 +57,16 @@ SignalStat \
 SmearGrid \
 Sobel \
 StringOutput \
+StringGen \
+StringFormat \
+StringSource \
+RandomValue \
 Tempo \
 VideoDelay \
 VideoRecord \
 VideoOffset \
 VideoReplaceAreas \
 VideoSwitch \
-StringGen \
-StringFormat \
-StringSource \
 ValueMix
 agg {
 SUBDIRS+= SVGLoader \

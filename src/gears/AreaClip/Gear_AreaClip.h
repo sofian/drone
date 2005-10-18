@@ -56,13 +56,13 @@ private:
   PlugIn<AreaType> *_AREA_IN;
 
   //! Input video.
-  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugIn<AreaType> *_CLIPPING_IN;
 
   //! Border to which to clip.
   PlugIn<ValueType> *_BORDER_IN;
 
   // Internal use.
-  const AreaType *_areaIn;
+  const AreaType *_areaIn, *_clippingIn;
   AreaType *_areaOut;
   int _borderX, _borderY;
 };

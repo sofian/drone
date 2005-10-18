@@ -29,12 +29,12 @@
                     <Plug Name="Video" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="342" PosY="290" Type="AreaClip" Name="AreaClip.1" >
+            <Gear PosX="342" PosY="289" Type="AreaClip" Name="AreaClip.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="AreaOut" Exposed="0" />
                     <Plug Name="AreaIn" Exposed="0" />
-                    <Plug Name="Video" Exposed="0" />
+                    <Plug Name="Clip" Exposed="0" />
                     <Plug Name="Border" Exposed="0" />
                 </Plugs>
             </Gear>
@@ -52,7 +52,7 @@
                     <Plug Name="VValue" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="206" PosY="434" Type="VideoSource" Name="VideoSource.1" >
+            <Gear PosX="266" PosY="418" Type="VideoSource" Name="VideoSource.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgOut" Exposed="0" />
@@ -65,15 +65,6 @@
                 <Properties YRes="240" XRes="352" FullScreen="0" />
                 <Plugs>
                     <Plug Name="IN" Exposed="0" />
-                </Plugs>
-            </Gear>
-            <Gear PosX="476" PosY="48" Type="AreaScale" Name="AreaScale.1" >
-                <Properties/>
-                <Plugs>
-                    <Plug Name="AreaOut" Exposed="0" />
-                    <Plug Name="AreaIn" Exposed="0" />
-                    <Plug Name="XScale" Exposed="0" />
-                    <Plug Name="YScale" Exposed="0" />
                 </Plugs>
             </Gear>
             <Gear PosX="334" PosY="31" Type="AreaTranslate" Name="AreaTranslate.1" >
@@ -92,14 +83,7 @@
                     <Plug Name="VValue" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="282" PosY="160" Type="TouchPad" Name="TouchPad.4" >
-                <Properties Horizontal_higher_Bound="2" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="2" />
-                <Plugs>
-                    <Plug Name="HValue" Exposed="0" />
-                    <Plug Name="VValue" Exposed="0" />
-                </Plugs>
-            </Gear>
-            <Gear PosX="53" PosY="451" Type="StringSource" Name="StringSource.1" >
+            <Gear PosX="125" PosY="428" Type="StringSource" Name="StringSource.1" >
                 <Properties Source="/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/shot01_01" />
                 <Plugs>
                     <Plug Name="str" Exposed="0" />
@@ -111,7 +95,7 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="197" PosY="506" Type="VideoSource" Name="VideoSource.2" >
+            <Gear PosX="246" PosY="516" Type="VideoSource" Name="VideoSource.2" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgOut" Exposed="0" />
@@ -120,7 +104,7 @@
                     <Plug Name="Movie" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="49" PosY="501" Type="StringSource" Name="StringSource.2" >
+            <Gear PosX="118" PosY="518" Type="StringSource" Name="StringSource.2" >
                 <Properties Source="/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/shot01_03" />
                 <Plugs>
                     <Plug Name="str" Exposed="0" />
@@ -152,7 +136,7 @@
                     <Plug Name="Rec" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="534" PosY="582" Type="Slider" SliderPos="-71.0732" Name="Slider.3" >
+            <Gear PosX="45" PosY="523" Type="Slider" SliderPos="-71.0732" Name="Slider.3" >
                 <Properties Lower_Bound="-124" Higher_Bound="0" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -164,6 +148,23 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
+            <Gear PosX="37" PosY="641" Type="TouchPad" Name="TouchPad.5" >
+                <Properties Horizontal_higher_Bound="720" Horizontal_lower_Bound="720" Vertical_lower_Bound="480" Vertical_higher_Bound="480" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="249" PosY="637" Type="AreaCreate" Name="AreaCreate.2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="X" Exposed="0" />
+                    <Plug Name="Y" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                    <Plug Name="Area" Exposed="0" />
+                </Plugs>
+            </Gear>
         </Gears>
         <Connections>
             <Connection GearA="AreaCreate.1" GearB="AreaClip.1" Input="AreaIn" Output="Area" />
@@ -171,18 +172,14 @@
             <Connection GearA="AreaVideoSelect.1" GearB="AreaVideoReplace.1" Input="ReplaceVideo" Output="VideoOut" />
             <Connection GearA="AreaClip.1" GearB="AreaVideoSelect.1" Input="Select" Output="AreaOut" />
             <Connection GearA="AreaClip.1" GearB="AreaTranslate.1" Input="AreaIn" Output="AreaOut" />
+            <Connection GearA="AreaClip.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="AreaOut" />
             <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="X" Output="HValue" />
             <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="Y" Output="VValue" />
             <Connection GearA="TouchPad.2" GearB="AreaCreate.1" Input="Width" Output="HValue" />
             <Connection GearA="TouchPad.2" GearB="AreaCreate.1" Input="Height" Output="VValue" />
-            <Connection GearA="VideoSource.1" GearB="AreaClip.1" Input="Video" Output="ImgOut" />
             <Connection GearA="VideoSource.1" GearB="VideoMix.1" Input="ImgA" Output="ImgOut" />
-            <Connection GearA="AreaTranslate.1" GearB="AreaScale.1" Input="AreaIn" Output="AreaOut" />
-            <Connection GearA="AreaTranslate.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="AreaOut" />
             <Connection GearA="TouchPad.3" GearB="AreaTranslate.1" Input="X" Output="HValue" />
             <Connection GearA="TouchPad.3" GearB="AreaTranslate.1" Input="Y" Output="VValue" />
-            <Connection GearA="TouchPad.4" GearB="AreaScale.1" Input="XScale" Output="HValue" />
-            <Connection GearA="TouchPad.4" GearB="AreaScale.1" Input="YScale" Output="VValue" />
             <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
             <Connection GearA="Slider.1" GearB="AreaClip.1" Input="Border" Output="Value" />
             <Connection GearA="VideoSource.2" GearB="VideoMix.1" Input="ImgB" Output="ImgOut" />
@@ -193,6 +190,9 @@
             <Connection GearA="VideoDelay.1" GearB="AreaVideoReplace.1" Input="VideoIn" Output="ImgOUT" />
             <Connection GearA="Slider.3" GearB="VideoDelay.1" Input="Delay" Output="Value" />
             <Connection GearA="Slider.4" GearB="VideoDelay.1" Input="Rec" Output="Value" />
+            <Connection GearA="TouchPad.5" GearB="AreaCreate.2" Input="Width" Output="HValue" />
+            <Connection GearA="TouchPad.5" GearB="AreaCreate.2" Input="Height" Output="VValue" />
+            <Connection GearA="AreaCreate.2" GearB="AreaClip.1" Input="Clip" Output="Area" />
         </Connections>
     </Schema>
 </Project>
