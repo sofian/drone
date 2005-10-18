@@ -24,6 +24,7 @@
 #include "Gear.h"
 #include "VideoRGBAType.h"
 #include "AreaType.h"
+#include "Rasterer.h"
 
 #include "error.h"
 
@@ -61,6 +62,8 @@ private:
   const VideoRGBAType *_imageIn;
   const AreaType *_area;
   VideoRGBAType *_imageOut;
+
+  Rasterer *_rasterer;
 };
 
 #endif
