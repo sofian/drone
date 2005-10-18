@@ -39,7 +39,7 @@ extern "C" {
   }
 }
 
-const int Gear_TA_ContextSelector::MAX_CONTEXTS = 5;
+const int Gear_TA_ContextSelector::MAX_CONTEXTS = 2;
 
 Gear_TA_ContextSelector::Gear_TA_ContextSelector(Schema *schema, std::string uniqueName) : 
   Gear(schema, "TA_ContextSelector", uniqueName),
@@ -49,12 +49,21 @@ Gear_TA_ContextSelector::Gear_TA_ContextSelector(Schema *schema, std::string uni
   addPlug(_CHANNEL_IN = new PlugIn<ValueType>(this, "Ch", false));
   addPlug(_BANG_IN = new PlugIn<ValueType>(this, "Bang", false));
 
-  for (int i=0; i<MAX_CONTEXTS; ++i)
-  {
-    addPlug(_INNOCENCE_OUT[i] = new PlugOut<ValueType>(this, "Ict" + i, false));
-    addPlug(_CHANNEL_OUT[i] = new PlugOut<ValueType>(this, "Ch" + i, false));
-    addPlug(_BANG_OUT[i] = new PlugOut<ValueType>(this, "Bang" + i, false));
-  }
+//   _INNOCENCE_OUT.resize(MAX_CONTEXTS);
+//   _CHANNEL_OUT.resize(MAX_CONTEXTS);
+//   _BANG_OUT.resize(MAX_CONTEXTS);
+//   for (int i=0; i<MAX_CONTEXTS; ++i)
+//   {
+    addPlug(_INNOCENCE_0_OUT = new PlugOut<ValueType>(this, "Ict0", false));    
+    addPlug(_CHANNEL_0_OUT = new PlugOut<ValueType>(this, "Ch0", false));
+    addPlug(_BANG_0_OUT = new PlugOut<ValueType>(this, "Bang0", false));
+    addPlug(_INNOCENCE_1_OUT = new PlugOut<ValueType>(this, "Ict1", false));    
+    addPlug(_CHANNEL_1_OUT = new PlugOut<ValueType>(this, "Ch1", false));
+    addPlug(_BANG_1_OUT = new PlugOut<ValueType>(this, "Bang1", false));
+//     addPlug(new PlugOut<ValueType>(this, "Ict", false));
+//     addPlug(new PlugOut<ValueType>(this, "Ch", false));
+//     addPlug(new PlugOut<ValueType>(this, "Bang", false));
+//  }
 }
 
 Gear_TA_ContextSelector::~Gear_TA_ContextSelector()
@@ -65,9 +74,20 @@ void Gear_TA_ContextSelector::runVideo()
 {
   if (_BANG_IN->type()->boolValue())
   {
-    _INNOCENCE_OUT[_currentContext]->type()->setValue(_INNOCENCE_IN->type()->value());
-    _CHANNEL_OUT[_currentContext]->type()->setValue(_CHANNEL_IN->type()->value());
-    _BANG_OUT[_currentContext]->type()->setValue(_BANG_IN->type()->value());
+    if (_currentContext == 0)
+    {
+      _INNOCENCE_0_OUT->type()->setValue(_INNOCENCE_IN->type()->value());
+      _CHANNEL_0_OUT->type()->setValue(_CHANNEL_IN->type()->value());
+      _BANG_0_OUT->type()->setValue(_BANG_IN->type()->value());
+    }
+    else if (_currentContext == 1)
+    {
+      _INNOCENCE_1_OUT->type()->setValue(_INNOCENCE_IN->type()->value());
+      _CHANNEL_1_OUT->type()->setValue(_CHANNEL_IN->type()->value());
+      _BANG_1_OUT->type()->setValue(_BANG_IN->type()->value());
+    }
+    
+    _currentContext = ( _currentContext + 1 ) % MAX_CONTEXTS;
   }
 }
 

@@ -1,5 +1,5 @@
-/* Gear_TA_ContextSelector.h
- * Copyright (C) 2005 Jean-Sebastien Senecal
+/* Gear_TA_RandomArea.h
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,37 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_TA_CONTEXTSELECTOR_INCLUDED
-#define GEAR_TA_CONTEXTSELECTOR_INCLUDED
-
+#ifndef GEAR_TA_RandomArea_INCLUDED
+#define GEAR_TA_RandomArea_INCLUDED
 
 #include "Gear.h"
+#include "AreaType.h"
 #include "ValueType.h"
 
-class Gear_TA_ContextSelector : public Gear
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 480
+
+class Gear_TA_RandomArea : public Gear  
 {
-  static const int MAX_CONTEXTS;
-  
 public:
-  Gear_TA_ContextSelector(Schema *schema, std::string uniqueName);
-  virtual ~Gear_TA_ContextSelector();
+  Gear_TA_RandomArea(Schema *schema, std::string uniqueName);
+  virtual ~Gear_TA_RandomArea();
 
   void runVideo();
 
-public:
-  PlugIn<ValueType> *_INNOCENCE_IN;
-  PlugIn<ValueType> *_CHANNEL_IN;
-  PlugIn<ValueType> *_BANG_IN;
-
-  PlugOut<ValueType>* _INNOCENCE_0_OUT;
-  PlugOut<ValueType>* _CHANNEL_0_OUT;
-  PlugOut<ValueType>* _BANG_0_OUT;
-  PlugOut<ValueType>* _INNOCENCE_1_OUT;
-  PlugOut<ValueType>* _CHANNEL_1_OUT;
-  PlugOut<ValueType>* _BANG_1_OUT;
-  
 protected:
-  int _currentContext;
+  PlugIn<ValueType> *_NEXT;
+
+  PlugOut<AreaType> *_AREA;
 };
 
-#endif
+#endif 
