@@ -29,7 +29,13 @@
 #include "agg_bounding_rect.h"
 #include "agg_rasterizer_scanline_aa.h"
 #include "agg_svg_path_tokenizer.h"
-
+#include "agg_trans_warp_magnifier.h"
+#include "agg_conv_segmentator.h"
+#include <vector>
+struct disto_t
+{
+float x,y,rad,magn;
+};
 namespace agg
 {
 namespace svg
@@ -133,6 +139,10 @@ namespace svg
         typedef conv_curve<path_storage>       curved;
         typedef conv_count<curved>             curved_count;
 
+        typedef conv_segmentator<curved_count> curved_count_segmented;
+	typedef conv_transform<curved_count_segmented,trans_warp_magnifier> curved_lens;
+	//typedef conv_transform<curved_count,trans_warp_magnifier> curved_lens;
+
         typedef conv_stroke<curved_count>      curved_stroked;
         typedef conv_transform<curved_stroked> curved_stroked_trans;
 
@@ -221,6 +231,13 @@ namespace svg
             agg::bounding_rect(trans, *this, 0, m_attr_storage.size(), x1, y1, x2, y2);
         }
 
+	void bounding_rect()
+        {
+            agg::conv_transform<agg::path_storage> trans(m_storage, m_transform);
+            agg::bounding_rect(trans, *this, 0, m_attr_storage.size(), &m_min_x, &m_min_y, &m_max_x, &m_max_y);
+        }
+
+
 	void setGlobalTransform(trans_affine& mtx)
 	  {
 	    m_global_trans = mtx;
@@ -251,12 +268,25 @@ namespace svg
                 const path_attributes& attr = m_attr_storage[i];
                 m_transform = attr.transform;
                 m_transform *= m_global_trans;
+		m_transform  *= mtx;
                 double scl = m_transform.scale();
                 //m_curved.approximation_method(curve_inc);
                 m_curved.approximation_scale(scl);
                 m_curved.angle_tolerance(0.0);
 
-                rgba8 color;
+	if(distpts.size())
+	{
+	        m_trans_lens.center((distpts)[0].x,(distpts)[0].y);
+	        m_trans_lens.magnification((distpts)[0].magn);
+	        m_trans_lens.radius((distpts)[0].rad);
+	}
+	else
+	{
+		m_trans_lens.center(0,0);
+		m_trans_lens.magnification(0.0f);
+		m_trans_lens.radius(0.0f);
+	}
+	rgba8 color;
 
                 if(attr.fill_flag)
                 {
@@ -305,17 +335,34 @@ namespace svg
             }
         }
 
+
+	double getMinX() const {return m_min_x;}
+	double getMaxX() const {return m_max_x;}
+	double getMinY() const {return m_min_y;}
+	double getMaxY() const {return m_max_y;}
+	void setDisto(std::vector<disto_t> pt){distpts=pt;}
+  	const std::vector<disto_t>& getDisto(){return distpts;}
+	
     private:
         path_attributes& cur_attr();
 
+	double m_min_x,m_min_y,m_max_x,m_max_y;
+   
+  	std::vector<disto_t> distpts;
+  
         path_storage   m_storage;
         attr_storage   m_attr_storage;
         attr_storage   m_attr_stack;
         trans_affine   m_transform;
-	trans_affine   m_global_trans;
+	public:trans_affine   m_global_trans;
+	private:trans_warp_magnifier m_trans_lens;
+        
 
         curved                       m_curved;
         curved_count                 m_curved_count;
+
+	curved_count_segmented	     m_curved_count_segmented;
+	curved_lens		     m_lens;
 
         curved_stroked               m_curved_stroked;
         curved_stroked_trans         m_curved_stroked_trans;

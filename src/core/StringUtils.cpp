@@ -105,7 +105,7 @@ long tolong(const string& s, int base)
   long result = strtol(nptr,&endptr,base);
   if(endptr==nptr) { // no character to be read
     string err = string("in toint string is not an int: ") + s;
-    error(err.c_str());
+    //error(err.c_str());
   }
   return result;
 }
@@ -114,7 +114,7 @@ bool tobool(const string& s)
 {
   if (s=="true" || s=="1") return true;
   if (s=="false" || s=="0") return false;
-  error("tobool: can't convert string %s into a boolean",s.c_str());
+  //error("tobool: can't convert string %s into a boolean",s.c_str());
   return false;
 }
 
@@ -123,7 +123,7 @@ double todouble(const string& s)
   const char* nptr = s.c_str();
   char* endptr;
   double result = strtod(nptr,&endptr);
-  ASSERT_ERROR(endptr!=nptr); // no character to be read
+  //ASSERT_ERROR(endptr!=nptr); // no character to be read
   return result;
 }
 

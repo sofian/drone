@@ -42,6 +42,7 @@ Gamma \
 GenDisplaceGrid \
 GrayScale \
 HalfToning \
+EmptyImage \
 ImageSource \
 Invert \
 InvertAlpha \
@@ -63,7 +64,6 @@ StringFormat \
 StringSource \
 RandomValue \
 Tempo \
-ValueClamp \
 VideoDelay \
 VideoRecord \
 VideoOffset \

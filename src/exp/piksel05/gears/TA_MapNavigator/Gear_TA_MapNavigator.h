@@ -37,8 +37,9 @@ public:
 public:
   PlugIn<TA_DataType> *_DATA_IN;
   PlugIn<ValueType> *_HOTSPOT;
+ 
+  PlugIn<ValueType> *_ASPEED;
   
-
   PlugOut<ValueType> *_SCALE;
   PlugOut<ValueType> *_XOFF;
   PlugOut<ValueType> *_YOFF;
@@ -46,6 +47,11 @@ public:
   PlugOut<ValueType> *_RAX;  
   PlugOut<ValueType> *_RAY;
   PlugOut<ValueType> *_REACHED;    
+
+private :
+  bool initialized;
+  float rax,ray,acurspeed;
+
 };
 
 #endif

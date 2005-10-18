@@ -45,8 +45,10 @@ GearInfo getGearInfo()
 }
 
 Gear_Vectorial2Raster::Gear_Vectorial2Raster(Schema *schema, std::string uniqueName) : Gear(schema, "Vectorial2Raster", uniqueName)
-                                                                         
 {
+  addPlug(_XOFF = new PlugIn<ValueType>(this, "xoff", false, new ValueType(0, -100, 100)));
+  addPlug(_YOFF = new PlugIn<ValueType>(this, "yoff", false, new ValueType(0, -100, 100)));
+
   addPlug(_VEC_IN = new PlugIn<VectorialType>(this, "VecIN",true));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "BackG",true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT",true));
@@ -70,6 +72,9 @@ void Gear_Vectorial2Raster::runVideo()
   _imageIn  = (const unsigned char*) _image->data();
   _imageOut = (unsigned char*) _outImage->data();
 
+  float xoff = _XOFF->type()->value();
+  float yoff = _YOFF->type()->value();
+
   _vecIn  = _VEC_IN->type();
   
   zepath  = _vecIn->path();
@@ -84,6 +89,8 @@ void Gear_Vectorial2Raster::runVideo()
         typedef agg::pixfmt_rgba32 pixfmt;
         typedef agg::renderer_base<pixfmt> renderer_base;
         typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_solid;
+ 	
+	
 
         pixfmt pixf(rbuf);
         renderer_base rb(pixf);
@@ -94,7 +101,9 @@ void Gear_Vectorial2Raster::runVideo()
         agg::rasterizer_scanline_aa<> ras;
         agg::scanline_p8 sl;
         agg::trans_affine mtx;
-
+	mtx *= agg::trans_affine_translation(xoff,yoff);
+   
+ 
         zepath->render(ras, sl, ren, mtx, rb.clip_box(), 1.0);
 /*
         char buf[128]; 

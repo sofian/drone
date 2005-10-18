@@ -50,6 +50,7 @@ protected:
   void onUpdateSettings();
 
 private:
+  double m_min_x,m_min_y,m_max_x,m_max_y;
 
   static const std::string SETTING_FILENAME;
 

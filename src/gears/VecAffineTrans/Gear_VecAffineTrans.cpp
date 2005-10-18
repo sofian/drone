@@ -58,9 +58,6 @@ Gear_VecAffineTrans::Gear_VecAffineTrans(Schema *schema, std::string uniqueName)
   addPlug(_Y_IN = new PlugIn<ValueType>(this, "y", false, new ValueType(0.0f, -10.0f, 10.0f)));
   addPlug(_SCALE_IN = new PlugIn<ValueType>(this, "scale", false, new ValueType(1.0f, 0.1f, 2.0f)));
   addPlug(_ROTATE_IN = new PlugIn<ValueType>(this, "rotat", false, new ValueType(0.0f, 0.0f, 10.0f)));
- 
-
-
 }
 
 Gear_VecAffineTrans::~Gear_VecAffineTrans()
@@ -79,14 +76,14 @@ void Gear_VecAffineTrans::runVideo()
   m_path =  (_VEC_IN->type()->path());  
   
   agg::trans_affine mtx;
+//std::cerr<<"!!!!!!!!!!"<<m_path->getMinX()<<","<<m_path->getMaxX()<<"   "<<m_path->getMinY()<<","<<m_path->getMaxY()<<std::endl;
 
-  mtx *= agg::trans_affine_translation((m_min_x + m_max_x) * -0.5, (m_min_y + m_max_y) * -0.5);
+  mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * -0.5, (m_path->getMinY() + m_path->getMaxY()) * -0.5);
   mtx *= agg::trans_affine_scaling(scale);
   mtx *= agg::trans_affine_rotation(rotate);
-  mtx *= agg::trans_affine_translation((m_min_x + m_max_x) * 0.5 + x, (m_min_y + m_max_y) * 0.5 + y);
+  mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * 0.5 + x*scale, (m_path->getMinY() + m_path->getMaxY()) * 0.5 + y*scale);
   
-  m_path->setGlobalTransform(mtx);
-	
+  m_path->setGlobalTransform(mtx);	
   _VEC_OUT->type()->setPath(m_path);
 
 }

@@ -14,32 +14,37 @@
 //----------------------------------------------------------------------------
 
 #include <math.h>
+#include <stdlib.h>
+#include <iostream>
 #include "agg_trans_warp_magnifier.h"
 
 namespace agg
-{
+{   
 
     //------------------------------------------------------------------------
     void trans_warp_magnifier::transform(double* x, double* y) const
     {
         double dx = *x - m_xc;
         double dy = *y - m_yc;
-        double r = sqrt(dx * dx + dy * dy);
+	unsigned int magn=(unsigned int)m_magn;
+        double r = dx+dy;
+        //std::cerr<<"3pokpokpokpok"<<std::endl;
         if(r < m_radius)
-        {
-            *x = m_xc + dx * m_magn;
-            *y = m_yc + dy * m_magn;
+        { 
+            *x += (double)((((int)x)^0x5a5a5a5a)%magn - magn>>1)*r;
+            *y += (double)((((int)y)^0xa5a5a5a5)%magn - magn>>1)*r;
             return;
         }
-
-        double m = (r + m_radius * (m_magn - 1.0)) / r;
-        *x = m_xc + dx * m;
-        *y = m_yc + dy * m;
+ 
+        //double m = (r + m_radius * (m_magn - 1.0)) / r;
+        //*x = m_xc;// + dx * m;
+        //*y = m_yc;// + dy * m;
     }
 
     //------------------------------------------------------------------------
     void trans_warp_magnifier::inverse_transform(double* x, double* y) const
     {
+	std::cerr<<"inverse"<<std::endl;
         trans_warp_magnifier t(*this);
         t.magnification(1.0 / m_magn);
         t.radius(m_radius * m_magn);

@@ -31,10 +31,15 @@
 #include "platform/agg_platform_support.h"
 #include "ctrl/agg_slider_ctrl.h"
 #include "agg_svg_parser.h"
+#include <vector>
+//#include <pair>
+
  
 class VectorialType : public AbstractType
 {
+
 public:
+
   VectorialType()
 	: AbstractType()
 {
@@ -48,8 +53,8 @@ public:
   
   void setPath(agg::svg::path_renderer *path) const {m_path=path;}
   agg::svg::path_renderer *path() const {return m_path;}
- private:
-
+ 
+  private:
 
   mutable agg::svg::path_renderer *m_path;
 };

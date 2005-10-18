@@ -50,7 +50,6 @@ GearInfo getGearInfo()
 Gear_SVGLoader::Gear_SVGLoader(Schema *schema, std::string uniqueName) : Gear(schema, "SVGLoader", uniqueName)
 {
   addPlug(_VEC_OUT = new PlugOut<VectorialType>(this, "VecOUT",false));
- 
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
 
@@ -74,10 +73,9 @@ void Gear_SVGLoader::onUpdateSettings()
   }
   p.parse(_settings.get(SETTING_FILENAME)->valueStr().c_str());
   m_path.arrange_orientations();
- 
+  m_path.bounding_rect();
+
 }
-
-
 
 void Gear_SVGLoader::runVideo()
 {

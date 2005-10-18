@@ -1,4 +1,5 @@
 #include "AggWrapper.h"
+#include <stdlib.h>
 #include <iostream>
 
 template<class Source> struct stroke_fine
@@ -94,11 +95,12 @@ void AggWrapper::circle(float x, float y, float radius, agg::rgba8 color)
 void AggWrapper::ellipse(float x, float y, float radiusx, float radiusy, agg::rgba8 color)
 {
   agg::ellipse e1;
+agg::conv_transform<agg::ellipse> some(e1,m_globtrans);
   agg::rasterizer_scanline_aa<> pf;
   agg::scanline_p8 sl;
   e1.init(x,y,radiusx,radiusy,(int)(radiusx+radiusy)/2+4);
 
-  pf.add_path(e1);
+  pf.add_path(some);
   _r->color(color);
   agg::render_scanlines(pf, sl, *_r);
 
@@ -111,9 +113,11 @@ void AggWrapper::line(float x1, float y1, float x2, float y2, agg::rgba8 color)
   double x, y;
 
   line_t l(x1,y1,x2,y2);
-  stroke_fine<line_t> s(l, 1);
-  l.rewind(0);
-  while(!agg::is_stop(l.vertex(&x, &y)));
+  agg::conv_transform<line_t> some(l,m_globtrans);
+  	
+  stroke_fine<agg::conv_transform<line_t> > s(some, 1);
+  some.rewind(0);
+  while(!agg::is_stop(some.vertex(&x, &y)));
   
   pf.add_path(s);
   _r->color(agg::rgba8(color.r, color.g, color.b, color.a));

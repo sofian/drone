@@ -21,7 +21,7 @@
 #include <iostream>
 #include "Gear_TA_MapNavigator.h"
 #include "Engine.h"
-
+#include "StringUtils.h"
 #include "GearMaker.h"
 
 extern "C" {           
@@ -39,19 +39,20 @@ extern "C" {
 }
 
 Gear_TA_MapNavigator::Gear_TA_MapNavigator(Schema *schema, std::string uniqueName) : 
-Gear(schema, "TA_MapNavigator", uniqueName)
+Gear(schema, "TA_MapNavigator", uniqueName),initialized(false)
 {
 
   addPlug(_DATA_IN = new   PlugIn<TA_DataType>(this,"DATA",true)); 
   addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",true));
+  //addPlug(_HOTSPOT = new   PlugIn<ValueType>(this,"HOTSPOT",true));
   
-  addPlug(_SCALE  = new   PlugOut<ValueType>(this,"SCALE",true));
-  addPlug(_XOFF  = new   PlugOut<ValueType>(this,"XOFF",true));
-  addPlug(_YOFF  = new   PlugOut<ValueType>(this,"YOFF",true));
-  addPlug(_ROTATE  = new   PlugOut<ValueType>(this,"ROTATE",true));
-  addPlug(_RAX  = new   PlugOut<ValueType>(this,"RAX",true));
-  addPlug(_RAY  = new   PlugOut<ValueType>(this,"RAY",true));
-  addPlug(_REACHED  = new   PlugOut<ValueType>(this,"REACHED",true));
+  addPlug(_SCALE  = new   PlugOut<ValueType>(this,"SCALE",false));
+  addPlug(_XOFF  = new   PlugOut<ValueType>(this,"XOFF",false));
+  addPlug(_YOFF  = new   PlugOut<ValueType>(this,"YOFF",false));
+  addPlug(_ROTATE  = new   PlugOut<ValueType>(this,"ROTATE",false));
+  addPlug(_RAX  = new   PlugOut<ValueType>(this,"RAX",false));
+  addPlug(_RAY  = new   PlugOut<ValueType>(this,"RAY",false));
+  addPlug(_REACHED  = new   PlugOut<ValueType>(this,"REACHED",false));
 
 }
 
@@ -61,6 +62,32 @@ Gear_TA_MapNavigator::~Gear_TA_MapNavigator()
 
 void Gear_TA_MapNavigator::runVideo()
 {
+	bool moving;
+	int hs_num = (int)_HOTSPOT->type()->value();	
+	TA_DataType* data = _DATA_IN->type();
+	TA_CityVertex ver = (*data)[hs_num];
+	//data->printDebug();
+	float goalx(ver.x),goaly(ver.y);
+	if(!initialized)
+	{
+		initialized=true;	
+		rax = goalx;
+		ray = goaly;
+	}		
+	
+	moving = !(fabs(rax-goalx)<1 && fabs(ray-goaly)<1);
+	_REACHED->type()->setValue(moving?0.0f:1.0f);
+	rax += (goalx-rax)/10;
+	ray += (goaly-ray)/10;
+
+	std::cerr<<"hs:"<<hs_num<<" g:"<<goalx<<","<<goaly<<" cur:"<<rax<<","<<ray<<" moving:"<<(moving?1:0)<<"pok:"<<fabs(rax-goalx)<<std::endl;
+
+	_RAX->type()->setValue(rax);
+	_RAY->type()->setValue(ray);
+	_XOFF->type()->setValue(rax);
+	_YOFF->type()->setValue(ray);
+	_SCALE->type()->setValue(moving?1.0f:4.0f);
+	
 }
 
 

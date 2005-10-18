@@ -1,13 +1,13 @@
 <data x0="60.396" y0="5.32" width="0.003" height="0.002">
   <spot id="1" enabled="true">
-    <position x="60.396389" y="5.328600" z="61.709999" />
+    <position x="138" y="160" z="61.709999" />
     <moviefile>shot01_01</moviefile>
     <moviefile>shot01_03</moviefile>
     <moviefile>shot01_04</moviefile>
   </spot>
   
   <spot id="2">
-    <position x="60.398117" y="5.328063" z="146.850006" />
+    <position x="211" y="206" z="146.850006" />
     <moviefile>shot02_01</moviefile>
     <moviefile>shot02_02</moviefile>
     <moviefile>shot02_03</moviefile>
@@ -17,7 +17,7 @@
   </spot>
 
   <spot id="3">
-    <position x="60.397144" y="5.329805" z="182.160004"/>
+    <position x="354" y="305" z="182.160004"/>
     <moviefile>shot03_02</moviefile>
     <moviefile>shot03_03</moviefile>
     <moviefile>shot03_04</moviefile>
@@ -26,6 +26,6 @@
     <moviefile>shot03_08</moviefile>
   </spot>
 
-  <connection from="1" to="2" />
+
   <connection from="2" to="3" />
 </data>

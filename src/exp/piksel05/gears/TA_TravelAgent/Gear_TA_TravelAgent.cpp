@@ -161,7 +161,7 @@ void Gear_TA_TravelAgent::runVideo()
 //     _currentSpot = (_currentSpot == 1 ? 2 : 1); // swap
 //     NOTICE("...to %d", _currentSpot);
 //   }
-  graph->printDebug();
+  //graph->printDebug();
   _CURRENT_SPOT_OUT->type()->setValue(_currentSpot);
 }
 

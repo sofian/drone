@@ -12,8 +12,8 @@
 
 //#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
-#define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
-//#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
+//#define TA_MOVIES_PATH "/home/julien/dev/drone/src/exp/piksel05/data/clips/"
+//#define TA_OSC_PATH "/home/julien/dev/drone/src/exp/piksel05/data/k2o/"
 
 // A point in the city.
 class TA_Point

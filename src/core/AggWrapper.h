@@ -15,6 +15,7 @@
 #include "ctrl/agg_slider_ctrl.h"
 #include "platform/agg_platform_support.h"
 #include "agg_pixfmt_rgba.h"
+#include "agg_trans_affine.h"
 
 typedef agg::pixfmt_rgba32 pixfmt;
 typedef agg::rgba8 color_type;
@@ -38,7 +39,8 @@ public :
             float x4, float y4, 
             agg::rgba8 color);
 
-  
+  agg::trans_affine m_globtrans;
+
 protected:
   pixfmt *_pixf;
   renderer_base *_rb;

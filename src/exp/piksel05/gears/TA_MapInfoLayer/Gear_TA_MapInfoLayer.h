@@ -1,5 +1,5 @@
-/* Gear_Saturation.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+/* Gear_TA_MapNavigator.h
+ * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,54 +17,47 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_V2RASTER_INCLUDED
-#define GEAR_V2RASTER_INCLUDED
+#ifndef GEAR_TA_MAPInfoLayer_INCLUDED
+#define GEAR_TA_MAPInfoLayer_INCLUDED
+
 
 #include "Gear.h"
-#include "SignalType.h"
+#include "ValueType.h"
+#include "TA_DataType.h"
 #include "VideoRGBAType.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "agg_basics.h"
-#include "agg_rendering_buffer.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_scanline_p.h"
-#include "agg_renderer_scanline.h"
-#include "agg_pixfmt_rgba.h"
-#include "platform/agg_platform_support.h"
-#include "ctrl/agg_slider_ctrl.h"
-#include "agg_svg_parser.h"
 #include "VectorialType.h"
 
-class Gear_Vectorial2Raster : public Gear
+class Gear_TA_MapInfoLayer : public Gear
 {
-public:
+public:  
 
-  Gear_Vectorial2Raster(Schema *schema, std::string uniqueName);
-  virtual ~Gear_Vectorial2Raster();
+  Gear_TA_MapInfoLayer(Schema *schema, std::string uniqueName);
+  virtual ~Gear_TA_MapInfoLayer();
 
   void runVideo();
-        
-private:
 
+public:
+
+  PlugIn<TA_DataType> *_DATA_IN;
   PlugIn<VectorialType> *_VEC_IN;
+  PlugIn<ValueType> *_RAX;
+  PlugIn<ValueType> *_RAY;
   PlugIn<ValueType> *_XOFF;
   PlugIn<ValueType> *_YOFF;
-
-  PlugIn<VideoRGBAType> *_VIDEO_IN;  
-  PlugOut<VideoRGBAType> *_VIDEO_OUT;
-
-  //local var
-  const VideoRGBAType *_image; 
-  VideoRGBAType *_outImage; 
-  const VectorialType *_vecIn;
-  agg::svg::path_renderer * zepath;
-
-  const unsigned char *_imageIn;
-  unsigned char *_imageOut;
-
+  PlugIn<ValueType> *_SCALE;
   
+  PlugIn<ValueType> *_RADIUS;
+  PlugIn<ValueType> *_MAGN;
+  
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugOut<VideoRGBAType> *_VIDEO_OUT;
+  PlugOut<VectorialType> *_VEC_OUT;
+  
+private: 
+  VideoRGBAType* _image;
+  VideoRGBAType* _outImage;
+  unsigned int* _data;
+  unsigned int* _outData;
 };
 
 #endif

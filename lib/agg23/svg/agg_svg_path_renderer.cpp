@@ -25,12 +25,14 @@ namespace agg
 {
 namespace svg
 {
-
+  
     //------------------------------------------------------------------------
     path_renderer::path_renderer() :
         m_curved(m_storage),
         m_curved_count(m_curved),
-
+	m_curved_count_segmented(m_curved_count),
+	m_lens(m_curved_count_segmented,m_trans_lens),
+        //m_lens(m_curved_count,m_trans_lens),
         m_curved_stroked(m_curved_count),
         m_curved_stroked_trans(m_curved_stroked, m_transform),
 

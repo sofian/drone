@@ -71,7 +71,10 @@ void TA_CityGraph::load(const std::string& filename)
   QDomDocument doc;
   QFile file(filename);
   if (!file.open(IO_ReadOnly))
-    return;
+{	
+  std::cerr<<"!!!!!!!!!!!!!Could not load file in TA_CityGraph::load"<<std::endl;	
+  return;
+}
   if (!doc.setContent(&file))
   {
     file.close();
