@@ -44,7 +44,13 @@ GearInfo getGearInfo()
 Gear_StringOutput::Gear_StringOutput(Schema *schema, std::string uniqueName) : 
 	Gear(schema, "StringOutput", uniqueName)
 {
-  addPlug(_STRING_IN = new PlugIn<StringType>(this, "string", true));
+  addPlug(_STRING_IN = new PlugIn<StringType>(this, "String", true));
+  addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "Value", true));
+
+  std::vector<AbstractPlug*> atLeastOneOfThem;
+  atLeastOneOfThem.push_back(_STRING_IN);
+  atLeastOneOfThem.push_back(_VALUE_IN);
+  setPlugAtLeastOneNeeded(atLeastOneOfThem);
 }
 
 Gear_StringOutput::~Gear_StringOutput()
@@ -58,7 +64,14 @@ void Gear_StringOutput::runVideo()
 
 std::string Gear_StringOutput::getString()
 {
-	return _STRING_IN->type()->value();
+  if (_VALUE_IN->connected())
+  {
+    char buff[1024];
+    sprintf(buff, "%f", _VALUE_IN->type()->value());
+    return buff;
+  }
+  else
+    return _STRING_IN->type()->value();
 }
 
 

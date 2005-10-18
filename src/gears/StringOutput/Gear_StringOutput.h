@@ -22,6 +22,7 @@
 
 #include "Gear.h"
 #include "StringType.h"
+#include "ValueType.h"
 
 class GearGui;
 
@@ -41,6 +42,7 @@ protected:
 private:
 
   PlugIn<StringType> *_STRING_IN;
+  PlugIn<ValueType> *_VALUE_IN;
 
 
 
