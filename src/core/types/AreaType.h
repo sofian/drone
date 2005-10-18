@@ -57,6 +57,10 @@ public:
   int y0() const { return _y0; }
   size_t width() const { return _width; }
   size_t height() const { return _height; }
+
+  void debug() {
+    NOTICE("Area: %d %d %d %d", _x0, _y0, _width, _height);
+  }
   
 protected:
   //! The upper-left point.
