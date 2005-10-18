@@ -82,9 +82,19 @@ void Gear_AreaVideoReplace::runVideo()
   //  NOTICE("replace area: %d %d %d %d",  _replaceArea->x0(), _replaceArea->y0(),_replaceArea->width(), _replaceArea->height());  
   //  NOTICE("Replace image in: %d %d ", _imageReplaceIn->width(), _imageReplaceIn->height());  
   ASSERT_ERROR(_replaceArea->width() == _imageReplaceIn->width() && _replaceArea->height() == _imageReplaceIn->height());
-  
-  int x = _replaceArea->x0();
-  size_t rowWidth = (int)_replaceArea->width() * sizeof(RGBA);
+
+//   int x0;
+//   size_t rowWidth
+//   if (_replaceArea->x0() >= 0)
+//   {
+//     x0 = _replaceArea->x0();
+//     rowWidth = (int)_replaceArea->width() * sizeof(RGBA);
+//   }
+//   else
+//   {
+//     x0 = 0;
+//     rowWidth = (int)_replaceArea->width() * sizeof(RGBA);
+//   }
 
   // Copy everything.
   memcpy(_imageOut->data(), _imageIn->data(), _imageIn->size() * sizeof(RGBA));
@@ -92,12 +102,16 @@ void Gear_AreaVideoReplace::runVideo()
   // Copy the subwindow.
   for (int j=0, y=_replaceArea->y0(); j<(int)_replaceArea->height(); ++j, ++y)
   {
-    if (0 <= y && y < _imageOut->height()) // inside image 
-      for (int i=0, x=_replaceArea->x0(); i<(int)_replaceArea->width(); ++i, ++x)
-      {
-	if (0 <= x && x < _imageOut->width()) // inside image
-	  alpha_over((unsigned char*)&_imageOut->operator()(x,y), (const unsigned char*)&_imageReplaceIn->operator()(i,j), (const unsigned char*)&_imageIn->operator()(x,y), SIZE_RGBA);
-      }
+     if (0 <= y && y < _imageIn->height()) // inside image
+     {
+       for (int i=0, x=_replaceArea->x0(); i<(int)_replaceArea->width(); ++i, ++x)
+       {
+         if (0 <= x && x < _imageOut->width()) // inside image
+           alpha_over((unsigned char*)&_imageOut->operator()(x,y),
+                      (const unsigned char*)&_imageReplaceIn->operator()(i,j),
+                      (const unsigned char*)&_imageIn->operator()(x,y), SIZE_RGBA);
+       }
+     }
   }
 
   _imageOut->demultiplyAlpha();

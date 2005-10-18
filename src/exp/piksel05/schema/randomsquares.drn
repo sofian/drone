@@ -69,8 +69,8 @@
                     <Plug Name="VValue" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="125" PosY="428" Type="StringSource" Name="StringSource.1" >
-                <Properties Source="/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/shot01_01" />
+            <Gear PosX="125" PosY="429" Type="StringSource" Name="StringSource.1" >
+                <Properties Source="/Users/tats/Movies/nivea_visage_3steps.mpg" />
                 <Plugs>
                     <Plug Name="str" Exposed="0" />
                 </Plugs>

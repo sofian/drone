@@ -18,7 +18,7 @@
                 </Plugs>
             </Gear>
             <Gear PosX="-1" PosY="130" Type="TouchPad" Name="TouchPad.1" >
-                <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="288" />
+                <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="-300" Vertical_lower_Bound="-200" Vertical_higher_Bound="288" />
                 <Plugs>
                     <Plug Name="HValue" Exposed="0" />
                     <Plug Name="VValue" Exposed="0" />
@@ -43,18 +43,9 @@
                 </Plugs>
             </Gear>
             <Gear PosX="160" PosY="520" Type="StringSource" Name="StringSource.1" >
-                <Properties Source="/home/bek/ClassicT1948_edit.mp4" />
+                <Properties Source="/Users/tats/Movies/nivea_visage_3steps.mpg" />
                 <Plugs>
                     <Plug Name="str" Exposed="0" />
-                </Plugs>
-            </Gear>
-            <Gear PosX="224" PosY="252" Type="ValueClamp" Name="ValueClamp.1" >
-                <Properties/>
-                <Plugs>
-                    <Plug Name="In" Exposed="0" />
-                    <Plug Name="Min" Exposed="0" />
-                    <Plug Name="Max" Exposed="0" />
-                    <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
             <Gear PosX="33" PosY="412" Type="TouchPad" Name="TouchPad.3" >
@@ -64,7 +55,7 @@
                     <Plug Name="VValue" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="11" PosY="280" Type="Slider" SliderPos="111.22" Name="Slider.1" >
+            <Gear PosX="11" PosY="280" Type="Slider" SliderPos="108.293" Name="Slider.1" >
                 <Properties Lower_Bound="0" Higher_Bound="240" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -85,14 +76,14 @@
                     <Plug Name="VideoIn" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="611" PosY="186" Type="Invert" Name="Invert.1" >
+            <Gear PosX="545" PosY="129" Type="Invert" Name="Invert.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgIN" Exposed="0" />
                     <Plug Name="ImgOUT" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="637" PosY="71" Type="Gamma" Name="Gamma.1" >
+            <Gear PosX="558" PosY="14" Type="Gamma" Name="Gamma.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgIN" Exposed="0" />
@@ -116,15 +107,12 @@
             <Connection GearA="AreaCreate.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="Area" />
             <Connection GearA="AreaVideoSelect.1" GearB="Invert.1" Input="ImgIN" Output="VideoOut" />
             <Connection GearA="AreaVideoSelect.1" GearB="Gamma.1" Input="ImgIN" Output="VideoOut" />
+            <Connection GearA="AreaVideoSelect.1" GearB="VideoOutput.2" Input="IN" Output="VideoOut" />
             <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
-            <Connection GearA="ValueClamp.1" GearB="AreaCreate.1" Input="Height" Output="Out" />
-            <Connection GearA="ValueClamp.1" GearB="AreaCreate.1" Input="Width" Output="Out" />
-            <Connection GearA="TouchPad.3" GearB="ValueClamp.1" Input="Min" Output="HValue" />
-            <Connection GearA="TouchPad.3" GearB="ValueClamp.1" Input="Max" Output="VValue" />
-            <Connection GearA="Slider.1" GearB="ValueClamp.1" Input="In" Output="Value" />
+            <Connection GearA="Slider.1" GearB="AreaCreate.1" Input="Width" Output="Value" />
+            <Connection GearA="Slider.1" GearB="AreaCreate.1" Input="Height" Output="Value" />
             <Connection GearA="AreaVideoReplace.1" GearB="VideoOutput.1" Input="IN" Output="VideoOut" />
-            <Connection GearA="Gamma.1" GearB="AreaVideoReplace.1" Input="ReplaceVideo" Output="ImgOUT" />
-            <Connection GearA="Gamma.1" GearB="VideoOutput.2" Input="IN" Output="ImgOUT" />
+            <Connection GearA="Invert.1" GearB="AreaVideoReplace.1" Input="ReplaceVideo" Output="ImgOUT" />
             <Connection GearA="Slider.2" GearB="Gamma.1" Input="Amount" Output="Value" />
         </Connections>
     </Schema>

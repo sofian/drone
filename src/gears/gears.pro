@@ -42,7 +42,7 @@ Gamma \
 GenDisplaceGrid \
 GrayScale \
 HalfToning \
-EmptyImage \
+#EmptyImage \
 ImageSource \
 Invert \
 InvertAlpha \
@@ -59,15 +59,16 @@ SignalStat \
 SmearGrid \
 Sobel \
 StringOutput \
-StringGen \
+#StringGen \
 StringFormat \
 StringSource \
 RandomValue \
 Tempo \
+ValueClamp \
 VideoDelay \
 VideoRecord \
 VideoOffset \
-VideoReplaceAreas \
+#VideoReplaceAreas \
 VideoSwitch \
 ValueMix
 agg {

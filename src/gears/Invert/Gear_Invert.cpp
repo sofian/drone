@@ -62,19 +62,17 @@ void Gear_Invert::runVideo()
   
   _outImage = _VIDEO_OUT->type();
   _outImage->resize(_image->width(), _image->height());
-  _data = (unsigned int*)_image->data();    
+  _data = (unsigned int*)_image->data();
   _outData = (unsigned int*)_outImage->data();
 
-//  _iterSizeX = _image->width();
-//  _iterSizeY = _image->height();
-
- // int contrast = (int)CLAMP(_CONTRAST_IN->type()->value(), -1000.0f, 1000.0f);
-//  int brightness = _BRIGHTNESS_IN->type()->intValue();
-//  _imageIn = (unsigned char*)_data;
-//  _imageOut = (unsigned char*)&_outData[y*_iterSizeX];
-
-    for (int p=0;p<_image->size();p++)
-      *_outData++ = 0xffffffff ^ (*_data++);
+    for (size_t p=0;p<_image->size();p++)
+    {
+//       unsigned char alpha = ((const unsigned char*)_data)[IDX_RGBA_A];
+//       ASSERT_WARNING_MESSAGE( alpha == 0xff || alpha == 0, "Alpha not 0 or 255 : %d", (int)(((const unsigned char*)_data)[IDX_RGBA_A]));
+      *_outData = 0xffffffff ^ *_data;
+      ((unsigned char*)_outData)[IDX_RGBA_A] = ((const unsigned char*)_data)[IDX_RGBA_A];
+      _outData++; _data++;
+    }
 }
 
 

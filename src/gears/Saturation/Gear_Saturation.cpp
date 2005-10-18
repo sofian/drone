@@ -93,6 +93,7 @@ void Gear_Saturation::runVideo()
       _imageOut[0] = (unsigned char) (bw + _lut[_r]);
       _imageOut[1] = (unsigned char) (bw + _lut[_g]);
       _imageOut[2] = (unsigned char) (bw + _lut[_b]);
+      _imageOut[3] = _imageIn[3];
       
       _imageIn+=SIZE_RGBA;
       _imageOut+=SIZE_RGBA;

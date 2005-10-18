@@ -1,5 +1,5 @@
-/* Gear_StringGen.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+/* Gear_TA_ContextSelector.h
+ * Copyright (C) 2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,29 +17,34 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_StringGen_INCLUDED
-#define GEAR_StringGen_INCLUDED
+#ifndef GEAR_TA_CONTEXTSELECTOR_INCLUDED
+#define GEAR_TA_CONTEXTSELECTOR_INCLUDED
+
 
 #include "Gear.h"
-#include "StringType.h"
 #include "ValueType.h"
 
-
-class Gear_StringGen : public Gear  
+class Gear_TA_ContextSelector : public Gear
 {
+  static const int MAX_CONTEXTS;
+  
 public:
-  Gear_StringGen(Schema *schema, std::string uniqueName);
-  virtual ~Gear_StringGen();
+  Gear_TA_ContextSelector(Schema *schema, std::string uniqueName);
+  virtual ~Gear_TA_ContextSelector();
 
   void runVideo();
 
+public:
+  PlugIn<ValueType> *_INNOCENCE_IN;
+  PlugIn<ValueType> *_CHANNEL_IN;
+  PlugIn<ValueType> *_BANG_IN;
+  
+  std::vector< PlugOut<ValueType>* > _INNOCENCE_OUT;
+  std::vector< PlugOut<ValueType>* > _CHANNEL_OUT;
+  std::vector< PlugOut<ValueType>* > _BANG_OUT;
+
 protected:
-
-  PlugIn<ValueType> *_GO;
-  PlugIn<StringType> *_STR;
-  PlugOut<StringType> *_STR_OUT;
-	
-
+  int _currentContext;
 };
 
-#endif 
+#endif
