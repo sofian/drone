@@ -42,7 +42,7 @@ Gear_PackList::Gear_PackList(Schema *schema, std::string uniqueName) :
   Gear(schema, "PackList", uniqueName)
 {
 
-  addPlug(_STR1 = new PlugIn<StringType>(this, "Str1", true, new StringType("")));
+  addPlug(_STR1 = new PlugIn<AbstractType>(this, "Str1", true));
   addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", false));
   addPlug(_LIST_OUT = new PlugOut<ListType>(this, "ListO", true));
 }

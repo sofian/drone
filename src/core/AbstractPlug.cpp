@@ -57,7 +57,7 @@ bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
     return false;
 
   //est-ce que ce sont des plugs de meme type
-  if (_abstractType->typeName() != plug->abstractType()->typeName())
+  if ( !((_abstractType->typeName()=="AbstractType") || (plug->abstractType()->typeName()=="AbstractType")|| (_abstractType->typeName() == plug->abstractType()->typeName())))
     return false;
 
   //avons-nous bien une connection d'un in dans un out ou vice-versa

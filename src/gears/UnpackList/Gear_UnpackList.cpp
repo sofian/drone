@@ -41,10 +41,10 @@ GearInfo getGearInfo()
 Gear_UnpackList::Gear_UnpackList(Schema *schema, std::string uniqueName) : 
   Gear(schema, "UnpackList", uniqueName)
 {
-  addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", false));
+  addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", true));
 
   addPlug(_STR_OUT = new PlugOut<StringType>(this, "StrO", false));
-  addPlug(_VAL_OUT = new PlugOut<ValueType>(this, "StrO", false));
+  addPlug(_VAL_OUT = new PlugOut<ValueType>(this, "ValueO", false));
   addPlug(_ENUM_OUT = new PlugOut<EnumType>(this, "EnumO", false));
   addPlug(_CHANNEL_OUT = new PlugOut<VideoChannelType>(this, "ChannelO", false));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoO", false));
@@ -59,7 +59,7 @@ Gear_UnpackList::Gear_UnpackList(Schema *schema, std::string uniqueName) :
   atLeastOneOfThem.push_back(_AREA_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);
 
-  addPlug(_LIST_OUT = new PlugOut<ListType>(this, "ListO", true));
+  addPlug(_LIST_OUT = new PlugOut<ListType>(this, "ListO", false));
 }
 
 Gear_UnpackList::~Gear_UnpackList()
@@ -69,24 +69,40 @@ Gear_UnpackList::~Gear_UnpackList()
 
 void Gear_UnpackList::runVideo()
 {
-  ListType *listType = _LIST_OUT->type();
-  
-  if (_LIST_IN->connected())
-    listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
-  else 
-    clearList();  
+  if (_LIST_IN->type()->size()<=0)
+  {    
+    _LIST_OUT->sleeping(true);
+    return;
+  }
 
-  AbstractType *type = listType->pop_back();
-  if (type->typeName() == StringType::TYPENAME)
-    (*_STR_OUT) = *((StringType*)type);
+  _LIST_OUT->sleeping(false);
+  
+  ListType *listType = _LIST_OUT->type();  
+  listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
+  AbstractType *type = listType->back();
+  
+  if ((_STR_OUT->connected()) && type->typeName() == StringType::TYPENAME)
+  {
+    listType->pop_back();
+    _STR_OUT->type()->setValue(((StringType*)type)->value());
+    return;
+  }
+    
+  if ((_VAL_OUT->connected()) && type->typeName() == ValueType::TYPENAME)
+  {
+    listType->pop_back();
+    _VAL_OUT->type()->setValue(((ValueType*)type)->value());
+    return;
+  }
+
+    
 }
 
 
 void Gear_UnpackList::clearList()
 {
-	ListType *listType = _LIST_OUT->type();
-	
-	listType->clear();
+  ListType *listType = _LIST_OUT->type();
+  listType->clear();
 	
 }
 

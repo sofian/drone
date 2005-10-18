@@ -3,7 +3,7 @@ include (../../../config.pro)
 TEMPLATE=lib
 SOURCES+=Gear_AreaVideoReplace.cpp
 HEADERS+=Gear_AreaVideoReplace.h
-INCLUDEPATH+=../../core/ ../../core/types
+INCLUDEPATH+=../../core/ ../../core/types ../../core/composite
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore

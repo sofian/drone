@@ -39,7 +39,7 @@ protected:
 
   void clearList();
 		
-  PlugIn<StringType> *_STR1;
+  PlugIn<AbstractType> *_STR1;
 
   PlugIn<ListType> *_LIST_IN;	
   PlugOut<ListType> *_LIST_OUT;

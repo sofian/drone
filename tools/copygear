@@ -5,5 +5,5 @@ cd $2
 mv $1.pro $2.pro
 mv Gear_$1.h Gear_$2.h
 mv Gear_$1.cpp Gear_$2.cpp
-replace.py $1 $2 *
+replace $1 $2 -- *
 cd ..

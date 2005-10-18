@@ -24,6 +24,7 @@
 #include "Gear.h"
 #include "VideoRGBAType.h"
 #include "AreaType.h"
+#include "AlphaComposite.h"
 
 #include "error.h"
 
@@ -61,6 +62,9 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   // Internal use.
+  VideoRGBAType *_imageInBuffer;
+  VideoRGBAType *_imageReplaceInBuffer;
+
   const VideoRGBAType *_imageIn;
   const VideoRGBAType *_imageReplaceIn;
   const AreaType *_replaceArea;

@@ -57,22 +57,26 @@ void Gear_OscOutput::runVideo()
 {
   		
   lo_address t = lo_address_new(_IP->type()->value().c_str(), _PORT->type()->value().c_str());
-
+  lo_message msg = lo_message_new();
   OscMessageType* oscMessage = _OSC_IN->type();
-
-  StringType *str1 = (StringType*)oscMessage->args()[0];
-  //StringType *str2 = (StringType*)oscMessage->args()[1];
-
-  std::cout << oscMessage->args().size() << std::endl;
+  ListType args = oscMessage->args();
 
 
-  if (lo_send(t, oscMessage->path().value().c_str(), "s", str1->value().c_str()
-  ) == -1) 
+  for(ListType::iterator it=args.begin();it!=args.end();++it)
+  {
+    if ((*it)->typeName() == StringType::TYPENAME)
+    	lo_message_add_string(msg, ((StringType*)(*it))->value().c_str());
+    else if ((*it)->typeName() == ValueType::TYPENAME)
+    	lo_message_add_float(msg, ((ValueType*)(*it))->value());
+  }
+
+  if (lo_send_message(t, oscMessage->path().value().c_str(), msg)== -1) 
   {
      std::cout << "OSC error " << lo_address_errno(t) << " " << lo_address_errstr(t);
   }
   
   lo_address_free(t);
+  lo_message_free(msg);
 
 }
 

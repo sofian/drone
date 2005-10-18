@@ -35,8 +35,9 @@ public:
 
 protected:
 
-	PlugIn<ValueType> *_GO;
-	PlugOut<StringType> *_STR_OUT;
+  PlugIn<ValueType> *_GO;
+  PlugIn<StringType> *_STR;
+  PlugOut<StringType> *_STR_OUT;
 	
 
 };

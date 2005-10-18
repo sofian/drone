@@ -43,9 +43,11 @@ Gear_StringGen::Gear_StringGen(Schema *schema, std::string uniqueName) :
 {
 
   addPlug(_GO = new PlugIn<ValueType>(this, "go", false, new ValueType(0)));
-
-  addPlug(_STR_OUT = new PlugOut<StringType>(this, "str", false, new StringType("aaa")));
-	_STR_OUT->sleeping(true);
+  addPlug(_STR = new PlugIn<StringType>(this, "strI", false, new StringType("teststr")));
+  
+  addPlug(_STR_OUT = new PlugOut<StringType>(this, "strO", false));
+  
+  _STR_OUT->sleeping(true);
 }
 
 Gear_StringGen::~Gear_StringGen()
@@ -55,10 +57,13 @@ Gear_StringGen::~Gear_StringGen()
 
 void Gear_StringGen::runVideo()
 {
-	if (_GO->type()->value()>0.0f)
-		_STR_OUT->sleeping(false);		
-	else
-		_STR_OUT->sleeping(true);		
-		
+  if (_GO->type()->value()>0.0f)
+  {
+    _STR_OUT->sleeping(false);		
+    _STR_OUT->type()->setValue(_STR->type()->value());
+  }  
+  else
+    _STR_OUT->sleeping(true);
+    
 }
 

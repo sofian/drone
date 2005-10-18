@@ -71,8 +71,10 @@ void PlugPropertiesTable::refresh(Gear *gear)
   setNumRows(inputs.size());
   int row=0;
   for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it,row++)
-    insertPlug(*it,row);
-  
+  {
+    if (!(*it)->connected())
+    	insertPlug(*it,row);    
+  }
 }
 
 void PlugPropertiesTable::insertPlug(AbstractPlug *plug, int row)

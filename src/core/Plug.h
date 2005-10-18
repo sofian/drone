@@ -129,10 +129,10 @@ public:
 
   void init() {}
 
-  T* defaultType() { return static_cast<const T*>(_abstractDefaultType);}
+  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
   T* hintType() { return static_cast<T*>(_abstractDefaultType);}
 
-  T* type() const { return static_cast<const T*>(_abstractType);}
+  T* type() const { return static_cast<T*>(_abstractType);}
   const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
   const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 

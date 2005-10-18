@@ -34,7 +34,7 @@ public:
 	
   virtual ~AbstractType() {}
 
-  virtual QColor color() const = 0;
+  virtual QColor color() const { return QColor(0,0,0);}
 
   int nSubTypes() const { return _subTypes.size();}
   const AbstractType* getSubType(int i) const { return _subTypes[i]; }
@@ -44,7 +44,7 @@ public:
     return &subType;
   }
 	
-  virtual std::string typeName() const=0;
+  virtual std::string typeName() const {return "AbstractType";}
   bool typeOf(AbstractType &other) const
   {
       return other.typeName() == typeName();

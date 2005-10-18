@@ -46,6 +46,7 @@ ImageSource \
 Invert \
 InvertAlpha \
 PackList \
+UnpackList \
 OscMessage \
 OscInput \
 OscOutput \
@@ -62,6 +63,7 @@ StringFormat \
 StringSource \
 RandomValue \
 Tempo \
+ValueClamp \
 VideoDelay \
 VideoRecord \
 VideoOffset \

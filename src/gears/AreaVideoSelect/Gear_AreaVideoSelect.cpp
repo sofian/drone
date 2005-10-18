@@ -57,12 +57,49 @@ void Gear_AreaVideoSelect::runVideo()
   _imageOut = _VIDEO_OUT->type();
 
   _imageOut->resize(_area->width(), _area->height());
-  ASSERT_ERROR(0 <= _area->x0() && _area->x0() + _area->width() <= _imageIn->width() &&
-               0 <= _area->y0() && _area->y0() + _area->height() <= _imageIn->height());
 
+  //  ASSERT_ERROR(0 <= _area->x0() && _area->x0() + _area->width() <= _imageIn->width() &&
+  //               0 <= _area->y0() && _area->y0() + _area->height() <= _imageIn->height());
+  //  NOTICE("Area in: %d %d %d %d", _area->x0(), _area->y0(),_area->width(), _area->height());  
+  //  NOTICE("Image out: %d %d ", _imageOut->width(), _imageOut->height());  
+  
   int x = _area->x0();
   size_t rowWidth = (int)_area->width() * sizeof(RGBA);
 
-  for (int i=0, y=_area->y0(); i<(int)_area->height(); ++i, ++y)
-    memcpy(_imageOut->row(i), &_imageIn->operator()(x,y), rowWidth);
+  RGBA val;
+  
+  for (int j=0, y=_area->y0(); j<(int)_area->height(); ++j, ++y)
+  {
+    if (0 <= y && y < _imageOut->height()) // inside image 
+      for (int i=0, x=_area->x0(); i<(int)_area->width(); ++i, ++x)
+      {
+	if (0 <= y && y < _imageOut->height()) // inside image
+	  val = _imageIn->get(x,y);
+	else
+	  val = CLEAR_RGBA;
+	_imageOut->operator()(i,j) = val;
+      }
+    else
+      for (int i=0; i<(int)_area->width(); ++i)
+	_imageOut->operator()(i,j) = CLEAR_RGBA;
+  }
+
+  //    memcpy(_imageOut->row(i), &_imageIn->operator()(x,y), rowWidth);
+
+
+//   _area = _SELECT_IN->type();
+//   _imageIn = _VIDEO_IN->type();
+//   _imageOut = _VIDEO_OUT->type();
+
+//   _imageOut->resize(_area->width(), _area->height());
+//   ASSERT_ERROR(0 <= _area->x0() && _area->x0() + _area->width() <= _imageIn->width() &&
+//                0 <= _area->y0() && _area->y0() + _area->height() <= _imageIn->height());
+//   //  NOTICE("Area in: %d %d %d %d", _area->x0(), _area->y0(),_area->width(), _area->height());  
+//   //  NOTICE("Image out: %d %d ", _imageOut->width(), _imageOut->height());  
+  
+//   int x = _area->x0();
+//   size_t rowWidth = (int)_area->width() * sizeof(RGBA);
+
+//   for (int i=0, y=_area->y0(); i<(int)_area->height(); ++i, ++y)
+//     memcpy(_imageOut->row(i), &_imageIn->operator()(x,y), rowWidth);
 }

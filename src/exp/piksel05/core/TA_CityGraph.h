@@ -10,9 +10,9 @@
 #include <qdom.h>
 #include <qfile.h>
 
-#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
+//#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
-//#define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
+#define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
 
 // A point in the city.

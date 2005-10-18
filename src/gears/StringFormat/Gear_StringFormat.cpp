@@ -61,7 +61,7 @@ void Gear_StringFormat::runVideo()
   
   std::string outputString = "";
 
-  for (ListType::iterator it = listType->begin(); it != listType->end(); ++it)
+  for (ListType::const_iterator it = listType->begin(); it != listType->end(); ++it)
   {
     int pos1, pos2;
     if ((*it)->typeName() == StringType::TYPENAME)

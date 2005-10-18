@@ -83,6 +83,7 @@ void Gear_Gamma::runVideo()
     _imageOut[0] = _lut[_imageIn[0]];
     _imageOut[1] = _lut[_imageIn[1]];
     _imageOut[2] = _lut[_imageIn[2]];
+    _imageOut[3] = _imageIn[3];
 
     _imageIn += SIZE_RGBA;
     _imageOut += SIZE_RGBA;

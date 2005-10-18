@@ -65,6 +65,7 @@ void Gear_AreaClip::runVideo()
   _areaOut->setOrigin(MAX(_areaIn->x0(), _borderX), MAX(_areaIn->y0(), _borderY));
   _areaOut->resize(MIN(_areaIn->width(), (size_t)MAX(0, (int)(_clippingIn->width() - _areaIn->x0() - 2*_borderX))),
                    MIN(_areaIn->height(), (size_t)MAX(0, (int)(_clippingIn->height() - _areaIn->y0() - 2*_borderY))));
+  //  NOTICE("Area out: %d %d %d %d", _areaOut->x0(), _areaOut->y0(),_areaOut->width(), _areaOut->height());  
 }
 
 
