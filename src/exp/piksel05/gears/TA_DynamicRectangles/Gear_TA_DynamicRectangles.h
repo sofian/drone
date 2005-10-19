@@ -59,8 +59,8 @@ public:
 public:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugIn<ValueType> *_DECAY_IN;
-  PlugIn<ValueType> *_WIDTH_IN;
-  PlugIn<ValueType> *_HEIGHT_IN;
+//   PlugIn<ValueType> *_WIDTH_IN;
+//   PlugIn<ValueType> *_HEIGHT_IN;
 //   PlugIn<ValueType> *_INNOCENCE_IN;
 //   PlugIn<ValueType> *_CHANNEL_IN;
 

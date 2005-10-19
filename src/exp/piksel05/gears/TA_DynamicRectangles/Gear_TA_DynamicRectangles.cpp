@@ -148,8 +148,8 @@ Gear(schema, "TA_DynamicRectangles", uniqueName)
   addPlug(_VIDEO_IN = new   PlugIn<VideoRGBAType>(this,"ImgIN",true)); 
 //   addPlug(_INNOCENCE_IN = new PlugIn<ValueType>(this, "Ict", false));
 //   addPlug(_CHANNEL_IN = new PlugIn<ValueType>(this, "Ch", false));
-  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(768, 240, 1024)));
-  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(480, 180, 768)));
+//   addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(768, 240, 1024)));
+//   addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(480, 180, 768)));
   
   addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Gamma", false));
 
@@ -178,8 +178,11 @@ void Gear_TA_DynamicRectangles::runVideo()
 
   float decay = CLAMP(_DECAY_IN->type()->value(), 0.0f, 1.0f);
   
-  int width = _WIDTH_IN->type()->intValue();
-  int height = _HEIGHT_IN->type()->intValue();
+//   int width = _WIDTH_IN->type()->intValue();
+//   int height = _HEIGHT_IN->type()->intValue();
+
+  int width = _VIDEO_IN->type()->width();
+  int height = _VIDEO_IN->type()->height();
   
   _imageOut->resize(_imageIn->width(), _imageIn->height());
   memcpy(_imageOut->data(), _imageIn->data(), _imageIn->size() * sizeof(RGBA));
@@ -209,10 +212,14 @@ void Gear_TA_DynamicRectangles::createRectangle(size_t width, size_t height, flo
 {
   size_t max = MAX(width, height);
   Rectangle rect;
-  rect.area.setOrigin((int)( Random::uniform() * width),
-                      (int)( Random::uniform() * height));
-  rect.area.resize((size_t)MAX( Random::uniform() * max, 32.0f),
-                   (size_t)MAX( Random::uniform() * max, 32.0f));
+  rect.area.setOrigin(MAX(0, (int)( Random::uniform() * width)),
+                      MAX(0, (int)( Random::uniform() * height)));
+  rect.area.resize(MIN((size_t)MAX( Random::uniform() * max, 32.0f), width),
+                   MIN((size_t)MAX( Random::uniform() * max, 32.0f), height));
+//   rect.area.setOrigin((int)( Random::uniform() * width),
+//                       (int)( Random::uniform() * height));
+//   rect.area.resize((size_t)MAX( Random::uniform() * max, 32.0f),
+//                    (size_t)MAX( Random::uniform() * max, 32.0f));
   rect.img.resize(rect.area.width(), rect.area.height());
   rect.blend = 1.0f;
   rect.init(gamma);
