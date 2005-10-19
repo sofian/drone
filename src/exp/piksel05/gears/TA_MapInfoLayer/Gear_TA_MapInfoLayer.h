@@ -20,12 +20,20 @@
 #ifndef GEAR_TA_MAPInfoLayer_INCLUDED
 #define GEAR_TA_MAPInfoLayer_INCLUDED
 
-
 #include "Gear.h"
 #include "ValueType.h"
 #include "TA_DataType.h"
 #include "VideoRGBAType.h"
 #include "VectorialType.h"
+#include <vector>
+
+struct net_t
+{
+  float x,y;
+  int id,inno,chan;
+  int perturb;
+  float dist;
+};
 
 class Gear_TA_MapInfoLayer : public Gear
 {
@@ -48,7 +56,17 @@ public:
   
   PlugIn<ValueType> *_RADIUS;
   PlugIn<ValueType> *_MAGN;
-  
+
+  PlugIn<ValueType> *_ADDNETX;
+  PlugIn<ValueType> *_ADDNETY;
+  PlugIn<ValueType> *_ADDNETID;
+  PlugIn<ValueType> *_ADDNETINNO;
+  PlugIn<ValueType> *_ADDNETCHAN;
+  PlugIn<ValueType> *_PACKETEV;
+  PlugIn<ValueType> *_NETSCALE;
+
+  PlugIn<ValueType> *_REACH;
+
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<VectorialType> *_VEC_OUT;
@@ -58,6 +76,7 @@ private:
   VideoRGBAType* _outImage;
   unsigned int* _data;
   unsigned int* _outData;
+  std::map<int,net_t> nets;
 };
 
 #endif
