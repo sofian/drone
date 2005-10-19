@@ -1,0 +1,367 @@
+<data x0="60.396" y="5.32" width="0.003" height="0.002">
+<spot id="1">
+  <position x="418" y="157" z="0"/>
+  <moviefile>shot01_03</moviefile>
+  <moviefile>shot01_04</moviefile>
+  <moviefile>shot01_01</moviefile>
+  <connection from="1" to="2" />
+  <connection from="1" to="3" />
+</spot>
+
+<spot id="2">
+  <position x="388" y="128" z="0"/>
+  <moviefile>shot02_01</moviefile>
+  <moviefile>shot02_03</moviefile>
+  <moviefile>shot02_05</moviefile>
+  <moviefile>shot02_02</moviefile>
+  <moviefile>shot02_06</moviefile>
+  <moviefile>shot02_04</moviefile>
+  <connection from="2" to="3" />
+  <connection from="2" to="4" />
+</spot>
+
+<spot id="3">
+  <position x="406" y="105" z="0"/>
+  <moviefile>shot03_06</moviefile>
+  <moviefile>shot03_03</moviefile>
+  <moviefile>shot03_05</moviefile>
+  <moviefile>shot03_02</moviefile>
+  <moviefile>shot03_08</moviefile>
+  <moviefile>shot03_04</moviefile>
+  <connection from="3" to="4" />
+  <connection from="3" to="5" />
+</spot>
+
+<spot id="4">
+  <position x="475" y="104" z="0"/>
+  <moviefile>shot04_04</moviefile>
+  <moviefile>shot04_05</moviefile>
+  <moviefile>shot04_02</moviefile>
+  <moviefile>shot04_06</moviefile>
+  <moviefile>shot04_03</moviefile>
+  <moviefile>shot04_01</moviefile>
+  <connection from="4" to="5" />
+  <connection from="4" to="6" />
+</spot>
+
+<spot id="5">
+  <position x="503" y="106" z="0"/>
+  <moviefile>shot05_01</moviefile>
+  <moviefile>shot05_02</moviefile>
+  <connection from="5" to="6" />
+  <connection from="5" to="7" />
+</spot>
+
+<spot id="6">
+  <position x="480" y="368" z="0"/>
+  <moviefile>shot06_02</moviefile>
+  <moviefile>shot06_08</moviefile>
+  <moviefile>shot06_03</moviefile>
+  <moviefile>shot06_09</moviefile>
+  <moviefile>shot06_05</moviefile>
+  <moviefile>shot06_04</moviefile>
+  <moviefile>shot06_10</moviefile>
+  <moviefile>shot06_07</moviefile>
+  <connection from="6" to="7" />
+  <connection from="6" to="8" />
+</spot>
+
+<spot id="7">
+  <position x="364" y="74" z="0"/>
+  <moviefile>shot07_01</moviefile>
+  <moviefile>shot07_02</moviefile>
+  <connection from="7" to="8" />
+  <connection from="7" to="9" />
+</spot>
+
+<spot id="8">
+  <position x="306" y="67" z="0"/>
+  <moviefile>shot08_04</moviefile>
+  <moviefile>shot08_02</moviefile>
+  <connection from="8" to="9" />
+  <connection from="8" to="10" />
+</spot>
+
+<spot id="9">
+  <position x="266" y="55" z="0"/>
+  <moviefile>shot09_01</moviefile>
+  <moviefile>shot09_02</moviefile>
+  <connection from="9" to="10" />
+  <connection from="9" to="11" />
+</spot>
+
+<spot id="10">
+  <position x="252" y="38" z="0"/>
+  <moviefile>shot10_01</moviefile>
+  <moviefile>shot10_02</moviefile>
+  <moviefile>shot10_06</moviefile>
+  <moviefile>shot10_04</moviefile>
+  <moviefile>shot10_05</moviefile>
+  <connection from="10" to="11" />
+  <connection from="10" to="12" />
+</spot>
+
+<spot id="11">
+  <position x="232" y="49" z="0"/>
+  <moviefile>shot11_01</moviefile>
+  <moviefile>shot11_04</moviefile>
+  <moviefile>shot11_02</moviefile>
+  <connection from="11" to="12" />
+  <connection from="11" to="13" />
+</spot>
+
+<spot id="12">
+  <position x="194" y="43" z="0"/>
+  <moviefile>shot12_03</moviefile>
+  <moviefile>shot12_02</moviefile>
+  <moviefile>shot12_04</moviefile>
+  <moviefile>shot12_01</moviefile>
+  <connection from="12" to="13" />
+  <connection from="12" to="14" />
+</spot>
+
+<spot id="13">
+  <position x="131" y="40" z="0"/>
+  <moviefile>shot13_05</moviefile>
+  <moviefile>shot13_09</moviefile>
+  <moviefile>shot13_06</moviefile>
+  <moviefile>shot13_10</moviefile>
+  <moviefile>shot13_08</moviefile>
+  <moviefile>shot13_02</moviefile>
+  <moviefile>shot13_03</moviefile>
+  <moviefile>shot13_11</moviefile>
+  <moviefile>shot13_04</moviefile>
+  <moviefile>shot13_01</moviefile>
+  <connection from="13" to="14" />
+  <connection from="13" to="15" />
+</spot>
+
+<spot id="14">
+  <position x="176" y="98" z="0"/>
+  <connection from="14" to="15" />
+  <connection from="14" to="16" />
+</spot>
+
+<spot id="15">
+  <position x="199" y="260" z="0"/>
+  <connection from="15" to="16" />
+  <connection from="15" to="17" />
+</spot>
+
+<spot id="16">
+  <position x="247" y="350" z="0"/>
+  <connection from="16" to="17" />
+  <connection from="16" to="18" />
+</spot>
+
+<spot id="17">
+  <position x="204" y="352" z="0"/>
+  <connection from="17" to="19" />
+  <connection from="17" to="20" />
+</spot>
+
+<spot id="18">
+  <position x="200" y="364" z="0"/>
+  <connection from="18" to="21" />
+  <connection from="18" to="22" />
+</spot>
+
+<spot id="19">
+  <position x="198" y="425" z="0"/>
+  <connection from="19" to="21" />
+  <connection from="19" to="22" />
+</spot>
+
+<spot id="20">
+  <position x="148" y="443" z="0"/>
+  <connection from="20" to="21" />
+  <connection from="20" to="22" />
+</spot>
+
+<spot id="21">
+  <position x="110" y="457" z="0"/>
+  <connection from="21" to="23" />
+  <connection from="21" to="24" />
+</spot>
+
+<spot id="22">
+  <position x="106" y="485" z="0"/>
+  <connection from="22" to="25" />
+  <connection from="22" to="26" />
+</spot>
+
+<spot id="23">
+  <position x="138" y="514" z="0"/>
+  <connection from="23" to="26" />
+  <connection from="23" to="27" />
+</spot>
+
+<spot id="24">
+  <position x="183" y="476" z="0"/>
+  <connection from="24" to="27" />
+  <connection from="24" to="28" />
+</spot>
+
+<spot id="23">
+  <position x="235" y="454" z="0"/>
+  <connection from="23" to="28" />
+  <connection from="23" to="29" />
+</spot>
+
+<spot id="26">
+  <position x="289" y="433" z="0"/>
+  <connection from="26" to="29" />
+  <connection from="26" to="30" />
+</spot>
+
+<spot id="27">
+  <position x="345" y="389" z="0"/>
+  <connection from="27" to="30" />
+  <connection from="27" to="31" />
+</spot>
+
+<spot id="28">
+  <position x="268" y="415" z="0"/>
+  <connection from="28" to="31" />
+  <connection from="28" to="32" />
+</spot>
+
+<spot id="29">
+  <position x="307" y="443" z="0"/>
+  <connection from="29" to="32" />
+  <connection from="29" to="33" />
+</spot>
+
+<spot id="30">
+  <position x="290" y="474" z="0"/>
+  <connection from="30" to="34" />
+  <connection from="30" to="35" />
+</spot>
+
+<spot id="31">
+  <position x="308" y="481" z="0"/>
+  <connection from="31" to="35" />
+  <connection from="31" to="36" />
+</spot>
+
+<spot id="32">
+  <position x="350" y="472" z="0"/>
+  <connection from="32" to="36" />
+  <connection from="32" to="37" />
+</spot>
+
+<spot id="33">
+  <position x="360" y="420" z="0"/>
+  <connection from="33" to="38" />
+  <connection from="33" to="39" />
+</spot>
+
+<spot id="34">
+  <position x="415" y="414" z="0"/>
+  <connection from="34" to="38" />
+  <connection from="34" to="39" />
+</spot>
+
+<spot id="35">
+  <position x="419" y="448" z="0"/>
+  <connection from="35" to="1" />
+  <connection from="35" to="2" />
+</spot>
+
+<spot id="36">
+  <position x="458" y="492" z="0"/>
+  <connection from="36" to="2" />
+  <connection from="36" to="3" />
+</spot>
+
+<spot id="37">
+  <position x="490" y="449" z="0"/>
+  <connection from="37" to="2" />
+  <connection from="37" to="4" />
+</spot>
+
+<spot id="38">
+  <position x="539" y="446" z="0"/>
+  <connection from="38" to="24" />
+  <connection from="38" to="2" />
+</spot>
+
+<spot id="39">
+  <position x="576" y="421" z="0"/>
+  <connection from="39" to="12" />
+  <connection from="39" to="13" />
+</spot>
+
+<spot id="40">
+  <position x="465" y="396" z="0"/>
+  <connection from="40" to="13" />
+  <connection from="40" to="14" />
+</spot>
+
+<spot id="41">
+  <position x="531" y="353" z="0"/>
+  <connection from="41" to="15" />
+  <connection from="41" to="16" />
+</spot>
+
+<spot id="42">
+  <position x="484" y="408" z="0"/>
+  <connection from="42" to="15" />
+  <connection from="42" to="25" />
+</spot>
+
+<spot id="43">
+  <position x="384" y="292" z="0"/>
+  <connection from="43" to="1" />
+  <connection from="43" to="2" />
+</spot>
+
+<spot id="44">
+  <position x="411" y="267" z="0"/>
+  <connection from="44" to="1" />
+  <connection from="44" to="2" />
+</spot>
+
+<spot id="45">
+  <position x="406" y="204" z="0"/>
+  <connection from="45" to="1" />
+  <connection from="45" to="2" />
+</spot>
+
+<spot id="46">
+  <position x="358" y="219" z="0"/>
+  <connection from="46" to="1" />
+  <connection from="46" to="2" />
+</spot>
+
+<spot id="47">
+  <position x="355" y="174" z="0"/>
+  <connection from="47" to="1" />
+  <connection from="47" to="2" />
+</spot>
+
+<spot id="48">
+  <position x="344" y="158" z="0"/>
+  <connection from="48" to="1" />
+  <connection from="48" to="2" />
+</spot>
+
+<spot id="49">
+  <position x="310" y="114" z="0"/>
+  <connection from="49" to="1" />
+  <connection from="49" to="2" />
+</spot>
+
+<spot id="50">
+  <position x="269" y="136" z="0"/>
+  <connection from="50" to="1" />
+  <connection from="50" to="2" />
+</spot>
+
+<spot id="51">
+  <position x="236" y="171" z="0"/>
+  <connection from="51" to="1" />
+  <connection from="51" to="2" />
+</spot>
+
+</data>
