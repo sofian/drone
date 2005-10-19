@@ -70,7 +70,6 @@ void Gear_TA_RandomArea::runVideo()
                               (int)( Random::uniform() * height));
      _AREA->type()->resize((size_t)MAX( Random::uniform() * max, 32.0f),
                            (size_t)MAX( Random::uniform() * max, 32.0f));
-     _AREA->type()->resize(150,150);
   }
 }
 

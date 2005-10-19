@@ -72,6 +72,9 @@ Gear_TA_ContextSelector::~Gear_TA_ContextSelector()
 
 void Gear_TA_ContextSelector::runVideo()
 {
+  _BANG_0_OUT->type()->setValue(0);
+  _BANG_1_OUT->type()->setValue(0);
+  
   if (_BANG_IN->type()->boolValue())
   {
     if (_currentContext == 0)
