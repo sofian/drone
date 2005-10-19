@@ -44,9 +44,11 @@ Gear_OscInput::Gear_OscInput(Schema *schema, std::string uniqueName) :
   _currentPort(""),
   _loServerThread(NULL)
 {
-
-  addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("7770")));
-
+		
+	_mutex = new pthread_mutex_t();
+	pthread_mutex_init(_mutex, NULL);
+		
+  addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("9999")));
   addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", false));
 }
 
@@ -55,15 +57,28 @@ Gear_OscInput::~Gear_OscInput()
 
 }
 
-void Gear_OscInput::runAudio()
+void Gear_OscInput::runVideo()
 {
-  if (_forceOscServerInit ||
-       _currentPort != _PORT->type()->value())
+	std::cout << "!@#" << std::endl;
+	if (_forceOscServerInit ||
+			_currentPort != _PORT->type()->value())
   {
      _currentPort = _PORT->type()->value();
      _forceOscServerInit=false;
      startOscServer(_currentPort);
   }
+	
+	OscMessageType message;
+	ListType list;
+	
+	if (_messages.size())
+	{
+		ScopedLock scopedLock(_mutex);
+		message = _messages.back();
+		_OSC_OUT->type()->setPath(message.path());
+		_OSC_OUT->type()->setArgs(message.args());
+	}
+
 }
 
 void Gear_OscInput::internalPostPlay()
@@ -101,12 +116,45 @@ void Gear_OscInput::stopOscServer()
 
 int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data)
 {
+	Gear_OscInput *gearOscInput = (Gear_OscInput*)user_data;
 	std::cout << "Osc message received : " << std::endl;
 	std::cout << "path: " << path << std::endl;
+	
+	OscMessageType message;
+	ListType list;
+	
+	message.setPath(std::string(path));
+
 	for (int i=0; i<argc; i++) 
 	{
 		std::cout << "arg " << i << " " << types[i] << std::endl;
+		if (types[i]==LO_FLOAT) 
+		{	
+			ValueType *valuet = new ValueType();
+			valuet->setValue((float)argv[i]->f);
+			list.push_back(valuet);
+		} else if (types[i]==LO_INT32) 
+		{
+			ValueType *valuet = new ValueType();
+			valuet->setValue((float)argv[i]->i32);
+			list.push_back(valuet);			
+		} else if (types[i]==LO_DOUBLE)
+		{
+			ValueType *valuet = new ValueType();
+			valuet->setValue((float)argv[i]->d);
+			list.push_back(valuet);			
+		} else if (types[i]==LO_STRING)
+		{
+			StringType *stringt = new StringType();
+			stringt->setValue(argv[i]->s);
+			list.push_back(stringt);			
+		}	
 	}	
+	
+	message.setArgs(list);
+
+	ScopedLock scopedLock(gearOscInput->_mutex);
+	gearOscInput->_messages.push_back(message);	
 	
 	return 0;
 }

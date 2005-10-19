@@ -27,13 +27,17 @@
 
 #include "lo/lo.h"
 
+#include "ThreadUtil.h"
+
+#include <vector>
+
 class Gear_OscInput : public Gear  
 {
 public:
   Gear_OscInput(Schema *schema, std::string uniqueName);
   virtual ~Gear_OscInput();
 
-  void runAudio();
+  void runVideo();
 
 protected:
 	void internalPostPlay();
@@ -53,6 +57,8 @@ private:
 	std::string _currentPort;
 	
 	lo_server_thread _loServerThread;
+	pthread_mutex_t *_mutex;
+	std::vector<OscMessageType> _messages;
 
 };
 
