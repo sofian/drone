@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <qdir.h>
 #include <qtextstream.h>
+#include <set>
 
 //int errormsg(char const*,...)
 ///{}
@@ -17,9 +18,11 @@ int main( int argc, char **argv )
 	
 	std::string s;
 	std::map<int,std::pair<int,int> > pos;
-vector<string> coord;
+	vector<string> coord;
+	set<int> exist;
+        set<pair<int,int> > connec;
 
-std::ifstream i("../data/pos.txt");
+	std::ifstream i("../data/pos.txt");
 	if(i.fail())
 		printf("could not open pos.txt\n");
         std::ofstream o("../data/data.xml");
@@ -27,7 +30,7 @@ std::ifstream i("../data/pos.txt");
 
 	getline(i, s);
 
-	QString ts;
+	QString ts,con;
 	coord = split(s," ");
 	int yoff = tolong(coord[1]);
 	int xoff = tolong(coord[0]);
@@ -62,14 +65,23 @@ std::ifstream i("../data/pos.txt");
 	    ++clips;
         }
 	ts+="</spot>\n\n";
-	for(int i=3;i<coord.size();i++)
-	  ts+= "  <connection from=\""+QString((coord[0]))+"\" to=\""+QString((coord[i]))+"\" />\n";
 	
 	if(clips>0)
-	  o<<ts.latin1();
+	  {
+	    exist.insert(tolong(coord[0]));
+	    o<<ts.latin1();
+	  }
+	for(int i=3;i<coord.size();i++)
+	  connec.insert(make_pair(tolong(coord[0]),tolong(coord[i])));
    }
-o<<"</data>\n";
-o.close();
+
+
+	for(set<pair<int,int> >::iterator it=connec.begin();it!=connec.end();++it)
+	  if(exist.find(it->first)!=exist.end() && exist.find(it->second)!=exist.end())
+	    o<<"  <connection from=\""+QString(tostring(it->first))+"\" to=\""+QString(tostring(it->second))+"\" />\n";
+
+	o<<"</data>\n";
+	o.close();
 	
         return 0;
 }

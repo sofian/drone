@@ -89,7 +89,7 @@ void Gear_TA_ContextSelector::runVideo()
       _CHANNEL_1_OUT->type()->setValue(_CHANNEL_IN->type()->value());
       _BANG_1_OUT->type()->setValue(_BANG_IN->type()->value());
     }
-    
+    std::cout << _currentContext << std::endl;
     _currentContext = ( _currentContext + 1 ) % MAX_CONTEXTS;
   }
 }

@@ -8,12 +8,18 @@
 #include <cmath>
 #include "StringUtils.h"
 #include <qdom.h>
-#include <qfile.h>
+#include <qfile.h> 
 
 //#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
+//#define TA_MOVIES_PATH "/home/julien/dev/drone/src/exp/piksel05/data/clips/"
 #define TA_MOVIES_PATH "src/exp/piksel05/data/clips/"
-#define TA_OSC_PATH "/home/julien/dev/drone/src/exp/piksel05/data/k2o/"
+//#define TA_OSC_PATH "/home/julien/dev/drone/src/exp/piksel05/data/k2o/"
+
+//#define TA_MOVIES_PATH "/home/julien/dev/drone/src/exp/piksel05/data/clips/"
+//#define TA_OSC_PATH "/home/julien/dev/drone/src/exp/piksel05/data/k2o/"
+//#define TA_MOVIES_PATH "/home/julien/dev/drone/src/exp/piksel05/data/clips/"
+//#define TA_OSC_PATH "/home/julien/dev/drone/src/exp/piksel05/data/k2o/"
 
 
 // A point in the city.
@@ -47,14 +53,19 @@ public:
   {
     currentClipIndex = (currentClipIndex+1) % clipFileNames.size();
   }
+
   std::string getCurrentClip() const { return clipFileNames[currentClipIndex]; }
+
   int getCurrentScene() const
   {
-    std::string fn = clipFileNames[currentClipIndex].substr(strlen("shot_XX_"));
+    std::string fn = getCurrentClip().substr(strlen(getCurrentClip().c_str())-2);
+    int current;
     if (fn.substr(0,1) == "0")
-      return toint(fn.substr(1,1));
+      current = toint(fn.substr(1,1));
     else
-      return toint(fn);
+      current = toint(fn);
+    std::cout << "filename : " << fn << " curr=" << current <<  " n clips" << clipFileNames.size() << " " << std::endl;
+    return current;
   }
 };
 

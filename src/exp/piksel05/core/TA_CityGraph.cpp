@@ -71,13 +71,15 @@ void TA_CityGraph::load(const std::string& filename)
   QDomDocument doc;
   QFile file(filename);
   if (!file.open(IO_ReadOnly))
-{	
-  std::cerr<<"!!!!!!!!!!!!!Could not load file in TA_CityGraph::load"<<std::endl;	
-  return;
-}
+  {	
+    WARNING("!!!!!!!!!!!!!Could not load file in TA_CityGraph::load.");
+    return;
+  }
+
   if (!doc.setContent(&file))
   {
     file.close();
+    WARNING("Cannot parse file '%s'.", filename.c_str());
     return;
   }
   file.close();
@@ -135,6 +137,7 @@ void TA_CityGraph::load(const std::string& filename)
           m = m.nextSibling();
         }
 
+	ASSERT_WARNING_MESSAGE( !vertex.clipFileNames.empty(), "Vertex # %d has no associated clips.", id);
         // Add it.
         insert(std::make_pair(id, vertex));
       }
