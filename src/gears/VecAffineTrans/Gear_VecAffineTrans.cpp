@@ -78,10 +78,13 @@ void Gear_VecAffineTrans::runVideo()
   agg::trans_affine mtx;
 //std::cerr<<"!!!!!!!!!!"<<m_path->getMinX()<<","<<m_path->getMaxX()<<"   "<<m_path->getMinY()<<","<<m_path->getMaxY()<<std::endl;
 
-  mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * -0.5, (m_path->getMinY() + m_path->getMaxY()) * -0.5);
+  //mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * -0.5, (m_path->getMinY() + m_path->getMaxY()) * -0.5);
+  mtx *= agg::trans_affine_translation(-x, -y);
+
   mtx *= agg::trans_affine_scaling(scale);
   mtx *= agg::trans_affine_rotation(rotate);
-  mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * 0.5 + x*scale, (m_path->getMinY() + m_path->getMaxY()) * 0.5 + y*scale);
+  //mtx *= agg::trans_affine_translation((m_path->getMinX() + m_path->getMaxX()) * 0.5 * scale + x*scale, (m_path->getMinY() + m_path->getMaxY()) * 0.5 * scale + y*scale);
+//mtx *= agg::trans_affine_translation(x*scale, y*scale);
   
   m_path->setGlobalTransform(mtx);	
   _VEC_OUT->type()->setPath(m_path);
