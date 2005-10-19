@@ -92,7 +92,7 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="700" PosY="290" Type="VideoMix" Name="VideoMix.1" >
+            <Gear PosX="584" PosY="399" Type="VideoMix" Name="VideoMix.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgA" Exposed="0" />
@@ -211,8 +211,8 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="153" PosY="16" Type="TouchPad" Name="TouchPad.1" >
-                <Properties Horizontal_higher_Bound="300" Horizontal_lower_Bound="300" Vertical_lower_Bound="200" Vertical_higher_Bound="200" />
+            <Gear PosX="151" PosY="15" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="768" Horizontal_lower_Bound="300" Vertical_lower_Bound="200" Vertical_higher_Bound="480" />
                 <Plugs>
                     <Plug Name="HValue" Exposed="0" />
                     <Plug Name="VValue" Exposed="0" />
@@ -224,7 +224,6 @@
             <Connection GearA="AreaVideoSelect.1" GearB="Gamma.1" Input="ImgIN" Output="VideoOut" />
             <Connection GearA="VideoSource.1" GearB="VideoDelay.1" Input="ImgIN" Output="ImgOut" />
             <Connection GearA="VideoSource.1" GearB="AreaVideoSelect.1" Input="Video" Output="ImgOut" />
-            <Connection GearA="VideoSource.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
             <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
             <Connection GearA="VideoDelay.1" GearB="AreaVideoReplace.1" Input="VideoIn" Output="ImgOUT" />
             <Connection GearA="VideoDelay.1" GearB="VideoMix.1" Input="ImgA" Output="ImgOUT" />
@@ -238,6 +237,7 @@
             <Connection GearA="ValueMix.1" GearB="AffineTransform.5" Input="In" Output="Out" />
             <Connection GearA="Slider.5" GearB="ValueMix.1" Input="Blend" Output="Value" />
             <Connection GearA="AffineTransform.5" GearB="VideoMix.1" Input="ArgA" Output="Out" />
+            <Connection GearA="VideoMix.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
             <Connection GearA="TA_RandomArea.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="Area" />
             <Connection GearA="TA_RandomArea.1" GearB="AreaVideoSelect.1" Input="Select" Output="Area" />
             <Connection GearA="Slider.1" GearB="AffineTransform.5" Input="Scale" Output="Value" />
