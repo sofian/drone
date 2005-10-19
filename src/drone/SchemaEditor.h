@@ -61,9 +61,7 @@ public:
 
   SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
   ~SchemaEditor();
-  
-  void zoomIn();
-  void zoomOut();
+
   void zoom(float factor);
 
   void addGear(std::string name, int posX, int posY);
@@ -75,7 +73,10 @@ public slots:
   void slotMenuGearSelected(QString name);
   void slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
   
-  //common slots
+  //common slots  
+  void zoomIn();
+  void zoomOut();
+
   void slotGearProperties();
   void slotGearDelete();
   void slotGearSelectAll();

@@ -81,6 +81,9 @@ private:
   
   QToolBar *_toolBar;
   QToolButton *_playPause;
+  QToolButton *_zoomIn;
+  QToolButton *_zoomOut;
+
   
   int _menuSaveItemId;
   int _menuPrefsItemId;

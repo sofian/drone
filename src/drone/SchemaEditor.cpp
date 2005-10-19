@@ -84,6 +84,9 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _gearContextMenu = new QPopupMenu(this);
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
+	_gearContextMenu->insertItem("ZoomIn", this, SLOT(zoomIn()));  
+	_gearContextMenu->insertItem("ZoomOut", this, SLOT(zoomOut()));  
+
   _gearContextMenu->insertItem("About");    
   
   _metaGearContextMenu = new QPopupMenu(this);

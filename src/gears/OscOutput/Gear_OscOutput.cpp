@@ -55,6 +55,9 @@ Gear_OscOutput::~Gear_OscOutput()
 
 void Gear_OscOutput::runVideo()
 {
+  if ((_IP->type()->value().size()<=0) || (_PORT->type()->value().size()<=0))		
+		return;
+
   		
   lo_address t = lo_address_new(_IP->type()->value().c_str(), _PORT->type()->value().c_str());
   lo_message msg = lo_message_new();

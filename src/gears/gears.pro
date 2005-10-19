@@ -29,6 +29,7 @@ ClusteredDither \
 ColorAdjust \
 Contrast \
 Enveloppe \
+EmptyImage \
 FlatSignal \
 FillAlpha \
 ListBox \

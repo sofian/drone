@@ -28,7 +28,7 @@
 class DroneQGLWidget : public QGLWidget
 {
 public:
-  DroneQGLWidget(QWidget* parent);
+  DroneQGLWidget(QWidget* parent, VideoOutput *videoOutput);
   ~DroneQGLWidget();
 
   void resize(int w, int h){resizeGL(w,h);}
@@ -53,6 +53,7 @@ private:
 
   bool _firstDraw;
   RGBA _buffer[352*480];
+	VideoOutput *_videoOutput;
 };
 
 //we need to create our own widget for the window containing the droneqglwidget
@@ -78,6 +79,8 @@ public:
 
   //videoOutput Overloading  
   bool init(int xRes, int yRes, bool fullscreen);
+	bool toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos);
+
   void render(const VideoRGBAType &image);
 
 

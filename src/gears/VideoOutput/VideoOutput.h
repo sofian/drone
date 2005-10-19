@@ -33,6 +33,8 @@ public:
   virtual void render(const VideoRGBAType &image)=0;
   virtual bool toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos){return true;}
 
+	bool fullscreen(){return _fullscreen;}
+
 protected:
   int _xRes, _yRes;
   int _bpp;

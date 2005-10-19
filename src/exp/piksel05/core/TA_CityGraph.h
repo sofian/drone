@@ -64,7 +64,6 @@ public:
       current = toint(fn.substr(1,1));
     else
       current = toint(fn);
-    std::cout << "filename : " << fn << " curr=" << current <<  " n clips" << clipFileNames.size() << " " << std::endl;
     return current;
   }
 };

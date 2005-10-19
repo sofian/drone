@@ -57,6 +57,7 @@ private:
 
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
+	PlugOut<ValueType> *_FINISH_OUT;
   PlugIn<ValueType> *_RESET_IN;
   PlugIn<StringType> *_MOVIE_IN;
 

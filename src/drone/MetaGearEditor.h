@@ -19,6 +19,7 @@ public:
   ~MetaGearEditor();
 
   SchemaGui *schemaGui(){return _schemaGui;}
+	SchemaEditor *schemaEditor(){return _schemaEditor;}    
   
 private:
   MetaGear *_metaGear;

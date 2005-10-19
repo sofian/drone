@@ -54,6 +54,8 @@ _movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "AudioOut", false));
+
+  addPlug(_FINISH_OUT = new PlugOut<ValueType>(this, "FinishOut", false));
   
   std::vector<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
@@ -209,8 +211,13 @@ void Gear_VideoSource::runVideo()
   //loop until we get a videoframe
   //if we reach end, return to the beginning
   if (av_read_frame(_formatContext, &_packet)<0)
+	{
     av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD); 
-
+		_FINISH_OUT->type()->setValue(1.0f);
+	}
+	else
+		_FINISH_OUT->type()->setValue(0.0f);
+	
   while (_packet.stream_index!=_videoStreamIndex)
   {    
     av_free_packet(&_packet);

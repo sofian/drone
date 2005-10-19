@@ -66,8 +66,15 @@ _menuFirstRecentSchemaId(-1)
 
   _toolBar = new QToolBar(this);
   addToolBar(_toolBar);        
-  _playPause = new QToolButton(_toolBar);    
+  _playPause = new QToolButton(_toolBar);    		
   _playPause->setToggleButton(true);
+	
+	/*
+  _zoomIn = new QToolButton(_toolBar);    
+	_zoomOut = new QToolButton(_toolBar);    
+  QObject::connect(_zoomIn, SIGNAL(toggled(bool)), _metaGearEditor->schemaEditor(), SLOT(slotZoomIn()));
+  QObject::connect(_zoomOut, SIGNAL(toggled(bool)), _metaGearEditor->schemaEditor(), SLOT(slotZoomIn()));
+	*/
 
   QIconSet playPauseIcon;
   playPauseIcon.setPixmap(Play_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);

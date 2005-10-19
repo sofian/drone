@@ -48,10 +48,17 @@ GearInfo getGearInfo()
   
 const int Gear_VideoOutput::DEFAULT_XRES = 352;
 const int Gear_VideoOutput::DEFAULT_YRES = 240;
+const int Gear_VideoOutput::DEFAULT_XPOS = 0;
+const int Gear_VideoOutput::DEFAULT_YPOS = 0;
+
 const bool Gear_VideoOutput::DEFAULT_FULLSCREEN = false; 
 
 const std::string Gear_VideoOutput::SETTING_XRES = "XRes";
 const std::string Gear_VideoOutput::SETTING_YRES = "YRes";
+
+const std::string Gear_VideoOutput::SETTING_XPOS = "XPos";
+const std::string Gear_VideoOutput::SETTING_YPOS = "YPos";
+
 const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
@@ -62,7 +69,7 @@ _videoOutput(NULL)
   //populate available video output list in order of preference
   //the init will try them in order, until he find one that fit
 #ifndef Q_OS_MACX
-  _allOutputs.push_back("Xv");
+  //_allOutputs.push_back("Xv");
   _allOutputs.push_back("Gl");
   _allOutputs.push_back("Shm");
   _allOutputs.push_back("QT");
@@ -73,6 +80,9 @@ _videoOutput(NULL)
 
   _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
+  _settings.add(Property::INT, SETTING_XPOS)->valueInt(DEFAULT_XPOS);
+  _settings.add(Property::INT, SETTING_YPOS)->valueInt(DEFAULT_YPOS);
+
   _settings.add(Property::BOOL, SETTING_FULLSCREEN)->valueBool(DEFAULT_FULLSCREEN);
 
 }
@@ -83,8 +93,8 @@ Gear_VideoOutput::~Gear_VideoOutput()
 }
 
 void Gear_VideoOutput::onUpdateSettings()
-{
-  _videoOutput->toggleFullscreen(true, 1024, 768, 0,0);
+{	
+  _videoOutput->toggleFullscreen(_settings.get(SETTING_FULLSCREEN)->valueBool(), 1024, 768, _settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
 }
 
 void Gear_VideoOutput::internalInit()
@@ -122,6 +132,11 @@ void Gear_VideoOutput::internalInit()
 
   std::cout << "sac a papier! fail to find a video output!!!" << std::endl;
 #endif
+}
+
+void Gear_VideoOutput::internalPrePlay()
+{
+  _videoOutput->toggleFullscreen(_settings.get(SETTING_FULLSCREEN)->valueBool(), 1024, 768, _settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
 }
 
 void Gear_VideoOutput::runVideo()

@@ -32,7 +32,7 @@
 #include <qapplication.h>
 #include <qlayout.h>
 
-DroneQGLWidget::DroneQGLWidget(QWidget* parent) : QGLWidget(parent, "video out"),
+DroneQGLWidget::DroneQGLWidget(QWidget* parent, VideoOutput* videoOutput) : QGLWidget(parent, "video out"),
 _currentImage(NULL),
 _frameSizeX(0),
 _frameSizeY(0),
@@ -40,7 +40,8 @@ _frameSize(0),
 _xRes(0),
 _yRes(0),
 _parentWidget(parent),
-_firstDraw(true)
+_firstDraw(true),
+_videoOutput(videoOutput)
 {
 }
 
@@ -80,7 +81,8 @@ void DroneQGLWidget::paintGL()
     
     //tell the parent to resize, it will also resize us, calling resizeGL since we will receive the event
     //we do this here, because we cannot make this call from an external thread
-    _parentWidget->resize(_frameSizeX, _frameSizeY);    
+    if (!_videoOutput->fullscreen())
+			_parentWidget->resize(_frameSizeX, _frameSizeY);    
   }
 
   _texSizeX = (float)_frameSizeX / (float)_textureGl.textureSizeX();
@@ -166,19 +168,30 @@ bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)
   
   _xRes = xRes;
   _yRes = yRes;
-
+	_fullscreen = fullscreen;
+	
   if (_window)
     delete _window;
     
   _window = new DroneGLWindow(qApp->mainWidget()); 
-  _droneQGLWidget = new DroneQGLWidget(_window);  
+  _droneQGLWidget = new DroneQGLWidget(_window, this);  
   QBoxLayout *l = new QHBoxLayout(_window);
   l->addWidget(_droneQGLWidget);  
   _window->setModal(false);
   _window->show();
-  
 
   return true;
+}
+
+bool VideoOutputGl::toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos)
+{
+	_fullscreen = fs;
+
+	_window->move(xPos, yPos);
+	if (fs)
+		_window->showFullScreen(); 		
+	else
+		_window->showNormal();	
 }
 
 void VideoOutputGl::onResize(int sizeX, int sizeY)

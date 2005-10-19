@@ -35,20 +35,27 @@ public:
 
   void runVideo();
 
-
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
 protected:
   void internalInit();  
   void onUpdateSettings();
+  void internalPrePlay();
+
 
 private:
   static const std::string SETTING_XRES;
   static const std::string SETTING_YRES;
+  static const std::string SETTING_XPOS;
+  static const std::string SETTING_YPOS;
+
   static const std::string SETTING_FULLSCREEN;
 
   static const int DEFAULT_XRES;
   static const int DEFAULT_YRES;    
+  static const int DEFAULT_XPOS;
+  static const int DEFAULT_YPOS;    
+	
   static const bool DEFAULT_FULLSCREEN; 
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;

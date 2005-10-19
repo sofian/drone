@@ -13,13 +13,13 @@
                 </Plugs>
             </Gear>
             <Gear PosX="470" PosY="128" Type="SVGLoader" Name="SVGLoader.1" >
-                <Properties Filename="/home/julien/dev/drone/schemas/jk/map_bergen_julien.svg" />
+                <Properties Filename="/home/bek/drone/schemas/jk/map_bergen_julien.svg" />
                 <Plugs>
                     <Plug Name="VecOUT" Exposed="0" />
                 </Plugs>
             </Gear>
             <Gear PosX="828" PosY="477" Type="VideoOutput" Name="VideoOutput.1" >
-                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Properties YRes="240" XRes="352" YPos="" XPos="" FullScreen="0" />
                 <Plugs>
                     <Plug Name="IN" Exposed="0" />
                 </Plugs>
@@ -35,16 +35,8 @@
                     <Plug Name="rotat" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="633" PosY="410" Type="EmptyImage" Name="EmptyImage.1" >
-                <Properties/>
-                <Plugs>
-                    <Plug Name="xsize" Exposed="0" />
-                    <Plug Name="ysize" Exposed="0" />
-                    <Plug Name="ImgOUT" Exposed="0" />
-                </Plugs>
-            </Gear>
             <Gear PosX="28" PosY="33" Type="TA_TravelAgent" Name="TA_TravelAgent.1" >
-                <Properties Filename="/home/julien/dev/drone/src/exp/piksel05/data/data.xml" />
+                <Properties Filename="/home/bek/drone/src/exp/piksel05/data/data.xml" />
                 <Plugs>
                     <Plug Name="GridIn" Exposed="0" />
                     <Plug Name="E-Decay" Exposed="0" />
@@ -93,19 +85,19 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="338" PosY="345" Type="Slider" SliderPos="0" Name="Slider.4" >
-                <Properties Lower_Bound="-30" Higher_Bound="30" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+            <Gear PosX="338" PosY="345" Type="Slider" SliderPos="-0.219512" Name="Slider.4" >
+                <Properties Lower_Bound="-3" Higher_Bound="3" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="338" PosY="406" Type="Slider" SliderPos="0" Name="Slider.1" >
+            <Gear PosX="338" PosY="406" Type="Slider" SliderPos="-102.439" Name="Slider.1" >
                 <Properties Lower_Bound="-600" Higher_Bound="600" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="342" PosY="283" Type="Slider" SliderPos="0" Name="Slider.2" >
+            <Gear PosX="342" PosY="283" Type="Slider" SliderPos="-43.9025" Name="Slider.2" >
                 <Properties Lower_Bound="-900" Higher_Bound="900" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -120,19 +112,19 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="324" PosY="26" Type="Slider" SliderPos="0.231707" Name="Slider.5" >
+            <Gear PosX="324" PosY="26" Type="Slider" SliderPos="0.256098" Name="Slider.5" >
                 <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="497" PosY="437" Type="Slider" SliderPos="511.683" Name="Slider.6" >
+            <Gear PosX="497" PosY="437" Type="Slider" SliderPos="621.329" Name="Slider.6" >
                 <Properties Lower_Bound="0" Higher_Bound="999" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="497" PosY="495" Type="Slider" SliderPos="341.463" Name="Slider.7" >
+            <Gear PosX="497" PosY="495" Type="Slider" SliderPos="400" Name="Slider.7" >
                 <Properties Lower_Bound="0" Higher_Bound="800" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -165,7 +157,7 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="620" PosY="20" Type="Slider" SliderPos="0.5" Name="Slider.10" >
+            <Gear PosX="620" PosY="20" Type="Slider" SliderPos="0.164634" Name="Slider.10" >
                 <Properties Lower_Bound="0" Higher_Bound=".5" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -185,10 +177,9 @@
                     <Plug Name="Magn" Exposed="0" />
                     <Plug Name="ImgIn" Exposed="0" />
                     <Plug Name="ImgOut" Exposed="0" />
-                    <Plug Name="VecOut" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="636" PosY="496" Type="Slider" SliderPos="0.160976" Name="Slider.11" >
+            <Gear PosX="636" PosY="496" Type="Slider" SliderPos="0.292683" Name="Slider.11" >
                 <Properties Lower_Bound="0" Higher_Bound=".3" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -200,7 +191,7 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="105" PosY="192" Type="Slider" SliderPos="16.8537" Name="Slider.13" >
+            <Gear PosX="105" PosY="192" Type="Slider" SliderPos="13.8049" Name="Slider.13" >
                 <Properties Lower_Bound="1" Higher_Bound="51" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
                 <Plugs>
                     <Plug Name="Value" Exposed="0" />
@@ -212,13 +203,20 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
+            <Gear PosX="640" PosY="416" Type="EmptyImage" Name="EmptyImage.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="xsize" Exposed="0" />
+                    <Plug Name="ysize" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
         </Gears>
         <Connections>
             <Connection GearA="Vectorial2Raster.1" GearB="TA_MapInfoLayer.1" Input="ImgIn" Output="ImgOUT" />
             <Connection GearA="SVGLoader.1" GearB="VecAffineTrans.1" Input="VecIn" Output="VecOUT" />
             <Connection GearA="VecAffineTrans.1" GearB="TA_MapInfoLayer.1" Input="VecIn" Output="VecOUT" />
             <Connection GearA="VecAffineTrans.1" GearB="Vectorial2Raster.1" Input="VecIN" Output="VecOUT" />
-            <Connection GearA="EmptyImage.1" GearB="Vectorial2Raster.1" Input="BackG" Output="ImgOUT" />
             <Connection GearA="TA_TravelAgent.1" GearB="TA_MapNavigator.1" Input="DATA" Output="DataOut" />
             <Connection GearA="TA_TravelAgent.1" GearB="TA_MapInfoLayer.1" Input="DATA" Output="DataOut" />
             <Connection GearA="TA_MapNavigator.1" GearB="ValueMix.1" Input="In1" Output="SCALE" />
@@ -250,6 +248,7 @@
             <Connection GearA="Slider.12" GearB="TA_MapInfoLayer.1" Input="Magn" Output="Value" />
             <Connection GearA="Slider.13" GearB="TA_MapNavigator.1" Input="HOTSPOT" Output="Value" />
             <Connection GearA="Slider.14" GearB="TA_MapInfoLayer.1" Input="Radius" Output="Value" />
+            <Connection GearA="EmptyImage.1" GearB="Vectorial2Raster.1" Input="BackG" Output="ImgOUT" />
         </Connections>
     </Schema>
 </Project>
