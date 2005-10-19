@@ -31,11 +31,12 @@ public:
   Gear_OscFilter(Schema *schema, std::string uniqueName);
   virtual ~Gear_OscFilter();
 
-  void runAudio();
+  void runVideo();
 	
 private:
 			
 	PlugIn<OscMessageType> *_OSC_IN;
+	PlugIn<StringType> *_PATH_IN;
 	PlugOut<OscMessageType> *_OSC_OUT;
 	
 };

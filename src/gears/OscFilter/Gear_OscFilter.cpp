@@ -41,8 +41,10 @@ GearInfo getGearInfo()
 Gear_OscFilter::Gear_OscFilter(Schema *schema, std::string uniqueName) : 
 	Gear(schema, "OscFilter", uniqueName)
 {
-  addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));
-  addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", true));
+	addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));
+	addPlug(_PATH_IN = new PlugIn<StringType>(this, "path", false, new StringType("/")));
+
+	addPlug(_OSC_OUT = new PlugOut<OscMessageType>(this, "Osc Out", true));
 }
 
 Gear_OscFilter::~Gear_OscFilter()
@@ -50,7 +52,14 @@ Gear_OscFilter::~Gear_OscFilter()
 
 }
 
-void Gear_OscFilter::runAudio()
+void Gear_OscFilter::runVideo()
 {
-
+	if (_PATH_IN->type()->value() == _OSC_IN->type()->path().value())
+	{
+		_OSC_OUT->type()->setPath(_OSC_IN->type()->path());
+		_OSC_OUT->type()->setArgs(_OSC_IN->type()->args());
+		_OSC_OUT->sleeping(false);
+	}
+	else
+		_OSC_OUT->sleeping(true);
 }
