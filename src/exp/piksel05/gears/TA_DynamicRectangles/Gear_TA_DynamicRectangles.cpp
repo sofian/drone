@@ -25,10 +25,14 @@
 #include "GearMaker.h"
 #include "Random.h"
 
-#include "AlphaComposite.h"
+//#include "AlphaComposite.h"
+#include "Utils.h"
+
+#define MAX_RECTANGLES 5
 
 void Rectangle::clipImage(const VideoRGBAType& imageIn)
 {
+  //  NOTICE("%p clip: %d %d", this, img.width(), img.height());
   RGBA *out = img.data();
   const RGBA *in = imageIn.data();
   for (int j=0, y=area.y0(); j<(int)img.height(); ++j, ++y)
@@ -54,25 +58,28 @@ void Rectangle::clipImage(const VideoRGBAType& imageIn)
 
 }
 
-void Rectangle::recomputeAlpha()
-{
-  unsigned char alpha = CLAMP0255( (unsigned char) blend * 255 );
-  unsigned char *it = (unsigned char*)img.data();
-  for (size_t i=0; i<img.size(); ++i)
-  {
-    it[IDX_RGBA_A] = alpha;
-    it += SIZE_RGBA;
-  }
-}
+// void Rectangle::recomputeAlpha()
+// {
+//   unsigned char alpha = CLAMP0255( (unsigned char) blend * 255 );
+//   unsigned char *it = (unsigned char*)img.data();
+//   for (size_t i=0; i<img.size(); ++i)
+//   {
+//     it[IDX_RGBA_A] = alpha;
+//     it += SIZE_RGBA;
+//   }
+// }
 
 void Rectangle::init(float gamma)
 {
-  _gamma = gamma;
-  computeGammaLookUpTable();
+  _lut[0] = 0;
+  float invGamma = 1.0 / gamma;
+  for (int i=1; i<256; ++i)
+    _lut[i] = CLAMP0255( ROUND(255.0f * exp( invGamma * log( float(i) / 255.0f ) ) ));
 }
 
 void Rectangle::applyGamma()
 {
+  //  NOTICE("%p gamma: %d %d", this, img.width(), img.height());
   unsigned char *data = (unsigned char*) img.data();
 
   // Apply gamma on img.
@@ -81,7 +88,7 @@ void Rectangle::applyGamma()
     data[0] = _lut[data[0]];
     data[1] = _lut[data[1]];
     data[2] = _lut[data[2]];
-    data[3] = data[3];
+    //data[3] = data[3];
 
     data += SIZE_RGBA;
   }
@@ -89,9 +96,13 @@ void Rectangle::applyGamma()
 
 void Rectangle::run(VideoRGBAType& image) const
 {
-  img.setIsAlphaPremultiplied(false);
-  img.premultiplyAlpha();
+  //img.setIsAlphaPremultiplied(false);
+  //img.premultiplyAlpha();
 
+  unsigned char alpha = 255 - (unsigned char) (CLAMP( blend, 0.0f, 1.0f) * 255.0f);
+  //  NOTICE("alpha: %d", (int)alpha);//unsigned char alpha = 127;
+  unsigned char *imagePtr, *imgPtr;
+  unsigned int tmp;
   // Copy everything.
   //memcpy(imageOut.data(), imageIn.data(), image.size() * sizeof(RGBA));
 
@@ -103,21 +114,17 @@ void Rectangle::run(VideoRGBAType& image) const
        for (int i=0, x=area.x0(); i<(int)area.width(); ++i, ++x)
        {
          if (0 <= x && x < image.width()) // inside image
-            alpha_over((unsigned char*)&image(x,y),
-                       (const unsigned char*)&img(i,j),
-                       (const unsigned char*)&image(x,y), SIZE_RGBA);
+         {
+           imagePtr = (unsigned char*)&image(x,y);
+           imgPtr = (unsigned char*)&img(i,j);
+           imagePtr[0] = INT_BLEND(imagePtr[0], imgPtr[0], alpha, tmp);
+           imagePtr[1] = INT_BLEND(imagePtr[1], imgPtr[1], alpha, tmp);
+           imagePtr[2] = INT_BLEND(imagePtr[2], imgPtr[2], alpha, tmp);
+         }
        }
      }
   }
-  img.demultiplyAlpha();
-}
-
-void Rectangle::computeGammaLookUpTable()
-{
-  _lut[0] = 0;
-  float invGamma = 1.0 / _gamma;
-  for (int i=1; i<256; ++i)
-    _lut[i] = CLAMP0255( ROUND(255.0f * exp( invGamma * log( float(i) / 255.0f ) ) ));
+  //  img.demultiplyAlpha();
 }
 
 
@@ -141,6 +148,9 @@ Gear(schema, "TA_DynamicRectangles", uniqueName)
   addPlug(_VIDEO_IN = new   PlugIn<VideoRGBAType>(this,"ImgIN",true)); 
 //   addPlug(_INNOCENCE_IN = new PlugIn<ValueType>(this, "Ict", false));
 //   addPlug(_CHANNEL_IN = new PlugIn<ValueType>(this, "Ch", false));
+  addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(768, 240, 1024)));
+  addPlug(_HEIGHT_IN = new PlugIn<ValueType>(this, "Height", false, new ValueType(480, 180, 768)));
+  
   addPlug(_GAMMA_IN = new PlugIn<ValueType>(this, "Gamma", false));
 
   addPlug(_DECAY_IN = new PlugIn<ValueType>(this, "Decay", false, new ValueType(0.001, 0, 1)));
@@ -150,6 +160,7 @@ Gear(schema, "TA_DynamicRectangles", uniqueName)
 
   _imageInBuffer = new VideoRGBAType();
 
+  Random::manualSeed((int)'q');
 //   _gamma = FLT_MIN;
 //   computeGammaLookUpTable();
 }
@@ -167,7 +178,8 @@ void Gear_TA_DynamicRectangles::runVideo()
 
   float decay = CLAMP(_DECAY_IN->type()->value(), 0.0f, 1.0f);
   
-  int width = 768, height = 480;
+  int width = _WIDTH_IN->type()->intValue();
+  int height = _HEIGHT_IN->type()->intValue();
   
   _imageOut->resize(_imageIn->width(), _imageIn->height());
   memcpy(_imageOut->data(), _imageIn->data(), _imageIn->size() * sizeof(RGBA));
@@ -182,18 +194,15 @@ void Gear_TA_DynamicRectangles::runVideo()
     // Compose image.
     it->clipImage(*_imageIn);
     it->applyGamma();
-    it->recomputeAlpha();
+    //it->recomputeAlpha();
     it->run(*_imageOut);
     
     // Decay weight;
     it->blend -= decay;
-    
-    // Erase zero-alpha elements.
-    if (it->blend <= 0)
-      _rectangles.erase(it);
+    //NOTICE("Blend: %f, decay %f", it->blend, decay);
   }
 
-  _imageOut->demultiplyAlpha();
+  //_imageOut->demultiplyAlpha();
 }
 
 void Gear_TA_DynamicRectangles::createRectangle(size_t width, size_t height, float gamma)
@@ -208,4 +217,7 @@ void Gear_TA_DynamicRectangles::createRectangle(size_t width, size_t height, flo
   rect.blend = 1.0f;
   rect.init(gamma);
   _rectangles.push_back(rect);
+  if (_rectangles.size() > MAX_RECTANGLES)
+    _rectangles.pop_front();
+  NOTICE("n rectangles: %d.", _rectangles.size());
 }

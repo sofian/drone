@@ -36,7 +36,6 @@ struct Rectangle
   VideoRGBAType img;
   float blend;
 
-  float _gamma;
   unsigned char _lut[256];
 
   void init(float gamma);
@@ -44,8 +43,6 @@ struct Rectangle
   void applyGamma();
   void recomputeAlpha();
   void run(VideoRGBAType& image) const;
-
-  void computeGammaLookUpTable();
 };
 
 typedef std::list< Rectangle > RectangleList;
@@ -62,6 +59,8 @@ public:
 public:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugIn<ValueType> *_DECAY_IN;
+  PlugIn<ValueType> *_WIDTH_IN;
+  PlugIn<ValueType> *_HEIGHT_IN;
 //   PlugIn<ValueType> *_INNOCENCE_IN;
 //   PlugIn<ValueType> *_CHANNEL_IN;
 
