@@ -25,6 +25,8 @@
 #include "TA_DataType.h"
 #include "VideoChannelType.h"
 
+#include "Random.h"
+
 class Gear_TA_TravelAgent : public Gear
 {
   static const std::string SETTING_FILENAME;

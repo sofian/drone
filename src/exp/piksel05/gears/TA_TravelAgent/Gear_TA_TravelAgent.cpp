@@ -101,15 +101,31 @@ void Gear_TA_TravelAgent::runVideo()
 	  std::set<int> neighbors = graph->neighbors(_currentSpot);
 	  float maxEnergy = -1000000.0f;
 	  int next = _currentSpot;
-	  for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
-	    {
-	      if ((*graph)[*it].energy > maxEnergy)
-		{
-		  maxEnergy = (*graph)[*it].energy;
-		  next = *it;
-		}
-	    }
-	  _currentSpot = next;
+      bool allempty = true;
+      for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+      {
+        if ((*graph)[*it].energy != 0)
+          allempty = true;
+        if ((*graph)[*it].energy > maxEnergy)
+        {
+          maxEnergy = (*graph)[*it].energy;
+          next = *it;
+        }
+      }
+
+      if (allempty)
+      {
+        int index = MIN((int)Random::boundedUniform(0, neighbors.size()), (int)neighbors.size()-1);
+        int i=0;
+        for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+          if (i==index)
+          {
+            next = *it;
+            break;
+          }
+      }
+
+      _currentSpot = next;
 	}
       else if (nextScene)
 	v.nextScene();
