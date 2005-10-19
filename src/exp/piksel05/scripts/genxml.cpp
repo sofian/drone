@@ -61,10 +61,10 @@ std::ifstream i("../data/pos.txt");
             ++it;
 	    ++clips;
         }
+	ts+="</spot>\n\n";
 	for(int i=3;i<coord.size();i++)
 	  ts+= "  <connection from=\""+QString((coord[0]))+"\" to=\""+QString((coord[i]))+"\" />\n";
 	
-	ts+="</spot>\n\n";
 	if(clips>0)
 	  o<<ts.latin1();
    }
