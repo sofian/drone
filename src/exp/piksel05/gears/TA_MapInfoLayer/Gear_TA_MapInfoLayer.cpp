@@ -89,19 +89,19 @@ void Gear_TA_MapInfoLayer::runVideo()
   double yoff = _YOFF->type()->value();
  
   std::vector<disto_t> pt;
-disto_t di;
-di.x=rax;
-di.y=ray;
-di.rad=_RADIUS->type()->value();;
-di.magn=_MAGN->type()->value();;
+  disto_t di;
+  di.x=rax;
+  di.y=ray;
+  di.rad=_RADIUS->type()->value();;
+  di.magn=_MAGN->type()->value();;
   pt.push_back(di);
   _VEC_IN->type()->path()->setDisto(pt);
   
   for(TA_DataType::const_iterator it= graph->begin(); it!=graph->end(); ++it)
-	{
-		TA_CityVertex ver = it->second;
-		aggw.circle( ver.x , ver.y, 10 * (float)(rand()%10) / 10, agg::rgba8(200,100,30,125));
-	}
+    {
+      TA_CityVertex ver = it->second;
+      aggw.circle( ver.x , ver.y, 2+ver.energy/10, agg::rgba8(200,100,30,155));
+    }
   
   aggw.circle( rax,ray, 10, agg::rgba8(00,100,230,125));
 }

@@ -7,6 +7,7 @@
 #include <qstring.h>
 #include <stdio.h>
 #include <qdir.h>
+#include <qtextstream.h>
 
 //int errormsg(char const*,...)
 ///{}
@@ -24,7 +25,9 @@ std::ifstream i("../data/pos.txt");
         std::ofstream o("../data/data.xml");
 	o<<"<data x0=\"60.396\" y=\"5.32\" width=\"0.003\" height=\"0.002\">\n";
 
-getline(i, s);
+	getline(i, s);
+
+	QString ts;
 	coord = split(s," ");
 	int yoff = tolong(coord[1]);
 	int xoff = tolong(coord[0]);
@@ -38,8 +41,8 @@ getline(i, s);
 		//exit(1);
 	}
 
-o<<"<spot id=\""<<tolong(coord[0])<<"\">\n";
-o<<"  <position x=\""<<toint(coord[1])+xoff<<"\" y=\""<<-toint(coord[2])+yoff<<"\" z=\"0\"/>\n";
+	ts="<spot id=\""+QString((coord[0]))+"\">\n";
+	ts+="  <position x=\""+QString(tostring(tolong(coord[1])+xoff))+"\" y=\""+QString(tostring(-tolong(coord[2])+yoff))+"\" z=\"0\"/>\n";
 
 	QDir d;
 	d.setPath("../data/clips");
@@ -52,17 +55,18 @@ o<<"  <position x=\""<<toint(coord[1])+xoff<<"\" y=\""<<-toint(coord[2])+yoff<<"
         const QFileInfoList *list = d.entryInfoList();
         QFileInfoListIterator it( *list );
         QFileInfo *fi;
-
+	int clips=0;
 	while ( (fi = it.current()) != 0 ) {
-            o<< "  <moviefile>"<<fi->fileName().latin1()<<"</moviefile>\n";
+            ts+= "  <moviefile>"+QString(fi->fileName().latin1())+"</moviefile>\n";
             ++it;
+	    ++clips;
         }
 	for(int i=3;i<coord.size();i++)
-	  o<< "  <connection from=\""<<tolong(coord[0])<<"\" to=\""<<tolong(coord[i])<<"\" />\n";
-
-
+	  ts+= "  <connection from=\""+QString((coord[0]))+"\" to=\""+QString((coord[i]))+"\" />\n";
 	
-	o<<"</spot>\n\n";
+	ts+="</spot>\n\n";
+	if(clips>0)
+	  o<<ts.latin1();
    }
 o<<"</data>\n";
 o.close();
