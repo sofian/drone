@@ -63,7 +63,7 @@ private:
   const AreaType *_area;
   VideoRGBAType *_imageOut;
 
-  Rasterer *_rasterer;
+  //  Rasterer *_rasterer;
 };
 
 #endif

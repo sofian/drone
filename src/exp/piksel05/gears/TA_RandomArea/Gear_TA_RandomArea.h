@@ -37,6 +37,8 @@ public:
 
 protected:
   PlugIn<ValueType> *_NEXT;
+  PlugIn<ValueType> *_WIDTH;
+  PlugIn<ValueType> *_HEIGHT;
 
   PlugOut<AreaType> *_AREA;
 };

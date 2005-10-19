@@ -19,7 +19,7 @@
                     <Plug Name="Video" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="117" PosY="175" Type="VideoSource" Name="VideoSource.1" >
+            <Gear PosX="139" PosY="170" Type="VideoSource" Name="VideoSource.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgOut" Exposed="0" />
@@ -28,14 +28,14 @@
                     <Plug Name="Movie" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="884" PosY="264" Type="VideoOutput" Name="VideoOutput.1" >
+            <Gear PosX="838" PosY="412" Type="VideoOutput" Name="VideoOutput.1" >
                 <Properties YRes="240" XRes="352" FullScreen="0" />
                 <Plugs>
                     <Plug Name="IN" Exposed="0" />
                 </Plugs>
             </Gear>
             <Gear PosX="-2" PosY="209" Type="StringSource" Name="StringSource.1" >
-                <Properties Source="/Users/tats/Movies/shot03_06" />
+                <Properties Source="/Users/tats/Movies/shot62_04.m2v" />
                 <Plugs>
                     <Plug Name="str" Exposed="0" />
                 </Plugs>
@@ -92,7 +92,7 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="775" PosY="111" Type="VideoMix" Name="VideoMix.1" >
+            <Gear PosX="700" PosY="290" Type="VideoMix" Name="VideoMix.1" >
                 <Properties/>
                 <Plugs>
                     <Plug Name="ImgA" Exposed="0" />
@@ -106,6 +106,8 @@
                 <Properties/>
                 <Plugs>
                     <Plug Name="Next" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
                     <Plug Name="Area" Exposed="0" />
                 </Plugs>
             </Gear>
@@ -161,26 +163,6 @@
                     <Plug Name="Out" Exposed="0" />
                 </Plugs>
             </Gear>
-            <Gear PosX="663" PosY="410" Type="VideoDelay" Name="VideoDelay.2" >
-                <Properties/>
-                <Plugs>
-                    <Plug Name="ImgIN" Exposed="0" />
-                    <Plug Name="ImgOUT" Exposed="0" />
-                    <Plug Name="Memory" Exposed="0" />
-                    <Plug Name="Delay" Exposed="0" />
-                    <Plug Name="Rec" Exposed="0" />
-                </Plugs>
-            </Gear>
-            <Gear PosX="576" PosY="553" Type="VideoDelay" Name="VideoDelay.3" >
-                <Properties/>
-                <Plugs>
-                    <Plug Name="ImgIN" Exposed="0" />
-                    <Plug Name="ImgOUT" Exposed="0" />
-                    <Plug Name="Memory" Exposed="0" />
-                    <Plug Name="Delay" Exposed="0" />
-                    <Plug Name="Rec" Exposed="0" />
-                </Plugs>
-            </Gear>
             <Gear PosX="505" PosY="311" Type="Gamma" Name="Gamma.1" >
                 <Properties/>
                 <Plugs>
@@ -229,12 +211,20 @@
                     <Plug Name="Value" Exposed="0" />
                 </Plugs>
             </Gear>
+            <Gear PosX="153" PosY="16" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="300" Horizontal_lower_Bound="300" Vertical_lower_Bound="200" Vertical_higher_Bound="200" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
         </Gears>
         <Connections>
             <Connection GearA="AreaVideoReplace.1" GearB="VideoMix.1" Input="ImgB" Output="VideoOut" />
             <Connection GearA="AreaVideoSelect.1" GearB="Gamma.1" Input="ImgIN" Output="VideoOut" />
             <Connection GearA="VideoSource.1" GearB="VideoDelay.1" Input="ImgIN" Output="ImgOut" />
             <Connection GearA="VideoSource.1" GearB="AreaVideoSelect.1" Input="Video" Output="ImgOut" />
+            <Connection GearA="VideoSource.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
             <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
             <Connection GearA="VideoDelay.1" GearB="AreaVideoReplace.1" Input="VideoIn" Output="ImgOUT" />
             <Connection GearA="VideoDelay.1" GearB="VideoMix.1" Input="ImgA" Output="ImgOUT" />
@@ -248,7 +238,6 @@
             <Connection GearA="ValueMix.1" GearB="AffineTransform.5" Input="In" Output="Out" />
             <Connection GearA="Slider.5" GearB="ValueMix.1" Input="Blend" Output="Value" />
             <Connection GearA="AffineTransform.5" GearB="VideoMix.1" Input="ArgA" Output="Out" />
-            <Connection GearA="VideoMix.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
             <Connection GearA="TA_RandomArea.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="Area" />
             <Connection GearA="TA_RandomArea.1" GearB="AreaVideoSelect.1" Input="Select" Output="Area" />
             <Connection GearA="Slider.1" GearB="AffineTransform.5" Input="Scale" Output="Value" />
@@ -263,6 +252,8 @@
             <Connection GearA="ValueClamp.1" GearB="Gamma.1" Input="Amount" Output="Out" />
             <Connection GearA="Slider.7" GearB="ValueClamp.1" Input="Min" Output="Value" />
             <Connection GearA="Slider.8" GearB="ValueClamp.1" Input="Max" Output="Value" />
+            <Connection GearA="TouchPad.1" GearB="TA_RandomArea.1" Input="Width" Output="HValue" />
+            <Connection GearA="TouchPad.1" GearB="TA_RandomArea.1" Input="Height" Output="VValue" />
         </Connections>
     </Schema>
 </Project>

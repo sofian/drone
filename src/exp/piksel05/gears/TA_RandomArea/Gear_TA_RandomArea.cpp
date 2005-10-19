@@ -45,8 +45,10 @@ Gear_TA_RandomArea::Gear_TA_RandomArea(Schema *schema, std::string uniqueName) :
   Gear(schema, "TA_RandomArea", uniqueName)
 {
   addPlug(_NEXT = new PlugIn<ValueType>(this, "Next", false, new ValueType(1, 0, 1)));
-  addPlug(_AREA = new PlugOut<AreaType>(this, "Area", false));
-  Random::seed();
+  addPlug(_WIDTH = new PlugIn<ValueType>(this, "Width", false, new ValueType(640, 0, 1024)));
+  addPlug(_HEIGHT = new PlugIn<ValueType>(this, "Height", false, new ValueType(480, 0, 768)));
+  addPlug(_AREA = new PlugOut<AreaType>(this, "Area", true));
+  //  Random::seed();
 }
 
 Gear_TA_RandomArea::~Gear_TA_RandomArea()
@@ -56,17 +58,19 @@ Gear_TA_RandomArea::~Gear_TA_RandomArea()
 
 void Gear_TA_RandomArea::runVideo()
 {
+  float width = _WIDTH->type()->value() / 2;
+  float height = _HEIGHT->type()->value() / 2;
+  float max = MAX(width, height);
+
+  //  NOTICE("%f %f %f", width, height, max);
   if (_NEXT->type()->boolValue())
   {
-    _AREA->type()->setOrigin((int)( CLAMP(Random::uniform(), 0.0f, 1.0f) * WINDOW_WIDTH/2),
-                             (int)( CLAMP(Random::uniform(), 0.0f, 1.0f) * WINDOW_HEIGHT/2));
-    _AREA->type()->resize((size_t)MAX( Random::uniform() * WINDOW_HEIGHT/2, 32.0f),
-                          (size_t)MAX( Random::uniform() * WINDOW_HEIGHT/2, 32.0f));
-//     _AREA->type()->setOrigin((int)( CLAMP(Random::normal(0,1), 0.0f, 1.0f) * WINDOW_WIDTH/2),
-//                              (int)( CLAMP(Random::normal(0,1), 0.0f, 1.0f) * WINDOW_HEIGHT/2));
-//     _AREA->type()->resize((size_t)MAX( CLAMP(Random::normal(0,1), 0.0f, 1.0f) * WINDOW_WIDTH/2, 32.0f),
-//                           (size_t)MAX( CLAMP(Random::normal(0,1), 0.0f, 1.0f) * WINDOW_HEIGHT/2, 32.0f));
-//    _AREA->type()->debug();
+    
+     _AREA->type()->setOrigin((int)( Random::uniform() * width),
+                              (int)( Random::uniform() * height));
+     _AREA->type()->resize((size_t)MAX( Random::uniform() * max, 32.0f),
+                           (size_t)MAX( Random::uniform() * max, 32.0f));
+     _AREA->type()->resize(150,150);
   }
 }
 
