@@ -44,12 +44,15 @@ public:
   PlugIn<ValueType> *_ENERGY_CONSUMPTION;
   PlugIn<ValueType> *_ENERGY_GRID;
   PlugIn<ValueType> *_MOVE_ALLOWED;
+  PlugIn<ValueType> *_NEXT_SCENE;
   
   PlugOut<TA_DataType> *_TA_DATA_OUT;
   PlugOut<ValueType> *_CURRENT_SPOT_OUT;
+  PlugOut<ValueType> *_CURRENT_SCENE_OUT;
 
 private:
   int _currentSpot;
+  int _currentScene;
 };
 
 #endif

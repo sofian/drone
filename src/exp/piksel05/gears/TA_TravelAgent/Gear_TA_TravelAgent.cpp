@@ -47,18 +47,21 @@ Gear(schema, "TA_TravelAgent", uniqueName)
   //  addPlug(_TA_DATA_IN = new PlugIn<TA_DataType>(this, "DataIn", false));
   addPlug(_GRID_IN = new PlugIn<VideoChannelType>(this, "GridIn", false));
   
-  addPlug(_ENERGY_DECAY = new PlugIn<ValueType>(this, "E-Decay", false, new ValueType(0.001, 0, 1)));
-  addPlug(_ENERGY_CONSUMPTION = new PlugIn<ValueType>(this, "E-Consum", false, new ValueType(0.001, 0, 1)));
-  addPlug(_ENERGY_GRID = new PlugIn<ValueType>(this, "E-Grid", false, new ValueType(0.001, 0, 1)));
+  addPlug(_ENERGY_DECAY = new PlugIn<ValueType>(this, "E-Decay", false, new ValueType(0, 0, 1)));
+  addPlug(_ENERGY_CONSUMPTION = new PlugIn<ValueType>(this, "E-Consum", false, new ValueType(1, 0, 1)));
+  addPlug(_ENERGY_GRID = new PlugIn<ValueType>(this, "E-Grid", false, new ValueType(1, 0, 1)));
   addPlug(_MOVE_ALLOWED = new PlugIn<ValueType>(this, "MoveOK", false, new ValueType(1, 0, 1)));
+  addPlug(_NEXT_SCENE = new PlugIn<ValueType>(this, "NextScene", false, new ValueType(1, 0, 1)));
 
   addPlug(_TA_DATA_OUT = new PlugOut<TA_DataType>(this, "DataOut", false));
   addPlug(_CURRENT_SPOT_OUT = new PlugOut<ValueType>(this, "CurrSpot", false));
+  addPlug(_CURRENT_SCENE_OUT = new PlugOut<ValueType>(this, "CurrScene", false));
   
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 	_TA_DATA_OUT->sleeping(true);
 
   _currentSpot = -1;
+  _currentScene = -1;
 }
 
 Gear_TA_TravelAgent::~Gear_TA_TravelAgent()
@@ -74,7 +77,7 @@ void Gear_TA_TravelAgent::onUpdateSettings()
   graph->load(_settings.get(SETTING_FILENAME)->valueStr());
   graph->printDebug();
   _currentSpot = graph->begin()->first;
-  //  (*graph)[_currentSpot].energy = 100;
+  _currentScene = graph->begin()->second.getCurrentScene();
 	_TA_DATA_OUT->sleeping(false);
 }
 
@@ -84,13 +87,15 @@ void Gear_TA_TravelAgent::runVideo()
   VideoChannelType *grid = _GRID_IN->type();
   TA_CityVertex& v = (*graph)[_currentSpot];
 
+  bool nextScene = _NEXT_SCENE->type()->boolValue();
+  
   // Dummy agent, just goes from one point to the other, consuming all the energy there.
   if (v.energy <= 0)
   {
     if (_MOVE_ALLOWED->type()->boolValue())
     {
-      // Change next clip of this spot.
-      v.currentClipIndex = (v.currentClipIndex+1) % v.clipFileNames.size();
+      // Change next clip of this spot for the next time the agent comes here.
+      v.nextScene();
       
       // Choose next spot.
       std::set<int> neighbors = graph->neighbors(_currentSpot);
@@ -106,9 +111,13 @@ void Gear_TA_TravelAgent::runVideo()
       }
       _currentSpot = next;
     }
+    else if (nextScene)
+      v.nextScene();
   }
   else
   {
+    if (nextScene)
+      v.nextScene();
     v.energy -= _ENERGY_CONSUMPTION->type()->value();    
   }
 
@@ -163,6 +172,9 @@ void Gear_TA_TravelAgent::runVideo()
 //   }
   //graph->printDebug();
   _CURRENT_SPOT_OUT->type()->setValue(_currentSpot);
+  _currentScene = (*graph)[_currentSpot].getCurrentScene();
+  NOTICE("current scene: %d.", _currentScene);
+  _CURRENT_SCENE_OUT->type()->setValue(_currentScene);
 }
 
 
