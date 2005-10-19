@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread debug
+CONFIG = qt warn_on thread debug agg
 
 
 
