@@ -55,13 +55,31 @@ public:
   Array2D() : _width(0), _height(0) {}
 
   /**
+   * Copy constructor.
+   */
+  Array2D(const Array2D<T>& copy)
+  {
+    resize(copy.width(), copy.height());
+    std::copy(begin(), end(), copy.begin());
+  }
+
+  /**
+   * Copy constructor.
+   */
+  Array2D(const Array<T>& copy)
+  {
+    resize(copy.size());
+    std::copy(begin(), end(), copy.begin());
+  }
+  
+  /**
    * Constructor.
    *
    * @param width the wished number of columns
    * @param height the wished number of rows
    */
   Array2D(size_type width,
-         size_type height)    
+          size_type height)    
     : _width(0), _height(0)
   {
     resize(width, height);
