@@ -27,6 +27,8 @@
 
 #include "Random.h"
 
+#define MAX_VERTEX_ENERGY 2000.0f
+
 class Gear_TA_TravelAgent : public Gear
 {
   static const std::string SETTING_FILENAME;

@@ -188,7 +188,7 @@ void Gear_TA_TravelAgent::runVideo()
     it->second.energy += energy[i];
 
   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
-    it->second.energy = CLAMP(it->second.energy, 0.0f, 45.0f); // lower bound at zero, higher at 45 secs
+    it->second.energy = CLAMP(it->second.energy, 0.0f, MAX_VERTEX_ENERGY); // lower bound at zero, higher at 45 secs
 
   //   if (_MOVE_ALLOWED->type()->boolValue())
   //   {
