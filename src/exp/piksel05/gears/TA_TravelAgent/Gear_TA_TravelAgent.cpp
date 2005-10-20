@@ -137,7 +137,9 @@ void Gear_TA_TravelAgent::runVideo()
   {
     if (nextScene)
       v.nextScene();
-    v.energy -= _ENERGY_CONSUMPTION->type()->value();    
+    
+    if (_MOVE_ALLOWED->type()->boolValue())
+      v.energy -= _ENERGY_CONSUMPTION->type()->value();
   }
 
   // Decay energy of every point.
