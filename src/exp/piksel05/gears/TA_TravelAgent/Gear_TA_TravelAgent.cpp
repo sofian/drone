@@ -107,11 +107,11 @@ void Gear_TA_TravelAgent::runVideo()
       for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
       {
         float e = graph->pathEnergy(*it, 1, excluded);
-        if ((*graph)[*it].energy != 0)
+        if (e != 0)
           allempty = true;
-        if ((*graph)[*it].energy > maxEnergy)
+        if (e > maxEnergy)
         {
-          maxEnergy = (*graph)[*it].energy;
+          maxEnergy = e;
           next = *it;
         }
       }
