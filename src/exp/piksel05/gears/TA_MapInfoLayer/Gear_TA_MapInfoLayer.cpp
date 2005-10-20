@@ -140,7 +140,7 @@ void Gear_TA_MapInfoLayer::runVideo()
   for(TA_DataType::const_iterator it= graph->begin(); it!=graph->end(); ++it)
     {
       TA_CityVertex ver = it->second;
-      aggw.circle( ver.x , ver.y, 2+ver.energy/10, agg::rgba8(200,100,30,155));
+      aggw.circle( ver.x , ver.y, MAX(2+ver.energy/10,300), , agg::rgba8(200,100,30,155));
     
     }
   int r,g,b;
