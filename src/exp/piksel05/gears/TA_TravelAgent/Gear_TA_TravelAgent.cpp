@@ -102,9 +102,11 @@ void Gear_TA_TravelAgent::runVideo()
       float maxEnergy = -1000000.0f;
       int next = _currentSpot;
       bool allempty = true;
+      std::set<int> excluded;
+      excluded.insert(_currentSpot);
       for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
       {
-        float e = graph->pathEnergy(*it, 1);
+        float e = graph->pathEnergy(*it, 1, excluded);
         if ((*graph)[*it].energy != 0)
           allempty = true;
         if ((*graph)[*it].energy > maxEnergy)
