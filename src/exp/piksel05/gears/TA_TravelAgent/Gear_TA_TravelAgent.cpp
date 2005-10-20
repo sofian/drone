@@ -91,19 +91,20 @@ void Gear_TA_TravelAgent::runVideo()
   
   // Dummy agent, just goes from one point to the other, consuming all the energy there.
   if (v.energy <= 0)
+  {
+    if (_MOVE_ALLOWED->type()->boolValue())
     {
-      if (_MOVE_ALLOWED->type()->boolValue())
-	{
-	  // Change next clip of this spot for the next time the agent comes here.
-	  v.nextScene();
+      // Change next clip of this spot for the next time the agent comes here.
+      v.nextScene();
       
-	  // Choose next spot.
-	  std::set<int> neighbors = graph->neighbors(_currentSpot);
-	  float maxEnergy = -1000000.0f;
-	  int next = _currentSpot;
+      // Choose next spot.
+      std::set<int> neighbors = graph->neighbors(_currentSpot);
+      float maxEnergy = -1000000.0f;
+      int next = _currentSpot;
       bool allempty = true;
       for (std::set<int>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
       {
+        float e = graph->pathEnergy(*it, 1);
         if ((*graph)[*it].energy != 0)
           allempty = true;
         if ((*graph)[*it].energy > maxEnergy)
@@ -112,7 +113,7 @@ void Gear_TA_TravelAgent::runVideo()
           next = *it;
         }
       }
-
+    
       if (allempty)
       {
         int index = MIN((int)Random::boundedUniform(0, neighbors.size()), (int)neighbors.size()-1);
@@ -126,16 +127,16 @@ void Gear_TA_TravelAgent::runVideo()
       }
 
       _currentSpot = next;
-	}
-      else if (nextScene)
-	v.nextScene();
     }
+    else if (nextScene)
+      v.nextScene();
+  }
   else
-    {
-      if (nextScene)
-	v.nextScene();
-      v.energy -= _ENERGY_CONSUMPTION->type()->value();    
-    }
+  {
+    if (nextScene)
+      v.nextScene();
+    v.energy -= _ENERGY_CONSUMPTION->type()->value();    
+  }
 
   // Decay energy of every point.
   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it)
@@ -145,43 +146,41 @@ void Gear_TA_TravelAgent::runVideo()
   energy.fill(0.0f);
   int total_activated_points = 0;
   for (int x=0; x<grid->width(); ++x)
+  {
+    for (int y=0; y<grid->height(); ++y)
     {
-      for (int y=0; y<grid->height(); ++y)
-	{
-	  if ((*grid)(x,y)) // point activated
+      if ((*grid)(x,y)) // point activated
 	    {
 	      total_activated_points++;
         
 	      TA_Point centroid((float)x / (float)grid->width() * graph->xSize + graph->xOrigin,
-				(float)y / (float)grid->height() * graph->ySize + graph->yOrigin);
+                          (float)y / (float)grid->height() * graph->ySize + graph->yOrigin);
 	      float sum = 0;
 	      int i = 0;
 	      float dist;
 	      for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it, ++i)
-		{
-		  dist = distance( centroid, it->second );
-		  dist *= dist;
-		  //	  dist *= dist;
-		  //dist *= dist;
-		  energy[i] = 1.0f / dist;
-		  sum += energy[i];
-		}
+        {
+          dist = distance( centroid, it->second );
+          dist *= dist;
+          energy[i] = 1.0f / dist;
+          sum += energy[i];
+        }
 	      i = 0;
 
 	      float factor = 1.0f / sum;
 	      for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it, ++i)
-		energy[i] *= factor;
+          energy[i] *= factor;
 	    }
-	}
     }
+  }
 
   // Global energy inputed by grid equals one at all time.
   if (total_activated_points > 0)
-    {
-      float mult = _ENERGY_GRID->type()->value() / (float)total_activated_points;
-      for (int i=0; i<energy.size(); ++i)
-	energy[i] *= mult;
-    }
+  {
+    float mult = _ENERGY_GRID->type()->value() / (float)total_activated_points;
+    for (int i=0; i<energy.size(); ++i)
+      energy[i] *= mult;
+  }
 
   int i=0;
   for (TA_DataType::iterator it = graph->begin(); it != graph->end(); ++it, ++i)

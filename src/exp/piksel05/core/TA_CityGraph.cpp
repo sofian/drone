@@ -172,3 +172,34 @@ void TA_CityGraph::printDebug() const
     std::cerr << "</graph>" << std::endl;
   }
 }
+
+float TA_CityGraph::pathEnergy(int vertex, int lookAhead, std::set<int> excluded)
+{
+  float energy = this->operator[](vertex).energy;
+
+  if (lookAhead > 0)
+  {
+    std::set<int> neigh = neighbors(vertex);
+
+    excluded.insert(vertex);
+
+    std::set<int> trueNeighbors;
+
+    set_difference(neigh.begin(), neigh.end(),
+                   excluded.begin(), excluded.end(),
+                   inserter(trueNeighbors, trueNeighbors.begin()));
+
+    float max = -100000;
+
+    for (std::set<int>::iterator it = trueNeighbors.begin(); it != trueNeighbors.end(); ++it)
+    {
+      float e = pathEnergy(*it, lookAhead-1, excluded);
+      if (e > max)
+        max = e;
+    }
+
+    energy += max;
+  }
+  
+  return energy;
+}

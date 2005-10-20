@@ -9,6 +9,8 @@
 #include "StringUtils.h"
 #include <qdom.h>
 #include <qfile.h> 
+#include <set>
+#include <algorithm>
 
 //#define TA_MOVIES_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/clips/"
 //#define TA_OSC_PATH "/Users/tats/devel/drone/trunk/src/exp/piksel05/data/k2o/"
@@ -90,6 +92,8 @@ public:
   virtual void load(const std::string& filename);
 
   virtual void printDebug() const;
+
+  float pathEnergy(int vertex, int lookAhead, std::set<int> excluded = std::set<int>());
   
 public:
   //  TA_CentroidGrid _gridCentroids;
