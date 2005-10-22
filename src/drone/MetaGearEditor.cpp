@@ -56,3 +56,13 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 MetaGearEditor::~MetaGearEditor()
 {
 }
+
+void MetaGearEditor::zoomInSchema()
+{
+	_schemaEditor->zoomIn();
+}
+
+void MetaGearEditor::zoomOutSchema()
+{
+	_schemaEditor->zoomOut();
+}
