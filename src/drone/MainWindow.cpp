@@ -54,7 +54,8 @@ QMainWindow(),
 _engine(NULL), 
 _frame(NULL), 
 _mainSchemaGui(NULL), 
-_menuFirstRecentSchemaId(-1)
+_menuFirstRecentSchemaId(-1),
+_menuShowSmallGearsId(false)
 {    
   _engine = new Engine(0);    
   _metaGearEditor = new MetaGearEditor(this, _engine->mainMetaGear(), _engine);
@@ -68,6 +69,13 @@ _menuFirstRecentSchemaId(-1)
   addToolBar(_toolBar);        
   _playPause = new QToolButton(_toolBar);    		
   _playPause->setToggleButton(true);
+	
+	
+  _toolBar->addSeparator();
+  QToolButton *zoomOut = new QToolButton(_toolBar);    
+  zoomOut->setText("-");    
+  QToolButton *zoomIn = new QToolButton(_toolBar);    
+  zoomIn->setText("+");    
 	
 	/*
   _zoomIn = new QToolButton(_toolBar);    
@@ -83,6 +91,10 @@ _menuFirstRecentSchemaId(-1)
 
   QObject::connect(_playPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
   
+  QObject::connect(zoomIn, SIGNAL(pressed()), this, SLOT(slotZoomIn()));
+  QObject::connect(zoomOut, SIGNAL(pressed()), this, SLOT(slotZoomOut()));
+	
+	
   //menu    
   _fileMenu = new QPopupMenu(this);
   _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), CTRL+Key_N);
@@ -102,8 +114,11 @@ _menuFirstRecentSchemaId(-1)
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
 
   _viewMenu = new QPopupMenu(this);
-  _viewMenu->insertItem("Media Pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
- 
+	_viewMenu->setCheckable(true);
+  _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
+  _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), CTRL+Key_I);
+
+	
   //for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
@@ -286,12 +301,29 @@ void MainWindow::slotMenuQuit()
 void MainWindow::slotMenuViewMediaPool()
 {
   MediaPoolDialog mediaPoolDialog(this);
-
   mediaPoolDialog.exec();
-
 }
+
+void MainWindow::slotMenuViewSmallGears()
+{
+	_showSmallGears=!_showSmallGears;
+	_viewMenu->setItemChecked(_menuShowSmallGearsId, _showSmallGears);
+	_mainSchemaGui->showSmallGears(_showSmallGears);
+}
+
+
 
 void MainWindow::timerEvent(QTimerEvent*)
 {
   _engine->playThread(_engine);
+}
+
+void MainWindow::slotZoomIn()
+{
+  _metaGearEditor->zoomInSchema();
+}
+
+void MainWindow::slotZoomOut()
+{
+  _metaGearEditor->zoomOutSchema();
 }
