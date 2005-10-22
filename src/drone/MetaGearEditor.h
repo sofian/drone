@@ -21,6 +21,9 @@ public:
   SchemaGui *schemaGui(){return _schemaGui;}
 	SchemaEditor *schemaEditor(){return _schemaEditor;}    
   
+	void zoomInSchema();
+	void zoomOutSchema();
+	
 private:
   MetaGear *_metaGear;
   SchemaGui *_schemaGui;
