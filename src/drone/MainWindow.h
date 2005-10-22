@@ -49,6 +49,9 @@ class MainWindow : public QMainWindow
 
 public slots:
   void slotPlay(bool);
+	void slotZoomIn();
+	void slotZoomOut();
+
 
   void slotMenuNew();
   void slotMenuLoad();
@@ -59,6 +62,7 @@ public slots:
   void slotMenuPreferences();
 
   void slotMenuViewMediaPool();
+	void slotMenuViewSmallGears();
 
   void slotMenuItemSelected(int id);
 
@@ -98,6 +102,8 @@ private:
   QString _lastSavePath;
   std::list<std::string> _recentSchemas;
   int _menuFirstRecentSchemaId;
+	int _menuShowSmallGearsId;
+	bool _showSmallGears;
 
 //    PlayThread *_playThread;
 };
