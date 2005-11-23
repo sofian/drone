@@ -90,6 +90,17 @@ void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
   }
 }
 
+void GearMaker::getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo, std::string filter)
+{
+  
+  
+  for (std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
+  {
+	if(QString(it->second->gearInfo().name).lower().find(QString(filter.c_str()).lower()) != -1)
+    	  gearsInfo.push_back(&(it->second->gearInfo()));
+  }
+}
+
 void GearMaker::parseGears()
 {           
   std::cout << "--- loading gears ---" << std::endl;
