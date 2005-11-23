@@ -537,6 +537,17 @@ void SchemaEditor::addGear(std::string name, int posX, int posY)
   _schemaGui->addGear(name, posX, posY);    
 }
 
+void SchemaEditor::addMovingGear(std::string name)
+{
+  Gear * ng = _schemaGui->addGear(name, 0,0); // il est tard.... 
+  selectOneGear(ng->getGearGui());
+ 
+  _state = MOVING_GEAR; 
+  QRect rect = getBoundingBoxOfAllSelectedGears();
+  _movingGearStartPos = rect.center(); 
+}
+
+
 void SchemaEditor::addMetaGear(std::string filename, int posX, int posY)
 {  
   MetaGear *metaGear = _schemaGui->addMetaGear(filename, posX, posY);
@@ -593,6 +604,7 @@ QRect SchemaEditor::getBoundingBoxOfAllSelectedGears()
   return bbox;
 }
 
+/* 
 Gear* SchemaEditor::getTopLeftSelectedGear()
 {
   QRect getBoundingBoxOfAllSelectedGears();
@@ -601,7 +613,7 @@ Gear* SchemaEditor::getTopLeftSelectedGear()
   for(unsigned int i=0;i<allGears.size();++i)
     _schemaGui->removeGear(allGears[i]);
 }
-
+*/
 
 void SchemaEditor::selectOneGear(GearGui* gear)
 {

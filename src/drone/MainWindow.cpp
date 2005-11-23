@@ -28,6 +28,7 @@
 #include "Pause.xpm"
 #include "GearGui.h"
 #include "error.h"
+#include <qlineedit.h>
 
 #include "SchemaGui.h"
 #include "MetaGear.h"
@@ -109,6 +110,10 @@ _menuShowSmallGearsId(false)
   _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), CTRL+Key_Q);    
   _fileMenu->insertSeparator();
   
+  
+  _editMenu = new QPopupMenu(this);
+  _editMenu->insertItem("Goto navigator", this, SLOT(slotMenuGotoNavigator()),Key_Slash);    
+  
   _toolsMenu = new QPopupMenu(this);
   _menuPrefsItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
@@ -125,6 +130,7 @@ _menuShowSmallGearsId(false)
   QMenuBar *menuBar = new QMenuBar(this);
   menuBar->setSeparator(QMenuBar::InWindowsStyle);
   menuBar->insertItem("&File", _fileMenu);
+  menuBar->insertItem("&Edit", _editMenu);
   menuBar->insertItem("&Tools", _toolsMenu);
   menuBar->insertItem("&View", _viewMenu);
 
@@ -251,6 +257,12 @@ void MainWindow::slotMenuPreferences()
   
 }
 
+void MainWindow::slotMenuGotoNavigator()
+{
+  _metaGearEditor->gearNavigatorView()->focusAndClear();
+  std::cerr<<"A!!!!!!!"<<std::endl;
+}
+
 void MainWindow::addToRecentSchema(std::string filename)
 {  
   //clean recent menu and settings first
@@ -308,7 +320,7 @@ void MainWindow::slotMenuViewSmallGears()
 {
 	_showSmallGears=!_showSmallGears;
 	_viewMenu->setItemChecked(_menuShowSmallGearsId, _showSmallGears);
-	_mainSchemaGui->showSmallGears(_showSmallGears);
+	//	_mainSchemaGui->showSmallGears(_showSmallGears);
 }
 
 

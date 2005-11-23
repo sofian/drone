@@ -61,10 +61,14 @@ public slots:
 
   void slotMenuPreferences();
 
+
   void slotMenuViewMediaPool();
 	void slotMenuViewSmallGears();
 
   void slotMenuItemSelected(int id);
+
+  void slotMenuGotoNavigator();
+
 
 protected:
   void timerEvent(QTimerEvent*);
@@ -92,6 +96,7 @@ private:
   int _menuSaveItemId;
   int _menuPrefsItemId;
   QPopupMenu *_fileMenu;
+  QPopupMenu *_editMenu;
   QPopupMenu *_toolsMenu;
   QPopupMenu *_viewMenu;
 

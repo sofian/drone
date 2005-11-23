@@ -2,6 +2,7 @@
 #define METAGEAREDITOR_INCLUDED
 
 #include <qwidget.h>
+#include "GearNavigatorView.h"
 
 class MetaGear;
 class PanelScrollView;
@@ -19,10 +20,13 @@ public:
   ~MetaGearEditor();
 
   SchemaGui *schemaGui(){return _schemaGui;}
-	SchemaEditor *schemaEditor(){return _schemaEditor;}    
+  GearNavigatorView *gearNavigatorView(){return _gearNavigatorView;}
+  SchemaEditor *schemaEditor(){return _schemaEditor;}    
   
 	void zoomInSchema();
 	void zoomOutSchema();
+
+
 	
 private:
   MetaGear *_metaGear;
@@ -31,10 +35,10 @@ private:
   QSplitter *_horizontalSplitter;
 	QSplitter *_verticalSplitter;
 
-  GearListView *_gearListView;
+  GearNavigatorView *_gearNavigatorView;
   PlugPropertiesTable *_plugPropertiesTable;
   PanelScrollView *_panelScrollView;
-  SchemaEditor *_schemaEditor;    
+  SchemaEditor *_schemaEditor;
 
 };
 

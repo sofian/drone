@@ -37,10 +37,11 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   
   //_panelScrollView = new PanelScrollView(_horizontalSplitter);
   _panelScrollView = NULL;
-  _gearListView = new GearListView(_verticalSplitter);
-  _gearListView->create();
-  _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
   _schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine, _panelScrollView);  
+  
+  _gearNavigatorView = new GearNavigatorView(_verticalSplitter,_schemaEditor);
+  _gearNavigatorView->create();
+  _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
   
   _horizontalSplitter->moveToFirst(_verticalSplitter);
   

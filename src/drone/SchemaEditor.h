@@ -65,6 +65,8 @@ public:
   void zoom(float factor);
 
   void addGear(std::string name, int posX, int posY);
+  void addMovingGear(std::string name); // like addGear but new gear is tied and moving to the mouse cursor until dropped (by clicking) somewhere in the window
+
   void addMetaGear(std::string filename, int posX, int posY);
   void addNewMetaGear(int posX, int posY);
   void removeGear(GearGui *gear);
@@ -115,7 +117,7 @@ protected:
   void selectGearsInRectangle(QRect rect);
   QRect getBoundingBoxOfAllSelectedGears();
   // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
-  Gear* SchemaEditor::getTopLeftSelectedGear();
+  //Gear* SchemaEditor::getTopLeftSelectedGear();
   void moveSelectedGearsBy(int x, int y);
   void toggleGearSelection(GearGui* gear);
 

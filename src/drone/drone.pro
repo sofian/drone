@@ -30,6 +30,7 @@ unix:!macx:TARGET = ../../drone
 
 HEADERS += config.h \
 GearListMenu.h \
+GearNavigatorView.h \
 GearListView.h \
 GearPropertiesDialog.h \
 MediaPoolIconView.h \
@@ -56,6 +57,7 @@ splash.xpm
 SOURCES += drone.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
+GearNavigatorView.cpp \
 GearPropertiesDialog.cpp \
 MainWindow.cpp \
 MediaPoolIconView.cpp \
