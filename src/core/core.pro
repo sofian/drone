@@ -33,17 +33,13 @@ Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
 ConnectionItem.h \
-ControlPanel.h \
-Control.h \
 DroneCore.h \
 Engine.h \
 Gear.h \
-GearControl.h \
 GearFrei0r.h \
 types/AbstractType.h \
 types/AreaArrayType.h \
 types/AreaType.h \
-types/FFTType.h \
 types/StringType.h \
 types/OscMessageType.h \
 types/ValueType.h \
@@ -95,12 +91,9 @@ composite/AlphaComposite.h
  
 SOURCES += error.cpp \
 ConnectionItem.cpp \
-ControlPanel.cpp \
-Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
 Gear.cpp \
-GearControl.cpp \
 GearFrei0r.cpp \
 types/AreaType.cpp \
 types/EnumType.cpp \

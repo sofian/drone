@@ -41,9 +41,14 @@ _currentSizeY(0)
 {            
 }
 
-void GearGui_TV::drawShape(QPainter &painter)
+void GearGui_TV::drawSmall(QPainter &painter)
 {
-  GearGui::drawShape(painter);
+	drawNormal(painter);
+}
+
+void GearGui_TV::drawNormal(QPainter &painter)
+{
+  GearGui::drawNormal(painter);
 
   const Array2DType<RGBA> *image;
   const RGBA *data;

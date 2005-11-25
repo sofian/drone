@@ -39,11 +39,9 @@ public:
 protected:
   QImage _videoFrame;    
 
-  void drawShape(QPainter &painter);
-
-
-
-
+  void drawNormal(QPainter &painter);
+  void drawSmall(QPainter &painter);
+	
 private:
 
   static const QColor NO_SIGNAL_COLOR;

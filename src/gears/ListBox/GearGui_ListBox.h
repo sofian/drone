@@ -22,7 +22,6 @@
 
 #include "GearGui.h"
 
-
 #include <qcanvas.h>
 #include <vector>
 
@@ -45,10 +44,8 @@ public:
 
 protected:
 
-
-  void drawShape(QPainter &painter);
-
-
+  void drawNormal(QPainter &painter);
+  void drawSmall(QPainter &painter);
 };
 
 

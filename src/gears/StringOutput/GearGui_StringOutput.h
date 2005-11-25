@@ -33,11 +33,13 @@ class GearGui_StringOutput : public GearGui
 {
 public:
   GearGui_StringOutput(Gear_StringOutput *gear, QCanvas *canvas);
-	
-	void drawShape(QPainter &painter);
-	
+		
 protected:
   static const int UPDATE_RATE_MS;
+
+	void drawSmall(QPainter &painter);
+	void drawNormal(QPainter &painter);
+
 	
 };
 

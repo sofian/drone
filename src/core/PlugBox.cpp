@@ -64,7 +64,7 @@ QColor PlugBox::color()
   return _plug->abstractType()->color();
 }
 
-void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected)
+void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected, bool small)
 {    
   int halfGearSizeX = gearSizeX / 2;    
   _x = x;
@@ -110,12 +110,14 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGe
   else
     painter.setPen(Qt::black);
 
-  //align text left or right if In or Out
-  if (_plug->inOut() == IN)
-    painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 5, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
-  else
-    painter.drawText(_x - halfGearSizeX, _y - 5, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
-
+	if (!small)
+	{
+		//align text left or right if In or Out
+		if (_plug->inOut() == IN)
+			painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 5, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+		else
+			painter.drawText(_x - halfGearSizeX, _y - 5, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+	}
 }
 
 bool PlugBox::hitted(int x, int y)

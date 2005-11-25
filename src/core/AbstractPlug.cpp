@@ -21,16 +21,18 @@
 #include <iostream>
 #include <sstream>
 #include "AbstractPlug.h"
+#include "XMLHelper.h"
 
 #include "Gear.h"
 
 const std::string AbstractPlug::XML_TAGNAME = "Plug";
+const std::string AbstractPlug::XML_TAGNAME_TYPE_ELEM = "Type";
 
 AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory) :
   _abstractType(type),
   _abstractDefaultType(type),
-  _parent(parent),
-  _mandatory(mandatory),
+	_mandatory(mandatory),
+	_parent(parent),
   _sleeping(false),
   _inOut(inOut),
   _name(name),
@@ -242,13 +244,28 @@ void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
   oss << exposed();
   exposedAttr.setValue(oss.str().c_str());
   plugElem.setAttributeNode(exposedAttr);
+
+  QDomElement typeElem = doc.createElement(XML_TAGNAME_TYPE_ELEM);
+  plugElem.appendChild(typeElem);
+	
+	if (_inOut==IN)
+		_abstractDefaultType->save(doc, typeElem);
 }
 
 void AbstractPlug::load(QDomElement &plugElem)
 {
   std::string val = plugElem.attribute("Exposed","0").ascii();
-
   exposed(val == "1" ? true : false);
+	
+	if (_inOut==IN)
+	{
+		QDomNode typeNode = XMLHelper::findChildNode(plugElem, XML_TAGNAME_TYPE_ELEM);	
+		if (!typeNode.isNull())
+		{
+			QDomElement typeElem = typeNode.toElement();
+			_abstractDefaultType->load(typeElem);
+		}
+	}
 }
 
 void AbstractPlug::sleeping(bool s)

@@ -40,7 +40,10 @@ public:
     
   virtual std::string typeName() const { return TYPENAME;}
   virtual QColor color() const { return QColor(157, 208, 50); }
-  
+
+	void save(QDomDocument &doc, QDomElement &parent) const;
+	void load(QDomElement &typeElem);
+	  
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
   int intValue() const { return (int)_value; }

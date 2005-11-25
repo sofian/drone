@@ -31,7 +31,6 @@ public:
   void onGearAdded(Schema *schema, Gear *gear);
   void onGearRemoved(Schema *schema, Gear *gear);
 
-  void associateControlPanel(ControlPanel *controlPanel) {_associatedControlPanel = controlPanel;}
   
 protected:
   
@@ -45,7 +44,6 @@ protected:
   std::string _metaGearName;
   std::string _fullPath;
 
-  ControlPanel *_associatedControlPanel;
 
   static const QColor METAGEAR_COLOR;
 	

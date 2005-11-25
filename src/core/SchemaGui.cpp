@@ -33,7 +33,8 @@ const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
 
 SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QCanvas(DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
-  _engine(engine)
+  _engine(engine),
+	_showSmall(false)
 {
   
   //todo various background for metagear and main schema
@@ -64,6 +65,7 @@ void SchemaGui::rebuildSchema()
 		gearGui=(*it)->getGearGui();
 		gearGui->setCanvas(this);
     gearGui->show();
+		gearGui->showSmall(_showSmall);
   }
 	
   //add connectionItems
@@ -107,6 +109,7 @@ Gear* SchemaGui::addGear(std::string type, int x, int y)
   gearGui->move(x,y);    
   gearGui->setZ(0);
   gearGui->show();
+	gearGui->showSmall(_showSmall);
   update();
 
   return gear;
@@ -125,6 +128,7 @@ MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
   gearGui->move(x,y);    
   gearGui->setZ(0);
   gearGui->show();
+	gearGui->showSmall(_showSmall);
   update();
 
   return metaGear;
@@ -147,6 +151,7 @@ MetaGear* SchemaGui::newMetaGear(int x, int y)
   gearGui->move(x,y);    
   gearGui->setZ(0);
   gearGui->show();
+	gearGui->showSmall(_showSmall);
   update();
 
   return metaGear;
@@ -329,4 +334,14 @@ std::vector<GearGui*> SchemaGui::getSelectedGears()
          && ((GearGui*)(*it))->isSelected())    
       vec.push_back((GearGui*)(*it));
   return vec;
+}
+
+
+void SchemaGui::showSmallGears(bool v)
+{
+	_showSmall=v;
+  QCanvasItemList l=allItems();
+  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
+			((GearGui*)(*it))->showSmall(v);
 }

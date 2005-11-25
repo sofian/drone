@@ -34,9 +34,14 @@ GearGui(gear, canvas, GearGui::BOXNAME_COLOR, GearGui::DEFAULT_SIZEX, 0, UPDATE_
 {            
 }
 
-void GearGui_StringOutput::drawShape(QPainter &painter)
+void GearGui_StringOutput::drawSmall(QPainter &painter)
 {
-  GearGui::drawShape(painter);
+		drawNormal(painter);
+}
+
+void GearGui_StringOutput::drawNormal(QPainter &painter)
+{
+  GearGui::drawNormal(painter);
 	
 	int x, y, sizeX, sizeY;      
   getDrawableArea(&x, &y, &sizeX, &sizeY);

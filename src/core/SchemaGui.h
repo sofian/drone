@@ -62,7 +62,9 @@ public:
 
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
-  
+
+  void showSmallGears(bool v);
+	
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;
@@ -71,6 +73,7 @@ private:
 
   Schema *_schema;
   Engine *_engine;
+	bool _showSmall;
 };
 
 #endif

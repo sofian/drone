@@ -5,7 +5,6 @@
 #include "GearNavigatorView.h"
 
 class MetaGear;
-class PanelScrollView;
 class SchemaEditor;
 class SchemaGui;
 class Engine;
@@ -25,8 +24,6 @@ public:
   
 	void zoomInSchema();
 	void zoomOutSchema();
-
-
 	
 private:
   MetaGear *_metaGear;
@@ -37,7 +34,6 @@ private:
 
   GearNavigatorView *_gearNavigatorView;
   PlugPropertiesTable *_plugPropertiesTable;
-  PanelScrollView *_panelScrollView;
   SchemaEditor *_schemaEditor;
 
 };

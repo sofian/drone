@@ -59,7 +59,6 @@ public:
     return true;
   }
 
-  void init() {}
 
   AbstractPlug *clone(Gear* parent)
   {
@@ -126,8 +125,6 @@ public:
     else
       setType(_internalType);*/
   }
-
-  void init() {}
 
   T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
   T* hintType() { return static_cast<T*>(_abstractDefaultType);}

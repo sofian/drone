@@ -2,7 +2,6 @@
 #include "GearGui.h"
 
 #include "XMLHelper.h"
-#include "ControlPanel.h"
 
 #include <qfileinfo.h>
 
@@ -12,8 +11,7 @@ const std::string MetaGear::EXTENSION=".meta";
 
 MetaGear::MetaGear(Schema *parentSchema, std::string vname, std::string uniqueName) :
 Gear(parentSchema, TYPE, uniqueName),
-_metaGearName(vname),
-_associatedControlPanel(0)
+_metaGearName(vname)
 {
   _schema = new Schema(this);
   _schema->addSchemaEventListener(this);
@@ -172,18 +170,12 @@ bool MetaGear::load(std::string filename)
   return true;
 }
 
-void MetaGear::onGearAdded(Schema *schema, Gear *gear)
+void MetaGear::onGearAdded(Schema *schema, Gear *)
 {
   //if this event is not for our schema (it's from a child schema), do nothing
   if (schema!=_schema)
     return;
-  
-  if (!_associatedControlPanel)
-    return;
-  
-  if (gear->kind() == Gear::CONTROL)  
-    _associatedControlPanel->addControl((GearControl*)gear);
-}
+  }
 
 void MetaGear::onGearRemoved(Schema *schema, Gear*)
 {

@@ -25,13 +25,15 @@
 #include <string>
 #include <vector>
 
+class QDomDocument;
+class QDomElement;
+
+
 class AbstractType
 {
 public:
   AbstractType(){}
-  
-		
-	
+
   virtual ~AbstractType() {}
 
   virtual QColor color() const { return QColor(0,0,0);}
@@ -50,6 +52,9 @@ public:
       return other.typeName() == typeName();
   }
   
+	virtual void save(QDomDocument &, QDomElement &) const {};
+	virtual void load(QDomElement &) {};
+	
 protected:
   std::vector<const AbstractType*> _subTypes;
 	

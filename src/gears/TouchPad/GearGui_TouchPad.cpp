@@ -37,14 +37,18 @@ GearGui_TouchPad::GearGui_TouchPad(Gear_TouchPad *gear, QCanvas *canvas) :
 {
 }
 
-void GearGui_TouchPad::drawShape(QPainter &painter)
+void GearGui_TouchPad::drawSmall(QPainter &painter)
+{
+	drawNormal(painter);
+}
+void GearGui_TouchPad::drawNormal(QPainter &painter)
 {    
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << "(" << ((Gear_TouchPad*)_gear)->getHorizontalValue() << "," << ((Gear_TouchPad*)_gear)->getVerticalValue() << ")";
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::drawNormal(painter);    
 
   int sliderStartX, sliderStartY, sizeX, sizeY;
   getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);

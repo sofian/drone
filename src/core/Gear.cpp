@@ -66,9 +66,6 @@ void Gear::init()
   std::cout << _Type << std::endl;
   std::cout << "------------------------------------------" << std::endl;
 
-  for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-    (*it)->init();
-
   _gearGui = createGearGui(NULL);
 
   //call the virtual method

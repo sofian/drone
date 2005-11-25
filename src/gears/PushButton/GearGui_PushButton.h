@@ -44,7 +44,8 @@ public:
   
 protected:
 
-  void drawShape(QPainter &painter);
+  void drawNormal(QPainter &painter);
+  void drawSmall(QPainter &painter);
 
 
 };

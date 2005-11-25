@@ -39,11 +39,11 @@ class AbstractPlug
 {
 public:
   static const std::string XML_TAGNAME;
+	static const std::string XML_TAGNAME_TYPE_ELEM;
 
   AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
 
-  virtual void init(){};
   bool canStartConnection();
   bool canConnect(AbstractPlug *plug, bool onlyTypeCheck=false);
   bool connect(AbstractPlug *plug);
@@ -65,8 +65,8 @@ public:
   virtual void onConnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites APRES une bonne connection
   virtual void onDisconnection(AbstractPlug*){};//!overloader pour ajouter fonctionnalites AVANT deconnection
 
-  AbstractType* abstractType() const { return _abstractType;}
-  AbstractType* abstractDefaultType() const { return _abstractDefaultType;}
+  AbstractType* abstractType() const { return _abstractType;}//!value used when connected
+  AbstractType* abstractDefaultType() const { return _abstractDefaultType;}//!value used when not connected
   AbstractType* abstractHintType() const { return _abstractDefaultType;}
   eInOut inOut() const {return _inOut;};
 

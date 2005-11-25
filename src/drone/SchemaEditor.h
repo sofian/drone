@@ -43,7 +43,6 @@ class Engine;
 class Schema;
 class GearListMenu;
 class MetaGearListMenu;
-class PanelScrollView;
 
 /**
  * SchemaEditor maintain synchronization between Schema and SchemaGui
@@ -59,7 +58,7 @@ public:
     IDLE, MOVING_GEAR, CONNECTING, DRAGGING_SELECT_BOX
   };
 
-  SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
+  SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine);
   ~SchemaEditor();
 
   void zoom(float factor);
@@ -79,7 +78,6 @@ public slots:
   void zoomIn();
   void zoomOut();
 
-  void slotGearProperties();
   void slotGearDelete();
   void slotGearSelectAll();
   void slotGearCopy();
@@ -123,8 +121,6 @@ protected:
 
 private:
   
-  void associateControlPanelWithMetaGear(MetaGear *metaGear);
-
   static const std::string NAME;
   static const double ZOOM_FACTOR;
   
@@ -155,10 +151,7 @@ private:
   QPopupMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
-
-  PanelScrollView *_panelScrollView;
-
-
+ 
   QCanvasRectangle *_selectBox;
 };
 

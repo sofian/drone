@@ -37,6 +37,7 @@ Q_OBJECT
 public:
   static const int CANVAS_RTTI_GEAR;
   static const int DEFAULT_SIZEX;
+	static const int DEFAULT_SMALL_SIZEX;
   static const int NAME_SIZEY;
   static const int PLUGBOXES_NOMINAL_INTERVAL;
   static const int PLUGBOXES_STARTING_OFFSET;
@@ -58,7 +59,8 @@ public:
 	
   virtual int rtti() const;
 
-  GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
+  GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, 
+					int sizeY=0, int smallSizeX=DEFAULT_SMALL_SIZEX, int smallSizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
   int renderingStartX();
@@ -91,6 +93,8 @@ public:
   void setSelected(bool state){_selected=state;QCanvasRectangle::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
   bool isSelected() const {return _selected;}
+	
+	void showSmall(bool v);
 
 public slots:
 	void reDraw();
@@ -99,7 +103,10 @@ protected:
 				
   void timerEvent(QTimerEvent*);
 
-  virtual void drawShape(QPainter &painter);
+  void drawShape(QPainter &painter);
+  virtual void drawNormal(QPainter &painter);
+  virtual void drawSmall(QPainter &painter);
+	
   void drawPlugBoxes(QPainter &painter);
 
   void determineMinimumSize();
@@ -114,7 +121,11 @@ protected:
   // the effective Size (can be stretched by user)
   int _sizeX;
   int _sizeY;
-
+	int _normalSizeX;
+	int _normalSizeY;
+	int _smallSizeX;
+	int _smallSizeY;
+	
   // minimum required size for gear
   int _minSizeX;
   int _minSizeY;
@@ -126,6 +137,7 @@ protected:
 private:
   void removeAllPlugBoxes();
   pthread_mutex_t *_reDrawMutex;
+	bool _showSmall;//! draw a small version of the gear
 
 };
 

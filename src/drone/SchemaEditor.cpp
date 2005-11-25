@@ -24,15 +24,12 @@
 #include "Engine.h"
 #include "GearMaker.h"
 #include "MetaGearMaker.h"
-#include "GearPropertiesDialog.h"
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearListMenu.h"
 #include "MetaGearListMenu.h"
 
 #include "MetaGearEditor.h"
-#include "PanelScrollView.h"
-#include "ControlPanel.h"
 
 #include <qdragobject.h>
 #include <qmainwindow.h>
@@ -50,7 +47,7 @@
 const std::string SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 0.1;
 
-SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
+SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine) :
   QCanvasView(schemaGui, parent, NAME.c_str(),0),
   _engine(engine),
   _schemaGui(schemaGui),
@@ -59,7 +56,6 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _activeConnection(0),
   _contextMenuPos(0,0),
   _contextGear(NULL),
-  _panelScrollView(panelScrollView),
   _selectBox(NULL)
 
 {
@@ -83,7 +79,6 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
     
   _gearContextMenu = new QPopupMenu(this);
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
-  _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
 	_gearContextMenu->insertItem("ZoomIn", this, SLOT(zoomIn()));  
 	_gearContextMenu->insertItem("ZoomOut", this, SLOT(zoomOut()));  
 
@@ -94,7 +89,6 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _metaGearContextMenu->insertItem("Select All", this, SLOT(slotGearSelectAll()),CTRL + Key_A);
   _metaGearContextMenu->insertItem("Copy", this, SLOT(slotGearCopy()),CTRL + Key_C);
   _metaGearContextMenu->insertItem("Paste", this, SLOT(slotGearPaste()),CTRL + Key_V);
-  _metaGearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));  
   _metaGearContextMenu->insertItem("About");    
   _metaGearContextMenu->insertSeparator();
   _metaGearContextMenu->insertItem("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
@@ -455,21 +449,6 @@ void SchemaEditor::slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo)
   addMetaGear(metaGearFileInfo->filePath().ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
 }
 
-void SchemaEditor::slotGearProperties()
-{
-  if (_contextGear == NULL)
-    return;
-
-  GearPropertiesDialog *gearPropertiesDialog;
-
-  gearPropertiesDialog = new GearPropertiesDialog(this, _contextGear->gear(), _engine);
-  gearPropertiesDialog->exec();
-  delete gearPropertiesDialog;
-
-  _contextGear=NULL;
-
-}
-
 void SchemaEditor::slotGearDelete()
 {
   deleteSelectedGears();
@@ -547,18 +526,14 @@ void SchemaEditor::addMovingGear(std::string name)
   _movingGearStartPos = rect.center(); 
 }
 
-
 void SchemaEditor::addMetaGear(std::string filename, int posX, int posY)
 {  
-  MetaGear *metaGear = _schemaGui->addMetaGear(filename, posX, posY);
-  associateControlPanelWithMetaGear(metaGear);
+  _schemaGui->addMetaGear(filename, posX, posY);
 }
 
 void SchemaEditor::addNewMetaGear(int posX, int posY)
 {
-  MetaGear *metaGear = _schemaGui->newMetaGear(posX, posY);
-  
-  associateControlPanelWithMetaGear(metaGear);
+  _schemaGui->newMetaGear(posX, posY);  
 }
 
 void SchemaEditor::deleteSelectedGears()
@@ -635,12 +610,6 @@ void SchemaEditor::toggleGearSelection(GearGui* gear)
 {
   gear->toggleSelection();
   _schemaGui->update();
-}
-
-void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
-{
-  //create and associate a control panel with this metagear
-  //_panelScrollView->addControlPanel(metaGear);    
 }
 
 void SchemaEditor::slotGearCopy()

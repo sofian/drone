@@ -37,7 +37,11 @@ GearGui(gear, canvas, GearGui::BOXNAME_COLOR, SLIDER_SIZEX, SLIDER_SIZEY)
 {        
 }
 
-void GearGui_ListBox::drawShape(QPainter &painter)
+void GearGui_ListBox::drawSmall(QPainter &painter)
+{
+	drawNormal(painter);
+}
+void GearGui_ListBox::drawNormal(QPainter &painter)
 {    
   //make the title bar show the value
   std::ostringstream sstream;
@@ -45,7 +49,7 @@ void GearGui_ListBox::drawShape(QPainter &painter)
   sstream << str;//((Gear_ListBox*)_gear)->getLabel();
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::drawNormal(painter);    
 
   int sliderStartX, sliderStartY, sizeX, sizeY;
   getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);

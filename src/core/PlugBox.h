@@ -43,7 +43,7 @@ public:
   virtual ~PlugBox();
 
   QColor color();
-  void draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected);
+  void draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected, bool small);
   bool hitted(int x, int y);
   void hilight(bool hiLight);
 

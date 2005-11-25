@@ -36,14 +36,19 @@ GearGui(gear, canvas, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY
 {        
 }
 
-void GearGui_PushButton::drawShape(QPainter &painter)
+void GearGui_PushButton::drawSmall(QPainter &painter)
+{
+	drawNormal(painter);
+}
+
+void GearGui_PushButton::drawNormal(QPainter &painter)
 {    
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << ((Gear_PushButton*)_gear)->getValue();
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::drawNormal(painter);    
 
   int PushButtonStartX, PushButtonStartY, sizeX, sizeY;
   getDrawableArea(&PushButtonStartX, &PushButtonStartY, &sizeX , &sizeY);
