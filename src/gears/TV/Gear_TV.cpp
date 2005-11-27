@@ -41,7 +41,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_TV::Gear_TV(Schema *schema, std::string uniqueName) : GearControl(schema, "TV", uniqueName)
+Gear_TV::Gear_TV(Schema *schema, std::string uniqueName) : 
+	Gear(schema, "TV", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
 }

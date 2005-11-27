@@ -19,14 +19,8 @@
 
 #include "ConnectionItem.h"
 #include "PlugBox.h"
-#include "Plug.h"
-#include "Gear.h"
-#include <qpainter.h>
-#include <qdom.h>
-#include <iostream>
 
 const int ConnectionItem::CANVAS_RTTI_CONNECTION = 2001;//space odissey
-
 
 ConnectionItem::ConnectionItem(QCanvas *canvas) : 
   QCanvasLine(canvas), 
@@ -36,7 +30,6 @@ ConnectionItem::ConnectionItem(QCanvas *canvas) :
   _destPointY(0),
   _sourcePlugBox(NULL),
   _destPlugBox(NULL)
-
 {
   setZ(255);    
   _pen = new QPen(Qt::black, 2, Qt::SolidLine);
@@ -50,24 +43,20 @@ ConnectionItem::~ConnectionItem()
 
 void ConnectionItem::drawShape(QPainter &painter)
 {
-  
   int sourceX, sourceY, destX, destY;
 
   getOrigin(&sourceX, &sourceY);
   getDest(&destX, &destY);
 
   setPoints(sourceX, sourceY, destX, destY);
-  //std::cout << sourceX << ":" << sourceY << ":" << destX << ":" << destY << std::endl;
   
   QCanvasLine::drawShape(painter);
-  
 }
 
 void ConnectionItem::getOrigin(int *x, int *y)
 {  
   *x = _sourcePlugBox->connectionHandleX();
   *y = _sourcePlugBox->connectionHandleY();
-
 }
 
 void ConnectionItem::getDest(int *x, int *y)
@@ -162,23 +151,3 @@ void ConnectionItem::hiLight(bool hi)
   update();
   canvas()->update();
 }
-
-/* void ConnectionItem::createConnectionLineOnly(PlugBox *source, PlugBox *dest) */
-/* {                                                                             */
-/*   _state = CONNECTED;                                                         */
-/*   _sourcePlugBox = source;                                                    */
-/*   _destPlugBox = dest;                                                        */
-/*                                                                               */
-/*   source->assignConnectionOnly(dest, this);                                   */
-/*                                                                               */
-/*   _pen->setColor(_sourcePlugBox->color());                                    */
-/*   setPen(*_pen);                                                              */
-/*                                                                               */
-/*   int sourceX, sourceY, destX, destY;                                         */
-/*   getOrigin(&sourceX, &sourceY);                                              */
-/*   getDest(&destX, &destY);                                                    */
-/*   setPoints(sourceX, sourceY, destX, destY);                                  */
-/*                                                                               */
-/*                                                                               */
-/*   update();                                                                   */
-/* }                                                                             */

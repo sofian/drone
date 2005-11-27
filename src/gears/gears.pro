@@ -5,7 +5,7 @@ SUBDIRS= Osc
 #TV \
 #Oscilloscope \
 #VideoOutput \
-#AudioPushButton \
+AudioPushButton \
 #AlphaMix \
 #Blur \
 #VideoSource \

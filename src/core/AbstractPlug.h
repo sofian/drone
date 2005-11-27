@@ -20,13 +20,9 @@
 #ifndef __ABSTRACTPLUG_INCLUDED
 #define __ABSTRACTPLUG_INCLUDED
 
-#include "Engine.h"
 #include "AbstractType.h"
-#include <iostream> // XXX debug
-#include <vector>
 #include <string>
 #include <list>
-
 
 enum eInOut
 {
@@ -44,7 +40,6 @@ public:
   AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
 
-  bool canStartConnection();
   bool canConnect(AbstractPlug *plug, bool onlyTypeCheck=false);
   bool connect(AbstractPlug *plug);
   bool disconnect(AbstractPlug *plug);

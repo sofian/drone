@@ -20,7 +20,6 @@
 #include "Gear_Slider.h"
 #include "GearMaker.h"
 #include "GearGui_Slider.h"
-#include "ControlSlider.h"
 #include "Math.h"
 	
 #include "MidiEngine.h"
@@ -56,7 +55,8 @@ const std::string Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
 const std::string Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
 const std::string Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
 
-Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
+Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : 
+	Gear(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
@@ -173,11 +173,6 @@ void Gear_Slider::runAudio()
 GearGui *Gear_Slider::createGearGui(QCanvas *canvas)
 {                
   return new GearGui_Slider(this, canvas);
-}
-
-Control* Gear_Slider::internalCreateControl(ControlPanel* parent)
-{
-  return new ControlSlider(this, parent);  
 }
 
 void Gear_Slider::internalSave(QDomDocument &doc, QDomElement &gearElem)

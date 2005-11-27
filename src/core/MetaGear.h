@@ -7,8 +7,6 @@
 
 #include <map>
 
-class ControlPanel;
-
 class MetaGear : public Gear, public ISchemaEventListener
 {
 public:  

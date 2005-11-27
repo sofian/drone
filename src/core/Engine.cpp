@@ -18,10 +18,8 @@
  */
 
 #include "Engine.h"
- #include "MidiEngine.h"
+#include "MidiEngine.h"
 #include "Gear.h"
-#include "Plug.h"
-#include "GearMaker.h"
 #include "MetaGear.h"
 #include <iostream>
 #include <unistd.h>

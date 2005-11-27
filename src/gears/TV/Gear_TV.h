@@ -20,10 +20,10 @@
 #ifndef GEAR_TV_INCLUDED
 #define GEAR_TV_INCLUDED
 
-#include "GearControl.h"
+#include "Gear.h"
 #include "VideoRGBAType.h"
 
-class Gear_TV : public GearControl
+class Gear_TV : public Gear
 {
 public:
 
@@ -36,7 +36,6 @@ public:
 
 protected:
   GearGui *createGearGui(QCanvas *canvas);
-  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
 
 private:
 
@@ -60,9 +59,6 @@ private:
   int _halfTVSize;
 
   RGBA _acc;
-
-
-
 };
 
 #endif

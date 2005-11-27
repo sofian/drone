@@ -23,10 +23,6 @@
 
 #include <qcanvas.h>
 class PlugBox;
-class Engine;
-
-class QDomDocument;
-class QDomElement;
 
 class ConnectionItem : public QCanvasLine
 {
@@ -52,13 +48,10 @@ public:
 
   bool ready();
   
-  //void createConnectionLineOnly(PlugBox *source, PlugBox *dest);
-
   void hiLight(bool hi);
 
 protected:
 
-//    void updateAreaPoints();
   void drawShape(QPainter &painter);
 
   void getOrigin(int *x, int *y);

@@ -20,12 +20,10 @@
 #ifndef GEAR_SLIDER_INCLUDED
 #define GEAR_SLIDER_INCLUDED
 
-#include "GearControl.h"
+#include "Gear.h"
 #include "ValueType.h"
 
-class ControlSlider;
-
-class Gear_Slider : public GearControl  
+class Gear_Slider : public Gear
 {
 public:
   static const float  DEFAULT_VALUE;
@@ -51,7 +49,6 @@ protected:
   void internalLoad(QDomElement &gearElem);
 
   GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
-  Control* internalCreateControl(ControlPanel *parent);
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
