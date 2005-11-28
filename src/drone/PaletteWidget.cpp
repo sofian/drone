@@ -67,11 +67,26 @@ void PaletteWidget::saveGeometry()
 
 void PaletteWidget::loadGeometry()
 {
-  int gx = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/xpos") ).toInt();
-  int gy = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/ypos") ).toInt();
-  int gwidth = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/width") ).toInt();
-  int gheight= globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/height") ).toInt();
-  setGeometry(QRect(gx,gy,gwidth,gheight));
+	int gx;
+	int gy;
+	int gwidth;
+	int gheight;
+	
+	QStringList keys = globalSettings.entryList("/drone/palettes"+_name);
+	//positionning for the first load
+	if (!keys.empty())
+	{			
+		gx = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/xpos") ).toInt();
+		gy = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/ypos") ).toInt();
+		gwidth = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/width") ).toInt();
+		gheight= globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/height") ).toInt();
+		setGeometry(QRect(gx,gy,gwidth,gheight));
+	}
+	else
+	{
+		//gx = 0;
+		//setGeometry(QRect(gx,gy,gwidth,gheight));
+	}
 }
 
 void PaletteWidget::resizeEvent(QResizeEvent*e)

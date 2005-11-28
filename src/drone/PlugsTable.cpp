@@ -86,8 +86,7 @@ void PlugsTable::insertPlug(AbstractPlug *plug, int row)
   if (plug->abstractType()->typeName() == ValueType::TYPENAME)
   {
     PlugsTableItemValue *valueItem = new PlugsTableItemValue(plug, this, QTableItem::WhenCurrent);
-    setText(row,0,plug->name());
-    setItem(row,1,valueItem);
+		addRow(row, plug, valueItem);
   } 
   else if (plug->abstractType()->typeName() == StringType::TYPENAME)
   {
@@ -95,14 +94,19 @@ void PlugsTable::insertPlug(AbstractPlug *plug, int row)
 		if (strType->isAFilename())
 		{
 			PlugsTableItemFilename *filenameItem = new PlugsTableItemFilename(plug, this, QTableItem::WhenCurrent);
-			setText(row,0,plug->name());
-			setItem(row,1,filenameItem);  			
+			addRow(row, plug, filenameItem);
 		}
 		else
 		{
 			PlugsTableItemString *stringItem = new PlugsTableItemString(plug, this, QTableItem::WhenCurrent);
-			setText(row,0,plug->name());
-			setItem(row,1,stringItem);  
+			addRow(row, plug, stringItem);
 		}
   }
 }
+
+void PlugsTable::addRow(int row, AbstractPlug *plug, QTableItem *tableItem)
+{
+	setText(row,0,plug->name());
+	setItem(row,1,tableItem);  				
+}
+																																		

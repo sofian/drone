@@ -63,7 +63,6 @@ _schemaGui(NULL),
 _menuFirstRecentSchemaId(-1),
 _menuShowSmallGearsId(false)
 {    
-  
   _schemaGui = new SchemaGui(_engine->mainMetaGear()->getInternalSchema(), engine);
   _schemaEditor = new SchemaEditor(this, _schemaGui, _engine);
   
@@ -307,12 +306,22 @@ void MainWindow::saveGeometry()
 
 void MainWindow::loadGeometry()
 {
-  int gx = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/xpos") ).toInt();
-  int gy = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/ypos") ).toInt();
-  int gwidth = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/width") ).toInt();
-  int gheight= globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/height") ).toInt();
-
-  setGeometry(QRect(gx,gy,gwidth,gheight));
+	int gx;
+	int gy;
+	int gwidth;
+	int gheight;
+	
+	QStringList keys = globalSettings.entryList("/drone/mainwindow");
+	//positionning for the first load
+	if (!keys.empty())
+	{
+		gx = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/xpos") ).toInt();
+		gy = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/ypos") ).toInt();
+		gwidth = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/width") ).toInt();
+		gheight= globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/height") ).toInt();
+		setGeometry(QRect(gx,gy,gwidth,gheight));
+	}
+	
 }
 
 

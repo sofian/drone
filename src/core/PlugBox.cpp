@@ -114,9 +114,9 @@ void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGe
 	{
 		//align text left or right if In or Out
 		if (_plug->inOut() == IN)
-			painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 5, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+			painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 4, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
 		else
-			painter.drawText(_x - halfGearSizeX, _y - 5, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+			painter.drawText(_x - halfGearSizeX, _y - 4, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
 	}
 }
 

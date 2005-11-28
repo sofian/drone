@@ -28,6 +28,7 @@ public slots:
 
 protected:
   void insertPlug(AbstractPlug *plug, int row);
+	void addRow(int row, AbstractPlug *plug, QTableItem *tableItem);
 	
 private:
 	Gear *_gear;
