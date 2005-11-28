@@ -27,7 +27,7 @@ extern QSettings globalSettings;
 
 
 PaletteWidget::PaletteWidget(PaletteManager* pman,MainWindow * mw,QString name):
-	QDockWindow(InDock,0,name.latin1()),_pMan(pman),_mainWindow(mw),_name(name)
+	QDockWindow(InDock,0,name.latin1()),_pMan(pman),_mainWindow(mw),_name(name),_firstMove(false)
 {
     setResizeEnabled( TRUE );
     //setMovingEnabled( FALSE );
@@ -71,20 +71,32 @@ void PaletteWidget::loadGeometry()
   int gy = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/ypos") ).toInt();
   int gwidth = globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/width") ).toInt();
   int gheight= globalSettings.readEntry( QString("/drone/palettes/")+_name+QString("/height") ).toInt();
-
   setGeometry(QRect(gx,gy,gwidth,gheight));
 }
 
-void PaletteWidget::hideEvent(QHideEvent*e)
+void PaletteWidget::resizeEvent(QResizeEvent*e)
 {
-std::cerr<<_name.latin1()<<" hideevent"<<std::endl;
- saveGeometry();
- QDockWindow::hideEvent(e);
+ if(_firstMove)
+  saveGeometry();
+ QDockWindow::resizeEvent(e);
+}
+
+void PaletteWidget::moveEvent(QMoveEvent*e)
+{
+ if(_firstMove)
+  saveGeometry();
+ QDockWindow::moveEvent(e);
+}
+
+void PaletteWidget::closeEvent(QCloseEvent*e)
+{
+ _pMan->mainWindow()->close();
 }
 
 void PaletteWidget::showEvent(QShowEvent*e)
 {
  loadGeometry();
+ _firstMove=true;
  QDockWindow::showEvent(e);
 }
 

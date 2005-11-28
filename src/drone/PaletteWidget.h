@@ -37,7 +37,8 @@ Q_OBJECT
 public slots:
   void myPlaceChanged(QDockWindow::Place);
 protected:
-  virtual void hideEvent(QHideEvent*);
+  virtual void resizeEvent(QResizeEvent*);
+  virtual void moveEvent(QMoveEvent*);
   virtual void showEvent(QShowEvent*);
 
   void loadGeometry();
@@ -46,6 +47,7 @@ protected:
   PaletteManager* _pMan;
   MainWindow* _mainWindow;
   QString _name; 
+  bool _firstMove;
   
 };
 
