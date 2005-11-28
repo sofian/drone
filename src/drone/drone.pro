@@ -45,6 +45,8 @@ PlugsTableItemFilename.h \
 PlugsTableItemValue.h \
 PlugsTableItemString.h \
 SchemaEditor.h \
+PaletteWidget.h \
+PaletteManager.h \
 SelectFilenameWidget.h \
 Play.xpm \
 Pause.xpm \
@@ -60,6 +62,8 @@ MediaPoolItem.cpp \
 MetaGearEditor.cpp \
 MetaGearListMenu.cpp \
 MediaPoolDialog.cpp \
+PaletteManager.cpp \
+PaletteWidget.cpp \
 PlugsTable.cpp \
 PlugsTableItem.cpp \
 PlugsTableItemFilename.cpp \

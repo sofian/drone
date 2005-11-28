@@ -11,6 +11,7 @@ class Engine;
 class QSplitter;
 class GearListView;
 class PlugsTable;
+class QTextEdit;
 
 class MetaGearEditor : public QWidget
 {
@@ -30,12 +31,14 @@ private:
   SchemaGui *_schemaGui;
 
   QSplitter *_horizontalSplitter;
-	QSplitter *_verticalSplitter;
+  QSplitter *_verticalSplitter;
+  QSplitter *_bottomVerticalSplitter;
+  QTextEdit * _logView;
 
   GearNavigatorView *_gearNavigatorView;
   PlugsTable *_PlugsTable;
   SchemaEditor *_schemaEditor;
-
+  
 };
 
 #endif

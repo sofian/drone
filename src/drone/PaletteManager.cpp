@@ -1,4 +1,4 @@
-/* drone.cpp
+/* PaletteManager.cpp
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,55 +17,33 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <qapplication.h>
-#include <qsplashscreen.h>
-#include "Timing.h"
-#include "DroneCore.h"
-#include "splash.xpm"
-
+#include "PaletteManager.h"
+#include "PaletteWidget.h"
 #include "MainWindow.h"
-
-#include <iostream>
-#include <stdio.h>
-
 #include <qsettings.h>
+#include <iostream>
 
-QSettings globalSettings;
 
-
-int main(int argc, char** argv)
+PaletteManager::PaletteManager(MainWindow *mainWindow):_mainWindow(mainWindow)
 {
-  QApplication qtApp(argc, argv);
-  QApplication::setGlobalMouseTracking(TRUE);
-      
-  QSplashScreen splash(splash_xpm);
-  splash.show();
-
-  //init the drone core
-	DroneCore::init();
-	
-  Engine engine(0);
-
-  MainWindow mainWindow(&engine);
-  mainWindow.adjustSize();
-  qtApp.setMainWidget(&mainWindow);
-
-  splash.hide();
-  mainWindow.show();
-  mainWindow.undockPaletteHack();
-  if(argc>1)
-  {
-    if(argc==2)
-      mainWindow.load(argv[1]);
-    else 
-      error("Usage : drone [schema.drn]");
-  }
-
-
-  qtApp.exec();
-
-  //release the core
-	DroneCore::release();
   
 }
 
+PaletteManager::~PaletteManager()
+{
+}
+
+PaletteWidget* PaletteManager::addPalette(QString name)
+{
+  PaletteWidget* pwidg = new PaletteWidget(this, _mainWindow,name);
+  _pw.push_back(pwidg);
+
+  return pwidg;
+
+}
+
+void PaletteManager::undockAllPalettes()
+{
+  for(std::list<PaletteWidget*>::iterator it = _pw.begin();it!=_pw.end();++it)
+      (*it)->undock();
+}

@@ -1,4 +1,4 @@
-/* GearNavigatorView.h
+/* PaletteManager.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,37 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GearNavigatorView_INCLUDED
-#define GearNavigatorView_INCLUDED
+#ifndef PaletteManager_INCLUDED
+#define PaletteManager_INCLUDED
 
 #include "qwidget.h"
-#include <qlayout.h>
-#include <qcombobox.h>
+#include <qstring.h>
+#include <qmainwindow.h>
+class MainWindow;
+class PaletteWidget;
 
-class SchemaEditor;
-class QComboBox;
-class QPushButton;
-class QLineEdit;
-
-class GearNavigatorView : public QWidget
+class PaletteManager
 {
-  Q_OBJECT
   public:
-  GearNavigatorView(QWidget *parent, SchemaEditor*);
-  virtual ~GearNavigatorView();
-  void focusAndClear();
-	
-	
-public slots:
-  void textChanged(const QString&);
-  void activated(const QString&);
-  void returnPressed();
+  PaletteManager(MainWindow*);
+  PaletteWidget* addPalette(QString str);
+  virtual ~PaletteManager();
+  void undockAllPalettes();
 
-private:
-  SchemaEditor* _schemaEditor;
-  QHBoxLayout *_hLayout;
-  QComboBox *_comboEdit;
-  QPushButton *_goButton;
+protected:
+
+  std::list<PaletteWidget*> _pw; 
+
+  MainWindow* _mainWindow;
   
 };
 

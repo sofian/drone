@@ -31,9 +31,15 @@
 #include "Engine.h"
 #include "Project.h"
 
+class Engine;
+class PaletteManager;
 class SchemaGui;
-class MetaGearEditor;
+class SchemaEditor;
+class SchemaGui;
 class MetaGear;
+class GearNavigatorView;
+class GearListView;
+class PlugsTable;
 
 class MainWindow : public QMainWindow
 {
@@ -44,7 +50,7 @@ class MainWindow : public QMainWindow
   void load(std::string filename);
   //void play(bool pl);
 
-  MainWindow();
+  MainWindow(Engine* engine);
   ~MainWindow();
 
 public slots:
@@ -69,9 +75,12 @@ public slots:
 
   void slotMenuGotoNavigator();
 
+  void undockPaletteHack();
 
 protected:
   void timerEvent(QTimerEvent*);
+  virtual void hideEvent(QHideEvent*);
+  virtual void showEvent(QShowEvent*);
 
 private:
 
@@ -83,16 +92,17 @@ private:
 
   Engine* _engine;
   QFrame* _frame;
-  SchemaGui* _mainSchemaGui;
+  SchemaGui* _schemaGui;
   
-  MetaGearEditor *_metaGearEditor;
+  SchemaEditor *_schemaEditor;
   
   QToolBar *_toolBar;
   QToolButton *_playPause;
   QToolButton *_zoomIn;
   QToolButton *_zoomOut;
 
-  
+  PaletteManager* _pManager;
+
   int _menuSaveItemId;
   int _menuPrefsItemId;
   QPopupMenu *_fileMenu;
@@ -100,15 +110,21 @@ private:
   QPopupMenu *_toolsMenu;
   QPopupMenu *_viewMenu;
 
+  void loadGeometry();
+  void saveGeometry();
+
   Project* _project;
-  
+
   std::string _currentSchemaFilename;  
   QString _lastLoadPath;
   QString _lastSavePath;
   std::list<std::string> _recentSchemas;
   int _menuFirstRecentSchemaId;
-	int _menuShowSmallGearsId;
-	bool _showSmallGears;
+  int _menuShowSmallGearsId;
+  bool _showSmallGears;
+  GearNavigatorView* _gearNavigatorView;
+  GearListView* _gearListView;
+  PlugsTable *_plugsTable;
 
 //    PlayThread *_playThread;
 };

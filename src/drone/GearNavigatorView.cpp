@@ -30,55 +30,54 @@
 
 GearNavigatorView::GearNavigatorView(QWidget *parent,SchemaEditor* schemaEditor):QWidget(parent),_schemaEditor(schemaEditor)
 {
-  _vLayout = new QVBoxLayout(this, 3);
-  _hLayout = new QHBoxLayout(_vLayout, 3);
-  _clearButton = new QPushButton("Clear", this);
-  _hLayout->addWidget(_clearButton);
+  _hLayout = new QHBoxLayout(this, 3);
   _comboEdit = new QComboBox(this);
   _comboEdit->setEditable(true);
   _comboEdit->setAutoCompletion(true); 
-_comboEdit->popup();
+  _comboEdit->setMinimumWidth(150);
+  _comboEdit->popup();
   _hLayout->addWidget(_comboEdit,5);
-  _gearListView = new GearListView(this);
-  _vLayout->addWidget(_gearListView);
-  QObject::connect(_clearButton, SIGNAL(clicked()), this, SLOT(slotClearClicked()));
+  _goButton = new QPushButton("Go", this);
+  _hLayout->addWidget(_goButton);
+  
+  QObject::connect(_goButton, SIGNAL(clicked()), this, SLOT(returnPressed()));
   QObject::connect(_comboEdit,SIGNAL(textChanged(const QString&)),SLOT(textChanged(const QString&)));
-  QObject::connect(_comboEdit,SIGNAL(highlighted(const QString&)),SLOT(highlighted(const QString&)));
+  QObject::connect(_comboEdit,SIGNAL(activated(const QString&)),SLOT(activated(const QString&)));
   QObject::connect(_comboEdit->lineEdit(),SIGNAL(returnPressed()),SLOT(returnPressed()));
+
 }
 
 GearNavigatorView::~GearNavigatorView()
 {}
 
+void GearNavigatorView::activated(const QString& s)
+{
+	std::cerr<<s<<std::endl;
+
+}
+
 void GearNavigatorView::returnPressed()
-{std::cerr<<"selected:"<<_comboEdit->lineEdit()->text().latin1()<<std::endl;
-_schemaEditor->addMovingGear(_comboEdit->lineEdit()->text().latin1());
-_schemaEditor->setFocus();
+{
+	_schemaEditor->addMovingGear(_comboEdit->lineEdit()->text().latin1());
+	_schemaEditor->setFocus();
+ 	return;
+
 }
 
 void GearNavigatorView::focusAndClear()
 {
-  _comboEdit->lineEdit()->setFocus();
-
+_comboEdit->lineEdit()->setFocus();
   _comboEdit->lineEdit()->clear();
+
 }
 void GearNavigatorView::textChanged(const QString& str)
 {
   _comboEdit->listBox()->clear();
   QStringList sl;
   std::vector<const GearInfo*> gi;
-  GearMaker::getAllGearsInfoWithNameFilter(gi,str.latin1());
+  GearMaker::getAllGearsInfoWithNameFilter(gi,"");//gi,str.latin1());
   for(std::vector<const GearInfo*>::const_iterator it = gi.begin();it!=gi.end();++it)
     sl.push_back((*it)->name);
   _comboEdit->listBox()->insertStringList(sl);
 }
 
-void GearNavigatorView::create() 
-{
-  _gearListView->create();	
-}
-
-void GearNavigatorView::slotClearClicked()
-{
-  _comboEdit->lineEdit()->setText("");
-}

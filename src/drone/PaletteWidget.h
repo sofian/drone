@@ -1,4 +1,4 @@
-/* GearNavigatorView.h
+/* PaletteWidget.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,37 +17,35 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GearNavigatorView_INCLUDED
-#define GearNavigatorView_INCLUDED
+#ifndef PaletteWidget_INCLUDED
+#define PaletteWidget_INCLUDED
 
-#include "qwidget.h"
-#include <qlayout.h>
-#include <qcombobox.h>
+#include "qdockwindow.h"
+#include <qstring.h>
 
-class SchemaEditor;
-class QComboBox;
-class QPushButton;
-class QLineEdit;
+class MainWindow;
+class PaletteManager;
 
-class GearNavigatorView : public QWidget
+// this class is an undockable QDockWindow, no joke 
+
+class PaletteWidget: public QDockWindow
 {
-  Q_OBJECT
   public:
-  GearNavigatorView(QWidget *parent, SchemaEditor*);
-  virtual ~GearNavigatorView();
-  void focusAndClear();
-	
-	
+  PaletteWidget(PaletteManager*,MainWindow *mw,QString name);
+  virtual ~PaletteWidget();
+Q_OBJECT
 public slots:
-  void textChanged(const QString&);
-  void activated(const QString&);
-  void returnPressed();
+  void myPlaceChanged(QDockWindow::Place);
+protected:
+  virtual void hideEvent(QHideEvent*);
+  virtual void showEvent(QShowEvent*);
 
-private:
-  SchemaEditor* _schemaEditor;
-  QHBoxLayout *_hLayout;
-  QComboBox *_comboEdit;
-  QPushButton *_goButton;
+  void loadGeometry();
+  void saveGeometry();
+
+  PaletteManager* _pMan;
+  MainWindow* _mainWindow;
+  QString _name; 
   
 };
 

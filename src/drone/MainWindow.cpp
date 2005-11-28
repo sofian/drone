@@ -31,14 +31,19 @@
 #include <qlineedit.h>
 
 #include "SchemaGui.h"
+#include "SchemaEditor.h"
 #include "MetaGear.h"
-#include "MetaGearEditor.h"
+//#include "MetaGearEditor.h"
 
 #include "MediaPoolItem.h"
 #include "MediaMovie.h"
 #include "MediaPoolDialog.h"
 
-
+#include "PaletteManager.h"
+#include "PaletteWidget.h"
+#include "GearNavigatorView.h"
+#include "GearListView.h"
+#include "PlugsTable.h"
 
 //#include "PreferencesDialog.h"
 
@@ -50,28 +55,27 @@ const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
 extern QSettings globalSettings;
 
 
-MainWindow::MainWindow() : 
+MainWindow::MainWindow(Engine* engine) : 
 QMainWindow(), 
-_engine(NULL), 
+_engine(engine), 
 _frame(NULL), 
-_mainSchemaGui(NULL), 
+_schemaGui(NULL), 
 _menuFirstRecentSchemaId(-1),
 _menuShowSmallGearsId(false)
 {    
-  _engine = new Engine(0);    
-  _metaGearEditor = new MetaGearEditor(this, _engine->mainMetaGear(), _engine);
-  _mainSchemaGui = _metaGearEditor->schemaGui();
   
-  _project = new Project(_mainSchemaGui);
+  _schemaGui = new SchemaGui(_engine->mainMetaGear()->getInternalSchema(), engine);
+  _schemaEditor = new SchemaEditor(this, _schemaGui, _engine);
   
-  setCentralWidget(_metaGearEditor);
+  _project = new Project(_schemaGui);
+  
+  setCentralWidget(_schemaEditor);
 
   _toolBar = new QToolBar(this);
   addToolBar(_toolBar);        
   _playPause = new QToolButton(_toolBar);    		
   _playPause->setToggleButton(true);
-	
-	
+		
   _toolBar->addSeparator();
   QToolButton *zoomOut = new QToolButton(_toolBar);    
   zoomOut->setText("-");    
@@ -94,7 +98,6 @@ _menuShowSmallGearsId(false)
   
   QObject::connect(zoomIn, SIGNAL(pressed()), this, SLOT(slotZoomIn()));
   QObject::connect(zoomOut, SIGNAL(pressed()), this, SLOT(slotZoomOut()));
-	
 	
   //menu    
   _fileMenu = new QPopupMenu(this);
@@ -123,8 +126,9 @@ _menuShowSmallGearsId(false)
   _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
   _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), CTRL+Key_I);
 
-	
-  //for the most recent schema files that will be appended
+  _pManager = new PaletteManager(this);
+  
+//for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
   QMenuBar *menuBar = new QMenuBar(this);
@@ -149,11 +153,36 @@ _menuShowSmallGearsId(false)
     _recentSchemas.push_back(filename);    
   }
   globalSettings.endGroup();
+
+
+///////////////////////////////////////////
+// palettes declarations
+
+  _gearNavigatorView = new GearNavigatorView(_toolBar,_schemaEditor);
+
+  PaletteWidget*pw = _pManager->addPalette("Gears");
+  _gearListView = new GearListView(pw);
+  _gearListView->create();	
+  pw->setWidget(_gearListView);
+
+  pw = _pManager->addPalette("Gear Properties");
+  _plugsTable = new PlugsTable(pw);
+  pw->setWidget(_plugsTable);
+
+  //_gearNavigatorView->show();
+  //QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
+  
+
 }
 
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::undockPaletteHack()
+{
+  _pManager->undockAllPalettes();
 }
 
 void MainWindow::slotPlay(bool play)
@@ -259,9 +288,33 @@ void MainWindow::slotMenuPreferences()
 
 void MainWindow::slotMenuGotoNavigator()
 {
-  _metaGearEditor->gearNavigatorView()->focusAndClear();
-  std::cerr<<"A!!!!!!!"<<std::endl;
+  _gearNavigatorView->focusAndClear();
+  //std::cerr<<"A!!!!!!!"<<std::endl;
 }
+
+void MainWindow::saveGeometry()
+{
+ int gx = this->x();
+ int gy = this->y();
+ int gwidth = this->width();
+ int gheight = this->height();
+
+ globalSettings.writeEntry(QString("/drone/mainwindow/")+QString("/xpos"),gx);
+ globalSettings.writeEntry(QString("/drone/mainwindow/")+QString("/ypos"),gy);
+ globalSettings.writeEntry(QString("/drone/mainwindow/")+QString("/width"),gwidth);
+ globalSettings.writeEntry(QString("/drone/mainwindow/")+QString("/height"),gheight);
+}
+
+void MainWindow::loadGeometry()
+{
+  int gx = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/xpos") ).toInt();
+  int gy = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/ypos") ).toInt();
+  int gwidth = globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/width") ).toInt();
+  int gheight= globalSettings.readEntry( QString("/drone/mainwindow/")+QString("/height") ).toInt();
+
+  setGeometry(QRect(gx,gy,gwidth,gheight));
+}
+
 
 void MainWindow::addToRecentSchema(std::string filename)
 {  
@@ -332,10 +385,22 @@ void MainWindow::timerEvent(QTimerEvent*)
 
 void MainWindow::slotZoomIn()
 {
-  _metaGearEditor->zoomInSchema();
+  _schemaEditor->zoomIn();
 }
 
 void MainWindow::slotZoomOut()
 {
-  _metaGearEditor->zoomOutSchema();
+  _schemaEditor->zoomOut();
+}
+
+void MainWindow::hideEvent(QHideEvent*e)
+{
+ saveGeometry();
+ QMainWindow::hideEvent(e);
+}
+
+void MainWindow::showEvent(QShowEvent*e)
+{
+ loadGeometry();
+ QMainWindow::showEvent(e);
 }

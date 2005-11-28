@@ -7,6 +7,7 @@
 
 #include <qsplitter.h>
 #include <qlayout.h>
+#include <qtextedit.h>
 
 MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engine) :
   QWidget(parent),
@@ -16,19 +17,16 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
 
   _schemaGui = new SchemaGui(_metaGear->getInternalSchema(), engine);
 
-  _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
-  _verticalSplitter = new QSplitter(QSplitter::Vertical, _horizontalSplitter);
+  _bottomVerticalSplitter = new QSplitter(QSplitter::Vertical, this);
+	
+  _schemaEditor = new SchemaEditor(_bottomVerticalSplitter, _schemaGui, engine);  
 
-	_schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine);  
-  
-  _gearNavigatorView = new GearNavigatorView(_verticalSplitter,_schemaEditor);
-  _gearNavigatorView->create();
-  _PlugsTable = new PlugsTable(_verticalSplitter);
-  
-  _horizontalSplitter->moveToFirst(_verticalSplitter);
-  
-  layout->addWidget(_horizontalSplitter);
-  	
+  _logView = new QTextEdit(_bottomVerticalSplitter);
+  _logView->setTextFormat(Qt::LogText);
+  _logView->append("<font color=\"#220\">allo</font>");
+
+  _bottomVerticalSplitter->moveToFirst(_schemaEditor);
+
   QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _PlugsTable, SLOT(slotGearSelected(GearGui*)));
   
 }
