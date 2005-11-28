@@ -88,11 +88,6 @@ void PaletteWidget::moveEvent(QMoveEvent*e)
  QDockWindow::moveEvent(e);
 }
 
-void PaletteWidget::closeEvent(QCloseEvent*e)
-{
- _pMan->mainWindow()->close();
-}
-
 void PaletteWidget::showEvent(QShowEvent*e)
 {
  loadGeometry();
