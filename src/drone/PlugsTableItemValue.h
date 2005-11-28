@@ -1,5 +1,5 @@
 /*
- *  PlugParametersTableItemValue.h
+ *  PlugsTableItemValue.h
  *  drone
  *
  *  Created by foogy on 11/09/05.
@@ -7,17 +7,17 @@
  *
  */
 
-#ifndef PLUGParametersTABLEITEMVALUE_INCLUDED
-#define PLUGParametersTABLEITEMVALUE_INCLUDED
+#ifndef PlugsTABLEITEMVALUE_INCLUDED
+#define PlugsTABLEITEMVALUE_INCLUDED
 
-#include "PlugParametersTableItem.h"
+#include "PlugsTableItem.h"
 #include <qlineedit.h>
 
-class PlugParametersTableItemValue : public PlugParametersTableItem
+class PlugsTableItemValue : public PlugsTableItem
 {
 public:  
-  PlugParametersTableItemValue(AbstractPlug *plug, QTable *table, EditType et);
-  virtual ~PlugParametersTableItemValue();
+  PlugsTableItemValue(AbstractPlug *plug, QTable *table, EditType et);
+  virtual ~PlugsTableItemValue();
 
   QWidget *createEditor() const;
   void setContentFromEditor(QWidget *w);

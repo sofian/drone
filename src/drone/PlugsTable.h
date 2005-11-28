@@ -1,5 +1,5 @@
 /*
- *  PlugParametersTable.h
+ *  PlugsTable.h
  *  drone
  *
  *  Created by foogy on 20/09/05.
@@ -14,11 +14,11 @@ class Gear;
 class GearGui;
 class AbstractPlug;
 
-class PlugParametersTable : public QTable
+class PlugsTable : public QTable
 {
 	Q_OBJECT
 public:
-	PlugParametersTable(QWidget *parent);
+	PlugsTable(QWidget *parent);
   
 	void refresh(Gear *gear);    
     

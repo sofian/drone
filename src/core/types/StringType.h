@@ -27,9 +27,10 @@ class StringType : public AbstractType
 {
 public:
   static const std::string TYPENAME;
-  StringType(std::string defaultValue="")
+  StringType(std::string defaultValue="", bool isAFilename=false)
 	: AbstractType(),
-	_value(defaultValue)
+	_value(defaultValue),
+	_isAFilename(isAFilename)
 {}
   
   virtual ~StringType() {}
@@ -37,11 +38,13 @@ public:
   virtual std::string typeName() const { return TYPENAME; }
   virtual QColor color() const { return QColor(123, 173, 241); }
   
+	bool isAFilename(){return _isAFilename;}
   void setValue(std::string value) { _value = value; }
 	std::string value() const { return _value; }
   
 private:
 	std::string _value;
+	bool _isAFilename;
 };
 
 #endif

@@ -39,11 +39,13 @@ MetaGearEditor.h \
 MetaGearListMenu.h \
 MediaPoolDialog.h \
 #PreferencesDialog.h \
-PlugPropertiesTable.h \
-PlugPropertiesTableItem.h \
-PlugPropertiesTableItemValue.h \
-PlugPropertiesTableItemString.h \
+PlugsTable.h \
+PlugsTableItem.h \
+PlugsTableItemFilename.h \
+PlugsTableItemValue.h \
+PlugsTableItemString.h \
 SchemaEditor.h \
+SelectFilenameWidget.h \
 Play.xpm \
 Pause.xpm \
 splash.xpm
@@ -58,10 +60,11 @@ MediaPoolItem.cpp \
 MetaGearEditor.cpp \
 MetaGearListMenu.cpp \
 MediaPoolDialog.cpp \
-PlugPropertiesTable.cpp \
-PlugPropertiesTableItem.cpp \
-PlugPropertiesTableItemValue.cpp \
-PlugPropertiesTableItemString.cpp \
+PlugsTable.cpp \
+PlugsTableItem.cpp \
+PlugsTableItemFilename.cpp \
+PlugsTableItemValue.cpp \
+PlugsTableItemString.cpp \
 #PreferencesDialog.cpp \
-SchemaEditor.cpp
-
+SchemaEditor.cpp \
+SelectFilenameWidget.cpp

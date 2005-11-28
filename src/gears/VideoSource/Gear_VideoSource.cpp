@@ -63,7 +63,7 @@ _movieReady(false)
   setPlugAtLeastOneNeeded(atLeastOneOfThem);
 
   addPlug(_RESET_IN = new PlugIn<ValueType>(this, "Reset", false, new ValueType(0, 0, 1)));
-  addPlug(_MOVIE_IN = new PlugIn<StringType>(this, "Movie", false));
+  addPlug(_MOVIE_IN = new PlugIn<StringType>(this, "Movie", false, new StringType("", true)));
 
   //_settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 

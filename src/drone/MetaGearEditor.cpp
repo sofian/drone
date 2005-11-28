@@ -3,7 +3,7 @@
 #include "MetaGear.h"
 #include "SchemaEditor.h"
 #include "GearListView.h"
-#include "PlugPropertiesTable.h"
+#include "PlugsTable.h"
 
 #include <qsplitter.h>
 #include <qlayout.h>
@@ -23,13 +23,13 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   
   _gearNavigatorView = new GearNavigatorView(_verticalSplitter,_schemaEditor);
   _gearNavigatorView->create();
-  _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
+  _PlugsTable = new PlugsTable(_verticalSplitter);
   
   _horizontalSplitter->moveToFirst(_verticalSplitter);
   
   layout->addWidget(_horizontalSplitter);
   	
-  QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
+  QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _PlugsTable, SLOT(slotGearSelected(GearGui*)));
   
 }
 

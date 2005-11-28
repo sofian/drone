@@ -1,5 +1,5 @@
 /*
- *  PlugPropertiesTableItem.h
+ *  PlugParametersTableItem.h
  *  drone
  *
  *  Created by foogy on 11/09/05.
@@ -7,18 +7,18 @@
  *
  */
 
-#ifndef PLUGPROPERTIESTABLEITEM_INCLUDED
-#define PLUGPROPERTIESTABLEITEM_INCLUDED
+#ifndef PLUGParametersTABLEITEM_INCLUDED
+#define PLUGParametersTABLEITEM_INCLUDED
 
 #include <qtable.h>
 
 class AbstractPlug;
 
-class PlugPropertiesTableItem : public QTableItem
+class PlugParametersTableItem : public QTableItem
 {
 public:  
-  PlugPropertiesTableItem(AbstractPlug *plug, QTable *table, EditType et, const QString &text);
-  virtual ~PlugPropertiesTableItem();
+  PlugParametersTableItem(AbstractPlug *plug, QTable *table, EditType et, const QString &text);
+  virtual ~PlugParametersTableItem();
 
 protected:
   AbstractPlug *_plug;

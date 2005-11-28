@@ -1,5 +1,5 @@
 /*
- *  PlugParametersTable.cpp
+ *  PlugsTable.cpp
  *  drone
  *
  *  Created by foogy on 20/09/05.
@@ -7,18 +7,19 @@
  *
  */
 #include <iostream>
-#include "PlugParametersTable.h"
+#include "PlugsTable.h"
 #include "Gear.h"
 #include "GearGui.h"
 
-#include "PlugParametersTableItemValue.h"
-#include "PlugParametersTableItemString.h"
+#include "PlugsTableItemValue.h"
+#include "PlugsTableItemString.h"
+#include "PlugsTableItemFilename.h"
 
 #include "ValueType.h"
 #include "StringType.h"
 
 
-PlugParametersTable::PlugParametersTable(QWidget *parent) :
+PlugsTable::PlugsTable(QWidget *parent) :
 QTable(parent),
 _gear(NULL)
 {
@@ -38,7 +39,7 @@ _gear(NULL)
   setColumnStretchable(1,true);
 }
 
-void PlugParametersTable::slotGearSelected(GearGui *gearGui)
+void PlugsTable::slotGearSelected(GearGui *gearGui)
 {
   if (gearGui==NULL)
   {
@@ -49,7 +50,7 @@ void PlugParametersTable::slotGearSelected(GearGui *gearGui)
   refresh(gearGui->gear());
 }
 
-void PlugParametersTable::refresh(Gear *gear)
+void PlugsTable::refresh(Gear *gear)
 {
   if (gear==NULL)
   {
@@ -77,21 +78,31 @@ void PlugParametersTable::refresh(Gear *gear)
   }
 }
 
-void PlugParametersTable::insertPlug(AbstractPlug *plug, int row)
+void PlugsTable::insertPlug(AbstractPlug *plug, int row)
 {
   if(!plug)
     return;
 
   if (plug->abstractType()->typeName() == ValueType::TYPENAME)
   {
-    PlugParametersTableItemValue *valueItem = new PlugParametersTableItemValue(plug, this, QTableItem::WhenCurrent);
+    PlugsTableItemValue *valueItem = new PlugsTableItemValue(plug, this, QTableItem::WhenCurrent);
     setText(row,0,plug->name());
     setItem(row,1,valueItem);
   } 
   else if (plug->abstractType()->typeName() == StringType::TYPENAME)
   {
-    PlugParametersTableItemString *stringItem = new PlugParametersTableItemString(plug, this, QTableItem::WhenCurrent);
-    setText(row,0,plug->name());
-    setItem(row,1,stringItem);  
+    StringType *strType = (StringType*)plug->abstractType();
+		if (strType->isAFilename())
+		{
+			PlugsTableItemFilename *filenameItem = new PlugsTableItemFilename(plug, this, QTableItem::WhenCurrent);
+			setText(row,0,plug->name());
+			setItem(row,1,filenameItem);  			
+		}
+		else
+		{
+			PlugsTableItemString *stringItem = new PlugsTableItemString(plug, this, QTableItem::WhenCurrent);
+			setText(row,0,plug->name());
+			setItem(row,1,stringItem);  
+		}
   }
 }

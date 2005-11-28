@@ -1,24 +1,24 @@
-#include "PlugParametersTableItemString.h"
+#include "PlugsTableItemString.h"
 #include "AbstractPlug.h"
 #include "StringType.h"
 
-PlugParametersTableItemString::PlugParametersTableItemString(AbstractPlug *plug, QTable * table, EditType et) :
-  PlugParametersTableItem(plug, table, et, static_cast<StringType*>(plug->abstractDefaultType())->value().c_str()),
+PlugsTableItemString::PlugsTableItemString(AbstractPlug *plug, QTable * table, EditType et) :
+  PlugsTableItem(plug, table, et, static_cast<StringType*>(plug->abstractDefaultType())->value().c_str()),
   _lineEdit(NULL)
 {
   setReplaceable(false);  
 }
 
-PlugParametersTableItemString::~PlugParametersTableItemString()
+PlugsTableItemString::~PlugsTableItemString()
 {
 
 }
 
-QWidget *PlugParametersTableItemString::createEditor() const
+QWidget *PlugsTableItemString::createEditor() const
 {
   std::cout << "createEditor" << std::endl;
   //create a lineedit
-  ((PlugParametersTableItemString*)this)->_lineEdit = new QLineEdit(table()->viewport());
+  ((PlugsTableItemString*)this)->_lineEdit = new QLineEdit(table()->viewport());
   StringType *data = static_cast<StringType*>(_plug->abstractDefaultType());
   
   _lineEdit->setText(data->value());  
@@ -27,7 +27,7 @@ QWidget *PlugParametersTableItemString::createEditor() const
   return _lineEdit;
 }
 
-void PlugParametersTableItemString::setContentFromEditor(QWidget *w)
+void PlugsTableItemString::setContentFromEditor(QWidget *w)
 {
   std::cout << "setcontentfromeditor" << std::endl;
   if (w->inherits("QLineEdit"))
@@ -36,7 +36,7 @@ void PlugParametersTableItemString::setContentFromEditor(QWidget *w)
     QTableItem::setContentFromEditor(w);
 }
 
-void PlugParametersTableItemString::setText(const QString &s)
+void PlugsTableItemString::setText(const QString &s)
 {
   std::cout << "settext" << std::endl;
   StringType *data = static_cast<StringType*>(_plug->abstractDefaultType());

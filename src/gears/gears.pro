@@ -1,14 +1,14 @@
 include(../../config.pro)
 
 TEMPLATE=subdirs
-SUBDIRS= Osc 
+SUBDIRS= Osc \
 #TV \
 #Oscilloscope \
 #VideoOutput \
 AudioPushButton \
 #AlphaMix \
 #Blur \
-#VideoSource \
+VideoSource \
 #Slider \
 #KDTree\ 
 #VideoMix \
@@ -50,11 +50,11 @@ AudioPushButton \
 #VideoRecord \
 #VideoOffset \
 #VideoSwitch \
-#ValueMix
-agg {
-SUBDIRS+= SVGLoader \
-Vectorial2Raster \
-VecAffineTrans
+ValueMix
+#agg {
+#SUBDIRS+= SVGLoader \
+#Vectorial2Raster \
+#VecAffineTrans
 }
 
 #linux specific gears

@@ -1,31 +1,31 @@
-#include "PlugParametersTableItemValue.h"
+#include "PlugsTableItemValue.h"
 #include "AbstractPlug.h"
 #include "ValueType.h"
 
-PlugParametersTableItemValue::PlugParametersTableItemValue(AbstractPlug *plug, QTable * table, EditType et) :
-  PlugParametersTableItem(plug, table, et, QString::number(static_cast<ValueType*>(plug->abstractDefaultType())->value())),
+PlugsTableItemValue::PlugsTableItemValue(AbstractPlug *plug, QTable * table, EditType et) :
+  PlugsTableItem(plug, table, et, QString::number(static_cast<ValueType*>(plug->abstractDefaultType())->value())),
   _lineEdit(NULL)
 {
   setReplaceable(false);  
 }
 
-PlugParametersTableItemValue::~PlugParametersTableItemValue()
+PlugsTableItemValue::~PlugsTableItemValue()
 {
 
 }
 
-QWidget *PlugParametersTableItemValue::createEditor() const
+QWidget *PlugsTableItemValue::createEditor() const
 {
   std::cout << "createEditor" << std::endl;
   //create a lineedit
-  ((PlugParametersTableItemValue*)this)->_lineEdit = new QLineEdit(table()->viewport());
+  ((PlugsTableItemValue*)this)->_lineEdit = new QLineEdit(table()->viewport());
   _lineEdit->setText(QString::number(static_cast<ValueType*>(_plug->abstractDefaultType())->value()));  
   
   QObject::connect(_lineEdit, SIGNAL( textChanged(const QString&)), table(), SLOT( doValueChanged()) );
   return _lineEdit;
 }
 
-void PlugParametersTableItemValue::setContentFromEditor(QWidget *w)
+void PlugsTableItemValue::setContentFromEditor(QWidget *w)
 {
   std::cout << "setcontentfromeditor" << std::endl;
   if (w->inherits("QLineEdit"))
@@ -34,7 +34,7 @@ void PlugParametersTableItemValue::setContentFromEditor(QWidget *w)
     QTableItem::setContentFromEditor(w);
 }
 
-void PlugParametersTableItemValue::setText(const QString &s)
+void PlugsTableItemValue::setText(const QString &s)
 {
   std::cout << "settext" << std::endl;
   ValueType *data = static_cast<ValueType*>(_plug->abstractDefaultType());
