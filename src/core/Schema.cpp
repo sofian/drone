@@ -601,7 +601,7 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   return true;
 }
 
-bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
+bool Schema::load(QDomElement& parent, bool pasting)
 {    
   std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");

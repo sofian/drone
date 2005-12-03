@@ -9,6 +9,7 @@ class ISchemaEventListener
 public:
   virtual void onGearAdded(Schema *schema, Gear *gear)=0;
   virtual void onGearRemoved(Schema *schema, Gear *gear)=0;
+  virtual ~ISchemaEventListener(){}
 };
 
 #endif

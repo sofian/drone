@@ -20,7 +20,7 @@
 #ifndef COLORSPACE_DEFINED
 #define COLORSPACE_DEFINED
 
-#include "Math.h"
+#include "MathUtil.h"
 #include <stdlib.h>
 
 #define SIZE_RGB   3

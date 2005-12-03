@@ -76,8 +76,6 @@
  * masking is always cheaper than passing parameters over the stack.      */
 /* FIXME: Move to a global place */
 
-#define HAS_ALPHA(bytes) (~bytes & 1)
-
 
 // static guchar add_lut[511];
 // static gint32 random_table[RANDOM_TABLE_SIZE];
@@ -109,7 +107,7 @@ gimp_composite_convert_any_any_any_generic (GimpCompositeContext *ctx)
     for (j = 0; j < bpp_A; j++) {
       D[j] = A[j];
     }
-    D[j] = GIMP_COMPOSITE_ALPHA_OPAQUE;
+    D[j] = (unsigned char)GIMP_COMPOSITE_ALPHA_OPAQUE;
     A += bpp_A;
     D += bpp_D;
   }

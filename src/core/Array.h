@@ -48,7 +48,7 @@ public:
   using std::vector<T>::end;
   using std::vector<T>::begin;
   using std::vector<T>::front;
-
+	using std::vector<T>::empty;
   /**
    * Default constructor.
    */

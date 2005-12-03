@@ -182,7 +182,7 @@ struct CoreMidiData {
 //  Class Definitions: RtMidiIn
 //*********************************************************************//
 
-void midiInputCallback( const MIDIPacketList *list, void *procRef, void *srcRef )
+void midiInputCallback( const MIDIPacketList *list, void *procRef, void *)
 {
   RtMidiIn::RtMidiInData *data = static_cast<RtMidiIn::RtMidiInData *> (procRef);
   CoreMidiData *apiData = static_cast<CoreMidiData *> (data->apiData);

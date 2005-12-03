@@ -163,10 +163,11 @@
  * compositing operation handlers, followed by overloading those which
  * are supported by the current cpu/hardware.
  **/
-void
-gimp_composite_init (gboolean  be_verbose,
-                     gboolean  use_cpu_accel)
-{
+
+//void
+//gimp_composite_init (gboolean  be_verbose,
+//                     gboolean  use_cpu_accel)
+//{
 //   const gchar *p;
 
 //   if ((p = g_getenv ("GIMP_COMPOSITE")))
@@ -222,4 +223,4 @@ gimp_composite_init (gboolean  be_verbose,
 //                     can_use_altivec ? '+' : '-',
 //                     can_use_vis     ? '+' : '-');
 //     }
-}
+//}

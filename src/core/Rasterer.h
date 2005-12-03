@@ -44,7 +44,6 @@ public:
   void line(int x0, int y0, int x1, int y1);
   void rect(int x0, int y0, int x1, int y1, bool filled);
   void ellipse(int x0, int y0, int radx, int rady, bool filled);
-  void fill(int x0, int y0);
 
   void ellipsePoints(int x0, int y0, int relx, int rely)
   {

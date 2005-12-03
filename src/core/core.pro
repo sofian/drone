@@ -10,6 +10,8 @@ message(Core : Builing Makefile with the following config flags : $$CONFIG)
 TEMPLATE = lib
 INCLUDEPATH += . types ../contrib/frei0r/spec composite
 
+QMAKE_CXXFLAGS_WARN_ON = -Wno-non-virtual-dtor
+
 #mac
 macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
@@ -17,7 +19,7 @@ macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS += -lz
 macx:LIBS += -framework OpenGL -framework CoreAudio -framework CoreMidi
 macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
-macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
+#macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
 macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 
 #linux
@@ -57,7 +59,7 @@ GearGui.h \
 GearConverter.h \
 GearMaker.h \
 ISchemaEventListener.h \
-Math.h \
+MathUtil.h \
 Media.h \
 MediaPool.h \
 MediaMovie.h \
@@ -103,7 +105,7 @@ types/ValueType.cpp \
 types/StringType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
-Math.cpp \
+MathUtil.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
 MetaGear.cpp \

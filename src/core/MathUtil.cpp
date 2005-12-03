@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Math.h"
+#include "MathUtil.h"
 
 float sinLut[FASTMATH_TABLESIZE];
 float cosLut[FASTMATH_TABLESIZE];

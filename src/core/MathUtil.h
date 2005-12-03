@@ -20,10 +20,10 @@
 #ifndef MATH_INCLUDED
 #define MATH_INCLUDED
 
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <algorithm>
-#include <limits.h>
+#include <limits>
 #include <float.h>
 
 //! Init function.

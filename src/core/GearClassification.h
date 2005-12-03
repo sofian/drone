@@ -32,6 +32,7 @@ class GearClassification
 public:  
   virtual std::string toString()=0;  
   virtual std::vector<std::string> path()=0;
+  virtual ~GearClassification(){}
 };
 
 /**
@@ -43,7 +44,7 @@ template<typename Me, typename ParentNode>
 class GearClassificationT : public GearClassification
 {
 public:  
-    
+  virtual ~GearClassificationT(){}
   /**
    * return a vector representing the full path to this classication 
    * from the root.
@@ -93,6 +94,7 @@ public:
   class Root : public GearClassificationT<Root, Root>
   { 
     public: 
+      virtual ~Root(){}
       std::string toString(){return "Root";}
       //Root overload the path method, to return an empty vector
       //it's very important for the recursive path mechanism because it's actually the only classification

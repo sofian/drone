@@ -208,7 +208,7 @@ string removeblanks(const string& s)
   else
     start = i;
 
-  for(i=s.length()-1; i>=0; i--)
+  for(i=s.length()-1; i>0; i--)
     if(s[i]!=' ' && s[i]!='\t' && s[i]!='\n' && s[i]!='\r')
       break;
   end = i;
@@ -231,7 +231,7 @@ string removeallblanks(const string& s)
 string removenewline(const string& s)
 {
   size_t pos = s.length()-1;
-  while(pos>=0 && (s[pos]=='\r' || s[pos]=='\n'))
+  while(pos>0 && (s[pos]=='\r' || s[pos]=='\n'))
     pos--;
   return s.substr(0,pos+1);
 }
@@ -239,7 +239,7 @@ string removenewline(const string& s)
 string remove_trailing_slash(const string& s)
 {
   size_t pos = s.length()-1;
-  while( s[pos]==slash_char && pos>=0 )
+  while( s[pos]==slash_char && pos>0 )
     pos--;
   return s.substr(0,pos+1);
 }

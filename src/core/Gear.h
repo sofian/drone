@@ -167,7 +167,7 @@ private:
 
   friend void Schema::initGear(Gear* gear) const;
   friend void *Engine::playThread(void *parent);
-  friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);
+  friend bool Schema::load(QDomElement& parent, bool pasting);
   friend bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected);
 
   #ifdef SINGLE_THREADED_PLAYBACK  

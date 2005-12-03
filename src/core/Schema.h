@@ -93,7 +93,7 @@ public:
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
   void clear();
   // dx,dy are offsets added to the gears coordinates (used when pasting clipboard)
-  bool load(QDomElement& doc, bool pasting=false, int dx=0, int dy=0);
+  bool load(QDomElement& doc, bool pasting=false);
 
   //! Returns a list of unordered gears, but not expanded. Metagears are left as is.
   virtual std::list<Gear*> getGears(){return _gears;}

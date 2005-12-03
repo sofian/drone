@@ -20,7 +20,7 @@
 #ifndef UTILS_INCLUDED
 #define UTILS_INCLUDED
 
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -140,8 +140,7 @@ inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeigh
  * to change if we support bigger formats. We'll do it so for now because
  * masking is always cheaper than passing parameters over the stack.      */
 /* FIXME: Move to a global place */
-//#define HAS_ALPHA(bytes) (~bytes & 1)
-#define HAS_ALPHA(bytes) 0 // XXX pour le moment on l'utilise pas, donc...
+#define HAS_ALPHA(bytes) (~bytes & 1)
 
 static unsigned char       add_lut[511];
 static int                 random_table[RANDOM_TABLE_SIZE];

@@ -161,9 +161,4 @@ void Rasterer::ellipse(int x0, int y0, int radx, int rady, bool filled)
   }
 }
 
-void Rasterer::fill(int x0, int y0)
-{
-}
-
-
 

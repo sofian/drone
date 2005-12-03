@@ -48,7 +48,8 @@ public:
   // using (as suggested by Norm)
   using Array<T>::data;
   using Array<T>::size;
-
+	using Array<T>::end;
+	using Array<T>::begin;
   /**
    * Default constructor.
    */
