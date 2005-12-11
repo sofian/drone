@@ -36,9 +36,9 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   _engine(engine),
 	_showSmall(false)
 {
-  
+   
   //todo various background for metagear and main schema
-  setBackgroundColor(QColor(107,124,153));
+  setBackgroundPixmap(QPixmap("bg.jpg"));
   
   setSchema(schema);
 }

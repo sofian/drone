@@ -4,7 +4,6 @@
 #include "Gear.h"
 #include "Schema.h"
 #include "ISchemaEventListener.h"
-
 #include <map>
 
 class MetaGear : public Gear, public ISchemaEventListener
@@ -22,6 +21,8 @@ public:
   void save(std::string filename);
   bool load(std::string filename);
   
+  void saveDefinition(QDomDocument& doc);
+
   void createPlugs();
 
   std::string fullPath(){return _fullPath;}

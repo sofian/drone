@@ -21,7 +21,7 @@
 
 #include "GearGui.h"
 #include "Schema.h"
-
+#include "GearInfo.h"
 #include <qdom.h>
 #include "XMLHelper.h"
 #include <iostream>
@@ -30,19 +30,26 @@
 
 const std::string Gear::XML_TAGNAME = "Gear";
 
-Gear::Gear(Schema *parentSchema, std::string type, std::string name) : 
-_parentSchema(parentSchema), 
-_Type(type), 
-_name(name),
-_gearGui(NULL),
-_ready(false)
-{
-}
+Gear::Gear(Schema *parentSchema, std::string type, std::string name) :
+    _parentSchema(parentSchema),
+    _Type(type),
+    _name(name),
+    _gearGui(NULL),
+    _ready(false)
+{}
 
 Gear::~Gear()
-{    
+{
   for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
     delete (*it);
+}
+
+void Gear::saveDefinition(QDomDocument& doc)
+{
+std::cerr<<"void Gear::saveDefinition(QDomDocument& doc)!!!!!"<<std::endl;
+  QDomElement gearElem = doc.createElement("GearInfo");
+  doc.appendChild(gearElem);
+  _gearInfo_->save(doc,gearElem);
 }
 
 void Gear::unSynch()
@@ -92,9 +99,9 @@ bool Gear::isPlugNameUnique(std::string name)
   {
     if ((*it)->name() == name)
       return false;
-  }    
-	
-	return true;
+  }
+
+  return true;
 }
 
 
@@ -110,24 +117,24 @@ bool Gear::isPlugNameUnique(std::string name)
  * @see AbstractPlug
  */
 AbstractPlug* Gear::addPlug(AbstractPlug* plug)
-{    
-	if (!plug)
-		return NULL;
-	
-	if (!isPlugNameUnique(plug->name()))
-			return NULL;
-/*  
-  //if plug is input, add only plug for main type
-  if (plug->inOut()==IN)
-    _plugs.push_back(plug);  
-  else
-    //add main plug and plugs for its subType
-    addPlugAndSubPlugs(plug,0);  
-*/  
+{
+  if (!plug)
+    return NULL;
 
-  _plugs.push_back(plug);  
+  if (!isPlugNameUnique(plug->name()))
+    return NULL;
+  /*
+    //if plug is input, add only plug for main type
+    if (plug->inOut()==IN)
+      _plugs.push_back(plug);  
+    else
+      //add main plug and plugs for its subType
+      addPlugAndSubPlugs(plug,0);  
+  */
 
-  return plug;    
+  _plugs.push_back(plug);
+
+  return plug;
 }
 
 //! temp method
@@ -135,13 +142,13 @@ AbstractPlug* Gear::addPlug(AbstractPlug* plug)
 void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
 {
   std::string str;
-
+ 
   for (int l=0;l<=level;l++)
     str+="..";
-
+ 
   _plugs.push_back(plug);
   int size = plug->abstractType()->nSubTypes();
-
+ 
   for (int i=0;i<size;i++)
   {
     const AbstractType* subtype = (plug->abstractType()->getSubType(i));    
@@ -157,7 +164,7 @@ void Gear::getInputs(std::list<AbstractPlug*> &inputs, bool onlyExposed) const
   {
     if ( ((*it)->inOut() == IN && ((onlyExposed && (*it)->exposed()) || !onlyExposed)) )
       inputs.push_back(*it);
-  }    
+  }
 }
 
 void Gear::getOutputs(std::list<AbstractPlug*> &outputs, bool onlyExposed) const
@@ -185,12 +192,12 @@ void Gear::getDependencies(std::vector<Gear*> &dependencies) const
 
 GearGui* Gear::createGearGui(QCanvas *canvas)
 {
-  return new GearGui(this, canvas);    
+  return new GearGui(this, canvas);
 }
 
 
 void Gear::save(QDomDocument &doc, QDomElement &parent)
-{               
+{
   QDomElement gearElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(gearElem);
 
@@ -207,18 +214,18 @@ void Gear::save(QDomDocument &doc, QDomElement &parent)
 
   //save plugs
   QDomElement plugElem = doc.createElement("Plugs");
-  gearElem.appendChild(plugElem);	
-	for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-		(*it)->save(doc, plugElem);
-	
+  gearElem.appendChild(plugElem);
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+    (*it)->save(doc, plugElem);
+
   internalSave(doc, gearElem);
 }
 
-void Gear::load(QDomElement &gearElem)               
-{            
+void Gear::load(QDomElement &gearElem)
+{
   _name = gearElem.attribute("Name","").ascii();
 
-  _settings.load(gearElem);  
+  _settings.load(gearElem);
   updateSettings();
 
   internalLoad(gearElem);
@@ -231,36 +238,36 @@ void Gear::load(QDomElement &gearElem)
   QDomNode plugNode = plugsNode.firstChild();
   while (!plugNode.isNull())
   {
-		QDomElement plugElem = plugNode.toElement();
+    QDomElement plugElem = plugNode.toElement();
     if (!plugElem.isNull())
     {
-			std::string name = plugElem.attribute("Name","").ascii();
-			//now find this plug and load is attributes
-			for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-			{
-				if ((*it)->name() == name)
-					(*it)->load(plugElem);
-			}
-		}
-		plugNode = plugNode.nextSibling();
-	}
-	
+      std::string name = plugElem.attribute("Name","").ascii();
+      //now find this plug and load is attributes
+      for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+      {
+        if ((*it)->name() == name)
+          (*it)->load(plugElem);
+      }
+    }
+    plugNode = plugNode.nextSibling();
+  }
+
 }
 
 AbstractPlug* Gear::getInput(std::string name) const
 {
   std::list<AbstractPlug*> inputs;
   getInputs(inputs);
-  
-  int (*pf)(int)=tolower; 
+
+  int (*pf)(int)=tolower;
   std::string nameAlower=name;
-  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf); 
-  
+  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf);
+
   for (std::list<AbstractPlug*>::const_iterator it = inputs.begin();it!=inputs.end();++it)
   {
     std::string nameBlower=(*it)->name();
-    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf); 
-    
+    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf);
+
     if (nameAlower == nameBlower)
       return(*it);
   }
@@ -272,16 +279,16 @@ AbstractPlug* Gear::getOutput(std::string name) const
 {
   std::list<AbstractPlug*> outputs;
   getOutputs(outputs);
-  
-  int (*pf)(int)=tolower; 
+
+  int (*pf)(int)=tolower;
   std::string nameAlower=name;
-  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf); 
-  
+  transform(nameAlower.begin(), nameAlower.end(), nameAlower.begin(), pf);
+
   for (std::list<AbstractPlug*>::const_iterator it = outputs.begin();it!=outputs.end();++it)
   {
     std::string nameBlower=(*it)->name();
-    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf); 
-    
+    transform(nameBlower.begin(), nameBlower.end(), nameBlower.begin(), pf);
+
     if (nameAlower == nameBlower)
       return(*it);
   }
@@ -313,67 +320,98 @@ void Gear::updateSettings()
  */
 void Gear::evaluateReady()
 {
-	std::cout << "checking ready for : " << name() << std::endl;
-	bool _oldStatus = _ready;
-	_ready=true;
-	
-    //manage the "at least one of them connected mechanism" by setting connected plugs
-    //in the vector to mandatory and the others to not mandatory
-    if (_atLeastOneOfThemNeeded.size()>0)
-    {    
-      bool atLeastOneConnected=false;
-      for(std::vector<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
+  std::cout << "checking ready for : " << name() << std::endl;
+  bool _oldStatus = _ready;
+  _ready=true;
+
+  //manage the "at least one of them connected mechanism" by setting connected plugs
+  //in the vector to mandatory and the others to not mandatory
+  if (_atLeastOneOfThemNeeded.size()>0)
+  {
+    bool atLeastOneConnected=false;
+    for(std::vector<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
+    {
+      if ((*it)->connected())
       {
-        if ((*it)->connected())
-        {
-          atLeastOneConnected=true;
-          (*it)->mandatory(true);
-        }
-        else
-          (*it)->mandatory(false);      
+        atLeastOneConnected=true;
+        (*it)->mandatory(true);
       }
-       
-      if (!atLeastOneConnected)
-      {
-        _ready=false;
-        if (_ready!=_oldStatus)
-            emit readyStatusChanged();
-        return;
-      }
+      else
+        (*it)->mandatory(false);
     }
-    
-      
-    std::list<AbstractPlug*> inputs;
-	getInputs(inputs);
-	for(std::list<AbstractPlug*>::iterator it=inputs.begin();it!=inputs.end();++it)
-	{
-		if (!(*it)->ready())
-		{
-			_ready=false;
-			if (_ready!=_oldStatus)
-				emit readyStatusChanged();
-			return;
-		}
-	}
 
-	std::list<AbstractPlug*> outputs;
-	getOutputs(outputs);
-	for(std::list<AbstractPlug*>::iterator it=outputs.begin();it!=outputs.end();++it)
-	{
-		if (!(*it)->ready())
-		{
-			_ready=false;
-			if (_ready!=_oldStatus)
-				emit readyStatusChanged();
-			return;
-		}
-	}
+    if (!atLeastOneConnected)
+    {
+      _ready=false;
+      if (_ready!=_oldStatus)
+        emit readyStatusChanged();
+      return;
+    }
+  }
 
-	if (_ready!=_oldStatus)
-		emit readyStatusChanged();
+
+  std::list<AbstractPlug*> inputs;
+  getInputs(inputs);
+  for(std::list<AbstractPlug*>::iterator it=inputs.begin();it!=inputs.end();++it)
+  {
+    if (!(*it)->ready())
+    {
+      _ready=false;
+      if (_ready!=_oldStatus)
+        emit readyStatusChanged();
+      return;
+    }
+  }
+
+  std::list<AbstractPlug*> outputs;
+  getOutputs(outputs);
+  for(std::list<AbstractPlug*>::iterator it=outputs.begin();it!=outputs.end();++it)
+  {
+    if (!(*it)->ready())
+    {
+      _ready=false;
+      if (_ready!=_oldStatus)
+        emit readyStatusChanged();
+      return;
+    }
+  }
+
+  if (_ready!=_oldStatus)
+    emit readyStatusChanged();
 }
 
 void Gear::setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs)
 {
   _atLeastOneOfThemNeeded = plugs;
 }
+
+
+
+QMap<QString,PlugInfo> Gear::getInputsInfo() const
+{
+  QMap<QString,PlugInfo> pim;
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+    if((*it)->inOut()==IN)
+    {
+      PlugInfo pi;
+      pi.inOut=IN;
+      pi.type=(*it)->abstractDefaultType()->typeName();
+      pim[(*it)->name().c_str()]=pi;
+    }
+  return pim;
+}
+
+QMap<QString,PlugInfo> Gear::getOutputsInfo() const
+{
+  QMap<QString,PlugInfo> pim;
+  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+    if((*it)->inOut()==OUT)
+    {
+      PlugInfo pi;
+      pi.inOut=OUT;
+      pi.type=(*it)->abstractDefaultType()->typeName();
+      pim[(*it)->name().c_str()]=pi;
+    }
+  return pim;
+}
+

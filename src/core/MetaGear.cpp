@@ -1,6 +1,6 @@
 #include "MetaGear.h"
 #include "GearGui.h"
-
+#include "GearInfo.h"
 #include "XMLHelper.h"
 
 #include <qfileinfo.h>
@@ -22,6 +22,14 @@ MetaGear::~MetaGear()
   //TODOFOO: check this!!?
   //_schema.removeAllGears();
   //_schema->removeSchemaEventListener(this);
+}
+
+void MetaGear::saveDefinition(QDomDocument& doc)
+{
+  QDomElement metaGearElem = doc.createElement("MetaGear");
+  doc.appendChild(metaGearElem);
+  _schema->save(doc, metaGearElem);
+  _gearInfo_->save(doc,metaGearElem);
 }
 
 GearGui* MetaGear::createGearGui(QCanvas *canvas)

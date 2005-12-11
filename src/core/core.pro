@@ -55,6 +55,7 @@ types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
 types/EnumType.h \
 GearClassification.h \
+GearInfo.h \
 GearGui.h \
 GearConverter.h \
 GearMaker.h \
@@ -64,7 +65,6 @@ Media.h \
 MediaPool.h \
 MediaMovie.h \
 MetaGear.h \
-MetaGearMaker.h \
 MidiEngine.h \
 AbstractPlug.h \
 Plug.h \
@@ -104,12 +104,12 @@ types/VideoRGBAType.cpp \
 types/ValueType.cpp \
 types/StringType.cpp \
 GearGui.cpp \
+GearInfo.cpp \
 GearMaker.cpp \
 MathUtil.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
 MetaGear.cpp \
-MetaGearMaker.cpp \
 MidiEngine.cpp \
 AbstractPlug.cpp \
 PlugBox.cpp \
