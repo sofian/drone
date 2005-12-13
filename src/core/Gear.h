@@ -47,7 +47,7 @@ class Schema;
 class GearInfo_;
 class GearMaker;
 
-#include "oldGearInfo.h"
+//#include "oldGearInfo.h"
 
 /**
  * Gear is the atomic processing unit of the dataflow and the base class for all gears.
@@ -184,7 +184,7 @@ private:
 extern "C"
 {
   Gear* makeGear(Schema *schema, std::string uniqueName);
-  GearInfo getGearInfo();
+  //GearInfo getGearInfo();
 }
 
 

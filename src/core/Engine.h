@@ -27,7 +27,7 @@
 
 #include "SignalInfo.h"
 #include "VideoInfo.h"
-#include "Math.h"
+#include "MathUtil.h"
 #include "error.h"
 #include "Schema.h"
 #include "ISchemaEventListener.h"

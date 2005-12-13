@@ -13,6 +13,7 @@ void GearInfo_::saveDefinition()
 	GearMaker::saveDefinition(this);
 }
 
+/*
 bool GearInfo_::createIfNotExists(QString filename, QString fallbackname, GearInfo gi)
 {
   QDomDocument doc("GearInfo");
@@ -51,6 +52,7 @@ bool GearInfo_::createIfNotExists(QString filename, QString fallbackname, GearIn
 
   }
 }
+*/
 
 void GearInfo_::save(QDomDocument &doc, QDomNode &parent)
 {
@@ -71,7 +73,7 @@ void GearInfo_::save(QDomDocument &doc, QDomNode &parent)
   QMap<QString,PlugInfo>::Iterator it;
   for ( it = _plugs.begin(); it != _plugs.end(); ++it )
   {
-std::cerr<<"count : "<<_plugs.size()<<std::endl;
+   //std::cerr<<"count : "<<_plugs.size()<<std::endl;
     QValueList<QPair<QString, QString> > vl;
     vl[0]=QPair<QString, QString>("name",it.key());
     vl[0]=QPair<QString, QString>("inout",it.data().inOut==IN?QString("IN"):QString("OUT"));

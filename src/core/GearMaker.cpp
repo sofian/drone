@@ -32,11 +32,11 @@
 #endif
 
 GearMaker GearMaker::_registerMyself;
-std::map<std::string, GearMaker::GearPluginDefinition*> *GearMaker::_registry;
+std::map<std::string, GearInfo*> *GearMaker::_registry;
 
 GearMaker::GearMaker()
 {
-  _registry = new std::map<std::string, GearMaker::GearPluginDefinition*>;
+  _registry = new std::map<std::string, GearInfo_*>;
 }
 
 GearMaker::~GearMaker()
@@ -48,7 +48,7 @@ GearMaker::~GearMaker()
 void GearMaker::emptyRegistry()
 {
   //delete GearPluginDefinitions
-  for(std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it!=_registry->end();++it)
+  for(std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it!=_registry->end();++it)
   {
     if (it->second->gearInfo_()->pluginType() == GearInfo_::FREI0R_PLUGIN)
       free(it->second->gearInfo().data);
@@ -59,7 +59,7 @@ void GearMaker::emptyRegistry()
 Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
 {
   Gear* thegear;
-  std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it = _registry->find(type);
+  std::map<std::string, GearInfo_*>::iterator it = _registry->find(type);
 
   std::cout << "calling GearMaker::makeGear: " << type << std::endl;
 
@@ -92,7 +92,7 @@ Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueNa
 void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
 {
   // XXX TODO
-  for (std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
+  for (std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
   {
     gearsInfo.push_back(&(it->second->gearInfo()));
   }
@@ -102,7 +102,7 @@ void GearMaker::getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gear
 {
 
 
-  for (std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
+  for (std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
   {
     if(QString(it->second->gearInfo().name).lower().find(QString(filter.c_str()).lower()) != -1)
       gearsInfo.push_back(&(it->second->gearInfo()));
@@ -168,13 +168,15 @@ void GearMaker::parseGears()
       {
         //get gearInfo
         *(void**) (&getGearInfo) = dlsym(handle, "getGearInfo");
-        GearInfo gearInfo = (*getGearInfo)();
+        //GearInfo gearInfo = (*getGearInfo)();
         GearInfo_ gearInfo_;
 
-        gearInfo_=loadGearInfo(dir.path()+"/"+fileInfo->baseName().mid(8)+".xml",fileInfo->baseName().mid(8),GearInfo_::DRONE_PLUGIN,gearInfo);
+        gearInfo_=loadGearInfo(dir.path()+"/"+fileInfo->baseName().mid(8)+".xml",fileInfo->baseName().mid(8),GearInfo_::DRONE_PLUGIN);
+        gearInfo_._handle=handle;
+        gearInfo_.makeGear=makeGear;
         //build gear definition
-        GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,gearInfo_,
-            handle, makeGear);
+        //GearInfo_ *gearPluginDefinition = new GearPluginDefinition(gearInfo,gearInfo_,
+        //    handle, makeGear);
 
         //add geardefintion to the registry
         (*_registry)[gearInfo_._name]=gearPluginDefinition;//todo check for duplicates
@@ -243,7 +245,7 @@ void GearMaker::parseFrei0rPlugins()
     if (!(error = dlerror()))
     {
       // get gear info
-      GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo->filePath());
+      //GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo->filePath());
       GearInfo_ gearInfo_;
 
       gearInfo_=loadGearInfo(dir.path()+"/"+fileInfo->baseName().mid(3)+".xml",fileInfo->baseName().mid(3),GearInfo_::FREI0R_PLUGIN,gearInfo);

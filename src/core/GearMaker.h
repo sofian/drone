@@ -35,20 +35,20 @@
 class GearMaker
 {
 public:
-
+/*
   class GearPluginDefinition
   {
   public:
-    GearPluginDefinition(GearInfo gearInfo, GearInfo_ gearInfo_,
+    GearPluginDefinition(GearInfo_ gearInfo_,
                          void *handle,
                          Gear* (*pmakeGear)(Schema *schema, std::string uniqueName)) :
         makeGear(pmakeGear),
-        _gearInfo(gearInfo),
+        //_gearInfo(gearInfo),
         _gearInfo_(gearInfo_),
         _handle(handle)
     {}
 
-    const GearInfo& gearInfo() const {return _gearInfo;}
+    //const GearInfo& gearInfo() const {return _gearInfo;}
     GearInfo_* gearInfo_() {return &_gearInfo_;}
     const void* handle() const {return _handle;}
 
@@ -56,16 +56,16 @@ public:
     Gear* (*makeGear)(Schema *schema, std::string uniqueName);
 
   private:
-    GearInfo _gearInfo;
+    //GearInfo _gearInfo;
     GearInfo_ _gearInfo_;
     void* _handle;
   };
-
+*/
   static void saveDefinition(GearInfo_* gi);
 
   static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
-  static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
-  static void getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo,std::string filter);
+  static void getAllGearsInfo(std::vector<const GearInfo_*> &gearsInfo);
+  //static void getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo,std::string filter);
   static void parseGears();
   static void parseFrei0rPlugins();
   static void parseMetaGears();
@@ -80,7 +80,7 @@ private:
 
   static void emptyRegistry();
 
-  static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
+  static std::map<std::string, GearInfo_*> *_registry;
   static GearMaker _registerMyself;
 
 };
