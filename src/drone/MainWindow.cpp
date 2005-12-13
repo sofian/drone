@@ -44,6 +44,7 @@
 #include "GearNavigatorView.h"
 #include "GearListView.h"
 #include "PlugsTable.h"
+#include "HelpWindow.h"
 
 //#include "PreferencesDialog.h"
 
@@ -65,11 +66,11 @@ _menuShowSmallGearsId(false)
 {    
   _schemaGui = new SchemaGui(_engine->mainMetaGear()->getInternalSchema(), engine);
   _schemaEditor = new SchemaEditor(this, _schemaGui, _engine);
-  
-  _project = new Project(_schemaGui);
-  
   setCentralWidget(_schemaEditor);
 
+  _project = new Project(_schemaGui);
+  
+  
   _toolBar = new QToolBar(this);
   addToolBar(_toolBar);        
   _playPause = new QToolButton(_toolBar);    		
@@ -80,7 +81,8 @@ _menuShowSmallGearsId(false)
   zoomOut->setText("-");    
   QToolButton *zoomIn = new QToolButton(_toolBar);    
   zoomIn->setText("+");    
-	
+  	
+
 	/*
   _zoomIn = new QToolButton(_toolBar);    
 	_zoomOut = new QToolButton(_toolBar);    
@@ -122,11 +124,9 @@ _menuShowSmallGearsId(false)
 
   _viewMenu = new QPopupMenu(this);
 	_viewMenu->setCheckable(true);
-  _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
   _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), CTRL+Key_I);
 
-  _pManager = new PaletteManager(this);
-  
+
 //for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
@@ -156,7 +156,8 @@ _menuShowSmallGearsId(false)
 
 ///////////////////////////////////////////
 // palettes declarations
-
+  _pManager = new PaletteManager(this);
+  
   _gearNavigatorView = new GearNavigatorView(_toolBar,_schemaEditor);
 
   PaletteWidget*pw = _pManager->addPalette("Gears");
@@ -168,9 +169,18 @@ _menuShowSmallGearsId(false)
   _plugsTable = new PlugsTable(pw);
   pw->setWidget(_plugsTable);
 
+  pw = _pManager->addPalette("Media Pool");
+  _mediaPool = new MediaPoolDialog(pw);
+  pw->setWidget(_mediaPool);
+
+  pw = _pManager->addPalette("Help Window");
+  _helpWindow = new HelpWindow(pw);
+  pw->setWidget(_helpWindow);
+
+_schemaEditor->setFocus();
   //_gearNavigatorView->show();
   //QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
-  
+QObject::connect(_schemaEditor, SIGNAL(gearHelpRequested(GearGui*)), _helpWindow, SLOT(slotLoadGearInfo(GearGui*)));  
 
 }
 
@@ -181,7 +191,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::undockPaletteHack()
 {
-  _pManager->undockAllPalettes();
+  //_pManager->undockAllPalettes();
 }
 
 void MainWindow::slotPlay(bool play)
@@ -370,12 +380,6 @@ void MainWindow::slotMenuItemSelected(int id)
 void MainWindow::slotMenuQuit()
 {
   qApp->quit();
-}
-
-void MainWindow::slotMenuViewMediaPool()
-{
-  MediaPoolDialog mediaPoolDialog(this);
-  mediaPoolDialog.exec();
 }
 
 void MainWindow::slotMenuViewSmallGears()

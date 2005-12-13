@@ -88,7 +88,7 @@ void PaletteWidget::close()
   else
   {
     _windowGoalSize=_lastUnshadedWindowSize;
-    setMaximumSize(800,700);
+    setMaximumSize(500,700);
 
   }
 

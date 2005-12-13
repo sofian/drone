@@ -23,7 +23,6 @@
 #include "PlugBox.h"
 #include "Engine.h"
 #include "GearMaker.h"
-#include "MetaGearMaker.h"
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearListMenu.h"
@@ -41,6 +40,7 @@
 #include <iostream>
 #include <qpainter.h>
 #include <qwmatrix.h>
+#include <qpixmap.h>
 
 #include <qdom.h>
 
@@ -61,6 +61,8 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 {
   viewport()->setMouseTracking(TRUE);
   setAcceptDrops(TRUE); 
+
+  setFocusPolicy(QWidget::ClickFocus);
     
   _contextMenu = new QPopupMenu(this);
   _gearListMenu = new GearListMenu(this);    
@@ -82,7 +84,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 	_gearContextMenu->insertItem("ZoomIn", this, SLOT(zoomIn()));  
 	_gearContextMenu->insertItem("ZoomOut", this, SLOT(zoomOut()));  
 
-  _gearContextMenu->insertItem("About");    
+  _gearContextMenu->insertItem("About", this, SLOT(slotGearAbout()));    
   
   _metaGearContextMenu = new QPopupMenu(this);
   _metaGearContextMenu->insertItem("delete", this, SLOT(slotGearDelete()),Key_Delete);
@@ -98,6 +100,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _plugContextMenu = new QPopupMenu(this);
   _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
   _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
+ //setErasePixmap(QPixmap("bg.gif"));
 
 }
 
@@ -134,6 +137,7 @@ void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
 
 void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 {
+setFocus();
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox;
@@ -193,7 +197,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     _state = DRAGGING_SELECT_BOX;
     _selectBoxStartPos = p;
   }
-
+QCanvasView::contentsMousePressEvent(mouseEvent);
 }
 
 void SchemaEditor::contentsWheelEvent(QWheelEvent * wheelEvent)
@@ -455,6 +459,12 @@ void SchemaEditor::slotGearDelete()
   _contextGear = NULL;
 }
 
+void SchemaEditor::slotGearAbout()
+{
+  emit gearHelpRequested(_contextGear);
+  _contextGear = NULL;
+}
+
 /**
  * React on Expose selection in the plug context menu
  */
@@ -478,6 +488,7 @@ void SchemaEditor::slotNewMetaGear()
 
 void SchemaEditor::slotSaveMetaGear()
 {
+/*
   if (!_contextGear->gear()->kind() == Gear::METAGEAR)
   {
     std::cout << "not a metagear, cannot save!!!" << std::endl; 
@@ -508,7 +519,7 @@ void SchemaEditor::slotSaveMetaGear()
     _schemaGui->renameGear(_contextGear, fileInfo.baseName());
     
   }
-
+*/
 }
 
 void SchemaEditor::addGear(std::string name, int posX, int posY)

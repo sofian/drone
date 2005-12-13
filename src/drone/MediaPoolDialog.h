@@ -7,7 +7,7 @@
 
 #include "MediaPoolIconView.h"
 
-class MediaPoolDialog : public QDialog
+class MediaPoolDialog : public QWidget
 {
 public:  
   MediaPoolDialog(QWidget *parent);

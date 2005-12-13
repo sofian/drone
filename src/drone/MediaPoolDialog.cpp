@@ -4,7 +4,7 @@
 
 
 MediaPoolDialog::MediaPoolDialog(QWidget *parent) :
-  QDialog(parent)
+  QWidget(parent)
 {
   setCaption("Media Pool");
   _verticalLayout = new QVBoxLayout(this, 3);
@@ -20,7 +20,7 @@ MediaPoolDialog::MediaPoolDialog(QWidget *parent) :
   _horizontalLayout->addWidget(_movieButton);
   _horizontalLayout->addWidget(_pictureButton);
 
-  _verticalLayout->addLayout(_horizontalLayout);
+  //_verticalLayout->addLayout(_horizontalLayout); Mathieu : qt aime pas ce pcq horizlayout a deja le verticallayout comme parent
   _verticalLayout->addWidget(_mediaPoolIconView);    
   _verticalLayout->addWidget(_importButton);
 

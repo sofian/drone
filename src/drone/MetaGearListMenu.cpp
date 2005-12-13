@@ -1,5 +1,5 @@
 #include "MetaGearListMenu.h"
-#include "MetaGearMaker.h"
+#include "GearMaker.h"
 
 MetaGearListMenu::MetaGearListMenu(QWidget *parent, MetaGearListMenu* parentMetaGearListMenu) : 
   QPopupMenu(parent),
@@ -28,6 +28,7 @@ MetaGearListMenu::~MetaGearListMenu()
  */
 void MetaGearListMenu::create()
 {
+/*
   std::vector<QFileInfo*> metaGearsPath;
 
   //get all metaGearsPath from the MetaGearMaker
@@ -53,6 +54,7 @@ void MetaGearListMenu::create()
      //populate the map
      (*_menuItemIndexfileInfoMap)[itemIndex] = (*it);     
   }
+*/
 }
 
 /**

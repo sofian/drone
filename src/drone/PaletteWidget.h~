@@ -65,7 +65,7 @@ protected:
   ToolTitleBar *_titlebar;
   QWidget* _childWidget;
   int _shadedHeight,_shadedWidth;
-
+  
   QSize _windowSize;
   QSize _windowGoalSize;
   QSize _lastUnshadedWindowSize;

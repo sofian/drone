@@ -32,6 +32,9 @@ HEADERS += config.h \
 GearListMenu.h \
 GearNavigatorView.h \
 GearListView.h \
+HelpWindow.h \
+HelpBrowser.h \
+HelpEditor.h \
 MediaPoolIconView.h \
 MediaPoolItem.h \
 MainWindow.h \
@@ -47,6 +50,7 @@ PlugsTableItemString.h \
 SchemaEditor.h \
 PaletteWidget.h \
 PaletteManager.h \
+ToolTitleBar.h \
 SelectFilenameWidget.h \
 Play.xpm \
 Pause.xpm \
@@ -56,6 +60,9 @@ SOURCES += drone.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
 GearNavigatorView.cpp \
+HelpBrowser.cpp \
+HelpWindow.cpp \
+HelpEditor.cpp \
 MainWindow.cpp \
 MediaPoolIconView.cpp \
 MediaPoolItem.cpp \
@@ -71,4 +78,5 @@ PlugsTableItemValue.cpp \
 PlugsTableItemString.cpp \
 #PreferencesDialog.cpp \
 SchemaEditor.cpp \
-SelectFilenameWidget.cpp
+SelectFilenameWidget.cpp \
+ToolTitleBar.cpp

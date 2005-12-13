@@ -23,22 +23,30 @@
 #include "qwidget.h"
 #include <qstring.h>
 #include <qmainwindow.h>
+#include <qtimer.h>
+
 class MainWindow;
 class PaletteWidget;
 
-class PaletteManager
+class PaletteManager: public QObject
 {
+Q_OBJECT
   public:
   PaletteManager(MainWindow*);
   PaletteWidget* addPalette(QString str);
   virtual ~PaletteManager();
   void undockAllPalettes();
-
+  void regroup();
+  void moveGroup(QPoint p,PaletteWidget*);
+  int numPalettes(){return _pw.size();}
+  bool movingGroup(){return _movingGroup;}
+public slots:
+  void updateSizes();
 protected:
-
+  QTimer* _timer;
   std::list<PaletteWidget*> _pw; 
-
   MainWindow* _mainWindow;
+  bool _movingGroup;
   
 };
 

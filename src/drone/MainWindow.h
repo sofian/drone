@@ -39,7 +39,9 @@ class SchemaGui;
 class MetaGear;
 class GearNavigatorView;
 class GearListView;
+class MediaPoolDialog;
 class PlugsTable;
+class HelpWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -67,9 +69,7 @@ public slots:
 
   void slotMenuPreferences();
 
-
-  void slotMenuViewMediaPool();
-	void slotMenuViewSmallGears();
+  void slotMenuViewSmallGears();
 
   void slotMenuItemSelected(int id);
 
@@ -124,7 +124,9 @@ private:
   bool _showSmallGears;
   GearNavigatorView* _gearNavigatorView;
   GearListView* _gearListView;
+  MediaPoolDialog * _mediaPool;
   PlugsTable *_plugsTable;
+  HelpWindow *_helpWindow;
 
 //    PlayThread *_playThread;
 };

@@ -79,6 +79,7 @@ public slots:
   void zoomOut();
 
   void slotGearDelete();
+  void slotGearAbout();
   void slotGearSelectAll();
   void slotGearCopy();
   void slotGearPaste();
@@ -93,6 +94,7 @@ public slots:
 
 signals:
 		void gearSelected(GearGui *gearGui);
+void gearHelpRequested(GearGui *gearGui);
 
 protected:
 

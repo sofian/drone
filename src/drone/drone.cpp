@@ -27,7 +27,7 @@
 
 #include <iostream>
 #include <stdio.h>
-
+#include <qdialog.h>
 #include <qsettings.h>
 
 QSettings globalSettings;
@@ -63,7 +63,6 @@ int main(int argc, char** argv)
 
 
   qtApp.exec();
-
   //release the core
 	DroneCore::release();
   
