@@ -1,5 +1,5 @@
-/* Gear_Blur.h
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
+/* Gear_Simple.h
+ * Copyright (C) 2005 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,45 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_BLUR_INCLUDED
-#define GEAR_BLUR_INCLUDED
+#ifndef GEAR_SIMPLE_INCLUDED
+#define GEAR_SIMPLE_INCLUDED
 
 
 #include "Gear.h"
-#include "SignalType.h"
 #include "VideoRGBAType.h"
-#include "SummedAreaTable.h"
+#include "ValueType.h"
 
-class Gear_Blur : public Gear
+class Gear_Simple : public Gear
 {
 public:
 
-  Gear_Blur(Schema *schema, std::string uniqueName);
-  virtual ~Gear_Blur();
+  Gear_Simple(Schema *schema, QString uniqueName);
+  virtual ~Gear_Simple();
 
-  void runVideo();
+  void runVideo(){}
 
 private:
 
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_AMOUNT_IN;
-
-  //local var
-  const VideoRGBAType *_image;     
-  VideoRGBAType *_outImage;
-  unsigned char *_outData;
-
-  SummedAreaTable<> *_table;
-  unsigned int _sum[SIZE_RGBA];
-
-  int _sizeY;
-  int _sizeX;
-
-  int _x1,_y1,_x2,_y2;
-
-  int _blurSize;
-  int _area;
  
 };
 
