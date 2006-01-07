@@ -113,15 +113,17 @@ bool GearInfo::load()
     qWarning() << "could not open gear meta Info " << metaFile().fileName() << ", creating default";
 		return createDefaultMetaInfo();
   }
+	
+	return true;
 }
 
 bool GearInfo::loadMetaInfo()
 {
-  qDebug() << "loading: " << name(); 
+  qDebug() << "loading: " << metaFile().fileName(); 
 	QFile file(metaFile().absoluteFilePath());
   if( !file.open(QIODevice::ReadOnly) )
 		return false;
-
+	
   QDomDocument doc(XML_TAGNAME);
 	
   QString errMsg;
