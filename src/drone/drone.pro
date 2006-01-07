@@ -21,6 +21,14 @@ macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:TARGET = ../../drone.app/Contents/MacOS/drone
 RC_FILE = myapp.icns
 QMAKE_INFO_PLIST = Info.plist
+#bundling on osx
+macx:bundle.target = bundle
+macx:bundle.commands += ./bundle.osx
+macx:PRE_TARGETDEPS += bundle
+macx:QMAKE_EXTRA_UNIX_TARGETS += bundle
+
+
+
 
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,

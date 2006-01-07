@@ -54,6 +54,9 @@ bool GearInfo::createDefaultMetaInfo()
 
 bool GearInfo::save()
 {
+	if (!_pluginFile.exists())
+		return false;
+		
   QDomDocument doc(XML_TAGNAME);
   
   QDomElement infoElem = doc.createElement(XML_TAGNAME);
@@ -96,6 +99,12 @@ bool GearInfo::save()
 
 bool GearInfo::load()
 {
+	if (!_pluginFile.exists())
+	{
+		qCritical() << "plugin file doesnt exists: " << _pluginFile.fileName(); 
+		return false;
+	}
+	
 	if (!bindPlugin())
 		return false;
 
@@ -178,6 +187,9 @@ void GearInfo::syncPlugsInfo()
 {
   //create a temporary instance of the gear
 	Gear *gear = createGearInstance(NULL, "");
+	
+	if (!gear)
+		qCritical() << "cannot sync pluginfo because gear doesnt exists!";
 
 	//remove plugsInfo that doesnt exist anymore
 	QList<QString> plugsToRemove;

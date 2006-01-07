@@ -319,7 +319,7 @@ variables_saved_for_relink="PATH   GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 link_all_deplibs=yes
 
 # Compile-time system search path for libraries
-sys_lib_search_path_spec=" /usr/libexec/gcc/darwin/ppc/3.3/ /usr/local/libexec/gcc/darwin/ppc/3.3/ /usr/libexec/gcc/darwin/../../ppc-darwin/lib/ppc/3.3/ /usr/libexec/gcc/darwin/../../ppc-darwin/lib/ /usr/lib/gcc/darwin/ppc/3.3/ /usr/lib/gcc/darwin/ /usr/libexec/gcc/darwin/ppc/3.3/../../../ppc/3.3/ /usr/libexec/gcc/darwin/ppc/3.3/../../../ /lib/ppc/3.3/ /lib/ /usr/lib/ppc/3.3/ /usr/lib/  /lib /usr/lib /usr/local/lib"
+sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../ /lib/powerpc-apple-darwin8/4.0.0/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/  /lib /usr/lib /usr/local/lib"
 
 # Run-time system search path for libraries
 sys_lib_dlsearch_path_spec="/usr/local/lib /lib /usr/lib"
@@ -7117,7 +7117,7 @@ variables_saved_for_relink="PATH DYLD_LIBRARY_PATH  GCC_EXEC_PREFIX COMPILER_PAT
 link_all_deplibs=yes
 
 # Compile-time system search path for libraries
-sys_lib_search_path_spec=" /usr/libexec/gcc/darwin/ppc/3.3/ /usr/local/libexec/gcc/darwin/ppc/3.3/ /usr/libexec/gcc/darwin/../../ppc-darwin/lib/ppc/3.3/ /usr/libexec/gcc/darwin/../../ppc-darwin/lib/ /usr/lib/gcc/darwin/ppc/3.3/ /usr/lib/gcc/darwin/ /usr/libexec/gcc/darwin/ppc/3.3/../../../ppc/3.3/ /usr/libexec/gcc/darwin/ppc/3.3/../../../ /lib/ppc/3.3/ /lib/ /usr/lib/ppc/3.3/ /usr/lib/  /lib /usr/lib /usr/local/lib"
+sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../ /lib/powerpc-apple-darwin8/4.0.0/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/  /lib /usr/lib /usr/local/lib"
 
 # Run-time system search path for libraries
 sys_lib_dlsearch_path_spec="/usr/local/lib /lib /usr/lib"

@@ -27,7 +27,7 @@
 class Gear_Osc : public Gear
 {
 public:
-  Gear_Osc(Schema *schema, std::string uniqueName);
+  Gear_Osc(Schema *schema, QString uniqueName);
   virtual ~Gear_Osc();
 
   void runAudio();

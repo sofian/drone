@@ -12,11 +12,25 @@
 #include "GearInfo.h"
 #include "Gear.h"
 
+#if defined(Q_OS_MACX)
+	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.dylib.1.0.0"
+#else
+	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.so.1.0.0"
+#endif
+
 class TestGearInfo : public QObject
 {
 Q_OBJECT
-
 private slots:
+
+	void testLoad_GearDoesntExist()
+	{		
+		//prepare
+		//create it
+		QFileInfo simpleFileInfo("testgears/drone/patate");
+		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
+		QVERIFY(simpleGearInfoForCreation.load()==false);
+	}
 
 	void testLoad_MetaDoesntExist()
 	{
@@ -25,7 +39,7 @@ private slots:
 		QFile metaFile("testgears/drone/Simple.xml");
 		metaFile.remove();
 
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
 		
 		//test
@@ -44,7 +58,7 @@ private slots:
 		metaFile.open(QIODevice::WriteOnly);
 		metaFile.close();
 
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
 		
 		//test
@@ -57,9 +71,9 @@ private slots:
 	{
 		//prepare
 		//create it
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
-		simpleGearInfoForCreation.load();
+		QVERIFY(simpleGearInfoForCreation.load());
 
 		//test & verify
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
@@ -69,7 +83,7 @@ private slots:
 	void testCreateGearInstance()
 	{
 		//prepare
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
 		QVERIFY(simpleGearInfo.load());		
 	
@@ -87,7 +101,7 @@ private slots:
 		QFile metaFile("testgears/drone/Simple.xml");
 		metaFile.remove();
 		//load
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
 		QVERIFY(simpleGearInfo.load());		
 
@@ -103,9 +117,9 @@ private slots:
 	{		
 		//prepare
 		//create it
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
-		simpleGearInfoForCreation.load();
+		QVERIFY(simpleGearInfoForCreation.load());
 
 		//test
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
@@ -117,18 +131,19 @@ private slots:
 		QVERIFY(plugsInfo.contains("Amount"));
 	}
 
+
 	void testPlugsInfo_Sync()
 	{		
 		//prepare
 		//create it
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
-		simpleGearInfoForCreation.load();
+		QVERIFY(simpleGearInfoForCreation.load());
 		PlugInfo pi = simpleGearInfoForCreation.getPlugInfo("ImgIN");
 		pi.type("patate");
 		pi.inOut(OUT);
 		simpleGearInfoForCreation.setPlugInfo(pi);
-		simpleGearInfoForCreation.save();
+		QVERIFY(simpleGearInfoForCreation.save());
 		
 		//test
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
@@ -143,13 +158,13 @@ private slots:
 	{		
 		//prepare
 		//create it
-		QFileInfo simpleFileInfo("testgears/drone/libSimple.dylib.1.0.0");
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
 		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
-		simpleGearInfoForCreation.load();
+		QVERIFY(simpleGearInfoForCreation.load());
 		PlugInfo pi = simpleGearInfoForCreation.getPlugInfo("ImgIN");
 		pi.help("hello!");
 		simpleGearInfoForCreation.setPlugInfo(pi);
-		simpleGearInfoForCreation.save();
+		QVERIFY(simpleGearInfoForCreation.save());
 		
 		//test
 		GearInfoDrone simpleGearInfo(simpleFileInfo);

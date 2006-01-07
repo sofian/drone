@@ -5,10 +5,10 @@ SUBDIRS= Osc \
 #TV \
 #Oscilloscope \
 #VideoOutput \
-AudioPushButton \
+#AudioPushButton \
 #AlphaMix \
 #Blur \
-VideoSource \
+#VideoSource \
 #Slider \
 #KDTree\ 
 #VideoMix \
@@ -55,8 +55,8 @@ ValueMix
 #SUBDIRS+= SVGLoader \
 #Vectorial2Raster \
 #VecAffineTrans
-}
+#}
 
 #linux specific gears
-unix:!macx:SUBDIRS += VideoInput AudioInput
+#unix:!macx:SUBDIRS += VideoInput AudioInput
 

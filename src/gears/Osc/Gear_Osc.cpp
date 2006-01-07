@@ -20,11 +20,11 @@
 #include "Gear_Osc.h"
 #include "Engine.h"
 #include "GearMaker.h"
-#include "Math.h"
+#include "MathUtil.h"
 #include "Engine.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Osc(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
+Gear_Osc::Gear_Osc(Schema *schema, QString uniqueName) : 
   Gear(schema, "Osc", uniqueName),
   _phaseCorrection(0.0f)
 {
