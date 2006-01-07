@@ -1,4 +1,5 @@
-CONFIG = qt warn_on thread debug
+CONFIG = qt warn_on thread
+QT += xml
 
 message(Gears : Builing Makefile with the following config flags : $$CONFIG)
 
