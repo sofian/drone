@@ -338,11 +338,13 @@ bool GearInfoFrei0r::bindPlugin()
 	_majorVersion = _pluginInfo.major_version;
   _minorVersion = _pluginInfo.minor_version;
 	_author = QString::fromLocal8Bit(_pluginInfo.author, strlen(_pluginInfo.author)) ;
+	
+	return true;
 }
 
 bool GearInfoFrei0r::loadMetaInfo()
 {
-	if (!GearInfo::load())
+	if (!GearInfo::loadMetaInfo())
 		return false;
 	
 	//overwrite field already specified in f0r_plugin_info_t
@@ -355,7 +357,7 @@ bool GearInfoFrei0r::loadMetaInfo()
 
 Gear* GearInfoFrei0r::createGearInstance(Schema *schema, QString uniqueName)
 {
-  return new GearFrei0r(schema, uniqueName);
+  return new GearFrei0r(schema, uniqueName, _handle);
 }
 
 

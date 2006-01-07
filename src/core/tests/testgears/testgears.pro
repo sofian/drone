@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = Simple
+SUBDIRS = Simple flippo
 
 
 

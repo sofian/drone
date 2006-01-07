@@ -27,15 +27,14 @@
 
 #include "GearMaker.h"
 
-GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName) : 
+GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName, void* handle) : 
   Gear(schema, "", uniqueName),
+	_handle(handle),
   _instance(0),
   _sizeX(0),
   _sizeY(0)
 {
 
-	qCritical() << "fail to open: "<< _frei0rLib;
-  
   //get interface function pointers
   *(void**) (&f0r_init) = dlsym(_handle, "f0r_init");
   *(void**) (&f0r_get_plugin_info) = dlsym(_handle, "f0r_get_plugin_info");
@@ -127,7 +126,6 @@ GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName) :
 GearFrei0r::~GearFrei0r()
 {
   (*f0r_destruct)(_instance);
-  dlclose(_handle);
 }
 
 void GearFrei0r::runVideo()

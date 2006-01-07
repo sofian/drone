@@ -30,7 +30,7 @@
 class GearFrei0r : public Gear
 {
 public:
-  GearFrei0r(Schema *schema, QString uniqueName);
+  GearFrei0r(Schema *schema, QString uniqueName, void* handle);
   virtual ~GearFrei0r();
 
   void runVideo();  
@@ -71,9 +71,6 @@ private:
   void (*f0r_update)(f0r_instance_t instance, double time, const uint32_t* inframe, uint32_t* outframe);
 
   int _sizeX, _sizeY;
-
-  //! The name of the frei0r plugin.
-  QString _frei0rLib;
 
 };
 

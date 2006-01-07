@@ -14,9 +14,12 @@
 
 #if defined(Q_OS_MACX)
 	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.dylib.1.0.0"
+	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.dylib.1.0.0"
 #else
 	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.so.1.0.0"
+	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.so.1.0.0"
 #endif
+
 
 class TestGearInfo : public QObject
 {
@@ -166,12 +169,26 @@ private slots:
 		simpleGearInfoForCreation.setPlugInfo(pi);
 		QVERIFY(simpleGearInfoForCreation.save());
 		
-		//test
+		//test	
 		GearInfoDrone simpleGearInfo(simpleFileInfo);
 		QVERIFY(simpleGearInfo.load());		
 		PlugInfo expectedPi;
 		expectedPi = simpleGearInfo.getPlugInfo("ImgIN");
 		QVERIFY(expectedPi.help() == "hello!");
+	}
+	
+	void testCreateGearInstanceFrei0r()
+	{
+		//prepare
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME_FREI0R);
+		GearInfoFrei0r simpleGearInfo(simpleFileInfo);
+		QVERIFY(simpleGearInfo.load());		
+	
+		//test
+		Gear* gear = simpleGearInfo.createGearInstance(NULL, "flippo");
+		//verify
+		QVERIFY(gear!=NULL);
+		delete gear;
 	}
 
 };
