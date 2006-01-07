@@ -26,7 +26,7 @@ template <class TypeIn, class TypeOut>
 class GearConverter : public Gear
 {
 public:
-  GearConverter(Schema *schema, std::string type, std::string uniqueName)
+  GearConverter(Schema *schema, QString type, QString uniqueName)
     : Gear(schema, type, uniqueName)
   {
     addPlug(_PLUG_IN  = new PlugIn<TypeIn>(this, "In", true));

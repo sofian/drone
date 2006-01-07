@@ -41,7 +41,7 @@ public:
 
   virtual ~SignalType(){}
 
-  virtual std::string typeName() const { return "Signal";}
+  virtual QString typeName() const { return "Signal";}
   QColor color() const { return QColor(249,169,7);}
 };
 

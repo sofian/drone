@@ -22,7 +22,7 @@
 
 #include <qcolor.h>
 #include <iostream>
-#include <string>
+
 #include <vector>
 
 class QDomDocument;
@@ -46,7 +46,7 @@ public:
     return &subType;
   }
 	
-  virtual std::string typeName() const {return "AbstractType";}
+  virtual QString typeName() const {return "AbstractType";}
   bool typeOf(AbstractType &other) const
   {
       return other.typeName() == typeName();

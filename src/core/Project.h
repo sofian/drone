@@ -20,30 +20,28 @@
 #ifndef PROJECT_INCLUDED
 #define PROJECT_INCLUDED
 
-#include <string>
+#include <QString>
 
 class QDomDocument;
 class QDomElement;
-class SchemaGui;
+class Schema;
 
 class Project  
 {
-
 public:
-
-  Project(SchemaGui* mainSchemaGui);
+  Project(Schema* mainSchema);
 
   bool save();
-  bool saveAs(std::string filename);
-  bool load(std::string filename);
-  std::string projectName(){return _projectName;}
+  bool saveAs(QString filename);
+  bool load(QString filename);
+  QString projectName(){return _projectName;}
         
   void newProject();
 
 protected:
 
-  SchemaGui* _mainSchemaGui;
-  std::string _projectName;
+  Schema* _mainSchema;
+  QString _projectName;
   
 };
 

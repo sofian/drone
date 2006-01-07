@@ -35,7 +35,7 @@ public:
 
   virtual ~PaletteRGBAType(){}
 
-  std::string name() const { return "PaletteRGBAType";}
+  QString name() const { return "PaletteRGBAType";}
   QColor color() const { return QColor(50,124,50);}
 };
 

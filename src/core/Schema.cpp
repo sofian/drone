@@ -3,15 +3,14 @@
 #include "MetaGear.h"
 #include "GearMaker.h"
 #include "ISchemaEventListener.h"
-#include "GearGui.h"
 
-#include <qdom.h>
+#include <QtXml>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
 #include "XMLHelper.h"
 
-const std::string Schema::XML_TAGNAME = "Schema";
+const QString Schema::XML_TAGNAME = "Schema";
 
 void Schema::Connection::save(QDomDocument &doc, QDomElement &parent)
 {
@@ -19,40 +18,39 @@ void Schema::Connection::save(QDomDocument &doc, QDomElement &parent)
   parent.appendChild(connectionElem);
 
   QDomAttr gearA = doc.createAttribute("GearA");
-  gearA.setValue(_gearA.c_str());
+  gearA.setValue(_gearA);
   connectionElem.setAttributeNode(gearA);
 
   QDomAttr input = doc.createAttribute("Input");
-  input.setValue(_input.c_str());
+  input.setValue(_input);
   connectionElem.setAttributeNode(input);
 
   QDomAttr gearB = doc.createAttribute("GearB");
-  gearB.setValue(_gearB.c_str());
+  gearB.setValue(_gearB);
   connectionElem.setAttributeNode(gearB);
 
   QDomAttr output = doc.createAttribute("Output");
-  output.setValue(_output.c_str());
+  output.setValue(_output);
   connectionElem.setAttributeNode(output);
 
 }
 
 void Schema::Connection::load(QDomElement &connectionElem)
 {
-  _gearA = connectionElem.attribute("GearA","").ascii();
-  _input = connectionElem.attribute("Input","").ascii();
-  _gearB = connectionElem.attribute("GearB","").ascii();
-  _output = connectionElem.attribute("Output","").ascii();
+  _gearA = connectionElem.attribute("GearA","");
+  _input = connectionElem.attribute("Input","");
+  _gearB = connectionElem.attribute("GearB","");
+  _output = connectionElem.attribute("Output","");
 }
 
-void Schema::Connection::updateWithRenameMapping(std::map<std::string,std::string> map)
+void Schema::Connection::updateWithRenameMapping(std::map<QString,QString> map)
 {
-  std::map<std::string,std::string>::iterator renA(map.find(_gearA));
-  std::map<std::string,std::string>::iterator renB(map.find(_gearB));
+  std::map<QString,QString>::iterator renA(map.find(_gearA));
+  std::map<QString,QString>::iterator renB(map.find(_gearB));
   if(renA!=map.end())
     _gearA = map[_gearA];
   if(renB!=map.end())
     _gearB = map[_gearB];
-  std::cerr<<_gearA<<" "<<_gearB<<std::endl;
 }
 
 Schema::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears) :  
@@ -141,7 +139,7 @@ void Schema::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
     orderedGears.push_back(_nodes[i].gear);
 }
 
-/* Gear* Schema::getDeepGearByName(std::string name) const                                */
+/* Gear* Schema::getDeepGearByName(QString name) const                                */
 /* {                                                                                      */
 /*   std::list<Gear*> allgears = getDeepGears();                                          */
 /*                                                                                        */
@@ -154,7 +152,7 @@ void Schema::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
 /*   return NULL;                                                                         */
 /* }                                                                                      */
 
-Gear* Schema::getGearByName(std::string name) const
+Gear* Schema::getGearByName(QString name) const
 {
   for (std::list<Gear*>::const_iterator it = _gears.begin();it!=_gears.end();++it)
   {
@@ -253,10 +251,10 @@ std::list<Gear*> Schema::getDeepGears() const
  * 
  * @return 
  */
-std::string Schema::getUniqueGearName(std::string prefix)
+QString Schema::getUniqueGearName(QString prefix)
 {
   int i=1;
-  std::string tmp;
+  QString tmp;
   bool ok=false;
   char buf[10];
   // in drone specs : drone supports up to 123456 gears 
@@ -362,14 +360,14 @@ void Schema::initGear(Gear * gear) const
 
 MetaGear* Schema::newMetaGear()
 {
-  std::string name="MetaGear";
+  QString name="MetaGear";
   return addMetaGear(name, getUniqueGearName(name));
 }
 
-MetaGear* Schema::addMetaGear(std::string filename)
+MetaGear* Schema::addMetaGear(QString filename)
 {
   QFileInfo fileInfo(filename);
-  std::string name = fileInfo.baseName();
+  QString name = fileInfo.baseName();
 
   MetaGear *metaGear = new MetaGear(this, name, getUniqueGearName(name));
 
@@ -387,7 +385,7 @@ MetaGear* Schema::addMetaGear(std::string filename)
   return metaGear;
 }
 
-void Schema::renameGear(Gear* gear, std::string newName)
+void Schema::renameGear(Gear* gear, QString newName)
 {
   if (!gear)
     return;
@@ -395,7 +393,7 @@ void Schema::renameGear(Gear* gear, std::string newName)
   gear->name(getUniqueGearName(newName));
 }
 
-MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
+MetaGear* Schema::addMetaGear(QString name, QString uniqueName)
 {
   MetaGear *metaGear = new MetaGear(this, name, uniqueName);
   initGear(metaGear);
@@ -407,7 +405,7 @@ MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
   return metaGear;
 }                         
 
-Gear* Schema::addGear(std::string geartype)
+Gear* Schema::addGear(QString geartype)
 {
   return addGear(geartype, getUniqueGearName(geartype));
 }
@@ -421,13 +419,13 @@ Gear* Schema::addGear(std::string geartype)
  * 
  * @return 
  */
-Gear* Schema::addGear(std::string geartype, std::string uniqueName)
+Gear* Schema::addGear(QString geartype, QString uniqueName)
 {
   
   Gear *gear = GearMaker::makeGear(this, geartype, uniqueName);
 
   if (gear==NULL)
-    std::cout << "Schema addGear: " << geartype << " unknown" << std::endl;
+    qCritical() << "Schema addGear: " << geartype << " unknown";
   else
   {
     initGear(gear);    
@@ -442,7 +440,7 @@ Gear* Schema::addGear(std::string geartype, std::string uniqueName)
 //not deep
 void Schema::getAllConnections(std::list<Connection*> &connections)
 {
-  std::list<AbstractPlug*> outputs;
+  QList<AbstractPlug*> outputs;
   std::list<AbstractPlug*> connectedPlugs;
 
   connections.clear();
@@ -450,7 +448,7 @@ void Schema::getAllConnections(std::list<Connection*> &connections)
   for (std::list<Gear*>::iterator itGear = _gears.begin(); itGear != _gears.end(); ++itGear)
   {
     (*itGear)->getOutputs(outputs);
-    for (std::list<AbstractPlug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
+    for (QList<AbstractPlug*>::Iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
     {
       (*itOutput)->connectedPlugs(connectedPlugs);
 
@@ -532,25 +530,25 @@ bool Schema::connect(Schema::Connection &connection)
                                                                                             
    if ( (gearA=getGearByName(connection.gearA())) == NULL)                                        
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.gearA() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.gearA() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                                                                                                                         
    if ( (gearB=getGearByName(connection.gearB())) == NULL)                                        
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.gearB() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.gearB() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (output=gearA->getOutput(connection.output())) == NULL)                             
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.output() + " not found!" << std::endl; 
+     qCritical() << "connectPlugs fail: " + connection.output() + " not found!"; 
      return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (input=gearB->getInput(connection.input())) == NULL)                                
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.input() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.input() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                             
@@ -568,9 +566,8 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 
   for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
   {
-    GearGui* ggui = (*it)->getGearGui();
-    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
-      continue;
+//    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
+//      continue;
     std::cerr<<"About to save!"<<std::endl;
     (*it)->save(doc, gearsElem);            
   }
@@ -587,13 +584,11 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   {
     Gear * gA = getGearByName((*it)->gearA());
     Gear * gB = getGearByName((*it)->gearB());
-    GearGui* ggA = (gA==NULL?NULL:gA->getGearGui());
-    GearGui* ggB = (gB==NULL?NULL:gB->getGearGui());
-    
+/*
     if(onlySelected 
        && (ggA == NULL || !ggA->isSelected() || ggB == NULL || !ggB->isSelected()))
       continue;
-       
+*/       
     (*it)->save(doc, connectionsElem);
     delete (*it);//free
   }
@@ -606,7 +601,7 @@ bool Schema::load(QDomElement& parent, bool pasting)
   std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
   // when pasting, gears have to be renamed
-  std::map<std::string,std::string> renameMap;
+  std::map<QString,QString> renameMap;
   if (gearsNode.isNull())
   {
     std::cout << "Bad DroneSchema : <Gears> tag not found!" << std::endl;
@@ -620,13 +615,13 @@ bool Schema::load(QDomElement& parent, bool pasting)
     QDomElement gearElem = gearNode.toElement();
     if (!gearElem.isNull())
     {
-      std::string type = gearElem.attribute("Type","").ascii();
+      QString type = gearElem.attribute("Type","");
       
       if (type == MetaGear::TYPE)        
         //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
-        pgear = addMetaGear("MetaGear", gearElem.attribute("Name","").ascii());          
+        pgear = addMetaGear("MetaGear", gearElem.attribute("Name",""));          
       else                   
-        pgear = addGear(type, gearElem.attribute("Name","").ascii());
+        pgear = addGear(type, gearElem.attribute("Name",""));
       
       if (pgear!=NULL)
       {
@@ -642,10 +637,8 @@ bool Schema::load(QDomElement& parent, bool pasting)
   if(pasting)
     for(unsigned int i=0;i<addedGears.size();++i)
     {
-      addedGears[i]->getGearGui()->setSelected(true);
-      std::string newname = getUniqueGearName(addedGears[i]->type());
+      QString newname = getUniqueGearName(addedGears[i]->type());
       renameMap[addedGears[i]->name()] = getUniqueGearName(addedGears[i]->type());
-      std::cerr<<"rename : "<<addedGears[i]->name()<<" to "<<renameMap[addedGears[i]->name()]<<" (newname:) "<<newname<<std::endl;
 
       addedGears[i]->name(renameMap[addedGears[i]->name()]);
     }

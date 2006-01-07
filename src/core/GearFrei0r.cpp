@@ -27,18 +27,14 @@
 
 #include "GearMaker.h"
 
-GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib) : 
+GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName) : 
   Gear(schema, "", uniqueName),
-  _handle(0),
   _instance(0),
   _sizeX(0),
-  _sizeY(0),
-  _frei0rLib(frei0rLib)
+  _sizeY(0)
 {
-  std::cout << "Constructing a GearFrei0r with lib " << _frei0rLib << std::endl;
 
-  _handle = dlopen(_frei0rLib.c_str(), RTLD_LAZY);
-  ASSERT_ERROR_MESSAGE(_handle, "fail to load plugin");
+	qCritical() << "fail to open: "<< _frei0rLib;
   
   //get interface function pointers
   *(void**) (&f0r_init) = dlsym(_handle, "f0r_init");
@@ -100,9 +96,9 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
       break;
     case F0R_PARAM_COLOR:
     {    
-      PlugIn<ValueType> *b = new PlugIn<ValueType>(this, std::string(param_info.name) + " B", false, new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *g = new PlugIn<ValueType>(this, std::string(param_info.name) + " G", false, new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *r = new PlugIn<ValueType>(this, std::string(param_info.name) + " R", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *b = new PlugIn<ValueType>(this, QString(param_info.name) + " B", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *g = new PlugIn<ValueType>(this, QString(param_info.name) + " G", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *r = new PlugIn<ValueType>(this, QString(param_info.name) + " R", false, new ValueType(0.5, 0, 1));
       addPlug(r);
       addPlug(g);
       addPlug(b);
@@ -113,8 +109,8 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
       break;
     case F0R_PARAM_POSITION:
     {    
-      PlugIn<ValueType> *x = new PlugIn<ValueType>(this, std::string(param_info.name) + " X", false, new ValueType(0.5, 0, 1));
-      PlugIn<ValueType> *y = new PlugIn<ValueType>(this, std::string(param_info.name) + " Y", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *x = new PlugIn<ValueType>(this, QString(param_info.name) + " X", false, new ValueType(0.5, 0, 1));
+      PlugIn<ValueType> *y = new PlugIn<ValueType>(this, QString(param_info.name) + " Y", false, new ValueType(0.5, 0, 1));
       addPlug(x);
       addPlug(y);
       _params.push_back(x);
@@ -217,31 +213,5 @@ void GearFrei0r::runVideo()
 
   // note: XXX incomplete XXX we have to switch on BGRA
   (*f0r_update)(_instance, Engine::currentTime(), _imageIn, (uint32_t*)_outImage->data());
-}
-
-Gear* GearFrei0r::makeGear(Schema *schema, std::string uniqueName, std::string frei0rLib)
-{
-  return new GearFrei0r(schema, uniqueName, frei0rLib);
-}
-
-GearInfo GearFrei0r::getGearInfo(std::string frei0rLib)
-{
-  void *handle = dlopen(frei0rLib.c_str(), RTLD_LAZY);
-  ASSERT_ERROR_MESSAGE(handle, "fail to load plugin");
-
-  GearInfo gearInfo;
-  f0r_plugin_info_t pluginInfo;
-  void (*f0r_get_plugin_info)(f0r_plugin_info_t*);
-  *(void**) (&f0r_get_plugin_info) = dlsym(handle, "f0r_get_plugin_info");
-  (*f0r_get_plugin_info)(&pluginInfo);
-
-  char str[1000];
-  sprintf(str, "f0r::%s", pluginInfo.name);
-  gearInfo.name = str;
-  gearInfo.classification = GearClassifications::video().frei0r().instance();
-  gearInfo.data = (char*) malloc(1000*sizeof(char));
-  strcpy((char*)gearInfo.data, frei0rLib.c_str());
-
-  return gearInfo;
 }
 

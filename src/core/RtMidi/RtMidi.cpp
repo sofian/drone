@@ -52,7 +52,7 @@ RtMidi :: RtMidi()
 void RtMidi :: error( RtError::Type type )
 {
   if (type == RtError::WARNING) {
-    std::cerr << '\n' << errorString_ << "\n\n";
+    qCritical() << errorString_;
   }
   else if (type == RtError::DEBUG_WARNING) {
 #if defined(__RTMIDI_DEBUG__)
@@ -60,7 +60,7 @@ void RtMidi :: error( RtError::Type type )
 #endif
   }
   else {
-    std::cerr << '\n' << errorString_ << "\n\n";
+    qCritical() << errorString_;
     throw RtError( errorString_, type );
   }
 }
@@ -338,7 +338,7 @@ void RtMidiIn :: openPort( unsigned int portNumber )
   std::ostringstream ost;
   if ( portNumber >= nSrc ) {
     ost << "RtMidiIn::openPort: the 'portNumber' argument (" << portNumber << ") is invalid.";
-    errorString_ = ost.str();
+    errorString_ = ost.str().c_str();
     error( RtError::INVALID_PARAMETER );
   }
 
@@ -417,7 +417,7 @@ unsigned int RtMidiIn :: getPortCount()
   return MIDIGetNumberOfSources();
 }
 
-std::string RtMidiIn :: getPortName( unsigned int portNumber )
+QString RtMidiIn :: getPortName( unsigned int portNumber )
 {
   CFStringRef nameRef;
   MIDIEndpointRef portRef;
@@ -426,7 +426,7 @@ std::string RtMidiIn :: getPortName( unsigned int portNumber )
 
   if ( portNumber >= MIDIGetNumberOfSources() ) {
     ost << "RtMidiIn::getPortName: the 'portNumber' argument (" << portNumber << ") is invalid.";
-    errorString_ = ost.str();
+    errorString_ = ost.str().c_str();
     error( RtError::INVALID_PARAMETER );
   }
   portRef = MIDIGetSource( portNumber );
@@ -434,7 +434,7 @@ std::string RtMidiIn :: getPortName( unsigned int portNumber )
   MIDIObjectGetStringProperty( portRef, kMIDIPropertyName, &nameRef );
   CFStringGetCString( nameRef, name, sizeof(name), 0);
   CFRelease( nameRef );
-  std::string stringName = name;
+  QString stringName = name;
   return stringName;
 }
 
@@ -448,7 +448,7 @@ unsigned int RtMidiOut :: getPortCount()
   return MIDIGetNumberOfDestinations();
 }
 
-std::string RtMidiOut :: getPortName( unsigned int portNumber )
+QString RtMidiOut :: getPortName( unsigned int portNumber )
 {
   CFStringRef nameRef;
   MIDIEndpointRef portRef;
@@ -457,7 +457,7 @@ std::string RtMidiOut :: getPortName( unsigned int portNumber )
 
   if ( portNumber >= MIDIGetNumberOfDestinations() ) {
     ost << "RtMidiOut::getPortName: the 'portNumber' argument (" << portNumber << ") is invalid.";
-    errorString_ = ost.str();
+    errorString_ = ost.str().c_str();
     error( RtError::INVALID_PARAMETER );
   }
   portRef = MIDIGetDestination( portNumber );
@@ -465,7 +465,7 @@ std::string RtMidiOut :: getPortName( unsigned int portNumber )
   MIDIObjectGetStringProperty( portRef, kMIDIPropertyName, &nameRef );
   CFStringGetCString( nameRef, name, sizeof(name), 0);
   CFRelease( nameRef );
-  std::string stringName = name;
+  QString stringName = name;
   return stringName;
 }
 
@@ -503,7 +503,7 @@ void RtMidiOut :: openPort( unsigned int portNumber )
   std::ostringstream ost;
   if ( portNumber >= nDest ) {
     ost << "RtMidiOut::openPort: the 'portNumber' argument (" << portNumber << ") is invalid.";
-    errorString_ = ost.str();
+    errorString_ = ost.str().c_str();
     error( RtError::INVALID_PARAMETER );
   }
 
@@ -974,14 +974,14 @@ unsigned int RtMidiIn :: getPortCount()
   return portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ, -1 );
 }
 
-std::string RtMidiIn :: getPortName( unsigned int portNumber )
+QString RtMidiIn :: getPortName( unsigned int portNumber )
 {
 	snd_seq_port_info_t *pinfo;
 	snd_seq_port_info_alloca( &pinfo );
 
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   if ( portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ, (int) portNumber ) ) {
-    std::string stringName = std::string( snd_seq_port_info_get_name( pinfo ) );
+    QString stringName = QString( snd_seq_port_info_get_name( pinfo ) );
     return stringName;
   }
 
@@ -1005,14 +1005,14 @@ unsigned int RtMidiOut :: getPortCount()
   return portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, -1 );
 }
 
-std::string RtMidiOut :: getPortName( unsigned int portNumber )
+QString RtMidiOut :: getPortName( unsigned int portNumber )
 {
 	snd_seq_port_info_t *pinfo;
 	snd_seq_port_info_alloca( &pinfo );
 
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   if ( portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, (int) portNumber ) ) {
-    std::string stringName = std::string( snd_seq_port_info_get_name( pinfo ) );
+    QString stringName = QString( snd_seq_port_info_get_name( pinfo ) );
     return stringName;
   }
 
@@ -1443,7 +1443,7 @@ unsigned int RtMidiIn :: getPortCount()
   else return 0;
 }
 
-std::string RtMidiIn :: getPortName( unsigned int portNumber )
+QString RtMidiIn :: getPortName( unsigned int portNumber )
 {
   int nPorts = mdInit();
 
@@ -1454,7 +1454,7 @@ std::string RtMidiIn :: getPortName( unsigned int portNumber )
     error( RtError::INVALID_PARAMETER );
   }
 
-  std::string stringName = std::string( mdGetName( portNumber ) );
+  QString stringName = QString( mdGetName( portNumber ) );
   return stringName;
 }
 
@@ -1470,7 +1470,7 @@ unsigned int RtMidiOut :: getPortCount()
   else return 0;
 }
 
-std::string RtMidiOut :: getPortName( unsigned int portNumber )
+QString RtMidiOut :: getPortName( unsigned int portNumber )
 {
   int nPorts = mdInit();
 
@@ -1481,7 +1481,7 @@ std::string RtMidiOut :: getPortName( unsigned int portNumber )
     error( RtError::INVALID_PARAMETER );
   }
 
-  std::string stringName = std::string( mdGetName( portNumber ) );
+  QString stringName = QString( mdGetName( portNumber ) );
   return stringName;
 }
 
@@ -1783,7 +1783,7 @@ unsigned int RtMidiIn :: getPortCount()
   return midiInGetNumDevs();
 }
 
-std::string RtMidiIn :: getPortName( unsigned int portNumber )
+QString RtMidiIn :: getPortName( unsigned int portNumber )
 {
   unsigned int nDevices = midiInGetNumDevs();
   if ( portNumber >= nDevices ) {
@@ -1796,7 +1796,7 @@ std::string RtMidiIn :: getPortName( unsigned int portNumber )
   MIDIINCAPS deviceCaps;
   MMRESULT result = midiInGetDevCaps( portNumber, &deviceCaps, sizeof(MIDIINCAPS));
 
-  std::string stringName = std::string( deviceCaps.szPname );
+  QString stringName = QString( deviceCaps.szPname );
   return stringName;
 }
 
@@ -1810,7 +1810,7 @@ unsigned int RtMidiOut :: getPortCount()
   return midiOutGetNumDevs();
 }
 
-std::string RtMidiOut :: getPortName( unsigned int portNumber )
+QString RtMidiOut :: getPortName( unsigned int portNumber )
 {
   unsigned int nDevices = midiOutGetNumDevs();
   if ( portNumber >= nDevices ) {
@@ -1823,7 +1823,7 @@ std::string RtMidiOut :: getPortName( unsigned int portNumber )
   MIDIOUTCAPS deviceCaps;
   MMRESULT result = midiOutGetDevCaps( portNumber, &deviceCaps, sizeof(MIDIOUTCAPS));
 
-  std::string stringName = std::string( deviceCaps.szPname );
+  QString stringName = QString( deviceCaps.szPname );
   return stringName;
 }
 

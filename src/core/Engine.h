@@ -22,7 +22,7 @@
 
 #include <list>
 #include <vector>
-#include <string>
+
 #include <pthread.h>
 
 #include "SignalInfo.h"
@@ -80,12 +80,10 @@ public:
   void onGearAdded(Schema *schema, Gear *gear);
   void onGearRemoved(Schema *schema, Gear *gear);
 
-  void setClipboardText(std::string txt){_clipboard=txt;}
-  std::string getClipboardText(){return _clipboard;}
+  void setClipboardText(QString txt){_clipboard=txt;}
+  QString getClipboardText(){return _clipboard;}
 
 protected:
-
-  void performScheduledGearUpdateSettings();
 
   int _hWnd;
 
@@ -109,11 +107,9 @@ private:
 
   pthread_t _playThreadHandle;
 
-  std::vector<Gear*> _scheduledsGearUpdateSettings;
-
   bool _playing;
 
-  std::string _clipboard;
+  QString _clipboard;
 };
 
 #endif

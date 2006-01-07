@@ -13,7 +13,8 @@
 #define RTERROR_H
 
 #include <iostream>
-#include <string>
+#include <QString>
+#include <QDebug>
 
 #undef DEBUG_WARNING
 
@@ -36,24 +37,24 @@ public:
   };
 
 protected:
-  std::string message_;
+  QString message_;
   Type type_;
 
 public:
   //! The constructor.
-  RtError(const std::string& message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
+  RtError(const QString& message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
 
   //! The destructor.
   virtual ~RtError(void) {}
 
   //! Prints "thrown" error message to stdout.
-  virtual void printMessage(void) { std::cout << '\n' << message_ << "\n\n"; }
+  virtual void printMessage(void) { qWarning() << '\n' << message_ << "\n\n"; }
 
   //! Returns the "thrown" error message type.
   virtual const Type& getType(void) { return type_; }
 
   //! Returns the "thrown" error message string.
-  virtual const std::string& getMessage(void) { return message_; }
+  virtual const QString& getMessage(void) { return message_; }
 };
 
 #endif

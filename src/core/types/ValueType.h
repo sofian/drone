@@ -25,7 +25,7 @@
 class ValueType : public AbstractType
 {
 public:
-  static const std::string TYPENAME;
+  static const QString TYPENAME;
 
   ValueType(float defaultValue=0.0f,
             float minValue=-1.0f,
@@ -38,7 +38,7 @@ public:
   
   virtual ~ValueType() {}
     
-  virtual std::string typeName() const { return TYPENAME;}
+  virtual QString typeName() const { return TYPENAME;}
   virtual QColor color() const { return QColor(157, 208, 50); }
 
 	void save(QDomDocument &doc, QDomElement &parent) const;

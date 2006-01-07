@@ -9,23 +9,21 @@
 class MetaGear : public Gear, public ISchemaEventListener
 {
 public:  
-  MetaGear(Schema *parentSchema, std::string name, std::string uniqueName);
+  MetaGear(Schema *parentSchema, QString name, QString uniqueName);
   virtual ~MetaGear();
   virtual Schema* getInternalSchema(){return _schema;}
   
   GearKind kind() const {return METAGEAR;}
 
-  static const std::string TYPE;
-  static const std::string EXTENSION;
+  static const QString TYPE;
+  static const QString EXTENSION;
   
-  void save(std::string filename);
-  bool load(std::string filename);
+  void save(QString filename);
+  bool load(QString filename);
   
-  void saveDefinition(QDomDocument& doc);
-
   void createPlugs();
 
-  std::string fullPath(){return _fullPath;}
+  QString fullPath(){return _fullPath;}
   
   void onGearAdded(Schema *schema, Gear *gear);
   void onGearRemoved(Schema *schema, Gear *gear);
@@ -35,14 +33,11 @@ protected:
   
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &parent);
-  
-  GearGui* createGearGui(QCanvas *canvas);
-  	
+    	
   Schema *_schema;
   
-  std::string _metaGearName;
-  std::string _fullPath;
-
+  QString _metaGearName;
+  QString _fullPath;
 
   static const QColor METAGEAR_COLOR;
 	

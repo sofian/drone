@@ -21,7 +21,7 @@
 #define __ABSTRACTPLUG_INCLUDED
 
 #include "AbstractType.h"
-#include <string>
+
 #include <list>
 
 enum eInOut
@@ -34,10 +34,10 @@ class Gear;
 class AbstractPlug
 {
 public:
-  static const std::string XML_TAGNAME;
-	static const std::string XML_TAGNAME_TYPE_ELEM;
+  static const QString XML_TAGNAME;
+	static const QString XML_TAGNAME_TYPE_ELEM;
 
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory);
+  AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
 
   bool canConnect(AbstractPlug *plug, bool onlyTypeCheck=false);
@@ -70,10 +70,10 @@ public:
   int nbConnectedPlugs() const {return _connectedPlugs.size();};
   Gear* parent() const {return _parent;};
 
-  std::string fullName() const;
-  std::string shortName(int nbChars) const;
-  std::string name() const {return _name;};
-  bool name(std::string newName);
+  QString fullName() const;
+  QString shortName(int nbChars) const;
+  const QString& name() const {return _name;};
+  bool name(QString newName);
 
   bool exposed() const {return _exposed;}
   void exposed(bool exp);
@@ -96,7 +96,7 @@ protected:
 	
 private:
   eInOut _inOut;
-  std::string _name;
+  QString _name;
 
   bool _exposed;//! the plug is exposed outside of a metagear
 

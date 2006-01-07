@@ -20,8 +20,8 @@
 #ifndef GEAR_MAKER_INCLUDED
 #define GEAR_MAKER_INCLUDED
 
-#include <map>
-#include <string>
+#include <QMap>
+
 #include <vector>
 #include <qdir.h>
 
@@ -35,52 +35,33 @@
 class GearMaker
 {
 public:
-/*
-  class GearPluginDefinition
-  {
-  public:
-    GearPluginDefinition(GearInfo_ gearInfo_,
-                         void *handle,
-                         Gear* (*pmakeGear)(Schema *schema, std::string uniqueName)) :
-        makeGear(pmakeGear),
-        //_gearInfo(gearInfo),
-        _gearInfo_(gearInfo_),
-        _handle(handle)
-    {}
+  //static void saveDefinition(GearInfo_* gi);
 
-    //const GearInfo& gearInfo() const {return _gearInfo;}
-    GearInfo_* gearInfo_() {return &_gearInfo_;}
-    const void* handle() const {return _handle;}
+  static Gear* makeGear(Schema *schema, QString name, QString uniqueName);
+  static void getAllGearsInfo(QList<GearInfo*> &gearsInfo);
+	static GearInfo* GearMaker::findGearInfo(QString name);
 
-    //ptrfunc
-    Gear* (*makeGear)(Schema *schema, std::string uniqueName);
-
-  private:
-    //GearInfo _gearInfo;
-    GearInfo_ _gearInfo_;
-    void* _handle;
-  };
-*/
-  static void saveDefinition(GearInfo_* gi);
-
-  static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
-  static void getAllGearsInfo(std::vector<const GearInfo_*> &gearsInfo);
-  //static void getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo,std::string filter);
-  static void parseGears();
-  static void parseFrei0rPlugins();
-  static void parseMetaGears();
-  static void parseMetaGearsSubDirs(QDir dir);
-  static void createMissingGearInfoPlugHelp(GearInfo_* gi);
+	static bool parse(QDir rootDir);
+	static bool parse();
+	static QDir defaultGearsDir();
+  //static void createMissingGearInfoPlugHelp(GearInfo* gi);
 
 private:
-  GearMaker();
+	static QString DRONEGEARS_SUBPATH;
+	static QString FREI0RGEARS_SUBPATH;
+	static QString METAGEARS_SUBPATH;
+		
+	GearMaker();
   ~GearMaker();
 
-  static GearInfo_ loadGearInfo(QString filename,QString fallbackname, GearInfo_::eGearPluginType type, GearInfo gi);
-
+  template <class T> static void parseGears(QDir dir, QString extension);
+	static void parseDroneGears(QDir rootDir);
+  static void parseFrei0rGears(QDir rootDir);
+  static void parseMetaGears(QDir rootDir);
+	
   static void emptyRegistry();
 
-  static std::map<std::string, GearInfo_*> *_registry;
+  static QMap<QString, GearInfo*> *_registry;
   static GearMaker _registerMyself;
 
 };

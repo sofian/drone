@@ -1,11 +1,12 @@
 #ifndef SCHEMA_INCLUDED
 #define SCHEMA_INCLUDED
 
-#include <qdom.h>
+#include <QtXml>
+
 #include <map>
 #include <list>
 #include <vector>
-#include <string>
+
 
 class MetaGear;
 class Gear;
@@ -17,7 +18,7 @@ class Schema
 {
 public:
 
-  static const std::string XML_TAGNAME;
+  static const QString XML_TAGNAME;
 
   class GearGraphManip
   {
@@ -52,7 +53,7 @@ public:
   {
   public:
     Connection(){};        
-    Connection(std::string gearA, std::string output, std::string gearB, std::string input) :
+    Connection(QString gearA, QString output, QString gearB, QString input) :
       _gearA(gearA),
       _input(input),
       _gearB(gearB),
@@ -60,20 +61,20 @@ public:
     {
     }
 
-    std::string gearA(){return _gearA;};
-    std::string input(){return _input;};
-    std::string gearB(){return _gearB;};
-    std::string output(){return _output;};
+    QString gearA(){return _gearA;};
+    QString input(){return _input;};
+    QString gearB(){return _gearB;};
+    QString output(){return _output;};
 
     void save(QDomDocument &doc, QDomElement &parent);
     void load(QDomElement &connectionElem);
-    void updateWithRenameMapping(std::map<std::string,std::string> map);
+    void updateWithRenameMapping(std::map<QString,QString> map);
 
   private:
-    std::string _gearA;
-    std::string _input;
-    std::string _gearB;
-    std::string _output;
+    QString _gearA;
+    QString _input;
+    QString _gearB;
+    QString _output;
   };
 
 
@@ -104,7 +105,7 @@ public:
   //! Returns a list of ordered gears
   virtual std::list<Gear*> getDeepOrderedReadyGears();
 
-  Gear* getGearByName(std::string name) const;
+  Gear* getGearByName(QString name) const;
 
   //! Returns all connections in this schema
   void getAllConnections(std::list<Connection*> &connections);
@@ -116,13 +117,13 @@ public:
   void disconnectAll(AbstractPlug *plugA);
 
   MetaGear* newMetaGear();
-  MetaGear* addMetaGear(std::string filename);
-  void renameGear(Gear* gear, std::string newName);
-  Gear* addGear(std::string geartype);
+  MetaGear* addMetaGear(QString filename);
+  void renameGear(Gear* gear, QString newName);
+  Gear* addGear(QString geartype);
   
   bool removeDeepGear(Gear* gear);
   
-  std::string getUniqueGearName(std::string prefix);
+  QString getUniqueGearName(QString prefix);
   std::list<Schema*> getSubSchemas();
   
   void unSynch(){_needSynch=true;}  
@@ -140,8 +141,8 @@ public:
 
  private:
 
-  Gear* addGear(std::string geartype, std::string uniqueName);
-  MetaGear* addMetaGear(std::string name, std::string uniqueName);
+  Gear* addGear(QString geartype, QString uniqueName);
+  MetaGear* addMetaGear(QString name, QString uniqueName);
 
   void onGearAdded(Gear *gear);
   void onGearRemoved(Gear *gear);

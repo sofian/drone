@@ -41,7 +41,7 @@
 #define RTMIDI_H
 
 #include "RtError.h"
-#include <string>
+
 
 class RtMidi
 {
@@ -57,7 +57,7 @@ class RtMidi
   virtual unsigned int getPortCount() = 0;
 
   //! Pure virtual getPortName() function.
-  virtual std::string getPortName( unsigned int portNumber = 0 ) = 0;
+  virtual QString getPortName( unsigned int portNumber = 0 ) = 0;
 
   //! Pure virtual closePort() function.
   virtual void closePort( void ) = 0;
@@ -74,7 +74,7 @@ class RtMidi
 
   void *apiData_;
   bool connected_;
-  std::string errorString_;
+  QString errorString_;
 };
 
 /**********************************************************************/
@@ -156,7 +156,7 @@ class RtMidiIn : public RtMidi
   /*!
       An exception is thrown if an invalid port specifier is provided.
   */
-  std::string getPortName( unsigned int portNumber = 0 );
+  QString getPortName( unsigned int portNumber = 0 );
 
   //! Set the maximum number of MIDI messages to be saved in the queue.
   /*!
@@ -279,7 +279,7 @@ class RtMidiOut : public RtMidi
   /*!
       An exception is thrown if an invalid port specifier is provided.
   */
-  std::string getPortName( unsigned int portNumber );
+  QString getPortName( unsigned int portNumber );
 
   //! Immediately send a single message out an open MIDI output port.
   /*!

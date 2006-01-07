@@ -163,7 +163,6 @@ void *Engine::playThread(void *parent)
     blockIt++;
 
     mainSchema->unlock();
-    engine->performScheduledGearUpdateSettings();
 #ifndef SINGLE_THREADED_PLAYBACK
   }
   allGears = mainSchema->getDeepGears();
@@ -195,22 +194,6 @@ void Engine::debugStopPlay()
 }
 #endif
 
-void Engine::scheduleGearUpdateSettings(Gear *gear)
-{
-  _scheduledsGearUpdateSettings.push_back(gear);
-
-  if (!_playing)
-    performScheduledGearUpdateSettings();
-}
-
-void Engine::performScheduledGearUpdateSettings()
-{
-  for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)
-  {    
-    (*it)->updateSettings();
-  }
-  _scheduledsGearUpdateSettings.clear();
-}
 
 void Engine::onGearAdded(Schema *, Gear *gear)
 {  

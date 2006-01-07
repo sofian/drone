@@ -1,21 +1,21 @@
 #include "StringType.h"
 
-#include <qdom.h>
+#include <QtXml>
 
 
-const std::string StringType::TYPENAME="String";
+const QString StringType::TYPENAME="String";
 
 
 void StringType::save(QDomDocument &doc, QDomElement &parent) const
 {
   QDomAttr valAttr;
   valAttr = doc.createAttribute("Value");
-  valAttr.setValue(_value.c_str());	
+  valAttr.setValue(_value);	
   parent.setAttributeNode(valAttr);
 	
 }
 
 void StringType::load(QDomElement &typeElem)
 {
-  _value = typeElem.attribute("Value","").ascii();
+  _value = typeElem.attribute("Value","");
 }

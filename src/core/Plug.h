@@ -30,7 +30,7 @@ template <class T>
 class PlugOut : public AbstractPlug
 {
 public:
-  PlugOut(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  PlugOut(Gear* parent, QString name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, OUT, name, type, mandatory)
   {    
     _forwardPlug = 0;
@@ -72,7 +72,7 @@ template <class T>
 class PlugIn : public AbstractPlug
 {
 public:
-  PlugIn(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  PlugIn(Gear* parent, QString name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, IN, name, type, mandatory)
   {
     _forwardPlug = 0;

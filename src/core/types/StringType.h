@@ -21,13 +21,13 @@
 #define __StringType_INCLUDED
 
 #include "AbstractType.h"
-#include <string>
+
 
 class StringType : public AbstractType
 {
 public:
-  static const std::string TYPENAME;
-  StringType(std::string defaultValue="", bool isAFilename=false)
+  static const QString TYPENAME;
+  StringType(QString defaultValue="", bool isAFilename=false)
 	: AbstractType(),
 	_value(defaultValue),
 	_isAFilename(isAFilename)
@@ -38,15 +38,15 @@ public:
 	void save(QDomDocument &doc, QDomElement &parent) const;
 	void load(QDomElement &typeElem);
 	
-  virtual std::string typeName() const { return TYPENAME; }
+  virtual QString typeName() const { return TYPENAME; }
   virtual QColor color() const { return QColor(123, 173, 241); }
   
 	bool isAFilename(){return _isAFilename;}
-  void setValue(std::string value) { _value = value; }
-	std::string value() const { return _value; }
+  void setValue(const QString& value) { _value = value; }
+	const QString& value() const { return _value; }
   
 private:
-	std::string _value;
+	QString _value;
 	bool _isAFilename;
 };
 

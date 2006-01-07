@@ -1,8 +1,8 @@
 #include "ValueType.h"
 
-#include <qdom.h>
+#include <QtXml>
 
-const std::string ValueType::TYPENAME = "Value";
+const QString ValueType::TYPENAME = "Value";
 
 
 void ValueType::save(QDomDocument &doc, QDomElement &parent) const

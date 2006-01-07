@@ -1,130 +1,167 @@
 #include "GearMaker.h"
 #include "GearInfo.h"
 #include "Gear.h"
+#include "GearFrei0r.h"
+
+#include <QtXml>
 #include <qfile.h>
 #include <qdir.h>
+#include <QStringList>
 
-const std::string GearInfo_::XML_TAGNAME = "Info";
+#include <dlfcn.h>
 
-void GearInfo_::saveDefinition()
+const QString GearInfo::XML_TAGNAME = "GearInfo";
+
+
+bool PlugInfo::save(QDomDocument doc, QDomElement parent) const
 {
- std::cout << "void GearInfo_::saveDefinition()"<< std::endl;
-   
-	GearMaker::saveDefinition(this);
+	QList<QPair<QString, QString> > vl;
+	vl.push_back(QPair<QString, QString>("name",_name));
+	vl.push_back(QPair<QString, QString>("type",_type));
+	vl.push_back(QPair<QString, QString>("inout",_inOut==IN?QString("IN"):QString("OUT")));
+	XMLHelper::appendTaggedString(doc, parent, "Plug", _help, vl);
+	
+	return true;
 }
 
-/*
-bool GearInfo_::createIfNotExists(QString filename, QString fallbackname, GearInfo gi)
+bool PlugInfo::load(QDomElement elem)
 {
-  QDomDocument doc("GearInfo");
-  if(gi.name=="")
-    gi.name=fallbackname.latin1();
-  QFile file(filename);
-
-  if (!file.open(IO_ReadOnly))
-  {
-    std::cout << "Failed to open file " << filename << std::endl;
-    std::cout << "Creating it ! " << filename << std::endl;
-
-    if (!file.open(IO_ReadWrite))
-    {
-      std::cout << "-->Failed to create file " << filename << std::endl;
-      return false;
-    }
-    QTextStream stream( &file );
-    stream<<"<!DOCTYPE GearInfo>\n<GearInfo>\n  <Info>\n";
-    std::string jp;
-    std::vector<std::string> path = gi.classification->path();
-    for(int i=0;i<path.size();++i)
-    {
-      jp+=path[i];
-      if(i!=path.size()-1)
-        jp+="/";
-    }
-    stream<<"    <Name>"+gi.name+"</Name>\n";
-    stream<<"    <Classification>"+jp+"</Classification>\n";
-    stream<<"    <Major>0</Major>\n";
-    stream<<"    <Minor>1</Minor>\n";
-    stream<<"  </Info>\n</GearInfo>";
-
-    file.close();
-    file.open(IO_ReadOnly);
-
-  }
+	//std::cerr<<"found a tag !: "<<elem.tagName().latin1()<<std::endl;
+	_name=elem.attribute("name","?");
+	_inOut=elem.attribute("inout","IN")=="IN"?IN:OUT;
+	_type = elem.attribute("type","?");
+	_help = elem.text();
+	
+	return true;
 }
-*/
 
-void GearInfo_::save(QDomDocument &doc, QDomNode &parent)
+GearInfo::GearInfo(eGearPluginType pluginType, QFileInfo pluginFile) : 
+	_pluginType(pluginType),
+	_pluginFile(pluginFile), 
+	_majorVersion(1), 
+	_minorVersion(0)
 {
+}
+
+bool GearInfo::createDefaultMetaInfo()
+{
+	//default values
+	_classification.push_back("unclassified");
+	
+	return save();
+}
+
+
+bool GearInfo::save()
+{
+  QDomDocument doc(XML_TAGNAME);
+  
   QDomElement infoElem = doc.createElement(XML_TAGNAME);
-  parent.appendChild(infoElem);
+  doc.appendChild(infoElem);
 
-  XMLHelper::appendTaggedString(doc,infoElem,"Name",_name);
+  XMLHelper::appendTaggedString(doc,infoElem,"Name",name());// writed but never readed. Just to make things more obvious when looking at the xml file.
   XMLHelper::appendTaggedString(doc,infoElem,"Author",_author);
-  XMLHelper::appendTaggedString(doc,infoElem,"Minor",QString().arg(_minorVersion));
-  XMLHelper::appendTaggedString(doc,infoElem,"Major",QString().arg(_majorVersion));
+  XMLHelper::appendTaggedString(doc,infoElem,"Minor",QString::number(_minorVersion));
+  XMLHelper::appendTaggedString(doc,infoElem,"Major",QString::number(_majorVersion));
   XMLHelper::appendTaggedString(doc,infoElem,"Classification",_classification.join("/"));
   XMLHelper::appendTaggedString(doc,infoElem,"Intro",_intro);
   XMLHelper::appendTaggedString(doc,infoElem,"Description",_description);
 
-  QDomElement plugElem = doc.createElement("Plugs");
+	
+	QDomElement plugElem = doc.createElement("Plugs");
   infoElem.appendChild(plugElem);
 
-  QMap<QString,PlugInfo>::Iterator it;
-  for ( it = _plugs.begin(); it != _plugs.end(); ++it )
-  {
-   //std::cerr<<"count : "<<_plugs.size()<<std::endl;
-    QValueList<QPair<QString, QString> > vl;
-    vl[0]=QPair<QString, QString>("name",it.key());
-    vl[0]=QPair<QString, QString>("inout",it.data().inOut==IN?QString("IN"):QString("OUT"));
-    XMLHelper::appendTaggedString(doc,infoElem,"Plug",it.data().help,vl);
-  }
+	syncPlugsInfo();
+  for (QMap<QString,PlugInfo>::Iterator it = _plugsInfo.begin(); it != _plugsInfo.end(); ++it )
+		(*it).save(doc, plugElem);
 
+  QFile file(metaFile().absoluteFilePath());
+  if (file.open(QIODevice::WriteOnly))
+		file.remove();
+
+  if (file.open(QIODevice::WriteOnly))
+  {
+    QTextStream stream(&file);
+    doc.save(stream,4);
+    file.close();
+  }
+  else
+  {
+    qCritical() << "file io error, cannot save!";
+    return false;
+  }
+	
+	return true;
 }
 
-
-bool GearInfo_::load(QDomNode &parent,QString filename)
+bool GearInfo::load()
 {
-  QDomNode infoNode = XMLHelper::findChildNode(parent, XML_TAGNAME);
-  _filename=filename;
+	if (!bindPlugin())
+		return false;
 
-  if (infoNode.isNull())
+  if(!loadMetaInfo())
   {
-    std::cout << "Bad Drone GearDefinition file : <"+XML_TAGNAME+"> tag not found in " << _filename<<std::endl;
+    qWarning() << "could not open gear meta Info " << metaFile().fileName() << ", creating default";
+		return createDefaultMetaInfo();
+  }
+}
+
+bool GearInfo::loadMetaInfo()
+{
+  qDebug() << "loading: " << name(); 
+	QFile file(metaFile().absoluteFilePath());
+  if( !file.open(QIODevice::ReadOnly) )
+		return false;
+
+  QDomDocument doc(XML_TAGNAME);
+	
+  QString errMsg;
+  int errLine;
+  int errColumn;
+  if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
+  {
+    qCritical() << "gearinfo document is invalid " << file.fileName();
+    qCritical() << errMsg;
+    qCritical() << "Line: " <<  errLine;
+    qCritical() << "Col: " <<  errColumn;
+    file.close();
     return false;
   }
 
+  file.close();
+
+  QDomNode infoNode = doc.firstChild();
+
+  if (infoNode.isNull())
+  {
+    qCritical() << "Bad Drone GearInfo file : <"+XML_TAGNAME+"> tag not found in " << file.fileName();
+    return false;
+  }
+
+	_plugsInfo.clear();
+
   QDomNode curnode=infoNode.firstChild();
   while(!curnode.isNull())
-
   {
     QDomElement elem = curnode.toElement();
     //std::cerr<<"found a tag !: "<<elem.tagName().latin1()<<std::endl;
 
     if(elem.tagName()=="Intro")
       _intro=elem.text();
-    else if(elem.tagName()=="Name")
-      _name=elem.text();
     else if(elem.tagName()=="Classification")
-      _classification =QStringList::split("/",elem.text());
+      _classification = elem.text().split("/");
     else if(elem.tagName()=="Plugs")
     {
-      QDomNode curnode2=curnode.firstChild();
+			QDomNode curnode2=curnode.firstChild();
       while(!curnode2.isNull())
       {
         QDomElement elem2 = curnode2.toElement();
-        //std::cerr<<"found a tag !: "<<elem.tagName().latin1()<<std::endl;
-        QString name=elem2.attribute("name","?");
-        eInOut inout(elem2.attribute("inout","IN")=="IN"?IN:OUT);
-        if(elem2.tagName()=="Plug")
-        {
-          _plugs[name]=PlugInfo();
-          _plugs[name].help= elem2.text();
-          _plugs[name].type= elem2.attribute("type","?");
-          _plugs[name].inOut=inout;
-        }
+				PlugInfo pi;
+				pi.load(elem2);
+				addPlugInfo(pi);
         curnode2=curnode2.nextSibling();
       }
+			
     }
 
     else if(elem.tagName()=="Description")
@@ -132,37 +169,197 @@ bool GearInfo_::load(QDomNode &parent,QString filename)
     curnode=curnode.nextSibling();
   }
 
+	syncPlugsInfo();
+
   return true;
+}
+
+void GearInfo::syncPlugsInfo()
+{
+  //create a temporary instance of the gear
+	Gear *gear = createGearInstance(NULL, "");
+
+	//remove plugsInfo that doesnt exist anymore
+	QList<QString> plugsToRemove;
+  for (QMap<QString,PlugInfo>::Iterator it = _plugsInfo.begin(); it != _plugsInfo.end(); ++it )
+	{
+		if (!gear->getPlug(it.key()))
+			plugsToRemove.push_back(it.key());
+	}
+	for(QList<QString>::Iterator it = plugsToRemove.begin(); it!=plugsToRemove.end();++it)
+		_plugsInfo.remove(*it);
+
+	//create plugsInfo that have not been created yet
+	QList<AbstractPlug*> plugs; 
+	gear->getAllPlugs(plugs);
+	for(QList<AbstractPlug*>::Iterator it = plugs.begin(); it!=plugs.end();++it)
+	{
+			if (!_plugsInfo.contains((*it)->name()))
+			{
+				PlugInfo plugInfo((*it)->name(), (*it)->inOut(), (*it)->abstractDefaultType()->typeName());
+				addPlugInfo(plugInfo);
+			}
+			else
+			{
+				//sync info that is duplicated in abstractPlug
+				PlugInfo plugInfo = getPlugInfo((*it)->name());
+				plugInfo.inOut((*it)->inOut());
+				plugInfo.type((*it)->abstractDefaultType()->typeName());
+				setPlugInfo(plugInfo);
+			}	
+	}
+}
+
+bool GearInfo::addPlugInfo(const PlugInfo& pi)
+{
+  if (_plugsInfo.contains(pi.name()))
+	{
+		qDebug() << "addPlugInfo fail because " << pi.name() << " already exists";
+		return false;
+	}
+	
+	_plugsInfo.insert(pi.name(), pi);
+	
+	return true;
+}
+
+bool GearInfo::setPlugInfo(const PlugInfo& pi)
+{
+  if (!_plugsInfo.contains(pi.name()))
+	{
+		qDebug() << "setPlugInfo fail because " << pi.name() << " doesnt exists";
+		return false;
+	}
+	
+	_plugsInfo[pi.name()]=pi;
+	
+	return true;
+}
+
+/**
+* GearInfo for drone gears.
+**/
+GearInfoDrone::GearInfoDrone(QFileInfo pluginFile) :
+	GearInfo(DRONE, pluginFile),
+	_handle(0),
+	_makeGear(0)
+{
+}
+
+GearInfoDrone::~GearInfoDrone()
+{
+	if (_handle)
+		dlclose(_handle);
+}
+
+bool GearInfoDrone::bindPlugin()
+{
+	qDebug() << "binding: " << _pluginFile.fileName();
+
+	//open file
+	_handle = dlopen(_pluginFile.absoluteFilePath().toAscii(), RTLD_LAZY);
+
+	if (!_handle)
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : " << dlerror();
+		return false;
+	}
+	
+	//query makeGear ptrfun interface
+	Gear* (*makeGear)(Schema *schema, QString uniqueName);
+	*(void**) (&_makeGear) = dlsym(_handle, "makeGear");	
+	
+	if (dlerror())
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : not a drone plugin!";
+		return false;
+	}
+		
+	return true;
+}
+
+Gear* GearInfoDrone::createGearInstance(Schema *schema, QString uniqueName)
+{
+	if (_makeGear)
+		return _makeGear(schema, uniqueName);
+	else
+		return NULL;
+}
+
+GearInfoFrei0r::GearInfoFrei0r(QFileInfo pluginFile) :
+	GearInfo(FREI0R, pluginFile),
+	_handle(0)
+{
+}
+
+GearInfoFrei0r::~GearInfoFrei0r()
+{
+	if (_handle)
+		dlclose(_handle);
+}
+
+bool GearInfoFrei0r::bindPlugin()
+{
+  qDebug() << "binding: " << _pluginFile.fileName();
+	
+	_handle = dlopen(_pluginFile.absoluteFilePath().toAscii(), RTLD_LAZY);
+
+	if (!_handle)
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : " << dlerror();
+		return false;
+	}
+	
+  void (*f0r_get_plugin_info)(f0r_plugin_info_t*);
+  *(void**) (&f0r_get_plugin_info) = dlsym(_handle, "f0r_get_plugin_info");
+	
+	if (dlerror())
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : not a Frei0r plugin!";
+		return false;
+	}
+	
+  (*f0r_get_plugin_info)(&_pluginInfo);
+
+	_majorVersion = _pluginInfo.major_version;
+  _minorVersion = _pluginInfo.minor_version;
+	_author = QString::fromLocal8Bit(_pluginInfo.author, strlen(_pluginInfo.author)) ;
+}
+
+bool GearInfoFrei0r::loadMetaInfo()
+{
+	if (!GearInfo::load())
+		return false;
+	
+	//overwrite field already specified in f0r_plugin_info_t
+	_majorVersion = _pluginInfo.major_version;
+  _minorVersion = _pluginInfo.minor_version;
+	_author = QString::fromLocal8Bit(_pluginInfo.author, strlen(_pluginInfo.author)) ;
+	
+	return true;
+}
+
+Gear* GearInfoFrei0r::createGearInstance(Schema *schema, QString uniqueName)
+{
+  return new GearFrei0r(schema, uniqueName);
+}
+
+
+GearInfoMeta::GearInfoMeta(QFileInfo pluginFile) :
+	GearInfo(META, pluginFile)
+{
+}
+
+GearInfoMeta::~GearInfoMeta()
+{
+}
+
+Gear* GearInfoMeta::createGearInstance(Schema *schema, QString uniqueName)
+{
 
 }
 
-void GearInfo_::syncWithGear(Gear*g)
+bool GearInfoMeta::bindPlugin()
 {
-
-  QMap<QString,PlugInfo> pii = g->getInputsInfo();
-  QMap<QString,PlugInfo> pio = g->getOutputsInfo();
-  PlugInfo pi;
-  QMap<QString,PlugInfo>::Iterator it;
-  for ( it = pii.begin(); it != pii.end(); ++it )
-  {
-    pi.help="";
-    pi.inOut=IN;
-    pi.type=it.data().type;
-    _plugs[it.key()]=pi;
-  }
-  for ( it = pio.begin(); it != pio.end(); ++it )
-  {
-    pi.help="";
-    pi.inOut=OUT;
-    pi.type=it.data().type;
-    _plugs[it.key()]=pi;
-  }
-
-}
-
-void GearInfo_::setPlugInfo(QString name,PlugInfo* pi)
-{
-
-  std::cerr<<"GearInfo::setting pluginfo for:"<<name<<" with:"<<pi<<std::endl;
-  _plugs[name]=*pi;
+	return true;
 }

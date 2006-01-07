@@ -30,7 +30,7 @@
 class GearFrei0r : public Gear
 {
 public:
-  GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0rLib);
+  GearFrei0r(Schema *schema, QString uniqueName);
   virtual ~GearFrei0r();
 
   void runVideo();  
@@ -73,12 +73,8 @@ private:
   int _sizeX, _sizeY;
 
   //! The name of the frei0r plugin.
-  std::string _frei0rLib;
+  QString _frei0rLib;
 
-public:
-  //! Static reimplementations of the standard Gear interface C functions.
-  static Gear* makeGear(Schema *schema, std::string uniqueName, std::string frei0rLib);
-  static GearInfo getGearInfo(std::string frei0rLib);
 };
 
 #endif

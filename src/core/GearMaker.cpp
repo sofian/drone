@@ -25,18 +25,22 @@
 #include <qdir.h>
 #include <qdom.h>
 #include <iostream>
-#include <dlfcn.h>
 
 #if defined(Q_OS_MACX)
 #include <CFBundle.h>
 #endif
 
 GearMaker GearMaker::_registerMyself;
-std::map<std::string, GearInfo*> *GearMaker::_registry;
+
+QMap<QString, GearInfo*> *GearMaker::_registry;
+QString GearMaker::DRONEGEARS_SUBPATH = "drone";
+QString GearMaker::FREI0RGEARS_SUBPATH = "frei0r";
+QString GearMaker::METAGEARS_SUBPATH = "meta";
+
 
 GearMaker::GearMaker()
 {
-  _registry = new std::map<std::string, GearInfo_*>;
+  _registry = new QMap<QString, GearInfo*>();
 }
 
 GearMaker::~GearMaker()
@@ -47,309 +51,158 @@ GearMaker::~GearMaker()
 
 void GearMaker::emptyRegistry()
 {
-  //delete GearPluginDefinitions
-  for(std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it!=_registry->end();++it)
-  {
-    if (it->second->gearInfo_()->pluginType() == GearInfo_::FREI0R_PLUGIN)
-      free(it->second->gearInfo().data);
-    delete it->second;
-  }
+  for(QMap<QString, GearInfo*>::iterator it=_registry->begin(); it!=_registry->end();++it)
+    delete it.value();
+
+  _registry->clear();
 }
 
-Gear* GearMaker::makeGear(Schema *schema, std::string type, std::string uniqueName)
+Gear* GearMaker::makeGear(Schema *schema, QString name, QString uniqueName)
 {
   Gear* thegear;
-  std::map<std::string, GearInfo_*>::iterator it = _registry->find(type);
-
-  std::cout << "calling GearMaker::makeGear: " << type << std::endl;
+  GearInfo *gearInfo = findGearInfo(name);
 
   //be sure we have this gear
-  if (it == _registry->end())
+  if (!gearInfo)
   {
-    warningmsg("gear %s not found!", type.c_str());
+    qCritical() << "gear not found: " << name;
     return NULL;
   }
 
-  //todo switch on various strategy depending on gearPluginType
-  if (it->second->gearInfo_()->pluginType() == GearInfo_::FREI0R_PLUGIN)
-  {
-    std::cout << "building up a frei0r plugin" << std::endl;
-    std::cout << "frei0rlib path = " <<(char*)it->second->gearInfo().data << std::endl;
-    //GearFrei0r::setGlobalFrei0rLib((char*)it->second->gearInfo().data);
-    thegear= GearFrei0r::makeGear(schema, uniqueName, (char*)it->second->gearInfo().data);
-    thegear->_gearInfo_=it->second->gearInfo_();
-    return thegear;
-  }
-  else
-  {
-    //make the gear
-    thegear = it->second->makeGear(schema, uniqueName);
-    thegear->_gearInfo_ = it->second->gearInfo_();
-    return thegear;
-  }
+	return gearInfo->createGearInstance(schema, uniqueName);
 }
 
-void GearMaker::getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo)
+GearInfo* GearMaker::findGearInfo(QString name)
 {
-  // XXX TODO
-  for (std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
-  {
-    gearsInfo.push_back(&(it->second->gearInfo()));
-  }
+  QMap<QString, GearInfo*>::iterator it = _registry->find(name);
+
+	if (it == _registry->end())
+		return NULL;
+		
+	return it.value();
 }
 
-void GearMaker::getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo, std::string filter)
+void GearMaker::getAllGearsInfo(QList<GearInfo*> &gearsInfo)
 {
-
-
-  for (std::map<std::string, GearInfo_*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
-  {
-    if(QString(it->second->gearInfo().name).lower().find(QString(filter.c_str()).lower()) != -1)
-      gearsInfo.push_back(&(it->second->gearInfo()));
-  }
+	gearsInfo = _registry->values();
 }
 
-void GearMaker::parseGears()
+/**
+* Parse every supported gears plugins located under the specified path. Once parsed, gears can be instanciated
+* using GearMaker::makeGear(). The whole registry of parsed gears is cleaned up before each
+* parse call.
+*
+* @param gearsPath the path from which you want to parse.
+**/
+bool GearMaker::parse(QDir rootDir)
 {
-  std::cout << "--- loading gears ---" << std::endl;
-  emptyRegistry();
+	if (!rootDir.exists())
+  {
+    qWarning() << "gears folder not found: " << rootDir.path();
+    return false;
+  }
+	
+	qDebug() << "parsing Gears in path: " << rootDir.path();
+	emptyRegistry();
+	parseDroneGears(rootDir);
+	parseFrei0rGears(rootDir);
+	parseMetaGears(rootDir);
+	
+	return true;
+}
+
+/**
+ * Behave has parse, but use defaultGearDir.
+**/ 
+bool GearMaker::parse()
+{
+	QDir defaultDir = defaultGearsDir();
+	return parse(defaultDir);
+}
+
+QDir GearMaker::defaultGearsDir()
+{
 #if defined(Q_OS_MACX)
   //on osx we have to first find the bundle full path
   CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
   CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef, kCFURLPOSIXPathStyle);
   //gears are in /Contents/PlugIns
   QString qstrMacPath = QString(CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding())) + "/Contents/PlugIns";
-  QDir dir(qstrMacPath);
+  return QDir(qstrMacPath);
 #else
-  QDir dir("gears");
-#endif
-  if (!dir.exists())
-  {
-    warningmsg("no gears path");
-    return;
-  }
-
-  dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-
-#if defined(Q_OS_MACX)
-  dir.setNameFilter("*.dylib*");
-#else
-  dir.setNameFilter("*.so*");
-#endif
-
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
-  const char* error;
-
-  while ((fileInfo = it.current()) != 0 )
-  {
-    std::cout << fileInfo->fileName() << std::endl;
-
-    //reset error
-    dlerror();
-
-    //open file
-    void *handle = dlopen(fileInfo->filePath(), RTLD_LAZY);
-
-    if (!(error = dlerror()))
-    {
-      //reset error
-      dlerror();
-
-      //query getGearInfo ptrfun interface
-      GearInfo (*getGearInfo)();
-
-      //query makeGear ptrfun interface
-      Gear* (*makeGear)(Schema *schema, std::string uniqueName);
-      *(void**) (&makeGear) = dlsym(handle, "makeGear");
-
-      if (!(error = dlerror()))
-      {
-        //get gearInfo
-        *(void**) (&getGearInfo) = dlsym(handle, "getGearInfo");
-        //GearInfo gearInfo = (*getGearInfo)();
-        GearInfo_ gearInfo_;
-
-        gearInfo_=loadGearInfo(dir.path()+"/"+fileInfo->baseName().mid(8)+".xml",fileInfo->baseName().mid(8),GearInfo_::DRONE_PLUGIN);
-        gearInfo_._handle=handle;
-        gearInfo_.makeGear=makeGear;
-        //build gear definition
-        //GearInfo_ *gearPluginDefinition = new GearPluginDefinition(gearInfo,gearInfo_,
-        //    handle, makeGear);
-
-        //add geardefintion to the registry
-        (*_registry)[gearInfo_._name]=gearPluginDefinition;//todo check for duplicates
-      }
-      else // might be a frei0r plugin
-      {
-        warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
-        std::cout << error << std::endl;
-      }
-    }
-    else
-    {
-      warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
-      std::cout << error << std::endl;
-    }
-
-    ++it;//next file
-  }
-
-  parseFrei0rPlugins();
-  //parseMetaGears();
+  return QDir("gears");
+#endif	
 }
 
-void GearMaker::parseFrei0rPlugins()
+
+template<class T>
+void GearMaker::parseGears(QDir dir, QString extension)
 {
-  std::cout << "--- loading frei0r plugins ---" << std::endl;
-#if defined(Q_OS_MACX)
-  //on osx we have to first find the bundle full path
-  CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-  CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef, kCFURLPOSIXPathStyle);
-  //gears are in /Contents/PlugIns
-  QString qstrMacPath = QString(CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding())) + "/Contents/PlugIns/frei0r";
-  QDir dir(qstrMacPath);
-#else
-  QDir dir("gears/frei0r");
-#endif
-  if (!dir.exists())
+	dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+	if (!dir.exists())
   {
-    warningmsg("no gears path");
+    qWarning() << "gears folder not found: " << dir.path();
     return;
   }
+	
+  dir.setNameFilters(QStringList(extension));
 
-  dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-
-#if defined(Q_OS_MACX)
-  dir.setNameFilter("*.dylib*");
-#else
-  dir.setNameFilter("*.so*");
-#endif
-
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
+  const QFileInfoList files = dir.entryInfoList();
   const char* error;
 
-  while ((fileInfo = it.current()) != 0 )
-  {
-    std::cout << fileInfo->fileName() << std::endl;
-
-    //reset error
-    dlerror();
-
-    //open file
-    dlopen(fileInfo->filePath(), RTLD_LAZY);
-
-    if (!(error = dlerror()))
-    {
-      // get gear info
-      //GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo->filePath());
-      GearInfo_ gearInfo_;
-
-      gearInfo_=loadGearInfo(dir.path()+"/"+fileInfo->baseName().mid(3)+".xml",fileInfo->baseName().mid(3),GearInfo_::FREI0R_PLUGIN,gearInfo);
-
-      // build plugin definition
-      GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,gearInfo_,
-          0, 0);
-      //add geardefintion to the registry
-      (*_registry)[gearInfo_._name]=gearPluginDefinition;//todo check for duplicates
-    }
-    else
-    {
-      warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
-      std::cout << error << std::endl;
-    }
-
+  for(QFileInfoList::const_iterator it=files.begin();it!=files.end();++it)
+  {		
+		T *gearInfo = new T(*it);
+		//add gearInfo to the registry
+		if (gearInfo->load())
+			(*_registry)[gearInfo->name()]=gearInfo;//todo check for duplicates
+		else
+		  delete gearInfo;
+    
     ++it;//next file
   }
 }
 
-/**
- * parse relative to metagears path
- */
-void GearMaker::parseMetaGears()
-{
-  std::cout << "--- parsing MetaGears ---" << std::endl;
-  emptyRegistry();
+void GearMaker::parseDroneGears(QDir rootDir)
+{  	
+  std::cout << "--- loading drone gears ---" << std::endl;
 
-  QDir dir("metagears");
-
-  parseMetaGearsSubDirs(dir);
+	QDir gearsDir(rootDir.path() + "/" + DRONEGEARS_SUBPATH); 
+	
+#if defined(Q_OS_MACX)
+  	QString extension("*.dylib*");
+#else
+  	QString extension("*.so*");
+#endif
+	parseGears<GearInfoDrone>(gearsDir, extension);
 }
 
-void GearMaker::parseMetaGearsSubDirs(QDir dir)
+void GearMaker::parseFrei0rGears(QDir rootDir)
 {
-  if (!dir.exists())
-    return;
+  std::cout << "--- loading frei0r gears ---" << std::endl;
 
-  dir.setFilter(QDir::All | QDir::Hidden | QDir::NoSymLinks);
-  dir.setNameFilter("*.meta");
-  dir.setMatchAllDirs(true);
-
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
-
-  while ((fileInfo = it.current()) != 0 )
-  {
-    if (fileInfo->isDir() && (fileInfo->fileName()!=".") && (fileInfo->fileName()!=".."))
-      parseMetaGearsSubDirs(QDir(fileInfo->filePath()));
-
-    if (fileInfo->isFile())
-    {
-      GearInfo_ gearInfo_;
-      gearInfo_=loadGearInfo(fileInfo->filePath(),fileInfo->baseName(),GearInfo_::DRONE_METAGEAR,GearInfo());
-
-      // build plugin definition
-      GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(GearInfo(),gearInfo_,
-          0, 0);
-      //add geardefintion to the registry
-      (*_registry)[gearInfo_._name]=gearPluginDefinition;//todo check for duplicates
-
-    }
-
-    ++it;
-  }
+	QDir gearsDir(rootDir.path() + "/" +FREI0RGEARS_SUBPATH); 
+	
+#if defined(Q_OS_MACX)
+  	QString extension("*.dylib*");
+#else
+  	QString extension("*.so*");
+#endif
+	parseGears<GearInfoFrei0r>(gearsDir, extension);
 }
 
-GearInfo_ GearMaker::loadGearInfo(QString filename, QString fallbackname, GearInfo_::eGearPluginType type, GearInfo oldgi)
+void GearMaker::parseMetaGears(QDir rootDir)
 {
-  QDomDocument doc("GearInfo");
-  GearInfo_ gi;
-  gi.createIfNotExists(filename,fallbackname,oldgi);
+  std::cout << "--- loading Meta gears ---" << std::endl;
 
-  QFile file(filename);
-  if( !file.open( IO_ReadOnly ) )
-  {
-    std::cout << "GearMaker:loadGearInfo : could not open file " << filename << std::endl;
-    return GearInfo_();
-  }
-  QString errMsg;
-  int errLine;
-  int errColumn;
-  if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
-  {
-    std::cout << "GearMaker:loadGearInfo : parsing error in " << filename << std::endl;
-    std::cout << errMsg.ascii() << std::endl;
-    std::cout << "Line: " <<  errLine << std::endl;
-    std::cout << "Col: " <<  errColumn << std::endl;
-    file.close();
-    return GearInfo_();
-  }
+	QDir gearsDir(rootDir.path() + "/" + METAGEARS_SUBPATH); 
+	
+	QString extension("*.meta");
 
-  file.close();
-
-  QDomNode node = doc.firstChild();
-
-  gi.load(node,filename);
-  if(gi._name=="")
-    gi._name=fallbackname;
-  gi._pluginType=type;
-  return gi;
+	parseGears<GearInfoMeta>(gearsDir, extension);
 }
 
+/*
 void GearMaker::createMissingGearInfoPlugHelp(GearInfo_* gi)
 {
   std::cerr<<"creating gear of type "<<gi->_name<<" to sync gearInfo"<<std::endl;
@@ -358,7 +211,8 @@ void GearMaker::createMissingGearInfoPlugHelp(GearInfo_* gi)
   delete mygear;
   std::cerr<<"just deleted "<<gi->_name<<" to sync gearInfo"<<std::endl;
 }
-
+*/
+/*
 void GearMaker::saveDefinition(GearInfo_* gi)
 {
   QString t;
@@ -373,7 +227,7 @@ else
   mygear->saveDefinition(doc);  
   delete mygear;
   //save to file  
-    std::cout << "garMaker::saveDefinition : saving in " << gi->_filename<<std::endl;
+    std::cout << "gearMaker::saveDefinition : saving in " << gi->_filename<<std::endl;
 
 
   QFile file(gi->_filename);
@@ -395,3 +249,4 @@ file.remove();
   return;
   
 }
+*/

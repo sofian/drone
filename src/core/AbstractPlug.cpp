@@ -25,10 +25,10 @@
 
 #include "Gear.h"
 
-const std::string AbstractPlug::XML_TAGNAME = "Plug";
-const std::string AbstractPlug::XML_TAGNAME_TYPE_ELEM = "Type";
+const QString AbstractPlug::XML_TAGNAME = "Plug";
+const QString AbstractPlug::XML_TAGNAME_TYPE_ELEM = "Type";
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory) :
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractType* type, bool mandatory) :
   _abstractType(type),
   _abstractDefaultType(type),
 	_mandatory(mandatory),
@@ -184,17 +184,17 @@ int AbstractPlug::connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const
   return connectedplugs.size();
 }
 
-std::string AbstractPlug::fullName() const
+QString AbstractPlug::fullName() const
 {
   return _parent->name()+"/"+_name;
 }
 
-std::string AbstractPlug::shortName(int nbChars) const
+QString AbstractPlug::shortName(int nbChars) const
 {
-  std::string abbrev;
+  QString abbrev;
 
   int c=0;
-  for (std::string::const_iterator it=_name.begin();it != _name.end() && c < nbChars; ++it, ++c)
+  for (QString::const_iterator it=_name.begin();it != _name.end() && c < nbChars; ++it, ++c)
   {
     abbrev+=*it;
   }
@@ -219,7 +219,7 @@ void AbstractPlug::exposed(bool exp)
   }
 }
 
-bool AbstractPlug::name(std::string newName)
+bool AbstractPlug::name(QString newName)
 {
   if (!_parent->isPlugNameUnique(newName))
     return false;
@@ -235,7 +235,7 @@ void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
 
   QDomAttr nameAttr;
   nameAttr = doc.createAttribute("Name");
-  nameAttr.setValue(name().c_str());
+  nameAttr.setValue(name());
   plugElem.setAttributeNode(nameAttr);
 
   QDomAttr exposedAttr;
@@ -254,7 +254,7 @@ void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
 
 void AbstractPlug::load(QDomElement &plugElem)
 {
-  std::string val = plugElem.attribute("Exposed","0").ascii();
+  QString val = plugElem.attribute("Exposed","0");
   exposed(val == "1" ? true : false);
 	
 	if (_inOut==IN)

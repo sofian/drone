@@ -27,7 +27,7 @@
 void DroneCore::init()
 {
 	std::cout << "initializing the drone core..." << std::endl;
-	GearMaker::parseGears();
+	GearMaker::parse();
 	
   initMath();
   paint_funcs_setup();

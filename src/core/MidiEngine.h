@@ -21,7 +21,7 @@
 #define MIDIENGINE_INCLUDED
 
 #include <vector>
-#include <string>
+
 #include <pthread.h>
 
 #include "RtMidi/RtMidi.h"

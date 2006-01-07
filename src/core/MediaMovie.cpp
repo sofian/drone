@@ -4030,10 +4030,10 @@ MediaMovie::MediaMovie() :
   Media(MOVIE)
 {
   _thumbnail = new QPixmap(testpix_xpm);
-  _thumbnail->resize(64,64);
+//  _thumbnail->resize(64,64);
 }
 
-void MediaMovie::load(std::string)
+void MediaMovie::load(QString)
 {
 }
 

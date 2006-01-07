@@ -1,19 +1,20 @@
 #include "Project.h"
 #include "Engine.h"
 #include "error.h"
-#include "SchemaGui.h"
+#include "Schema.h"
 
 #include <iostream>
-#include <qdom.h>
+#include <QtXml>
 #include <qfile.h>
 #include <qtextstream.h>
 
-Project::Project(SchemaGui* mainSchemaGui):_mainSchemaGui(mainSchemaGui)
+Project::Project(Schema* mainSchema):
+	_mainSchema(mainSchema)
 {}
 
 void Project::newProject()
 {
-  _mainSchemaGui->clear();
+  _mainSchema->clear();
   _projectName="";
   //todo:
 }
@@ -24,20 +25,20 @@ bool Project::save()
   return saveAs(_projectName);
 }
 
-bool Project::saveAs(std::string filename)
+bool Project::saveAs(QString filename)
 {
   QDomDocument doc("DroneProject");
   
   QDomElement projectElem = doc.createElement("Project");
   doc.appendChild(projectElem);
 
-  if(!_mainSchemaGui->save(doc, projectElem))
+  if(!_mainSchema->save(doc, projectElem))
     return false;
 
   //save to file  
        
-  QFile file(filename.c_str());
-  if (file.open(IO_WriteOnly))
+  QFile file(filename);
+  if (file.open(QIODevice::WriteOnly))
   {
     QTextStream stream(&file);
     doc.save(stream,4);
@@ -54,15 +55,15 @@ bool Project::saveAs(std::string filename)
 
 }
 
-bool Project::load(std::string filename)
+bool Project::load(QString filename)
 {
   QDomDocument doc("DroneProject");
 
-  QFile file(filename.c_str());
+  QFile file(filename);
 
-  if (!file.open(IO_ReadOnly))
+  if (!file.open(QIODevice::ReadOnly))
   {
-    std::cout << "Fail to open file " << filename << std::endl;
+    qCritical() << "Fail to open file " << filename;
     return false;
   }
 
@@ -71,10 +72,10 @@ bool Project::load(std::string filename)
   int errColumn;
   if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
   {
-    std::cout << "parsing error in " << filename << std::endl;
-    std::cout << errMsg.ascii() << std::endl;
-    std::cout << "Line: " <<  errLine << std::endl;
-    std::cout << "Col: " <<  errColumn << std::endl;
+    qCritical() << "parsing error in " << filename;
+    qCritical() << errMsg;
+    qCritical() << "Line: " <<  errLine;
+    qCritical() << "Col: " <<  errColumn;
     file.close();
     return false;
   }
@@ -99,7 +100,7 @@ bool Project::load(std::string filename)
     return false;
   }
   
-  if(!_mainSchemaGui->load(schemaElem))
+  if(!_mainSchema->load(schemaElem))
     return false;
   
   _projectName=filename;
