@@ -1,0 +1,12 @@
+drone (0.1-20050222) unstable; urgency=low
+
+  * Upgrade to current trunk
+
+ -- The Anarcat <anarcat@anarcat.ath.cx>  Tue, 22 Feb 2005 16:36:01 -0500
+
+drone (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- The Anarcat <anarcat@anarcat.ath.cx>  Sat, 19 Feb 2005 11:17:29 -0500
+

@@ -1,0 +1,263 @@
+<spot id="1">
+  <position x="331" y="-130" z="0">
+  <moviefile>shot01_03</moviefile>
+  <moviefile>shot01_04</moviefile>
+  <moviefile>shot01_01</moviefile>
+</spot>
+
+<spot id="2">
+  <position x="301" y="-101" z="0">
+  <moviefile>shot02_01</moviefile>
+  <moviefile>shot02_03</moviefile>
+  <moviefile>shot02_05</moviefile>
+  <moviefile>shot02_02</moviefile>
+  <moviefile>shot02_06</moviefile>
+  <moviefile>shot02_04</moviefile>
+</spot>
+
+<spot id="3">
+  <position x="319" y="-78" z="0">
+  <moviefile>shot03_06</moviefile>
+  <moviefile>shot03_03</moviefile>
+  <moviefile>shot03_05</moviefile>
+  <moviefile>shot03_02</moviefile>
+  <moviefile>shot03_08</moviefile>
+  <moviefile>shot03_04</moviefile>
+</spot>
+
+<spot id="4">
+  <position x="388" y="-77" z="0">
+  <moviefile>shot04_04</moviefile>
+  <moviefile>shot04_05</moviefile>
+  <moviefile>shot04_02</moviefile>
+  <moviefile>shot04_06</moviefile>
+  <moviefile>shot04_03</moviefile>
+  <moviefile>shot04_01</moviefile>
+</spot>
+
+<spot id="5">
+  <position x="416" y="-79" z="0">
+  <moviefile>shot05_01</moviefile>
+  <moviefile>shot05_02</moviefile>
+</spot>
+
+<spot id="6">
+  <position x="393" y="-341" z="0">
+  <moviefile>shot06_02</moviefile>
+  <moviefile>shot06_08</moviefile>
+  <moviefile>shot06_03</moviefile>
+  <moviefile>shot06_09</moviefile>
+  <moviefile>shot06_05</moviefile>
+  <moviefile>shot06_04</moviefile>
+  <moviefile>shot06_10</moviefile>
+  <moviefile>shot06_07</moviefile>
+</spot>
+
+<spot id="7">
+  <position x="277" y="-47" z="0">
+  <moviefile>shot07_01</moviefile>
+  <moviefile>shot07_02</moviefile>
+</spot>
+
+<spot id="8">
+  <position x="219" y="-40" z="0">
+  <moviefile>shot08_04</moviefile>
+  <moviefile>shot08_02</moviefile>
+</spot>
+
+<spot id="9">
+  <position x="179" y="-28" z="0">
+  <moviefile>shot09_01</moviefile>
+  <moviefile>shot09_02</moviefile>
+</spot>
+
+<spot id="10">
+  <position x="165" y="-11" z="0">
+  <moviefile>shot10_01</moviefile>
+  <moviefile>shot10_02</moviefile>
+  <moviefile>shot10_06</moviefile>
+  <moviefile>shot10_04</moviefile>
+  <moviefile>shot10_05</moviefile>
+</spot>
+
+<spot id="11">
+  <position x="145" y="-22" z="0">
+  <moviefile>shot11_01</moviefile>
+  <moviefile>shot11_04</moviefile>
+  <moviefile>shot11_02</moviefile>
+</spot>
+
+<spot id="12">
+  <position x="107" y="-16" z="0">
+  <moviefile>shot12_03</moviefile>
+  <moviefile>shot12_02</moviefile>
+  <moviefile>shot12_04</moviefile>
+  <moviefile>shot12_01</moviefile>
+</spot>
+
+<spot id="13">
+  <position x="44" y="-13" z="0">
+  <moviefile>shot13_05</moviefile>
+  <moviefile>shot13_09</moviefile>
+  <moviefile>shot13_06</moviefile>
+  <moviefile>shot13_10</moviefile>
+  <moviefile>shot13_08</moviefile>
+  <moviefile>shot13_02</moviefile>
+  <moviefile>shot13_03</moviefile>
+  <moviefile>shot13_11</moviefile>
+  <moviefile>shot13_04</moviefile>
+  <moviefile>shot13_01</moviefile>
+</spot>
+
+<spot id="14">
+  <position x="89" y="-71" z="0">
+</spot>
+
+<spot id="15">
+  <position x="112" y="-233" z="0">
+</spot>
+
+<spot id="16">
+  <position x="160" y="-323" z="0">
+</spot>
+
+<spot id="17">
+  <position x="117" y="-325" z="0">
+</spot>
+
+<spot id="18">
+  <position x="113" y="-337" z="0">
+</spot>
+
+<spot id="19">
+  <position x="111" y="-398" z="0">
+</spot>
+
+<spot id="20">
+  <position x="61" y="-416" z="0">
+</spot>
+
+<spot id="21">
+  <position x="23" y="-430" z="0">
+</spot>
+
+<spot id="22">
+  <position x="19" y="-458" z="0">
+</spot>
+
+<spot id="23">
+  <position x="51" y="-487" z="0">
+</spot>
+
+<spot id="24">
+  <position x="96" y="-449" z="0">
+</spot>
+
+<spot id="23">
+  <position x="148" y="-427" z="0">
+</spot>
+
+<spot id="26">
+  <position x="202" y="-406" z="0">
+</spot>
+
+<spot id="27">
+  <position x="258" y="-362" z="0">
+</spot>
+
+<spot id="28">
+  <position x="181" y="-388" z="0">
+</spot>
+
+<spot id="29">
+  <position x="220" y="-416" z="0">
+</spot>
+
+<spot id="30">
+  <position x="203" y="-447" z="0">
+</spot>
+
+<spot id="31">
+  <position x="221" y="-454" z="0">
+</spot>
+
+<spot id="32">
+  <position x="263" y="-445" z="0">
+</spot>
+
+<spot id="33">
+  <position x="273" y="-393" z="0">
+</spot>
+
+<spot id="34">
+  <position x="328" y="-387" z="0">
+</spot>
+
+<spot id="35">
+  <position x="332" y="-421" z="0">
+</spot>
+
+<spot id="36">
+  <position x="371" y="-465" z="0">
+</spot>
+
+<spot id="37">
+  <position x="403" y="-422" z="0">
+</spot>
+
+<spot id="38">
+  <position x="452" y="-419" z="0">
+</spot>
+
+<spot id="39">
+  <position x="489" y="-394" z="0">
+</spot>
+
+<spot id="40">
+  <position x="378" y="-369" z="0">
+</spot>
+
+<spot id="41">
+  <position x="444" y="-326" z="0">
+</spot>
+
+<spot id="42">
+  <position x="397" y="-381" z="0">
+</spot>
+
+<spot id="43">
+  <position x="297" y="-265" z="0">
+</spot>
+
+<spot id="44">
+  <position x="324" y="-240" z="0">
+</spot>
+
+<spot id="45">
+  <position x="319" y="-177" z="0">
+</spot>
+
+<spot id="46">
+  <position x="271" y="-192" z="0">
+</spot>
+
+<spot id="47">
+  <position x="268" y="-147" z="0">
+</spot>
+
+<spot id="48">
+  <position x="257" y="-131" z="0">
+</spot>
+
+<spot id="49">
+  <position x="223" y="-87" z="0">
+</spot>
+
+<spot id="50">
+  <position x="182" y="-109" z="0">
+</spot>
+
+<spot id="51">
+  <position x="149" y="-144" z="0">
+</spot>
+

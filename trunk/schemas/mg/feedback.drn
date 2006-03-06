@@ -1,0 +1,95 @@
+<!DOCTYPE DroneProject>
+<Project>
+<Schema>
+    <Gears>
+        <Gear PosX="173" PosY="52" Type="VideoSource" Name="VideoSource1" >
+            <Properties width="352" Device="/dev/video1" height="292" />
+        </Gear>
+        <Gear PosX="769" PosY="32" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="257" PosY="143" Type="Slider" SliderPos="6.21951" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="400" PosY="73" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="315" PosY="367" Type="Slider" SliderPos="0" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="6" />
+        </Gear>
+        <Gear PosX="541" PosY="232" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="355" PosY="219" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="109" PosY="272" Type="Slider" SliderPos="1" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="131" PosY="379" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="8" />
+        </Gear>
+        <Gear PosX="553" PosY="392" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="726" PosY="423" Type="AffineTransform" Name="AffineTransform1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="583" PosY="497" Type="Slider" SliderPos="6.82927" Name="Slider7" >
+            <Properties Lower_Bound="0" Higher_Bound="40" />
+        </Gear>
+        <Gear PosX="430" PosY="562" Type="Slider" SliderPos="0" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="6" />
+        </Gear>
+        <Gear PosX="306" PosY="471" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="138" PosY="529" Type="Slider" SliderPos="0.097561" Name="Slider9" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="144" PosY="601" Type="Slider" SliderPos="0.426829" Name="Slider10" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="593" PosY="633" Type="Oscilloscope" Name="Oscilloscope1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="776" PosY="716" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="637" PosY="124" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="696" PosY="277" Type="Slider" SliderPos="0" Name="Slider2" >
+            <Properties Lower_Bound="-124" Higher_Bound="0" />
+        </Gear>
+        <Gear PosX="527" PosY="153" Type="PushButton" Name="PushButton1" >
+            <Properties On_Value="0" One_Shot="0" Off_Value="1" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="VideoMix1" Input="ImgA" Output="ImgOut" />
+        <Connection GearA="Slider5" GearB="VideoMix1" Input="ArgA" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="IN" Output="ImgOUT" />
+        <Connection GearA="VideoMix1" GearB="GenDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider3" GearB="GenDisplaceGrid1" Input="PARAM3" Output="Value" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
+        <Connection GearA="Slider6" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
+        <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
+        <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
+        <Connection GearA="AffineTransform1" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Out" />
+        <Connection GearA="AffineTransform1" GearB="GenDisplaceGrid1" Input="PARAM1" Output="Out" />
+        <Connection GearA="Slider7" GearB="AffineTransform1" Input="Scale" Output="Value" />
+        <Connection GearA="Slider8" GearB="SignalStat1" Input="Func" Output="Value" />
+        <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="Enveloppe1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="Slider9" GearB="Enveloppe1" Input="Rel" Output="Value" />
+        <Connection GearA="Slider10" GearB="Enveloppe1" Input="Att" Output="Value" />
+        <Connection GearA="Oscilloscope1" GearB="TV1" Input="ImgIN" Output="Out" />
+        <Connection GearA="VideoDelay1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider2" GearB="VideoDelay1" Input="Delay" Output="Value" />
+        <Connection GearA="PushButton1" GearB="VideoDelay1" Input="Rec" Output="Value" />
+    </Connections>
+</Schema>
+</Project>

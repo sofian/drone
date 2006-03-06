@@ -1,0 +1,27 @@
+<!DOCTYPE MetaGear>
+<MetaGear>
+    <Schema>
+        <Gears>
+            <Gear PosX="250" PosY="198" Type="VideoMix" Name="VideoMix1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgA" Exposed="0" />
+                    <Plug Name="ImgB" Exposed="1" />
+                    <Plug Name="ImgOut" Exposed="1" />
+                    <Plug Name="ArgA" Exposed="0" />
+                    <Plug Name="MixFunc" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="49" PosY="282" Type="Slider" SliderPos="12.439" Name="Slider1" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoMix1" GearB="VideoMix1" Input="ImgA" Output="ImgOut" />
+            <Connection GearA="Slider1" GearB="VideoMix1" Input="ArgA" Output="Value" />
+        </Connections>
+    </Schema>
+</MetaGear>

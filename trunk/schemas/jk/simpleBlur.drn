@@ -1,0 +1,41 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="156" PosY="114" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/dev/drone/media/Breakfas1939.mpeg" />
+        </Gear>
+        <Gear PosX="505" PosY="158" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="692" PosY="219" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="297" PosY="280" Type="Slider" SliderPos="4.29268" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="8" />
+        </Gear>
+        <Gear PosX="345" PosY="125" Type="Contrast" Name="Contrast1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="89" PosY="268" Type="Slider" SliderPos="926.829" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="1000" />
+        </Gear>
+        <Gear PosX="160" PosY="475" Type="SmearGrid" Name="SmearGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="164" PosY="383" Type="Slider" SliderPos="-55.9756" Name="Slider3" >
+            <Properties Lower_Bound="-255" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="471" PosY="414" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="Contrast1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Blur1" GearB="TV1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Blur1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Slider1" GearB="Blur1" Input="Amount" Output="Value" />
+        <Connection GearA="Contrast1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider2" GearB="Contrast1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider3" GearB="Contrast1" Input="Bright" Output="Value" />
+    </Connections>
+</Schema>

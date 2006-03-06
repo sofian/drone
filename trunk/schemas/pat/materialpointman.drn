@@ -1,0 +1,383 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="820" PosY="3" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/lezardus/videos/Madonna - Material Girl.mpg" />
+        </Gear>
+        <Gear PosX="809" PosY="196" Type="VideoSource" Name="VideoSource2" >
+            <Properties Filename="/home/lezardus/videos/Madonna - Material Girl.mpg" />
+        </Gear>
+        <Gear PosX="822" PosY="391" Type="VideoSource" Name="VideoSource3" >
+            <Properties Filename="/home/lezardus/videos/Madonna - Material Girl.mpg" />
+        </Gear>
+        <Gear PosX="839" PosY="571" Type="VideoSource" Name="VideoSource4" >
+            <Properties Filename="/home/lezardus/videos/Madonna - Material Girl.mpg" />
+        </Gear>
+        <Gear PosX="954" PosY="9" Type="VideoLoop" Name="VideoLoop1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="965" PosY="198" Type="VideoLoop" Name="VideoLoop2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="988" PosY="388" Type="VideoLoop" Name="VideoLoop3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="971" PosY="589" Type="VideoLoop" Name="VideoLoop4" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="1" PosX="717" PosY="746" Type="ListBox" Name="ListBox1" >
+            <Properties Number_of_elements="2" Labels_of_elements="Normal,Loop" />
+        </Gear>
+        <Gear PosX="840" PosY="771" Type="Slider" SliderPos="125" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="125" />
+        </Gear>
+        <Gear PosX="513" PosY="868" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="514" PosY="880" Type="VideoMix" Name="VideoMix2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="826" PosY="939" Type="VideoMix" Name="VideoMix3" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="2" PosX="852" PosY="832" Type="ListBox" Name="ListBox2" >
+            <Properties Number_of_elements="3" Labels_of_elements="Foward,Backward,Ping pong" />
+        </Gear>
+        <Gear PosX="690" PosY="5" Type="ColorAdjust" Name="ColorAdjust1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="691" PosY="14" Type="VideoSwitch" Name="VideoSwitch1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="536" PosY="32" Type="Slider" SliderPos="-0.731707" Name="Slider2" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="539" PosY="89" Type="Slider" SliderPos="-0.365854" Name="Slider3" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="539" PosY="144" Type="Slider" SliderPos="-0.804878" Name="Slider4" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="396" PosY="27" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="398" PosY="21" Type="SmearGrid" Name="SmearGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="397" PosY="32" Type="VideoSwitch" Name="VideoSwitch2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1094" PosY="69" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1095" PosY="253" Type="TV" Name="TV2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1117" PosY="453" Type="TV" Name="TV3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1110" PosY="587" Type="TV" Name="TV4" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="1" PosX="688" PosY="92" Type="ListBox" Name="ListBox3" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear ListBoxPos="1" PosX="400" PosY="122" Type="ListBox" Name="ListBox4" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="2.49161" TouchPadVerticalPos="2.491611.52941" PosX="265" PosY="22" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="3.14159" Horizontal_lower_Bound="-3.14159" Vertical_lower_Bound="0" Vertical_higher_Bound="2" />
+        </Gear>
+        <Gear PosX="267" PosY="145" Type="Slider" SliderPos="0.292683" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear PosX="666" PosY="231" Type="ColorAdjust" Name="ColorAdjust2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="667" PosY="244" Type="VideoSwitch" Name="VideoSwitch3" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="1" PosX="665" PosY="317" Type="ListBox" Name="ListBox5" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear PosX="534" PosY="227" Type="Slider" SliderPos="-0.195122" Name="Slider6" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="537" PosY="284" Type="Slider" SliderPos="-0.926829" Name="Slider7" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="535" PosY="340" Type="Slider" SliderPos="-0.756098" Name="Slider8" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="398" PosY="224" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="399" PosY="225" Type="SmearGrid" Name="SmearGrid2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="398" PosY="243" Type="VideoSwitch" Name="VideoSwitch4" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="0" TouchPadVerticalPos="00" PosX="262" PosY="225" Type="TouchPad" Name="TouchPad2" >
+            <Properties Horizontal_higher_Bound="3.14159" Horizontal_lower_Bound="-3.14159" Vertical_lower_Bound="0" Vertical_higher_Bound="2" />
+        </Gear>
+        <Gear PosX="269" PosY="355" Type="Slider" SliderPos="1" Name="Slider9" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="399" PosY="331" Type="ListBox" Name="ListBox6" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear PosX="668" PosY="430" Type="ColorAdjust" Name="ColorAdjust3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="668" PosY="450" Type="VideoSwitch" Name="VideoSwitch5" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="0" PosX="668" PosY="510" Type="ListBox" Name="ListBox7" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear PosX="533" PosY="414" Type="Slider" SliderPos="0.95122" Name="Slider10" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="534" PosY="476" Type="Slider" SliderPos="0.243902" Name="Slider11" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="534" PosY="532" Type="Slider" SliderPos="0.292683" Name="Slider12" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="401" PosY="422" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="404" PosY="418" Type="SmearGrid" Name="SmearGrid3" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="403" PosY="436" Type="VideoSwitch" Name="VideoSwitch6" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="0.758315" TouchPadVerticalPos="0.7583151.55294" PosX="271" PosY="417" Type="TouchPad" Name="TouchPad3" >
+            <Properties Horizontal_higher_Bound="3.14159" Horizontal_lower_Bound="-3.14159" Vertical_lower_Bound="0" Vertical_higher_Bound="2" />
+        </Gear>
+        <Gear PosX="275" PosY="541" Type="Slider" SliderPos="1.90244" Name="Slider13" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="404" PosY="492" Type="ListBox" Name="ListBox8" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear PosX="682" PosY="590" Type="ColorAdjust" Name="ColorAdjust4" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="0" PosX="684" PosY="671" Type="ListBox" Name="ListBox9" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear PosX="675" PosY="604" Type="VideoSwitch" Name="VideoSwitch7" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="543" PosY="589" Type="Slider" SliderPos="-0.0487805" Name="Slider14" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="544" PosY="644" Type="Slider" SliderPos="0.926829" Name="Slider15" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="543" PosY="697" Type="Slider" SliderPos="0.439024" Name="Slider16" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="410" PosY="610" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid4" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="407" PosY="603" Type="SmearGrid" Name="SmearGrid4" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="408" PosY="603" Type="VideoSwitch" Name="VideoSwitch8" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="0" PosX="407" PosY="689" Type="ListBox" Name="ListBox10" >
+            <Properties Number_of_elements="2" Labels_of_elements="Play A,Play B" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="0" TouchPadVerticalPos="00" PosX="289" PosY="580" Type="TouchPad" Name="TouchPad4" >
+            <Properties Horizontal_higher_Bound="3.14159" Horizontal_lower_Bound="-3.14159" Vertical_lower_Bound="0" Vertical_higher_Bound="2" />
+        </Gear>
+        <Gear PosX="282" PosY="709" Type="Slider" SliderPos="0.243902" Name="Slider17" >
+            <Properties Lower_Bound="0" Higher_Bound="2" />
+        </Gear>
+        <Gear PosX="1148" PosY="1091" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="1227" PosY="243" Type="Slider" SliderPos="118.171" Name="Slider18" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="1257" PosY="625" Type="Slider" SliderPos="130.61" Name="Slider19" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="1323" PosY="818" Type="Slider" SliderPos="0" Name="Slider20" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="1378" PosY="587" Type="ListBox" Name="ListBox11" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="1316" PosY="171" Type="ListBox" Name="ListBox12" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="1311" PosY="719" Type="ListBox" Name="ListBox13" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="1513" PosY="598" Type="TV" Name="TV5" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1516" PosY="722" Type="TV" Name="TV6" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="955" PosY="135" Type="PushButton" Name="PushButton1" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="1018" PosY="132" Type="PushButton" Name="PushButton2" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="851" PosY="129" Type="PushButton" Name="PushButton3" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="1029" PosY="318" Type="PushButton" Name="PushButton4" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="964" PosY="318" Type="PushButton" Name="PushButton5" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="850" PosY="331" Type="PushButton" Name="PushButton6" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="1039" PosY="527" Type="PushButton" Name="PushButton7" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="850" PosY="513" Type="PushButton" Name="PushButton8" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="980" PosY="527" Type="PushButton" Name="PushButton9" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="861" PosY="706" Type="PushButton" Name="PushButton10" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="978" PosY="707" Type="PushButton" Name="PushButton11" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="1035" PosY="706" Type="PushButton" Name="PushButton12" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="1364" PosY="443" Type="TV" Name="TV7" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="VideoLoop1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource2" GearB="VideoLoop2" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource3" GearB="VideoLoop3" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource4" GearB="VideoLoop4" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoLoop1" GearB="VideoSwitch1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoLoop1" GearB="ColorAdjust1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoLoop2" GearB="VideoSwitch3" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoLoop2" GearB="ColorAdjust2" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoLoop3" GearB="VideoSwitch5" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoLoop3" GearB="ColorAdjust3" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoLoop4" GearB="VideoSwitch7" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="VideoLoop4" GearB="ColorAdjust4" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="ListBox1" GearB="VideoSource3" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox1" GearB="VideoSource4" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox1" GearB="VideoSource2" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox1" GearB="VideoSource1" Input="Mode" Output="Value" />
+        <Connection GearA="Slider1" GearB="VideoLoop4" Input="Memory" Output="Value" />
+        <Connection GearA="Slider1" GearB="VideoLoop3" Input="Memory" Output="Value" />
+        <Connection GearA="Slider1" GearB="VideoLoop2" Input="Memory" Output="Value" />
+        <Connection GearA="Slider1" GearB="VideoLoop1" Input="Memory" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="VideoMix3" Input="ImgA" Output="ImgO" />
+        <Connection GearA="VideoMix1" GearB="TV6" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoMix2" GearB="VideoMix3" Input="ImgB" Output="ImgO" />
+        <Connection GearA="VideoMix2" GearB="TV5" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoMix3" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
+        <Connection GearA="VideoMix3" GearB="TV7" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="ListBox2" GearB="VideoLoop4" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox2" GearB="VideoLoop3" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox2" GearB="VideoLoop2" Input="Mode" Output="Value" />
+        <Connection GearA="ListBox2" GearB="VideoLoop1" Input="Mode" Output="Value" />
+        <Connection GearA="ColorAdjust1" GearB="VideoSwitch1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoSwitch1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch1" GearB="SmearGrid1" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch1" GearB="VideoSwitch2" Input="ImgA" Output="ImgO" />
+        <Connection GearA="Slider2" GearB="ColorAdjust1" Input="Red" Output="Value" />
+        <Connection GearA="Slider3" GearB="ColorAdjust1" Input="Green" Output="Value" />
+        <Connection GearA="Slider4" GearB="ColorAdjust1" Input="Blue" Output="Value" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="VideoSwitch2" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="SmearGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
+        <Connection GearA="VideoSwitch2" GearB="TV1" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch2" GearB="VideoMix1" Input="ImgA" Output="ImgO" />
+        <Connection GearA="ListBox3" GearB="VideoSwitch1" Input="Switch" Output="Value" />
+        <Connection GearA="ListBox4" GearB="VideoSwitch2" Input="Switch" Output="Value" />
+        <Connection GearA="TouchPad1" GearB="SmearGrid1" Input="PARAM1" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="SmearGrid1" Input="PARAM2" Output="VValue" />
+        <Connection GearA="Slider5" GearB="SmearGrid1" Input="SCALE" Output="Value" />
+        <Connection GearA="ColorAdjust2" GearB="VideoSwitch3" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoSwitch3" GearB="ApplyDisplaceGrid2" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch3" GearB="SmearGrid2" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch3" GearB="VideoSwitch4" Input="ImgA" Output="ImgO" />
+        <Connection GearA="ListBox5" GearB="VideoSwitch3" Input="Switch" Output="Value" />
+        <Connection GearA="Slider6" GearB="ColorAdjust2" Input="Red" Output="Value" />
+        <Connection GearA="Slider7" GearB="ColorAdjust2" Input="Green" Output="Value" />
+        <Connection GearA="Slider8" GearB="ColorAdjust2" Input="Blue" Output="Value" />
+        <Connection GearA="ApplyDisplaceGrid2" GearB="VideoSwitch4" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="SmearGrid2" GearB="ApplyDisplaceGrid2" Input="Grid" Output="GRID" />
+        <Connection GearA="VideoSwitch4" GearB="TV2" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch4" GearB="VideoMix1" Input="ImgB" Output="ImgO" />
+        <Connection GearA="TouchPad2" GearB="SmearGrid2" Input="PARAM1" Output="HValue" />
+        <Connection GearA="TouchPad2" GearB="SmearGrid2" Input="PARAM2" Output="VValue" />
+        <Connection GearA="Slider9" GearB="SmearGrid2" Input="SCALE" Output="Value" />
+        <Connection GearA="ListBox6" GearB="VideoSwitch4" Input="Switch" Output="Value" />
+        <Connection GearA="ColorAdjust3" GearB="VideoSwitch5" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoSwitch5" GearB="SmearGrid3" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch5" GearB="ApplyDisplaceGrid3" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch5" GearB="VideoSwitch6" Input="ImgA" Output="ImgO" />
+        <Connection GearA="ListBox7" GearB="VideoSwitch5" Input="Switch" Output="Value" />
+        <Connection GearA="Slider10" GearB="ColorAdjust3" Input="Red" Output="Value" />
+        <Connection GearA="Slider11" GearB="ColorAdjust3" Input="Green" Output="Value" />
+        <Connection GearA="Slider12" GearB="ColorAdjust3" Input="Blue" Output="Value" />
+        <Connection GearA="ApplyDisplaceGrid3" GearB="VideoSwitch6" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="SmearGrid3" GearB="ApplyDisplaceGrid3" Input="Grid" Output="GRID" />
+        <Connection GearA="VideoSwitch6" GearB="TV3" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch6" GearB="VideoMix2" Input="ImgA" Output="ImgO" />
+        <Connection GearA="TouchPad3" GearB="SmearGrid3" Input="PARAM1" Output="HValue" />
+        <Connection GearA="TouchPad3" GearB="SmearGrid3" Input="PARAM2" Output="VValue" />
+        <Connection GearA="Slider13" GearB="SmearGrid3" Input="SCALE" Output="Value" />
+        <Connection GearA="ListBox8" GearB="VideoSwitch6" Input="Switch" Output="Value" />
+        <Connection GearA="ColorAdjust4" GearB="VideoSwitch7" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="ListBox9" GearB="VideoSwitch7" Input="Switch" Output="Value" />
+        <Connection GearA="VideoSwitch7" GearB="ApplyDisplaceGrid4" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch7" GearB="SmearGrid4" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch7" GearB="VideoSwitch8" Input="ImgA" Output="ImgO" />
+        <Connection GearA="Slider14" GearB="ColorAdjust4" Input="Red" Output="Value" />
+        <Connection GearA="Slider15" GearB="ColorAdjust4" Input="Green" Output="Value" />
+        <Connection GearA="Slider16" GearB="ColorAdjust4" Input="Blue" Output="Value" />
+        <Connection GearA="ApplyDisplaceGrid4" GearB="VideoSwitch8" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="SmearGrid4" GearB="ApplyDisplaceGrid4" Input="Grid" Output="GRID" />
+        <Connection GearA="VideoSwitch8" GearB="TV4" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoSwitch8" GearB="VideoMix2" Input="ImgB" Output="ImgO" />
+        <Connection GearA="ListBox10" GearB="VideoSwitch8" Input="Switch" Output="Value" />
+        <Connection GearA="TouchPad4" GearB="SmearGrid4" Input="PARAM1" Output="HValue" />
+        <Connection GearA="TouchPad4" GearB="SmearGrid4" Input="PARAM2" Output="VValue" />
+        <Connection GearA="Slider17" GearB="SmearGrid4" Input="SCALE" Output="Value" />
+        <Connection GearA="Slider18" GearB="VideoMix1" Input="ArgA" Output="Value" />
+        <Connection GearA="Slider19" GearB="VideoMix2" Input="ArgA" Output="Value" />
+        <Connection GearA="Slider20" GearB="VideoMix3" Input="ArgA" Output="Value" />
+        <Connection GearA="ListBox11" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="ListBox12" GearB="VideoMix2" Input="MixFunc" Output="Value" />
+        <Connection GearA="ListBox13" GearB="VideoMix3" Input="MixFunc" Output="Value" />
+        <Connection GearA="PushButton1" GearB="VideoLoop1" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton2" GearB="VideoLoop1" Input="PunchOut" Output="Value" />
+        <Connection GearA="PushButton3" GearB="VideoSource1" Input="Reset" Output="Value" />
+        <Connection GearA="PushButton4" GearB="VideoLoop2" Input="PunchOut" Output="Value" />
+        <Connection GearA="PushButton5" GearB="VideoLoop2" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton6" GearB="VideoSource2" Input="Reset" Output="Value" />
+        <Connection GearA="PushButton7" GearB="VideoLoop3" Input="PunchOut" Output="Value" />
+        <Connection GearA="PushButton8" GearB="VideoSource3" Input="Reset" Output="Value" />
+        <Connection GearA="PushButton9" GearB="VideoLoop3" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton10" GearB="VideoSource4" Input="Reset" Output="Value" />
+        <Connection GearA="PushButton11" GearB="VideoLoop4" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton12" GearB="VideoLoop4" Input="PunchOut" Output="Value" />
+    </Connections>
+</Schema>

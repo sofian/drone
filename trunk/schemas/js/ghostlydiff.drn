@@ -1,0 +1,93 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="0" PosY="12" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/tatien/drone/trunk/media/silverspoon/Baby.mpg" />
+        </Gear>
+        <Gear PosX="564" PosY="450" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="430" PosY="94" Type="VideoMix" Name="VideoMix1" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="20" PosX="255" PosY="260" Type="ListBox" Name="ListBox1" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="488" PosY="260" Type="Slider" SliderPos="1.03659" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="5" />
+        </Gear>
+        <Gear PosX="733" PosY="164" Type="VideoMix" Name="VideoMix2" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="20" PosX="709" PosY="604" Type="ListBox" Name="ListBox2" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="946" PosY="194" Type="ColorAdjust" Name="ColorAdjust2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="5" PosY="327" Type="Slider" SliderPos="0" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="4" PosY="268" Type="Slider" SliderPos="0.914634" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="-2" PosY="140" Type="VideoSource" Name="VideoSource2" >
+            <Properties Filename="/home/tatien/drone/trunk/media/nivea_visage_3steps.mpg" />
+        </Gear>
+        <Gear PosX="201" PosY="12" Type="Rescale" Name="Rescale1" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="320" TouchPadVerticalPos="320240" PosX="31" PosY="579" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="320" Horizontal_lower_Bound="320" Vertical_lower_Bound="240" Vertical_higher_Bound="240" />
+        </Gear>
+        <Gear PosX="9" PosY="405" Type="Slider" SliderPos="255" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="249" PosY="430" Type="VideoMix" Name="VideoMix3" >
+            <Properties/>
+        </Gear>
+        <Gear ListBoxPos="0" PosX="251" PosY="534" Type="ListBox" Name="ListBox3" >
+            <Properties Number_of_elements="21" Labels_of_elements="Blend,Shade,Darken,Lighten,Hue only,Saturation only,Value only,Color only,Multiply,Divide,Screen,Overlay,Dodge,Burn,Hardlight,Softlight,Grain extract,Grain merge,Add,Subtract,Difference" />
+        </Gear>
+        <Gear PosX="592" PosY="19" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="139" PosY="143" Type="Rescale" Name="Rescale2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="250" PosY="364" Type="Slider" SliderPos="4.87805" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="500" PosY="597" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="323" PosY="653" Type="Slider" SliderPos="-3.78049" Name="Slider5" >
+            <Properties Lower_Bound="-10" Higher_Bound="0" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="Rescale1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoMix1" GearB="VideoMix2" Input="ImgA" Output="ImgO" />
+        <Connection GearA="ListBox1" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="VideoMix2" GearB="ColorAdjust2" Input="ImgIN" Output="ImgO" />
+        <Connection GearA="VideoMix2" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
+        <Connection GearA="ListBox2" GearB="VideoMix2" Input="MixFunc" Output="Value" />
+        <Connection GearA="ColorAdjust2" GearB="VideoMix3" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="Slider3" GearB="ColorAdjust2" Input="Green" Output="Value" />
+        <Connection GearA="Slider3" GearB="ColorAdjust2" Input="Blue" Output="Value" />
+        <Connection GearA="Slider1" GearB="ColorAdjust2" Input="Red" Output="Value" />
+        <Connection GearA="VideoSource2" GearB="Rescale2" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Rescale1" GearB="VideoMix3" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="TouchPad1" GearB="Rescale1" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="Rescale2" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="Rescale1" Input="Height" Output="VValue" />
+        <Connection GearA="TouchPad1" GearB="Rescale2" Input="Height" Output="VValue" />
+        <Connection GearA="Slider2" GearB="VideoMix3" Input="ArgA" Output="Value" />
+        <Connection GearA="ListBox3" GearB="VideoMix3" Input="MixFunc" Output="Value" />
+        <Connection GearA="Rescale2" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Rescale2" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Rescale2" GearB="VideoMix2" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="VideoDelay1" GearB="VideoMix1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="Slider5" GearB="VideoDelay1" Input="Delay" Output="Value" />
+    </Connections>
+</Schema>

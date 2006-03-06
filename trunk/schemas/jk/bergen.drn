@@ -1,0 +1,254 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="800" PosY="132" Type="Vectorial2Raster" Name="Vectorial2Raster.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="xoff" Exposed="0" />
+                    <Plug Name="yoff" Exposed="0" />
+                    <Plug Name="VecIN" Exposed="0" />
+                    <Plug Name="BackG" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="470" PosY="128" Type="SVGLoader" Name="SVGLoader.1" >
+                <Properties Filename="/home/bek/drone/schemas/jk/map_bergen_julien.svg" />
+                <Plugs>
+                    <Plug Name="VecOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="828" PosY="477" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" YPos="" XPos="" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="642" PosY="128" Type="VecAffineTrans" Name="VecAffineTrans.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VecOUT" Exposed="0" />
+                    <Plug Name="VecIn" Exposed="0" />
+                    <Plug Name="x" Exposed="0" />
+                    <Plug Name="y" Exposed="0" />
+                    <Plug Name="scale" Exposed="0" />
+                    <Plug Name="rotat" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="28" PosY="33" Type="TA_TravelAgent" Name="TA_TravelAgent.1" >
+                <Properties Filename="/home/bek/drone/src/exp/piksel05/data/data.xml" />
+                <Plugs>
+                    <Plug Name="GridIn" Exposed="0" />
+                    <Plug Name="E-Decay" Exposed="0" />
+                    <Plug Name="E-Consum" Exposed="0" />
+                    <Plug Name="E-Grid" Exposed="0" />
+                    <Plug Name="MoveOK" Exposed="0" />
+                    <Plug Name="DataOut" Exposed="0" />
+                    <Plug Name="CurrSpot" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="185" PosY="28" Type="TA_MapNavigator" Name="TA_MapNavigator.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="DATA" Exposed="0" />
+                    <Plug Name="HOTSPOT" Exposed="0" />
+                    <Plug Name="SCALE" Exposed="0" />
+                    <Plug Name="XOFF" Exposed="0" />
+                    <Plug Name="YOFF" Exposed="0" />
+                    <Plug Name="ROTATE" Exposed="0" />
+                    <Plug Name="RAX" Exposed="0" />
+                    <Plug Name="RAY" Exposed="0" />
+                    <Plug Name="REACHED" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="476" PosY="235" Type="AffineTransform" Name="AffineTransform.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In" Exposed="0" />
+                    <Plug Name="Scale" Exposed="0" />
+                    <Plug Name="Offset" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="292" PosY="220" Type="Slider" SliderPos="0" Name="Slider.3" >
+                <Properties Lower_Bound="-10" Higher_Bound="10" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="475" PosY="326" Type="AffineTransform" Name="AffineTransform.2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In" Exposed="0" />
+                    <Plug Name="Scale" Exposed="0" />
+                    <Plug Name="Offset" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="338" PosY="345" Type="Slider" SliderPos="-0.219512" Name="Slider.4" >
+                <Properties Lower_Bound="-3" Higher_Bound="3" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="338" PosY="406" Type="Slider" SliderPos="-102.439" Name="Slider.1" >
+                <Properties Lower_Bound="-600" Higher_Bound="600" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="342" PosY="283" Type="Slider" SliderPos="-43.9025" Name="Slider.2" >
+                <Properties Lower_Bound="-900" Higher_Bound="900" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="473" PosY="21" Type="ValueMix" Name="ValueMix.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In1" Exposed="0" />
+                    <Plug Name="In2" Exposed="0" />
+                    <Plug Name="Blend" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="324" PosY="26" Type="Slider" SliderPos="0.256098" Name="Slider.5" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="497" PosY="437" Type="Slider" SliderPos="621.329" Name="Slider.6" >
+                <Properties Lower_Bound="0" Higher_Bound="999" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="497" PosY="495" Type="Slider" SliderPos="400" Name="Slider.7" >
+                <Properties Lower_Bound="0" Higher_Bound="800" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="29" PosY="173" Type="PushButton" Name="PushButton.1" >
+                <Properties On_Value="1" Midi_Note="0" One_Shot="1" Off_Value="0" Midi_Channel="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="625" PosY="288" Type="Slider" SliderPos="0" Name="Slider.8" >
+                <Properties Lower_Bound="-100" Higher_Bound="100" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="629" PosY="344" Type="Slider" SliderPos="0" Name="Slider.9" >
+                <Properties Lower_Bound="-100" Higher_Bound="100" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="790" PosY="28" Type="AffineTransform" Name="AffineTransform.3" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In" Exposed="0" />
+                    <Plug Name="Scale" Exposed="0" />
+                    <Plug Name="Offset" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="620" PosY="20" Type="Slider" SliderPos="0.164634" Name="Slider.10" >
+                <Properties Lower_Bound="0" Higher_Bound=".5" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="824" PosY="246" Type="TA_MapInfoLayer" Name="TA_MapInfoLayer.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="DATA" Exposed="0" />
+                    <Plug Name="VecIn" Exposed="0" />
+                    <Plug Name="RAX" Exposed="0" />
+                    <Plug Name="RAY" Exposed="0" />
+                    <Plug Name="XOff" Exposed="0" />
+                    <Plug Name="YOff" Exposed="0" />
+                    <Plug Name="Scale" Exposed="0" />
+                    <Plug Name="Radius" Exposed="0" />
+                    <Plug Name="Magn" Exposed="0" />
+                    <Plug Name="ImgIn" Exposed="0" />
+                    <Plug Name="ImgOut" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="636" PosY="496" Type="Slider" SliderPos="0.292683" Name="Slider.11" >
+                <Properties Lower_Bound="0" Higher_Bound=".3" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="663" PosY="620" Type="Slider" SliderPos="19.5122" Name="Slider.12" >
+                <Properties Lower_Bound="0" Higher_Bound="800" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="105" PosY="192" Type="Slider" SliderPos="13.8049" Name="Slider.13" >
+                <Properties Lower_Bound="1" Higher_Bound="51" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="660" PosY="570" Type="Slider" SliderPos="7.07317" Name="Slider.14" >
+                <Properties Lower_Bound="0" Higher_Bound="20" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="640" PosY="416" Type="EmptyImage" Name="EmptyImage.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="xsize" Exposed="0" />
+                    <Plug Name="ysize" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="Vectorial2Raster.1" GearB="TA_MapInfoLayer.1" Input="ImgIn" Output="ImgOUT" />
+            <Connection GearA="SVGLoader.1" GearB="VecAffineTrans.1" Input="VecIn" Output="VecOUT" />
+            <Connection GearA="VecAffineTrans.1" GearB="TA_MapInfoLayer.1" Input="VecIn" Output="VecOUT" />
+            <Connection GearA="VecAffineTrans.1" GearB="Vectorial2Raster.1" Input="VecIN" Output="VecOUT" />
+            <Connection GearA="TA_TravelAgent.1" GearB="TA_MapNavigator.1" Input="DATA" Output="DataOut" />
+            <Connection GearA="TA_TravelAgent.1" GearB="TA_MapInfoLayer.1" Input="DATA" Output="DataOut" />
+            <Connection GearA="TA_MapNavigator.1" GearB="ValueMix.1" Input="In1" Output="SCALE" />
+            <Connection GearA="TA_MapNavigator.1" GearB="AffineTransform.1" Input="In" Output="XOFF" />
+            <Connection GearA="TA_MapNavigator.1" GearB="TA_MapInfoLayer.1" Input="RAX" Output="XOFF" />
+            <Connection GearA="TA_MapNavigator.1" GearB="AffineTransform.2" Input="In" Output="YOFF" />
+            <Connection GearA="TA_MapNavigator.1" GearB="TA_MapInfoLayer.1" Input="RAY" Output="YOFF" />
+            <Connection GearA="AffineTransform.1" GearB="VecAffineTrans.1" Input="x" Output="Out" />
+            <Connection GearA="Slider.3" GearB="AffineTransform.1" Input="Scale" Output="Value" />
+            <Connection GearA="AffineTransform.2" GearB="VecAffineTrans.1" Input="y" Output="Out" />
+            <Connection GearA="Slider.4" GearB="AffineTransform.2" Input="Scale" Output="Value" />
+            <Connection GearA="Slider.1" GearB="AffineTransform.2" Input="Offset" Output="Value" />
+            <Connection GearA="Slider.2" GearB="AffineTransform.1" Input="Offset" Output="Value" />
+            <Connection GearA="ValueMix.1" GearB="ValueMix.1" Input="In2" Output="Out" />
+            <Connection GearA="ValueMix.1" GearB="AffineTransform.3" Input="In" Output="Out" />
+            <Connection GearA="Slider.5" GearB="ValueMix.1" Input="Blend" Output="Value" />
+            <Connection GearA="Slider.6" GearB="EmptyImage.1" Input="xsize" Output="Value" />
+            <Connection GearA="Slider.7" GearB="EmptyImage.1" Input="ysize" Output="Value" />
+            <Connection GearA="PushButton.1" GearB="TA_TravelAgent.1" Input="MoveOK" Output="Value" />
+            <Connection GearA="Slider.8" GearB="Vectorial2Raster.1" Input="xoff" Output="Value" />
+            <Connection GearA="Slider.8" GearB="TA_MapInfoLayer.1" Input="XOff" Output="Value" />
+            <Connection GearA="Slider.9" GearB="Vectorial2Raster.1" Input="yoff" Output="Value" />
+            <Connection GearA="Slider.9" GearB="TA_MapInfoLayer.1" Input="YOff" Output="Value" />
+            <Connection GearA="AffineTransform.3" GearB="VecAffineTrans.1" Input="scale" Output="Out" />
+            <Connection GearA="AffineTransform.3" GearB="TA_MapInfoLayer.1" Input="Scale" Output="Out" />
+            <Connection GearA="Slider.10" GearB="AffineTransform.3" Input="Scale" Output="Value" />
+            <Connection GearA="TA_MapInfoLayer.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
+            <Connection GearA="Slider.11" GearB="VecAffineTrans.1" Input="rotat" Output="Value" />
+            <Connection GearA="Slider.12" GearB="TA_MapInfoLayer.1" Input="Magn" Output="Value" />
+            <Connection GearA="Slider.13" GearB="TA_MapNavigator.1" Input="HOTSPOT" Output="Value" />
+            <Connection GearA="Slider.14" GearB="TA_MapInfoLayer.1" Input="Radius" Output="Value" />
+            <Connection GearA="EmptyImage.1" GearB="Vectorial2Raster.1" Input="BackG" Output="ImgOUT" />
+        </Connections>
+    </Schema>
+</Project>

@@ -1,0 +1,164 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="150" PosY="61" Type="TA_TestGridPosition" Name="TA_TestGridPosition.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="X0" Exposed="0" />
+                    <Plug Name="Y0" Exposed="0" />
+                    <Plug Name="X1" Exposed="0" />
+                    <Plug Name="Y1" Exposed="0" />
+                    <Plug Name="DataOut" Exposed="0" />
+                    <Plug Name="RGBAOut" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="20" PosY="63" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="1.5" Horizontal_lower_Bound="-0.5" Vertical_lower_Bound="-0.5" Vertical_higher_Bound="1.5" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="158" PosY="267" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" YPos="0" XPos="0" FullScreen="1" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="151" PosY="172" Type="Rescale" Name="Rescale.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="24" PosY="326" Type="Slider" SliderPos="63.3781" Name="Slider.1" >
+                <Properties Lower_Bound="1" Higher_Bound="1024" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="289" PosY="60" Type="TA_TravelAgent" Name="TA_TravelAgent.1" >
+                <Properties Filename="/home/bek/drone/src/exp/piksel05/data/data_example.xml" />
+                <Plugs>
+                    <Plug Name="GridIn" Exposed="0" />
+                    <Plug Name="E-Decay" Exposed="0" />
+                    <Plug Name="E-Consum" Exposed="0" />
+                    <Plug Name="E-Grid" Exposed="0" />
+                    <Plug Name="MoveOK" Exposed="0" />
+                    <Plug Name="DataOut" Exposed="0" />
+                    <Plug Name="CurrSpot" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="165" PosY="415" Type="Slider" SliderPos="1" Name="Slider.2" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="166" PosY="473" Type="Slider" SliderPos="1" Name="Slider.4" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="425" PosY="74" Type="TA_ClipSelector" Name="TA_ClipSelector.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="DATA" Exposed="0" />
+                    <Plug Name="HOTSPOT" Exposed="0" />
+                    <Plug Name="CURR" Exposed="0" />
+                    <Plug Name="PREV" Exposed="0" />
+                    <Plug Name="CHANGED" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="580" PosY="46" Type="VideoSource" Name="VideoSource.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                    <Plug Name="Movie" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="585" PosY="138" Type="VideoOutput" Name="VideoOutput.2" >
+                <Properties YRes="240" XRes="352" YPos="0" XPos="1280" FullScreen="1" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="341" PosY="500" Type="Slider" SliderPos="255" Name="Slider.7" >
+                <Properties Lower_Bound="255" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="6" PosY="222" Type="Slider" SliderPos="1" Name="Slider.5" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="723" PosY="407" Type="OscOutput" Name="OscOutput.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Port" Exposed="0" />
+                    <Plug Name="IP" Exposed="0" />
+                    <Plug Name="Osc In" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="569" PosY="385" Type="OscMessage" Name="OscMessage.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Path" Exposed="0" />
+                    <Plug Name="Args" Exposed="0" />
+                    <Plug Name="Osc Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="396" PosY="340" Type="PackList" Name="PackList.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Str1" Exposed="0" />
+                    <Plug Name="ListI" Exposed="0" />
+                    <Plug Name="ListO" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="531" PosY="583" Type="StringSource" Name="StringSource.1" >
+                <Properties Source="" />
+                <Plugs>
+                    <Plug Name="str" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="525" PosY="519" Type="StringSource" Name="StringSource.2" >
+                <Properties Source="" />
+                <Plugs>
+                    <Plug Name="str" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="TA_TestGridPosition.1" GearB="TA_TravelAgent.1" Input="GridIn" Output="DataOut" />
+            <Connection GearA="TA_TestGridPosition.1" GearB="Rescale.1" Input="ImgIN" Output="RGBAOut" />
+            <Connection GearA="TouchPad.1" GearB="TA_TestGridPosition.1" Input="X0" Output="HValue" />
+            <Connection GearA="TouchPad.1" GearB="TA_TestGridPosition.1" Input="Y0" Output="VValue" />
+            <Connection GearA="Rescale.1" GearB="VideoOutput.1" Input="IN" Output="ImgOUT" />
+            <Connection GearA="Slider.1" GearB="Rescale.1" Input="Width" Output="Value" />
+            <Connection GearA="Slider.1" GearB="Rescale.1" Input="Height" Output="Value" />
+            <Connection GearA="TA_TravelAgent.1" GearB="TA_ClipSelector.1" Input="DATA" Output="DataOut" />
+            <Connection GearA="TA_TravelAgent.1" GearB="TA_ClipSelector.1" Input="HOTSPOT" Output="CurrSpot" />
+            <Connection GearA="TA_TravelAgent.1" GearB="PackList.1" Input="Str1" Output="CurrSpot" />
+            <Connection GearA="Slider.2" GearB="TA_TravelAgent.1" Input="E-Consum" Output="Value" />
+            <Connection GearA="Slider.4" GearB="TA_TravelAgent.1" Input="E-Grid" Output="Value" />
+            <Connection GearA="TA_ClipSelector.1" GearB="VideoSource.1" Input="Movie" Output="CURR" />
+            <Connection GearA="VideoSource.1" GearB="VideoOutput.2" Input="IN" Output="ImgOut" />
+            <Connection GearA="Slider.5" GearB="TA_TravelAgent.1" Input="MoveOK" Output="Value" />
+            <Connection GearA="OscMessage.1" GearB="OscOutput.1" Input="Osc In" Output="Osc Out" />
+            <Connection GearA="PackList.1" GearB="OscMessage.1" Input="Args" Output="ListO" />
+            <Connection GearA="StringSource.1" GearB="OscOutput.1" Input="IP" Output="str" />
+            <Connection GearA="StringSource.2" GearB="OscOutput.1" Input="Port" Output="str" />
+        </Connections>
+    </Schema>
+</Project>

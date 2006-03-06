@@ -1,0 +1,107 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="100" PosY="386" Type="VideoSource" Name="VideoSource1" >
+                <Properties Filename="/home/foogy/movies/reasons_why_2.mpeg" />
+            </Gear>
+            <Gear PosX="967" PosY="387" Type="VideoOutput" Name="VideoOutput1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+            </Gear>
+            <Gear PosX="314" PosY="384" Type="VideoDelay" Name="VideoDelay1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="308" PosY="636" Type="Enveloppe" Name="Enveloppe1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="140" PosY="636" Type="AudioInput" Name="AudioInput1" >
+                <Properties FramesPerBuffer="512" NbBuffers="8" />
+            </Gear>
+            <Gear PosX="608" PosY="638" Type="AffineTransform" Name="AffineTransform1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="455" PosY="637" Type="SignalStat" Name="SignalStat1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="463" PosY="713" Type="Slider" SliderPos="-182.927" Name="Slider1" >
+                <Properties Lower_Bound="-500" Higher_Bound="0" />
+            </Gear>
+            <Gear PosX="465" PosY="771" Type="Slider" SliderPos="-2.43903" Name="Slider2" >
+                <Properties Lower_Bound="-200" Higher_Bound="0" />
+            </Gear>
+            <Gear PosX="670" PosY="369" Type="ClusteredDither" Name="ClusteredDither1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="416" PosY="262" Type="Contrast" Name="Contrast1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="610" PosY="543" Type="AffineTransform" Name="AffineTransform2" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="471" PosY="503" Type="Slider" SliderPos="8658.54" Name="Slider3" >
+                <Properties Lower_Bound="0" Higher_Bound="10000" />
+            </Gear>
+            <Gear PosX="449" PosY="582" Type="Slider" SliderPos="-487.805" Name="Slider4" >
+                <Properties Lower_Bound="-1000" Higher_Bound="1000" />
+            </Gear>
+            <Gear PosX="636" PosY="167" Type="Slider" SliderPos="54.1707" Name="Slider5" >
+                <Properties Lower_Bound="2" Higher_Bound="64" />
+            </Gear>
+            <Gear ListBoxPos="3" PosX="639" PosY="233" Type="ListBox" Name="ListBox1" >
+                <Properties Number_of_elements="4" Labels_of_elements="Square,Diamond,Round,Line" />
+            </Gear>
+            <Gear PosX="153" PosY="775" Type="Slider" SliderPos="0.0365854" Name="Slider6" >
+                <Properties Lower_Bound="0" Higher_Bound="3" />
+            </Gear>
+            <Gear PosX="793" PosY="597" Type="Slider" SliderPos="180" Name="Slider7" >
+                <Properties Lower_Bound="0" Higher_Bound="360" />
+            </Gear>
+            <Gear PosX="862" PosY="503" Type="Slider" SliderPos="1" Name="Slider8" >
+                <Properties Lower_Bound="0" Higher_Bound="100" />
+            </Gear>
+            <Gear PosX="881" PosY="700" Type="Oscilloscope" Name="Oscilloscope1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="793" PosY="852" Type="Slider" SliderPos="10" Name="Slider9" >
+                <Properties Lower_Bound="0" Higher_Bound="10" />
+            </Gear>
+            <Gear PosX="838" PosY="232" Type="Saturation" Name="Saturation1" >
+                <Properties/>
+            </Gear>
+            <Gear PosX="839" PosY="316" Type="Slider" SliderPos="0.121951" Name="Slider10" >
+                <Properties Lower_Bound="0" Higher_Bound="10" />
+            </Gear>
+            <Gear PosX="200" PosY="517" Type="PushButton" Name="PushButton1" >
+                <Properties On_Value="0" One_Shot="0" Off_Value="1" />
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoSource1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="VideoDelay1" GearB="Contrast1" Input="ImgIN" Output="ImgOUT" />
+            <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
+            <Connection GearA="Enveloppe1" GearB="Oscilloscope1" Input="In" Output="Out" />
+            <Connection GearA="AudioInput1" GearB="Enveloppe1" Input="In" Output="Left" />
+            <Connection GearA="AffineTransform1" GearB="VideoDelay1" Input="Delay" Output="Out" />
+            <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
+            <Connection GearA="SignalStat1" GearB="AffineTransform2" Input="In" Output="Out" />
+            <Connection GearA="Slider1" GearB="AffineTransform1" Input="Scale" Output="Value" />
+            <Connection GearA="Slider2" GearB="AffineTransform1" Input="Offset" Output="Value" />
+            <Connection GearA="ClusteredDither1" GearB="Saturation1" Input="ImgIN" Output="ImgOUT" />
+            <Connection GearA="Contrast1" GearB="ClusteredDither1" Input="ImgIN" Output="ImgOUT" />
+            <Connection GearA="AffineTransform2" GearB="Contrast1" Input="Amount" Output="Out" />
+            <Connection GearA="Slider3" GearB="AffineTransform2" Input="Scale" Output="Value" />
+            <Connection GearA="Slider4" GearB="AffineTransform2" Input="Offset" Output="Value" />
+            <Connection GearA="Slider5" GearB="ClusteredDither1" Input="ClusterSize" Output="Value" />
+            <Connection GearA="ListBox1" GearB="ClusteredDither1" Input="SpotType" Output="Value" />
+            <Connection GearA="Slider6" GearB="Enveloppe1" Input="Rel" Output="Value" />
+            <Connection GearA="Slider6" GearB="Enveloppe1" Input="Att" Output="Value" />
+            <Connection GearA="Slider7" GearB="ClusteredDither1" Input="AngleRed" Output="Value" />
+            <Connection GearA="Slider7" GearB="ClusteredDither1" Input="AngleGreen" Output="Value" />
+            <Connection GearA="Slider7" GearB="ClusteredDither1" Input="AngleBlue" Output="Value" />
+            <Connection GearA="Slider9" GearB="Oscilloscope1" Input="ZoomY" Output="Value" />
+            <Connection GearA="Saturation1" GearB="VideoOutput1" Input="IN" Output="ImgOUT" />
+            <Connection GearA="Slider10" GearB="Saturation1" Input="Amount" Output="Value" />
+            <Connection GearA="PushButton1" GearB="VideoDelay1" Input="Rec" Output="Value" />
+        </Connections>
+    </Schema>
+</Project>

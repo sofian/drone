@@ -1,0 +1,119 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="722" PosY="253" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="346" PosY="405" Type="VideoSource" Name="VideoSource.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                    <Plug Name="Movie" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="-1" PosY="130" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="-300" Vertical_lower_Bound="-200" Vertical_higher_Bound="288" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="165" PosY="69" Type="AreaCreate" Name="AreaCreate.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="X" Exposed="0" />
+                    <Plug Name="Y" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                    <Plug Name="Area" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="366" PosY="112" Type="AreaVideoSelect" Name="AreaVideoSelect.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoOut" Exposed="0" />
+                    <Plug Name="Select" Exposed="0" />
+                    <Plug Name="Video" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="160" PosY="520" Type="StringSource" Name="StringSource.1" >
+                <Properties Source="/Users/tats/Movies/nivea_visage_3steps.mpg" />
+                <Plugs>
+                    <Plug Name="str" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="33" PosY="412" Type="TouchPad" Name="TouchPad.3" >
+                <Properties Horizontal_higher_Bound="32" Horizontal_lower_Bound="32" Vertical_lower_Bound="240" Vertical_higher_Bound="240" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="11" PosY="280" Type="Slider" SliderPos="108.293" Name="Slider.1" >
+                <Properties Lower_Bound="0" Higher_Bound="240" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="723" PosY="418" Type="VideoOutput" Name="VideoOutput.2" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="532" PosY="369" Type="AreaVideoReplace" Name="AreaVideoReplace.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoOut" Exposed="0" />
+                    <Plug Name="ReplaceArea" Exposed="0" />
+                    <Plug Name="ReplaceVideo" Exposed="0" />
+                    <Plug Name="VideoIn" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="545" PosY="129" Type="Invert" Name="Invert.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="558" PosY="14" Type="Gamma" Name="Gamma.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Amount" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="393" PosY="29" Type="Slider" SliderPos="5.2439" Name="Slider.2" >
+                <Properties Lower_Bound="0" Higher_Bound="10" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoSource.1" GearB="AreaVideoSelect.1" Input="Video" Output="ImgOut" />
+            <Connection GearA="VideoSource.1" GearB="AreaVideoReplace.1" Input="VideoIn" Output="ImgOut" />
+            <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="X" Output="HValue" />
+            <Connection GearA="TouchPad.1" GearB="AreaCreate.1" Input="Y" Output="VValue" />
+            <Connection GearA="AreaCreate.1" GearB="AreaVideoSelect.1" Input="Select" Output="Area" />
+            <Connection GearA="AreaCreate.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="Area" />
+            <Connection GearA="AreaVideoSelect.1" GearB="Invert.1" Input="ImgIN" Output="VideoOut" />
+            <Connection GearA="AreaVideoSelect.1" GearB="Gamma.1" Input="ImgIN" Output="VideoOut" />
+            <Connection GearA="AreaVideoSelect.1" GearB="VideoOutput.2" Input="IN" Output="VideoOut" />
+            <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
+            <Connection GearA="Slider.1" GearB="AreaCreate.1" Input="Width" Output="Value" />
+            <Connection GearA="Slider.1" GearB="AreaCreate.1" Input="Height" Output="Value" />
+            <Connection GearA="AreaVideoReplace.1" GearB="VideoOutput.1" Input="IN" Output="VideoOut" />
+            <Connection GearA="Invert.1" GearB="AreaVideoReplace.1" Input="ReplaceVideo" Output="ImgOUT" />
+            <Connection GearA="Slider.2" GearB="Gamma.1" Input="Amount" Output="Value" />
+        </Connections>
+    </Schema>
+</Project>

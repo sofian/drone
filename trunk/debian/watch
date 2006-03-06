@@ -1,0 +1,4 @@
+# see the 'uscan' command
+# Site		Directory		Pattern			Version	Script
+version=2
+http://drone.ws/index.php?page=download	drone-(.*)\.tar\.gz
