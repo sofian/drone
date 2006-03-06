@@ -308,7 +308,7 @@ void MainWindow::slotMenuViewSmallGears()
 {
 	_showSmallGears=!_showSmallGears;
 	_viewMenu->setItemChecked(_menuShowSmallGearsId, _showSmallGears);
-	_mainSchemaGui->showSmallGears(_showSmallGears);
+	//	_mainSchemaGui->showSmallGears(_showSmallGears);
 }
 
 
