@@ -15,7 +15,7 @@ DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types ../contrib/frei0r/spec/
 
 #mac
-macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
+macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore -lguile
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:TARGET = ../../drone.app/Contents/MacOS/drone
@@ -24,7 +24,7 @@ QMAKE_INFO_PLIST = Info.plist
 
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
-unix:!macx:LIBS += -L../../lib -ldroneCore
+unix:!macx:LIBS += -L../../lib -ldroneCore -lguile
 unix:!macx:TARGET = ../../drone
 
 
@@ -32,6 +32,7 @@ HEADERS += config.h \
 GearListMenu.h \
 GearListView.h \
 GearPropertiesDialog.h \
+GuileBindings.h \
 MediaPoolIconView.h \
 MediaPoolItem.h \
 MainWindow.h \
@@ -57,6 +58,7 @@ SOURCES += drone.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
 GearPropertiesDialog.cpp \
+GuileBindings.cpp \
 MainWindow.cpp \
 MediaPoolIconView.cpp \
 MediaPoolItem.cpp \

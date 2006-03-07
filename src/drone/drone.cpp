@@ -21,6 +21,7 @@
 #include <qsplashscreen.h>
 #include "Timing.h"
 #include "DroneCore.h"
+#include "GuileBindings.h"
 #include "splash.xpm"
 
 #include "MainWindow.h"
@@ -30,40 +31,22 @@
 
 #include <qsettings.h>
 
+#include <guile/gh.h>
+
 QSettings globalSettings;
 
+void innerMain(int argc, char** argv)
+{
+  gh_repl(argc, argv);
+}
 
 int main(int argc, char** argv)
 {
-  QApplication qtApp(argc, argv);
-  QApplication::setGlobalMouseTracking(TRUE);
-      
-  QSplashScreen splash(splash_xpm);
-  splash.show();
+  gh_enter(argc, argv, GuileBindings::init);
 
-  //init the drone core
-	DroneCore::init();
-	
-  MainWindow mainWindow;
-  mainWindow.adjustSize();
-  qtApp.setMainWidget(&mainWindow);
-
-  splash.hide();
-  mainWindow.show();
-  
-  if(argc>1)
-  {
-    if(argc==2)
-      mainWindow.load(argv[1]);
-    else 
-      error("Usage : drone [schema.drn]");
-  }
-
-
-  qtApp.exec();
+  GuileBindings::release();
+  //qtApp.exec();
 
   //release the core
-	DroneCore::release();
-  
 }
 

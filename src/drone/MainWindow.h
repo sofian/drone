@@ -31,6 +31,8 @@
 #include "Engine.h"
 #include "Project.h"
 
+#include "GuileBindings.h"
+
 class SchemaGui;
 class MetaGearEditor;
 class MetaGear;
@@ -38,7 +40,10 @@ class MetaGear;
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
-  public:
+
+  friend class GuileBindings;
+  
+public:
 
   //! loads the specified schema file
   void load(std::string filename);
