@@ -19,7 +19,8 @@ void GuileBindings::init(int argc, char **argv)
 
   _mainWindow->show();
 
-  _mainSchema = _mainWindow->_metaGearEditor->schemaGui()->getSchema();
+  _mainSchema = _mainWindow->_engine->mainMetaGear()->getInternalSchema();
+  //_mainSchema = _mainWindow->_metaGearEditor->schemaGui()->getSchema();
   registerProcedures();
 
   gh_repl(argc, argv);
@@ -46,11 +47,17 @@ void GuileBindings::registerProcedures()
   gh_new_procedure0_1("gear-plug-outs",  gearPlugOuts);
   gh_new_procedure0_1("plug-name",       plugName);
   gh_new_procedure0_2("connect",         connect);
+  //  gh_new_procedure0_0("all-connections", allConnections);
 }
 
+#include "Schema.h"
 SCM GuileBindings::startPlaying()
 {
   _mainWindow->slotPlay(true);
+  _mainSchema->unlock();
+  std::list<Schema::Connection*> con;
+  _mainSchema->getAllConnections(con);
+  std::cout << "num connections: " << con.size() << std::endl;
   _qtApp->exec();
   return SCM_UNSPECIFIED;
 }
@@ -105,7 +112,8 @@ SCM GuileBindings::makeGear(SCM s_type, SCM s_properties)
 	    s_properties = SCM_CDR(s_properties);
     }
   }
-  
+
+  newGear->updateSettings();
   return SCM_MAKINUM((int)newGear);
 }
 
@@ -170,3 +178,4 @@ SCM GuileBindings::connect(SCM s_plugIdA, SCM s_plugIdB)
   _mainSchema->connect(plugA, plugB);
   return SCM_UNSPECIFIED;
 }
+

@@ -6,6 +6,7 @@
 #include "MainWindow.h"
 #include "SchemaEditor.h"
 #include "MetaGearEditor.h"
+#include "MetaGear.h"
 #include "Engine.h"
 #include "Gear.h"
 
@@ -42,7 +43,8 @@ class GuileBindings {
 
   static SCM plugName(SCM s_plugId);
   static SCM connect(SCM s_plugIdA, SCM s_plugIdB);
-
+  //static SCM allConnections();
+  
   //  static SCM settingName(SCM s_settingId);
 /*   static SCM makeConnection */
 /*   static SCM connect(SCM s_name);//, SCM s_posX, SCM s_posY); */

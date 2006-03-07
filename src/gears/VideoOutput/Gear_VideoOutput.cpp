@@ -140,7 +140,7 @@ void Gear_VideoOutput::internalPrePlay()
 }
 
 void Gear_VideoOutput::runVideo()
-{       
+{
   if (!_VIDEO_IN->connected() || _videoOutput==NULL)
     return;
 

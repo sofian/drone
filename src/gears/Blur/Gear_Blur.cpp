@@ -55,7 +55,7 @@ Gear_Blur::~Gear_Blur()
 }
 
 void Gear_Blur::runVideo()
-{ 
+{
   _image = _VIDEO_IN->type();
   
   ASSERT_ERROR(_image);

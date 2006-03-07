@@ -101,7 +101,6 @@ void Gear_VideoSource::freeResources()
 
 bool Gear_VideoSource::loadMovie(std::string filename)
 {
-
   std::cout << "opening movie : " << filename << std::endl;
 
   //free previously allocated structures
@@ -189,7 +188,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 void Gear_VideoSource::runVideo()
 {
   int frameFinished=0;
-			
+
 	if (_currentMovie != _MOVIE_IN->type()->value())
 	{
 		_currentMovie=_MOVIE_IN->type()->value();
