@@ -3,17 +3,17 @@
 
 #include "Gear.h"
 #include "Schema.h"
-#include "ISchemaEventListener.h"
-#include <map>
 
-class MetaGear : public Gear, public ISchemaEventListener
+#include <QMap>
+
+class MetaGear : public Gear
 {
 public:  
-  MetaGear(Schema *parentSchema, QString name, QString uniqueName);
+  MetaGear();
   virtual ~MetaGear();
   virtual Schema* getInternalSchema(){return _schema;}
   
-  GearKind kind() const {return METAGEAR;}
+//  GearKind kind() const {return METAGEAR;}
 
   static const QString TYPE;
   static const QString EXTENSION;
@@ -24,10 +24,6 @@ public:
   void createPlugs();
 
   QString fullPath(){return _fullPath;}
-  
-  void onGearAdded(Schema *schema, Gear *gear);
-  void onGearRemoved(Schema *schema, Gear *gear);
-
   
 protected:
   
@@ -41,7 +37,7 @@ protected:
 
   static const QColor METAGEAR_COLOR;
 	
-  std::map<AbstractPlug*, AbstractPlug*> _plugMapping;//!mapping between our exposed cloned plug and the real internal plug
+  QMap<AbstractPlug*, AbstractPlug*> _plugMapping;//!mapping between our exposed cloned plug and the real internal plug
 };
 
 #endif

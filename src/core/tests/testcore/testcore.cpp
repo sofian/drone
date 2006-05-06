@@ -38,8 +38,8 @@ int main(int argc, char** argv)
 	
 
 //	RUNTEST(TestSchema);
-	RUNTEST(TestGearInfo);
+//	RUNTEST(TestGearInfo);
 
-//	RUNTEST(TestGearMaker);
+	RUNTEST(TestGearMaker);
 }
 

@@ -30,7 +30,7 @@
 class GearFrei0r : public Gear
 {
 public:
-  GearFrei0r(Schema *schema, QString uniqueName, void* handle);
+  GearFrei0r(void* handle);
   virtual ~GearFrei0r();
 
   void runVideo();  

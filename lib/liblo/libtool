@@ -66,13 +66,13 @@ fast_install=needless
 
 # The host system.
 host_alias=
-host=powerpc-apple-darwin8.3.0
-host_os=darwin8.3.0
+host=powerpc-apple-darwin8.4.0
+host_os=darwin8.4.0
 
 # The build system.
 build_alias=
-build=powerpc-apple-darwin8.3.0
-build_os=darwin8.3.0
+build=powerpc-apple-darwin8.4.0
+build_os=darwin8.4.0
 
 # An echo program that does not interpret backslashes.
 echo="echo"
@@ -248,7 +248,7 @@ deplibs_check_method="pass_all"
 file_magic_cmd="\$MAGIC_CMD"
 
 # Flag that allows shared libraries with undefined symbols to be built.
-allow_undefined_flag="\${wl}-flat_namespace \${wl}-undefined \${wl}suppress"
+allow_undefined_flag="\${wl}-undefined \${wl}dynamic_lookup"
 
 # Flag that forces no undefined symbols.
 no_undefined_flag=""
@@ -319,7 +319,7 @@ variables_saved_for_relink="PATH   GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
 link_all_deplibs=yes
 
 # Compile-time system search path for libraries
-sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../ /lib/powerpc-apple-darwin8/4.0.0/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/  /lib /usr/lib /usr/local/lib"
+sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../ /lib/powerpc-apple-darwin8/4.0.1/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.1/ /usr/lib/  /lib /usr/lib /usr/local/lib"
 
 # Run-time system search path for libraries
 sys_lib_dlsearch_path_spec="/usr/local/lib /lib /usr/lib"
@@ -6864,13 +6864,13 @@ fast_install=needless
 
 # The host system.
 host_alias=
-host=powerpc-apple-darwin8.3.0
-host_os=darwin8.3.0
+host=powerpc-apple-darwin8.4.0
+host_os=darwin8.4.0
 
 # The build system.
 build_alias=
-build=powerpc-apple-darwin8.3.0
-build_os=darwin8.3.0
+build=powerpc-apple-darwin8.4.0
+build_os=darwin8.4.0
 
 # An echo program that does not interpret backslashes.
 echo="echo"
@@ -7046,7 +7046,7 @@ deplibs_check_method="pass_all"
 file_magic_cmd="\$MAGIC_CMD"
 
 # Flag that allows shared libraries with undefined symbols to be built.
-allow_undefined_flag="\${wl}-flat_namespace \${wl}-undefined \${wl}suppress"
+allow_undefined_flag="\${wl}-undefined \${wl}dynamic_lookup"
 
 # Flag that forces no undefined symbols.
 no_undefined_flag=""
@@ -7117,7 +7117,7 @@ variables_saved_for_relink="PATH DYLD_LIBRARY_PATH  GCC_EXEC_PREFIX COMPILER_PAT
 link_all_deplibs=yes
 
 # Compile-time system search path for libraries
-sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../powerpc-apple-darwin8/4.0.0/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.0/../../../ /lib/powerpc-apple-darwin8/4.0.0/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.0/ /usr/lib/  /lib /usr/lib /usr/local/lib"
+sys_lib_search_path_spec=" /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../../powerpc-apple-darwin8/lib/powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../../powerpc-apple-darwin8/lib/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../powerpc-apple-darwin8/4.0.1/ /usr/lib/gcc/powerpc-apple-darwin8/4.0.1/../../../ /lib/powerpc-apple-darwin8/4.0.1/ /lib/ /usr/lib/powerpc-apple-darwin8/4.0.1/ /usr/lib/  /lib /usr/lib /usr/local/lib"
 
 # Run-time system search path for libraries
 sys_lib_dlsearch_path_spec="/usr/local/lib /lib /usr/lib"

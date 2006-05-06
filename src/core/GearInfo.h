@@ -58,12 +58,10 @@ private:
 class GearInfo
 {
 public:
-  enum eGearPluginType {DRONE, FREI0R, META};
-
-	GearInfo(eGearPluginType pluginType, QFileInfo pluginFile);
+	GearInfo(QString pluginType, QFileInfo pluginFile);
 	virtual ~GearInfo(){}
 
-  eGearPluginType pluginType() const {return _pluginType;}
+  QString pluginType() const {return _pluginType;}
 	
   virtual bool save();
   bool load();	
@@ -71,7 +69,8 @@ public:
 	
 	virtual QFileInfo metaFile()=0;//! mangling for the metaInfo filename from the pluginfile
 	QString name(){return metaFile().baseName();}//! name of the gearInfo is taken from the metaFile name.
-	virtual Gear* createGearInstance(Schema *schema, QString uniqueName)=0;
+	QString fullName(){return pluginType() + ":" + name();}//! the type + ":" + the name
+	virtual Gear* createGearInstance()=0;
 
   bool setPlugInfo(const PlugInfo &plugInfo);
 	PlugInfo getPlugInfo(QString name) {return _plugsInfo.value(name);}
@@ -86,7 +85,7 @@ protected:
 
 	static const QString XML_TAGNAME;
 
-	eGearPluginType _pluginType;
+	QString _pluginType;
 	int _majorVersion;
   int _minorVersion;
   QString _author,_intro,_description;
@@ -101,10 +100,12 @@ protected:
 class GearInfoDrone : public GearInfo
 {
 public:
+	static const QString TYPENAME;
+	
 	GearInfoDrone(QFileInfo pluginFile);
 	~GearInfoDrone();				
 											
-	Gear* createGearInstance(Schema *schema, QString uniqueName);
+	Gear* createGearInstance();
 
 	QFileInfo metaFile()
 	{
@@ -114,7 +115,7 @@ public:
 protected:
 	bool bindPlugin();
 
-  Gear* (*_makeGear)(Schema *schema, QString uniqueName);	
+  Gear* (*_makeGear)();	
 	void* _handle;
 };
 
@@ -124,15 +125,17 @@ protected:
 class GearInfoFrei0r : public GearInfo
 {
 public:
+	static const QString TYPENAME;
+	
 	GearInfoFrei0r(QFileInfo pluginFile);
 	~GearInfoFrei0r();				
 												  
 	QFileInfo metaFile()
 	{
-		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName() + ".xml");
+		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName().mid(3) + ".xml");
 	}
 										
-	Gear* createGearInstance(Schema *schema, QString uniqueName);
+	Gear* createGearInstance();
 	bool bindPlugin();
 					
 protected:
@@ -149,15 +152,18 @@ protected:
 class GearInfoMeta : public GearInfo
 {
 public:
+	static const QString TYPENAME;
+	
 	GearInfoMeta(QFileInfo pluginFile);
 	~GearInfoMeta();				
 
 	QFileInfo metaFile()
 	{
+		//!!!! need to append a string like metainfo?
 		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName() + ".xml");
 	}
 
-	Gear* createGearInstance(Schema *schema, QString uniqueName);
+	Gear* createGearInstance();
 
 protected:
 	bool bindPlugin();

@@ -20,8 +20,8 @@
 #ifndef ENGINE_INCLUDED
 #define ENGINE_INCLUDED
 
-#include <list>
-#include <vector>
+#include <QList>
+#include <QObject>
 
 #include <pthread.h>
 
@@ -29,18 +29,17 @@
 #include "VideoInfo.h"
 #include "MathUtil.h"
 #include "error.h"
-#include "Schema.h"
-#include "ISchemaEventListener.h"
 #include <sys/time.h>
 
 
+class Schema;
 class Gear;
 class AbstractPlug;
 class QDomDocument;
 class QDomElement;
 class MetaGear;
 
-class Engine : public ISchemaEventListener
+class Engine : public QObject
 {
 public:
 
@@ -75,13 +74,13 @@ public:
   void debugStopPlay();
 #endif
 
-
-  //ISchemaEventListener Interface implementation
-  void onGearAdded(Schema *schema, Gear *gear);
-  void onGearRemoved(Schema *schema, Gear *gear);
-
   void setClipboardText(QString txt){_clipboard=txt;}
   QString getClipboardText(){return _clipboard;}
+
+private slots:
+  //Schema signals
+	void onGearAdded(Schema *schema, Gear *gear);
+  void onGearRemoved(Schema *schema, Gear *gear);
 
 protected:
 
@@ -103,7 +102,7 @@ private:
   
   //is sorted in processing order when _GraphSynched==true
   //only contain gears->ready()    
-  std::list<Gear*> _orderedGears;
+  QList<Gear*> _orderedGears;
 
   pthread_t _playThreadHandle;
 

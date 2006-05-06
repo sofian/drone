@@ -27,8 +27,8 @@
 
 #include "GearMaker.h"
 
-GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName, void* handle) : 
-  Gear(schema, "", uniqueName),
+GearFrei0r::GearFrei0r(void* handle) : 
+  Gear("Frei0r"),//exact type setted when the frei0r plugin is loaded 
 	_handle(handle),
   _instance(0),
   _sizeX(0),
@@ -47,7 +47,6 @@ GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName, void* handle) :
   //...
 
   const char* error = dlerror();
-  std::cerr << (int)error << std::endl;
   ASSERT_ERROR_MESSAGE(!error, "fail to find f0r_init");
 
   //now call init
@@ -120,7 +119,6 @@ GearFrei0r::GearFrei0r(Schema *schema, QString uniqueName, void* handle) :
       std::cerr << "Wrong parameter type " << param_info.type << std::endl;
     }
   }
-  std::cout << "init done" << std::endl; 
 }
 
 GearFrei0r::~GearFrei0r()

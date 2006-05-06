@@ -30,9 +30,6 @@
 #include <CFBundle.h>
 #endif
 
-GearMaker GearMaker::_registerMyself;
-
-QMap<QString, GearInfo*> *GearMaker::_registry;
 QString GearMaker::DRONEGEARS_SUBPATH = "drone";
 QString GearMaker::FREI0RGEARS_SUBPATH = "frei0r";
 QString GearMaker::METAGEARS_SUBPATH = "meta";
@@ -40,43 +37,69 @@ QString GearMaker::METAGEARS_SUBPATH = "meta";
 
 GearMaker::GearMaker()
 {
-  _registry = new QMap<QString, GearInfo*>();
 }
 
-GearMaker::~GearMaker()
+/**
+ * Singleton instanciation not Thread-safe
+*/ 
+GearMaker* GearMaker::instance()
 {
-  emptyRegistry();
-  delete _registry;
+		static GearMaker gearMaker;
+				
+		return &gearMaker;
 }
+
 
 void GearMaker::emptyRegistry()
 {
-  for(QMap<QString, GearInfo*>::iterator it=_registry->begin(); it!=_registry->end();++it)
+  for(QMap<QString, GearInfo*>::iterator it=_registry.begin(); it!=_registry.end();++it)
     delete it.value();
 
-  _registry->clear();
+  _registry.clear();
 }
 
-Gear* GearMaker::makeGear(Schema *schema, QString name, QString uniqueName)
+/**
+ * Creates an instance of fullname gear, using all parsed gearInfos.
+ * The init() method of gear is also called.
+ */
+Gear* GearMaker::makeGear(QString fullName)
 {
   Gear* thegear;
-  GearInfo *gearInfo = findGearInfo(name);
+  GearInfo *gearInfo = findGearInfo(fullName);
 
   //be sure we have this gear
   if (!gearInfo)
   {
-    qCritical() << "gear not found: " << name;
+    qCritical() << "gear not found: " << fullName;
     return NULL;
   }
 
-	return gearInfo->createGearInstance(schema, uniqueName);
+	thegear = gearInfo->createGearInstance();
+	
+	if (thegear)
+		thegear->init();
+		
+	return thegear;
 }
 
-GearInfo* GearMaker::findGearInfo(QString name)
+Gear* GearMaker::makeGear(QString type, QString name)
 {
-  QMap<QString, GearInfo*>::iterator it = _registry->find(name);
+	return makeGear(type + ":" + name);
+}
 
-	if (it == _registry->end())
+GearInfo* GearMaker::findGearInfo(QString type, QString name)
+{
+	return findGearInfo(type + ":" + name);
+}
+
+/**
+* Find the gearInfo using the fullName (ex: Drone:Blur)
+**/
+GearInfo* GearMaker::findGearInfo(QString fullName)
+{
+  QMap<QString, GearInfo*>::iterator it = _registry.find(fullName);
+
+	if (it == _registry.end())
 		return NULL;
 		
 	return it.value();
@@ -84,7 +107,7 @@ GearInfo* GearMaker::findGearInfo(QString name)
 
 void GearMaker::getAllGearsInfo(QList<GearInfo*> &gearsInfo)
 {
-	gearsInfo = _registry->values();
+	gearsInfo = _registry.values();
 }
 
 /**
@@ -138,7 +161,7 @@ QDir GearMaker::defaultGearsDir()
 template<class T>
 void GearMaker::parseGears(QDir dir, QString extension)
 {
-	dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+	dir.setFilter(QDir::Files | QDir::Hidden);
 	if (!dir.exists())
   {
     qWarning() << "gears folder not found: " << dir.path();
@@ -154,12 +177,12 @@ void GearMaker::parseGears(QDir dir, QString extension)
   {		
 		T *gearInfo = new T(*it);
 		//add gearInfo to the registry
+		//the key will be unique since each gears type
+		//are in there own path and we use fullName as the key.
 		if (gearInfo->load())
-			(*_registry)[gearInfo->name()]=gearInfo;//todo check for duplicates
+			_registry[gearInfo->fullName()]=gearInfo;
 		else
 		  delete gearInfo;
-    
-    ++it;//next file
   }
 }
 
@@ -170,9 +193,9 @@ void GearMaker::parseDroneGears(QDir rootDir)
 	QDir gearsDir(rootDir.path() + "/" + DRONEGEARS_SUBPATH); 
 	
 #if defined(Q_OS_MACX)
-  	QString extension("*.dylib*");
+  	QString extension("*.dylib");
 #else
-  	QString extension("*.so*");
+  	QString extension("*.so");
 #endif
 	parseGears<GearInfoDrone>(gearsDir, extension);
 }
@@ -184,9 +207,9 @@ void GearMaker::parseFrei0rGears(QDir rootDir)
 	QDir gearsDir(rootDir.path() + "/" +FREI0RGEARS_SUBPATH); 
 	
 #if defined(Q_OS_MACX)
-  	QString extension("*.dylib*");
+  	QString extension("*.dylib");
 #else
-  	QString extension("*.so*");
+  	QString extension("*.so");
 #endif
 	parseGears<GearInfoFrei0r>(gearsDir, extension);
 }
@@ -202,51 +225,3 @@ void GearMaker::parseMetaGears(QDir rootDir)
 	parseGears<GearInfoMeta>(gearsDir, extension);
 }
 
-/*
-void GearMaker::createMissingGearInfoPlugHelp(GearInfo_* gi)
-{
-  std::cerr<<"creating gear of type "<<gi->_name<<" to sync gearInfo"<<std::endl;
-  Gear* mygear = GearMaker::makeGear(NULL,gi->_name, "temp");
-  gi->syncWithGear(mygear);
-  delete mygear;
-  std::cerr<<"just deleted "<<gi->_name<<" to sync gearInfo"<<std::endl;
-}
-*/
-/*
-void GearMaker::saveDefinition(GearInfo_* gi)
-{
-  QString t;
-  if(gi->_pluginType==GearInfo_::DRONE_METAGEAR)
-	t="MetaGear";
-else
-	t="GearInfo";
-
-  QDomDocument doc(t);
-  
-  Gear* mygear = GearMaker::makeGear(NULL,gi->_name, "temp");
-  mygear->saveDefinition(doc);  
-  delete mygear;
-  //save to file  
-    std::cout << "gearMaker::saveDefinition : saving in " << gi->_filename<<std::endl;
-
-
-  QFile file(gi->_filename);
-  if (file.open(IO_WriteOnly))
-file.remove();
-
-  if (file.open(IO_WriteOnly))
-  {
-    QTextStream stream(&file);
-    doc.save(stream,4);
-    file.close();
-  }
-  else
-  {
-    std::cout << "file io error, cannot save!" << std::endl;
-    return;
-  }
-
-  return;
-  
-}
-*/

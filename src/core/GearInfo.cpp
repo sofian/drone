@@ -12,6 +12,10 @@
 
 const QString GearInfo::XML_TAGNAME = "GearInfo";
 
+const QString GearInfoDrone::TYPENAME = "Drone";
+const QString GearInfoFrei0r::TYPENAME = "Frei0r";
+const QString GearInfoMeta::TYPENAME = "Meta";
+
 
 bool PlugInfo::save(QDomDocument doc, QDomElement parent) const
 {
@@ -35,7 +39,7 @@ bool PlugInfo::load(QDomElement elem)
 	return true;
 }
 
-GearInfo::GearInfo(eGearPluginType pluginType, QFileInfo pluginFile) : 
+GearInfo::GearInfo(QString pluginType, QFileInfo pluginFile) : 
 	_pluginType(pluginType),
 	_pluginFile(pluginFile), 
 	_majorVersion(1), 
@@ -63,6 +67,7 @@ bool GearInfo::save()
   doc.appendChild(infoElem);
 
   XMLHelper::appendTaggedString(doc,infoElem,"Name",name());// writed but never readed. Just to make things more obvious when looking at the xml file.
+  XMLHelper::appendTaggedString(doc,infoElem,"Type",pluginType());// writed but never readed. Just to make things more obvious when looking at the xml file.
   XMLHelper::appendTaggedString(doc,infoElem,"Author",_author);
   XMLHelper::appendTaggedString(doc,infoElem,"Minor",QString::number(_minorVersion));
   XMLHelper::appendTaggedString(doc,infoElem,"Major",QString::number(_majorVersion));
@@ -70,7 +75,6 @@ bool GearInfo::save()
   XMLHelper::appendTaggedString(doc,infoElem,"Intro",_intro);
   XMLHelper::appendTaggedString(doc,infoElem,"Description",_description);
 
-	
 	QDomElement plugElem = doc.createElement("Plugs");
   infoElem.appendChild(plugElem);
 
@@ -120,10 +124,12 @@ bool GearInfo::load()
 bool GearInfo::loadMetaInfo()
 {
   qDebug() << "loading: " << metaFile().fileName(); 
+
 	QFile file(metaFile().absoluteFilePath());
-  if( !file.open(QIODevice::ReadOnly) )
+
+	if( !file.open(QIODevice::ReadOnly) )
 		return false;
-	
+
   QDomDocument doc(XML_TAGNAME);
 	
   QString errMsg;
@@ -138,7 +144,6 @@ bool GearInfo::loadMetaInfo()
     file.close();
     return false;
   }
-
   file.close();
 
   QDomNode infoNode = doc.firstChild();
@@ -181,14 +186,13 @@ bool GearInfo::loadMetaInfo()
   }
 
 	syncPlugsInfo();
-
   return true;
 }
 
 void GearInfo::syncPlugsInfo()
 {
   //create a temporary instance of the gear
-	Gear *gear = createGearInstance(NULL, "");
+	Gear *gear = createGearInstance();
 	
 	if (!gear)
 		qCritical() << "cannot sync pluginfo because gear doesnt exists!";
@@ -254,7 +258,7 @@ bool GearInfo::setPlugInfo(const PlugInfo& pi)
 * GearInfo for drone gears.
 **/
 GearInfoDrone::GearInfoDrone(QFileInfo pluginFile) :
-	GearInfo(DRONE, pluginFile),
+	GearInfo(TYPENAME, pluginFile),
 	_handle(0),
 	_makeGear(0)
 {
@@ -292,16 +296,16 @@ bool GearInfoDrone::bindPlugin()
 	return true;
 }
 
-Gear* GearInfoDrone::createGearInstance(Schema *schema, QString uniqueName)
+Gear* GearInfoDrone::createGearInstance()
 {
 	if (_makeGear)
-		return _makeGear(schema, uniqueName);
+		return _makeGear();
 	else
 		return NULL;
 }
 
 GearInfoFrei0r::GearInfoFrei0r(QFileInfo pluginFile) :
-	GearInfo(FREI0R, pluginFile),
+	GearInfo(TYPENAME, pluginFile),
 	_handle(0)
 {
 }
@@ -355,14 +359,14 @@ bool GearInfoFrei0r::loadMetaInfo()
 	return true;
 }
 
-Gear* GearInfoFrei0r::createGearInstance(Schema *schema, QString uniqueName)
+Gear* GearInfoFrei0r::createGearInstance()
 {
-  return new GearFrei0r(schema, uniqueName, _handle);
+  return new GearFrei0r(_handle);
 }
 
 
 GearInfoMeta::GearInfoMeta(QFileInfo pluginFile) :
-	GearInfo(META, pluginFile)
+	GearInfo(TYPENAME, pluginFile)
 {
 }
 
@@ -370,11 +374,11 @@ GearInfoMeta::~GearInfoMeta()
 {
 }
 
-Gear* GearInfoMeta::createGearInstance(Schema *schema, QString uniqueName)
+Gear* GearInfoMeta::createGearInstance()
 {
-
+	return NULL;
 }
-
+	
 bool GearInfoMeta::bindPlugin()
 {
 	return true;

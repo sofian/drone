@@ -20,9 +20,6 @@
 #ifndef GEAR_INCLUDED
 #define GEAR_INCLUDED
 
-
-#include <list>
-#include <vector>
 #include <qobject.h>
 
 #include "Engine.h"
@@ -31,10 +28,10 @@
 #include "Plug.h"
 #include "GearClassification.h"
 #include "GearInfo.h"
-#include <qvector.h>
-#include <qlist.h>
-#include <qstring.h>
-#include <map>
+#include "Node.h"
+#include <QVector>
+#include <QList>
+#include <QString>
 
 class QDomDocument;
 class QDomElement;
@@ -42,25 +39,19 @@ class QCanvas;
 class Schema;
 class GearMaker;
 
-//#include "oldGearInfo.h"
-
 /**
  * Gear is the atomic processing unit of the dataflow and the base class for all gears.
  * 
- * 
+ * TODO : setSchema, setName 
  */
-class Gear : public QObject
+class Gear : public QObject, public Node
 {
   Q_OBJECT
 public:
 
-  enum GearKind {GEAR, METAGEAR, CONTROL, EXPOSE_ANCHOR};
-
   static const QString XML_TAGNAME;
 
-  virtual GearKind kind() const {return GEAR;}
-
-  Gear(Schema *parentSchema, QString type, QString uniqueName);
+  Gear(QString type);
   virtual ~Gear();
 
   void init();
@@ -77,11 +68,12 @@ public:
   AbstractPlug* getOutput(QString name) const;
 	AbstractPlug *getPlug(QString name) const;
 
-  void getDependencies(std::vector<Gear*> & dependencies) const;
+  //Node
+	void getDependencies(QList<Node*> & dependencies) const;
 
   virtual Schema* getInternalSchema(){return NULL;}
 
-  void name(QString vname){_name=vname;}
+  void name(QString vname);
 
   const QString& type() const {return _Type;};  
   const QString& name() const {return _name;}
@@ -126,14 +118,15 @@ protected:
 
   AbstractPlug* addPlug(AbstractPlug* plug);
   //void addBypassChannel(std::string in, std::string out);
-  void setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs);
+  //TODO: more flexible way of defining this
+	void setPlugAtLeastOneNeeded(QList<AbstractPlug*> &plugs);
   //void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
   void deletePlug(AbstractPlug *plug);
 
   Schema *_parentSchema;
 
-  std::list<AbstractPlug*> _plugs;
+  QList<AbstractPlug*> _plugs;
 
 protected:
 
@@ -145,20 +138,8 @@ protected:
 private:
 
   bool _ready;
-  std::vector<AbstractPlug*> _atLeastOneOfThemNeeded;
-
-  friend class GearMaker;
+	QList<AbstractPlug*> _atLeastOneOfThemNeeded;
   
-  friend void Schema::initGear(Gear* gear) const;
-  friend void *Engine::playThread(void *parent);
-  friend bool Schema::load(QDomElement& parent, bool pasting);
-  friend bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected);
-
-#ifdef SINGLE_THREADED_PLAYBACK
-  friend void Engine::debugStartPlay();
-  friend void Engine::debugStopPlay();
-#endif
-
 };
 
 extern "C"

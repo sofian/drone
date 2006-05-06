@@ -35,6 +35,7 @@ Array.h \
 Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
+Connection.h \
 DroneCore.h \
 Engine.h \
 Gear.h \
@@ -58,13 +59,13 @@ GearClassification.h \
 GearInfo.h \
 GearConverter.h \
 GearMaker.h \
-ISchemaEventListener.h \
 MathUtil.h \
 Media.h \
 MediaPool.h \
 MediaMovie.h \
 MetaGear.h \
 MidiEngine.h \
+Node.h \
 AbstractPlug.h \
 Plug.h \
 Project.h \
@@ -72,6 +73,7 @@ Rasterer.h \
 Random.h \
 SummedAreaTable.h \
 Schema.h \
+SchemaTopoSort.h \
 SignalInfo.h \
 StringUtils.h \
 TextureGl.h \
@@ -88,6 +90,7 @@ composite/CompositeGeneric.h \
 composite/AlphaComposite.h
  
 SOURCES += error.cpp \
+Connection.cpp \
 DroneCore.cpp \
 Engine.cpp \
 Gear.cpp \
@@ -105,11 +108,13 @@ MediaPool.cpp \
 MediaMovie.cpp \
 MetaGear.cpp \
 MidiEngine.cpp \
+Node.cpp \
 AbstractPlug.cpp \
 Project.cpp \
 Rasterer.cpp \
 Random.cpp \
 Schema.cpp \
+SchemaTopoSort.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
 TextureGl.cpp \

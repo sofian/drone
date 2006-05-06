@@ -55,7 +55,7 @@ bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
     return false;
 
   //s'assurer que plug n'est pas deja connecte a nous
-  if (find(_connectedPlugs.begin(), _connectedPlugs.end(), plug) != _connectedPlugs.end())
+  if (_connectedPlugs.contains(plug))
     return false;
 
   //est-ce que ce sont des plugs de meme type
@@ -135,8 +135,7 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
     return false;
 
   //on ne peut pas deconnecter une plug qui n'est pas connecte a nous
-  std::list<AbstractPlug*>::iterator it = find(_connectedPlugs.begin(), _connectedPlugs.end(), plug);
-  if (it == _connectedPlugs.end())
+  if (!_connectedPlugs.contains(plug))
     return false;
 
   _parent->onPlugDisconnected(this, plug);
@@ -147,18 +146,18 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   plug->onDisconnection(this);
 
   //remove this plug from our connections
-  _connectedPlugs.remove(plug);
+  _connectedPlugs.removeAll(plug);
   AbstractPlug * deepestPlug = 0;
   for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
   if(deepestPlug != this)
-    deepestPlug->_connectedPlugs.remove(plug);
+    deepestPlug->_connectedPlugs.removeAll(plug);
 
   //remove ourself from the other plug connections
-  plug->_connectedPlugs.remove(this);
+  plug->_connectedPlugs.removeAll(this);
   AbstractPlug * deepestOtherPlug = 0;
   for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
   if(deepestOtherPlug != plug)
-    deepestOtherPlug->_connectedPlugs.remove(this);
+    deepestOtherPlug->_connectedPlugs.removeAll(this);
 
   //tell the gear that disconnection have been made and that we need synch
   _parent->unSynch();
@@ -176,12 +175,9 @@ void AbstractPlug::disconnectAll()
   }
 }
 
-int AbstractPlug::connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const
+void AbstractPlug::connectedPlugs(QList<AbstractPlug*> &connectedPlugs) const
 {
-  connectedplugs.clear();
-  connectedplugs.assign(_connectedPlugs.begin(), _connectedPlugs.end());
-
-  return connectedplugs.size();
+	connectedPlugs = _connectedPlugs;
 }
 
 QString AbstractPlug::fullName() const

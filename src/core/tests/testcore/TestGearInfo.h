@@ -13,11 +13,11 @@
 #include "Gear.h"
 
 #if defined(Q_OS_MACX)
-	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.dylib.1.0.0"
-	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.dylib.1.0.0"
+	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.dylib"
+	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.dylib"
 #else
-	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.so.1.0.0"
-	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.so.1.0.0"
+	#define SIMPLE_PLUGIN_NAME "testgears/drone/libSimple.so"
+	#define SIMPLE_PLUGIN_NAME_FREI0R "testgears/frei0r/libflippo.so"
 #endif
 
 
@@ -83,7 +83,18 @@ private slots:
 		QVERIFY(simpleGearInfo.load());		
 	}
 	
-	void testCreateGearInstance()
+	void testFullName()
+	{
+		//prepare
+		//create it
+		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
+		GearInfoDrone simpleGearInfo(simpleFileInfo);
+
+		//test & verify
+		QVERIFY(simpleGearInfo.fullName() == (GearInfoDrone::TYPENAME + ":" + simpleGearInfo.name()));
+	}
+	
+	void testCreateGearInstanceDrone()
 	{
 		//prepare
 		QFileInfo simpleFileInfo(SIMPLE_PLUGIN_NAME);
@@ -165,6 +176,7 @@ private slots:
 		GearInfoDrone simpleGearInfoForCreation(simpleFileInfo);
 		QVERIFY(simpleGearInfoForCreation.load());
 		PlugInfo pi = simpleGearInfoForCreation.getPlugInfo("ImgIN");
+		//TODO: tear up tear down or qstring random... to be sure
 		pi.help("hello!");
 		simpleGearInfoForCreation.setPlugInfo(pi);
 		QVERIFY(simpleGearInfoForCreation.save());

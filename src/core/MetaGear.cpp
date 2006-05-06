@@ -8,12 +8,11 @@ const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const QString MetaGear::TYPE="MetaGear";
 const QString MetaGear::EXTENSION=".meta";
 
-MetaGear::MetaGear(Schema *parentSchema, QString vname, QString uniqueName) :
-Gear(parentSchema, TYPE, uniqueName),
-_metaGearName(vname)
+MetaGear::MetaGear() :
+Gear(TYPE),
+_metaGearName(TYPE)
 {
-  _schema = new Schema(this);
-  _schema->addSchemaEventListener(this);
+  _schema = new Schema(*this);
 }
 
 MetaGear::~MetaGear()
@@ -25,7 +24,6 @@ MetaGear::~MetaGear()
 
 void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
 {
-  std::cerr<<"metagear savEW!!"<<std::endl;
   _schema->save(doc, parent);
 }
 
@@ -50,22 +48,17 @@ void MetaGear::internalLoad(QDomElement &parent)
 void MetaGear::createPlugs()
 {
   //clear plugs first, we will recreate them
-  std::list<AbstractPlug*>::iterator plugIt;
-  for(plugIt = _plugs.begin(); plugIt != _plugs.end(); ++plugIt)
-  {
-    delete(*plugIt);
-  }
-  _plugs.clear();
+  qDeleteAll(_plugs);
 
   //clear plug mapping
   _plugMapping.clear();
 
-  std::list<Gear*> gears = _schema->getGears();
+  QList<Gear*> gears = _schema->getGears();
 
   QList<AbstractPlug*> inputs;
   QList<AbstractPlug*> outputs;
 
-  for(std::list<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
+  for(QList<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
   {
     (*gearIt)->getInputs(inputs, true);
     for(QList<AbstractPlug*>::Iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
@@ -158,20 +151,6 @@ bool MetaGear::load(QString filename)
   Gear::load(metagearElem);
 
   return true;
-}
-
-void MetaGear::onGearAdded(Schema *schema, Gear *)
-{
-  //if this event is not for our schema (it's from a child schema), do nothing
-  if (schema!=_schema)
-    return;
-  }
-
-void MetaGear::onGearRemoved(Schema *schema, Gear*)
-{
-  //if this event is not for our schema (it's from a child schema), do nothing
-  if (schema!=_schema)
-    return;
 }
 
 

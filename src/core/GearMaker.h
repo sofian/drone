@@ -34,17 +34,19 @@
 */
 class GearMaker
 {
-public:
-  //static void saveDefinition(GearInfo_* gi);
+public:									
+	static GearMaker* instance();
 
-  static Gear* makeGear(Schema *schema, QString name, QString uniqueName);
-  static void getAllGearsInfo(QList<GearInfo*> &gearsInfo);
-	static GearInfo* GearMaker::findGearInfo(QString name);
+  Gear* makeGear(QString fullName);
+	Gear* makeGear(QString type, QString name);
 
-	static bool parse(QDir rootDir);
-	static bool parse();
-	static QDir defaultGearsDir();
-  //static void createMissingGearInfoPlugHelp(GearInfo* gi);
+  void getAllGearsInfo(QList<GearInfo*> &gearsInfo);
+	GearInfo* findGearInfo(QString fullName);
+	GearInfo* findGearInfo(QString type, QString name);
+
+	bool parse(QDir rootDir);
+	bool parse();
+	QDir defaultGearsDir();
 
 private:
 	static QString DRONEGEARS_SUBPATH;
@@ -52,18 +54,16 @@ private:
 	static QString METAGEARS_SUBPATH;
 		
 	GearMaker();
-  ~GearMaker();
 
-  template <class T> static void parseGears(QDir dir, QString extension);
-	static void parseDroneGears(QDir rootDir);
-  static void parseFrei0rGears(QDir rootDir);
-  static void parseMetaGears(QDir rootDir);
+  template <class T> void parseGears(QDir dir, QString extension);
+	void parseDroneGears(QDir rootDir);
+  void parseFrei0rGears(QDir rootDir);
+  void parseMetaGears(QDir rootDir);
 	
-  static void emptyRegistry();
+  void emptyRegistry();
 
-  static QMap<QString, GearInfo*> *_registry;
-  static GearMaker _registerMyself;
-
+  QMap<QString, GearInfo*> _registry;
+  
 };
 
 #endif

@@ -22,7 +22,7 @@
 
 #include "AbstractType.h"
 
-#include <list>
+#include <QList>
 
 enum eInOut
 {
@@ -65,7 +65,7 @@ public:
   AbstractType* abstractHintType() const { return _abstractDefaultType;}
   eInOut inOut() const {return _inOut;};
 
-  int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
+  void connectedPlugs(QList<AbstractPlug*> &connectedPlugs) const;
   AbstractPlug* firstConnectedPlug() const {return _connectedPlugs.front();}
   int nbConnectedPlugs() const {return _connectedPlugs.size();};
   Gear* parent() const {return _parent;};
@@ -84,7 +84,7 @@ public:
   virtual AbstractPlug* clone(Gear* parent)=0;
 
 protected:
-  std::list<AbstractPlug*> _connectedPlugs;
+  QList<AbstractPlug*> _connectedPlugs;
   AbstractType *_abstractType;
   AbstractType *_abstractDefaultType;
   AbstractPlug* _forwardPlug;

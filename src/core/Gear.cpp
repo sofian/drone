@@ -30,31 +30,38 @@
 
 const QString Gear::XML_TAGNAME = "Gear";
 
-Gear::Gear(Schema *parentSchema, QString type, QString name) : 
-_parentSchema(parentSchema), 
+Gear::Gear(QString type) : 
+_parentSchema(NULL), 
 _Type(type), 
-_name(name),
+_name(type),
 _ready(false)
 {
 }
 
 Gear::~Gear()
 {
-  for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-    delete (*it);
+	qDeleteAll(_plugs);
 }
-/*
-void Gear::saveDefinition(QDomDocument& doc)
+
+/**
+ * Sets the name for the gear. If the gear is in a schema, unique naming is done via Schema::rename()
+ */
+void Gear::name(QString vname)
 {
-std::cerr<<"void Gear::saveDefinition(QDomDocument& doc)!!!!!"<<std::endl;
-  QDomElement gearElem = doc.createElement("GearInfo");
-  doc.appendChild(gearElem);
-  _gearInfo->save(doc,gearElem);
+	if (vname == _name)
+		return;
+
+	_name=vname;
+	
+	if (_parentSchema)
+		_parentSchema->renameGear(*this, vname);				
 }
-*/
+
+
 void Gear::unSynch()
 {
-  _parentSchema->unSynch();
+	if (_parentSchema)
+		_parentSchema->unSynch();
 }
 
 void Gear::prePlay()
@@ -85,13 +92,13 @@ void Gear::init()
 void Gear::deletePlug(AbstractPlug *plug)
 {
   delete plug;
-  _plugs.remove(plug);
+  _plugs.removeAll(plug);
 }
 
 bool Gear::isPlugNameUnique(QString name)
 {
   //check for duplicate plug name
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
     if ((*it)->name() == name)
       return false;
@@ -156,7 +163,7 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
 void Gear::getInputs(QList<AbstractPlug*> &inputs, bool onlyExposed) const
 {
   inputs.clear();
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
     if ( ((*it)->inOut() == IN && ((onlyExposed && (*it)->exposed()) || !onlyExposed)) )
       inputs.push_back(*it);
@@ -166,7 +173,7 @@ void Gear::getInputs(QList<AbstractPlug*> &inputs, bool onlyExposed) const
 void Gear::getOutputs(QList<AbstractPlug*> &outputs, bool onlyExposed) const
 {
   outputs.clear();
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
   {
     if ( ((*it)->inOut() == OUT) && ((onlyExposed && (*it)->exposed()) || !onlyExposed) )
       outputs.push_back(*it);
@@ -175,20 +182,19 @@ void Gear::getOutputs(QList<AbstractPlug*> &outputs, bool onlyExposed) const
 
 void Gear::getAllPlugs(QList<AbstractPlug*> &plugs) const
 {
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-		plugs.push_back(*it);
+  plugs = _plugs;
 }
 
-void Gear::getDependencies(std::vector<Gear*> &dependencies) const
+void Gear::getDependencies(QList<Node*> &dependencies) const
 {
   QList<AbstractPlug*> inputs;
   getInputs(inputs);
-  std::list<AbstractPlug*> lplug;
+	QList<AbstractPlug*> lplug;
   for (QList<AbstractPlug*>::ConstIterator it = inputs.constBegin();it!=inputs.constEnd();++it)
   {
     (*it)->connectedPlugs(lplug);
-    if (lplug.size()!=0)
-      dependencies.push_back(lplug.back()->parent());
+		for (QList<AbstractPlug*>::ConstIterator it2 = lplug.constBegin();it2!=lplug.constEnd();++it2)
+			dependencies += (*it2)->parent();
   }
 }
 
@@ -208,7 +214,7 @@ void Gear::save(QDomDocument &doc, QDomElement &parent)
   //save plugs
   QDomElement plugElem = doc.createElement("Plugs");
   gearElem.appendChild(plugElem);
-  for (std::list<AbstractPlug*>::const_iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  for (QList<AbstractPlug*>::ConstIterator it=_plugs.constBegin(); it != _plugs.constEnd(); ++it)
     (*it)->save(doc, plugElem);
 
   internalSave(doc, gearElem);
@@ -231,7 +237,7 @@ void Gear::load(QDomElement &gearElem)
     {
 			QString name = plugElem.attribute("Name","");
 			//now find this plug and load is attributes
-			for (std::list<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
+			for (QList<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
 			{
 				if ((*it)->name() == name)
 					(*it)->load(plugElem);
@@ -261,7 +267,7 @@ AbstractPlug *Gear::getPlug(QString name) const
 {
   QString nameAlower=name.toLower();
   
-  for (std::list<AbstractPlug*>::const_iterator it = _plugs.begin();it!=_plugs.end();++it)
+  for (QList<AbstractPlug*>::ConstIterator it = _plugs.constBegin();it!=_plugs.constEnd();++it)
   {    
     if (nameAlower == (*it)->name().toLower())
       return(*it);
@@ -301,7 +307,7 @@ void Gear::evaluateReady()
   if (_atLeastOneOfThemNeeded.size()>0)
   {
     bool atLeastOneConnected=false;
-    for(std::vector<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
+    for(QList<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
     {
       if ((*it)->connected())
       {
@@ -352,7 +358,7 @@ void Gear::evaluateReady()
     emit readyStatusChanged();
 }
 
-void Gear::setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs)
+void Gear::setPlugAtLeastOneNeeded(QList<AbstractPlug*> &plugs)
 {
   _atLeastOneOfThemNeeded = plugs;
 }

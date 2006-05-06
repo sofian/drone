@@ -18,7 +18,6 @@ INCLUDEPATH += ../core ../core/types ../contrib/frei0r/spec/
 macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
-macx:TARGET = ../../drone.app/Contents/MacOS/drone
 RC_FILE = myapp.icns
 QMAKE_INFO_PLIST = Info.plist
 #bundling on osx
@@ -27,14 +26,12 @@ macx:bundle.commands += ./bundle.osx
 macx:PRE_TARGETDEPS += bundle
 macx:QMAKE_EXTRA_UNIX_TARGETS += bundle
 
-
-
-
 #linux
 unix:!macx:QMAKE_RPATH = -Wl,-rpath,lib/,-rpath,
 unix:!macx:LIBS += -L../../lib -ldroneCore
-unix:!macx:TARGET = ../../drone
 
+TAERGET=drone
+DESTIR = ../../
 
 HEADERS += config.h \
 GearListMenu.h \

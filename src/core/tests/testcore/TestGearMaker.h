@@ -16,28 +16,37 @@ Q_OBJECT
 
 private slots:
 
+	
 	void testParse()
 	{
-		QVERIFY(GearMaker::parse(QDir("testgears")));
+		QVERIFY(GearMaker::instance()->parse(QDir("testgears")));
 		
-		QVERIFY(GearMaker::findGearInfo("Simple")!=NULL);
+		QVERIFY(GearMaker::instance()->findGearInfo("Drone:Simple")!=NULL);
+		QVERIFY(GearMaker::instance()->findGearInfo("Frei0r:flippo")!=NULL);				
+		//other find
+		QVERIFY(GearMaker::instance()->findGearInfo("Drone", "Simple")!=NULL);
+		QVERIFY(GearMaker::instance()->findGearInfo("Frei0r","flippo")!=NULL);				
 	}
 
 	void testParseMultiple()
 	{
-		QVERIFY(GearMaker::parse(QDir("testgears")));
-		QVERIFY(GearMaker::parse(QDir("testgears")));
+		QVERIFY(GearMaker::instance()->parse(QDir("testgears")));
+		QVERIFY(GearMaker::instance()->parse(QDir("testgears")));
 		
-		QVERIFY(GearMaker::findGearInfo("Simple")!=NULL);
+		QVERIFY(GearMaker::instance()->findGearInfo("Drone:Simple")!=NULL);
+		QVERIFY(GearMaker::instance()->findGearInfo("Frei0r:flippo")!=NULL);		
+		//TODO: pas en double?
 	}
 
 	void testParseWrongDir()
 	{
-		bool result = GearMaker::parse(QDir("patate"));	
+		bool result = GearMaker::instance()->parse(QDir("patate"));	
 		QVERIFY(!result);
 	}
 	
-	void testMakeGear()
+	void testMakeGearDrone()
 	{
+		QVERIFY(GearMaker::instance()->parse(QDir("testgears")));
+		QVERIFY(GearMaker::instance()->makeGear(NULL, 
 	}
 };
