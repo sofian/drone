@@ -1,2 +1,0 @@
-?package(drone):needs="X11" section="Apps/Graphics"\
-  title="drone" command="/usr/bin/drone"
