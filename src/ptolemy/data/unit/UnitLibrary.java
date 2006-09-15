@@ -27,15 +27,17 @@ COPYRIGHTENDKEY
 package ptolemy.data.unit;
 
 import java.net.URL;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
-import ptolemy.actor.gui.MoMLApplication;
 import ptolemy.data.expr.Parameter;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLParser;
-
+import ptolemy.util.JNLPUtilities;
 
 //////////////////////////////////////////////////////////////////////////
 //// UnitLibrary
@@ -232,7 +234,111 @@ public class UnitLibrary {
             NamedObj container = new NamedObj();
             momlParser.setContext(container);
 
-            URL inURL = MoMLApplication.specToURL("ptolemy/data/unit/SI.xml");
+            // FIXME: There is a bit of a design flaw here because
+            // we open a stream to the url (which is probably expensive)
+            // and then close it.  The reason for opening the stream
+            // is that we want to be sure that the URL is valid,
+            // and if it is not, we check the local file system
+            // and the classpath.
+            // One solution would be to have a method that returned a
+            // URLConnection because we can open a stream with a
+            // URLConnection and still get the original URL if necessary
+            URL inURL = null;
+            String spec = "ptolemy/data/unit/SI.xml";
+            
+            // NOTE: This part of the code was stripped out of ptolemy.actor.gui.MoMLApplication
+            // Original call was:
+            // URL inURL = MoMLApplication.specToURL("ptolemy/data/unit/SI.xml");
+            // We also needed to move JNLPApplication from ptolemy.actor.gui to ptolemy.util
+
+            try {
+                // First argument is null because we are only
+                // processing absolute URLs this way.  Relative
+                // URLs are opened as ordinary files.
+                inURL = new URL(null, spec);
+
+                // Make sure that the specURL actually exists
+                InputStream urlStream = inURL.openStream();
+                urlStream.close();
+            } catch (Exception ex) {
+                try {
+                    // Try as a regular file
+                    File file = new File(spec);
+
+                    // Oddly, under Windows file.exists() might return even
+                    // though the file does not exist if we changed user.dir.
+                    // See
+                    // http://forum.java.sun.com/thread.jsp?forum=31&thread=328939
+                    // One hack is to convert to an absolute path first
+                    File absoluteFile = file.getAbsoluteFile();
+
+                    try {
+                        if (!absoluteFile.exists()) {
+                            throw new IOException("File '" + absoluteFile
+                                    + "' does not exist.");
+                        }
+                    } catch (java.security.AccessControlException accessControl) {
+                        IOException exception = new IOException(
+                                "AccessControlException while "
+                                        + "trying to read '" + absoluteFile + "'");
+
+                        // IOException does not have a cause argument constructor.
+                        exception.initCause(accessControl);
+                        throw exception;
+                    }
+
+                    inURL = absoluteFile.getCanonicalFile().toURL();
+
+                    //InputStream urlStream = specURL.openStream();
+                    //urlStream.close();
+                } catch (Exception ex2) {
+                    try {
+                        // Try one last thing, using the classpath.
+                        // Need a class context, and this is a static method, so...
+                        // we can't use this.getClass().getClassLoader()
+                        // NOTE: There doesn't seem to be any way to convert
+                        // this a canonical name, so if a model is opened this
+                        // way, and then later opened as a file, the model
+                        // directory will think it has two different files.
+                        //Class refClass = Class.forName(
+                        //        "ptolemy.kernel.util.NamedObj");
+                        //specURL = refClass.getClassLoader().getResource(spec);
+                        // This works in Web Start, see
+                        // http://java.sun.com/products/javawebstart/faq.html#54
+                        inURL = Thread.currentThread().getContextClassLoader()
+                                .getResource(spec);
+
+                        if (inURL == null) {
+                            throw new Exception("getResource(\"" + spec
+                                    + "\") returned null.");
+                        } else {
+                            // If we have a jar URL, convert spaces to %20
+                            // so as to avoid multiple windows with the
+                            // same file.  Web Start needs this if the Web
+                            // Start cache is in a directory that has
+                            // spaces in the path, which is the default
+                            // under Windows.
+                            inURL = JNLPUtilities.canonicalizeJarURL(inURL);
+
+                            // Verify that it can be opened
+                            InputStream urlStream = inURL.openStream();
+                            urlStream.close();
+                        }
+                    } catch (Exception ex3) {
+                        // Use a very verbose message in case opening
+                        // the configuration fails under Web Start.
+                        // Without this error message, users will
+                        // have no hope of telling us why Web Start failed.
+                        IOException exception = new IOException("File not found: '"
+                                + spec + "'\n caused by:\n" + ex + "\n AND:\n"
+                                + ex2 + "\n AND:\n" + ex3);
+
+                        // IOException does not have a cause argument
+                        exception.initCause(ex3);
+                        throw exception;
+                    }
+                }
+            }
 
             // Strangely, the XmlParser does not want as base the
             // directory containing the file, but rather the
@@ -308,6 +414,7 @@ public class UnitLibrary {
             }
         }
     }
+
 
     /** UnitNameExprPair
      * @author Rowland R Johnson
