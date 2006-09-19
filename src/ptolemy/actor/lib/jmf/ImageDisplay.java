@@ -83,7 +83,6 @@ public class ImageDisplay extends Sink {
         // FIXME: This is required to be an ImageToken, but
         // we don't see to have that class.
         input.setTypeEquals(BaseType.OBJECT);
-
         _frame = null;
     }
 
@@ -165,6 +164,8 @@ public class ImageDisplay extends Sink {
 //        _container.setBackground(background);
 //    }
 
+    static int count = 0;
+    
     /** Display the specified token. This must be called in the Swing
      *  event thread.
      *  @param in The token to display
@@ -174,13 +175,16 @@ public class ImageDisplay extends Sink {
             throw new InternalErrorException(
                     "Input is not an ImageToken. It is: " + in);
         }
-
+        
+        System.out.println(count++);
+        
+//        if (count != 4)
+//        	return;
+        
         if (_picture != null) {
-        	System.out.println("Writing picture");
             Image image = ((ImageToken) in).asAWTImage();
             int xSize = image.getWidth(null);
             int ySize = image.getHeight(null);
-        	System.out.println("size " + xSize + "," + ySize);
 
             // If the size has changed, have to recreate the Picture object.
             if ((_oldXSize != xSize) || (_oldYSize != ySize)) {
@@ -191,8 +195,6 @@ public class ImageDisplay extends Sink {
                 _oldXSize = xSize;
                 _oldYSize = ySize;
                 
-                System.out.println("size has changed");
-
                 Container container = _picture.getParent();
         
                 if (_picture != null) {
@@ -220,10 +222,11 @@ public class ImageDisplay extends Sink {
                     }
                 }
             } else {
-                System.out.println("size has not changed");
+            	_workspace.getWriteAccess();
                 _picture.setImage(((ImageToken) in).asAWTImage());
                 _picture.displayImage();
                 _picture.repaint();
+                _workspace.doneWriting();
             }
         }
     }
@@ -243,15 +246,14 @@ public class ImageDisplay extends Sink {
                     // Regrettably, since setSize() in swing doesn't actually
                     // set the size of the frame, we have to also set the
                     // size of the internal component.
-                    Component[] components = _frame.getContentPane()
-                        .getComponents();
+//                    Component[] components = _frame.getContentPane()
+//                        .getComponents();
                     
                     _frame.setVisible(true);
                 } catch (Exception ex) {
                     throw new InternalErrorException(ex);
                 }
-            } else {
-                // Erase previous image.
+        } else {
                 if (_frame != null) {
                     // Do not use show() as it overrides manual placement.
                     _frame.toFront();
