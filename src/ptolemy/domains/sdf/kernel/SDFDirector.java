@@ -438,7 +438,8 @@ public class SDFDirector extends StaticSchedulingDirector {
                         // locks on the workspace, which would block
                         // UI interactions and may cause deadlocks.
                         // SOLUTION: workspace.wait(object, long).
-                        _workspace.wait(this, timeToWait);
+                    	if (timeToWait > 0)
+                    		_workspace.wait(this, timeToWait);
                     } catch (InterruptedException ex) {
                         // Continue executing.
                     }
