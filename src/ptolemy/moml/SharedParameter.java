@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-//import ptolemy.actor.gui.Configuration;
+import ptolemy.actor.ApplicationConfigurer;
 import ptolemy.data.expr.Parameter;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
@@ -81,7 +81,7 @@ import ptolemy.kernel.util.NamedObj;
  single model.
 
  @author Edward A. Lee
- @version $Id: SharedParameter.java,v 1.23 2006/09/16 11:21:24 eal Exp $
+ @version $Id: SharedParameter.java,v 1.24 2006/09/19 17:49:08 cxh Exp $
  @since Ptolemy II 4.1
  @Pt.ProposedRating Green (eal)
  @Pt.AcceptedRating Green (acataldo)
@@ -169,14 +169,14 @@ public class SharedParameter extends Parameter {
             // ptolemy.actor.gui.  We could either do instanceof
             // or else create ptolemy.kernel.ConfigurationBase
             // and have Configuration extend it.
-//            if (result instanceof Configuration) {
-//                // If the results is a Configuration, then go no higher.
-//                // If we do go higher, then we end up expanding the actor
-//                // library tree which take a long time and fails if
-//                // not all the actors are present.  For example, not
-//                // everyone will have Matlab or quicktime.
-//                return null;
-//            }
+            if (result instanceof ApplicationConfigurer) {
+                // If the results is a Configuration, then go no higher.
+                // If we do go higher, then we end up expanding the actor
+                // library tree which take a long time and fails if
+                // not all the actors are present.  For example, not
+                // everyone will have Matlab or quicktime.
+                return null;
+            }
         }
 
         return result;
