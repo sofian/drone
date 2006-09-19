@@ -164,8 +164,6 @@ public class ImageDisplay extends Sink {
 //        _container.setBackground(background);
 //    }
 
-    static int count = 0;
-    
     /** Display the specified token. This must be called in the Swing
      *  event thread.
      *  @param in The token to display
@@ -175,12 +173,7 @@ public class ImageDisplay extends Sink {
             throw new InternalErrorException(
                     "Input is not an ImageToken. It is: " + in);
         }
-        
-        System.out.println(count++);
-        
-//        if (count != 4)
-//        	return;
-        
+
         if (_picture != null) {
             Image image = ((ImageToken) in).asAWTImage();
             int xSize = image.getWidth(null);
@@ -204,7 +197,8 @@ public class ImageDisplay extends Sink {
                 _picture = new Picture(xSize, ySize);
                 _picture.setImage(image);
                 _picture.setBackground(null);
-                container.add("Center", _picture);
+                _frame.pack();
+                container.add(_picture, BorderLayout.CENTER);
                 container.validate();
                 container.invalidate();
                 container.repaint();
@@ -222,11 +216,9 @@ public class ImageDisplay extends Sink {
                     }
                 }
             } else {
-            	_workspace.getWriteAccess();
                 _picture.setImage(((ImageToken) in).asAWTImage());
                 _picture.displayImage();
                 _picture.repaint();
-                _workspace.doneWriting();
             }
         }
     }
@@ -242,7 +234,6 @@ public class ImageDisplay extends Sink {
             // No current container for the pane.
                 try {
                     _frame = new JFrame();
-
                     // Regrettably, since setSize() in swing doesn't actually
                     // set the size of the frame, we have to also set the
                     // size of the internal component.
@@ -264,6 +255,7 @@ public class ImageDisplay extends Sink {
         	if (_picture == null) {
         		// Create the pane.
         		_picture = new Picture(_oldXSize, _oldYSize);
+        		_frame.setSize(_oldXSize, _oldYSize);
         	}
 
         	_frame.add(_picture);

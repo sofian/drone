@@ -40,7 +40,6 @@ public class JMFSimpleTest {
 			reader.fileOrURL.setExpression("/Users/tats/Documents/workspace/drone/src/ptolemy/actor/lib/jmf/MrPtolemy.mov");
 			top.connect(reader.output, writer.input);
 			
-//			top.getManager().startRun();
-			top.getManager().run();
+			top.getManager().startRun();
 	}
 }
