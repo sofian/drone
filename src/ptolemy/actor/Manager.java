@@ -1,34 +1,34 @@
 /* A Manager governs the execution of a model.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-execute catches Exceptions and rethrows them as runtime exceptions. why?
-requestInitialization is pickier about what actors are initialized.
-added preinitialization analyses (i.e. constVariableModelAnalysis)
-Look over exitAfterWrapup().
-*/
+ execute catches Exceptions and rethrows them as runtime exceptions. why?
+ requestInitialization is pickier about what actors are initialized.
+ added preinitialization analyses (i.e. constVariableModelAnalysis)
+ Look over exitAfterWrapup().
+ */
 package ptolemy.actor;
 
 import java.lang.ref.WeakReference;
@@ -39,102 +39,102 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import ptolemy.kernel.util.ExceptionHandler;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.KernelException;
-import ptolemy.kernel.util.KernelRuntimeException;
 import ptolemy.kernel.util.Nameable;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.PtolemyThread;
 import ptolemy.kernel.util.Workspace;
+import ptolemy.util.MessageHandler;
 import ptolemy.util.StringUtilities;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Manager
 
 /**
-   A Manager governs the execution of a model in a domain-independent way.
-   Its methods are designed to be called by a GUI, an applet, a command-line
-   interface, or the top-level code of an application.  The manager can
-   execute the model in the calling thread or in a separate thread.
-   The latter is useful when the caller wishes to remain live during
-   the execution of the model.
+ A Manager governs the execution of a model in a domain-independent way.
+ Its methods are designed to be called by a GUI, an applet, a command-line
+ interface, or the top-level code of an application.  The manager can
+ execute the model in the calling thread or in a separate thread.
+ The latter is useful when the caller wishes to remain live during
+ the execution of the model.
 
-   <p> There are three methods that can be used to start execution of a
-   system attached to the manager.  The execute() method is the most
-   basic way to execute a model.  The model will be executed
-   <i>synchronously</i>, meaning that the execute() method will return
-   when execution has completed.  Any exceptions that occur will be
-   thrown by the execute method to the calling thread, and will not be
-   reported to any execution listeners.  The run() method also initiates
-   synchronous execution of a model, but additionally catches all
-   exceptions and passes them to the notifyListenersOfException() method
-   <i>without throwing them to the calling thread</i>.  The startRun()
-   method, unlike the previous two techniques, begins <i>asynchronous</i>
-   execution of a model.  This method starts a new thread for execution
-   of the model and then returns immediately.  Exceptions are reported
-   using the notifyListenersOfException() method.
+ <p> There are three methods that can be used to start execution of a
+ system attached to the manager.  The execute() method is the most
+ basic way to execute a model.  The model will be executed
+ <i>synchronously</i>, meaning that the execute() method will return
+ when execution has completed.  Any exceptions that occur will be
+ thrown by the execute method to the calling thread, and will not be
+ reported to any execution listeners.  The run() method also initiates
+ synchronous execution of a model, but additionally catches all
+ exceptions and passes them to the notifyListenersOfException() method
+ <i>without throwing them to the calling thread</i>.  The startRun()
+ method, unlike the previous two techniques, begins <i>asynchronous</i>
+ execution of a model.  This method starts a new thread for execution
+ of the model and then returns immediately.  Exceptions are reported
+ using the notifyListenersOfException() method.
 
-   <p> In addition, execution can be manually driven, one phase at a
-   time, using the methods initialize(), iterate() and wrapup().  This is
-   most useful for testing purposes.  For example, a type system check
-   only needs to get the resolved types, which are found during
-   initialize, so the test can avoid actually executing the system.
-   Also, when testing mutations, the model can be examined after each
-   toplevel iteration to ensure the proper behavior.
+ <p> In addition, execution can be manually driven, one phase at a
+ time, using the methods initialize(), iterate() and wrapup().  This is
+ most useful for testing purposes.  For example, a type system check
+ only needs to get the resolved types, which are found during
+ initialize, so the test can avoid actually executing the system.
+ Also, when testing mutations, the model can be examined after each
+ toplevel iteration to ensure the proper behavior.
 
-   <p> A manager provides services for cleanly handling changes to the
-   topology.  These include such changes as adding or removing an entity,
-   port, or relation, creating or destroying a link, and changing the
-   value or type of a parameter.  Collectively, such changes are called
-   <i>mutations</i>. Usually, mutations cannot safely occur at arbitrary
-   points in the execution of a model.  Models can queue mutations with
-   any object in the hierarchy or with the manager using the
-   requestChange() method.  An object in the hierarchy simply delegates
-   the request to its container, so the request propagates up the
-   hierarchy until it gets to the top level composite actor, which
-   delegates to the manager, which performs the change at the earliest
-   opportunity.  In this implementation of Manager, the changes are
-   executed between iterations.
+ <p> A manager provides services for cleanly handling changes to the
+ topology.  These include such changes as adding or removing an entity,
+ port, or relation, creating or destroying a link, and changing the
+ value or type of a parameter.  Collectively, such changes are called
+ <i>mutations</i>. Usually, mutations cannot safely occur at arbitrary
+ points in the execution of a model.  Models can queue mutations with
+ any object in the hierarchy or with the manager using the
+ requestChange() method.  An object in the hierarchy simply delegates
+ the request to its container, so the request propagates up the
+ hierarchy until it gets to the top level composite actor, which
+ delegates to the manager, which performs the change at the earliest
+ opportunity.  In this implementation of Manager, the changes are
+ executed between iterations.
 
-   <p> A service is also provided whereby an object can be registered
-   with the composite actor as a change listener.  A change listener is
-   informed when mutations that are requested via requestChange() are
-   executed successfully, or when they fail with an exception.
+ <p> A service is also provided whereby an object can be registered
+ with the composite actor as a change listener.  A change listener is
+ informed when mutations that are requested via requestChange() are
+ executed successfully, or when they fail with an exception.
 
-   <p> Manager can optimize the performance of an execution by making the
-   workspace <i>write protected</i> during an iteration, if all relevant
-   directors permit this.  This removes some of the overhead of obtaining
-   read and write permission on the workspace.  By default, directors do
-   not permit this, but many directors explicitly relinquish write access
-   to allow faster execution.  Such directors are declaring that they
-   will not make changes to the topology during execution.  Instead, any
-   desired mutations are delegated to the manager via the requestChange()
-   method.
+ <p> Manager can optimize the performance of an execution by making the
+ workspace <i>write protected</i> during an iteration, if all relevant
+ directors permit this.  This removes some of the overhead of obtaining
+ read and write permission on the workspace.  By default, directors do
+ not permit this, but many directors explicitly relinquish write access
+ to allow faster execution.  Such directors are declaring that they
+ will not make changes to the topology during execution.  Instead, any
+ desired mutations are delegated to the manager via the requestChange()
+ method.
 
-   <p> Many domains make use of static analyses for performing, e.g.,
-   static scheduling of actor firings.  In some cases, these analyses
-   must make use of global information.  The class provides a centralized
-   mechanism for managing such global analyses.  During preinitialize,
-   domains can invoke the getAnalysis and addAnalysis methods to create a
-   global analysis.  It is up to the users of this mechanism to ensure
-   that a particular type of analysis is only created once, if that is
-   what is required.  After preinitialize, the manager clears the list of
-   analyses, to avoid unnecessary memory usage, and to ensure that the
-   analyses are performed again on the next invocation of the model.
-   This is somewhat preferable to tying a cache of analysis information
-   to the version of the workspace, since the version number of the
-   workspace itself may change during preinitialize as domains add
-   annotation to the model.
+ <p> Many domains make use of static analyses for performing, e.g.,
+ static scheduling of actor firings.  In some cases, these analyses
+ must make use of global information.  The class provides a centralized
+ mechanism for managing such global analyses.  During preinitialize,
+ domains can invoke the getAnalysis and addAnalysis methods to create a
+ global analysis.  It is up to the users of this mechanism to ensure
+ that a particular type of analysis is only created once, if that is
+ what is required.  After preinitialize, the manager clears the list of
+ analyses, to avoid unnecessary memory usage, and to ensure that the
+ analyses are performed again on the next invocation of the model.
+ This is somewhat preferable to tying a cache of analysis information
+ to the version of the workspace, since the version number of the
+ workspace itself may change during preinitialize as domains add
+ annotation to the model.
 
-   @author Steve Neuendorffer, Lukito Muliadi, Edward A. Lee, Elaine Cheong
-   // Contributors: Mudit Goel, John S. Davis II
-   @version $Id: Manager.java,v 1.215 2005/04/29 20:05:10 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (cxh)
-*/
+ @author Steve Neuendorffer, Lukito Muliadi, Edward A. Lee, Elaine Cheong
+ // Contributors: Mudit Goel, John S. Davis II
+ @version $Id: Manager.java,v 1.238 2006/09/16 22:47:25 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (neuendor)
+ @Pt.AcceptedRating Yellow (cxh)
+ */
 public class Manager extends NamedObj implements Runnable {
     /** Construct a manager in the default workspace with an empty string
      *  as its name. The manager is added to the list of objects in
@@ -225,17 +225,19 @@ public class Manager extends NamedObj implements Runnable {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
-    /** Add a static analysis to this manager. A static analysis is...
-     *  FIXME: Currently a static analysis is simply an object that
-     *  is recorded in a hash table and cleared at the end of preinitialize,
-     *  with no semantics associated with that object.  The intent is
-     *  for that object to serve as a repository for static analysis
-     *  results, but clearing it and the end of preinitialize isn't
-     *  quite right. The idea is that it is cleared at a point when
-     *  the analysis has to be redone after that point. But doing
-     *  this at the end of preinitialize means this won't work with
-     *  models that mutate either during preinitialize() (as in higher-
-     *  order actors) or during execution.
+    /** Add a static analysis to this manager. A static analysis is
+     *  simply an object that is recorded in a hash table and cleared
+     *  at the end of preinitialize(), with no semantics associated
+     *  with that object.  The intent is for that object to serve as a
+     *  repository for static analysis results, but clearing it and
+     *  the end of preinitialize isn't quite right. The idea is that
+     *  it is cleared at a point when the analysis has to be redone
+     *  after that point. But doing this at the end of preinitialize
+     *  means this won't work with models that mutate either during
+     *  preinitialize() (as in higher- order actors) or during
+     *  execution.
+     *
+     *  @param name The name of the analysis.
      *  @param analysis The analysis to record.
      *  @see #getAnalysis(String)
      */
@@ -249,6 +251,7 @@ public class Manager extends NamedObj implements Runnable {
 
     /** Add a listener to be notified when the model execution changes state.
      *  @param listener The listener.
+     *  @see #removeExecutionListener(ExecutionListener)
      */
     public void addExecutionListener(ExecutionListener listener) {
         if (listener == null) {
@@ -272,10 +275,15 @@ public class Manager extends NamedObj implements Runnable {
      *  so this method returns only after execution finishes.
      *  If you wish to perform execution in a new thread, use startRun()
      *  instead.  Even if an exception occurs during the execution, the
-     *  wrapup() method is called (in a finally clause).  It is up to the
-     *  caller to handle (i.e. report) the exception.
+     *  wrapup() method is called (in a finally clause).  
+     *  <p> 
+     *  If an exception occurs during the execution, delegate to the 
+     *  exception handlers (if there are any) to handle these exceptions.
+     *  If there are no exception handlers, it is up to the
+     *  caller to handle (e.g. report) the exception.
      *  If you do not wish to handle exceptions, but want to execute
      *  within the calling thread, use run().
+     *  @see #run()
      *  @exception KernelException If the model throws it.
      *  @exception IllegalActionException If the model is already running, or
      *   if there is no container.
@@ -350,6 +358,13 @@ public class Manager extends NamedObj implements Runnable {
         } finally {
             try {
                 wrapup();
+            } catch (Exception exception) {
+                // Caught an exception. Discard this exception 
+                // if there is an exception thrown during the iteration.
+                // Otherwise, save the exception to be handled later.
+                if (initialThrowable == null) {
+                    initialThrowable = exception;
+                }
             } finally {
                 // Indicate that it is now safe to execute
                 // change requests when they are requested.
@@ -357,6 +372,7 @@ public class Manager extends NamedObj implements Runnable {
 
                 // This is done again here because actors may throw exceptions
                 // during wrapup().
+                // FIXME: Huh??? Why does this need to be done?  EAL 9/16/06
                 _workspace.incrVersion();
 
                 // Reset this for the next run.
@@ -372,11 +388,53 @@ public class Manager extends NamedObj implements Runnable {
                     _notifyListenersOfCompletion();
                 }
 
+                // Wrapup may throw an exception, so put the following 
+                // statement inside the finally block.
+                System.out.println(timeAndMemory(startTime));
+
+                // Handle throwable with exception handlers,
+                // if there are any.
                 if (initialThrowable != null) {
-                    if (initialThrowable instanceof KernelException) {
+                    List exceptionHandlersList = _container
+                            .entityList(ExceptionHandler.class);
+                    Iterator exceptionHandlers = exceptionHandlersList
+                            .iterator();
+                    if (exceptionHandlersList.size() > 0) {
+                        boolean exceptionHandled = false;
+                        // Note that we allow multiple exception handlers
+                        // to handle the same exception. So we iterate all
+                        // of the exception handlers, at least until one
+                        // those throws an exception.
+                        while (exceptionHandlers.hasNext()) {
+                            ExceptionHandler exceptionHandler = (ExceptionHandler) exceptionHandlers
+                                    .next();
+                            if (exceptionHandler.handleException(_container,
+                                    (Exception) initialThrowable)) {
+                                exceptionHandled = true;
+                            }
+                        }
+                        if (exceptionHandled) {
+                            initialThrowable = null;
+                            _notifyListenersOfCompletion();
+                        }
+                    }
+                }
+
+                // If the throwable has not been handled by exception handlers, 
+                // throw it.
+                if (initialThrowable != null) {
+                    if (initialThrowable instanceof RuntimeException) {
+                        // We do not handle runtime exception. 
+                        // Throw it.
+                        throw (RuntimeException) initialThrowable;
+                    } else if (initialThrowable instanceof KernelException) {
                         // Since this class is declared to throw
                         // KernelException, if we have one, we throw it.
                         throw (KernelException) initialThrowable;
+                    } else if (initialThrowable instanceof RuntimeException) {
+                        // We do not handle runtime exception. 
+                        // Throw it.
+                        throw (RuntimeException) initialThrowable;
                     } else {
                         // Ok, it is not a KernelException, so we
                         // rethrow it as the cause of a KernelException
@@ -386,8 +444,6 @@ public class Manager extends NamedObj implements Runnable {
                 }
             }
         }
-
-        System.out.println(timeAndMemory(startTime));
     }
 
     /** Cause the system to exit after wrapup().
@@ -431,7 +487,7 @@ public class Manager extends NamedObj implements Runnable {
         if (!(container instanceof CompositeActor)) {
             throw new InternalErrorException(
                     "Attempted to call finish() on an executing manager "
-                    + "with no associated CompositeActor model");
+                            + "with no associated CompositeActor model");
         }
 
         // Used to just call stopFire() here, but this does not set
@@ -442,24 +498,26 @@ public class Manager extends NamedObj implements Runnable {
         ((CompositeActor) container).stop();
 
         Thread unpauser = new Thread() {
-                public void run() {
-                    // NOTE: The execute() method used to be synchronized,
-                    // which would cause deadlock with this.
-                    // During wrapup, if the Manager is locked
-                    // and the ProcessDirector is waiting for threads
-                    // to end, then these unpausers
-                    // can't run, and the processes can't end.
-                    synchronized (Manager.this) {
-                        Manager.this.notifyAll();
-                    }
+            public void run() {
+                // NOTE: The execute() method used to be synchronized,
+                // which would cause deadlock with this.
+                // During wrapup, if the Manager is locked
+                // and the ProcessDirector is waiting for threads
+                // to end, then these unpausers
+                // can't run, and the processes can't end.
+                synchronized (Manager.this) {
+                    Manager.this.notifyAll();
                 }
-            };
+            }
+        };
 
         unpauser.start();
     }
 
     /** Get the analysis with the given name, or return null if no such
      *  analysis exists.
+     *  @param name The name of the analysis.
+     *  @return the analysis with the given name, or null.
      *  @see #addAnalysis(String, Object)
      */
     public Object getAnalysis(String name) {
@@ -502,8 +560,8 @@ public class Manager extends NamedObj implements Runnable {
      *  @exception IllegalActionException If the model is already running, or
      *   if there is no container.
      */
-    public synchronized void initialize()
-            throws KernelException, IllegalActionException {
+    public synchronized void initialize() throws KernelException,
+            IllegalActionException {
         try {
             _workspace.getReadAccess();
 
@@ -531,6 +589,13 @@ public class Manager extends NamedObj implements Runnable {
      */
     public void invalidateResolvedTypes() {
         _typesResolved = false;
+    }
+
+    /** Return true if exitAfterWrapup() was called.
+     *  @return true if exitAfterWrapup was called.
+     */
+    public boolean isExitingAfterWrapup() {
+        return _exitAfterWrapup;
     }
 
     /** Invoke one iteration of the model.  An iteration consists of
@@ -622,38 +687,59 @@ public class Manager extends NamedObj implements Runnable {
         notifyListenersOfThrowable(exception);
     }
 
-    /** Notify all the execution listeners of a Throwable
+    /** Notify all the execution listeners of a Throwable.
      *  If there are no listeners, then print the throwable information
      *  to the standard error stream. This is intended to be used by threads
      *  that are involved in an execution as a mechanism for reporting
      *  errors.  As an example, in a threaded domain, each thread
      *  should catch all exceptions and report them using this method.
+     *  This method defers the actual reporting to a new thread
+     *  because it requires obtaining a lock on this manager, and that
+     *  could cause deadlock.
      *  @param throwable The throwable
      */
-    public synchronized void notifyListenersOfThrowable(Throwable throwable) {
-        // We use Throwables instead of Exceptions so that we can catch
-        // Errors like java.lang.UnsatisfiedLink.
-        String errorMessage = shortDescription(throwable) + " occurred: "
-            + throwable.getClass() + "(" + throwable.getMessage() + ")";
-        _debug("-- Manager notifying listeners of exception: " + throwable);
+    public void notifyListenersOfThrowable(final Throwable throwable) {
+        Thread thread = new Thread("Error reporting thread") {
+            public void run() {
+                synchronized (Manager.this) {
+                    // We use Throwables instead of Exceptions so that
+                    // we can catch Errors like
+                    // java.lang.UnsatisfiedLink.
+                    String errorMessage = MessageHandler
+                            .shortDescription(throwable)
+                            + " occurred: "
+                            + throwable.getClass()
+                            + "("
+                            + throwable.getMessage() + ")";
+                    _debug("-- Manager notifying listeners of exception: "
+                            + throwable);
 
-        if (_executionListeners == null) {
-            System.err.println(errorMessage);
-            throwable.printStackTrace();
-        } else {
-            ListIterator listeners = _executionListeners.listIterator();
+                    if (_executionListeners == null) {
+                        System.err.println(errorMessage);
+                        throwable.printStackTrace();
+                    } else {
+                        ListIterator listeners = _executionListeners
+                                .listIterator();
 
-            while (listeners.hasNext()) {
-                WeakReference reference = (WeakReference) listeners.next();
-                ExecutionListener listener = (ExecutionListener) reference.get();
+                        while (listeners.hasNext()) {
+                            WeakReference reference = (WeakReference) listeners
+                                    .next();
+                            ExecutionListener listener = (ExecutionListener) reference
+                                    .get();
 
-                if (listener != null) {
-                    listener.executionError(this, throwable);
-                } else {
-                    listeners.remove();
+                            if (listener != null) {
+                                listener
+                                        .executionError(Manager.this, throwable);
+                            } else {
+                                listeners.remove();
+                            }
+                        }
+                    }
                 }
             }
-        }
+        };
+
+        thread.start();
     }
 
     /** Set a flag requesting that execution pause at the next opportunity
@@ -677,7 +763,7 @@ public class Manager extends NamedObj implements Runnable {
         if (!(container instanceof CompositeActor)) {
             throw new InternalErrorException(
                     "Attempted to call pause() on an executing manager "
-                    + "with no associated CompositeActor model");
+                            + "with no associated CompositeActor model");
         }
 
         ((CompositeActor) container).stopFire();
@@ -686,17 +772,18 @@ public class Manager extends NamedObj implements Runnable {
     /** The thread that calls this method will wait until resume() has
      *  been called.
      *
-     *  Note: This method will block.  Should only be called from the
-     *  executing thread (the thread that is executing the model).  Do
-     *  not call this method from the same thread that will call
-     *  resume().
-     *
-     *  FIXME: Added by celaine.  Review this.  Works with
-     *  DebugController to resume execution after a breakpoint.
-     *  FIXME: in PN this could be called multiple times.  make sure
-     *  this still works with multiple threads.
+     *  <p>Note: This method will block.  It should only be called
+     *  from the executing thread (the thread that is executing the
+     *  model).  Do not call this method from the same thread that
+     *  will call resume().
+     *  @param breakpointMessage The message to print when paused on a
+     *  breakpoint.
      */
     public void pauseOnBreakpoint(String breakpointMessage) {
+        //  FIXME: Added by celaine.  Review this.  Works with
+        //  DebugController to resume execution after a breakpoint.
+        //  FIXME: in PN this could be called multiple times.  make sure
+        //  this still works with multiple threads.
         try {
             if (_state == ITERATING) {
                 // This will deadlock if called from, say, the UI
@@ -705,9 +792,10 @@ public class Manager extends NamedObj implements Runnable {
                     if (_state == ITERATING) {
                         // Set the new state to show that execution is paused
                         // on a breakpoint.
-                        PAUSED_ON_BREAKPOINT.setDescription(
-                                "pausing on breakpoint: " + breakpointMessage
-                                + ".  Click Resume to continue.");
+                        PAUSED_ON_BREAKPOINT
+                                .setDescription("pausing on breakpoint: "
+                                        + breakpointMessage
+                                        + ".  Click Resume to continue.");
                         _setState(PAUSED_ON_BREAKPOINT);
 
                         _resumeNotifyWaiting = true;
@@ -762,6 +850,7 @@ public class Manager extends NamedObj implements Runnable {
 
             _setState(PREINITIALIZING);
 
+            _exitAfterWrapup = false;
             _pauseRequested = false;
             _typesResolved = false;
             _iterationCount = 0;
@@ -811,6 +900,7 @@ public class Manager extends NamedObj implements Runnable {
      *  of execution events.  If the specified listener is not on the list,
      *  do nothing.
      *  @param listener The listener to remove.
+     *  @see #addExecutionListener(ExecutionListener)
      */
     public void removeExecutionListener(ExecutionListener listener) {
         if ((listener == null) || (_executionListeners == null)) {
@@ -845,14 +935,14 @@ public class Manager extends NamedObj implements Runnable {
         // actor twice when it is added as part of a container that is
         // being added.
         {
-            NamedObj container = (NamedObj) ((NamedObj) actor).getContainer();
+            NamedObj container = actor.getContainer();
 
             while (container != null) {
                 if (_actorsToInitialize.contains(container)) {
                     return;
                 }
 
-                container = (NamedObj) container.getContainer();
+                container = container.getContainer();
             }
         }
 
@@ -863,7 +953,7 @@ public class Manager extends NamedObj implements Runnable {
 
         for (Iterator actors = list.iterator(); actors.hasNext();) {
             NamedObj otherActor = (NamedObj) actors.next();
-            NamedObj otherActorContainer = (NamedObj) otherActor.getContainer();
+            NamedObj otherActorContainer = otherActor.getContainer();
 
             while (otherActorContainer != null) {
                 // If otherActor is contained by actor, then remove it.
@@ -871,8 +961,7 @@ public class Manager extends NamedObj implements Runnable {
                     _actorsToInitialize.remove(otherActor);
                     otherActorContainer = null;
                 } else {
-                    otherActorContainer = (NamedObj) otherActorContainer
-                        .getContainer();
+                    otherActorContainer = otherActorContainer.getContainer();
                 }
             }
         }
@@ -894,12 +983,12 @@ public class Manager extends NamedObj implements Runnable {
         }
 
         try {
-            _workspace.getWriteAccess();
+            _workspace.getReadAccess();
             _setState(RESOLVING_TYPES);
 
             TypedCompositeActor.resolveTypes((TypedCompositeActor) _container);
         } finally {
-            _workspace.doneWriting();
+            _workspace.doneReading();
         }
     }
 
@@ -963,21 +1052,10 @@ public class Manager extends NamedObj implements Runnable {
      *  @return If the throwable is an Exception, return "Exception",
      *  if it is an Error, return "Error", if it is a Throwable, return
      *  "Throwable".
+     *  @deprecated Instead ptolemy.util.MessageHandler.shortDescription()
      */
     public static String shortDescription(Throwable throwable) {
-        // FIXME: This code is a duplicate of MessageHandler.shortDescription()
-        // but we don't want to import ptolemy.actor.gui.MessageHandler here.
-        String throwableType = null;
-
-        if (throwable instanceof Exception) {
-            throwableType = "Exception";
-        } else if (throwable instanceof Error) {
-            throwableType = "Error";
-        } else {
-            throwableType = "Throwable";
-        }
-
-        return throwableType;
+        return MessageHandler.shortDescription(throwable);
     }
 
     /** Start an execution in another thread and return.  Any exceptions
@@ -988,21 +1066,21 @@ public class Manager extends NamedObj implements Runnable {
      */
     public void startRun() throws IllegalActionException {
         if (_state != IDLE) {
-            throw new IllegalActionException(this,
-                    "Model is " + _state.getDescription());
+            throw new IllegalActionException(this, "Model is "
+                    + _state.getDescription());
         }
 
         // Set this within the calling thread to avoid race conditions
         // where finish() might be called before the spawned thread
         // actually starts up.
         _finishRequested = false;
-        _thread = new PtolemyThread(this) {
-                public void run() {
-                    // The run() method will set _thread to null
-                    // upon completion of the run.
-                    Manager.this.run();
-                }
-            };
+        _thread = new PtolemyThread(this, _container.getName()) {
+            public void run() {
+                // The run() method will set _thread to null
+                // upon completion of the run.
+                Manager.this.run();
+            }
+        };
 
         // Priority set to the minimum to get responsive UI during execution.
         _thread.setPriority(Thread.MIN_PRIORITY);
@@ -1068,6 +1146,10 @@ public class Manager extends NamedObj implements Runnable {
 
     /** Return a string with the elapsed time since startTime, and
      *  the amount of memory used.
+     *  @param startTime The start time in milliseconds.  For example,
+     *  the value returned by <code>(new Date()).getTime()</code>.
+     *  @return A string with the elapsed time since startTime, and
+     *  the amount of memory used.
      */
     public static String timeAndMemory(long startTime) {
         Runtime runtime = Runtime.getRuntime();
@@ -1078,13 +1160,26 @@ public class Manager extends NamedObj implements Runnable {
 
     /** Return a string with the elapsed time since startTime,
      *  and the amount of memory used.
+     *  the value returned by <code>(new Date()).getTime()</code>.
+     *  @param startTime The start time in milliseconds.  For example,
+     *  the value returned by <code>(new Date()).getTime()</code>.
+     *  @param totalMemory The total amount of memory used in kilobytes.
+     *  @param freeMemory The total amount of memory free in kilobytes.
+     *  @return A string with the elapsed time since startTime, and
+     *  the amount of memory used.
      */
     public static String timeAndMemory(long startTime, long totalMemory,
             long freeMemory) {
-        return System.currentTimeMillis() - startTime + " ms. Memory: "
-            + totalMemory + "K Free: " + freeMemory + "K ("
-            + Math.round((((double) freeMemory) / ((double) totalMemory)) * 100.0)
-            + "%)";
+        return System.currentTimeMillis()
+                - startTime
+                + " ms. Memory: "
+                + totalMemory
+                + "K Free: "
+                + freeMemory
+                + "K ("
+                + Math
+                        .round((((double) freeMemory) / ((double) totalMemory)) * 100.0)
+                + "%)";
     }
 
     /** If there is an active thread created by startRun(), then wait
@@ -1134,7 +1229,7 @@ public class Manager extends NamedObj implements Runnable {
             if ((_state == IDLE) || (_state == WRAPPING_UP)) {
                 throw new IllegalActionException(this,
                         "Cannot wrap up. The current state is: "
-                        + _state.getDescription());
+                                + _state.getDescription());
             }
 
             if (_container == null) {
@@ -1156,23 +1251,14 @@ public class Manager extends NamedObj implements Runnable {
         // change requests.
         setDeferringChangeRequests(false);
 
+        // FIXME: Why is the workspace version incremented?
+        // EAL 9/16/06.
         _workspace.incrVersion();
 
         if (_exitAfterWrapup) {
-            // $PTII/util/testsuite/testDefs.tcl sets
-            // ptolemy.ptII.exitAfterWrapup
-            if (StringUtilities.getProperty("ptolemy.ptII.exitAfterWrapup")
-                    .length() > 0) {
-                throw new KernelRuntimeException(this,
-                        "Normally, we would "
-                        + "exit here because Manager.exitAfterWrapup() "
-                        + "was called.  However, because the "
-                        + "ptolemy.ptII.exitAfterWrapup property "
-                        + "is set, we throw this exception instead.");
-            } else {
-                // Non-zero indicates a problem.
-                System.exit(0);
-            }
+            // If the ptolemy.ptII.exitAfterWrapup property is set,
+            // then we don't actually exit.
+            StringUtilities.exit(0);
         }
 
         // Wrapup completed successfully
@@ -1190,6 +1276,8 @@ public class Manager extends NamedObj implements Runnable {
      *  garbage collected.  This method should not be called directly.
      *  Instead, call setManager in the CompositeActor class (or a
      *  derived class).
+     *  @param compositeActor The composite actor that this manager will
+     *  manage.
      */
     protected void _makeManagerOf(CompositeActor compositeActor) {
         if (compositeActor != null) {
@@ -1212,7 +1300,8 @@ public class Manager extends NamedObj implements Runnable {
 
             while (listeners.hasNext()) {
                 WeakReference reference = (WeakReference) listeners.next();
-                ExecutionListener listener = (ExecutionListener) reference.get();
+                ExecutionListener listener = (ExecutionListener) reference
+                        .get();
 
                 if (listener != null) {
                     listener.executionFinished(this);
@@ -1235,7 +1324,8 @@ public class Manager extends NamedObj implements Runnable {
 
             while (listeners.hasNext()) {
                 WeakReference reference = (WeakReference) listeners.next();
-                ExecutionListener listener = (ExecutionListener) reference.get();
+                ExecutionListener listener = (ExecutionListener) reference
+                        .get();
 
                 if (listener != null) {
                     listener.managerStateChanged(this);
@@ -1296,11 +1386,6 @@ public class Manager extends NamedObj implements Runnable {
 
     // An indicator of whether type resolution needs to be done.
     private boolean _typesResolved = false;
-
-    // A flag to indicate whether write access is needed by any of of
-    // of the domains in the model during an iteration.
-    private boolean _writeAccessNeeded = true;
-    private long _writeAccessVersion;
 
     ///////////////////////////////////////////////////////////////////
     ////                         inner class                       ////

@@ -1,59 +1,58 @@
 /* A library of signal processing operations.
 
-The algorithms for the FFT and DCT are based on the FFCT algorithm
-described in:
+ The algorithms for the FFT and DCT are based on the FFCT algorithm
+ described in:
 
-Martin Vetterli and Henri J. Nussbaumer."Simple FFT and DCT Algorithms with
-Reduced Number of Operations". Signal Processing 6 (1984) 267-278.
+ Martin Vetterli and Henri J. Nussbaumer."Simple FFT and DCT Algorithms with
+ Reduced Number of Operations". Signal Processing 6 (1984) 267-278.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
 
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.math;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// SignalProcessing
 
 /**
-   This class provides signal processing functions.
+ This class provides signal processing functions.
 
-   The algorithms for the FFT and DCT are based on the FFCT algorithm
-   described in:
+ The algorithms for the FFT and DCT are based on the FFCT algorithm
+ described in:
 
-   Martin Vetterli and Henri J. Nussbaumer."Simple FFT and DCT Algorithms with
-   Reduced Number of Operations". Signal Processing 6 (1984) 267-278.
+ Martin Vetterli and Henri J. Nussbaumer."Simple FFT and DCT Algorithms with
+ Reduced Number of Operations". Signal Processing 6 (1984) 267-278.
 
-   @author Albert Chen, William Wu, Edward A. Lee, Jeff Tsay, Elaine Cheong
-   @version $Id: SignalProcessing.java,v 1.98 2005/04/25 22:43:01 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Yellow (ctsay)
-   @Pt.AcceptedRating Red (cxh)
-*/
+ @author Albert Chen, William Wu, Edward A. Lee, Jeff Tsay, Elaine Cheong
+ @version $Id: SignalProcessing.java,v 1.104 2006/08/20 19:55:49 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Yellow (ctsay)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class SignalProcessing {
     // The only constructor is private so that this class cannot
     // be instantiated.
@@ -134,10 +133,8 @@ public class SignalProcessing {
 
         for (int i = 0; i < array1.length; i++) {
             for (int j = 0; j < array2.length; j++) {
-                reals[i + j] += ((array1[i].real * array2[j].real)
-                        - (array1[i].imag * array2[j].imag));
-                imags[i + j] += ((array1[i].imag * array2[j].real)
-                        + (array1[i].real * array2[j].imag));
+                reals[i + j] += ((array1[i].real * array2[j].real) - (array1[i].imag * array2[j].imag));
+                imags[i + j] += ((array1[i].imag * array2[j].real) + (array1[i].real * array2[j].imag));
             }
         }
 
@@ -278,20 +275,20 @@ public class SignalProcessing {
         if (x.length <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.downsample(): "
-                    + "array length must be greater than 0.");
+                            + "array length must be greater than 0.");
         }
 
         if (n <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.downsample(): "
-                    + "downsampling factor must be greater than 0.");
+                            + "downsampling factor must be greater than 0.");
         }
 
         if ((startIndex < 0) || (startIndex > (x.length - 1))) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.downsample(): "
-                    + "startIndex must be between 0 and L - 1, where L is the "
-                    + "size of the input array.");
+                            + "startIndex must be between 0 and L - 1, where L is the "
+                            + "size of the input array.");
         }
 
         int length = ((x.length + 1) - startIndex) / n;
@@ -611,7 +608,7 @@ public class SignalProcessing {
         if (_IDCTfactors[type][order] == null) {
             _IDCTfactors[type][order] = new Complex[twoSize];
 
-            double oneOverTwoSize = 1.0 / (double) twoSize;
+            double oneOverTwoSize = 1.0 / twoSize;
 
             double factor = 1.0;
             double oneOverE0 = 2.0;
@@ -623,7 +620,7 @@ public class SignalProcessing {
                 break;
 
             case DCT_TYPE_ORTHONORMAL:
-                factor = Math.sqrt((double) twoSize); // == 2 * sqrt(N/2)
+                factor = Math.sqrt(twoSize); // == 2 * sqrt(N/2)
                 oneOverE0 = ExtendedMath.SQRT_2;
                 break;
 
@@ -713,7 +710,7 @@ public class SignalProcessing {
         Complex[] y = ComplexArrayMath.conjugate(yConj);
 
         // scale by 1/N
-        double oneOverN = 1.0 / (double) (1 << order);
+        double oneOverN = 1.0 / (1 << order);
         return ComplexArrayMath.scale(y, oneOverN);
     }
 
@@ -752,7 +749,7 @@ public class SignalProcessing {
         realrealX = DoubleArrayMath.add(realrealX, imagimagX);
 
         // scale by 1/N
-        double oneOverN = 1.0 / (double) (1 << order);
+        double oneOverN = 1.0 / (1 << order);
         return DoubleArrayMath.scale(realrealX, oneOverN);
     }
 
@@ -781,7 +778,7 @@ public class SignalProcessing {
         double[] y = FFTRealOut(x, order);
 
         // scale by 1/N
-        double oneOverN = 1.0 / (double) (1 << order);
+        double oneOverN = 1.0 / (1 << order);
         return DoubleArrayMath.scale(y, oneOverN);
     }
 
@@ -803,7 +800,7 @@ public class SignalProcessing {
         double[] window = new double[length];
 
         int halfM = M / 2;
-        double twoOverM = 2.0 / (double) M;
+        double twoOverM = 2.0 / M;
 
         for (n = 0; n <= halfM; n++) {
             window[n] = n * twoOverM;
@@ -833,12 +830,12 @@ public class SignalProcessing {
         int n;
         double[] window = new double[length];
 
-        double twoPiOverM = (2.0 * Math.PI) / (double) M;
+        double twoPiOverM = (2.0 * Math.PI) / M;
         double fourPiOverM = 2.0 * twoPiOverM;
 
         for (n = 0; n < length; n++) {
             window[n] = 0.42 - (0.5 * Math.cos(twoPiOverM * n))
-                + (0.08 * Math.cos(fourPiOverM * n));
+                    + (0.08 * Math.cos(fourPiOverM * n));
         }
 
         return window;
@@ -861,14 +858,14 @@ public class SignalProcessing {
         int n;
         double[] window = new double[length];
 
-        double twoPiOverM = (2.0 * Math.PI) / (double) M;
+        double twoPiOverM = (2.0 * Math.PI) / M;
         double fourPiOverM = 2.0 * twoPiOverM;
         double sixPiOverM = 3.0 * twoPiOverM;
 
         for (n = 0; n < length; n++) {
-            window[n] = (0.35875 - (0.48829 * Math.cos(twoPiOverM * n))
-                    + (0.14128 * Math.cos(fourPiOverM * n)))
-                - (0.01168 * Math.cos(sixPiOverM * n));
+            window[n] = (0.35875 - (0.48829 * Math.cos(twoPiOverM * n)) + (0.14128 * Math
+                    .cos(fourPiOverM * n)))
+                    - (0.01168 * Math.cos(sixPiOverM * n));
         }
 
         return window;
@@ -902,14 +899,14 @@ public class SignalProcessing {
         if (length < 1) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.generateHammingWindow(): "
-                    + " length of window should be greater than 0.");
+                            + " length of window should be greater than 0.");
         }
 
         int M = length - 1;
         int n;
         double[] window = new double[length];
 
-        double twoPiOverM = (2.0 * Math.PI) / (double) M;
+        double twoPiOverM = (2.0 * Math.PI) / M;
 
         for (n = 0; n < length; n++) {
             window[n] = 0.54 - (0.46 * Math.cos(twoPiOverM * n));
@@ -928,14 +925,14 @@ public class SignalProcessing {
         if (length < 1) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.generateHanningWindow(): "
-                    + " length of window should be greater than 0.");
+                            + " length of window should be greater than 0.");
         }
 
         int M = length - 1;
         int n;
         double[] window = new double[length];
 
-        double twoPiOverM = (2.0 * Math.PI) / (double) M;
+        double twoPiOverM = (2.0 * Math.PI) / M;
 
         for (n = 0; n < length; n++) {
             window[n] = 0.5 - (0.5 * Math.cos(twoPiOverM * n));
@@ -960,8 +957,8 @@ public class SignalProcessing {
      */
     public static final double[] generatePolynomialCurve(double[] polynomial,
             double start, double step, int length) {
-        PolynomialSampleGenerator generator = new PolynomialSampleGenerator(polynomial,
-                1);
+        PolynomialSampleGenerator generator = new PolynomialSampleGenerator(
+                polynomial, 1);
         return sampleWave(length, start, step, generator);
     }
 
@@ -990,8 +987,8 @@ public class SignalProcessing {
      */
     public static final double[] generateRaisedCosinePulse(
             double excessBandwidth, double firstZeroCrossing, int length) {
-        RaisedCosineSampleGenerator generator = new RaisedCosineSampleGenerator(firstZeroCrossing,
-                excessBandwidth);
+        RaisedCosineSampleGenerator generator = new RaisedCosineSampleGenerator(
+                firstZeroCrossing, excessBandwidth);
         return sampleWave(length, -(length - 1) / 2.0, 1.0, generator);
     }
 
@@ -1047,8 +1044,8 @@ public class SignalProcessing {
      */
     public static final double[] generateSqrtRaisedCosinePulse(
             double excessBandwidth, double firstZeroCrossing, int length) {
-        RaisedCosineSampleGenerator generator = new RaisedCosineSampleGenerator(firstZeroCrossing,
-                excessBandwidth);
+        RaisedCosineSampleGenerator generator = new RaisedCosineSampleGenerator(
+                firstZeroCrossing, excessBandwidth);
         return sampleWave(length, -(length - 1) / 2.0, 1.0, generator);
     }
 
@@ -1063,7 +1060,7 @@ public class SignalProcessing {
         if (length < 1) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.generateWindow(): "
-                    + " length of window should be greater than 0.");
+                            + " length of window should be greater than 0.");
         }
 
         switch (windowType) {
@@ -1088,7 +1085,7 @@ public class SignalProcessing {
         default:
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.generateWindow(): "
-                    + "Unknown window type (" + windowType + ").");
+                            + "Unknown window type (" + windowType + ").");
         }
     }
 
@@ -1101,7 +1098,7 @@ public class SignalProcessing {
         if (x <= 0.0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.nextPowerOfTwo(): "
-                    + "argument (" + x + ") is not a positive number.");
+                            + "argument (" + x + ") is not a positive number.");
         }
 
         double m = Math.log(x) * _LOG2SCALE;
@@ -1214,11 +1211,11 @@ public class SignalProcessing {
         if (period <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.sawtooth(): "
-                    + "period should be greater than 0.");
+                            + "period should be greater than 0.");
         }
 
-        double point = (2 / period) * Math.IEEEremainder(time
-                + (phase * period), period);
+        double point = (2 / period)
+                * Math.IEEEremainder(time + (phase * period), period);
 
         // get rid of negative zero
         point = (point == -0.0) ? 0.0 : point;
@@ -1264,11 +1261,11 @@ public class SignalProcessing {
         if (period <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.square(): "
-                    + "period should be greater than 0.");
+                            + "period should be greater than 0.");
         }
 
-        double point = (2 / period) * Math.IEEEremainder(time
-                + (phase * period), period);
+        double point = (2 / period)
+                * Math.IEEEremainder(time + (phase * period), period);
 
         // hole at +1.0
         return ((point >= 0) && (point < 1)) ? 1.0 : (-1.0);
@@ -1292,7 +1289,7 @@ public class SignalProcessing {
         if (period <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.triangle(): "
-                    + "period should be greater than 0.");
+                            + "period should be greater than 0.");
         }
 
         double point = Math.IEEEremainder(time + (phase * period), period);
@@ -1368,7 +1365,7 @@ public class SignalProcessing {
         if (n <= 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing.upsample(): "
-                    + "upsampling factor must be greater than or equal to 0.");
+                            + "upsampling factor must be greater than or equal to 0.");
         }
 
         int length = x.length * n;
@@ -1533,13 +1530,20 @@ public class SignalProcessing {
          */
         public final double operate(double time) {
             double shiftedTime = time - _mean;
-            return _factor * Math.exp(-shiftedTime * shiftedTime * _oneOverTwoVariance);
+            return _factor
+                    * Math
+                            .exp(-shiftedTime * shiftedTime
+                                    * _oneOverTwoVariance);
         }
 
         private final double _mean;
+
         private final double _oneOverTwoVariance;
+
         private final double _factor;
-        private static final double ONE_OVER_SQRT_TWO_PI = 1.0 / Math.sqrt(2 * Math.PI);
+
+        private static final double ONE_OVER_SQRT_TWO_PI = 1.0 / Math
+                .sqrt(2 * Math.PI);
     }
 
     /** This class generates samples of a polynomial.
@@ -1555,10 +1559,9 @@ public class SignalProcessing {
      *         + a<sub>n-1</sub>t<sup>-(n-1)</sup>
      *  </pre>
      *  depending on the direction specified.
-     *  </p>
      */
-    public static class PolynomialSampleGenerator
-        implements DoubleUnaryOperation {
+    public static class PolynomialSampleGenerator implements
+            DoubleUnaryOperation {
         /** Construct a PolynomialSampleGenerator. The input argument is
          *  an array of doubles
          *  a[0] = a<sub>0</sub> .. a[n-1] = a<sub>n-1</sub> used to compute
@@ -1578,7 +1581,7 @@ public class SignalProcessing {
             if ((direction != 1) && (direction != -1)) {
                 throw new IllegalArgumentException(
                         "ptolemy.math.SignalProcessing.LineSampleGenerator: "
-                        + "direction must be either 1 or -1");
+                                + "direction must be either 1 or -1");
             }
 
             _coeffLength = coefficients.length;
@@ -1610,7 +1613,9 @@ public class SignalProcessing {
         }
 
         private final double[] _coefficients;
+
         private final int _coeffLength;
+
         private final int _direction;
     }
 
@@ -1638,6 +1643,7 @@ public class SignalProcessing {
         }
 
         private final double _period;
+
         private final double _phase;
     }
 
@@ -1670,6 +1676,7 @@ public class SignalProcessing {
         }
 
         private final double _frequency;
+
         private final double _phase;
     }
 
@@ -1698,9 +1705,9 @@ public class SignalProcessing {
      *  Kluwer Academic Publishers, Boston, 1994.</a>
      *
      */
-    public static class RaisedCosineSampleGenerator
-        implements DoubleUnaryOperation {
-        /*  Construct a RaisedCosineSampleGenerator.
+    public static class RaisedCosineSampleGenerator implements
+            DoubleUnaryOperation {
+        /** Construct a RaisedCosineSampleGenerator.
          *  @param firstZeroCrossing The time of the first zero crossing,
          *  after time zero. This would be the symbol interval in a
          *  communications application of this pulse.
@@ -1741,6 +1748,7 @@ public class SignalProcessing {
         }
 
         private final double _oneOverFZC;
+
         private final double _excess;
     }
 
@@ -1777,8 +1785,8 @@ public class SignalProcessing {
      *  The implementation was then further optimized to cache computations
      *  that are independent of time.
      */
-    public static class SqrtRaisedCosineSampleGenerator
-        implements DoubleUnaryOperation {
+    public static class SqrtRaisedCosineSampleGenerator implements
+            DoubleUnaryOperation {
         /** Construct a SqrtRaisedCosineSampleGenerator.
          *  @param firstZeroCrossing The time of the first zero crossing of
          *  the corresponding raised cosine pulse.
@@ -1803,10 +1811,12 @@ public class SignalProcessing {
             double fourExcessOverPI = _fourExcess / Math.PI;
             double oneOverSqrtFZC = 1.0 / _sqrtFZC;
 
-            _sampleAtZero = ((fourExcessOverPI + 1.0) - _excess) * oneOverSqrtFZC;
+            _sampleAtZero = ((fourExcessOverPI + 1.0) - _excess)
+                    * oneOverSqrtFZC;
             _fourExcessOverPISqrtFZC = fourExcessOverPI * oneOverSqrtFZC;
 
-            _fzcSqrtFZCOverEightExcessPI = (firstZeroCrossing * _sqrtFZC) / _eightExcessPI;
+            _fzcSqrtFZCOverEightExcessPI = (firstZeroCrossing * _sqrtFZC)
+                    / _eightExcessPI;
             _fzcOverFourExcess = firstZeroCrossing / _fourExcess;
 
             _oneMinusFZCOverFourExcess = _oneMinus * _fzcOverFourExcess;
@@ -1833,38 +1843,51 @@ public class SignalProcessing {
 
             // Check to see whether we will get divide by zero.
             double denominator = (time * time * _sixteenExcessSquared)
-                - _squareFZC;
+                    - _squareFZC;
 
             if (close(denominator, 0.0)) {
                 double oneOverTime = 1.0 / time;
                 double oneOverTimeSquared = oneOverTime * oneOverTime;
 
-                return _fzcSqrtFZCOverEightExcessPI * oneOverTime * ((_onePlus * Math
-                                                                             .sin(onePlusTime))
-                        - (_oneMinusFZCOverFourExcess * oneOverTime * Math
-                                .cos(oneMinusTime))
-                        + (_fzcOverFourExcess * oneOverTimeSquared * Math
-                                .sin(oneMinusTime)));
+                return _fzcSqrtFZCOverEightExcessPI
+                        * oneOverTime
+                        * ((_onePlus * Math.sin(onePlusTime))
+                                - (_oneMinusFZCOverFourExcess * oneOverTime * Math
+                                        .cos(oneMinusTime)) + (_fzcOverFourExcess
+                                * oneOverTimeSquared * Math.sin(oneMinusTime)));
             }
 
-            return (_fourExcessOverPISqrtFZC * (Math.cos(onePlusTime)
-                            + (Math.sin(oneMinusTime) / (x * _fourExcess)))) / (1.0
-                                    - (_sixteenExcessSquared * x * x));
+            return (_fourExcessOverPISqrtFZC * (Math.cos(onePlusTime) + (Math
+                    .sin(oneMinusTime) / (x * _fourExcess))))
+                    / (1.0 - (_sixteenExcessSquared * x * x));
         }
 
         private final double _oneOverFZC;
+
         private final double _sqrtFZC;
+
         private final double _squareFZC;
+
         private final double _onePlus;
+
         private final double _oneMinus;
+
         private final double _excess;
+
         private final double _fourExcess;
+
         private final double _eightExcessPI;
+
         private final double _sixteenExcessSquared;
+
         private final double _sampleAtZero;
+
         private final double _fourExcessOverPISqrtFZC;
+
         private final double _fzcSqrtFZCOverEightExcessPI;
+
         private final double _fzcOverFourExcess;
+
         private final double _oneMinusFZCOverFourExcess;
     }
 
@@ -1876,11 +1899,11 @@ public class SignalProcessing {
         if (order < 0) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing : order of transform "
-                    + "must be non-negative.");
+                            + "must be non-negative.");
         } else if (order > 31) {
             throw new IllegalArgumentException(
                     "ptolemy.math.SignalProcessing : order of transform "
-                    + "must be less than 32.");
+                            + "must be less than 32.");
         }
     }
 
@@ -1895,8 +1918,8 @@ public class SignalProcessing {
 
         // Zero pad the array if necessary
         if (x.length < size) {
-            x = inverse ? DoubleArrayMath.padMiddle(x, size)
-                : DoubleArrayMath.resize(x, size);
+            x = inverse ? DoubleArrayMath.padMiddle(x, size) : DoubleArrayMath
+                    .resize(x, size);
         }
 
         return x;
@@ -1913,9 +1936,8 @@ public class SignalProcessing {
 
         // Zero pad the array if necessary
         if (x.length < size) {
-            x = (inverse == _INVERSE_TRANSFORM)
-                ? ComplexArrayMath.padMiddle(x, size)
-                : ComplexArrayMath.resize(x, size);
+            x = (inverse == _INVERSE_TRANSFORM) ? ComplexArrayMath.padMiddle(x,
+                    size) : ComplexArrayMath.resize(x, size);
         }
 
         return x;
@@ -1925,7 +1947,7 @@ public class SignalProcessing {
     // of the cosDFT function.
     private static double[] _cosDFT(double[] x, int size, int order) {
         switch (size) {
-            // Base cases for lower orders
+        // Base cases for lower orders
         case 0:
             return null; // should never be used
 
@@ -1991,7 +2013,7 @@ public class SignalProcessing {
     // of the sinDFT function.
     private static double[] _sinDFT(double[] x, int size, int order) {
         switch (size) {
-            // Base cases for lower orders
+        // Base cases for lower orders
         case 0:
         case 1:
         case 2:
@@ -2022,7 +2044,7 @@ public class SignalProcessing {
         for (int k = 0; k < quarterN; k++) {
             int twoIp = (k << 1) + 1;
             x3[k] = ((k & 1) == 1) ? (x[size - twoIp] - x[twoIp])
-                : (x[twoIp] - x[size - twoIp]);
+                    : (x[twoIp] - x[size - twoIp]);
         }
 
         double[] halfSinDFT = _sinDFT(x1, halfN, order - 1);
@@ -2134,8 +2156,11 @@ public class SignalProcessing {
     // Tables needed for the FFCT algorithm. We assume no one will attempt
     // to do a transform of size greater than 2^31.
     private static final double[][] _P1Table = new double[32][];
+
     private static final double[][] _P2Table = new double[32][];
+
     private static final double[][] _CTable = new double[32][];
+
     private static int _FFCTGenLimit = 0;
 
     // Table of scaleFactors for the IDCT.
@@ -2143,9 +2168,11 @@ public class SignalProcessing {
 
     // Various constants
     private static final double _LOG10SCALE = 1.0 / Math.log(10.0);
+
     private static final double _LOG2SCALE = 1.0 / Math.log(2.0);
 
     // Indicates a forward/inverse transform for checking arguments
     private static final boolean _FORWARD_TRANSFORM = false;
+
     private static final boolean _INVERSE_TRANSFORM = true;
 }

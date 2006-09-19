@@ -1,50 +1,49 @@
 /* A base class for attributes to be attached to instances of NamedObj.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel.util;
 
 import java.util.Iterator;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Attribute
 
 /**
-   Attribute is a base class for attributes to be attached to instances
-   of NamedObj.  This base class is itself a NamedObj, with the only
-   extension being that it can have a container.  The setContainer()
-   method puts this object on the list of attributes of the container.
+ Attribute is a base class for attributes to be attached to instances
+ of NamedObj.  This base class is itself a NamedObj, with the only
+ extension being that it can have a container.  The setContainer()
+ method puts this object on the list of attributes of the container.
 
-   @author Edward A. Lee, Neil Smyth
-   @version $Id: Attribute.java,v 1.77 2005/04/25 22:37:35 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (johnr)
-*/
+ @author Edward A. Lee, Neil Smyth
+ @version $Id: Attribute.java,v 1.82 2006/09/16 22:41:42 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (johnr)
+ */
 public class Attribute extends NamedObj {
     /** Construct an attribute in the default workspace with an empty string
      *  as its name.
@@ -84,8 +83,42 @@ public class Attribute extends NamedObj {
      */
     public Attribute(NamedObj container, String name)
             throws IllegalActionException, NameDuplicationException {
-        super(container.workspace(), name);
-        setContainer(container);
+        this(container, name, true);
+    }
+    
+    /** Construct an attribute with the given name contained by the specified
+     *  entity. The container argument must not be null, or a
+     *  NullPointerException will be thrown.  This attribute will use the
+     *  workspace of the container for synchronization and version counts.
+     *  If the name argument is null, then the name is set to the empty string.
+     *  Increment the version of the workspace.
+     *  @param container The container.
+     *  @param name The name of this attribute.
+     *  @param incrementWorkspaceVersion False to not add this to the workspace 
+     *   or do anything else that might change the workspace version number.
+     *  @exception IllegalActionException If the attribute is not of an
+     *   acceptable class for the container, or if the name contains a period.
+     *  @exception NameDuplicationException If the name coincides with
+     *   an attribute already in the container.
+     */
+    protected Attribute(
+            NamedObj container, String name, boolean incrementWorkspaceVersion)
+            throws IllegalActionException, NameDuplicationException {
+        super(container.workspace(), name, incrementWorkspaceVersion);
+        if (incrementWorkspaceVersion) {
+            setContainer(container);
+        } else {
+            // Avoid methods that increment the workspace version.
+            if (container._attributes == null) {
+                container._attributes = new NamedList();
+            }
+            container._attributes.append(this);
+            _container = container;
+            // Make sure even the debugging messages are unchanged.
+            if (container._debugging) {
+                container._debug("Added attribute", getName(), "to", container.getFullName());
+            }
+        }
         _elementName = "property";
     }
 
@@ -182,7 +215,8 @@ public class Attribute extends NamedObj {
      *  of attributes of the container. If this object is already at
      *  the specified position, do  nothing. This method gets write
      *  access on workspace and increments the version.
-     *  @param index The position to move this object to.
+     *  @param index The zero based position to which this object is moved.
+     *  0 means the first position, 1 means the second position.
      *  @return The index of the specified object prior to moving it,
      *   or -1 if it is not moved.
      *  @exception IllegalActionException If this object has
@@ -321,8 +355,8 @@ public class Attribute extends NamedObj {
      *   an attribute with the name of this attribute.
      *  @see #getContainer()
      */
-    public void setContainer(NamedObj container)
-            throws IllegalActionException, NameDuplicationException {
+    public void setContainer(NamedObj container) throws IllegalActionException,
+            NameDuplicationException {
         if ((container != null) && (_workspace != container.workspace())) {
             throw new IllegalActionException(this, container,
                     "Cannot set container because workspaces are different.");
@@ -334,10 +368,10 @@ public class Attribute extends NamedObj {
             if (deepContains(container)) {
                 throw new IllegalActionException(this, container,
                         "Attempt to construct recursive containment "
-                        + "of attributes");
+                                + "of attributes");
             }
 
-            NamedObj previousContainer = (NamedObj) getContainer();
+            NamedObj previousContainer = getContainer();
 
             if (previousContainer == container) {
                 return;
@@ -391,13 +425,13 @@ public class Attribute extends NamedObj {
      *  @exception NameDuplicationException If there is already an
      *       attribute with the same name in the container.
      */
-    public void setName(String name)
-            throws IllegalActionException, NameDuplicationException {
+    public void setName(String name) throws IllegalActionException,
+            NameDuplicationException {
         if (name == null) {
             name = "";
         }
 
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if ((container != null)) {
             Attribute another = container.getAttribute(name);
@@ -438,10 +472,10 @@ public class Attribute extends NamedObj {
         Attribute candidate = container.getAttribute(relativeName);
 
         if ((candidate != null) && !getClass().isInstance(candidate)) {
-            throw new IllegalActionException(this,
-                    "Expected " + candidate.getFullName()
-                    + " to be an instance of " + getClass().getName()
-                    + ", but it is " + candidate.getClass().getName());
+            throw new IllegalActionException(this, "Expected "
+                    + candidate.getFullName() + " to be an instance of "
+                    + getClass().getName() + ", but it is "
+                    + candidate.getClass().getName());
         }
 
         return candidate;
@@ -459,7 +493,8 @@ public class Attribute extends NamedObj {
     protected NamedObj _propagateExistence(NamedObj container)
             throws IllegalActionException {
         try {
-            Attribute newObject = (Attribute) super._propagateExistence(container);
+            Attribute newObject = (Attribute) super
+                    ._propagateExistence(container);
             newObject.setContainer(container);
             return newObject;
         } catch (NameDuplicationException e) {

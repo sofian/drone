@@ -1,6 +1,6 @@
 /* Utilities used to manipulate strings.
 
- Copyright (c) 2002-2005 The Regents of the University of California.
+ Copyright (c) 2002-2006 The Regents of the University of California.
  All rights reserved.
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,7 +49,7 @@ import java.util.StringTokenizer;
  These utilities do not depend on any other ptolemy packages.
 
  @author Christopher Brooks
- @version $Id: StringUtilities.java,v 1.79.2.1 2005/07/14 20:44:08 cxh Exp $
+ @version $Id: StringUtilities.java,v 1.99 2006/08/20 19:55:52 cxh Exp $
  @since Ptolemy II 2.1
  @Pt.ProposedRating Green (eal)
  @Pt.AcceptedRating Green (cxh)
@@ -112,17 +113,17 @@ public class StringUtilities {
         string = StringUtilities.split(string, 160);
 
         // Third argument being true means return the delimiters as tokens.
-        StringTokenizer tokenizer =
-            new StringTokenizer(string, LINE_SEPARATOR, true);
+        StringTokenizer tokenizer = new StringTokenizer(string, LINE_SEPARATOR,
+                true);
 
-        // If there are more than 10 lines and 10 newlines, return
-        // truncate after the first 20 lines and newlines.
+        // If there are more than 42 lines and 42 newlines, return
+        // truncate after the first 42 lines and newlines.
         // This is necessary so that we can deal with very long lines
         // of text without spaces.
-        if (tokenizer.countTokens() > 20) {
+        if (tokenizer.countTokens() > 42) {
             StringBuffer results = new StringBuffer();
 
-            for (int i = 0; (i < 20) && tokenizer.hasMoreTokens(); i++) {
+            for (int i = 0; (i < 42) && tokenizer.hasMoreTokens(); i++) {
                 results.append(tokenizer.nextToken());
             }
 
@@ -165,6 +166,27 @@ public class StringUtilities {
         return string;
     }
 
+    /** If the ptolemy.ptII.exitAfterWrapup property is not set, then 
+     *  call System.exit().
+     *  Ptolemy code should call this method instead of directly calling
+     *  System.exit() so that we can test code that would usually exit.
+     *  @param returnValue The return value of this process, where
+     *  non-zero values indicate an error.
+     */
+    public static void exit(int returnValue) {
+        if (StringUtilities.getProperty("ptolemy.ptII.exitAfterWrapup")
+                .length() > 0) {
+            throw new RuntimeException("Normally, we would "
+                    + "exit here because Manager.exitAfterWrapup() "
+                    + "was called.  However, because the "
+                    + "ptolemy.ptII.exitAfterWrapup property "
+                    + "is set, we throw this exception instead.");
+        } else {
+            // Non-zero indicates a problem.
+            System.exit(returnValue);
+        }
+    }
+
     /** Return a number of spaces that is proportional to the argument.
      *  If the argument is negative or zero, return an empty string.
      *  @param level The level of indenting represented by the spaces.
@@ -175,7 +197,7 @@ public class StringUtilities {
             return "";
         }
 
-        StringBuffer result = new StringBuffer(level*4);
+        StringBuffer result = new StringBuffer(level * 4);
 
         for (int i = 0; i < level; i++) {
             result.append("    ");
@@ -213,6 +235,7 @@ public class StringUtilities {
      *  </dl>
      *  @param propertyName The name of property.
      *  @return A String containing the string value of the property.
+     *  If the property is not found, then we return the empty string.
      */
     public static String getProperty(String propertyName) {
         // NOTE: getProperty() will probably fail in applets, which
@@ -267,7 +290,10 @@ public class StringUtilities {
             File ptIIAsFile = new File(getProperty("ptolemy.ptII.dir"));
 
             try {
-                URL ptIIAsURL = ptIIAsFile.toURL();
+                // Convert first to a URI, then to a URL so that we
+                // properly handle cases where $PTII has spaces in it.
+                URI ptIIAsURI = ptIIAsFile.toURI();
+                URL ptIIAsURL = ptIIAsURI.toURL();
                 return ptIIAsURL.toString();
             } catch (java.net.MalformedURLException malformed) {
                 throw new RuntimeException("While trying to find '"
@@ -281,13 +307,12 @@ public class StringUtilities {
                 // Return the previously calculated value
                 return _ptolemyPtIIDir;
             } else {
-
                 String stringUtilitiesPath = "ptolemy/util/StringUtilities.class";
 
                 // PTII variable was not set
                 URL namedObjURL = Thread.currentThread()
-                    .getContextClassLoader()
-                    .getResource(stringUtilitiesPath);
+                        .getContextClassLoader().getResource(
+                                stringUtilitiesPath);
 
                 if (namedObjURL != null) {
                     // Get the file portion of URL
@@ -306,7 +331,8 @@ public class StringUtilities {
                     }
 
                     String abnormalHome = namedObjFileName.substring(0,
-                            namedObjFileName.length() - stringUtilitiesPath.length());
+                            namedObjFileName.length()
+                                    - stringUtilitiesPath.length());
 
                     // abnormalHome will have values like: "/C:/ptII/"
                     // which cause no end of trouble, so we construct a File
@@ -325,33 +351,30 @@ public class StringUtilities {
                     // RMptsupport.jar or
                     // XMptsupport.jar1088483703686
                     String ptsupportJarName = File.separator + "DMptolemy"
-                        + File.separator + "RMptsupport.jar";
+                            + File.separator + "RMptsupport.jar";
 
                     if (_ptolemyPtIIDir.endsWith(ptsupportJarName)) {
                         _ptolemyPtIIDir = _ptolemyPtIIDir.substring(0,
                                 _ptolemyPtIIDir.length()
-                                - ptsupportJarName.length());
+                                        - ptsupportJarName.length());
                     } else {
                         ptsupportJarName = "/DMptolemy/XMptsupport.jar";
 
-                        if (_ptolemyPtIIDir.lastIndexOf(ptsupportJarName)
-                                != -1) {
+                        if (_ptolemyPtIIDir.lastIndexOf(ptsupportJarName) != -1) {
                             _ptolemyPtIIDir = _ptolemyPtIIDir.substring(0,
                                     _ptolemyPtIIDir
-                                    .lastIndexOf(ptsupportJarName));
+                                            .lastIndexOf(ptsupportJarName));
                         }
                     }
                 }
-
 
                 // Convert %20 to spaces because if a URL has %20 in it,
                 // then we know we have a space, but file names do not
                 // recognize %20 as being a single space, instead file names
                 // see %20 as three characters: '%', '2', '0'.
                 if (_ptolemyPtIIDir != null) {
-                    _ptolemyPtIIDir =
-                        StringUtilities.substitute(_ptolemyPtIIDir,
-                                "%20", " ");
+                    _ptolemyPtIIDir = StringUtilities.substitute(
+                            _ptolemyPtIIDir, "%20", " ");
                 }
 
                 if (_ptolemyPtIIDir == null) {
@@ -360,8 +383,7 @@ public class StringUtilities {
                             + "Also tried loading '" + stringUtilitiesPath
                             + "' as a resource and working from that. "
                             + "Vergil should be "
-                            + "invoked with -Dptolemy.ptII.dir"
-                            + "=\"$PTII\"");
+                            + "invoked with -Dptolemy.ptII.dir" + "=\"$PTII\"");
                 }
 
                 try {
@@ -375,7 +397,6 @@ public class StringUtilities {
                 return _ptolemyPtIIDir;
             }
         }
-                
 
         // If the property is not set then we return the empty string. 
         if (property == null) {
@@ -385,21 +406,53 @@ public class StringUtilities {
         return property;
     }
 
+    /** Merge the properties in lib/ptII.properties with the current
+     *  properties.  lib/ptII.properties is searched for in the
+     *  classpath.  The value of properties listed in
+     *  lib/ptII.properties do not override properties with the same
+     *  name in the current properties.
+     *  @exception IOException If thrown while looking for the 
+     *  $CLASSPATH/lib/ptII.properties file.
+     */
+    public static void mergePropertiesFile() throws IOException {
+        Properties systemProperties = System.getProperties();
+        Properties newProperties = new Properties();
+        String propertyFileName = "$CLASSPATH/lib/ptII.properties";
+
+        // FIXME: xxxxxxCLASSPATHxxxxxx is an ugly hack
+        URL propertyFileURL = FileUtilities.nameToURL(
+                "xxxxxxCLASSPATHxxxxxx/lib/ptII.properties", null, null);
+
+        if (propertyFileURL == null) {
+            throw new IOException("Could not find " + propertyFileName);
+        }
+
+        newProperties.load(propertyFileURL.openStream());
+
+        // systemProperties is a HashSet, so we merge in the new properties.
+        newProperties.putAll(systemProperties);
+        System.setProperties(newProperties);
+        // FIXME: This should be logged, not printed.
+        //System.out.println("Loaded " + propertyFileURL);
+    }
+
     /** Return a string representing the name of the file expected to
      *  contain the source code for the specified object.  This method
      *  simply replaces "." with "/" and appends ".java" to the class
-     *  name.  
+     *  name.
      *  @param object The object.
      *  @return The expected source file name.
      */
     public static String objectToSourceFileName(Object object) {
-        String sourceFileNameBase =
-            object.getClass().getName().replace('.', '/');
+        String sourceFileNameBase = object.getClass().getName().replace('.',
+                '/');
+
         // Inner classes: Get rid of everything past the first $
         if (sourceFileNameBase.indexOf("$") != -1) {
-            sourceFileNameBase = sourceFileNameBase.substring(
-                    0, sourceFileNameBase.indexOf("$"));
+            sourceFileNameBase = sourceFileNameBase.substring(0,
+                    sourceFileNameBase.indexOf("$"));
         }
+
         return sourceFileNameBase + ".java";
     }
 
@@ -412,10 +465,10 @@ public class StringUtilities {
      */
     public static String preferencesDirectory() throws IOException {
         String preferencesDirectoryName = StringUtilities
-            .getProperty("user.home")
-            + File.separator
-            + StringUtilities.PREFERENCES_DIRECTORY
-            + File.separator;
+                .getProperty("user.home")
+                + File.separator
+                + StringUtilities.PREFERENCES_DIRECTORY
+                + File.separator;
         File preferencesDirectory = new File(preferencesDirectoryName);
 
         if (!preferencesDirectory.isDirectory()) {
@@ -742,7 +795,7 @@ public class StringUtilities {
                         + streamTokenizer.nval + "'.  We should not be "
                         + "tokenizing numbers");
 
-            //break;
+                //break;
             case StreamTokenizer.TT_EOL:
                 break;
 
@@ -771,7 +824,7 @@ public class StringUtilities {
 
     /** Given a string, replace all the instances of XML entities
      *  with their corresponding XML special characters.  This is necessary to
-     *  allow arbitrary strings to be encoded within XML.  
+     *  allow arbitrary strings to be encoded within XML.
      *
      *  <p>In this method, we make the following translations:
      *  <pre>
@@ -816,10 +869,8 @@ public class StringUtilities {
             String[][] commandOptions, String[] commandFlags) {
         // This method is static so that we can reuse it in places
         // like copernicus/kernel/Copernicus and actor/gui/MoMLApplication
-
-        StringBuffer result = new StringBuffer("Usage: "
-                + commandTemplate + "\n\n"
-                + "Options that take values:\n");
+        StringBuffer result = new StringBuffer("Usage: " + commandTemplate
+                + "\n\n" + "Options that take values:\n");
 
         int i;
 
@@ -846,22 +897,22 @@ public class StringUtilities {
     /** Maximum length in characters of a long string before
      *  {@link #ellipsis(String, int)} truncates and add a
      *  trailing ". . .".  This variable is used by callers
-     *  of ellipsis(String, int). 
+     *  of ellipsis(String, int).
      */
     public static final int ELLIPSIS_LENGTH_LONG = 2000;
 
     /** Maximum length in characters of a short string before
      *  {@link #ellipsis(String, int)} truncates and add a
      *  trailing ". . .". This variable is used by callers
-     *  of ellipsis(String, int). 
+     *  of ellipsis(String, int).
      */
     public static final int ELLIPSIS_LENGTH_SHORT = 400;
 
     /** The line separator string.  Under Windows, this would
      *  be "\r\n"; under Unix, "\n"; Under Macintosh, "\r".
      */
-    public static final String LINE_SEPARATOR =
-        System.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = System
+            .getProperty("line.separator");
 
     /** Location of Application preferences such as the user library.
      *  This field is not final in case other applications want to

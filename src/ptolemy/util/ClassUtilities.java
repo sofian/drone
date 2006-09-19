@@ -40,7 +40,7 @@ import java.net.URL;
 
 
  @author Christopher Hylands
- @version $Id: ClassUtilities.java,v 1.18.2.1 2005/07/14 20:44:06 cxh Exp $
+ @version $Id: ClassUtilities.java,v 1.24 2005/10/24 19:09:12 cxh Exp $
  @since Ptolemy II 4.0
  @Pt.ProposedRating Green (cxh)
  @Pt.AcceptedRating Green (cxh)
@@ -97,11 +97,12 @@ public class ClassUtilities {
 
         if (jarEntry == -1) {
             jarEntry = jarURLString.indexOf("!\\");
+
             if (jarEntry == -1) {
                 return null;
             }
         }
-        
+
         try {
             // !/ means that this could be in a jar file.
             String entry = jarURLString.substring(jarEntry + 2);

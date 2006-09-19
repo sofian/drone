@@ -1,57 +1,62 @@
 /* An actor that outputs a random sequence with a uniform distribution.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.lib;
 
+import ptolemy.actor.parameters.PortParameter;
+import ptolemy.data.BooleanToken;
 import ptolemy.data.DoubleToken;
-import ptolemy.data.expr.Parameter;
+import ptolemy.data.expr.SingletonParameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Uniform
 
 /**
-   Produce a random sequence with a uniform distribution.  On each iteration,
-   a new random number is produced.  The output port is of type DoubleToken.
-   The values that are generated are independent and identically distributed
-   with bounds defined by the parameters.  In addition, the
-   seed can be specified as a parameter to control the sequence that is
-   generated.
+ Produce a random sequence with a uniform distribution.  On each iteration,
+ a new random number is produced.  The output port is of type DoubleToken.
+ The values that are generated are independent and identically distributed
+ with bounds defined by the parameters.  In addition, the
+ seed can be specified as a parameter to control the sequence that is
+ generated.
 
-   @author Edward A. Lee
-   @version $Id: Uniform.java,v 1.20 2005/04/25 21:34:48 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Yellow (eal)
-   @Pt.AcceptedRating Yellow (cxh)
-*/
+ @author Edward A. Lee
+ @version $Id: Uniform.java,v 1.27 2006/07/21 16:57:08 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Yellow (eal)
+ @Pt.AcceptedRating Yellow (cxh)
+ @see ptolemy.actor.lib.Bernoulli
+ @see ptolemy.actor.lib.DiscreteRandomSource
+ @see ptolemy.actor.lib.Rician
+ @see ptolemy.actor.lib.Triangular
+ */
 public class Uniform extends RandomSource {
     /** Construct an actor with the given container and name.
      *  @param container The container.
@@ -67,10 +72,15 @@ public class Uniform extends RandomSource {
 
         output.setTypeEquals(BaseType.DOUBLE);
 
-        lowerBound = new Parameter(this, "lowerBound", new DoubleToken(0.0));
+        lowerBound = new PortParameter(this, "lowerBound", new DoubleToken(0.0));
         lowerBound.setTypeEquals(BaseType.DOUBLE);
-        upperBound = new Parameter(this, "upperBound", new DoubleToken(1.0));
+        new SingletonParameter(lowerBound.getPort(), "_showName")
+                .setToken(BooleanToken.TRUE);
+
+        upperBound = new PortParameter(this, "upperBound", new DoubleToken(1.0));
         upperBound.setTypeEquals(BaseType.DOUBLE);
+        new SingletonParameter(upperBound.getPort(), "_showName")
+                .setToken(BooleanToken.TRUE);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -79,12 +89,12 @@ public class Uniform extends RandomSource {
     /** The lower bound.
      *  This parameter contains a DoubleToken, initially with value 0.0.
      */
-    public Parameter lowerBound;
+    public PortParameter lowerBound;
 
     /** The upper bound.
      *  This parameter contains a DoubleToken, initially with value 0.0.
      */
-    public Parameter upperBound;
+    public PortParameter upperBound;
 
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -95,6 +105,8 @@ public class Uniform extends RandomSource {
      *  @exception IllegalActionException If there is no director.
      */
     public void fire() throws IllegalActionException {
+        lowerBound.update();
+        upperBound.update();
         super.fire();
         output.send(0, new DoubleToken(_current));
     }
@@ -106,8 +118,10 @@ public class Uniform extends RandomSource {
      *  @exception If parameter values are incorrect.
      */
     protected void _generateRandomNumber() throws IllegalActionException {
-        double lowerValue = ((DoubleToken) (lowerBound.getToken())).doubleValue();
-        double upperValue = ((DoubleToken) (upperBound.getToken())).doubleValue();
+        double lowerValue = ((DoubleToken) (lowerBound.getToken()))
+                .doubleValue();
+        double upperValue = ((DoubleToken) (upperBound.getToken()))
+                .doubleValue();
 
         if (lowerValue > upperValue) {
             throw new IllegalActionException(this,

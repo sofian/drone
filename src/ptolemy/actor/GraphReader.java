@@ -1,27 +1,27 @@
 /* Conversion of Ptolemy II models to generic weighted graphs.
 
-Copyright (c) 2001-2005 The University of Maryland. All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2001-2005 The University of Maryland. All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF MARYLAND BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF MARYLAND HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF MARYLAND BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF MARYLAND HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF MARYLAND SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-MARYLAND HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF MARYLAND SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ MARYLAND HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
 
-*/
+ */
 // In theory, this class could be in ptolemy.graph, but that would
 // set up a two way dependency between ptolemy.actor and ptolemy.graph.
 package ptolemy.actor;
@@ -34,27 +34,26 @@ import ptolemy.graph.Edge;
 import ptolemy.graph.Graph;
 import ptolemy.graph.Node;
 
-
 ///////////////////////////////////////////////////////////////////////
 //// GraphReader
 
 /** This class provides methods for converting Ptolemy II models
-    into generic graph representations. Portions of
-    this code are based on examples from [1].
+ into generic graph representations. Portions of
+ this code are based on examples from [1].
 
-    <p>
-    References<br>
-    [1] J. Davis et al., <em>Heterogeneous
-    concurrent modeling and design in Java</em>, Technical report,
-    Electronics Research Laboratory, University of California at Berkeley,
-    March 2001.
+ <p>
+ References<br>
+ [1] J. Davis et al., <em>Heterogeneous
+ concurrent modeling and design in Java</em>, Technical report,
+ Electronics Research Laboratory, University of California at Berkeley,
+ March 2001.
 
-    @author Shuvra S. Bhattacharyya, Chia-Jui Hsu
-    @version $Id: GraphReader.java,v 1.28 2005/04/29 20:05:10 cxh Exp $
-    @since Ptolemy II 2.0
-    @Pt.ProposedRating Red (cxh)
-    @Pt.AcceptedRating Red (cxh)
-*/
+ @author Shuvra S. Bhattacharyya, Chia-Jui Hsu
+ @version $Id: GraphReader.java,v 1.31 2005/12/31 02:49:50 cxh Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class GraphReader {
     /** Construct a new graph reader.
      */
@@ -97,7 +96,8 @@ public class GraphReader {
                 _processNewNode(graph, newNode, actor);
             } else {
                 throw new RuntimeException("Unsupported deep entity type: "
-                        + entity.getClass().getName() + " (value = " + entity + ")");
+                        + entity.getClass().getName() + " (value = " + entity
+                        + ")");
             }
         }
 
@@ -124,8 +124,8 @@ public class GraphReader {
                                     + " to " + sink);
                         }
 
-                        Edge newEdge = graph.addEdge((Node) (_actorMap.get(
-                                                                     source)), (Node) (_actorMap.get(sink)),
+                        Edge newEdge = graph.addEdge((Node) (_actorMap
+                                .get(source)), (Node) (_actorMap.get(sink)),
                                 _computeEdgeWeight(outPort, inPort));
                         _processNewEdge(graph, newEdge, outPort, inPort);
                     }
@@ -207,14 +207,6 @@ public class GraphReader {
         return;
     }
 
-    /** Set debug mode and let the class display conversion information.
-     * @param debug True will turn on debug mode, false will turn off debug
-     * mode.
-     */
-    protected void _setDebug(boolean debug) {
-        _debug = debug;
-    }
-
     /** Perform post-processing on the entire graph to complete the
      *  conversion. This method should be overridden by derived classes
      *  to implement specialized conversion aspects that operate
@@ -238,7 +230,7 @@ public class GraphReader {
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
     // Flag for turning local debugging output on and off.
-    private static boolean _debug = false;
+    private static final boolean _debug = false;
 
     // Map from actors to the generic graph nodes that represent them.
     // Keys are instances of AtomicActor, and values are instances of Node.

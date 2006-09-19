@@ -1,63 +1,62 @@
 /* An abstract base class for a schedule element.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.sched;
 
 import java.util.Iterator;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// ScheduleElement
 
 /**
-   This is an abstract base class for a schedule element. Instances of the
-   Schedule and Firing subclasses are used to construct a static schedule.
-   A schedule can be thought of as a structure that consists of an iteration
-   count and a list of schedule elements. A schedule element can contain
-   an actor, or it can contain another schedule. It is usually required that,
-   all of the lowest-level schedule elements must contain an actor. It is
-   up to the scheduler to enforce this, however. The Schedule class is a
-   schedule element that contains a schedule. The Firing class is a schedule
-   element that contains an actor. Therefore,
-   the top-level schedule element must be an instance of Schedule, and all
-   of the lowest-level elements must each be an instance of Firing.
-   <p>
-   This base class implements the getIterationCount() and setIterationCount()
-   methods, which return and set the iteration count for this schedule element.
-   A default value of 1 is used for the iteration count.
+ This is an abstract base class for a schedule element. Instances of the
+ Schedule and Firing subclasses are used to construct a static schedule.
+ A schedule can be thought of as a structure that consists of an iteration
+ count and a list of schedule elements. A schedule element can contain
+ an actor, or it can contain another schedule. It is usually required that,
+ all of the lowest-level schedule elements must contain an actor. It is
+ up to the scheduler to enforce this, however. The Schedule class is a
+ schedule element that contains a schedule. The Firing class is a schedule
+ element that contains an actor. Therefore,
+ the top-level schedule element must be an instance of Schedule, and all
+ of the lowest-level elements must each be an instance of Firing.
+ <p>
+ This base class implements the getIterationCount() and setIterationCount()
+ methods, which return and set the iteration count for this schedule element.
+ A default value of 1 is used for the iteration count.
 
-   @author Brian K. Vogel
-   @version $Id: ScheduleElement.java,v 1.26 2005/03/01 04:52:41 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (vogel)
-   @Pt.AcceptedRating Yellow (chf)
-   @see ptolemy.actor.sched.Firing
-   @see ptolemy.actor.sched.Schedule
-*/
+ @author Brian K. Vogel
+ @version $Id: ScheduleElement.java,v 1.32 2006/08/21 23:12:21 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (vogel)
+ @Pt.AcceptedRating Yellow (chf)
+ @see ptolemy.actor.sched.Firing
+ @see ptolemy.actor.sched.Schedule
+ */
 public abstract class ScheduleElement {
     /** Construct a schedule element with an iteration count of 1 and
      *  with no parent schedule element. The constructor that takes
@@ -72,9 +71,19 @@ public abstract class ScheduleElement {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
+    // What is the key difference between the following methods?
+    // From Steve:
+    // Basically, in some cases (debugging? testing?) it seemed
+    // more worthwhile to have a flat view of the schedule (actorIterator)
+    // rather than a tree view... providing this method also meant that
+    // it was temporarily easy to muck about with the schedule
+    // representation, without breaking the execution mechanism.
+    // ScheduleElement contains an iteration count, which multiplies the number
+    // of times that an actor is fired or a Schedule is executed.
+
     /** Return the actor invocation sequence of the schedule in the
      *  form of a sequence of actors. All of the lowest-level nodes
-     *  should be an instance of Firing. Otherwise, the returned
+     *  should be an instance of Actor. Otherwise, the returned
      *  iterator will contain null elements.
      *
      *  @return An iterator over a sequence of actors.
@@ -83,7 +92,8 @@ public abstract class ScheduleElement {
 
     /** Return the actor invocation sequence in the form
      *  of a sequence of firings. All of the lowest-level nodes
-     *  should be an instance of Firing. Otherwise, the returned
+     *  should be an instance of Firing, which references an
+     *  actor and an iteration count. Otherwise, the returned
      *  iterator will contain null elements.
      *
      *  @return An iterator over a sequence of firings.

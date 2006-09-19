@@ -1,6 +1,6 @@
 /* Utilities that manipulate strings using XSLT.
 
- Copyright (c) 2002-2005 The Regents of the University of California.
+ Copyright (c) 2002-2006 The Regents of the University of California.
  All rights reserved.
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
@@ -40,6 +40,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -68,9 +69,9 @@ import org.xml.sax.SAXException;
 
 
  @author Christopher Hylands, Haiyang Zheng
- @version $Id: XSLTUtilities.java,v 1.39.2.1 2005/07/14 20:44:11 cxh Exp $
+ @version $Id: XSLTUtilities.java,v 1.49 2006/02/07 00:49:12 cxh Exp $
  @since Ptolemy II 2.1
- @Pt.ProposedRating Green (eal) 
+ @Pt.ProposedRating Green (eal)
  Pending Java 1.5 changes
  @Pt.AcceptedRating Yellow (cxh)
  */
@@ -143,8 +144,8 @@ public class XSLTUtilities {
     public static Document parse(String filename)
             throws ParserConfigurationException, IOException {
         // FIXME: Throw something other than Exception
-        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-                "net.sf.saxon.om.DocumentBuilderFactoryImpl");
+        //        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+        //                "net.sf.saxon.om.DocumentBuilderFactoryImpl");
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -210,6 +211,27 @@ public class XSLTUtilities {
             throws TransformerException, IOException {
         TransformerFactory transformerFactory = TransformerFactory
                 .newInstance();
+        // Use an ErrorListener so as to avoid error output on stderr
+        // which causes problems with the test harness
+        transformerFactory.setErrorListener(new ErrorListener() {
+            /** Receive notification of a recoverable error. */
+            public void error(TransformerException exception)
+                    throws TransformerException {
+                throw exception;
+            }
+
+            /** Receive notification of a non-recoverable error. */
+            public void fatalError(TransformerException exception)
+                    throws TransformerException {
+                throw exception;
+            }
+
+            /** Receive notification of a warning. */
+            public void warning(TransformerException exception) {
+                System.err.println("ptolemy.util.XSLTUtilities.transform()"
+                        + ": Warning: " + exception);
+            }
+        });
         Transformer transformer = null;
 
         // Set a valid transformer.

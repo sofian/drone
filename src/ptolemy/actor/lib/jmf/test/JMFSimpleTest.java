@@ -4,10 +4,10 @@ import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 //import ptolemy.kernel.util.Workspace;
-import ptolemy.domains.sdf.kernel.SDFDirector;
-import ptolemy.domains.de.kernel.DEDirector;
-import ptolemy.domains.dt.kernel.DTDirector;
-import ptolemy.domains.ct.kernel.CTDirector;
+//import ptolemy.domains.sdf.kernel.SDFDirector;
+//import ptolemy.domains.de.kernel.DEDirector;
+//import ptolemy.domains.dt.kernel.DTDirector;
+//import ptolemy.domains.ct.kernel.CTDirector;
 import ptolemy.actor.Manager;
 //import ptolemy.actor.lib.StringConst;
 //import ptolemy.actor.lib.Writer;
@@ -45,7 +45,7 @@ public class JMFSimpleTest {
 //	}
 
 	public static void main(String[] args) throws NameDuplicationException, IllegalActionException {
-		
+/*		
 			TypedCompositeActor top = new TypedCompositeActor();
 			
 			// Create the director.
@@ -84,7 +84,7 @@ public class JMFSimpleTest {
 //			writer.fileOrURL.setExpression("/tmp/MovieOut.mov");
 			top.connect(reader.output, writer.input);
 			
-			top.getManager().startRun();
+			top.getManager().startRun();*/
 //			top.getManager().run();
 	}
 }

@@ -1,30 +1,30 @@
 /* An attribute whose value can be set via the MoML configure tag.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel.util;
 
 import java.io.BufferedReader;
@@ -33,35 +33,36 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// ConfigurableAttribute
 
 /**
-   This class provides a simple way to get a long string into an attribute.
-   It implements Configurable, so its value can be set using a configure MoML
-   element.  For example,
-   <pre>
-   &lt;property name="x" class="ptolemy.moml.ConfigurableAttribute"&gt;
-   &lt;configure source="url"&gt;xxx&lt;/configure&gt;
-   &lt;/property&gt;
-   </pre>
-   The value of this property, obtained via the value() method,
-   will be whatever text is contained by the referenced URL (which
-   is optional), followed by the text "xxx".
+ This class provides a simple way to get a long string into an attribute.
+ It implements Configurable, so its value can be set using a configure MoML
+ element.  For example,
+ <pre>
+ &lt;property name="x" class="ptolemy.moml.ConfigurableAttribute"&gt;
+ &lt;configure source="url"&gt;xxx&lt;/configure&gt;
+ &lt;/property&gt;
+ </pre>
+ The value of this property, obtained via the value() method,
+ will be whatever text is contained by the referenced URL (which
+ is optional), followed by the text "xxx".
 
-   @author Steve Neuendorffer and Edward A. Lee
-   @version $Id: ConfigurableAttribute.java,v 1.40 2005/04/25 22:37:45 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (janneck)
-*/
+ @author Steve Neuendorffer and Edward A. Lee
+ @version $Id: ConfigurableAttribute.java,v 1.48 2006/09/17 18:17:42 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (janneck)
+ */
 public class ConfigurableAttribute extends Attribute implements Configurable,
-                                                                Settable {
+        Settable {
     /** Construct a new attribute with no
      *  container and an empty string as its name. Add the attribute to the
      *  default workspace directory.
@@ -121,7 +122,8 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
      *  @return The cloned attribute.
      */
     public Object clone(Workspace workspace) throws CloneNotSupportedException {
-        ConfigurableAttribute newObject = (ConfigurableAttribute) super.clone(workspace);
+        ConfigurableAttribute newObject = (ConfigurableAttribute) super
+                .clone(workspace);
 
         // The clone has new value listeners.
         newObject._valueListeners = null;
@@ -132,7 +134,7 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
     /** Configure the object with data from the specified input source
      *  (a URL) and/or textual data.  The input source, if any, is assumed
      *  to contain textual data as well.  Note that the URL is not read
-     *  until the value() method is called.
+     *  until the value() or validate() method is called.
      *  @param base The base relative to which references within the input
      *   are found, or null if this is not known, or there is none.
      *   This argument is ignored in this method.
@@ -149,9 +151,6 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
         _base = base;
         _configureSource = source;
         _configureText = text;
-
-        // NOTE: Do we really want to call this right away?
-        validate();
     }
 
     /** Return the base specified in the most recent call to the
@@ -205,6 +204,20 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
         return _defaultText;
     }
 
+    /** Return a name to present to the user. If setDisplayName(String)
+     *  has been called, then return the name specified there, and
+     *  otherwise return the name returned by getName().
+     *  @return A name to present to the user.
+     *  @see #setDisplayName(String)
+     */
+    public String getDisplayName() {
+        if (_displayName != null) {
+            return _displayName;
+        }
+
+        return getName();
+    }
+
     /** Return the the result of calling value().
      *  @return The value, or a description of the exception if one is thrown.
      *  @see #value()
@@ -216,6 +229,14 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
         } catch (Exception ex) {
             return ex.toString();
         }
+    }
+
+    /** Get the value of the attribute, which is the evaluated expression.
+     *  @return The same as getExpression().
+     *  @see #getExpression()
+     */
+    public String getValueAsString() {
+        return getExpression();
     }
 
     /** Get the visibility of this attribute, as set by setVisibility().
@@ -239,6 +260,14 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
         }
     }
 
+    /** Set a name to present to the user.
+     *  @param name A name to present to the user.
+     *  @see #getDisplayName()
+     */
+    public void setDisplayName(String name) {
+        _displayName = name;
+    }
+
     /** Set the value of the string attribute and notify the container
      *  of the value of this attribute by calling attributeChanged(),
      *  and notify any listeners that have
@@ -253,6 +282,7 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
     public void setExpression(String expression) throws IllegalActionException {
         try {
             configure(null, null, expression);
+            validate();
         } catch (IllegalActionException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -269,35 +299,46 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
         _visibility = visibility;
     }
 
-    /** Validate any instances of Settable that this attribute may contain.
-     *  Notify listeners that the value of this attribute has changed.
+    /** Validate this attribute by calling {@link #value()}.
+     *  Notify the container and listeners that the value of this
+     *  attribute has changed.
+     *  @return A list of contained instances of Settable.
      *  @exception IllegalActionException If the change is not acceptable
      *   to the container.
      */
-    public void validate() throws IllegalActionException {
-        // Validate contained attributes, if any.
-        Iterator attributes = attributeList(Settable.class).iterator();
-
-        while (attributes.hasNext()) {
-            Settable attribute = (Settable) attributes.next();
-            attribute.validate();
+    public Collection validate() throws IllegalActionException {
+        // Validate by obtaining the value.
+        try {
+            value();
+        } catch (IOException ex) {
+            throw new IllegalActionException(this, ex,
+                    "Failed to read configuration at: "
+                    + _configureSource);
         }
-
         // Notify the container that the attribute has changed.
-        NamedObj container = (NamedObj) getContainer();
-
+        NamedObj container = getContainer();
         if (container != null) {
             container.attributeChanged(this);
         }
-
+        // Notify value listeners.
+        Collection result = new HashSet();
         if (_valueListeners != null) {
             Iterator listeners = _valueListeners.iterator();
 
             while (listeners.hasNext()) {
                 ValueListener listener = (ValueListener) listeners.next();
-                listener.valueChanged(this);
+                if (listener instanceof Settable) {
+                    Collection validated = ((Settable)listener).validate();
+                    if (validated != null) {
+                        result.addAll(validated);
+                    }
+                    result.add(listener);
+                } else {
+                    listener.valueChanged(this);
+                }
             }
         }
+        return result;
     }
 
     /** Return the value given by the configure tag.  This is the text
@@ -409,6 +450,9 @@ public class ConfigurableAttribute extends Attribute implements Configurable,
 
     // The default text in the body of the configure.
     private String _defaultText;
+
+    // The display name, if set.
+    private String _displayName;
 
     // Listeners for changes in value.
     private List _valueListeners;

@@ -1,30 +1,30 @@
 /* A director that uses a static schedule.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.sched;
 
 import java.util.Iterator;
@@ -32,7 +32,6 @@ import java.util.Iterator;
 import ptolemy.actor.Actor;
 import ptolemy.actor.Director;
 import ptolemy.actor.FiringEvent;
-import ptolemy.kernel.ComponentEntity;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.DebugListener;
 import ptolemy.kernel.util.IllegalActionException;
@@ -40,34 +39,33 @@ import ptolemy.kernel.util.InvalidStateException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// StaticSchedulingDirector
 
 /**
-   A director that uses static scheduling to govern the execution of the
-   CompositeActor it belongs to. <p>
+ A director that uses static scheduling to govern the execution of the
+ CompositeActor it belongs to. <p>
 
-   This class does not directly implement a scheduling algorithm, but
-   defers to its contained scheduler.  The contained scheduler creates an
-   instance of the Schedule class which determines the number of times
-   each actor should be fired and their firing order.  This allows new
-   scheduling algorithms to be easily created for existing domains.<p>
+ This class does not directly implement a scheduling algorithm, but
+ defers to its contained scheduler.  The contained scheduler creates an
+ instance of the Schedule class which determines the number of times
+ each actor should be fired and their firing order.  This allows new
+ scheduling algorithms to be easily created for existing domains.<p>
 
-   This class is generally useful for statically scheduled domains where
-   a schedule can be constructed once and used to repeatedly execute the
-   model.  The Scheduler class caches the schedule until the model changes
-   so that the schedule does not have to be recomputed.
+ This class is generally useful for statically scheduled domains where
+ a schedule can be constructed once and used to repeatedly execute the
+ model.  The Scheduler class caches the schedule until the model changes
+ so that the schedule does not have to be recomputed.
 
-   @author Jie Liu, Steve Neuendorffer
-   @version $Id: StaticSchedulingDirector.java,v 1.77 2005/04/29 20:05:57 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (neuendor)
-   @see ptolemy.actor.Director
-   @see Scheduler
-   @see Schedule
-*/
+ @author Jie Liu, Steve Neuendorffer
+ @version $Id: StaticSchedulingDirector.java,v 1.91 2006/06/20 23:05:36 hyzheng Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (neuendor)
+ @Pt.AcceptedRating Yellow (neuendor)
+ @see ptolemy.actor.Director
+ @see Scheduler
+ @see Schedule
+ */
 public class StaticSchedulingDirector extends Director {
     /** Construct a director in the default workspace with an empty string
      *  as its name. The director is added to the list of objects in
@@ -144,6 +142,9 @@ public class StaticSchedulingDirector extends Director {
      *  container.
      */
     public void fire() throws IllegalActionException {
+        // Don't call "super.fire();" here because if you do then
+        // everything happens twice.
+
         Scheduler scheduler = getScheduler();
 
         if (scheduler == null) {
@@ -158,12 +159,12 @@ public class StaticSchedulingDirector extends Director {
 
         while (firings.hasNext() && !_stopRequested) {
             Firing firing = (Firing) firings.next();
-            Actor actor = (Actor) firing.getActor();
+            Actor actor = firing.getActor();
             int iterationCount = firing.getIterationCount();
 
             if (_debugging) {
                 _debug(new FiringEvent(this, actor, FiringEvent.BEFORE_ITERATE,
-                               iterationCount));
+                        iterationCount));
             }
 
             int returnValue = actor.iterate(iterationCount);
@@ -171,13 +172,13 @@ public class StaticSchedulingDirector extends Director {
             if (returnValue == STOP_ITERATING) {
                 _postfireReturns = false;
             } else if (returnValue == NOT_READY) {
-                throw new IllegalActionException(this, (ComponentEntity) actor,
-                        "Actor " + "is not ready to fire.");
+                throw new IllegalActionException(this, actor, "Actor "
+                        + "is not ready to fire.");
             }
 
             if (_debugging) {
                 _debug(new FiringEvent(this, actor, FiringEvent.AFTER_ITERATE,
-                               iterationCount));
+                        iterationCount));
             }
         }
     }
@@ -207,11 +208,8 @@ public class StaticSchedulingDirector extends Director {
      */
     public void invalidateSchedule() {
         _debug("Invalidating schedule.");
-
-        try {
-            setScheduleValid(false);
-        } catch (IllegalActionException ex) {
-            // no scheduler.  ignore.
+        if (_scheduler != null) {
+            _scheduler.setValid(false);
         }
     }
 
@@ -239,7 +237,7 @@ public class StaticSchedulingDirector extends Director {
      *  @exception IllegalActionException Not thrown in this base class.
      */
     public boolean postfire() throws IllegalActionException {
-        return _postfireReturns && !_stopRequested;
+        return super.postfire() && _postfireReturns;
     }
 
     /** Return true if the director is ready to fire. This method is
@@ -281,28 +279,6 @@ public class StaticSchedulingDirector extends Director {
         }
     }
 
-    /** Validate/Invalidate the schedule. A true argument indicate that
-     *  the current (cached) schedule is valid, and the director can use
-     *  it in the further execution. A false argument indicate that
-     *  the CompositeActor has been significantly changed so that the
-     *  cached schedule is no longer valid, and the director should
-     *  invoke the scheduler again for a new schedule. This calls the
-     *  setValid() method of Scheduler.
-     *  @param valid True if the schedule is to be marked valid.
-     *  @exception IllegalActionException If there's no scheduler.
-     */
-    public void setScheduleValid(boolean valid) throws IllegalActionException {
-        // FIXME: This should be protected.  Edward Added this
-        // comment 5/99 r1.26
-        // The only other place it is called is CTEmbeddedDirector,
-        // which extends this class?
-        if (_scheduler == null) {
-            throw new IllegalActionException(this, "has no scheduler.");
-        }
-
-        _scheduler.setValid(valid);
-    }
-
     /** Set the scheduler for this StaticSchedulingDirector.
      *  The container of the specified scheduler is set to this director.
      *  If there was a previous scheduler, the container of that scheduler
@@ -342,16 +318,22 @@ public class StaticSchedulingDirector extends Director {
      */
     protected void _setScheduler(Scheduler scheduler)
             throws IllegalActionException, NameDuplicationException {
-        invalidateSchedule();
-        _scheduler = scheduler;
-        invalidateSchedule();
+        // If the scheduler is not changed, do nothing.
+        if (_scheduler != scheduler) {
+            _scheduler = scheduler;
+            invalidateSchedule();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////
-    ////                         private variables                 ////
-    // The scheduler.
-    private Scheduler _scheduler;
+    ////                       protected variables                 ////
 
-    // The value that the postfire method will return;
-    private boolean _postfireReturns;
+    /** The value that the postfire method will return. */
+    protected boolean _postfireReturns;
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         private variables                 ////
+
+    /** The scheduler. */
+    private Scheduler _scheduler;
 }

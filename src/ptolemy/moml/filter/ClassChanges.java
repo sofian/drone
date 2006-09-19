@@ -1,29 +1,29 @@
 /* Filter for simple class name changes
 
-Copyright (c) 2002-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2002-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
-*/
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
+ */
 package ptolemy.moml.filter;
 
 import java.util.HashMap;
@@ -34,28 +34,27 @@ import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLFilter;
 import ptolemy.moml.MoMLParser;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ClassChanges
 
 /** When this class is registered with the MoMLParser.setMoMLFilter()
-    method, it will cause MoMLParser to filter so that models from
-    earlier releases will run in the current release.
+ method, it will cause MoMLParser to filter so that models from
+ earlier releases will run in the current release.
 
-    <p>This class will filter moml for simple class changes where
-    the context of the class name to be changed does not matter - all
-    occurrences of the class name will be changed.  This class
-    can be though of as a primitive form of sed.
+ <p>This class will filter moml for simple class changes where
+ the context of the class name to be changed does not matter - all
+ occurrences of the class name will be changed.  This class
+ can be though of as a primitive form of sed.
 
-    <p> If a class within an actor is what has changed, use (@see
-    PropertyClassChanges) instead.
+ <p> If a class within an actor is what has changed, use (@see
+ PropertyClassChanges) instead.
 
-    @author Christopher Hylands
-    @version $Id: ClassChanges.java,v 1.48 2005/04/29 20:05:28 cxh Exp $
-    @since Ptolemy II 2.0
-    @Pt.ProposedRating Red (cxh)
-    @Pt.AcceptedRating Red (cxh)
-*/
+ @author Christopher Hylands
+ @version $Id: ClassChanges.java,v 1.56 2006/06/26 19:01:23 hyzheng Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class ClassChanges implements MoMLFilter {
     /** If the attributeName is "class" and attributeValue names a
      *  class that needs to be renamed, then substitute in the new class
@@ -100,9 +99,10 @@ public class ClassChanges implements MoMLFilter {
         return attributeValue;
     }
 
-    /** Do nothing.
+    /** In this class, do nothing.
      *  @param container The object created by this element.
      *  @param elementName The element name.
+     *  @exception Exception Not thrown in this base class.
      */
     public void filterEndElement(NamedObj container, String elementName)
             throws Exception {
@@ -184,11 +184,13 @@ public class ClassChanges implements MoMLFilter {
                 "ptolemy.domains.fsm.modal.ModalModel");
 
         // Moved InterfaceAutomatonTransition
-        _classChanges.put("ptolemy.domains.fsm.kernel.InterfaceAutomatonTransition",
+        _classChanges.put(
+                "ptolemy.domains.fsm.kernel.InterfaceAutomatonTransition",
                 "ptolemy.domains.fsm.kernel.ia.InterfaceAutomatonTransition");
 
         // Moved ModalTableauFactory
-        _classChanges.put("ptolemy.vergil.fsm.modal.ModalModel$ModalTableauFactory",
+        _classChanges.put(
+                "ptolemy.vergil.fsm.modal.ModalModel$ModalTableauFactory",
                 "ptolemy.vergil.fsm.modal.ModalTableauFactory");
 
         // Moved ModalPort
@@ -225,6 +227,29 @@ public class ClassChanges implements MoMLFilter {
 
         _classChanges.put("ptolemy.domains.sr.lib.Latch",
                 "ptolemy.domains.sr.lib.Current");
+
+        // Renamed VergilPreferences
+        _classChanges.put("ptolemy.vergil.VergilPreferences",
+                "ptolemy.actor.gui.PtolemyPreferences");
+
+        // Use FPScheduler instead of SROptimizedScheduler
+        _classChanges.put("ptolemy.domains.sr.kernel.SROptimizedScheduler",
+                "ptolemy.actor.sched.FixedPointScheduler");
+
+        // Moved HSFSMDirector
+        _classChanges.put("ptolemy.domains.fsm.kernel.HSFSMDirector",
+                "ptolemy.domains.ct.kernel.HSFSMDirector");
+
+        // Look for Kepler's NamedObjId, and if we don't find it, then
+        // add it to the filter.  This makes it much easier to open
+        // Kepler models in Ptolemy.
+        try {
+            Class.forName("org.kepler.moml.NamedObjId");
+        } catch (ClassNotFoundException ex) {
+            _classChanges.put("org.kepler.moml.NamedObjId",
+                    "ptolemy.kernel.util.StringAttribute");
+        }
+
     }
 
     // Set of class names that are obsolete and should be simply
@@ -241,5 +266,11 @@ public class ClassChanges implements MoMLFilter {
 
         //DEIOPort
         _classesToRemove.add("ptolemy.domains.de.kernel.DEIOPort");
+
+        // SROptimizedScheduler
+        _classesToRemove.add("ptolemy.domains.sr.kernel.SROptimizedScheduler");
+
+        // SRRandomizedScheduler
+        _classesToRemove.add("ptolemy.domains.sr.kernel.SRRandomizedScheduler");
     }
 }

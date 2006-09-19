@@ -1,111 +1,109 @@
 /* A Fraction.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.math;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Fraction
 
 /**
-   A class for representing fractions.  Fractions are immutable and
-   maintained in lowest terms, with a positive denominator.   Thus,
-   1/2 and 2/4 are interpreted as different names for the same number.
-   Any fraction with the value zero is expressed as 0/1 in lowest terms.
-   <p>This class only represents fractions with a determined value,
-   so fractions with a zero in the denominator are not allowed (including 0/0).
+ A class for representing fractions.  Fractions are immutable and
+ maintained in lowest terms, with a positive denominator.   Thus,
+ 1/2 and 2/4 are interpreted as different names for the same number.
+ Any fraction with the value zero is expressed as 0/1 in lowest terms.
+ <p>This class only represents fractions with a determined value,
+ so fractions with a zero in the denominator are not allowed (including 0/0).
 
-   @author Stephen Neuendorffer, Adam Cataldo
-   @version $Id: Fraction.java,v 1.40 2005/04/25 22:41:33 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (cxh)
-*/
+ @author Stephen Neuendorffer, Adam Cataldo
+ @version $Id: Fraction.java,v 1.46 2006/03/29 20:32:40 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (neuendor)
+ @Pt.AcceptedRating Yellow (cxh)
+ */
 public class Fraction extends Object {
     /** Create a new fraction with the value zero (0/1).
      */
     public Fraction() {
-        _num = 0;
-        _den = 1;
+        _numerator = 0;
+        _denominator = 1;
         _simplify();
     }
 
     /** Create a new fraction with the value i/1.
+     *  @param i The numerator.
      */
     public Fraction(int i) {
-        _num = i;
-        _den = 1;
+        _numerator = i;
+        _denominator = 1;
         _simplify();
     }
 
     /**
      * Create a new fraction in lowest terms
      * with the value Numerator/Denominator.
+     * @param numerator The numerator.
+     * @param denominator The denominator. 
      * @exception ArithmeticException If the denominator is specified to be
      * zero.
      */
-    public Fraction(int Numerator, int Denominator) {
-        if (Denominator == 0) {
+    public Fraction(int numerator, int denominator) {
+        if (denominator == 0) {
             throw new ArithmeticException("Illegal Fraction: "
                     + "cannot have denominator of zero.");
         }
 
-        _num = Numerator;
-        _den = Denominator;
+        _numerator = numerator;
+        _denominator = denominator;
         _simplify();
     }
 
     /** Create a new fraction with the same value as the given fraction.
+     *  @param f The given Fraction.
      */
     public Fraction(Fraction f) {
-        _num = f._num;
-        _den = f._den;
+        _numerator = f._numerator;
+        _denominator = f._denominator;
     }
-
-    /* It is arguable as to whether or not this is needed.  It may
-     * reduce the number of object creations, and increase speed,
-     * depending how often a zero fraction is needed.  This may become
-     * useful when this class is made into a Token.
-     */
-    public static final Fraction ZERO = new Fraction(0, 1);
 
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
     /** Add this fraction to the given fraction.
+     *  @param b The given Fraction.
      *  @return The answer as another fraction in lowest terms.
      */
     public Fraction add(Fraction b) {
-        Fraction f = new Fraction((_num * b._den) + (_den * b._num),
-                _den * b._den);
+        Fraction f = new Fraction((_numerator * b._denominator)
+                + (_denominator * b._numerator), _denominator * b._denominator);
         return f;
     }
 
     /** Divide this fraction by the given fraction.
+     *  @param b The given Fraction.
      *  @return The answer as another fraction in lowest terms.
      *  @exception ArithmeticException If the fraction in the divisor has
      *  a value of zero.
@@ -115,7 +113,8 @@ public class Fraction extends Object {
             throw new ArithmeticException("Division by zero!");
         }
 
-        Fraction f = new Fraction(_num * b._den, _den * b._num);
+        Fraction f = new Fraction(_numerator * b._denominator, _denominator
+                * b._numerator);
         return f;
     }
 
@@ -127,23 +126,21 @@ public class Fraction extends Object {
         // The Fractions are already in lowest terms, so we just compare the
         // numerator and denominator
         if (b instanceof Fraction) {
-            return ((_num == ((Fraction) b)._num)
-                    && (_den == ((Fraction) b)._den));
-        } else {
-            return false;
+            return ((_numerator == ((Fraction) b)._numerator) && (_denominator == ((Fraction) b)._denominator));
         }
+        return false;
     }
 
     /** Return the denominator of this fraction.
      */
     public int getDenominator() {
-        return _den;
+        return _denominator;
     }
 
     /** Return the numerator of this fraction.
      */
     public int getNumerator() {
-        return _num;
+        return _numerator;
     }
 
     /** Test if this Fraction is greater than the input.
@@ -152,16 +149,16 @@ public class Fraction extends Object {
      * @return True if this Fraction is greater than the input.
      */
     public boolean greaterThan(Fraction testInput) {
-        int gcd = ExtendedMath.gcd(testInput.getDenominator(),
-                this.getDenominator());
+        int gcd = ExtendedMath.gcd(testInput.getDenominator(), this
+                .getDenominator());
         int thisScaled = this.multiply(new Fraction(gcd, 1)).getNumerator();
-        int inputScaled = testInput.multiply(new Fraction(gcd, 1)).getNumerator();
+        int inputScaled = testInput.multiply(new Fraction(gcd, 1))
+                .getNumerator();
 
         if (thisScaled > inputScaled) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /** Find the multiplicative inverse of this fraction.
@@ -174,7 +171,7 @@ public class Fraction extends Object {
             throw new ArithmeticException("Inverse of zero is undefined!");
         }
 
-        Fraction f = new Fraction(_den, _num);
+        Fraction f = new Fraction(_denominator, _numerator);
         return f;
     }
 
@@ -195,7 +192,8 @@ public class Fraction extends Object {
      *  @return The answer as another fraction in lowest terms.
      */
     public Fraction multiply(Fraction b) {
-        Fraction f = new Fraction(_num * b._num, _den * b._den);
+        Fraction f = new Fraction(_numerator * b._numerator, _denominator
+                * b._denominator);
         return f;
     }
 
@@ -203,7 +201,7 @@ public class Fraction extends Object {
      *  @return The answer as another fraction in lowest terms
      */
     public Fraction negate() {
-        Fraction f = new Fraction(-_num, _den);
+        Fraction f = new Fraction(-_numerator, _denominator);
         return f;
     }
 
@@ -211,8 +209,8 @@ public class Fraction extends Object {
      *  @return The answer as another fraction in lowest terms
      */
     public Fraction subtract(Fraction b) {
-        Fraction f = new Fraction((_num * b._den) - (_den * b._num),
-                _den * b._den);
+        Fraction f = new Fraction((_numerator * b._denominator)
+                - (_denominator * b._numerator), _denominator * b._denominator);
         return f;
     }
 
@@ -222,8 +220,8 @@ public class Fraction extends Object {
     public double toDouble() {
         double numerator;
         double denominator;
-        numerator = (double) _num;
-        denominator = (double) _den;
+        numerator = _numerator;
+        denominator = _denominator;
         return numerator / denominator;
     }
 
@@ -233,38 +231,49 @@ public class Fraction extends Object {
     public float toFloat() {
         float numerator;
         float denominator;
-        numerator = (float) _num;
-        denominator = (float) _den;
+        numerator = _numerator;
+        denominator = _denominator;
         return numerator / denominator;
     }
 
     /** Convert the fraction to a readable string.
      */
     public String toString() {
-        StringBuffer s = new StringBuffer();
         _simplify();
-        s.append(_num);
-        s.append('/');
-        s.append(_den);
-        return s.toString();
+        return _numerator + "/" + _denominator;
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         public variables                  ////
+
+    /** The value of zero as a Fraction.
+     * It is arguable as to whether or not this is needed.  It may
+     * reduce the number of object creations, and increase speed,
+     * depending how often a zero fraction is needed.  This may become
+     * useful when this class is made into a Token.
+     */
+    public static final Fraction ZERO = new Fraction(0, 1);
 
     /** Reduce the fraction to lowest terms by dividing the Numerator and
      *  Denominator by their Greatest Common Divisor.  In addition the
      *  fraction is put in standard form (denominator greater than zero).
      */
     protected void _simplify() {
-        int factor = ExtendedMath.gcd(_num, _den);
-        _num = _num / factor;
-        _den = _den / factor;
+        int factor = ExtendedMath.gcd(_numerator, _denominator);
+        _numerator = _numerator / factor;
+        _denominator = _denominator / factor;
 
         // Standardize the sign
-        if (_den < 0) {
-            _den = -_den;
-            _num = -_num;
+        if (_denominator < 0) {
+            _denominator = -_denominator;
+            _numerator = -_numerator;
         }
     }
 
-    private int _num;
-    private int _den;
+    ///////////////////////////////////////////////////////////////////
+    ////                         private variables                 ////
+
+    private int _numerator;
+
+    private int _denominator;
 }

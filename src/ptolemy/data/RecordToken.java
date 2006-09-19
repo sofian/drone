@@ -1,31 +1,31 @@
 /* A token that contains a set of label/token pairs.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data;
 
 import java.util.HashSet;
@@ -43,25 +43,24 @@ import ptolemy.data.type.Type;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// RecordToken
 
 /**
-   A token that contains a set of label/token pairs. Operations on record
-   tokens result in new record tokens containing only the common fields,
-   where the operation specifies how to combine the data in the common
-   fields.  Thus, for example, if two record tokens
-   are added or subtracted, then common records
-   (those with the same labels) will be added or subtracted,
-   and the disjoint records will not appear in the result.
+ A token that contains a set of label/token pairs. Operations on record
+ tokens result in new record tokens containing only the common fields,
+ where the operation specifies how to combine the data in the common
+ fields.  Thus, for example, if two record tokens
+ are added or subtracted, then common records
+ (those with the same labels) will be added or subtracted,
+ and the disjoint records will not appear in the result.
 
-   @author Yuhong Xiong, Steve Neuendorffer, Elaine Cheong, Edward Lee
-   @version $Id: RecordToken.java,v 1.68 2005/04/29 20:05:06 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (cxh)
-*/
+ @author Yuhong Xiong, Steve Neuendorffer, Elaine Cheong, Edward Lee
+ @version $Id: RecordToken.java,v 1.73 2006/08/21 15:20:13 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (neuendor)
+ @Pt.AcceptedRating Yellow (cxh)
+ */
 public class RecordToken extends AbstractNotConvertibleToken {
     /** Construct a RecordToken with the specified labels and values.
      *  The labels and values arrays must have the same length, and have one
@@ -121,6 +120,9 @@ public class RecordToken extends AbstractNotConvertibleToken {
      *  @see #hashCode()
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out instances of a subclass.
         if (object.getClass() != getClass()) {
             return false;
@@ -316,7 +318,7 @@ public class RecordToken extends AbstractNotConvertibleToken {
 
     /** Return the value of this token as a string.
      *  The syntax is similar to the ML record:
-     *  {<label> = <value>, <label> = <value>, ...}
+     *  <code>{<i>label</i> = <i>value</i>, <i>label</i> = <i>value</i>, ...}</code>
      *  The record fields are listed in the lexicographical order of the
      *  labels determined by the java.lang.String.compareTo() method.
      *  @return A String beginning with "{" that contains label and value
@@ -459,13 +461,15 @@ public class RecordToken extends AbstractNotConvertibleToken {
      *  only makes sense for tokens where the distance between them is
      *  reasonably represented as a double. It is assumed that the
      *  argument is an RecordToken, and the isCloseTo() method of the
-     *  fields is is used.  If the fields do not match, then the
+     *  fields is used.  If the fields do not match, then the
      *  return value is false.
      *  @param rightArgument The token to compare to this token.
      *  @param epsilon The value that we use to determine whether two
      *   tokens are close.
      *  @return A token containing true if the value of the first
      *   argument is close to the value of this token.
+     *  @exception IllegalActionException If throw while checking
+     *  the closeness of an element of the record.
      */
     protected BooleanToken _isCloseTo(Token rightArgument, double epsilon)
             throws IllegalActionException {
@@ -663,7 +667,8 @@ public class RecordToken extends AbstractNotConvertibleToken {
                 _fields.put(labels[i], values[i]);
             } else {
                 throw new IllegalActionException("RecordToken: The "
-                        + "labels array contain duplicate element: " + labels[i]);
+                        + "labels array contain duplicate element: "
+                        + labels[i]);
             }
         }
     }

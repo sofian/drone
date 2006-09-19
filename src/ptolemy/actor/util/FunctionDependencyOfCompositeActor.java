@@ -1,31 +1,31 @@
 /* An instance of FunctionDependencyOfCompositeActor describes the
-   function dependency between the outputs and the inputs of a composite actor.
+ function dependency between the outputs and the inputs of a composite actor.
 
-   Copyright (c) 2003-2005 The Regents of the University of California.
-   All rights reserved.
-   Permission is hereby granted, without written agreement and without
-   license or royalty fees, to use, copy, modify, and distribute this
-   software and its documentation for any purpose, provided that the above
-   copyright notice and the following two paragraphs appear in all copies
-   of this software.
+ Copyright (c) 2003-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-   IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-   FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-   ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-   THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-   SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-   THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-   PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-   CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-   ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-   PT_COPYRIGHT_VERSION_2
-   COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.util;
 
 import java.util.Collection;
@@ -46,54 +46,57 @@ import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// FunctionDependenceOfCompositeActor
 
-/** An instance of FunctionDependencyOfCompositeActor describes the function
-    dependency between the outputs and inputs of a composite actor. In
-    particular, which outputs depend on which inputs. An output is depend on
-    an input if the token sent through an output port depends on the token
-    received from the input port in the same iteration.
+/**
+ An instance of this class describes the dependency that data at an output port
+ has on data at an input port in a firing of the container (an opaque composite actor).
+ In particular, an output port does not depend on an input port if the fire() method
+ of the container produces outputs on the output port or asserts that no outputs
+ will be produced on the output port in this iteration
+ without knowing anything about the input port (what data are there,
+ or even whether there are data). An actor that has one or more output ports that does
+ not depend on one or more input ports is said to be non-strict.
+ <p>
+ This class provides both an abstracted view, which gives the function
+ dependency the output ports of a composite actor have on input ports, and
+ a detailed view from which the abstract view is constructed.
+ The detailed view is a graph where the nodes correspond
+ to the ports of a composite actor and to the ports of all deeply
+ contained opaque actors, and the edges represent either the communication
+ dependencies implied by the connections within this composite actor or
+ the function dependencies of the contained opaque actors.
+ The detailed view is typically used by a director to construct a
+ schedule while the abstracted view is abstracted from the detailed view
+ for composition.
+ <p>
+ The detailed view may reveal dependency loops, which in many domains
+ means that the model cannot be scheduled.
+ To check whether there are such loops, use the getCycleNodes() method.
+ The method returns an array of IOPorts in such loops, or an empty
+ array if there are no such loops.
 
-    <p> This class provides both an abstracted view, which gives the function
-    dependency the output ports of a composite actor have on input ports, and
-    a detailed view from which the abstruct view is constructed.
-    The detailed view is a graph where the nodes correspond
-    to the ports of a composite actor and to the ports of all deeply
-    contained opaque actors, and the edges represent either the communication
-    dependencies implied by the connections within this composite actor or
-    the function dependencies of the contained opaque actors.
-    The detailed view is typically used by a director to construct a
-    schedule while the abstracted view is abstracted from the detailed view
-    for composition.
-    <p>
-    The detailed view may reveal dependency loops, which in many domains
-    means that the model cannot be executed.
-    To check whether there are such loops, use the getCycleNodes() method.
-    The method returns an array of IOPorts in such loops, or an empty
-    array if there are no such loops.
-
-    @see FunctionDependency
-    @author Haiyang Zheng
-    @version $Id: FunctionDependencyOfCompositeActor.java,v 1.22 2005/04/29 20:05:27 cxh Exp $
-    @since Ptolemy II 4.0
-    @Pt.ProposedRating Green (hyzheng)
-    @Pt.AcceptedRating Green (zhouye)
-*/
+ @see FunctionDependency
+ @author Haiyang Zheng
+ @version $Id: FunctionDependencyOfCompositeActor.java,v 1.29 2006/08/21 23:12:46 cxh Exp $
+ @since Ptolemy II 4.0
+ @Pt.ProposedRating Green (hyzheng)
+ @Pt.AcceptedRating Green (zhouye)
+ */
 public class FunctionDependencyOfCompositeActor extends FunctionDependency {
     /** Construct a FunctionDependency for the given actor.
+     *  The name of this attribute is always "_functionDependency".
      *  @param compositeActor The composite actor with which this function
      *  dependency is associated.
-     *  @param name The name for this attribute.
      *  @exception IllegalActionException If the name has a period in it, or
      *   the attribute is not compatible with the specified container.
      *  @exception NameDuplicationException If the container already contains
      *   an entity with the specified name.
      */
-    public FunctionDependencyOfCompositeActor(CompositeActor compositeActor,
-            String name) throws IllegalActionException, NameDuplicationException {
-        super(compositeActor, name);
+    public FunctionDependencyOfCompositeActor(CompositeActor compositeActor)
+            throws IllegalActionException, NameDuplicationException {
+        super(compositeActor);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -160,15 +163,15 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
             while (inputs.hasNext()) {
                 IOPort inputPort = (IOPort) inputs.next();
                 Collection reachableOutputs = _detailedDependencyGraph
-                    .reachableNodes(_detailedDependencyGraph.node(
-                                            inputPort));
+                        .reachableNodes(_detailedDependencyGraph
+                                .node(inputPort));
                 Iterator outputs = actor.outputPortList().listIterator();
 
                 while (outputs.hasNext()) {
                     IOPort outputPort = (IOPort) outputs.next();
 
-                    if (reachableOutputs.contains(_detailedDependencyGraph.node(
-                                                          outputPort))) {
+                    if (reachableOutputs.contains(_detailedDependencyGraph
+                            .node(outputPort))) {
                         _dependencyGraph.addEdge(inputPort, outputPort);
                     }
                 }
@@ -176,58 +179,12 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
         }
     }
 
-    /** Get a list of embedded entities for function dependency calculation.
-     *  This list of entities appear in the detailed view. Subclasses may
-     *  need to override this method to exclude some entities from calculation
-     *  of function dependency.
-     *  @return A list of embedded entities for the calculation of function
-     *  dependency.
+    /** Construct a directed graph with the nodes representing input and
+     * output ports, and directed edges representing dependencies. This
+     * graph includes both the ports of this actor and the ports of all
+     * deeply contained opaque actors.
      */
-    protected List _getEntities() {
-        return ((CompositeActor) getContainer()).deepEntityList();
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    ////                         private methods                   ////
-    // Categorize the given list of actors into three kinds: sinks, sources,
-    // and transformers.
-    private void _categorizeActors(List actorList) {
-        Iterator actors = actorList.listIterator();
-
-        while (actors.hasNext()) {
-            Actor actor = (Actor) actors.next();
-
-            if (actor instanceof AtomicActor) {
-                // Atomic actors have type.
-                if (actor instanceof Source) {
-                    _sourceActors.add(actor);
-                } else if (actor instanceof Sink) {
-                    _sinkActors.add(actor);
-                } else {
-                    _transformers.add(actor);
-                }
-            } else {
-                // Composite actors are categorized based
-                // on their ports
-                int numberOfInputs = actor.inputPortList().size();
-                int numberOfOutputs = actor.outputPortList().size();
-
-                if (numberOfInputs == 0) {
-                    _sourceActors.add(actor);
-                } else if (numberOfOutputs == 0) {
-                    _sinkActors.add(actor);
-                } else {
-                    _transformers.add(actor);
-                }
-            }
-        }
-    }
-
-    // Construct a directed graph with the nodes representing input and
-    // output ports, and directed edges representing dependencies. This
-    // graph includes both the ports of this actor and the ports of all
-    // deeply contained opaque actors.
-    private void _constructDetailedDependencyGraph() {
+    protected void _constructDetailedDependencyGraph() {
         // get the actor
         CompositeActor actor = (CompositeActor) getContainer();
 
@@ -258,7 +215,7 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
         // Transformer actors.
         _transformers = new LinkedList();
 
-        // catogrize the embedded actors into three kinds:
+        // categorize the embedded actors into three kinds:
         _categorizeActors(embeddedActors);
 
         // Constuct the portsGraph according to the communication dependencies,
@@ -309,7 +266,8 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
 
                             if (embeddedActors.contains(ioPort.getContainer())
                                     || outputPorts.contains(ioPort)) {
-                                _detailedDependencyGraph.addEdge(outPort, ioPort);
+                                _detailedDependencyGraph.addEdge(outPort,
+                                        ioPort);
                             }
                         }
                     }
@@ -347,15 +305,73 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
         }
     }
 
-    // Merge dependency graphs of the internal actors into
-    // the dependency graph of the actor.
+    /** Get a list of embedded entities for function dependency calculation.
+     *  This list of entities appear in the detailed view. Subclasses may
+     *  need to override this method to exclude some entities from calculation
+     *  of function dependency.
+     *  @return A list of embedded entities for the calculation of function
+     *  dependency.
+     */
+    protected List _getEntities() {
+        return ((CompositeActor) getContainer()).deepEntityList();
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                       protected variables                 ////
+
+    /** The detailed dependency graph that includes both the ports of
+     * this actor and the ports of all deeply contained opaque actors.
+     */
+    protected DirectedGraph _detailedDependencyGraph;
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         private methods                   ////
+
+    /** Categorize the given list of actors into three kinds: sinks, sources,
+     * and transformers.
+     */
+    private void _categorizeActors(List actorList) {
+        Iterator actors = actorList.listIterator();
+
+        while (actors.hasNext()) {
+            Actor actor = (Actor) actors.next();
+
+            if (actor instanceof AtomicActor) {
+                // Atomic actors have type.
+                if (actor instanceof Source) {
+                    _sourceActors.add(actor);
+                } else if (actor instanceof Sink) {
+                    _sinkActors.add(actor);
+                } else {
+                    _transformers.add(actor);
+                }
+            } else {
+                // Composite actors are categorized based
+                // on their ports
+                int numberOfInputs = actor.inputPortList().size();
+                int numberOfOutputs = actor.outputPortList().size();
+
+                if (numberOfInputs == 0) {
+                    _sourceActors.add(actor);
+                } else if (numberOfOutputs == 0) {
+                    _sinkActors.add(actor);
+                } else {
+                    _transformers.add(actor);
+                }
+            }
+        }
+    }
+
+    /** Merge dependency graphs of the internal actors into
+     * the dependency graph of the actor.
+     */
     private void _mergeActorsGraph(List actorList) {
         Iterator actors = actorList.iterator();
 
         while (actors.hasNext()) {
             Actor embeddedActor = (Actor) actors.next();
             FunctionDependency functionDependency = embeddedActor
-                .getFunctionDependency();
+                    .getFunctionDependency();
 
             if (functionDependency != null) {
                 _detailedDependencyGraph.addGraph(functionDependency
@@ -370,16 +386,13 @@ public class FunctionDependencyOfCompositeActor extends FunctionDependency {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    // The detailed dependency graph that includes both the ports of
-    // this actor and the ports of all deeply contained opaque actors.
-    private DirectedGraph _detailedDependencyGraph;
 
-    // Sink actors
+    /** Sink actors. */
     private List _sinkActors;
 
-    // Source actors
+    /** Source actors. */
     private List _sourceActors;
 
-    // Transformer actors.
+    /** Transformer actors. */
     private List _transformers;
 }

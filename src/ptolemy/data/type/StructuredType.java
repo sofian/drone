@@ -1,65 +1,97 @@
 /** Base class for structured type.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data.type;
 
 import ptolemy.kernel.util.IllegalActionException;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// StructuredType
 
 /**
-   Base class for structured type. Making this an abstract class (not an
-   interface) allows the methods to be protected.
-   All the types of the same structured type (e.g. all the array types)
-   must form a lattice. Each instance of a structured type must know how
-   to compare itself with another instance of the same structured type,
-   and compute the least upper bound and greatest lower bound. This
-   class defines methods for these operations.
-   <p>
-   Subclasses should override clone() to do a deep cloning.
+ Base class for structured type. Making this an abstract class (not an
+ interface) allows the methods to be protected.
+ All the types of the same structured type (e.g. all the array types)
+ must form a lattice. Each instance of a structured type must know how
+ to compare itself with another instance of the same structured type,
+ and compute the least upper bound and greatest lower bound. This
+ class defines methods for these operations.
+ <p>
+ Subclasses should override clone() to do a deep cloning.
 
-   @author Yuhong Xiong, Steve Neuendorffer
-   @version $Id: StructuredType.java,v 1.43 2005/04/25 22:03:02 cxh Exp $
-   @since Ptolemy II 0.4
-   @Pt.ProposedRating Red (yuhong)
-   @Pt.AcceptedRating Red (cxh)
-*/
+ @author Yuhong Xiong, Steve Neuendorffer
+ @version $Id: StructuredType.java,v 1.51 2006/08/20 19:55:37 cxh Exp $
+ @since Ptolemy II 0.4
+ @Pt.ProposedRating Red (yuhong)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public abstract class StructuredType implements Type {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
+
+    /** Return a new type which represents the type that results from
+     *  adding a token of this type and a token of the given argument
+     *  type.
+     *  @param rightArgumentType The type to add to this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type add(Type rightArgumentType) {
+        return (Type) TypeLattice.leastUpperBound(this, rightArgumentType);
+    }
 
     /** Return a deep copy of this StructuredType.
      *  @return A StructuredType.
      *  @exception CloneNotSupportedException Not thrown in this base class.
      */
     abstract public Object clone() throws CloneNotSupportedException;
+
+    /** Return a new type which represents the type that results from
+     *  dividing a token of this type and a token of the given
+     *  argument type.
+     *  @param rightArgumentType The type to divide with this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type divide(Type rightArgumentType) {
+        return (Type) TypeLattice.leastUpperBound(this, rightArgumentType);
+    }
+
+    /** Return the depth of a structured type. The depth of a 
+     *  structured type is the number of times a structured type 
+     *  contains other structured types. For example, an array 
+     *  of arrays has depth 2, and an array of arrays of records 
+     *  has depth 3.
+     *  @return the depth of a structured type.
+     */
+    public int depth() {
+        return 1;
+    }
 
     /** Return a perfect hash for this type.  This number corresponds
      *  uniquely to a particular type, and is used to improve
@@ -82,16 +114,78 @@ public abstract class StructuredType implements Type {
      */
     public abstract void initialize(Type type);
 
+    /** Return a new type which represents the type that results from
+     *  moduloing a token of this type and a token of the given
+     *  argument type.
+     *  @param rightArgumentType The type to add to this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type modulo(Type rightArgumentType) {
+        return (Type) TypeLattice.leastUpperBound(this, rightArgumentType);
+    }
+
+    /** Return a new type which represents the type that results from
+     *  multiplying a token of this type and a token of the given
+     *  argument type.
+     *  @param rightArgumentType The type to multiply by this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type multiply(Type rightArgumentType) {
+        return (Type) TypeLattice.leastUpperBound(this, rightArgumentType);
+    }
+
+    /** Return the type of the multiplicative identity for elements of
+     *  this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type one() {
+        return this;
+    }
+
+    /** Return a new type which represents the type that results from
+     *  subtracting a token of this type and a token of the given
+     *  argument type.
+     *  @param rightArgumentType The type to add to this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type subtract(Type rightArgumentType) {
+        return (Type) TypeLattice.leastUpperBound(this, rightArgumentType);
+    }
+
     /** Update this StructuredType to the specified Structured Type.
-     ** The specified type must have the same structure as this type.
+     *  The specified type must have depth less than the MAXDEPTHBOUND, and
+     *  have the same structure as this type.
      *  This method will only update the component type that is
      *  BaseType.UNKNOWN, and leave the constant part of this type intact.
      *  @param newType A StructuredType.
      *  @exception IllegalActionException If the specified type has a
      *   different structure.
      */
-    public abstract void updateType(StructuredType newType)
-            throws IllegalActionException;
+    public void updateType(StructuredType newType)
+            throws IllegalActionException {
+        if (newType.depth() >= MAXDEPTHBOUND)
+            throw new IllegalActionException(
+                    "Large type structure detected during type resolution."
+                            + "  The structured type "
+                            + newType.toString()
+                            + " has depth larger than the bound "
+                            + MAXDEPTHBOUND
+                            + ".  This may be an indicator of type constraints "
+                            + "in a model with no finite solution.");
+    }
+
+    /** Return the type of the additive identity for elements of
+     *  this type.
+     *  @return A new type, or BaseType.GENERAL, if the operation does
+     *  not make sense for the given types.
+     */
+    public Type zero() {
+        return this;
+    }
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
@@ -136,4 +230,9 @@ public abstract class StructuredType implements Type {
      *   not the same structured type as this one.
      */
     protected abstract StructuredType _leastUpperBound(StructuredType type);
+
+    /** Set up a bound for the max depth of structured types. This bound
+     *  is used to detect infinite iterations.
+     */
+    protected static final int MAXDEPTHBOUND = 20;
 }

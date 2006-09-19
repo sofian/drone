@@ -1,31 +1,31 @@
 /* An interface used by the expression parser for identifier lookup.
 
-Copyright (c) 2001-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2001-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data.expr;
 
 import java.util.HashSet;
@@ -36,21 +36,20 @@ import java.util.Set;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.NamedObj;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ModelScope
 
 /**
-   An abstract class that is useful for implementing expression language
-   scopes for Ptolemy models.
+ An abstract class that is useful for implementing expression language
+ scopes for Ptolemy models.
 
-   @author Xiaojun Liu, Steve Neuendorffer
-   @version $Id: ModelScope.java,v 1.26 2005/04/29 20:04:40 cxh Exp $
-   @since Ptolemy II 2.1
-   @Pt.ProposedRating Red (liuxj)
-   @Pt.AcceptedRating Red (liuxj)
-   @see ptolemy.data.expr.PtParser
-*/
+ @author Xiaojun Liu, Steve Neuendorffer
+ @version $Id: ModelScope.java,v 1.30 2006/03/28 23:59:05 cxh Exp $
+ @since Ptolemy II 2.1
+ @Pt.ProposedRating Red (liuxj)
+ @Pt.AcceptedRating Red (liuxj)
+ @see ptolemy.data.expr.PtParser
+ */
 public abstract class ModelScope implements ParserScope {
     /** Return a list of variable names in scope for variables in the
      * given container.  Exclude the given variable from being
@@ -70,7 +69,7 @@ public abstract class ModelScope implements ParserScope {
 
         // Get variables higher in scope.  Moving up the hierarchy
         // terminates when the container is null.
-        NamedObj aboveContainer = (NamedObj) container.getContainer();
+        NamedObj aboveContainer = container.getContainer();
 
         if (aboveContainer != null) {
             nameSet.addAll(getAllScopedVariableNames(exclude, aboveContainer));
@@ -79,7 +78,7 @@ public abstract class ModelScope implements ParserScope {
         // Get variables in scope extenders.  Moving down the scope
         // extenders terminates at hierarchy leaves.
         Iterator extenders = container.attributeList(ScopeExtender.class)
-            .iterator();
+                .iterator();
 
         while (extenders.hasNext()) {
             ScopeExtender extender = (ScopeExtender) extenders.next();
@@ -87,7 +86,7 @@ public abstract class ModelScope implements ParserScope {
             // It would be nice if ScopeExtender and NamedObj were common in
             // some way to avoid this cast.
             nameSet.addAll(getAllScopedVariableNames(exclude,
-                                   (NamedObj) extender));
+                    (NamedObj) extender));
         }
 
         return nameSet;
@@ -98,11 +97,12 @@ public abstract class ModelScope implements ParserScope {
      *  then an attribute more deeply in the hierarchy is searched
      *  for.  The scope of the object includes any container of the
      *  given object, and any variable contained in a scope extending
-     *  attribute inside any of those containers.  If no variable
-     *  exists with the given name, then return null.
+     *  attribute inside any of those containers. 
      *  @param exclude A variable to exclude from the search.
      *  @param container The container to search upwards from.
      *  @param name The variable name to search for.
+     *  @return The variable with the given name or null if the variable
+     *  does not exist.
      */
     public static Variable getScopedVariable(Variable exclude,
             NamedObj container, String name) {
@@ -114,7 +114,7 @@ public abstract class ModelScope implements ParserScope {
             if (result != null) {
                 return result;
             } else {
-                container = (NamedObj) container.getContainer();
+                container = container.getContainer();
             }
         }
 
@@ -133,7 +133,7 @@ public abstract class ModelScope implements ParserScope {
             return (Variable) result;
         } else {
             Iterator extenders = container.attributeList(ScopeExtender.class)
-                .iterator();
+                    .iterator();
 
             while (extenders.hasNext()) {
                 ScopeExtender extender = (ScopeExtender) extenders.next();

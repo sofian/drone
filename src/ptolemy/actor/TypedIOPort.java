@@ -1,31 +1,31 @@
 /* An IOPort with a type.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-review sendInside
-*/
+ review sendInside
+ */
 package ptolemy.actor;
 
 import java.util.Iterator;
@@ -52,61 +52,60 @@ import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// TypedIOPort
 
 /**
-   An IOPort with a type. This class implements the Typeable interface.
-   The type is represented by an instance of Type in data.type package.
-   It can be declared by calling setTypeEquals(). If this method is not
-   called, or called with a BaseType.UNKNOWN argument, the type of this port
-   will be set by type resolution using the type constraints. The type
-   constraints on this port can be specified using the methods defined in
-   the Typeable interface.
+ An IOPort with a type. This class implements the Typeable interface.
+ The type is represented by an instance of Type in data.type package.
+ It can be declared by calling setTypeEquals(). If this method is not
+ called, or called with a BaseType.UNKNOWN argument, the type of this port
+ will be set by type resolution using the type constraints. The type
+ constraints on this port can be specified using the methods defined in
+ the Typeable interface.
 
-   <p>This class keeps a list of TypeListeners. Whenever the type
-   changes, this class will generate an instance of TypeEvent and pass it
-   to the listeners by calling their typeChanged() method. A TypeListener
-   register its interest in the type change event of this port by calling
-   addTypeListener(), and can be removed from the listener list by calling
-   the removeTypeListener().
+ <p>This class keeps a list of TypeListeners. Whenever the type
+ changes, this class will generate an instance of TypeEvent and pass it
+ to the listeners by calling their typeChanged() method. A TypeListener
+ register its interest in the type change event of this port by calling
+ addTypeListener(), and can be removed from the listener list by calling
+ the removeTypeListener().
 
-   <p>A TypedIOPort can only link to instances of TypedIORelation. Derived
-   classes may further constrain links to a subclass of TypedIORelation.
-   To do this, they should override the protected methods _link() and
-   _linkInside() to throw an exception if their arguments are not of the
-   appropriate type.  Similarly, an TypeIOPort can only be contained by a
-   class derived from ComponentEntity and implementing the TypedActor
-   interface.  Subclasses may further constrain the containers by overriding
-   _checkContainer().
+ <p>A TypedIOPort can only link to instances of TypedIORelation. Derived
+ classes may further constrain links to a subclass of TypedIORelation.
+ To do this, they should override the protected methods _link() and
+ _linkInside() to throw an exception if their arguments are not of the
+ appropriate type.  Similarly, an TypeIOPort can only be contained by a
+ class derived from ComponentEntity and implementing the TypedActor
+ interface.  Subclasses may further constrain the containers by overriding
+ _checkContainer().
 
-   <p>Note that actors that call some of the setType<i>XXX</i> methods
-   may also need to have a clone() method.  Although the base classes
-   neatly handle most aspects of the clone operation, there are
-   subtleties involved with cloning type constraints. Absolute type
-   constraints on ports and parameters are carried automatically into the
-   clone, so clone() methods should never call setTypeEquals(). However,
-   relative type constraints of the other setType<i>XXX</I>() methods are
-   not cloned automatically because of the difficulty of ensuring that
-   the other object being referred to in a relative constraint is the
-   intended one.
-   <p> For example the Ramp actor constructor calls:
-   <pre>
-   output.setTypeAtLeast(init);
-   </pre>
-   so the clone() method of the Ramp actor calls:
-   <pre>
-   newObject.output.setTypeAtLeast(newObject.init);
-   </pre>
+ <p>Note that actors that call some of the setType<i>XXX</i> methods
+ may also need to have a clone() method.  Although the base classes
+ neatly handle most aspects of the clone operation, there are
+ subtleties involved with cloning type constraints. Absolute type
+ constraints on ports and parameters are carried automatically into the
+ clone, so clone() methods should never call setTypeEquals(). However,
+ relative type constraints of the other setType<i>XXX</I>() methods are
+ not cloned automatically because of the difficulty of ensuring that
+ the other object being referred to in a relative constraint is the
+ intended one.
+ <p> For example the Ramp actor constructor calls:
+ <pre>
+ output.setTypeAtLeast(init);
+ </pre>
+ so the clone() method of the Ramp actor calls:
+ <pre>
+ newObject.output.setTypeAtLeast(newObject.init);
+ </pre>
 
 
-   @author Yuhong Xiong, Lukito Muliadi
-   @version $Id: TypedIOPort.java,v 1.155 2005/04/29 20:05:11 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (yuhong)
-   @Pt.AcceptedRating Yellow (neuendor)
-*/
+ @author Yuhong Xiong, Lukito Muliadi
+ @version $Id: TypedIOPort.java,v 1.164 2006/09/16 22:44:00 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (yuhong)
+ @Pt.AcceptedRating Yellow (neuendor)
+ */
 public class TypedIOPort extends IOPort implements Typeable {
     // all the constructors are wrappers of the super class constructors.
 
@@ -163,8 +162,8 @@ public class TypedIOPort extends IOPort implements Typeable {
      *   a port already in the container.
      */
     public TypedIOPort(ComponentEntity container, String name, boolean isInput,
-            boolean isOutput)
-            throws IllegalActionException, NameDuplicationException {
+            boolean isOutput) throws IllegalActionException,
+            NameDuplicationException {
         super(container, name, isInput, isOutput);
     }
 
@@ -175,6 +174,7 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  be notified of all the type changes.  If the listener is already
      *  listening to this port, then do nothing.
      *  @param listener The TypeListener to add.
+     *  @see #removeTypeListener(TypeListener)
      */
     public void addTypeListener(TypeListener listener) {
         if (!_typeListeners.contains(listener)) {
@@ -196,7 +196,11 @@ public class TypedIOPort extends IOPort implements Typeable {
             Type type = ((TypeAttribute) attribute).getType();
 
             if (type != null) {
-                setTypeEquals(type);
+                // Avoid incrementing the workspace version if the type has
+                // not changed.
+                if (!type.equals(_declaredType) || !type.equals(_resolvedType)) {
+                    setTypeEquals(type);
+                }
             }
         } else {
             super.attributeChanged(attribute);
@@ -226,40 +230,10 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  @exception NoRoomException If a send to one of the channels throws
      *     it.
      */
-    public void broadcast(Token token)
-            throws IllegalActionException, NoRoomException {
-        Receiver[][] farReceivers;
-
-        if (_debugging) {
-            _debug("broadcast " + token);
-        }
-
-        try {
-            _workspace.getReadAccess();
-            _checkType(token);
-            farReceivers = getRemoteReceivers();
-
-            if (farReceivers == null) {
-                return;
-            }
-        } finally {
-            _workspace.doneReading();
-        }
-
-        // NOTE: This does not call send() here, because send()
-        // repeats the above on each call.
-        for (int i = 0; i < farReceivers.length; i++) {
-            if (farReceivers[i] == null) {
-                continue;
-            }
-
-            for (int j = 0; j < farReceivers[i].length; j++) {
-                TypedIOPort port = (TypedIOPort) farReceivers[i][j]
-                    .getContainer();
-                Token newToken = port.convert(token);
-                farReceivers[i][j].put(newToken);
-            }
-        }
+    public void broadcast(Token token) throws IllegalActionException,
+            NoRoomException {
+        _checkType(token);
+        super.broadcast(token);
     }
 
     /** Send the specified portion of a token array to all receivers connected
@@ -293,65 +267,13 @@ public class TypedIOPort extends IOPort implements Typeable {
      */
     public void broadcast(Token[] tokenArray, int vectorLength)
             throws IllegalActionException, NoRoomException {
-        Receiver[][] farReceivers;
-
-        if (_debugging) {
-            _debug("broadcast token array of length " + vectorLength);
+        // Check types.
+        for (int i = 0; i < tokenArray.length; i++) {
+            Token token = tokenArray[i];
+            _checkType(token);
         }
 
-        Token token = null;
-
-        try {
-            _workspace.getReadAccess();
-
-            // check types
-            for (int i = 0; i < tokenArray.length; i++) {
-                token = tokenArray[i];
-                _checkType(token);
-            }
-
-            farReceivers = getRemoteReceivers();
-
-            if (farReceivers == null) {
-                return;
-            }
-        } finally {
-            _workspace.doneReading();
-        }
-
-        // NOTE: This does not call send() here, because send()
-        // repeats the above on each call.
-        for (int i = 0; i < farReceivers.length; i++) {
-            if (farReceivers[i] == null) {
-                continue;
-            }
-
-            for (int j = 0; j < farReceivers[i].length; j++) {
-                TypedIOPort port = (TypedIOPort) farReceivers[i][j]
-                    .getContainer();
-                Type farType = port.getType();
-
-                boolean needConversion = false;
-
-                for (int k = 0; k < tokenArray.length; k++) {
-                    if (!farType.equals(tokenArray[k].getType())) {
-                        needConversion = true;
-                    }
-                }
-
-                if (!needConversion) {
-                    // Good, no conversion necessary.
-                    farReceivers[i][j].putArray(tokenArray, vectorLength);
-                } else {
-                    // Note: This is very bad for performance!
-                    // For better efficiency, make sure
-                    // all ports have the same type.
-                    for (int k = 0; k < vectorLength; k++) {
-                        farReceivers[i][j].put(port.convert(tokenArray[k]));
-                    }
-                }
-            }
-        }
+        super.broadcast(tokenArray, vectorLength);
     }
 
     /** Clone this port into the specified workspace. The new port is
@@ -373,7 +295,7 @@ public class TypedIOPort extends IOPort implements Typeable {
         if (_declaredType instanceof StructuredType
                 && !_declaredType.isConstant()) {
             newObject._declaredType = (Type) ((StructuredType) _declaredType)
-                .clone();
+                    .clone();
             newObject._resolvedType = newObject._declaredType;
         }
 
@@ -387,6 +309,7 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  to the type returned by getType(). If the token is already
      *  of this type, then simply return the specified token.
      *  @param token The token to convert.
+     *  @return The converted token.
      *  @exception IllegalActionException If the conversion is
      *   invalid.
      */
@@ -428,7 +351,7 @@ public class TypedIOPort extends IOPort implements Typeable {
                         if (receivers[i] != null) {
                             for (int j = 0; j < receivers[i].length; j++) {
                                 TypedIOPort port = (TypedIOPort) receivers[i][j]
-                                    .getContainer();
+                                        .getContainer();
                                 portTypeList.add(port.getType());
                             }
                         }
@@ -501,6 +424,7 @@ public class TypedIOPort extends IOPort implements Typeable {
     /** Remove a type listener from this port.  If the listener is
      *  not attached to this port, do nothing.
      *  @param listener The TypeListener to be removed.
+     *  @see #addTypeListener(TypeListener)
      */
     public void removeTypeListener(TypeListener listener) {
         if (_typeListeners.contains(listener)) {
@@ -540,44 +464,8 @@ public class TypedIOPort extends IOPort implements Typeable {
      */
     public void send(int channelIndex, Token token)
             throws IllegalActionException, NoRoomException {
-        if (token == null) {
-            throw new IllegalActionException(this, "Cannot send a null token.");
-        }
-
-        Receiver[][] farReceivers;
-
-        if (_debugging) {
-            _debug("send to channel " + channelIndex + ": " + token);
-        }
-
-        try {
-            try {
-                _workspace.getReadAccess();
-                _checkType(token);
-
-                // Note that the getRemoteReceivers() method doesn't throw
-                // any non-runtime exception.
-                farReceivers = getRemoteReceivers();
-
-                if ((farReceivers == null)
-                        || (farReceivers.length <= channelIndex)
-                        || (farReceivers[channelIndex] == null)) {
-                    return;
-                }
-            } finally {
-                _workspace.doneReading();
-            }
-
-            for (int j = 0; j < farReceivers[channelIndex].length; j++) {
-                TypedIOPort port = (TypedIOPort) farReceivers[channelIndex][j]
-                    .getContainer();
-                Token newToken = port.convert(token);
-                farReceivers[channelIndex][j].put(newToken);
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            // NOTE: This may occur if the channel index is out of range.
-            // This is allowed, just do nothing.
-        }
+        _checkType(token);
+        super.send(channelIndex, token);
     }
 
     /** Send the specified portion of a token array to all receivers
@@ -590,16 +478,6 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  then just silently return.  This behavior makes it
      *  easy to leave output ports unconnected when you are not interested
      *  in the output.
-     *  <p>
-     *  To improve efficiency for the common case where the type of the
-     *  tokens to send matches the type of this port and all connected
-     *  ports, this method assumes that all of the tokens in the
-     *  specified portion of the token array are of the same
-     *  type. If this is not the case, then the non-vectorized send()
-     *  method should be used instead.
-     *  The implementation only actually checks the
-     *  type of the first token in the array, and then assumes that
-     *  the remaining tokens are of the same type.
      *  <p>
      *  If the type of the tokens in the specified portion of the
      *  token array is the type of this
@@ -633,73 +511,13 @@ public class TypedIOPort extends IOPort implements Typeable {
      */
     public void send(int channelIndex, Token[] tokenArray, int vectorLength)
             throws IllegalActionException, NoRoomException {
-        if (vectorLength > tokenArray.length) {
-            throw new IllegalActionException(this,
-                    "Not enough data supplied to send specified number of samples.");
+        // Check types.
+        for (int i = 0; i < vectorLength; i++) {
+            Token token = tokenArray[i];
+            _checkType(token);
         }
 
-        Receiver[][] farReceivers;
-
-        if (_debugging) {
-            _debug("send to channel " + channelIndex
-                    + " token array of length " + vectorLength);
-        }
-
-        Token token = null;
-
-        try {
-            try {
-                _workspace.getReadAccess();
-
-                // check types
-                for (int i = 0; i < vectorLength; i++) {
-                    token = tokenArray[i];
-                    _checkType(token);
-                }
-
-                // Note that the getRemoteReceivers() method doesn't throw
-                // any non-runtime exception.
-                farReceivers = getRemoteReceivers();
-
-                if ((farReceivers == null)
-                        || (farReceivers[channelIndex] == null)) {
-                    return;
-                }
-            } finally {
-                _workspace.doneReading();
-            }
-
-            for (int j = 0; j < farReceivers[channelIndex].length; j++) {
-                TypedIOPort port = (TypedIOPort) farReceivers[channelIndex][j]
-                    .getContainer();
-                Type farType = port.getType();
-
-                boolean needConversion = false;
-
-                for (int k = 0; k < vectorLength; k++) {
-                    if (!farType.equals(tokenArray[k].getType())) {
-                        needConversion = true;
-                    }
-                }
-
-                if (!needConversion) {
-                    // Good, no conversion necessary.
-                    farReceivers[channelIndex][j].putArray(tokenArray,
-                            vectorLength);
-                } else {
-                    // Note: This is very bad for performance!
-                    // For better efficiency, make sure
-                    // all ports have the same type.
-                    for (int i = 0; i < vectorLength; i++) {
-                        farReceivers[channelIndex][j].put(port.convert(
-                                                                  tokenArray[i]));
-                    }
-                }
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            // NOTE: This may occur if the channel index is out of range.
-            // This is allowed, just do nothing.
-        }
+        super.send(channelIndex, tokenArray, vectorLength);
     }
 
     /** Send the specified token to all receivers connected to the
@@ -738,39 +556,8 @@ public class TypedIOPort extends IOPort implements Typeable {
      */
     public void sendInside(int channelIndex, Token token)
             throws IllegalActionException, NoRoomException {
-        Receiver[][] farReceivers;
-
-        if (_debugging) {
-            _debug("send inside to channel " + channelIndex + ": " + token);
-        }
-
-        try {
-            try {
-                _workspace.getReadAccess();
-                _checkType(token);
-
-                // Note that the getRemoteReceivers() method doesn't throw
-                // any non-runtime exception.
-                farReceivers = deepGetReceivers();
-
-                if ((farReceivers == null)
-                        || (farReceivers[channelIndex] == null)) {
-                    return;
-                }
-            } finally {
-                _workspace.doneReading();
-            }
-
-            for (int j = 0; j < farReceivers[channelIndex].length; j++) {
-                TypedIOPort port = (TypedIOPort) farReceivers[channelIndex][j]
-                    .getContainer();
-                Token newToken = port.convert(token);
-                farReceivers[channelIndex][j].put(newToken);
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            // NOTE: This may occur if the channel index is out of range.
-            // This is allowed, just do nothing.
-        }
+        _checkType(token);
+        super.sendInside(channelIndex, token);
     }
 
     /** Constrain the type of this port to be equal to or greater
@@ -781,8 +568,8 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  @param lesser A Typeable object.
      */
     public void setTypeAtLeast(Typeable lesser) {
-        Inequality inequality = new Inequality(lesser.getTypeTerm(),
-                this.getTypeTerm());
+        Inequality inequality = new Inequality(lesser.getTypeTerm(), this
+                .getTypeTerm());
         _constraints.add(inequality);
     }
 
@@ -856,8 +643,8 @@ public class TypedIOPort extends IOPort implements Typeable {
      *  @param equal A Typeable object.
      */
     public void setTypeSameAs(Typeable equal) {
-        Inequality inequality = new Inequality(this.getTypeTerm(),
-                equal.getTypeTerm());
+        Inequality inequality = new Inequality(this.getTypeTerm(), equal
+                .getTypeTerm());
         _constraints.add(inequality);
         inequality = new Inequality(equal.getTypeTerm(), this.getTypeTerm());
         _constraints.add(inequality);
@@ -896,7 +683,7 @@ public class TypedIOPort extends IOPort implements Typeable {
         if (!(container instanceof TypedActor) && (container != null)) {
             throw new IllegalActionException(container, this,
                     "TypedIOPort can only be contained by objects "
-                    + "implementing the TypedActor interface.");
+                            + "implementing the TypedActor interface.");
         }
     }
 
@@ -917,10 +704,10 @@ public class TypedIOPort extends IOPort implements Typeable {
         if (!(relation instanceof TypedIORelation)) {
             throw new IllegalActionException(this, relation,
                     "Attempt to link to an incompatible relation."
-                    + " TypedIOPort requires TypedIORelation.");
+                            + " TypedIOPort requires TypedIORelation.");
         }
 
-        super._checkLiberalLink((TypedIORelation) relation);
+        super._checkLiberalLink(relation);
     }
 
     /** Override the method in the super class to ensure compatibility of
@@ -938,14 +725,14 @@ public class TypedIOPort extends IOPort implements Typeable {
         if (!(relation instanceof TypedIORelation)) {
             throw new IllegalActionException(this, relation,
                     "Attempt to link to an incompatible relation."
-                    + " TypedIOPort requires TypedIORelation.");
+                            + " TypedIOPort requires TypedIORelation.");
         }
 
-        super._checkLink((TypedIORelation) relation);
+        super._checkLink(relation);
     }
 
     /** Check that the specified token is compatible with the
-     *  resolved type of this port.     *
+     *  resolved type of this port.
      *  @param token The token to check.
      *  @exception IllegalActionException If the specified token is
      *   either incomparable to the resolved type or higher in the
@@ -956,9 +743,10 @@ public class TypedIOPort extends IOPort implements Typeable {
 
         if ((compare == CPO.HIGHER) || (compare == CPO.INCOMPARABLE)) {
             throw new IllegalActionException(this,
-                    "Run-time type checking failed. Token " + token + " with type "
-                    + token.getType() + " is incompatible with port type: "
-                    + getType().toString());
+                    "Run-time type checking failed. Token " + token
+                            + " with type " + token.getType()
+                            + " is incompatible with port type: "
+                            + getType().toString());
         }
     }
 
@@ -1039,7 +827,9 @@ public class TypedIOPort extends IOPort implements Typeable {
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
     private Type _declaredType = BaseType.UNKNOWN;
+
     private Type _resolvedType = BaseType.UNKNOWN;
+
     private TypeTerm _typeTerm = null;
 
     // Listeners for type change.
@@ -1141,13 +931,14 @@ public class TypedIOPort extends IOPort implements Typeable {
             if (!isSettable()) {
                 throw new IllegalActionException(
                         "TypedIOPort$TypeTerm.setValue: The type is not "
-                        + "settable.");
+                                + "settable.");
             }
 
             if (!_declaredType.isSubstitutionInstance((Type) type)) {
                 throw new IllegalActionException("Type conflict on port "
                         + TypedIOPort.this.getFullName() + ".\n"
-                        + "Declared type is " + _declaredType.toString() + ".\n"
+                        + "Declared type is " + _declaredType.toString()
+                        + ".\n"
                         + "The connection or type constraints, however, "
                         + "require type " + type.toString());
             }
@@ -1158,10 +949,11 @@ public class TypedIOPort extends IOPort implements Typeable {
                 _resolvedType = (Type) type;
             } else {
                 // _declaredType is a StructuredType
-                ((StructuredType) _resolvedType).updateType((StructuredType) type);
+                ((StructuredType) _resolvedType)
+                        .updateType((StructuredType) type);
             }
 
-            if (!oldType.equals((Type) type)) {
+            if (!oldType.equals(type)) {
                 _notifyTypeListener(oldType, _resolvedType);
             }
         }

@@ -1,33 +1,33 @@
 /* A token that contains a long integer.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-added truncatedUnsignedByteValue.  Note that this needs to be greatly
-extended to be made useful.
-*/
+ added truncatedUnsignedByteValue.  Note that this needs to be greatly
+ extended to be made useful.
+ */
 package ptolemy.data;
 
 import ptolemy.data.type.BaseType;
@@ -36,23 +36,22 @@ import ptolemy.data.type.TypeLattice;
 import ptolemy.graph.CPO;
 import ptolemy.kernel.util.IllegalActionException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// LongToken
 
 /**
-   A token that contains a signed 64-bit long integer.  Generally, this
-   class handles overflow the same way that overflow for Java native
-   types are handled.  In other words, overflow just past
-   java.lang.Long.MAX_VALUE results in negative values close to
-   java.lang.Long.MIN_VALUE.
+ A token that contains a signed 64-bit long integer.  Generally, this
+ class handles overflow the same way that overflow for Java native
+ types are handled.  In other words, overflow just past
+ java.lang.Long.MAX_VALUE results in negative values close to
+ java.lang.Long.MIN_VALUE.
 
-   @author Neil Smyth, Yuhong Xiong, Steve Neuendorffer
-   @version $Id: LongToken.java,v 1.88 2005/04/25 22:01:54 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (neuendor)
-*/
+ @author Neil Smyth, Yuhong Xiong, Steve Neuendorffer, contributor: Christopher Brooks
+ @version $Id: LongToken.java,v 1.107 2006/08/21 15:20:13 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Yellow (cxh) nil token, ONE, ZERO
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class LongToken extends ScalarToken {
     /** Construct a token with long integer 0.
      */
@@ -61,16 +60,25 @@ public class LongToken extends ScalarToken {
     }
 
     /** Construct a token with the specified value.
+     *  @param value The specified value.   
      */
     public LongToken(long value) {
         _value = value;
     }
 
     /** Construct a token from the given String.
+     *  @param init The specified string, for example <code>1L</code>
+     *  <code>2L</code>.  Note that <code>3</code> will also result
+     *  a LongToken with a value of 3 being created.
      *  @exception IllegalActionException If the Token could not
      *   be created with the given String.
      */
     public LongToken(String init) throws IllegalActionException {
+        if (init == null || init.equals("nil")) {
+            throw new IllegalActionException(notSupportedNullNilStringMessage(
+                    "LongToken", init));
+        }
+
         // Throw away the ending L or l, if necessary.
         init = init.trim();
 
@@ -81,7 +89,8 @@ public class LongToken extends ScalarToken {
         try {
             _value = Long.parseLong(init);
         } catch (NumberFormatException e) {
-            throw new IllegalActionException(e.getMessage());
+            throw new IllegalActionException(null, e, "Failed to parse \""
+                    + init + "\" as a number.");
         }
     }
 
@@ -92,11 +101,13 @@ public class LongToken extends ScalarToken {
      *  This method does lossless conversion.  The units of the
      *  returned token will be the same as the units of the given
      *  token.  If the argument is already an instance of LongToken,
-     *  it is returned without any change. Otherwise, if the argument
-     *  is below LongToken in the type hierarchy, it is converted to
-     *  an instance of LongToken or one of the subclasses of LongToken
-     *  and returned. If none of the above condition is met, an
-     *  exception is thrown.
+     *  it is returned without any change.  If the argument is
+     *  a nil token, then a new nil Token is returned, see {@link
+     *  #NIL}.  Otherwise, if the argument is below LongToken in the
+     *  type hierarchy, it is converted to an instance of LongToken or
+     *  one of the subclasses of LongToken and returned. If none of
+     *  the above condition is met, an exception is thrown.
+     *
      *  @param token The token to be converted to a LongToken.
      *  @return A LongToken.
      *  @exception IllegalActionException If the conversion
@@ -107,11 +118,15 @@ public class LongToken extends ScalarToken {
             return (LongToken) token;
         }
 
+        if (token.isNil()) {
+            return LongToken.NIL;
+        }
+
         int compare = TypeLattice.compare(BaseType.LONG, token);
 
         if ((compare == CPO.LOWER) || (compare == CPO.INCOMPARABLE)) {
-            throw new IllegalActionException(notSupportedIncomparableConversionMessage(
-                                                     token, "long"));
+            throw new IllegalActionException(
+                    notSupportedIncomparableConversionMessage(token, "long"));
         }
 
         compare = TypeLattice.compare(BaseType.INT, token);
@@ -124,18 +139,26 @@ public class LongToken extends ScalarToken {
         }
 
         throw new IllegalActionException(notSupportedConversionMessage(token,
-                                                 "long"));
+                "long"));
     }
 
     /**  Return true if the argument's class is LongToken and it has the
      *  same values as this token.
      *  @param object An instance of Object.
-     *  @return True if the argument is a LongToken with the
-     *  same value.
+     *  @return True if the argument is an IntToken with the same
+     *  value. If either this object or the argument is a nil Token, return
+     *  false.
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out subclasses.
         if (object.getClass() != getClass()) {
+            return false;
+        }
+
+        if (isNil() || ((LongToken) object).isNil()) {
             return false;
         }
 
@@ -161,13 +184,28 @@ public class LongToken extends ScalarToken {
         return (int) _value;
     }
 
+    /** Return true if the token is nil, (aka null or missing).
+     *  Nil or missing tokens occur when a data source is sparsely populated.
+     *  @return True if the token is the {@link #NIL} token.
+     */
+    public boolean isNil() {
+        // We use a method here so that we can easily change how
+        // we determine if a token is nil without modify lots of classes.
+        // Can't use equals() here, or we'll go into an infinite loop.
+        return this == LongToken.NIL;
+    }
+
     /** Returns a token representing the result of shifting the bits
      *  of this token towards the most significant bit, filling the
      *  least significant bits with zeros.
      *  @param bits The number of bits to shift.
      *  @return The left shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken leftShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new LongToken(_value << bits);
     }
 
@@ -178,22 +216,26 @@ public class LongToken extends ScalarToken {
      *  sign of the value.
      *  @param bits The number of bits to shift.
      *  @return The logical right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken logicalRightShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new LongToken(_value >>> bits);
     }
 
     /** Return the value in the token as a long.
      */
     public long longValue() {
-        return (long) _value;
+        return _value;
     }
 
-    /** Returns a new LongToken with value 1.
-     *  @return A new LongToken with value 1.
+    /** Returns a LongToken with value 1.
+     *  @return A LongToken with value 1.
      */
     public Token one() {
-        return new LongToken(1);
+        return ONE;
     }
 
     /** Returns a token representing the result of shifting the bits
@@ -202,8 +244,12 @@ public class LongToken extends ScalarToken {
      *  the sign of the result.
      *  @param bits The number of bits to shift.
      *  @return The right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken rightShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new LongToken(_value >> bits);
     }
 
@@ -212,15 +258,30 @@ public class LongToken extends ScalarToken {
      *  @return A String formed using java.lang.Long.toString().
      */
     public String toString() {
-        return Long.toString(_value) + "L";
+        String unitString = "";
+
+        if (!_isUnitless()) {
+            unitString = " * " + unitsString();
+        }
+
+        if (isNil()) {
+            // FIXME: what about units?
+            return super.toString();
+        }
+
+        return Long.toString(_value) + "L" + unitString;
     }
 
     /** Return the value in the token truncated to an unsignedByte.
+     *  @return The truncated value   
      *  @exception IllegalActionException If the value is not in the
      *  range of an unsigned byte.
      */
     public UnsignedByteToken truncatedUnsignedByteValue()
             throws IllegalActionException {
+        if (isNil()) {
+            return UnsignedByteToken.NIL;
+        }
         if ((_value < 0) || (_value > 255)) {
             throw new IllegalActionException("Value cannot be represented"
                     + " as an unsigned Byte");
@@ -229,12 +290,30 @@ public class LongToken extends ScalarToken {
         }
     }
 
-    /** Returns a new LongToken with value 0.
-     *  @return A new LongToken with value 0.
+    /** Returns a LongToken with value 0.
+     *  @return A LongToken with value 0.
      */
     public Token zero() {
-        return new LongToken(0);
+        return ZERO;
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         public variables                  ////
+
+    /** A token that represents a missing value.
+     *  Null or missing tokens are common in analytical systems
+     *  like R and SAS where they are used to handle sparsely populated data
+     *  sources.  In database parlance, missing tokens are sometimes called
+     *  null tokens.  Since null is a Java keyword, we use the term "nil".
+     *  The toString() method on a nil token returns the string "nil".
+     */
+    public static final LongToken NIL = new LongToken(Long.MAX_VALUE);
+
+    /** A LongToken with the value 1.0. */
+    public static final LongToken ONE = new LongToken(1);
+
+    /** A LongToken with the value 0.0. */
+    public static final LongToken ZERO = new LongToken(0);
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
@@ -272,6 +351,7 @@ public class LongToken extends ScalarToken {
     /** Returns a token representing the bitwise AND of this token and
      *  the given token.  It is assumed that the type of the argument
      *  is an LongToken.
+     *  @param rightArgument The LongToken to bitwise AND with this one.
      *  @return The bitwise AND.
      */
     protected ScalarToken _bitwiseAnd(ScalarToken rightArgument) {
@@ -291,6 +371,7 @@ public class LongToken extends ScalarToken {
     /** Returns a token representing the bitwise OR of this token and
      *  the given token.  It is assumed that the type of the argument
      *  is an LongToken.
+     *  @param rightArgument The LongToken to bitwise OR with this one.
      *  @return The bitwise OR.
      */
     protected ScalarToken _bitwiseOr(ScalarToken rightArgument) {
@@ -301,6 +382,7 @@ public class LongToken extends ScalarToken {
     /** Returns a token representing the bitwise XOR of this token and
      *  the given token.  It is assumed that the type of the argument
      *  is an LongToken.
+     *  @param rightArgument The LongToken to bitwise XOR with this one.
      *  @return The bitwise XOR.
      */
     protected ScalarToken _bitwiseXor(ScalarToken rightArgument) {
@@ -319,11 +401,12 @@ public class LongToken extends ScalarToken {
         return new LongToken(quotient);
     }
 
-    /** Test whether the value of this token is close to the first argument,
-     *  where "close" means that the distance between their values is less than
-     *  or equal to the second argument. It is assumed that the type of
-     *  the first argument is LongToken.
+    /** Test whether the value of this token is close to the first
+     *  argument, where "close" means that the distance between their
+     *  values is less than or equal to the second argument. It is
+     *  assumed that the type of the first argument is LongToken.
      *  @param rightArgument The token to compare to this token.
+     *  @param epsilon The distance.
      *  @return A token containing true if the value of the first
      *   argument is close to the value of this token.
      */

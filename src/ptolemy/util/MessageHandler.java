@@ -1,6 +1,6 @@
 /* Base class for displaying exceptions, warnings, and messages.
 
- Copyright (c) 2003-2005 The Regents of the University of California.
+ Copyright (c) 2003-2006 The Regents of the University of California.
  All rights reserved.
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
@@ -49,8 +49,8 @@ import java.io.InputStreamReader;
  the derived class GraphicalMessageHandler.
  @see ptolemy.gui.GraphicalMessageHandler
 
- @author  Edward A. Lee, Steve Neuendorffer
- @version $Id: MessageHandler.java,v 1.18.2.1 2005/07/14 20:44:08 cxh Exp $
+ @author  Edward A. Lee, Steve Neuendorffer, Elaine Cheong
+ @version $Id: MessageHandler.java,v 1.28 2006/08/21 23:16:45 cxh Exp $
  @since Ptolemy II 4.0
  @Pt.ProposedRating Green (cxh)
  @Pt.AcceptedRating Green (cxh)
@@ -79,7 +79,9 @@ public class MessageHandler {
     public static void error(String info, Throwable throwable) {
         // Sometimes you find that errors are reported multiple times.
         // To find out who is calling this method, uncomment the following.
-        // System.out.println("------ reporting error:");
+        // System.out.println("------ reporting error:" + throwable);
+        // throwable.printStackTrace();
+        // System.out.println("------ called from:");
         // (new Exception()).printStackTrace();
         _handler._error(info, throwable);
     }
@@ -138,10 +140,6 @@ public class MessageHandler {
      *  Derived classes such as ptolemy.gui.GraphicalMessageHandler
      *  might display the message graphically.
      *
-     *  <p>NOTE: If in a derived class the message handler set by 
-     *  {@link #setMessageHandler(MessageHandler)} is graphical, then
-     *  this method must be called in the Swing event thread!
-     *
      *  @param info The message.
      *  @exception CancelException If the user clicks on the "Cancel" button.
      */
@@ -155,9 +153,6 @@ public class MessageHandler {
      *  ptolemy.gui.GraphicalMessageHandler might display the message
      *  graphically.
      *
-     *  <p>NOTE: If in a derived class the message handler set by 
-     *  {@link #setMessageHandler(MessageHandler)} is graphical, then
-     *  this method must be called in the Swing event thread!
      *  @param info The message.
      *  @param throwable The throwable associated with this warning.
      *  @exception CancelException If the user clicks on the "Cancel" button.
@@ -169,16 +164,26 @@ public class MessageHandler {
 
     /** Ask the user a yes/no question, and return true if the answer
      *  is yes.
-     *   
-     *  <p>NOTE: If in a derived class the message handler set by 
-     *  {@link #setMessageHandler(MessageHandler)} is graphical, then
-     *  this method must be called in the Swing event thread!
      *
      *  @param question The yes/no question.
      *  @return True if the answer is yes.
      */
     public static boolean yesNoQuestion(String question) {
         return _handler._yesNoQuestion(question);
+    }
+
+    /** Ask the user a yes/no/cancel question, and return true if the
+     *  answer is yes.  If the user clicks on the "Cancel" button,
+     *  then throw an exception.
+     *
+     *  @param question The yes/no/cancel question.
+     *  @return True if the answer is yes.
+     *  @exception ptolemy.util.CancelException If the user clicks on
+     *  the "Cancel" button.
+     */
+    public static boolean yesNoCancelQuestion(String question)
+            throws ptolemy.util.CancelException {
+        return _handler._yesNoCancelQuestion(question);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -217,7 +222,7 @@ public class MessageHandler {
     }
 
     /** Show the specified message.  In this base class, the message
-     *  is printed to standard error.  
+     *  is printed to standard error.
      *  <p>Derived classes might show the specified message in a modal
      *  dialog.  If the user clicks on the "Cancel" button, then throw
      *  an exception.  This gives the user the option of not
@@ -259,8 +264,47 @@ public class MessageHandler {
         try {
             String reply = stdIn.readLine();
 
-            if (reply.trim().toLowerCase().equals("yes")) {
+            if (reply == null) {
+                return false;
+            } else if (reply.trim().toLowerCase().equals("yes")) {
                 return true;
+            }
+        } catch (IOException ex) {
+        }
+
+        return false;
+    }
+
+    /** Ask the user a yes/no/cancel question, and return true if the
+     *  answer is yes.  If the user chooses "cancel", then throw an
+     *  exception.  In this base class, this prints the question on
+     *  the standard output and looks for the reply on the standard
+     *  input.
+     *  @param question The yes/no/cancel question to be asked.
+     *  @return True if the answer is yes.
+     *  @exception ptolemy.util.CancelException If the user chooses
+     *  "cancel".
+     */
+    protected boolean _yesNoCancelQuestion(String question)
+            throws ptolemy.util.CancelException {
+        System.out.print(question);
+        System.out.print(" (yes or no or cancel) ");
+
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(
+                System.in));
+
+        try {
+            String reply = stdIn.readLine();
+
+            if (reply == null) {
+                return false;
+            } else {
+                if (reply.trim().toLowerCase().equals("yes")) {
+                    return true;
+                } else if (reply.trim().toLowerCase().equals("cancel")) {
+                    throw new ptolemy.util.CancelException("Cancelled: "
+                            + question);
+                }
             }
         } catch (IOException ex) {
         }

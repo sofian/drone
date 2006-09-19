@@ -1,30 +1,30 @@
 /* An actor that outputs a scaled version of the input.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.lib;
 
 import ptolemy.actor.TypedIOPort;
@@ -44,31 +44,30 @@ import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Scale
 
 /**
-   Produce an output token on each firing with a value that is
-   equal to a scaled version of the input.  The actor is polymorphic
-   in that it can support any token type that supports multiplication
-   by the <i>factor</i> parameter.  If the input type is a scalar, the output
-   type is constrained to be at least as general as both the input and the
-   <i>factor</i> parameter; if the input is an array, the output is also
-   an array with the elements scaled. The input can be an array of array,
-   in which case the elements of the inner most array will be scaled.
-   For data types where multiplication is not commutative (such
-   as matrices), whether the factor is multiplied on the left is controlled
-   by the <i>scaleOnLeft</i> parameter. Setting the parameter to true means
-   that the factor is  multiplied on the left, and the input
-   on the right. Otherwise, the factor is multiplied on the right.
+ Produce an output token on each firing with a value that is
+ equal to a scaled version of the input.  The actor is polymorphic
+ in that it can support any token type that supports multiplication
+ by the <i>factor</i> parameter.  If the input type is a scalar, the output
+ type is constrained to be at least as general as both the input and the
+ <i>factor</i> parameter; if the input is an array, the output is also
+ an array with the elements scaled. The input can be an array of array,
+ in which case the elements of the inner most array will be scaled.
+ For data types where multiplication is not commutative (such
+ as matrices), whether the factor is multiplied on the left is controlled
+ by the <i>scaleOnLeft</i> parameter. Setting the parameter to true means
+ that the factor is  multiplied on the left, and the input
+ on the right. Otherwise, the factor is multiplied on the right.
 
-   @author Edward A. Lee, Steve Neuendorffer
-   @version $Id: Scale.java,v 1.55 2005/04/25 21:33:08 cxh Exp $
-   @since Ptolemy II 0.3
-   @Pt.ProposedRating Yellow (eal)
-   @Pt.AcceptedRating Yellow (yuhong)
-*/
+ @author Edward A. Lee, Steve Neuendorffer
+ @version $Id: Scale.java,v 1.60 2006/08/21 23:10:25 cxh Exp $
+ @since Ptolemy II 0.3
+ @Pt.ProposedRating Yellow (eal)
+ @Pt.AcceptedRating Yellow (yuhong)
+ */
 public class Scale extends Transformer {
     /** Construct an actor with the given container and name.
      *  @param container The container.
@@ -90,8 +89,8 @@ public class Scale extends Transformer {
         output.setTypeAtLeast(new PortParameterFunction(input, factor));
 
         // icon
-        _attachText("_iconDescription",
-                "<svg>\n" + "<polygon points=\"-30,-20 30,-4 30,4 -30,20\" "
+        _attachText("_iconDescription", "<svg>\n"
+                + "<polygon points=\"-30,-20 30,-4 30,4 -30,20\" "
                 + "style=\"fill:white\"/>\n" + "</svg>\n");
     }
 
@@ -124,8 +123,8 @@ public class Scale extends Transformer {
      */
     public Object clone(Workspace workspace) throws CloneNotSupportedException {
         Scale newObject = (Scale) super.clone(workspace);
-        PortParameterFunction function = new PortParameterFunction(newObject.input,
-                newObject.factor);
+        PortParameterFunction function = new PortParameterFunction(
+                newObject.input, newObject.factor);
         newObject.output.setTypeAtLeast(function);
         return newObject;
     }
@@ -135,6 +134,7 @@ public class Scale extends Transformer {
      *  @exception IllegalActionException If there is no director.
      */
     public void fire() throws IllegalActionException {
+        super.fire();
         if (input.hasToken(0)) {
             Token in = input.get(0);
             Token factorToken = factor.getToken();
@@ -142,10 +142,10 @@ public class Scale extends Transformer {
 
             if (((BooleanToken) scaleOnLeft.getToken()).booleanValue()) {
                 // Scale on the left.
-                result = _scaleOnLeft(in, factorToken);
+                result = _scaleOnLeft(in, factorToken, output.getType());
             } else {
                 // Scale on the right.
-                result = _scaleOnRight(in, factorToken);
+                result = _scaleOnRight(in, factorToken, output.getType());
             }
 
             output.send(0, result);
@@ -154,15 +154,24 @@ public class Scale extends Transformer {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
-    // Scale the given input token on the left by the given factor.
-    private Token _scaleOnLeft(Token input, Token factor)
+
+    /** Scale the given input token on the left by the given factor.
+     *  If the input is an ArrayToken, then the resultType is required
+     *  to be an ArrayType.
+     *  @param input The input token.
+     *  @param factor The scale factor.
+     *  @param resultType The type of the result.
+     *  @return The result of scaling.
+     */
+    private Token _scaleOnLeft(Token input, Token factor, Type resultType)
             throws IllegalActionException {
         if (input instanceof ArrayToken) {
             Token[] argArray = ((ArrayToken) input).arrayValue();
             Token[] result = new Token[argArray.length];
 
             for (int i = 0; i < argArray.length; i++) {
-                result[i] = _scaleOnLeft(argArray[i], factor);
+                result[i] = _scaleOnLeft(argArray[i], factor,
+                        ((ArrayType) resultType).getElementType());
             }
 
             return new ArrayToken(result);
@@ -171,15 +180,23 @@ public class Scale extends Transformer {
         }
     }
 
-    // Scale the given input token on the right by the given factor.
-    private Token _scaleOnRight(Token input, Token factor)
+    /** Scale the given input token on the right by the given factor.
+     *  If the input is an ArrayToken, then the resultType is required
+     *  to be an ArrayType.
+     *  @param input The input token.
+     *  @param factor The scale factor.
+     *  @param resultType The type of the result.
+     *  @return The result of scaling.
+     */
+    private Token _scaleOnRight(Token input, Token factor, Type resultType)
             throws IllegalActionException {
         if (input instanceof ArrayToken) {
             Token[] argArray = ((ArrayToken) input).arrayValue();
             Token[] result = new Token[argArray.length];
 
             for (int i = 0; i < argArray.length; i++) {
-                result[i] = _scaleOnRight(argArray[i], factor);
+                result[i] = _scaleOnRight(argArray[i], factor,
+                        ((ArrayType) resultType).getElementType());
             }
 
             return new ArrayToken(result);
@@ -258,6 +275,7 @@ public class Scale extends Transformer {
         ///////////////////////////////////////////////////////////////
         ////                       private inner variable          ////
         private TypedIOPort _port;
+
         private Parameter _param;
     }
 }

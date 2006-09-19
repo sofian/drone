@@ -1,31 +1,31 @@
 /* Parameter is a subclass of Variable with support for strings.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data.expr;
 
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import ptolemy.data.StringToken;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.NamedObj;
@@ -40,40 +41,39 @@ import ptolemy.kernel.util.Settable;
 import ptolemy.kernel.util.Workspace;
 import ptolemy.util.StringUtilities;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Parameter
 
 /**
-   Parameter extends Variable with additional support for string-valued
-   variables that makes these friendlier at the user interface level.
-   In particular, this class supports an annotation that specifies
-   choices for values.  A user interface can use this to present a
-   choice dialog that offers the specified values.  This is typically
-   used when a particular set of choices make sense.  The values can
-   be any expression, or if used in conjunction with string mode,
-   any string.
-   <p>
-   By default, an instance of Parameter, unlike Variable, is persistent.
-   <p>
-   By convention, an instance of NamedObj has a set of attributes,
-   some of which are visible to users and some of which are not.
-   When a user interface presents these attributes
-   for editing, it presents only those that are visible.
-   By default, an instance of Parameter is visible, as indicated by the fact
-   that it returns FULL in its getVisibility() method.  This can be overridden
-   by calling setVisibility().
+ Parameter extends Variable with additional support for string-valued
+ variables that makes these friendlier at the user interface level.
+ In particular, this class supports an annotation that specifies
+ choices for values.  A user interface can use this to present a
+ choice dialog that offers the specified values.  This is typically
+ used when a particular set of choices make sense.  The values can
+ be any expression, or if used in conjunction with string mode,
+ any string.
+ <p>
+ By default, an instance of Parameter, unlike Variable, is persistent.
+ <p>
+ By convention, an instance of NamedObj has a set of attributes,
+ some of which are visible to users and some of which are not.
+ When a user interface presents these attributes
+ for editing, it presents only those that are visible.
+ By default, an instance of Parameter is visible, as indicated by the fact
+ that it returns FULL in its getVisibility() method.  This can be overridden
+ by calling setVisibility().
 
-   @author Neil Smyth, Edward A. Lee, Xiaojun Liu
-   @version $Id: Parameter.java,v 1.113 2005/04/29 20:04:43 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Yellow (eal)
-   @Pt.AcceptedRating Red (cxh)
+ @author Neil Smyth, Edward A. Lee, Xiaojun Liu
+ @version $Id: Parameter.java,v 1.118 2006/08/21 23:13:15 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Yellow (eal)
+ @Pt.AcceptedRating Red (cxh)
 
-   @see ptolemy.data.expr.PtParser
-   @see ptolemy.data.Token
+ @see ptolemy.data.expr.PtParser
+ @see ptolemy.data.Token
 
-*/
+ */
 public class Parameter extends Variable {
     /** Construct a parameter in the default workspace with an empty
      *  string as its name. The parameter is added to the list of
@@ -197,16 +197,41 @@ public class Parameter extends Variable {
             return;
         }
 
-        String value = getExpression();
-        String valueTerm = "";
+        // NOTE: This used to read as follows, but this is problematic
+        // because you may actually want a parameter value to be an
+        // empty string (e.g., in InteractiveShell for the prompt).
+        // Unfortunately, we can't use getExpression(), because it
+        // substitutes null with an empty string, which isn't what
+        // we want. So we have to duplicate the code of getExpression().
+        // EAL 8/8/06.
+        // String value = getExpression();
+        // if ((value != null) && !value.equals("")) {
+        String value = _currentExpression;
+        if (value == null) {
+            ptolemy.data.Token token = null;
+            try {
+                token = getToken();
+            } catch (IllegalActionException ex) {
+                // token will remain null if the value is invalid.
+            }
+            if (token != null) {
+                if (isStringMode()) {
+                    value = ((StringToken) token).stringValue();
+                } else {
+                    value = token.toString();
+                }
+            }
+        }
 
-        if ((value != null) && !value.equals("")) {
+        String valueTerm = "";
+        if ((value != null)) {
             valueTerm = " value=\"" + StringUtilities.escapeForXML(value)
-                + "\"";
+                    + "\"";
         }
 
         output.write(_getIndentPrefix(depth) + "<" + _elementName + " name=\""
-                + name + "\" class=\"" + getClassName() + "\"" + valueTerm + ">\n");
+                + name + "\" class=\"" + getClassName() + "\"" + valueTerm
+                + ">\n");
         _exportMoMLContents(output, depth + 1);
         output.write(_getIndentPrefix(depth) + "</" + _elementName + ">\n");
     }

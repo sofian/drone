@@ -1,71 +1,70 @@
 /* Interface for objects that can store tokens.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.actor;
 
 import ptolemy.data.Token;
 import ptolemy.kernel.util.IllegalActionException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Receiver
 
 /**
-   Interface for objects that can hold tokens. An implementation of this
-   interface has two key methods: put() and get(). The put() method
-   deposits a token into the receiver. The get() method retrieves
-   a token that has been put. The order of
-   the retrieved tokens depends on specific implementations, and does not
-   necessarily match the order in which tokens have been put.
-   <p>
-   All implementations of this interface must follow these rules, regardless
-   of the number of threads that are accessing the receiver:
-   <ul>
-   <li> If hasToken() returns true, then the next call to get() must not
-   result in a NoTokenException being thrown.
-   <li> If hasRoom() returns true, then the next call to put() must not
-   result in a NoRoomException being thrown.
-   </ul>
-   In general, this means that multithreaded domains must provide
-   synchronization for receivers. Note that both NoTokenException
-   and NoRoomException are runtime exceptions, so they need not be
-   declared explicitly.
-   <p>
-   Objects that implement this interface can only be contained
-   by an instance of IOPort.
+ Interface for objects that can hold tokens. An implementation of this
+ interface has two key methods: put() and get(). The put() method
+ deposits a token into the receiver. The get() method retrieves
+ a token that has been put. The order of
+ the retrieved tokens depends on specific implementations, and does not
+ necessarily match the order in which tokens have been put.
+ <p>
+ All implementations of this interface must follow these rules, regardless
+ of the number of threads that are accessing the receiver:
+ <ul>
+ <li> If hasToken() returns true, then the next call to get() must not
+ result in a NoTokenException being thrown.
+ <li> If hasRoom() returns true, then the next call to put() must not
+ result in a NoRoomException being thrown.
+ </ul>
+ In general, this means that multithreaded domains must provide
+ synchronization for receivers. Note that both NoTokenException
+ and NoRoomException are runtime exceptions, so they need not be
+ declared explicitly.
+ <p>
+ Objects that implement this interface can only be contained
+ by an instance of IOPort.
 
-   @author Jie Liu, Edward A. Lee, Lukito Muliadi
-   @version $Id: Receiver.java,v 1.60 2005/04/25 21:36:31 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (bart)
-   @see Token
-*/
+ @author Jie Liu, Edward A. Lee, Lukito Muliadi
+ @version $Id: Receiver.java,v 1.66 2006/06/17 14:27:40 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (bart)
+ @see Token
+ */
 public interface Receiver {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -96,6 +95,7 @@ public interface Receiver {
 
     /** Return the container of this receiver, or null if there is none.
      *  @return The port containing this receiver.
+     *  @see #setContainer(IOPort)
      */
     public IOPort getContainer();
 
@@ -153,8 +153,10 @@ public interface Receiver {
     /** Put the specified token into this receiver.
      *  @param token The token to put into the receiver.
      *  @exception NoRoomException If there is no room in the receiver.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
      */
-    public void put(Token token) throws NoRoomException;
+    public void put(Token token) throws NoRoomException, IllegalActionException;
 
     /** Put a portion of the specified token array into this receiver.
      *  The first <i>numberOfTokens</i> elements of the token array are put
@@ -165,15 +167,52 @@ public interface Receiver {
      *  @param numberOfTokens The number of elements of the token
      *   array to put into this receiver.
      *  @exception NoRoomException If the token array cannot be put.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
      */
     public void putArray(Token[] tokenArray, int numberOfTokens)
-            throws NoRoomException;
+            throws NoRoomException, IllegalActionException;
+
+    /** Put a sequence of tokens to all receivers in the specified array.
+     *  Implementers will assume that all such receivers
+     *  are of the same class.
+     *  @param tokens The sequence of token to put.
+     *  @param numberOfTokens The number of tokens to put (the array might
+     *   be longer).
+     *  @param receivers The receivers.
+     *  @exception NoRoomException If there is no room for the token.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
+     */
+    public void putArrayToAll(Token[] tokens, int numberOfTokens,
+            Receiver[] receivers) throws NoRoomException,
+            IllegalActionException;
+
+    /** Put a single token to all receivers in the specified array.
+     *  Implementers will assume that all such receivers
+     *  are of the same class.
+     *  @param token The token to put.
+     *  @param receivers The receivers.
+     *  @exception NoRoomException If there is no room for the token.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
+     */
+    public void putToAll(Token token, Receiver[] receivers)
+            throws NoRoomException, IllegalActionException;
+
+    /** Reset this receiver to its initial state, which is typically
+     *  either empty (same as calling clear()) or unknown.
+     *  @exception IllegalActionException If reset() is not supported by
+     *   the domain.
+     */
+    public void reset() throws IllegalActionException;
 
     /** Set the container.
      *  @param port The container.
      *  @exception IllegalActionException If the container is not of
      *   an appropriate subclass of IOPort for the particular receiver
      *   implementation.
+     *  @see #getContainer()
      */
     public void setContainer(IOPort port) throws IllegalActionException;
 }

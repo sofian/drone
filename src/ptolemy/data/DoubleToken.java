@@ -1,30 +1,30 @@
 /* A token that contains a double precision number.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.data;
 
 import ptolemy.data.type.BaseType;
@@ -34,25 +34,24 @@ import ptolemy.graph.CPO;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.math.Complex;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// DoubleToken
 
 /**
-   A token that contains a 64-bit signed mantissa, signed exponent double
-   precision floating-point number (IEEE 754).  This class handles overflow and
-   underflow as does normal java arithmetic on doubles.
+ A token that contains a 64-bit signed mantissa, signed exponent double
+ precision floating-point number (IEEE 754).  This class handles overflow and
+ underflow as does normal java arithmetic on doubles.
 
-   <p> Note that a double cannot be losslessly converted to a long, and
-   vice versa, as both have 64-bit representations in Java.
+ <p> Note that a double cannot be losslessly converted to a long, and
+ vice versa, as both have 64-bit representations in Java.
 
-   @see ptolemy.data.Token
-   @author Neil Smyth, Yuhong Xiong, Christopher Hylands, Steve Neuendorffer
-   @version $Id: DoubleToken.java,v 1.112 2005/04/25 21:59:04 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Green (cxh)
-*/
+ @see ptolemy.data.Token
+ @author Neil Smyth, Yuhong Xiong, Christopher Hylands, Steve Neuendorffer
+ @version $Id: DoubleToken.java,v 1.132 2006/08/21 15:20:12 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Yellow (cxh) nil token, ONE, ZERO
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class DoubleToken extends ScalarToken {
     /** Construct a DoubleToken with value 0.0.
      */
@@ -61,20 +60,28 @@ public class DoubleToken extends ScalarToken {
     }
 
     /** Construct a DoubleToken with the specified value.
+     *  @param value The specified value.   
      */
     public DoubleToken(double value) {
         _value = value;
     }
 
     /** Construct a DoubleToken from the specified string.
+     *  @param init The initialization string, which is in a format
+     *  suitable for java.lang.Double.parseDouble(String).   
      *  @exception IllegalActionException If the Token could not
      *   be created with the given String.
      */
     public DoubleToken(String init) throws IllegalActionException {
+        if (init == null || init.equals("nil")) {
+            throw new IllegalActionException(notSupportedNullNilStringMessage(
+                    "DoubleToken", init));
+        }
         try {
             _value = Double.parseDouble(init);
         } catch (NumberFormatException e) {
-            throw new IllegalActionException(e.getMessage());
+            throw new IllegalActionException(null, e, "Failed to parse \""
+                    + init + "\" as a number.");
         }
     }
 
@@ -91,14 +98,19 @@ public class DoubleToken extends ScalarToken {
     }
 
     /** Convert the specified token into an instance of DoubleToken.
-     *  This method does lossless conversion.  The units of the returned
-     *  token will be the same as the units of the given token.
-     *  If the argument is already an instance of DoubleToken,
-     *  it is returned without any change. Otherwise, if the argument
-     *  is below DoubleToken in the type hierarchy, it is converted to
-     *  an instance of DoubleToken or one of the subclasses of
-     *  DoubleToken and returned. If none of the above condition is
-     *  met, an exception is thrown.
+     *  This method does lossless conversion.  The units of the
+     *  returned token will be the same as the units of the given
+     *  token.  If the argument is already an instance of DoubleToken,
+     *  it is returned without any change. If it is a PetiteToken is
+     *  it returned as a DoubleToken since lossless conversion is
+     *  possible between PetiteToken and DoubleToken.  If the argument
+     *  is a nil token, then {@link #NIL} is
+     *  returned.  Otherwise, if the argument is below DoubleToken in
+     *  the type hierarchy, it is converted to an instance of
+     *  DoubleToken or one of the subclasses of DoubleToken and
+     *  returned. If none of the above condition is met, an exception
+     *  is thrown.
+     *
      *  @param token The token to be converted to a DoubleToken.
      *  @return A DoubleToken.
      *  @exception IllegalActionException If the conversion
@@ -107,14 +119,18 @@ public class DoubleToken extends ScalarToken {
     public static DoubleToken convert(Token token)
             throws IllegalActionException {
         if (token instanceof DoubleToken) {
+            // Since PetiteToken extends DoubleToken, if the token arg
+            // is a Petite, then we will return a Double from here.
             return (DoubleToken) token;
         }
-
+        if (token.isNil()) {
+            return DoubleToken.NIL;
+        }
         int compare = TypeLattice.compare(BaseType.DOUBLE, token);
 
         if ((compare == CPO.LOWER) || (compare == CPO.INCOMPARABLE)) {
-            throw new IllegalActionException(notSupportedIncomparableConversionMessage(
-                                                     token, "double"));
+            throw new IllegalActionException(
+                    notSupportedIncomparableConversionMessage(token, "double"));
         }
 
         compare = TypeLattice.compare(BaseType.INT, token);
@@ -126,7 +142,7 @@ public class DoubleToken extends ScalarToken {
             return result;
         } else {
             throw new IllegalActionException(notSupportedConversionMessage(
-                                                     token, "double"));
+                    token, "double"));
         }
     }
 
@@ -140,12 +156,20 @@ public class DoubleToken extends ScalarToken {
     /** Return true if the argument's class is DoubleToken and it has the
      *  same values as this token.
      *  @param object An instance of Object.
-     *  @return True if the argument is a DoubleToken with the
-     *  same value.
+     *  @return True if the argument is a DoubleToken with the same
+     *  value. If either this object or the argument is a nil Token, return
+     *  false.
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out subclasses.
         if (object.getClass() != getClass()) {
+            return false;
+        }
+
+        if (isNil() || ((DoubleToken) object).isNil()) {
             return false;
         }
 
@@ -171,11 +195,21 @@ public class DoubleToken extends ScalarToken {
         return (int) _value;
     }
 
-    /** Returns a new DoubleToken with value 1.0.
-     *  @return A new DoubleToken with value 1.0.
+    /** Return true if the token is nil, (aka null or missing).
+     *  Nil or missing tokens occur when a data source is sparsely populated.
+     *  @return True if the token is the {@link #NIL} token.
+     */
+    public boolean isNil() {
+        // We use a method here so that we can easily change how
+        // we determine if a token is nil without modify lots of classes.
+        return this == DoubleToken.NIL;
+    }
+
+    /** Returns a DoubleToken with value 1.0.
+     *  @return A DoubleToken with value 1.0.
      */
     public Token one() {
-        return new DoubleToken(1.0);
+        return ONE;
     }
 
     /** Return the value of this token as a string that can be parsed
@@ -200,6 +234,11 @@ public class DoubleToken extends ScalarToken {
             unitString = " * " + unitsString();
         }
 
+        if (isNil()) {
+            // FIXME: what about units?
+            return super.toString();
+        }
+
         if (Double.isNaN(_value) || Double.isInfinite(_value)) {
             return Double.toString(_value) + unitString;
         } else {
@@ -209,17 +248,35 @@ public class DoubleToken extends ScalarToken {
                 return TokenUtilities.regularFormat.format(_value) + unitString;
             } else {
                 return TokenUtilities.exponentialFormat.format(_value)
-                    + unitString;
+                        + unitString;
             }
         }
     }
 
-    /** Returns a new DoubleToken with value 0.0.
+    /** Returns a DoubleToken with value 0.0.
      *  @return A DoubleToken with value 0.0.
      */
     public Token zero() {
-        return new DoubleToken(0);
+        return ZERO;
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         public variables                  ////
+
+    /** A token that represents a missing value.
+     *  Null or missing tokens are common in analytical systems
+     *  like R and SAS where they are used to handle sparsely populated data
+     *  sources.  In database parlance, missing tokens are sometimes called
+     *  null tokens.  Since null is a Java keyword, we use the term "nil".
+     *  The toString() method on a nil token returns the string "nil".
+     */
+    public static final DoubleToken NIL = new DoubleToken(Double.NaN);
+
+    /** A DoubleToken with the value 1.0. */
+    public static final DoubleToken ONE = new DoubleToken(1);
+
+    /** A DoubleToken with the value 0.0. */
+    public static final DoubleToken ZERO = new DoubleToken(0);
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
@@ -256,52 +313,47 @@ public class DoubleToken extends ScalarToken {
 
     /** Returns a token representing the bitwise AND of this token and
      *  the given token.
+     *  @param rightArgument The DoubleToken to bitwise AND with this one.
      *  @return The bitwise AND.
-     *  @exception IllegalActionException If the given token is not
-     *  compatible for this operation, or the operation does not make
-     *  sense for this type.
+     *  @exception IllegalActionException Always thrown by this base class.
      */
     protected ScalarToken _bitwiseAnd(ScalarToken rightArgument)
             throws IllegalActionException {
         throw new IllegalActionException(notSupportedMessage("bitwiseAnd",
-                                                 this, rightArgument));
+                this, rightArgument));
     }
 
     /** Returns a token representing the bitwise NOT of this token.
      *  @return The bitwise NOT of this token.
-     *  @exception IllegalActionException If the given token is not
-     *  compatible for this operation, or the operation does not make
-     *  sense for this type.
+     *  @exception IllegalActionException Always thrown by this base class.
      */
     protected ScalarToken _bitwiseNot() throws IllegalActionException {
         throw new IllegalActionException(notSupportedMessage("bitwiseNot",
-                                                 this, this));
+                this, this));
     }
 
     /** Returns a token representing the bitwise OR of this token and
      *  the given token.
+     *  @param rightArgument The DoubleToken to bitwise OR with this one.
      *  @return The bitwise OR.
-     *  @exception IllegalActionException If the given token is not
-     *  compatible for this operation, or the operation does not make
-     *  sense for this type.
+     *  @exception IllegalActionException Always thrown by this base class.
      */
     protected ScalarToken _bitwiseOr(ScalarToken rightArgument)
             throws IllegalActionException {
         throw new IllegalActionException(notSupportedMessage("bitwiseOr", this,
-                                                 rightArgument));
+                rightArgument));
     }
 
     /** Returns a token representing the bitwise XOR of this token and
      *  the given token.
+     *  @param rightArgument The DoubleToken to bitwise XOR with this one.
      *  @return The bitwise XOR.
-     *  @exception IllegalActionException If the given token is not
-     *  compatible for this operation, or the operation does not make
-     *  sense for this type.
+     *  @exception IllegalActionException Always thrown by this base class.
      */
     protected ScalarToken _bitwiseXor(ScalarToken rightArgument)
             throws IllegalActionException {
         throw new IllegalActionException(notSupportedMessage("bitwiseXor",
-                                                 this, rightArgument));
+                this, rightArgument));
     }
 
     /** Return a new token whose value is the value of this token
@@ -315,13 +367,13 @@ public class DoubleToken extends ScalarToken {
         return new DoubleToken(quotient);
     }
 
-    /** Test that the value of this token is close to the first argument,
-     *  where "close" means that the distance between their values is less than
-     *  or equal to the second argument. It is assumed that the type of
-     *  the first argument is DoubleToken.
+    /** Test that the value of this token is close to the first
+     *  argument, where "close" means that the distance between their
+     *  values is less than or equal to the second argument. It is
+     *  assumed that the type of the first argument is DoubleToken.
      *  @param rightArgument The token to compare to this token.
      *  @param epsilon The distance.
-     *  @return A token containing true if the value of this token is close
+     *  @return A token containing tue if the value of this token is close
      *   to that of the argument.
      */
     protected BooleanToken _isCloseTo(ScalarToken rightArgument, double epsilon) {
@@ -344,7 +396,7 @@ public class DoubleToken extends ScalarToken {
 
     /** Test for ordering of the values of this Token and the argument
      *  Token.  It is assumed that the type of the argument is DoubleToken.
-     *  @param rightArgument The token to add to this token.
+     *  @param rightArgument The token to compare to this token.
      *  @exception IllegalActionException If this method is not
      *  supported by the derived class.
      *  @return A new Token containing the result.
@@ -352,7 +404,8 @@ public class DoubleToken extends ScalarToken {
     protected BooleanToken _isLessThan(ScalarToken rightArgument)
             throws IllegalActionException {
         DoubleToken convertedArgument = (DoubleToken) rightArgument;
-        return BooleanToken.getInstance(_value < convertedArgument.doubleValue());
+        return BooleanToken.getInstance(_value < convertedArgument
+                .doubleValue());
     }
 
     /** Return a new token whose value is the value of this token
@@ -385,7 +438,7 @@ public class DoubleToken extends ScalarToken {
      */
     protected ScalarToken _subtract(ScalarToken rightArgument) {
         double difference = _value
-            - ((DoubleToken) rightArgument).doubleValue();
+                - ((DoubleToken) rightArgument).doubleValue();
         return new DoubleToken(difference);
     }
 

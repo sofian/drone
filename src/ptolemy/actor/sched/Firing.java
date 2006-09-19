@@ -1,30 +1,30 @@
 /* A schedule element that contains a reference to an actor.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.sched;
 
 import java.util.Collections;
@@ -36,31 +36,34 @@ import java.util.NoSuchElementException;
 import ptolemy.actor.Actor;
 import ptolemy.kernel.util.InvalidStateException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Firing
 
 /**
-   This class is a schedule element that contains a reference to an
-   actor.  This class is used together with the Schedule class to
-   construct a static schedule.  This class contains a reference to an
-   actor, and is used to represent an actor term of a schedule loop. The
-   setActor() method is used to create the reference to an actor. The
-   getActor() method will return a reference to this actor. <p>
+ This class is a schedule element that contains a reference to an
+ actor and an iteration count.  This class is used together
+ with the Schedule class to construct a static schedule.
+ This class is used to represent a single actor repeated some
+ number of times, whereas Schedule is used for multi-actor schedules.
+ The setActor() method is used to 
+ create the reference to an actor, and the setIterationCount() method
+ to set the iteration count. The getActor() method will return 
+ a reference to this actor, and getIterationCount() will return
+ the iteration count. <p>
 
-   It is more efficient to use this class than to simply maintain a list of
-   actors since actors will often firing multiple times consecutively.  Using
-   this class (and the Schedule data structure in general) greatly reduces the
-   memory requirements of most large schedules.
+ It is more efficient to use this class than to simply maintain a list of
+ actors since actors will often fire multiple times consecutively.  Using
+ this class (and the Schedule data structure in general) greatly reduces the
+ memory requirements of most large schedules.
 
-   @author Brian K. Vogel, Steve Neuendorffer
-   @version $Id: Firing.java,v 1.42 2005/04/29 20:05:57 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (vogel)
-   @Pt.AcceptedRating Yellow (chf)
-   @see ptolemy.actor.sched.Schedule
-   @see ptolemy.actor.sched.ScheduleElement
-*/
+ @author Brian K. Vogel, Steve Neuendorffer
+ @version $Id: Firing.java,v 1.46 2006/08/21 23:12:19 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (vogel)
+ @Pt.AcceptedRating Yellow (chf)
+ @see ptolemy.actor.sched.Schedule
+ @see ptolemy.actor.sched.ScheduleElement
+ */
 public class Firing extends ScheduleElement {
     /** Construct a firing with a default iteration count equal to one
      *  and with no parent schedule.
@@ -83,7 +86,7 @@ public class Firing extends ScheduleElement {
 
     /** Return the actor invocation sequence of the schedule in the
      *  form of a sequence of actors. For a valid schedule, all of the
-     *  lowest-level nodes should be an instance of Firing. If the
+     *  lowest-level nodes should be an instance of Actor. If the
      *  schedule is not valid, then the returned iterator will contain
      *  null elements.
      *  <p>
@@ -97,14 +100,13 @@ public class Firing extends ScheduleElement {
      *   is active.
      */
     public Iterator actorIterator() {
-        // As of 8/02, it seems like this method class is not really
-        // used except by the test suite.
         return new ActorIterator(getIterationCount());
     }
 
     /** Return the actor invocation sequence in the form
      *  of a sequence of firings.
-     *  Since this ScheduleElement is a Firing, the
+     *  Since this ScheduleElement is a Firing, which
+     *  represents an Actor and an iteration count. the
      *  iterator returned will contain exactly one Firing (this Firing).
      *  <p>
      *  A runtime exception is thrown if the
@@ -224,7 +226,9 @@ public class Firing extends ScheduleElement {
         }
 
         private long _startingVersion;
+
         private int _currentElement;
+
         private int _iterationCount;
     }
 

@@ -1,35 +1,36 @@
 /* An Entity is an aggregation of ports.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -47,43 +48,42 @@ import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.Settable;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Entity
 
 /**
-   An Entity is a vertex in a generalized graph. It is an aggregation
-   of ports. The ports can be linked to relations. The
-   relations thus represent connections between ports, and hence,
-   connections between entities. To add a port to an entity, simply
-   set its container to the entity.  To remove it, set its container
-   to null, or to some other entity.
-   <p>
-   Entities are intended for flat graphs. Derived classes support
-   hierarchy (clustered graphs) by defining entities that aggregate
-   other entities.
-   <p>
-   An Entity can contain any instance of Port.  Derived classes may
-   wish to constrain to a subclass of Port.  To do this, subclasses
-   should override the public method newPort() to create a port of
-   the appropriate subclass, and the protected method _addPort() to throw
-   an exception if its argument is a port that is not of the appropriate
-   subclass.
-   <p>
-   An Entity is created within a workspace.  If the workspace is
-   not specified as a constructor argument, then the default workspace
-   is used. The workspace is used to synchronize simultaneous accesses
-   to a topology from multiple threads.  The workspace is immutable
-   (it cannot be changed during the lifetime of the Entity).
+ An Entity is a vertex in a generalized graph. It is an aggregation
+ of ports. The ports can be linked to relations. The
+ relations thus represent connections between ports, and hence,
+ connections between entities. To add a port to an entity, simply
+ set its container to the entity.  To remove it, set its container
+ to null, or to some other entity.
+ <p>
+ Entities are intended for flat graphs. Derived classes support
+ hierarchy (clustered graphs) by defining entities that aggregate
+ other entities.
+ <p>
+ An Entity can contain any instance of Port.  Derived classes may
+ wish to constrain to a subclass of Port.  To do this, subclasses
+ should override the public method newPort() to create a port of
+ the appropriate subclass, and the protected method _addPort() to throw
+ an exception if its argument is a port that is not of the appropriate
+ subclass.
+ <p>
+ An Entity is created within a workspace.  If the workspace is
+ not specified as a constructor argument, then the default workspace
+ is used. The workspace is used to synchronize simultaneous accesses
+ to a topology from multiple threads.  The workspace is immutable
+ (it cannot be changed during the lifetime of the Entity).
 
-   @author John S. Davis II, Edward A. Lee
-   @version $Id: Entity.java,v 1.111 2005/04/29 20:03:29 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (johnr)
-   @see ptolemy.kernel.Port
-   @see ptolemy.kernel.Relation
-*/
+ @author John S. Davis II, Edward A. Lee
+ @version $Id: Entity.java,v 1.120 2006/09/16 11:20:08 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (johnr)
+ @see ptolemy.kernel.Port
+ @see ptolemy.kernel.Relation
+ */
 public class Entity extends InstantiableNamedObj {
     /** Construct an entity in the default workspace with an empty string
      *  as its name.
@@ -185,19 +185,17 @@ public class Entity extends InstantiableNamedObj {
             for (int i = 0; i < fields.length; i++) {
                 try {
                     if (fields[i].get(newEntity) instanceof Port) {
-                        // Get the field name.
-                        String fieldName = fields[i].getName();
-
                         // Get the port name. Note that by convention,
                         // this is the same as the field name. But it might
                         // not be.
-                        String portName = ((Port) fields[i].get(this)).getName();
+                        String portName = ((Port) fields[i].get(this))
+                                .getName();
                         Port port = newEntity.getPort(portName);
 
                         if (port == null) {
                             throw new IllegalActionException(this,
                                     "Could not find a port named '" + portName
-                                    + "';");
+                                            + "';");
                         }
 
                         fields[i].set(newEntity, port);
@@ -407,8 +405,8 @@ public class Entity extends InstantiableNamedObj {
      *  @exception NameDuplicationException If the entity already has a port
      *   with the specified name.
      */
-    public Port newPort(String name)
-            throws IllegalActionException, NameDuplicationException {
+    public Port newPort(String name) throws IllegalActionException,
+            NameDuplicationException {
         try {
             _workspace.getWriteAccess();
 
@@ -455,7 +453,8 @@ public class Entity extends InstantiableNamedObj {
                 } catch (KernelException ex) {
                     // Should not be thrown.
                     throw new InternalErrorException(
-                            "Internal error in Port constructor!" + ex.getMessage());
+                            "Internal error in Port constructor!"
+                                    + ex.getMessage());
                 }
             }
         } finally {
@@ -485,7 +484,7 @@ public class Entity extends InstantiableNamedObj {
                 if (port.numLinks() > 0) {
                     throw new IllegalActionException(this,
                             "Cannot convert an entity to a class definition "
-                            + "while it contains ports with links.");
+                                    + "while it contains ports with links.");
                 }
             }
         }
@@ -521,34 +520,6 @@ public class Entity extends InstantiableNamedObj {
         return candidate;
     }
 
-    /** Validate attributes deeply contained by this object if they
-     *  implement the Settable interface by calling their validate() method.
-     *  This method overrides the base class to check attributes contained
-     *  by the contained ports.
-     *  Errors that are triggered by this validation are handled by calling
-     *  handleModelError().
-     *  @see NamedObj#handleModelError(NamedObj context, IllegalActionException exception)
-     */
-    public void validateSettables() throws IllegalActionException {
-        super.validateSettables();
-
-        Iterator ports = portList().iterator();
-
-        while (ports.hasNext()) {
-            Port port = (Port) ports.next();
-
-            if (port instanceof Settable) {
-                try {
-                    ((Settable) port).validate();
-                } catch (IllegalActionException ex) {
-                    handleModelError(this, ex);
-                }
-            }
-
-            port.validateSettables();
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
 
@@ -568,8 +539,8 @@ public class Entity extends InstantiableNamedObj {
      *  @exception NameDuplicationException If the port name collides with a
      *   name already in the entity.
      */
-    protected void _addPort(Port port)
-            throws IllegalActionException, NameDuplicationException {
+    protected void _addPort(Port port) throws IllegalActionException,
+            NameDuplicationException {
         _portList.append(port);
     }
 
@@ -660,6 +631,42 @@ public class Entity extends InstantiableNamedObj {
         _portList.remove(port);
     }
 
+    /** Validate attributes deeply contained by this object if they
+     *  implement the Settable interface by calling their validate() method.
+     *  This method overrides the base class to check attributes contained
+     *  by the contained ports.
+     *  Errors that are triggered by this validation are handled by calling
+     *  handleModelError().
+     *  @param attributesValidated A HashSet of Attributes that have
+     *  already been validated.  For example, Settables that implement
+     *  the SharedSettable interface are validated only once.
+     *  @see NamedObj#handleModelError(NamedObj context, IllegalActionException exception)
+     *  @exception IllegalActionException If the superclass throws it
+     *  or if handleModelError() throws it.
+     */
+    protected void _validateSettables(Collection attributesValidated) throws IllegalActionException {
+
+        super._validateSettables(attributesValidated);
+        Iterator ports = portList().iterator();
+        while (ports.hasNext()) {
+            Port port = (Port) ports.next();
+            if (port instanceof Settable) {
+                try {
+                    Collection validated = ((Settable) port).validate();
+                    if (validated != null) {
+                        attributesValidated.addAll(validated);
+                    }
+                    attributesValidated.add(port);
+                } catch (IllegalActionException ex) {
+                    if (!handleModelError(this, ex)) {
+                        throw ex;
+                    }
+                }
+            }
+            port.validateSettables();
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////
     ////                         friendly variables                ////
     // The following is package friendly so port can access it.
@@ -671,10 +678,12 @@ public class Entity extends InstantiableNamedObj {
     ////                         private variables                 ////
     // Cached list of connected ports.
     private transient LinkedList _connectedPorts;
+
     private transient long _connectedPortsVersion = -1;
 
     // @serial Cached list of linked relations.
     private transient LinkedList _linkedRelations;
+
     private transient long _linkedRelationsVersion = -1;
 
     ///////////////////////////////////////////////////////////////////
@@ -690,8 +699,16 @@ public class Entity extends InstantiableNamedObj {
      *  or attribute list while using the iterator or it will get a
      *  ConcurrentModificationException.
      */
-    protected class ContainedObjectsIterator
-        extends NamedObj.ContainedObjectsIterator {
+    protected class ContainedObjectsIterator extends
+            NamedObj.ContainedObjectsIterator {
+        /** Create an iterator over all the contained objects, which
+         *  for Entities are attributes and then ports.
+         */
+        public ContainedObjectsIterator() {
+            super();
+            _portListIterator = portList().iterator();
+        }
+
         /** Return true if the iteration has more elements.
          *  In this base class, this returns true if there are more
          *  attributes or ports.
@@ -701,11 +718,6 @@ public class Entity extends InstantiableNamedObj {
             if (super.hasNext()) {
                 return true;
             }
-
-            if (_portListIterator == null) {
-                _portListIterator = portList().iterator();
-            }
-
             return _portListIterator.hasNext();
         }
 
@@ -717,27 +729,16 @@ public class Entity extends InstantiableNamedObj {
             if (super.hasNext()) {
                 return super.next();
             }
-
-            if (_portListIterator == null) {
-                _portListIterator = portList().iterator();
-            }
-
-            _lastElementWasMine = true;
             return _portListIterator.next();
         }
 
-        /** Remove from the underlying collection the last element
-         *  returned by the iterator.
+        /** The remove() method is not supported because is is not
+         *  supported in NamedObj.ContainedObjectsIterator.remove().
          */
         public void remove() {
-            if (_lastElementWasMine) {
-                _portListIterator.remove();
-            } else {
-                super.remove();
-            }
+            super.remove();
         }
 
         private Iterator _portListIterator = null;
-        private boolean _lastElementWasMine = false;
     }
 }

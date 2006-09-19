@@ -1,62 +1,60 @@
 /* Interface for defining how an object can be invoked.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
-*/
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
+ */
 package ptolemy.actor;
 
 import ptolemy.kernel.util.IllegalActionException;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Executable
 
 /**
-   This interface defines the <i>action methods</i>, which determine
-   how an object can be invoked. It should be implemented by actors
-   and directors. In an execution of an application,
-   the preinitialize() and initialize() methods should be
-   invoked exactly once, followed by any number of iterations, followed
-   by exactly one invocation of the wrapup() method. An <i>iteration</i>
-   is defined to be one firing of the prefire() method, followed by
-   any number of firings of the fire() method, followed by one firing
-   of the postfire() method.
-   The prefire() method returns true to indicate that firing
-   can occur.  The postfire() method returns false if no further firings
-   should occur. The initialize(), fire() and postfire() methods may produce
-   output data.  The initialize() method runs after the topology has
-   stabilized (all higher-order function actors have executed) and
-   type resolution has been done.  The preinitialize() method runs
-   before these have happened.
+ This interface defines the <i>action methods</i>, which determine
+ how an object can be invoked. It should be implemented by actors
+ and directors. In an execution of an application,
+ the preinitialize() and initialize() methods should be
+ invoked exactly once, followed by any number of iterations, followed
+ by exactly one invocation of the wrapup() method. An <i>iteration</i>
+ is defined to be any number of invocations of prefire() and fire(),
+ where fire() is invoked only if prefire() returns true, followed by
+ exactly one invocation of the postfire() method.
+ The postfire() method returns false if no further iterations
+ should occur. The initialize(), fire() and postfire() methods may produce
+ output data.  The preinitialize() method runs
+ before type resolution has been done, and is permitted to make
+ changes in the topology of the model.
 
-   @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
-   @version $Id: Executable.java,v 1.57 2005/03/01 01:00:28 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (davisj)
-*/
+ @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
+ @version $Id: Executable.java,v 1.62 2006/08/21 23:09:43 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (davisj)
+ */
 public interface Executable {
+
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
@@ -83,8 +81,32 @@ public interface Executable {
      */
     public void initialize() throws IllegalActionException;
 
+    /** Return true if this executable does not change state in either
+     *  the prefire() or the fire() method. A class that returns true
+     *  is said to obey the <i>actor abstract semantics</i>. In particular,
+     *  such an actor can be used in domains that have a fixed point
+     *  semantics and may repeatedly fire the actor before committing
+     *  to state changes.
+     *  
+     *  @return True if this executable only updates its states during
+     *   an iteration in the postfire() method.
+     */
+    public boolean isFireFunctional();
+
+    /** Return true if this executable is strict, meaning all inputs must
+     *  be known before iteration. Normally, classes that implement this
+     *  interface are strict, so this method will return true.
+     *  However, some classes can perform an iteration even if some
+     *  inputs are not known (i.e., these classes tolerate a return value
+     *  of false from the isKnown() method of Receiver).
+     *  
+     *  @return True if this executable is strict, meaning all inputs must
+     *   be known before iteration.
+     */
+    public boolean isStrict();
+
     /** Invoke a specified number of iterations of the actor. An
-     *  iteration is equivalent to invoking prefire(), fire(), and
+     *  iteration here is equivalent to invoking prefire(), fire(), and
      *  postfire(), in that order. In an iteration, if prefire()
      *  returns true, then fire() will be called once, followed by
      *  postfire(). Otherwise, if prefire() returns false, fire()
@@ -97,6 +119,10 @@ public interface Executable {
      *  actually invoke prefire(), fire(), and postfire(). An
      *  implementation of this method must, however,
      *  perform the equivalent operations.
+     *  <p>
+     *  Note that this method for iterating an actor should
+     *  be used only in domains where a single invocation of
+     *  prefire() and fire() is sufficient in an iteration.
      *
      *  @param count The number of iterations to perform.
      *  @return NOT_READY, STOP_ITERATING, or COMPLETED.
@@ -106,25 +132,24 @@ public interface Executable {
     public int iterate(int count) throws IllegalActionException;
 
     /** This method should be invoked once per iteration, after the last
-     *  invocation of fire() in that iteration. It may produce output data.
+     *  invocation of fire() in that iteration. The postfire() method should
+     *  not produce output data on output ports of the actor.
      *  It returns true if the execution can proceed into the next iteration,
      *  false if the actor does not wish to be fired again.
      *  This method typically wraps up an iteration, which may involve
-     *  updating local state. In an opaque, non-atomic entity, it may also
-     *  transfer output data. The execution of this method is bounded.
+     *  updating local state or updating displays.
      *
      *  @return True if the execution can continue.
      *  @exception IllegalActionException If postfiring is not permitted.
      */
     public boolean postfire() throws IllegalActionException;
 
-    /** This method should be invoked once per iteration, before the first
-     *  invocation of fire() in that iteration.  It returns true if the
-     *  iteration can proceed (the fire() method can be invoked). Thus
-     *  this method will typically check preconditions for an iteration, if
+    /** This method should be invoked prior to each invocation of fire().
+     *  It returns true if the the fire() method can be invoked, given the
+     *  current status of the inputs and parameters of the actor. Thus
+     *  this method will typically check preconditions for a firing, if
      *  there are any. In an opaque, non-atomic entity,
      *  it may move data into an inner subsystem.
-     *  The execution of this method is bounded.
      *
      *  @return True if the iteration can proceed.
      *  @exception IllegalActionException If prefiring is not permitted.

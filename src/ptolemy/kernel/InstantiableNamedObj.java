@@ -1,30 +1,30 @@
 /* A named object that can be either a class or an instance.
 
-Copyright (c) 2003-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2003-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel;
 
 import java.io.IOException;
@@ -41,37 +41,36 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// InstantiableNamedObj
 
 /**
-   An InstantiableNamedObj is a named object that can be either a class
-   definition or an instance.  If it is a class definition, then "instances" of
-   that class definition can be created by the instantiate() method. Those
-   instances are called the "children" of this "parent." Changes
-   to the parent propagate automatically to the children as described
-   in the {@link Instantiable} interface.
-   <p>
-   Note that the {@link #instantiate(NamedObj, String)} permits instantiating
-   an object into a workspace that is different from the one associated with
-   this object.  This means that some care must be exercised when propagating
-   changes from a parent to a child, since they may be in different workspaces.
-   Suppose for example that the change that has to propagate is made via a
-   change request. Although it may be a safe time to execute a change request
-   in the parent, it is not necessarily a safe time to execute a change request
-   in the child.  Classes that restrict these safe times should override
-   the propagateExistence(), propagateValue(), and propagateValues() methods
-   to ensure that the destinations of the propagation are in a state that
-   they can accept changes.
+ An InstantiableNamedObj is a named object that can be either a class
+ definition or an instance.  If it is a class definition, then "instances" of
+ that class definition can be created by the instantiate() method. Those
+ instances are called the "children" of this "parent." Changes
+ to the parent propagate automatically to the children as described
+ in the {@link Instantiable} interface.
+ <p>
+ Note that the {@link #instantiate(NamedObj, String)} permits instantiating
+ an object into a workspace that is different from the one associated with
+ this object.  This means that some care must be exercised when propagating
+ changes from a parent to a child, since they may be in different workspaces.
+ Suppose for example that the change that has to propagate is made via a
+ change request. Although it may be a safe time to execute a change request
+ in the parent, it is not necessarily a safe time to execute a change request
+ in the child.  Classes that restrict these safe times should override
+ the propagateExistence(), propagateValue(), and propagateValues() methods
+ to ensure that the destinations of the propagation are in a state that
+ they can accept changes.
 
-   @author Edward A. Lee
-   @version $Id: InstantiableNamedObj.java,v 1.15 2005/04/29 20:03:27 cxh Exp $
-   @since Ptolemy II 4.0
-   @see Instantiable
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (neuendor)
-*/
+ @author Edward A. Lee
+ @version $Id: InstantiableNamedObj.java,v 1.19 2006/09/18 11:36:48 eal Exp $
+ @since Ptolemy II 4.0
+ @see Instantiable
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (neuendor)
+ */
 public class InstantiableNamedObj extends NamedObj implements Instantiable {
     /** Construct an object in the default workspace with an empty string
      *  as its name.
@@ -139,7 +138,8 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
         try {
             workspace().getReadAccess();
 
-            InstantiableNamedObj newObject = (InstantiableNamedObj) super.clone(workspace);
+            InstantiableNamedObj newObject = (InstantiableNamedObj) super
+                    .clone(workspace);
 
             // The new object does not have any other objects deferring
             // their MoML definitions to it, so we have to reset this.
@@ -154,14 +154,14 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
             // to fix the parent relationships.
 
             /*
-              if (_parent != null) {
-              try {
-              newObject._setParent(_parent);
-              } catch (IllegalActionException ex) {
-              throw new InternalErrorException(ex);
-              }
-              }
-            */
+             if (_parent != null) {
+             try {
+             newObject._setParent(_parent);
+             } catch (IllegalActionException ex) {
+             throw new InternalErrorException(ex);
+             }
+             }
+             */
             return newObject;
         } finally {
             workspace().doneReading();
@@ -188,6 +188,8 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
      *  &lt;!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
      *      "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd"&gt;
      *  </pre>
+     *  In the above, "entity" may be replaced by "property" or
+     *  "port" if what is being exported is an attribute or a port.
      *  <p>
      *  The text that is written is indented according to the specified
      *  depth, with each line (including the last one)
@@ -224,6 +226,11 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
         if ((depth == 0) && (getContainer() == null)) {
             // No container, and this is a top level moml element.
             // Generate header information.
+            // NOTE: Currently, there is only one class designation,
+            // and it always applies to an Entity. Attributes that
+            // are classes are not yet supported. When they are,
+            // then "class" below may need to replaced with something
+            // else.
             output.write("<?xml version=\"1.0\" standalone=\"no\"?>\n"
                     + "<!DOCTYPE class PUBLIC "
                     + "\"-//UC Berkeley//DTD MoML 1//EN\"\n"
@@ -363,7 +370,7 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
         if (!isClassDefinition()) {
             throw new IllegalActionException(this,
                     "Cannot instantiate an object that is not a "
-                    + "class definition");
+                            + "class definition");
         }
 
         // Use the workspace of the container, if there is one,
@@ -406,6 +413,31 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
         return _isClassDefinition;
     }
 
+    /** Return true if this object is a class definition or is within
+     *  a class definition, which means that
+     *  any container above it in the hierarchy is
+     *  a class definition.
+     *  @return True if this object is within a class definition.
+     *  @see #setClassDefinition(boolean)
+     *  @see Instantiable
+     */
+    public final boolean isWithinClassDefinition() {
+        if (_isClassDefinition) {
+            return true;
+        } else {
+            NamedObj container = getContainer();
+            while (container != null) {
+                if (container instanceof InstantiableNamedObj) {
+                    if (((InstantiableNamedObj)container)._isClassDefinition) {
+                        return true;
+                    }
+                }
+                container = container.getContainer();
+            }
+            return false;
+        }
+    }
+
     /** Specify whether this object is a class definition.
      *  This method is write synchronized on the workspace.
      *  @param isClass True to make this object a class definition, false
@@ -424,7 +456,7 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
                     && (getChildren().size() > 0)) {
                 throw new IllegalActionException(this,
                         "Cannot change from a class to an instance because"
-                        + " there are subclasses and/or instances.");
+                                + " there are subclasses and/or instances.");
             }
 
             _isClassDefinition = isClass;
@@ -468,7 +500,7 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
         if ((parent != null) && !(parent instanceof InstantiableNamedObj)) {
             throw new IllegalActionException(this,
                     "Parent of an InstantiableNamedObj must also "
-                    + "be an InstantiableNamedObj.");
+                            + "be an InstantiableNamedObj.");
         }
 
         try {
@@ -489,7 +521,7 @@ public class InstantiableNamedObj extends NamedObj implements Instantiable {
 
                     while (references.hasNext()) {
                         WeakReference reference = (WeakReference) references
-                            .next();
+                                .next();
 
                         if ((reference == null) || (reference.get() == this)) {
                             references.remove();

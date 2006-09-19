@@ -1,31 +1,31 @@
 /* A table of named constants that are recognized by the expression parser.
 
-Copyright (c) 2001-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2001-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data.expr;
 
 import java.util.Hashtable;
@@ -35,38 +35,37 @@ import java.util.TreeMap;
 import ptolemy.data.BooleanToken;
 import ptolemy.data.ComplexToken;
 import ptolemy.data.DoubleToken;
-import ptolemy.data.FixToken;
 import ptolemy.data.IntToken;
 import ptolemy.data.LongToken;
 import ptolemy.data.ObjectToken;
 import ptolemy.data.RecordToken;
 import ptolemy.data.StringToken;
 import ptolemy.data.UnsignedByteToken;
+import ptolemy.data.UnsizedFixToken;
 import ptolemy.data.XMLToken;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.math.Complex;
 import ptolemy.util.StringUtilities;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Constants
 
 /**
-   A table of named constants that are recognized by the expression parser.
-   <p>
-   A named constant in an expression is substituted by its associated value
-   when the expression is evaluated. The constants are stored in a hash table,
-   using their names as key. The value of each constant is wrapped in a data
-   token.
+ A table of named constants that are recognized by the expression parser.
+ <p>
+ A named constant in an expression is substituted by its associated value
+ when the expression is evaluated. The constants are stored in a hash table,
+ using their names as key. The value of each constant is wrapped in a data
+ token.
 
-   @author Xiaojun Liu
-   @version $Id: Constants.java,v 1.52 2005/04/29 20:04:41 cxh Exp $
-   @since Ptolemy II 2.0
-   @Pt.ProposedRating Red (liuxj)
-   @Pt.AcceptedRating Red (liuxj)
-   @see ptolemy.data.expr.PtParser
-*/
+ @author Xiaojun Liu
+ @version $Id: Constants.java,v 1.59 2006/08/20 19:55:16 cxh Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Red (liuxj)
+ @Pt.AcceptedRating Red (liuxj)
+ @see ptolemy.data.expr.PtParser
+ */
 public class Constants {
     // There is no need to create an instance of this class.
     private Constants() {
@@ -213,8 +212,10 @@ public class Constants {
         _table.put("MinLong", new LongToken(Long.MIN_VALUE));
         _table.put("MaxDouble", new DoubleToken(Double.MAX_VALUE));
         _table.put("MinDouble", new DoubleToken(Double.MIN_VALUE));
-        _table.put("PositiveInfinity", new DoubleToken(Double.POSITIVE_INFINITY));
-        _table.put("NegativeInfinity", new DoubleToken(Double.NEGATIVE_INFINITY));
+        _table.put("PositiveInfinity",
+                new DoubleToken(Double.POSITIVE_INFINITY));
+        _table.put("NegativeInfinity",
+                new DoubleToken(Double.NEGATIVE_INFINITY));
 
         // Type constants.
         // We use a separate map of types so that we can list the
@@ -222,7 +223,7 @@ public class Constants {
         _types.put("boolean", BooleanToken.FALSE);
         _types.put("complex", new ComplexToken(new Complex(0.0, 0.0)));
         _types.put("double", new DoubleToken(0.0));
-        _types.put("fixedpoint", new FixToken(0.0, 2, 1));
+        _types.put("fixedpoint", new UnsizedFixToken());
         _types.put("general", new GeneralToken());
         _types.put("int", new IntToken(0));
         _types.put("long", new LongToken(0));
@@ -235,6 +236,10 @@ public class Constants {
         _types.put("unsignedByte", new UnsignedByteToken(0));
 
         _table.putAll(_types);
+
+        ptolemy.data.Token nil = ptolemy.data.Token.NIL;
+        _table.put("nil", nil);
+
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -244,8 +249,8 @@ public class Constants {
     // then ignore the securityException and do nothing.
     private static void _putProperty(String variableName, String property) {
         try {
-            _table.put(variableName,
-                    new StringToken(StringUtilities.getProperty(property)));
+            _table.put(variableName, new StringToken(StringUtilities
+                    .getProperty(property)));
         } catch (SecurityException ex) {
             System.out.println("Warning: While trying to set '" + variableName
                     + "', failed to read '" + property + "' property "

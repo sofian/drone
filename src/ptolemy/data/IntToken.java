@@ -1,31 +1,31 @@
 /* A token that contains an integer number.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data;
 
 import ptolemy.data.type.BaseType;
@@ -35,22 +35,21 @@ import ptolemy.graph.CPO;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.math.Complex;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// IntToken
 
 /**
-   A token that contains a signed 32-bit integer number.  Generally, this
-   class handles overflow the same way that overflow Java native types
-   are handled. In other words, overflow just past java.lang.Integer.MAX_VALUE
-   results in negative values close to java.lang.Integer.MIN_VALUE.
+ A token that contains a signed 32-bit integer number.  Generally, this
+ class handles overflow the same way that overflow Java native types
+ are handled. In other words, overflow just past java.lang.Integer.MAX_VALUE
+ results in negative values close to java.lang.Integer.MIN_VALUE.
 
-   @author Neil Smyth, Yuhong Xiong, Steve Neuendorffer
-   @version $Id: IntToken.java,v 1.100 2005/04/25 22:01:47 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Green (wbwu)
-*/
+ @author Neil Smyth, Yuhong Xiong, Steve Neuendorffer, contributor: Christopher Brooks
+ @version $Id: IntToken.java,v 1.120 2006/08/21 15:20:12 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Yellow (cxh) nil token, ONE, ZERO
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class IntToken extends ScalarToken {
     /** Construct a token with integer 0.
      */
@@ -59,20 +58,27 @@ public class IntToken extends ScalarToken {
     }
 
     /** Construct a token with the specified value.
+     *  @param value The specified value.   
      */
     public IntToken(int value) {
         _value = value;
     }
 
     /** Construct an IntToken from the specified string.
+     *  @param init The specified string.
      *  @exception IllegalActionException If the token could not
-     *   be created with the given String.
+     *  be created with the given String.
      */
     public IntToken(String init) throws IllegalActionException {
+        if (init == null || init.equals("nil")) {
+            throw new IllegalActionException(notSupportedNullNilStringMessage(
+                    "IntToken", init));
+        }
         try {
             _value = Integer.parseInt(init);
         } catch (NumberFormatException e) {
-            throw new IllegalActionException(e.getMessage());
+            throw new IllegalActionException(null, e, "Failed to parse \""
+                    + init + "\" as a number.");
         }
     }
 
@@ -85,18 +91,20 @@ public class IntToken extends ScalarToken {
      *  @return A Complex.
      */
     public Complex complexValue() {
-        return new Complex((double) _value);
+        return new Complex(_value);
     }
 
     /** Convert the specified token into an instance of IntToken.
      *  This method does lossless conversion.  The units of the
      *  returned token will be the same as the units of the given
      *  token.  If the argument is already an instance of IntToken, it
-     *  is returned without any change. Otherwise, if the argument is
-     *  below IntToken in the type hierarchy, it is converted to an
-     *  instance of IntToken or one of the subclasses of IntToken and
-     *  returned. If none of the above condition is met, an exception
-     *  is thrown.
+     *  is returned without any change.  If the argument is a
+     *  nil token, then {@link #NIL} is returned.
+     *  Otherwise, if the argument is below IntToken in the type
+     *  hierarchy, it is converted to an instance of IntToken or one
+     *  of the subclasses of IntToken and returned. If none of the
+     *  above condition is met, an exception is thrown.
+     *
      *  @param token The token to be converted to a IntToken.
      *  @return A IntToken.
      *  @exception IllegalActionException If the conversion
@@ -106,46 +114,58 @@ public class IntToken extends ScalarToken {
         if (token instanceof IntToken) {
             return (IntToken) token;
         }
+        if (token.isNil()) {
+            return IntToken.NIL;
+        }
 
         int compare = TypeLattice.compare(BaseType.INT, token);
 
         if ((compare == CPO.LOWER) || (compare == CPO.INCOMPARABLE)) {
-            throw new IllegalActionException(notSupportedIncomparableConversionMessage(
-                                                     token, "int"));
+            throw new IllegalActionException(
+                    notSupportedIncomparableConversionMessage(token, "int"));
         }
 
         compare = TypeLattice.compare(BaseType.UNSIGNED_BYTE, token);
 
         if ((compare == CPO.SAME) || (compare == CPO.HIGHER)) {
-            UnsignedByteToken unsignedByteToken = UnsignedByteToken.convert(token);
+            UnsignedByteToken unsignedByteToken = UnsignedByteToken
+                    .convert(token);
             IntToken result = new IntToken(unsignedByteToken.intValue());
             result._unitCategoryExponents = unsignedByteToken
-                ._copyOfCategoryExponents();
+                    ._copyOfCategoryExponents();
             return result;
         }
 
         // The argument is below UnsignedByteToken in the type hierarchy,
         // but I don't recognize it.
         throw new IllegalActionException(notSupportedConversionMessage(token,
-                                                 "int"));
+                "int"));
     }
 
     /** Return the value in the token as a double.
      *  @return The value contained in this token as a double.
      */
     public double doubleValue() {
-        return (double) _value;
+        return _value;
     }
 
     /** Return true if the argument's class is IntToken and it has the
      *  same values as this token.
      *  @param object An instance of Object.
-     *  @return True if the argument is an IntToken with the
-     *  same value.
+     *  @return True if the argument is an IntToken with the same
+     *  value. If either this object or the argument is a nil Token, return
+     *  false.
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out subclasses.
         if (object.getClass() != getClass()) {
+            return false;
+        }
+
+        if (this.isNil() || ((IntToken) object).isNil()) {
             return false;
         }
 
@@ -178,13 +198,28 @@ public class IntToken extends ScalarToken {
         return _value;
     }
 
+    /** Return true if the token is nil, (aka null or missing).
+     *  Nil or missing tokens occur when a data source is sparsely populated.
+     *  @return True if the token is the {@link #NIL} token.
+     */
+    public boolean isNil() {
+        // We use a method here so that we can easily change how
+        // we determine if a token is nil without modify lots of classes.
+        // Can't use equals() here, or we'll go into an infinite loop.
+        return this == IntToken.NIL;
+    }
+
     /** Returns a token representing the result of shifting the bits
      *  of this token towards the most significant bit, filling the
      *  least significant bits with zeros.
      *  @param bits The number of bits to shift.
      *  @return The left shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken leftShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new IntToken(_value << bits);
     }
 
@@ -195,8 +230,12 @@ public class IntToken extends ScalarToken {
      *  sign of the value.
      *  @param bits The number of bits to shift.
      *  @return The logical right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken logicalRightShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new IntToken(_value >>> bits);
     }
 
@@ -204,14 +243,14 @@ public class IntToken extends ScalarToken {
      *  @return The int value contained in this token as a long.
      */
     public long longValue() {
-        return (long) _value;
+        return _value;
     }
 
-    /** Returns a new IntToken with value 1.
-     *  @return A new IntToken with value 1.
+    /** Returns an IntToken with value 1.
+     *  @return An IntToken with value 1.
      */
     public Token one() {
-        return new IntToken(1);
+        return ONE;
     }
 
     /** Returns a token representing the result of shifting the bits
@@ -220,8 +259,12 @@ public class IntToken extends ScalarToken {
      *  the sign of the result.
      *  @param bits The number of bits to shift.
      *  @return The right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken rightShift(int bits) {
+        if (isNil()) {
+            return IntToken.NIL;
+        }
         return new IntToken(_value >> bits);
     }
 
@@ -240,15 +283,37 @@ public class IntToken extends ScalarToken {
             unitString = " * " + unitsString();
         }
 
+        if (isNil()) {
+            // FIXME: what about units?
+            return super.toString();
+        }
         return Integer.toString(_value) + unitString;
     }
 
-    /** Returns a new IntToken with value 0.
-     *  @return A new IntToken with value 0.
+    /** Returns an IntToken with value 0.
+     *  @return An IntToken with value 0.
      */
     public Token zero() {
-        return new IntToken(0);
+        return ZERO;
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         public variables                  ////
+
+    /** A token that represents a missing value.
+     *  Null or missing tokens are common in analytical systems
+     *  like R and SAS where they are used to handle sparsely populated data
+     *  sources.  In database parlance, missing tokens are sometimes called
+     *  null tokens.  Since null is a Java keyword, we use the term "nil".
+     *  The toString() method on a nil token returns the string "nil".
+     */
+    public static final IntToken NIL = new IntToken(Integer.MAX_VALUE);
+
+    /** A IntToken with the value 1.0. */
+    public static final IntToken ONE = new IntToken(1);
+
+    /** A IntToken with the value 0.0. */
+    public static final IntToken ZERO = new IntToken(0);
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
@@ -284,8 +349,9 @@ public class IntToken extends ScalarToken {
     }
 
     /** Returns a token representing the bitwise AND of this token and
-     *  the given token.  It is assumed that
-     *  the type of the argument is an IntToken.
+     *  the given token.  It is assumed that the type of the argument
+     *  is an IntToken.
+     *  @param rightArgument The IntToken to bitwise AND with this one.
      *  @return The bitwise AND.
      */
     protected ScalarToken _bitwiseAnd(ScalarToken rightArgument) {
@@ -304,6 +370,7 @@ public class IntToken extends ScalarToken {
     /** Returns a token representing the bitwise OR of this token and
      *  the given token.  It is assumed that
      *  the type of the argument is an IntToken.
+     *  @param rightArgument The IntToken to bitwise OR with this one.
      *  @return The bitwise OR.
      */
     protected ScalarToken _bitwiseOr(ScalarToken rightArgument) {
@@ -314,6 +381,7 @@ public class IntToken extends ScalarToken {
     /** Returns a token representing the bitwise XOR of this token and
      *  the given token.  It is assumed that
      *  the type of the argument is an IntToken.
+     *  @param rightArgument The IntToken to bitwise XOR with this one.
      *  @return The bitwise XOR.
      */
     protected ScalarToken _bitwiseXor(ScalarToken rightArgument) {
@@ -332,11 +400,12 @@ public class IntToken extends ScalarToken {
         return new IntToken(quotient);
     }
 
-    /** Test whether the value of this token is close to the first argument,
-     *  where "close" means that the distance between their values is less than
-     *  or equal to the second argument. It is assumed that the type of
-     *  the first argument is IntToken.
+    /** Test whether the value of this token is close to the first
+     *  argument, where "close" means that the distance between their
+     *  values is less than or equal to the second argument. It is
+     *  assumed that the type of the first argument is IntToken.
      *  @param rightArgument The token to compare to this token.
+     *  @param epsilon The distance.
      *  @return A token containing true if the value of the first
      *   argument is close to the value of this token.
      */

@@ -1,31 +1,31 @@
 /* Relation supporting message passing.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.actor;
 
 import java.util.Collections;
@@ -37,61 +37,74 @@ import java.util.List;
 
 import ptolemy.data.IntToken;
 import ptolemy.data.expr.Parameter;
+import ptolemy.data.type.BaseType;
 import ptolemy.kernel.ComponentRelation;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.kernel.Port;
+import ptolemy.kernel.Relation;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.InvalidStateException;
+import ptolemy.kernel.util.KernelException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Nameable;
 import ptolemy.kernel.util.Workspace;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// IORelation
 
 /**
-   This class mediates connections between ports that can send data to
-   one another via message passing. One purpose of this relation is to
-   ensure that IOPorts are only connected to IOPorts. A second purpose
-   is to support the notion of a <i>width</i> to represent something
-   like a bus. By default an IORelation is not a bus, which means that
-   its width can only be zero or one. Calling setWidth() with
-   an argument larger than one makes the relation a bus of fixed width.
-   Calling setWidth() with an argument of zero makes the relation
-   a bus with indeterminate width, in which case the width will be
-   inferred (if possible) from the context.  The actual width of an IORelation
-   can never be less than one.
-   <p>
-   Instances of IORelation can only be linked to instances of IOPort.
-   Derived classes may further constrain this to subclasses of IOPort.
-   Such derived classes should override the protected method _checkPort()
-   to throw an exception.
-   <p>
-   To link a IOPort to a IORelation, use the link() or
-   liberalLink() method in the IOPort class.  To remove a link,
-   use the unlink() method.
-   <p>
-   The container for instances of this class can only be instances of
-   CompositeActor.  Derived classes may wish to further constrain the
-   container to subclasses of ComponentEntity.  To do this, they should
-   override the _checkContainer() method.
+ This class mediates connections between ports that can send data to
+ one another via message passing. One purpose of this relation is to
+ ensure that IOPorts are only connected to IOPorts. A second purpose
+ is to support the notion of a <i>width</i> to represent something
+ like a bus. By default an IORelation is not a bus, which means that
+ its width is one. Calling setWidth() with
+ an argument larger than one makes the relation a bus of fixed width.
+ Calling setWidth() with an argument of zero makes the relation
+ a bus with indeterminate width, in which case the width will be
+ inferred (if possible) from the context.  In particular,
+ if this relation is linked on the inside to a port with some
+ width, then the width of this relation will be inferred to
+ be the enough so that the widths of all inside linked relations
+ adds up to the outside width of the port.
+ The actual width of an IORelation
+ can never be less than one. If this IORelation is linked to another
+ instance of IORelation, then the width of the two IORelations is
+ constrained to be the same.
+ <p>
+ Instances of IORelation can only be linked to instances of IOPort
+ or instances of IORelation.
+ Derived classes may further constrain this to subclasses of IOPort
+ of IORelation.
+ Such derived classes should override the protected methods _checkPort()
+ and _checkRelation() to throw an exception.
+ <p>
+ To link a IOPort to an IORelation, use the link() or
+ liberalLink() method in the IOPort class.  To remove a link,
+ use the unlink() method. To link (unlink) an IORelation to an IORelation,
+ use the link() (unlink()) method of IORelation.
+ <p>
+ The container for instances of this class can only be instances of
+ CompositeActor.  Derived classes may wish to further constrain the
+ container to subclasses of ComponentEntity.  To do this, they should
+ override the _checkContainer() method.
 
-   @author Edward A. Lee, Jie Liu
-   @version $Id: IORelation.java,v 1.75 2005/04/29 20:05:09 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (davisj)
-*/
+ @author Edward A. Lee, Jie Liu
+ @version $Id: IORelation.java,v 1.96 2006/09/16 21:40:46 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (acataldo)
+ */
 public class IORelation extends ComponentRelation {
     /** Construct a relation in the default workspace with an empty string
      *  as its name. Add the relation to the directory of the workspace.
      */
     public IORelation() {
         super();
+        _init();
     }
 
     /** Construct a relation in the specified workspace with an empty
@@ -103,6 +116,7 @@ public class IORelation extends ComponentRelation {
      */
     public IORelation(Workspace workspace) {
         super(workspace);
+        _init();
     }
 
     /** Construct a relation with the given name contained by the specified
@@ -122,7 +136,17 @@ public class IORelation extends ComponentRelation {
     public IORelation(CompositeEntity container, String name)
             throws IllegalActionException, NameDuplicationException {
         super(container, name);
+        _init();
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         parameters                        ////
+
+    /** The width of this relation. This is an integer that defaults
+     *  to one. Set it to zero to infer the width from that of ports
+     *  to which this relation is linked on the inside.
+     */
+    public Parameter width;
 
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -144,7 +168,7 @@ public class IORelation extends ComponentRelation {
 
             if (t != null) {
                 int width = t.intValue();
-                setWidth(width);
+                _setWidth(width);
             }
         }
     }
@@ -167,7 +191,8 @@ public class IORelation extends ComponentRelation {
     }
 
     /** Return the receivers of all input ports linked to this
-     *  relation, directly or indirectly, except those in the port
+     *  relation, directly or indirectly through a relation group,
+     *  except those in the port
      *  given as an argument. The returned value is an array of
      *  arrays. The first index (the row) specifies the group, where
      *  a group receives the same data from a channel.
@@ -197,7 +222,8 @@ public class IORelation extends ComponentRelation {
      *  This method read-synchronizes on the workspace.
      *
      *  @see IOPort#getRemoteReceivers
-     *  @param except The port to exclude.
+     *  @param except The port to exclude, or null to not
+     *   exclude any ports.
      *  @return The receivers associated with this relation.
      */
     public Receiver[][] deepReceivers(IOPort except) {
@@ -206,7 +232,7 @@ public class IORelation extends ComponentRelation {
 
             Receiver[][] result = new Receiver[0][0];
             Iterator inputs = linkedDestinationPortList(except).iterator();
-            Receiver[][] receivers = new Receiver[0][0];
+            Receiver[][] receivers; //= new Receiver[0][0];
 
             // NOTE: We have to be careful here to keep track of
             // multiple occurrences of a port in this list.
@@ -216,7 +242,7 @@ public class IORelation extends ComponentRelation {
             while (inputs.hasNext()) {
                 IOPort p = (IOPort) inputs.next();
 
-                if (p.isInsideLinked(this) && !p.isOpaque()) {
+                if (p.isInsideGroupLinked(this) && !p.isOpaque()) {
                     // if p is a transparent port and this relation links
                     // from the inside, then get the Receivers outside p.
                     try {
@@ -242,7 +268,8 @@ public class IORelation extends ComponentRelation {
 
                         seen.put(p, new Integer(occurrence));
 
-                        receivers = p.getReceivers(this, occurrence);
+                        receivers = p._getReceiversLinkedToGroup(this,
+                                occurrence);
                     } catch (IllegalActionException ex) {
                         throw new InternalErrorException(this, ex, null);
                     }
@@ -269,6 +296,7 @@ public class IORelation extends ComponentRelation {
      *  of zero, then return one.
      *
      *  @return The width, which is at least one.
+     *  @see #setWidth(int)
      */
     public int getWidth() {
         if (_width == 0) {
@@ -286,11 +314,12 @@ public class IORelation extends ComponentRelation {
         return (_width != 0);
     }
 
-    /** List the input ports that we are linked to from the
-     *  outside, and the output ports that we are linked to from
+    /** List the input ports that this relation connects to from the
+     *  outside, and the output ports that it connects to from
      *  the inside. I.e., list the ports through or to which we
-     *  could send data. This method read-synchronizes on the workspace.
-     *
+     *  could send data. Two ports are connected if they are
+     *  linked to relations in the same relation group.
+     *  This method read-synchronizes on the workspace.
      *  @see ptolemy.kernel.Relation#linkedPorts
      *  @return An enumeration of IOPort objects.
      */
@@ -298,17 +327,16 @@ public class IORelation extends ComponentRelation {
         return linkedDestinationPortList(null);
     }
 
-    /** Enumerate the input ports that we are linked to from the
-     *  outside, and the output ports that we are linked to from
-     *  the inside, except the port given as an argument and return
-     *  a list of list of these ports.
-     *  I.e., list the ports through or to which we could send data.
-     *  If the given port is null or is not linked to this relation,
-     *  then enumerate all the input ports.
+    /** List the input ports that this relation connects to from the
+     *  outside and the output ports that it connects to from
+     *  the inside, except the port given as an argument.
+     *  I.e., list the ports through or to which we
+     *  could send data. Two ports are connected if they are
+     *  linked to relations in the same relation group.
      *  This method read-synchronizes on the workspace.
-     *
-     *  @see ptolemy.kernel.Relation#linkedPorts(ptolemy.kernel.Port)
-     *  @param except The port not included in the returned Enumeration.
+     *  @see ptolemy.kernel.Relation#linkedPortList(ptolemy.kernel.Port)
+     *  @param except The port not included in the returned list, or
+     *   null to not exclude any ports.
      *  @return A list of IOPort objects.
      */
     public List linkedDestinationPortList(IOPort except) {
@@ -325,7 +353,7 @@ public class IORelation extends ComponentRelation {
                 IOPort p = (IOPort) ports.next();
 
                 if (p != except) {
-                    if (p.isInsideLinked(this)) {
+                    if (p.isInsideGroupLinked(this)) {
                         // Linked from the inside
                         if (p.isOutput()) {
                             resultPorts.addLast(p);
@@ -349,7 +377,6 @@ public class IORelation extends ComponentRelation {
      *  I.e., enumerate the ports through or to which we could send data.
      *  This method is deprecated and calls linkedDestinationPortList().
      *  This method read-synchronizes on the workspace.
-     *
      *  @see ptolemy.kernel.Relation#linkedPorts
      *  @deprecated Use linkedDestinationPortList() instead.
      *  @return An enumeration of IOPort objects.
@@ -365,7 +392,6 @@ public class IORelation extends ComponentRelation {
      *  This method is deprecated and calls
      *  linkedDestinationPortList(IOPort).
      *  This method read-synchronizes on the workspace.
-     *
      *  @see ptolemy.kernel.Relation#linkedPorts(ptolemy.kernel.Port)
      *  @param except The port not included in the returned Enumeration.
      *  @deprecated Use linkDestinationPortList(IOPort) instead.
@@ -375,11 +401,13 @@ public class IORelation extends ComponentRelation {
         return Collections.enumeration(linkedDestinationPortList(except));
     }
 
-    /** List the output ports that we are linked to from the outside
-     *  and the input ports that we are linked to from the inside.
-     *  I.e. list the ports from or through which we might receive
-     *  data. This method read-synchronizes on the workspace.
-     *
+    /** List the output ports that this relation connects to from the
+     *  outside and the input ports that it connects to from
+     *  the inside.
+     *  I.e., list the ports through or from which we
+     *  could receive data. Two ports are connected if they are
+     *  linked to relations in the same relation group.
+     *  This method read-synchronizes on the workspace.
      *  @see ptolemy.kernel.Relation#linkedPorts
      *  @return An enumeration of IOPort objects.
      */
@@ -387,13 +415,14 @@ public class IORelation extends ComponentRelation {
         return linkedSourcePortList(null);
     }
 
-    /** List the output ports that we are linked to from the outside
-     *  and the input ports that we are linked to from the inside.
-     *  I.e. list the ports from or through which we might receive
-     *  If the given port is null or is not linked to this relation,
-     *  then enumerate all the output ports.
+    /** List the output ports that this relation connects to from the
+     *  outside and the input ports that it connects to from
+     *  the inside, except the port given as an argument.
+     *  I.e., list the ports through or from which we
+     *  could receive data. Two ports are connected if they are
+     *  linked to relations in the same relation group.
      *  This method read-synchronizes on the workspace.
-     *  @see ptolemy.kernel.Relation#linkedPorts(ptolemy.kernel.Port)
+     *  @see ptolemy.kernel.Relation#linkedPortList(ptolemy.kernel.Port)
      *  @param except The port not included in the returned list.
      *  @return A list of IOPort objects.
      */
@@ -411,7 +440,7 @@ public class IORelation extends ComponentRelation {
                 IOPort p = (IOPort) ports.next();
 
                 if (p != except) {
-                    if (p.isInsideLinked(this)) {
+                    if (p.isInsideGroupLinked(this)) {
                         // Linked from the inside
                         if (p.isInput()) {
                             resultPorts.addLast(p);
@@ -436,7 +465,6 @@ public class IORelation extends ComponentRelation {
      *  data. This method is deprecated and calls
      *  linkedSourcePortList().
      *  This method read-synchronizes on the workspace.
-     *
      *  @see ptolemy.kernel.Relation#linkedPorts
      *  @deprecated Use linkedSourcePortList() instead.
      *  @return An enumeration of IOPort objects.
@@ -518,86 +546,28 @@ public class IORelation extends ComponentRelation {
         super.setContainer(container);
     }
 
-    /** Set the width of the IORelation. The width is the number of
+    /** Set the width of this relation and all relations in its
+     *  relation group. The width is the number of
      *  channels that the relation represents.  If the argument
-     *  is zero, then the relation becomes a bus with unspecified width,
+     *  is zero or less, then the relation becomes a bus with unspecified width,
      *  and the width will be inferred from the way the relation is used
      *  (but will never be less than one).
-     *  If the argument is not one, then all linked ports must
-     *  be multiports, or an exception is thrown.  This method invalidates
+     *  This method invalidates
      *  the resolved types on the director of the container, if there is
      *  one, and notifies each connected actor that its connections
      *  have changed.
      *  This method write-synchronizes on the workspace.
      *
-     *  @param width The width of the relation.
+     *  @param widthValue The width of the relation.
      *  @exception IllegalActionException If the argument is greater than
      *   one and the relation is linked to a non-multiport, or it is zero and
      *   the relation is linked on the inside to a port that is already
      *   linked on the inside to a relation with unspecified width.
      *  @see ptolemy.kernel.util.Workspace#getWriteAccess()
+     *  @see #getWidth()
      */
-    public void setWidth(int width) throws IllegalActionException {
-        try {
-            _workspace.getWriteAccess();
-
-            if (width == 0) {
-                // Check legitimacy of the change.
-                try {
-                    _inferWidth();
-                } catch (InvalidStateException ex) {
-                    throw new IllegalActionException(this,
-                            "Cannot use unspecified width on this relation "
-                            + "because of its links.");
-                }
-            }
-
-            Iterator ports;
-
-            if (width != 1) {
-                ports = linkedPortList().iterator();
-
-                while (ports.hasNext()) {
-                    IOPort p = (IOPort) ports.next();
-
-                    // Check for non-multiports
-                    if (!p.isMultiport()) {
-                        throw new IllegalActionException(this, p,
-                                "Cannot make bus because the "
-                                + "relation is linked to a non-multiport.");
-                    }
-                }
-            }
-
-            _width = width;
-
-            // Do this as a second pass in case the change is aborted
-            // above by an exception.
-            ports = linkedPortList().iterator();
-
-            while (ports.hasNext()) {
-                IOPort p = (IOPort) ports.next();
-                Entity portContainer = (Entity) p.getContainer();
-
-                if (portContainer != null) {
-                    portContainer.connectionsChanged(p);
-                }
-            }
-
-            // Invalidate schedule and type resolution.
-            Nameable container = getContainer();
-
-            if (container instanceof CompositeActor) {
-                Director director = ((CompositeActor) container).getDirector();
-
-                if (director != null) {
-                    director.invalidateSchedule();
-                    director.invalidateResolvedTypes();
-                }
-            }
-        } finally {
-            _workspace.doneWriting();
-        }
+    public void setWidth(int widthValue) throws IllegalActionException {
+        width.setToken(new IntToken(widthValue));
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -621,6 +591,32 @@ public class IORelation extends ComponentRelation {
             throw new IllegalActionException(this, port,
                     "IORelation can only link to a IOPort.");
         }
+    }
+
+    /** Throw an exception if the specified relation is not an instance
+     *  of IORelation or if it does not have the same width as this relation.
+     *  @param relation The relation to link to.
+     *  @param symmetric If true, the call _checkRelation() on the specified
+     *   relation with this as an argument.
+     *  @exception IllegalActionException If this relation has no container,
+     *   or if this relation is not an acceptable relation for the specified
+     *   relation, or if this relation and the specified relation do not
+     *   have the same width.
+     */
+    protected void _checkRelation(Relation relation, boolean symmetric)
+            throws IllegalActionException {
+        if (!(relation instanceof IORelation)) {
+            throw new IllegalActionException(this, relation,
+                    "IORelation can only link to an IORelation.");
+        }
+
+        if (((IORelation) relation)._width != _width) {
+            throw new IllegalActionException(this, relation,
+                    "Relations have different widths: " + _width + " != "
+                            + ((IORelation) relation)._width);
+        }
+
+        super._checkRelation(relation, symmetric);
     }
 
     /** Return a description of the object.  The level of detail depends
@@ -687,10 +683,12 @@ public class IORelation extends ComponentRelation {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
-    // Cascade two Receiver arrays to form a new array. For each row, each
-    // element of the second array is appended behind the elements of the
-    // first array. This method is solely for deepReceivers.
-    // The two input arrays must have the same number of rows.
+
+    /** Cascade two Receiver arrays to form a new array. For each row, each
+     *  element of the second array is appended behind the elements of the
+     *  first array. This method is solely for deepReceivers.
+     *  The two input arrays must have the same number of rows.
+     */
     private Receiver[][] _cascade(Receiver[][] array1, Receiver[][] array2)
             throws InvalidStateException {
         if ((array1 == null) || (array1.length <= 0)) {
@@ -731,12 +729,14 @@ public class IORelation extends ComponentRelation {
         return result;
     }
 
-    // Infer the width of the port from how it is connected.
-    // Throw a runtime exception if this cannot be done (normally,
-    // the methods that construct a topology ensure that it can be
-    // be done).  The returned value is always at least one.
-    // This method is not read-synchronized on the workspace, so the caller
-    // should be.
+    /** Infer the width of the port from how it is connected.
+     *  Throw a runtime exception if this cannot be done (normally,
+     *  the methods that construct a topology ensure that it can be
+     *  be done).  The returned value is always at least one.
+     *  This method is not read-synchronized on the workspace, so the caller
+     *  should be.
+     *  @return The inferred width.
+     */
     private int _inferWidth() {
         long version = _workspace.getVersion();
 
@@ -745,18 +745,54 @@ public class IORelation extends ComponentRelation {
 
             Iterator ports = linkedPortList().iterator();
 
+            // Note that depending on the order of the ports get iterated,
+            // the inferred width may be different if different ports have
+            // different widths. This is nondeterministic.
+            // However, the model behavior is not affected by this because
+            // the relation with the smallest width along a path decides
+            // the number of signals that can be passed through.
             while (ports.hasNext()) {
                 IOPort p = (IOPort) ports.next();
 
-                if (p.isInsideLinked(this)) {
-                    // I am linked on the inside...
-                    int portInsideWidth = p._getInsideWidth(this);
-                    int portOutsideWidth = p.getWidth();
-                    int difference = portOutsideWidth - portInsideWidth;
+                // Infer the width of this port from the linked connections.
+                // Note we assume that this method is only called upon a 
+                // multiport. 
+                // To guarantee this method successfully infer widths, we have
+                // to check and ensure that there is at most one input relation 
+                // or one output relation whose width is not fixed (unknown).
+                // This requirement is conservative. For example, an output 
+                // port may have two buses with their widths not fixed. 
+                // Furthermore, if one of the buses is connected to an input 
+                // port and its width can be determined from the internal 
+                // connections associated with that input port, the width of 
+                // the other bus can also be resolved. However, to support this,
+                // a fixed-point iteration has to be performed, but there is
+                // no guarantee of existence of a useful fixed-point whose 
+                // widths are all non-zero. Therefore, we take the conservative
+                // approach.
+                // To infer the unknown width, we resolve the equation where 
+                // the sum of the widths of input relations equals the sum of 
+                // those of output relations.
+                int portInsideWidth = 0;
+                int portOutsideWidth = 0;
+                int difference = 0;
 
-                    if (difference > _inferredWidth) {
-                        _inferredWidth = difference;
-                    }
+                if (p.isInsideGroupLinked(this)) {
+                    // I am linked on the inside...
+                    portInsideWidth = p._getInsideWidth(this);
+                    portOutsideWidth = p._getOutsideWidth(null);
+
+                    // the same as portOutsideWidth = p.getWidth();
+                    difference = portOutsideWidth - portInsideWidth;
+                } else if (p.isLinked(this)) {
+                    // I am linked on the outside...
+                    portInsideWidth = p._getInsideWidth(null);
+                    portOutsideWidth = p._getOutsideWidth(this);
+                    difference = portInsideWidth - portOutsideWidth;
+                }
+
+                if (difference > _inferredWidth) {
+                    _inferredWidth = difference;
                 }
             }
 
@@ -766,12 +802,139 @@ public class IORelation extends ComponentRelation {
         return _inferredWidth;
     }
 
+    /** Create an initialize the width parameter. */
+    private void _init() {
+        try {
+            width = new Parameter(this, "width");
+            width.setExpression("1");
+            width.setTypeEquals(BaseType.INT);
+        } catch (KernelException ex) {
+            throw new InternalErrorException(ex);
+        }
+    }
+
+    /** Set the width of this relation and all relations in its
+     *  relation group. The width is the number of
+     *  channels that the relation represents.  If the argument
+     *  is zero or less, then the relation becomes a bus with unspecified width,
+     *  and the width will be inferred from the way the relation is used
+     *  (but will never be less than one).
+     *  This method invalidates
+     *  the resolved types on the director of the container, if there is
+     *  one, and notifies each connected actor that its connections
+     *  have changed.
+     *  This method write-synchronizes on the workspace.
+     *
+     *  @param width The width of the relation.
+     *  @exception IllegalActionException If the argument is greater than
+     *   one and the relation is linked to a non-multiport, or it is zero and
+     *   the relation is linked on the inside to a port that is already
+     *   linked on the inside to a relation with unspecified width.
+     *  @see ptolemy.kernel.util.Workspace#getWriteAccess()
+     *  @see #getWidth()
+     */
+    private void _setWidth(int width) throws IllegalActionException {
+        if (width == _width) {
+            // No change.
+            return;
+        }
+        try {
+            _workspace.getWriteAccess();
+
+            if (width <= 0) {
+                // Check legitimacy of the change.
+                try {
+                    _inferWidth();
+                } catch (InvalidStateException ex) {
+                    throw new IllegalActionException(this,
+                            "Cannot use unspecified width on this relation "
+                                    + "because of its links.");
+                }
+            }
+
+            // Check for non-multiports on a link.
+            /* This is now allowed.
+             if (width != 1) {
+             Iterator ports = linkedPortList().iterator();
+
+             while (ports.hasNext()) {
+             IOPort p = (IOPort) ports.next();
+
+             // Check for non-multiports.
+             if (!p.isMultiport()) {
+             throw new IllegalActionException(this, p,
+             "Cannot make bus because the "
+             + "relation is linked to a non-multiport.");
+             }
+             }
+             }
+             */
+            _width = width;
+
+            // Set the width of all relations in the relation group.
+            Iterator relations = relationGroupList().iterator();
+
+            while (!_suppressWidthPropagation && relations.hasNext()) {
+                IORelation relation = (IORelation) relations.next();
+
+                if (relation == this) {
+                    continue;
+                }
+
+                // If the relation has a width parameter, set that
+                // value. Otherwise, just set its width directly.
+                // Have to disable back propagation.
+                try {
+                    relation._suppressWidthPropagation = true;
+                    relation.width.setToken(new IntToken(width));
+                } finally {
+                    relation._suppressWidthPropagation = false;
+                }
+            }
+
+            // Do this as a second pass so that it does not
+            // get executed if the change is aborted
+            // above by an exception.
+            // FIXME: Haven't completely dealt with this
+            // possibility since the above changes may have
+            // partially completed.
+            Iterator ports = linkedPortList().iterator();
+
+            while (ports.hasNext()) {
+                IOPort p = (IOPort) ports.next();
+                Entity portContainer = (Entity) p.getContainer();
+
+                if (portContainer != null) {
+                    portContainer.connectionsChanged(p);
+                }
+            }
+
+            // Invalidate schedule and type resolution.
+            Nameable container = getContainer();
+
+            if (container instanceof CompositeActor) {
+                Director director = ((CompositeActor) container).getDirector();
+
+                if (director != null) {
+                    director.invalidateSchedule();
+                    director.invalidateResolvedTypes();
+                }
+            }
+        } finally {
+            _workspace.doneWriting();
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    // width of the relation.
-    private int _width = 1;
-
     // cached inferred width.
     private transient int _inferredWidth;
+
     private transient long _inferredWidthVersion = -1;
+
+    // Suppress propagation of width changes.
+    private boolean _suppressWidthPropagation = false;
+
+    // The cached value of the width parameter.
+    private int _width = 1;
 }

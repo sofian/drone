@@ -1,30 +1,30 @@
 /* A port supporting clustered graphs.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2005 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel;
 
 import java.util.Collections;
@@ -40,59 +40,58 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Nameable;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ComponentPort
 
 /**
-   A port supporting hierarchy. A component port can have "inside"
-   links as well as the usual "outside" links supported by the base
-   class. That is, while the basic port has only links to relations
-   that are on the exterior of its containing entity, this port can have
-   links to relations on the interior.
-   An inside link is a link to a relation that is contained by the
-   container of the port.
-   <p>
-   A ComponentPort may be transparent or opaque.  If it is transparent,
-   then "deep" accesses of the topology see through the port.
-   Methods that read the topology come in two versions, shallow and deep.
-   The deep versions pass through transparent ports. This is
-   done with a simple rule. If a transparent port is encountered from
-   inside, then the traversal continues with its outside links. If it
-   is encountered from outside, then the traversal continues with its
-   inside links.  A ComponentPort is opaque if its container is opaque.
-   (its isOpaque() method returns true).  Derived classes may use other
-   strategies to specify whether a port is opaque.
-   <p>
-   Normally, links to a transparent port from the outside are to
-   relations contained by the container of the container of the port.
-   Links from the inside are to relations contained by the container
-   of the port.  That is, levels of the hierarchy are not crossed.
-   For a few applications, links that cross levels of the hierarchy
-   are needed. The links in these connections are created
-   using the liberalLink() method. The link() method
-   prohibits such links, throwing an exception if they are attempted
-   (most applications will prohibit level-crossing connections by using
-   only the link() method).
-   <p>
-   A ComponentPort can link to any instance of ComponentRelation.
-   An attempt to link to an instance of Relation will trigger an exception.
-   Derived classes may wish to further constrain links to a subclass
-   of ComponentRelation.  To do this, subclasses should override the
-   protected methods _checkLink() and _checkLiberalLink() to throw an exception
-   if their arguments are relations that are not of the appropriate
-   subclass.  Similarly, a ComponentPort can only be contained by a
-   ComponentEntity, and an attempt to set the container to an instance
-   of Entity will trigger an exception.  If a subclass wishes to
-   constrain the containers of the port to be of a subclass of
-   ComponentEntity, they should override _checkContainer().
+ A port supporting hierarchy. A component port can have "inside"
+ links as well as the usual "outside" links supported by the base
+ class. That is, while the basic port has only links to relations
+ that are on the exterior of its containing entity, this port can have
+ links to relations on the interior.
+ An inside link is a link to a relation that is contained by the
+ container of the port.
+ <p>
+ A ComponentPort may be transparent or opaque.  If it is transparent,
+ then "deep" accesses of the topology see through the port.
+ Methods that read the topology come in two versions, shallow and deep.
+ The deep versions pass through transparent ports. This is
+ done with a simple rule. If a transparent port is encountered from
+ inside, then the traversal continues with its outside links. If it
+ is encountered from outside, then the traversal continues with its
+ inside links.  A ComponentPort is opaque if its container is opaque.
+ (its isOpaque() method returns true).  Derived classes may use other
+ strategies to specify whether a port is opaque.
+ <p>
+ Normally, links to a transparent port from the outside are to
+ relations contained by the container of the container of the port.
+ Links from the inside are to relations contained by the container
+ of the port.  That is, levels of the hierarchy are not crossed.
+ For a few applications, links that cross levels of the hierarchy
+ are needed. The links in these connections are created
+ using the liberalLink() method. The link() method
+ prohibits such links, throwing an exception if they are attempted
+ (most applications will prohibit level-crossing connections by using
+ only the link() method).
+ <p>
+ A ComponentPort can link to any instance of ComponentRelation.
+ An attempt to link to an instance of Relation will trigger an exception.
+ Derived classes may wish to further constrain links to a subclass
+ of ComponentRelation.  To do this, subclasses should override the
+ protected methods _checkLink() and _checkLiberalLink() to throw an exception
+ if their arguments are relations that are not of the appropriate
+ subclass.  Similarly, a ComponentPort can only be contained by a
+ ComponentEntity, and an attempt to set the container to an instance
+ of Entity will trigger an exception.  If a subclass wishes to
+ constrain the containers of the port to be of a subclass of
+ ComponentEntity, they should override _checkContainer().
 
-   @author Edward A. Lee, Xiaojun Liu
-   @version $Id: ComponentPort.java,v 1.95 2005/04/29 20:03:29 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (bart)
-*/
+ @author Edward A. Lee, Xiaojun Liu
+ @version $Id: ComponentPort.java,v 1.102 2005/10/24 19:09:11 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (bart)
+ */
 public class ComponentPort extends Port {
     /** Construct a port in the default workspace with an empty string
      *  as its name. Increment the version number of the workspace.
@@ -318,10 +317,10 @@ public class ComponentPort extends Port {
 
                 if (_isInsideLinkable(relation.getContainer())) {
                     // An inside link
-                    _insideLinks.insertLink(index, relation._getPortList());
+                    _insideLinks.insertLink(index, relation._linkList);
                 } else {
                     // An outside link
-                    _relationsList.insertLink(index, relation._getPortList());
+                    _relationsList.insertLink(index, relation._linkList);
                 }
             }
 
@@ -433,7 +432,35 @@ public class ComponentPort extends Port {
         }
     }
 
+    /** Return true if the given relation or one in its relation
+     *  group is linked to this port on the inside.
+     *  @param r The relation.
+     *  @return True if the given relation is linked to this port.
+     *  @see #isLinked(Relation)
+     */
+    public boolean isInsideGroupLinked(Relation r) {
+        try {
+            _workspace.getReadAccess();
+
+            Iterator relations = r.relationGroupList().iterator();
+
+            while (relations.hasNext()) {
+                Relation groupRelation = (Relation) relations.next();
+
+                if (isInsideLinked(groupRelation)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } finally {
+            _workspace.doneReading();
+        }
+    }
+
     /** Return true if the given relation is linked from inside.
+     *  Note that this returns true only if the relation is directly
+     *  linked to the port. There is no support here for relation groups.
      *  @param relation The relation that is checked.
      *  @return True if the given relation is linked from inside.
      */
@@ -445,13 +472,21 @@ public class ComponentPort extends Port {
      *  @return True if the container entity is opaque.
      */
     public boolean isOpaque() {
-        ComponentEntity entity = (ComponentEntity) getContainer();
+        long workspaceVersion = _workspace.getVersion();
 
-        if (entity == null) {
-            return true;
+        if (_isOpaqueVersion != workspaceVersion) {
+            ComponentEntity entity = (ComponentEntity) getContainer();
+
+            if (entity == null) {
+                _isOpqaue = true;
+            } else {
+                _isOpqaue = entity.isOpaque();
+            }
+
+            _isOpaqueVersion = workspaceVersion;
         }
 
-        return entity.isOpaque();
+        return _isOpqaue;
     }
 
     /** Link this port with the specified relation.  The only constraints are
@@ -533,8 +568,8 @@ public class ComponentPort extends Port {
      *  @exception NameDuplicationException If the container already has
      *   a port with the name of this port.
      */
-    public void setContainer(Entity entity)
-            throws IllegalActionException, NameDuplicationException {
+    public void setContainer(Entity entity) throws IllegalActionException,
+            NameDuplicationException {
         if ((entity != null) && (_workspace != entity.workspace())) {
             throw new IllegalActionException(this, entity,
                     "Cannot set container because workspaces are different.");
@@ -685,7 +720,7 @@ public class ComponentPort extends Port {
             if (!(relation instanceof ComponentRelation)) {
                 throw new IllegalActionException(this, relation,
                         "Attempt to link to an incompatible relation "
-                        + "(expected ComponentRelation).");
+                                + "(expected ComponentRelation).");
             }
 
             Entity container = (Entity) getContainer();
@@ -701,7 +736,7 @@ public class ComponentPort extends Port {
                     && (container != relation.getContainer())) {
                 throw new IllegalActionException(this, relation,
                         "Cannot establish a link to a port contained "
-                        + "by a class definition");
+                                + "by a class definition");
             }
 
             // Throw an exception if this port is not of an acceptable
@@ -736,7 +771,7 @@ public class ComponentPort extends Port {
             if (!(relation instanceof ComponentRelation)) {
                 throw new IllegalActionException(this, relation,
                         "Attempt to link to an incompatible relation "
-                        + "(expected ComponentRelation).");
+                                + "(expected ComponentRelation).");
             }
 
             Entity container = (Entity) getContainer();
@@ -756,7 +791,7 @@ public class ComponentPort extends Port {
                     && (container != relationContainer)) {
                 throw new IllegalActionException(this, relation,
                         "Cannot establish a link to a port contained "
-                        + "by a class definition");
+                                + "by a class definition");
             }
 
             // Throw an exception if this port is not of an acceptable
@@ -803,13 +838,14 @@ public class ComponentPort extends Port {
         LinkedList result = new LinkedList();
 
         while (nearRelations.hasNext()) {
-            ComponentRelation relation = (ComponentRelation) nearRelations.next();
+            ComponentRelation relation = (ComponentRelation) nearRelations
+                    .next();
 
             // A null link (supported since indexed links) might
             // yield a null relation here. EAL 7/19/00.
             if (relation != null) {
                 Iterator connectedPorts = relation.linkedPortList(this)
-                    .iterator();
+                        .iterator();
 
                 while (connectedPorts.hasNext()) {
                     ComponentPort port = (ComponentPort) connectedPorts.next();
@@ -1009,8 +1045,7 @@ public class ComponentPort extends Port {
                     Relation relation = (Relation) insideRelations.next();
 
                     if (relation != null) {
-                        result += (relation._description(detail, indent + 1, 2)
-                                + "\n");
+                        result += (relation._description(detail, indent + 1, 2) + "\n");
                     } else {
                         result += (_getIndentPrefix(indent + 1) + "null\n");
                     }
@@ -1076,10 +1111,10 @@ public class ComponentPort extends Port {
             } else {
                 if (_isInsideLinkable(relation.getContainer())) {
                     // An inside link
-                    _insideLinks.link(relation._getPortList());
+                    _insideLinks.link(relation._linkList);
                 } else {
                     // An outside link
-                    _relationsList.link(relation._getPortList());
+                    _relationsList.link(relation._linkList);
                 }
             }
 
@@ -1098,7 +1133,15 @@ public class ComponentPort extends Port {
     // construct it.
     // 'transient' means that the variable will not be serialized.
     private transient List _deepLinkedPorts;
+
     private transient long _deepLinkedPortsVersion = -1;
+
     private transient List _deepLinkedInPorts;
+
     private transient long _deepLinkedInPortsVersion = -1;
+
+    // A cache of the opqaueness of this port.
+    private transient boolean _isOpqaue;
+
+    private transient long _isOpaqueVersion = -1;
 }

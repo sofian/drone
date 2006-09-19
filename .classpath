@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="ptolemy/data/unit/BasicEdgeHighlighter.java" kind="src" path="src"/>
+	<classpathentry excluding="ptolemy/data/unit/BasicEdgeHighlighter.java|ptolemy/domains/de/lib/EventButton.java|ptolemy/actor/lib/image/|ptolemy/domains/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
 	<classpathentry kind="output" path="build"/>

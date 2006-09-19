@@ -1,30 +1,30 @@
 /* An actor that outputs the maximum of all the inputs.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.lib;
 
 import ptolemy.actor.TypedAtomicActor;
@@ -37,27 +37,26 @@ import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Maximum
 
 /**
-   Read at most one token from each input channel and broadcast the one with the
-   greatest value to the <i>maximumValue</i> output.
-   In addition, broadcast the channel number of the maximum on
-   the <i>channelNumber</i> output port.  Either output port may be
-   left unconnected if you do not need its results (this is why these
-   are multiports).
-   This actor works with any scalar token. For ComplexToken, the output is
-   the one with the maximum magnitude.
-   The input port is a multiport.
+ Read at most one token from each input channel and broadcast the one with the
+ greatest value to the <i>maximumValue</i> output.
+ In addition, broadcast the channel number of the maximum on
+ the <i>channelNumber</i> output port.  Either output port may be
+ left unconnected if you do not need its results (this is why these
+ are multiports).
+ This actor works with any scalar token. For ComplexToken, the output is
+ the one with the maximum magnitude.
+ The input port is a multiport.
 
-   @author Edward A. Lee
-   @version $Id: Maximum.java,v 1.33 2005/04/25 21:31:48 cxh Exp $
-   @since Ptolemy II 0.3
-   @Pt.ProposedRating Yellow (eal)
-   @Pt.AcceptedRating Yellow (yuhong)
-*/
+ @author Edward A. Lee
+ @version $Id: Maximum.java,v 1.39 2006/08/21 23:10:23 cxh Exp $
+ @since Ptolemy II 0.3
+ @Pt.ProposedRating Yellow (eal)
+ @Pt.AcceptedRating Yellow (yuhong)
+ */
 public class Maximum extends TypedAtomicActor {
     /** Construct an actor with the given container and name.
      *  @param container The container.
@@ -128,19 +127,34 @@ public class Maximum extends TypedAtomicActor {
      *  @exception IllegalActionException If there is no director.
      */
     public void fire() throws IllegalActionException {
+        super.fire();
         ScalarToken result = null;
+        ScalarToken resultMagnitude = null;
+        ScalarToken inMagnitude = null;
         int channelNum = -1;
 
         for (int i = 0; i < input.getWidth(); i++) {
             if (input.hasToken(i)) {
                 ScalarToken in = (ScalarToken) input.get(i);
 
+                if (in.getType().equals(BaseType.COMPLEX)) {
+                    // If we have a complex, we use the absolute value
+                    // for comparison, but save output the initial input
+                    // for output at the end.
+                    inMagnitude = in.absolute();
+                } else {
+                    inMagnitude = in;
+                }
+
                 if (result == null) {
                     result = in;
+                    resultMagnitude = inMagnitude;
                     channelNum = i;
                 } else {
-                    if (result.isLessThan(in).booleanValue() == true) {
+                    if (inMagnitude.isGreaterThan(resultMagnitude)
+                            .booleanValue() == true) {
                         result = in;
+                        resultMagnitude = inMagnitude;
                         channelNum = i;
                     }
                 }

@@ -1,58 +1,57 @@
 /* An abstract implementation of the Receiver interface
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.actor;
 
 import ptolemy.actor.util.Time;
 import ptolemy.data.Token;
 import ptolemy.kernel.util.IllegalActionException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// AbstractReceiver
 
 /**
-   An abstract implementation of the Receiver interface.
-   The container methods and some of the more esoteric
-   methods are implemented, while the most
-   domain-specific methods are left undefined.
-   Note that the NoTokenException and NoRoomException exceptions
-   that are thrown by several of the methods are
-   runtime exceptions, so they need not be declared explicitly by
-   the caller.
+ An abstract implementation of the Receiver interface.
+ The container methods and some of the more esoteric
+ methods are implemented, while the most
+ domain-specific methods are left undefined.
+ Note that the NoTokenException and NoRoomException exceptions
+ that are thrown by several of the methods are
+ runtime exceptions, so they need not be declared explicitly by
+ the caller.
 
-   @author Steve Neuendorffer
-   @version $Id: AbstractReceiver.java,v 1.49 2005/04/25 21:14:11 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (bart)
-   @see ptolemy.actor.Receiver
-*/
+ @author Steve Neuendorffer
+ @version $Id: AbstractReceiver.java,v 1.58 2006/08/20 19:55:51 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (bart)
+ @see ptolemy.actor.Receiver
+ */
 public abstract class AbstractReceiver implements Receiver {
     /** Construct an empty receiver with no container.
      */
@@ -76,9 +75,8 @@ public abstract class AbstractReceiver implements Receiver {
      *  @exception IllegalActionException Always thrown.
      */
     public void clear() throws IllegalActionException {
-        throw new IllegalActionException(getContainer(),
-                "Receiver class " + getClass().getName()
-                + " does not support clear().");
+        throw new IllegalActionException(getContainer(), "Receiver class "
+                + getClass().getName() + " does not support clear().");
     }
 
     /** Get a token from this receiver.
@@ -113,6 +111,7 @@ public abstract class AbstractReceiver implements Receiver {
      *  as the put() and get() methods are properly synchronized.
      *
      *  @param numberOfTokens The number of tokens to get.
+     *  @return The array of tokens.
      *  @exception NoTokenException If there are not <i>numberOfTokens</i>
      *   tokens available.  Note that if this exception is thrown, then
      *   it is possible that some tokens will have been already extracted
@@ -138,6 +137,7 @@ public abstract class AbstractReceiver implements Receiver {
 
     /** Return the container of this receiver, or null if there is none.
      *  @return The port containing this receiver.
+     *  @see #setContainer(IOPort)
      */
     public IOPort getContainer() {
         return _container;
@@ -220,8 +220,11 @@ public abstract class AbstractReceiver implements Receiver {
     /** Put the specified token into this receiver.
      *  @param token The token to put into the receiver.
      *  @exception NoRoomException If there is no room in the receiver.
+     *  @exception IllegalActionException If the put fails
+     *   (e.g. because of incompatible types).
      */
-    public abstract void put(Token token) throws NoRoomException;
+    public abstract void put(Token token) throws NoRoomException,
+            IllegalActionException;
 
     /** Put a portion of the specified token array into this receiver.
      *  The first <i>numberOfTokens</i> elements of the token array are put
@@ -246,12 +249,81 @@ public abstract class AbstractReceiver implements Receiver {
      *  @param numberOfTokens The number of elements of the token
      *   array to put into this receiver.
      *  @exception NoRoomException If the token array cannot be put.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
      */
     public void putArray(Token[] tokenArray, int numberOfTokens)
-            throws NoRoomException {
-        for (int i = 0; i < numberOfTokens; i++) {
-            put(tokenArray[i]);
+            throws NoRoomException, IllegalActionException {
+        IOPort container = getContainer();
+
+        // If there is no container, then perform no conversion.
+        if (container == null) {
+            for (int i = 0; i < numberOfTokens; i++) {
+                put(tokenArray[i]);
+            }
+        } else {
+            for (int i = 0; i < numberOfTokens; i++) {
+                put(container.convert(tokenArray[i]));
+            }
         }
+    }
+
+    /** Put a sequence of tokens to all receivers in the specified array.
+     *  Implementers will assume that all such receivers
+     *  are of the same class.
+     *  @param tokens The sequence of token to put.
+     *  @param numberOfTokens The number of tokens to put (the array might
+     *   be longer).
+     *  @param receivers The receivers.
+     *  @exception NoRoomException If there is no room for the token.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type), or if the tokens array
+     *   does not have at least the specified number of tokens.
+     */
+    public void putArrayToAll(Token[] tokens, int numberOfTokens,
+            Receiver[] receivers) throws NoRoomException,
+            IllegalActionException {
+        if (numberOfTokens > tokens.length) {
+            IOPort container = getContainer();
+            throw new IllegalActionException(container,
+                    "Not enough tokens supplied.");
+        }
+
+        for (int j = 0; j < receivers.length; j++) {
+            receivers[j].putArray(tokens, numberOfTokens);
+        }
+    }
+
+    /** Put to all receivers in the specified array.
+     *  Implementers will assume that all such receivers
+     *  are of the same class.
+     *  @param token The token to put.
+     *  @param receivers The receivers.
+     *  @exception NoRoomException If there is no room for the token.
+     *  @exception IllegalActionException If the token is not acceptable
+     *   to one of the ports (e.g., wrong type).
+     */
+    public void putToAll(Token token, Receiver[] receivers)
+            throws NoRoomException, IllegalActionException {
+        for (int j = 0; j < receivers.length; j++) {
+            IOPort container = receivers[j].getContainer();
+
+            // If there is no container, then perform no conversion.
+            if (container == null) {
+                receivers[j].put(token);
+            } else {
+                receivers[j].put(container.convert(token));
+            }
+        }
+    }
+
+    /** Reset this receiver to its initial state, which in this base
+     *  class is the same as calling clear().
+     *  @exception IllegalActionException If reset() is not supported by
+     *   the domain.
+     */
+    public void reset() throws IllegalActionException {
+        clear();
     }
 
     /** Set the container.
@@ -259,9 +331,18 @@ public abstract class AbstractReceiver implements Receiver {
      *  @exception IllegalActionException If the container is not of
      *   an appropriate subclass of IOPort. Not thrown in this base class,
      *   but may be thrown in derived classes.
+     *  @see #getContainer()
      */
     public void setContainer(IOPort port) throws IllegalActionException {
         _container = port;
+    }
+
+    /** Return the class name and the full name of the object,
+     *  with syntax "className {fullName}".
+     *  @return The class name and the full name. */
+    public String toString() {
+        return getClass().getName() + " {" + getContainer().getFullName()
+                + ".receiver }";
     }
 
     ///////////////////////////////////////////////////////////////////

@@ -1,30 +1,30 @@
 /* An composite actor whose ports have types but is not typed inside.
 
-Copyright (c) 2004-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2004-2005 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor;
 
 import java.util.LinkedList;
@@ -37,36 +37,35 @@ import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// TypeOpaqueCompositeActor
 
 /**
- * This is a composite actor whose ports have types, but the actors inside are
- * not required to be typed. This actor does not impose any type constraints
- * between its ports, so any output ports of this actor have to have explicitly
- * declared types. There is no mechanism for inferring the types of the output
- * ports. Note that the ports of this actor cannot be linked on the inside to
- * untyped relations, and by default, any relation created on the inside will be
- * untyped.
- * <p>
- * The intended use of this actor is for scenarios where the inside structure is
- * not part of the Ptolemy type system. For example, the inside structure may
- * define a component that will be translated into executable code by a code
- * generator. A subclass of this actor would typically include the code
- * generator an a mechanism for executing the generating code.
+ * A composite actor whose ports have types, but the actors inside are
+ * not required to be typed. This actor does not impose any type
+ * constraints between its ports, so any output ports of this actor
+ * have to have explicitly declared types. There is no mechanism for
+ * inferring the types of the output ports. Note that the ports of
+ * this actor cannot be linked on the inside to untyped relations, and
+ * by default, any relation created on the inside will be untyped.
+ *
+ * <p> The intended use of this actor is for scenarios where the
+ * inside structure is not part of the Ptolemy type system. For
+ * example, the inside structure may define a component that will be
+ * translated into executable code by a code generator. A subclass of
+ * this actor would typically include the code generator an a
+ * mechanism for executing the generating code.
  *
  * @author Elaine Cheong and Edward A. Lee
- * @version $Id: TypeOpaqueCompositeActor.java,v 1.73 2004/04/13 05:12:39 cxh
- @since Ptolemy II 4.1
- *          Exp $
+ * @version $Id: TypeOpaqueCompositeActor.java,v 1.13 2005/12/31 02:46:22 cxh Exp $
+ * @since Ptolemy II 4.1
  * @Pt.ProposedRating Red (cxh)
  * @Pt.AcceptedRating Red (cxh)
  * @see ptolemy.actor.TypedCompositeActor
  * @see ptolemy.actor.TypedIOPort
  */
-public class TypeOpaqueCompositeActor extends CompositeActor
-    implements TypedActor {
+public class TypeOpaqueCompositeActor extends CompositeActor implements
+        TypedActor {
     /** Construct an actor in the default workspace with an empty string
      *  as its name.  The object is added to the workspace directory.
      *  Increment the version number of the workspace.
@@ -157,8 +156,8 @@ public class TypeOpaqueCompositeActor extends CompositeActor
      *  @exception NameDuplicationException If the port name coincides with
      *   the name of another port already in the actor.
      */
-    protected void _addPort(Port port)
-            throws IllegalActionException, NameDuplicationException {
+    protected void _addPort(Port port) throws IllegalActionException,
+            NameDuplicationException {
         // In the future, this method can be changed to allow IOPort to be
         // added. In that case, the type system just ignores instances of
         // IOPort during type checking. Since there is no intended application

@@ -1,55 +1,54 @@
 /* A library for mathematical operations on matrices of complex numbers.
 
-Some algorithms are from
+ Some algorithms are from
 
-[1] Embree, Paul M. and Bruce Kimble. "C Language Algorithms for Digital
-Signal Processing". Prentice Hall. Englewood Cliffs, NJ, 1991.
+ [1] Embree, Paul M. and Bruce Kimble. "C Language Algorithms for Digital
+ Signal Processing". Prentice Hall. Englewood Cliffs, NJ, 1991.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
+ Copyright (c) 1998-2005 The Regents of the University of California.
+ All rights reserved.
 
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
-    package ptolemy.math;
-
+ */
+package ptolemy.math;
 
 //////////////////////////////////////////////////////////////////////////
 //// ComplexMatrixMath
 
 /**
-   This class provides a library for mathematical operations on
-   matrices of complex numbers.
-   <p>
-   Rows and column numbers of matrices are specified with zero-based indices.
-   All calls expect matrix arguments to be non-null. In addition, all
-   rows of the matrix are expected to have the same number of columns.
-   @author Jeff Tsay
-   @version $Id: ComplexMatrixMath.java,v 1.66 2005/04/25 22:40:29 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Yellow (ctsay)
-   @Pt.AcceptedRating Red (ctsay)
-*/
+ This class provides a library for mathematical operations on
+ matrices of complex numbers.
+ <p>
+ Rows and column numbers of matrices are specified with zero-based indices.
+ All calls expect matrix arguments to be non-null. In addition, all
+ rows of the matrix are expected to have the same number of columns.
+ @author Jeff Tsay
+ @version $Id: ComplexMatrixMath.java,v 1.68 2005/12/31 22:54:05 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Yellow (ctsay)
+ @Pt.AcceptedRating Red (ctsay)
+ */
 public class ComplexMatrixMath {
     // Private constructor prevents construction of this class.
     private ComplexMatrixMath() {
@@ -171,12 +170,13 @@ public class ComplexMatrixMath {
      *  elements of the second matrix as the right operands.
      *  (op.operate(matrix1[i][j], matrix2[i][j])).
      *
+     *  @param op A complex binary operation.
      *  @param matrix1 The first matrix of complex numbers.
      *  @param matrix2 The second matrix of complex numbers.
      *  @return A new matrix of complex numbers with each element
      *  equal to (op.operate(matrix1[i][j], matrix2[i][j])).
-     *  @exception IllegalArgumentException If the matrices do not have the same
-     *   dimensions.
+     *  @exception IllegalArgumentException If the matrices do not
+     *  have the same dimensions.
      */
     public static final Complex[][] applyBinaryOperation(
             ComplexBinaryOperation op, final Complex[][] matrix1,
@@ -201,6 +201,7 @@ public class ComplexMatrixMath {
      *  ComplexUnaryOperation to each element in the input matrix
      *  (op.operate(matrix[i][j])).
      *
+     *  @param op A complex unary operation.
      *  @param matrix The matrix of complex numbers.
      *  @return A new matrix of complex numbers with each element
      *  equal to (op.operate(matrix1[i][j])).
@@ -348,8 +349,8 @@ public class ComplexMatrixMath {
                 Complex temp = a[row][pivot];
 
                 for (int col = pivot + 1; col < n; col++) {
-                    a[row][col] = a[row][col].subtract(a[pivot][col].multiply(
-                                                               temp));
+                    a[row][col] = a[row][col].subtract(a[pivot][col]
+                            .multiply(temp));
                 }
             }
         }
@@ -457,6 +458,8 @@ public class ComplexMatrixMath {
      *  (0, 0), (0, 1), (0, 2), ... , (0, n-1), (1, 0), (1, 1), ..., (m-1)(n-1)
      *
      *  @param matrix A matrix of complex numbers.
+     *  @param maxRow The maximum number of rows.
+     *  @param maxCol The maximum number of columns.
      *  @return A new array of complex numbers filled with
      *  the contents of the matrix.
      */
@@ -493,6 +496,10 @@ public class ComplexMatrixMath {
 
     /** Return an new identity matrix with the specified dimension. The
      *  matrix is square, so only one dimension specifier is needed.
+     *  @param dim An integer representing the dimension of the
+     *  identity matrix to be returned.
+     *  @return A new identity matrix of complex numbers with the
+     *  specified dimension.
      */
     public static final Complex[][] identityMatrixComplex(final int dim) {
         return identity(dim);
@@ -552,7 +559,7 @@ public class ComplexMatrixMath {
                     for (int col = 0; col < n; col++) {
                         if (pivotFlag[col] == 0) {
                             double magSquaredElement = Ai[row][col]
-                                .magnitudeSquared();
+                                    .magnitudeSquared();
 
                             if (magSquaredElement >= big) {
                                 big = magSquaredElement;
@@ -727,8 +734,9 @@ public class ComplexMatrixMath {
         if (rows != array.length) {
             throw new IllegalArgumentException(
                     "preMultiply : array does not have the same number of "
-                    + "elements (" + array.length + ") as the number of rows "
-                    + "of the matrix (" + rows + ")");
+                            + "elements (" + array.length
+                            + ") as the number of rows " + "of the matrix ("
+                            + rows + ")");
         }
 
         Complex[] returnValue = new Complex[columns];
@@ -765,8 +773,9 @@ public class ComplexMatrixMath {
         if (columns != array.length) {
             throw new IllegalArgumentException(
                     "postMultiply() : array does not have the same number "
-                    + "of elements (" + array.length + ") as the number of "
-                    + "columns of the matrix (" + columns + ")");
+                            + "of elements (" + array.length
+                            + ") as the number of " + "columns of the matrix ("
+                            + columns + ")");
         }
 
         Complex[] returnValue = new Complex[rows];
@@ -835,8 +844,8 @@ public class ComplexMatrixMath {
      *  @return A new matrix constructed by element by element
      *  multiplication of the two matrix arguments.
      */
-    public static final Complex[][] multiplyElements(
-            final Complex[][] matrix1, final Complex[][] matrix2) {
+    public static final Complex[][] multiplyElements(final Complex[][] matrix1,
+            final Complex[][] matrix2) {
         int rows = _rows(matrix1);
         int columns = _columns(matrix1);
 
@@ -993,6 +1002,7 @@ public class ComplexMatrixMath {
     }
 
     /** Return the sum of the elements of a matrix.
+     *  @param matrix The matrix.
      *  @return The sum of the elements of the matrix.
      */
     public static final Complex sum(final Complex[][] matrix) {
@@ -1272,10 +1282,10 @@ public class ComplexMatrixMath {
 
         if ((rows != _rows(matrix2)) || (columns != _columns(matrix2))) {
             throw new IllegalArgumentException(
-                    "ptolemy.math.ComplexMatrixMath." + caller + "() : one matrix "
-                    + _dimensionString(matrix1)
-                    + " is not the same size as another matrix "
-                    + _dimensionString(matrix2) + ".");
+                    "ptolemy.math.ComplexMatrixMath." + caller
+                            + "() : one matrix " + _dimensionString(matrix1)
+                            + " is not the same size as another matrix "
+                            + _dimensionString(matrix2) + ".");
         }
     }
 
@@ -1291,8 +1301,9 @@ public class ComplexMatrixMath {
         if (_rows(matrix) != _columns(matrix)) {
             throw new IllegalArgumentException(
                     "ptolemy.math.ComplexMatrixMath." + caller
-                    + "() : matrix argument " + _dimensionString(matrix)
-                    + " is not a square matrix.");
+                            + "() : matrix argument "
+                            + _dimensionString(matrix)
+                            + " is not a square matrix.");
         }
 
         return _rows(matrix);
@@ -1316,7 +1327,8 @@ public class ComplexMatrixMath {
         return ("[" + _rows(matrix) + " x " + _columns(matrix) + "]");
     }
 
-    /** Given a set of row vectors rowArrays[0] ... rowArrays[n-1], compute:
+    /** Orthogonalize the rows of a matrix.
+     *  Given a set of row vectors rowArrays[0] ... rowArrays[n-1], compute:
      *  <ol>
      *  <li> A new set of row vectors out[0] ... out[n-1] which are the
      *       orthogonalized versions of each input row vector. If a row
@@ -1327,7 +1339,7 @@ public class ComplexMatrixMath {
      *
      *  <li> An n x n matrix containing the dot products of the input
      *       row vectors and the output row vectors,
-     *       dotProductMatrix[j][i] = <rowArray[i], outArray[j]>.  Put
+     *       dotProductMatrix[j][i] = &lt;rowArray[i], outArray[j]&gt;.  Put
      *       the result in returnValue[1].<br>
      *
      *  <li> An array containing 1 / (norm(outArray[i])<sup>2</sup>),
@@ -1378,9 +1390,9 @@ public class ComplexMatrixMath {
 
                 dotProductMatrix[j][i] = dotProduct;
 
-                rowArray = ComplexArrayMath.subtract(rowArray,
-                        ComplexArrayMath.scale(orthogonalMatrix[j],
-                                dotProduct.multiply(oneOverNormSquaredArray[j])));
+                rowArray = ComplexArrayMath.subtract(rowArray, ComplexArrayMath
+                        .scale(orthogonalMatrix[j], dotProduct
+                                .multiply(oneOverNormSquaredArray[j])));
             }
 
             // Compute the dot product between the input and output vector
@@ -1423,12 +1435,8 @@ public class ComplexMatrixMath {
             }
         }
 
-        return new Object[] {
-            orthogonalMatrix,
-            dotProductMatrix,
-            oneOverNormSquaredArray,
-            new Integer(nullity)
-        };
+        return new Object[] { orthogonalMatrix, dotProductMatrix,
+                oneOverNormSquaredArray, new Integer(nullity) };
     }
 
     /** Return the number of rows of a matrix.

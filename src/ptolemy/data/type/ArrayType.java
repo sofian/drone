@@ -1,30 +1,30 @@
 /** A class representing the type of an ArrayToken.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.data.type;
 
 import ptolemy.data.ArrayToken;
@@ -33,20 +33,19 @@ import ptolemy.graph.InequalityTerm;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ArrayType
 
 /**
 
-A class representing the type of an ArrayToken.
+ A class representing the type of an ArrayToken.
 
-@author Steve Neuendorffer, Yuhong Xiong
-@version $Id: ArrayType.java,v 1.81 2005/04/25 22:02:39 cxh Exp $
-@since Ptolemy II 4.0
-@Pt.ProposedRating Red (cxh)
-@Pt.AcceptedRating Red (cxh)
-*/
+ @author Steve Neuendorffer, Yuhong Xiong
+ @version $Id: ArrayType.java,v 1.92 2006/09/07 16:13:59 cxh Exp $
+ @since Ptolemy II 4.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class ArrayType extends StructuredType {
     /** Construct a new ArrayType with the specified type for the array
      *  elements. To leave the element type undeclared, use BaseType.UNKNOWN.
@@ -94,8 +93,9 @@ public class ArrayType extends StructuredType {
     }
 
     /** Convert the argument token into an ArrayToken having this
-     *  type, if losslessly conversion can be done.  The argument must
-     *  be an ArrayToken.
+     *  type, if lossless conversion can be done.  If the argument
+     *  is not an ArrayToken, then the result is an array token with
+     *  one entry, the argument.
      *  @param token A token.
      *  @return An ArrayToken.
      *  @exception IllegalActionException If lossless conversion
@@ -103,9 +103,15 @@ public class ArrayType extends StructuredType {
      */
     public Token convert(Token token) throws IllegalActionException {
         if (!(token instanceof ArrayToken)) {
-            throw new IllegalArgumentException(Token
-                    .notSupportedIncomparableConversionMessage(token,
-                            toString()));
+            // Cannot convert to unknown element type.
+            if (token.getType() == BaseType.UNKNOWN) {
+                throw new IllegalActionException(
+                        "Cannot convert to type {unknown}");
+            }
+            // NOTE: Added 7/17/06 by EAL to support type -> {type} conversion.
+            Token[] contents = new Token[1];
+            contents[0] = token;
+            return new ArrayToken(token.getType(), contents);
         }
 
         ArrayToken argumentArrayToken = (ArrayToken) token;
@@ -122,11 +128,38 @@ public class ArrayType extends StructuredType {
                 resultArray[i] = getElementType().convert(argumentArray[i]);
             }
         } catch (IllegalActionException ex) {
-            throw new IllegalActionException(null, ex,
-                    Token.notSupportedConversionMessage(token, "int"));
+            throw new IllegalActionException(null, ex, Token
+                    .notSupportedConversionMessage(token, "int"));
         }
 
+        if (resultArray.length < 1) {
+            // Support your local zero length array.
+            // actor/lib/test/auto/NilTokenTypeTest.xml requires this.
+            Type argumentArrayElementType = argumentArrayToken.getElementType();
+            try {
+                return new ArrayToken(argumentArrayElementType);
+            } catch (Exception ex) {
+                throw new IllegalActionException(null, ex,
+                        "Failed to construct an array of type "
+                                + argumentArrayElementType);
+            }
+        }
         return new ArrayToken(resultArray);
+    }
+
+    /** Return the depth of an array type. The depth of an
+     *  array type is the number of times it 
+     *  contains other structured types. For example, an array 
+     *  of arrays has depth 2, and an array of arrays of records 
+     *  has depth 3.
+     *  @return the depth of a structured type.
+     */
+    public int depth() {
+        int depth = 1;
+        if (_elementType instanceof StructuredType) {
+            depth += ((StructuredType) _elementType).depth();
+        }
+        return depth;
     }
 
     /** Determine if the argument represents the same ArrayType as this
@@ -159,6 +192,7 @@ public class ArrayType extends StructuredType {
     }
 
     /** Return the class for tokens that this type represents.
+     *  @return The class for tokens that this type represents.  
      */
     public Class getTokenClass() {
         return ArrayToken.class;
@@ -250,7 +284,7 @@ public class ArrayType extends StructuredType {
 
     /** Update this Type to the specified ArrayType.
      *  The specified type must be an ArrayType with the same structure as
-     *  this type.
+     *  this type, and have depth less than the MAXDEPTHDOUND.
      *  This method will only update the component whose declared type is
      *  BaseType.UNKNOWN, and leave the constant part of this type intact.
      *  @param newType A StructuredType.
@@ -259,6 +293,7 @@ public class ArrayType extends StructuredType {
      */
     public void updateType(StructuredType newType)
             throws IllegalActionException {
+        super.updateType(newType);
         if (this.isConstant()) {
             if (this.equals(newType)) {
                 return;
@@ -273,7 +308,8 @@ public class ArrayType extends StructuredType {
         // This type is a variable.
         if (!this.isSubstitutionInstance(newType)) {
             throw new IllegalActionException("ArrayType.updateType: "
-                    + "The type " + this + " cannot be updated to " + newType + ".");
+                    + "The type " + this + " cannot be updated to " + newType
+                    + ".");
         }
 
         Type newElemType = ((ArrayType) newType).getElementType();
@@ -289,7 +325,8 @@ public class ArrayType extends StructuredType {
         } else {
             // _declaredElementType is a StructuredType. _elementType
             // must also be.
-            ((StructuredType) _elementType).updateType((StructuredType) newElemType);
+            ((StructuredType) _elementType)
+                    .updateType((StructuredType) newElemType);
         }
     }
 
@@ -314,8 +351,8 @@ public class ArrayType extends StructuredType {
                     + "The argument " + type + " is not an ArrayType.");
         }
 
-        return TypeLattice.compare(_elementType,
-                ((ArrayType) type).getElementType());
+        return TypeLattice.compare(_elementType, ((ArrayType) type)
+                .getElementType());
     }
 
     /** Return a static instance of ArrayType.
@@ -339,8 +376,8 @@ public class ArrayType extends StructuredType {
                     + "The argument " + type + " is not an ArrayType.");
         }
 
-        Type elementGLB = (Type) TypeLattice.lattice().greatestLowerBound(_elementType,
-                ((ArrayType) type).getElementType());
+        Type elementGLB = (Type) TypeLattice.lattice().greatestLowerBound(
+                _elementType, ((ArrayType) type).getElementType());
         return new ArrayType(elementGLB);
     }
 
@@ -358,8 +395,8 @@ public class ArrayType extends StructuredType {
                     + "The argument " + type + " is not an ArrayType.");
         }
 
-        Type elementLUB = (Type) TypeLattice.lattice().leastUpperBound(_elementType,
-                ((ArrayType) type).getElementType());
+        Type elementLUB = (Type) TypeLattice.lattice().leastUpperBound(
+                _elementType, ((ArrayType) type).getElementType());
         return new ArrayType(elementLUB);
     }
 
@@ -367,8 +404,11 @@ public class ArrayType extends StructuredType {
     ////                         private variables                 ////
     // the type of array elements.
     private Type _declaredElementType;
+
     private Type _elementType;
+
     private ElementTypeTerm _elemTypeTerm = new ElementTypeTerm();
+
     private static ArrayType _representative = new ArrayType(BaseType.UNKNOWN);
 
     ///////////////////////////////////////////////////////////////////
@@ -416,13 +456,13 @@ public class ArrayType extends StructuredType {
             if (isConstant()) {
                 throw new IllegalActionException(
                         "ArrayType$ElementTypeTerm.initialize: " + "This type "
-                        + this + " is not settable.");
+                                + this + " is not settable.");
             }
 
             if (!(e instanceof Type)) {
                 throw new IllegalActionException(
-                        "ArrayType$ElementTypeTerm.initialize: " + "The argument "
-                        + this + " is not a Type.");
+                        "ArrayType$ElementTypeTerm.initialize: "
+                                + "The argument " + this + " is not a Type.");
             }
 
             if (_declaredElementType == BaseType.UNKNOWN) {
@@ -458,7 +498,7 @@ public class ArrayType extends StructuredType {
             if (!isSettable()) {
                 throw new IllegalActionException(
                         "ArrayType$ElementTypeTerm.setValue: This type " + e
-                        + " is not settable.");
+                                + " is not settable.");
             }
 
             if (!_declaredElementType.isSubstitutionInstance((Type) e)) {
@@ -466,10 +506,10 @@ public class ArrayType extends StructuredType {
                 // this is a type conflict.
                 throw new IllegalActionException(
                         "ArrayType$ElementTypeTerm.setValue: "
-                        + "Cannot update the element type of this array to "
-                        + "the new type." + " Element type: "
-                        + _declaredElementType.toString() + ", New type: "
-                        + e.toString());
+                                + "Cannot update the element type of this array to "
+                                + "the new type." + " Element type: "
+                                + _declaredElementType.toString()
+                                + ", New type: " + e.toString());
             }
 
             if (_declaredElementType == BaseType.UNKNOWN) {
@@ -478,7 +518,8 @@ public class ArrayType extends StructuredType {
                 } catch (CloneNotSupportedException cnse) {
                     throw new InternalErrorException(
                             "ArrayType$ElementTypeTerm.setValue: "
-                            + "The specified type " + e + " cannot be cloned.");
+                                    + "The specified type " + e
+                                    + " cannot be cloned.");
                 }
             } else {
                 ((StructuredType) _elementType).updateType((StructuredType) e);
@@ -490,7 +531,7 @@ public class ArrayType extends StructuredType {
          */
         public String toString() {
             return "(ArrayElementType(" + getAssociatedObject() + "), "
-                + getValue() + ")";
+                    + getValue() + ")";
         }
     }
 }

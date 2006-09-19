@@ -1,66 +1,65 @@
 /* An interpolator for a specified array of indexes and values.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.math;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Interpolation
 
 /**
-   This class provides algorithms to do interpolation. Currently, zero,
-   first, and third order interpolations are supported. These are the
-   interpolation orders most often used in practice. zero order interpolation
-   holds the last reference value; first order does linear interpolation;
-   and third order interpolation is based on the Hermite curves in chapter
-   11 of "Computer Graphic, Principles and Practice", by Foley, van Dam, Feiner
-   and Hughes, 2nd ed. in C, 1996.
-   <p>
-   The setValues() method specifies the reference values as a double
-   array. setIndexes() specifies the indexes of those values as an
-   int array. These two arrays must have the same length, and the indexes
-   must be increasing and non-negative; otherwise an exception will be thrown.
-   The values are periodic if a positive period is set by setPeriod(). In
-   this case, the period must be greater than the largest index, and
-   values within the index range 0 to (period-1) are repeated indefinitely.
-   If the period is zero, the values are not periodic, and the values
-   outside the range of the indexes are considered to be 0.0.
-   The interpolation order is set by setOrder().
-   <p>
-   The default reference values are {1.0, 0.0} and the indexes are {0, 1}.
-   The default period is 2 and the order is 0.
-   <p>
+ This class provides algorithms to do interpolation. Currently, zero,
+ first, and third order interpolations are supported. These are the
+ interpolation orders most often used in practice. zero order interpolation
+ holds the last reference value; first order does linear interpolation;
+ and third order interpolation is based on the Hermite curves in chapter
+ 11 of "Computer Graphic, Principles and Practice", by Foley, van Dam, Feiner
+ and Hughes, 2nd ed. in C, 1996.
+ <p>
+ The setValues() method specifies the reference values as a double
+ array. setIndexes() specifies the indexes of those values as an
+ int array. These two arrays must have the same length, and the indexes
+ must be increasing and non-negative; otherwise an exception will be thrown.
+ The values are periodic if a positive period is set by setPeriod(). In
+ this case, the period must be greater than the largest index, and
+ values within the index range 0 to (period-1) are repeated indefinitely.
+ If the period is zero, the values are not periodic, and the values
+ outside the range of the indexes are considered to be 0.0.
+ The interpolation order is set by setOrder().
+ <p>
+ The default reference values are {1.0, 0.0} and the indexes are {0, 1}.
+ The default period is 2 and the order is 0.
+ <p>
 
-   @author Sarah Packman, Yuhong Xiong
-   @version $Id: Interpolation.java,v 1.30 2005/04/25 22:42:00 cxh Exp $
-   @since Ptolemy II 0.4
-   @Pt.ProposedRating Yellow (yuhong)
-   @Pt.AcceptedRating red (cxh)
-*/
+ @author Sarah Packman, Yuhong Xiong
+ @version $Id: Interpolation.java,v 1.34 2006/02/07 00:46:38 cxh Exp $
+ @since Ptolemy II 0.4
+ @Pt.ProposedRating Yellow (yuhong)
+ @Pt.AcceptedRating red (cxh)
+ */
 public class Interpolation {
     /** Construct an instance of Interpolation using the default parameters.
      */
@@ -72,6 +71,7 @@ public class Interpolation {
 
     /** Return the reference indexes.
      *  @return An int array.
+     *  @see #setIndexes(int[])
      */
     public int[] getIndexes() {
         return _indexes;
@@ -79,6 +79,7 @@ public class Interpolation {
 
     /** Return the interpolation order.
      *  @return An int.
+     *  @see #setOrder(int)
      */
     public int getOrder() {
         return _order;
@@ -86,6 +87,7 @@ public class Interpolation {
 
     /** Return the value repetition period.
      *  @return An int.
+     *  @see #setPeriod(int)
      */
     public int getPeriod() {
         return _period;
@@ -93,6 +95,7 @@ public class Interpolation {
 
     /** Return the reference values.
      *  @return An double array.
+     *  @see #setValues(double[])
      */
     public double[] getValues() {
         return _values;
@@ -195,7 +198,7 @@ public class Interpolation {
 
         if (_order == 1) {
             return vStart
-                + (((index - iStart) * (vEnd - vStart)) / (iEnd - iStart));
+                    + (((index - iStart) * (vEnd - vStart)) / (iEnd - iStart));
         }
 
         // order is 3. Need the points before Start and the point after End
@@ -243,8 +246,8 @@ public class Interpolation {
         }
 
         // computer the tangent at Start and End.
-        double tanBefore2Start = (vStart - vBeforeStart) / (iStart
-                - iBeforeStart);
+        double tanBefore2Start = (vStart - vBeforeStart)
+                / (iStart - iBeforeStart);
         double tanStart2End = (vEnd - vStart) / (iEnd - iStart);
         double tanEnd2After = (vAfterEnd - vEnd) / (iAfterEnd - iEnd);
 
@@ -258,6 +261,7 @@ public class Interpolation {
      *  @param indexes An int array.
      *  @exception IllegalArgumentException If the argument array is
      *   not increasing and non-negative.
+     *  @see #getIndexes()
      */
     public void setIndexes(int[] indexes) {
         int prev = -1;
@@ -277,6 +281,7 @@ public class Interpolation {
     /** Set the interpolation order.
      *  @param order An int.
      *  @exception IllegalArgumentException If the order is not 0, 1, or 3.
+     *  @see #getOrder()
      */
     public void setOrder(int order) {
         if ((order != 0) && (order != 1) && (order != 3)) {
@@ -290,6 +295,7 @@ public class Interpolation {
     /** Set the value repetition period.
      *  @param period An int.
      *  @exception IllegalArgumentException If the period is negative.
+     *  @see #getPeriod()
      */
     public void setPeriod(int period) {
         if (period < 0) {
@@ -302,6 +308,7 @@ public class Interpolation {
 
     /** Set the reference values.
      *  @param values A double array.
+     *  @see #getValues()
      */
     public void setValues(double[] values) {
         _values = values;
@@ -355,19 +362,16 @@ public class Interpolation {
         // compute the interpolated value
         double indexSqr = index * index;
         return (coef[0] * indexSqr * index) + (coef[1] * indexSqr)
-            + (coef[2] * index) + coef[3];
+                + (coef[2] * index) + coef[3];
     }
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    private int[] _indexes = {
-        0,
-        1
-    };
-    private double[] _values = {
-        1.0,
-        0.0
-    };
+    private int[] _indexes = { 0, 1 };
+
+    private double[] _values = { 1.0, 0.0 };
+
     private int _period = 2;
+
     private int _order = 0;
 }

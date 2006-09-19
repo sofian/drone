@@ -1,34 +1,35 @@
 /* An attribute that represents a location of a node in a schematic.
 
-Copyright (c) 2002-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2002-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel.util;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,28 +37,27 @@ import java.util.StringTokenizer;
 
 import ptolemy.util.StringUtilities;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// Location
 
 /**
-   An attribute that represents a location of a node in a schematic.
+ An attribute that represents a location of a node in a schematic.
 
-   <p>By default, an instance of this class is not visible in a user
-   interface.  This is indicated to the user interface by returning NONE
-   to the getVisibility() method.  The location is specified by calling
-   setExpression() with a string that has the form "x,y" or "[x,y]" or
-   "{x,y}", where x and y can be parsed into doubles.
+ <p>By default, an instance of this class is not visible in a user
+ interface.  This is indicated to the user interface by returning NONE
+ to the getVisibility() method.  The location is specified by calling
+ setExpression() with a string that has the form "x,y" or "[x,y]" or
+ "{x,y}", where x and y can be parsed into doubles.
 
-   <p>The default location is a two dimensional location with value {0.0, 0.0}.
-   This class can also handle locations with greater than two dimensions.
+ <p>The default location is a two dimensional location with value {0.0, 0.0}.
+ This class can also handle locations with greater than two dimensions.
 
-   @author Steve Neuendorffer and Edward A. Lee
-   @version $Id: Location.java,v 1.50 2005/04/29 20:05:09 cxh Exp $
-   @since Ptolemy II 2.1
-   @Pt.ProposedRating Green (cxh)
-   @Pt.AcceptedRating Green (cxh)
-*/
+ @author Steve Neuendorffer and Edward A. Lee
+ @version $Id: Location.java,v 1.61 2006/09/16 11:20:46 eal Exp $
+ @since Ptolemy II 2.1
+ @Pt.ProposedRating Green (cxh)
+ @Pt.AcceptedRating Green (cxh)
+ */
 public class Location extends SingletonAttribute implements Locatable {
     // FIXME: Note that this class does not extend from StringAttribute
     // because it is a singleton.  Thus, there is a bunch of code
@@ -118,13 +118,11 @@ public class Location extends SingletonAttribute implements Locatable {
 
         // Copy the location so that the reference in the new object
         // does not refer to the same array.
-        if (_location == null) {
-            newObject._location = null;
-        } else {
-            int length = _location.length;
-            newObject._location = new double[length];
-            System.arraycopy(_location, 0, newObject._location, 0, length);
-        }
+        // _location can never be null because setLocation() will
+        // not handle it.
+        int length = _location.length;
+        newObject._location = new double[length];
+        System.arraycopy(_location, 0, newObject._location, 0, length);
 
         newObject._valueListeners = null;
         return newObject;
@@ -162,12 +160,13 @@ public class Location extends SingletonAttribute implements Locatable {
 
         if ((value != null) && !value.equals("")) {
             valueTerm = " value=\"" + StringUtilities.escapeForXML(value)
-                + "\"";
+                    + "\"";
         }
 
         // It might be better to use multiple writes here for performance.
         output.write(_getIndentPrefix(depth) + "<" + _elementName + " name=\""
-                + name + "\" class=\"" + getClassName() + "\"" + valueTerm + ">\n");
+                + name + "\" class=\"" + getClassName() + "\"" + valueTerm
+                + ">\n");
         _exportMoMLContents(output, depth + 1);
         output.write(_getIndentPrefix(depth) + "</" + _elementName + ">\n");
     }
@@ -195,6 +194,14 @@ public class Location extends SingletonAttribute implements Locatable {
         }
 
         return _default;
+    }
+
+    /** Return a name to present to the user, which
+     *  is the same as the name returned by getName().
+     *  @return A name to present to the user.
+     */
+    public String getDisplayName() {
+        return getName();
     }
 
     /** Get the value that has been set by setExpression() or by
@@ -245,6 +252,14 @@ public class Location extends SingletonAttribute implements Locatable {
      */
     public double[] getLocation() {
         return _location;
+    }
+
+    /** Get the value of the attribute, which is the evaluated expression.
+     *  @return The same as getExpression().
+     *  @see #getExpression()
+     */
+    public String getValueAsString() {
+        return getExpression();
     }
 
     /** Get the visibility of this attribute, as set by setVisibility().
@@ -334,13 +349,15 @@ public class Location extends SingletonAttribute implements Locatable {
      *  Notify the container and any value listeners of the new location,
      *  if it has changed.
      *  See the class comment for a description of the format.
+     *  @return Null, indicating that no other instances of Settable are
+     *   validated.
      *  @exception IllegalActionException If the expression is invalid.
      */
-    public void validate() throws IllegalActionException {
+    public Collection validate() throws IllegalActionException {
         // If the value has not been set via setExpression(), there is
         // nothing to do.
         if (!_expressionSet) {
-            return;
+            return null;
         }
 
         double[] location;
@@ -352,7 +369,8 @@ public class Location extends SingletonAttribute implements Locatable {
         } else {
             // Parse the specification: a comma specified list of doubles,
             // optionally surrounded by square or curly brackets.
-            StringTokenizer tokenizer = new StringTokenizer(_expression, ",[]{}");
+            StringTokenizer tokenizer = new StringTokenizer(_expression,
+                    ",[]{}");
             location = new double[tokenizer.countTokens()];
 
             int count = tokenizer.countTokens();
@@ -368,6 +386,8 @@ public class Location extends SingletonAttribute implements Locatable {
 
         // FIXME: If _setLocation() returns true, should we call
         // setModifiedFromClass() like we do elsewhere?
+        
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -401,35 +421,40 @@ public class Location extends SingletonAttribute implements Locatable {
     private boolean _setLocation(double[] location)
             throws IllegalActionException {
         // If the location is unchanged, return false.
-        if ((_location != null) && (location != null)
-                && (_location.length == location.length)) {
-            boolean match = true;
+        if (_location != null) {
+            if (_location.length == location.length) {
+                boolean match = true;
 
-            for (int i = 0; i < location.length; i++) {
-                if (_location[i] != location[i]) {
-                    match = false;
-                    break;
+                for (int i = 0; i < location.length; i++) {
+                    if (_location[i] != location[i]) {
+                        match = false;
+                        break;
+                    }
                 }
-            }
 
-            if (match) {
-                return false;
+                if (match) {
+                    return false;
+                }
+            } else {
+                // _location.length != location.length
+                // If location is of size 3, then we end up here.
+                _location = new double[location.length];
             }
-        }
-
-        if (_location.length != location.length) {
-            // If location is of size 3, then we end up here.
+        } else {
+            // _location == null
             _location = new double[location.length];
         }
 
-        // Copy location array into member array _location.
-        // Just referencing _location to location isn't enough, we need
-        // to maintain a local copy of the double array.
-        for (int i = 0; i < location.length; i++) {
-            _location[i] = location[i];
+        if (location != null) {
+            // Copy location array into member array _location.
+            // Just referencing _location to location isn't enough, we need
+            // to maintain a local copy of the double array.
+            for (int i = 0; i < location.length; i++) {
+                _location[i] = location[i];
+            }
         }
 
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.attributeChanged(this);
@@ -459,10 +484,7 @@ public class Location extends SingletonAttribute implements Locatable {
     private boolean _expressionSet = false;
 
     // The location.
-    private double[] _location = {
-        0.0,
-        0.0
-    };
+    private double[] _location = { 0.0, 0.0 };
 
     // Listeners for changes in value.
     private List _valueListeners;

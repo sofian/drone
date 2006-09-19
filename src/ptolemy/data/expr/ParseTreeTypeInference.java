@@ -1,61 +1,64 @@
 /* A visitor for parse trees of the expression language that infers types.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
 
-*/
+ */
 package ptolemy.data.expr;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ptolemy.data.ScalarToken;
 import ptolemy.data.type.ArrayType;
 import ptolemy.data.type.BaseType;
+import ptolemy.data.type.FixType;
 import ptolemy.data.type.FunctionType;
+import ptolemy.data.type.MatrixType;
 import ptolemy.data.type.RecordType;
 import ptolemy.data.type.Type;
 import ptolemy.data.type.TypeConstant;
 import ptolemy.data.type.TypeLattice;
-import ptolemy.data.type.UnsizedMatrixType;
 import ptolemy.graph.InequalityTerm;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
-
+import ptolemy.math.Precision;
 
 //////////////////////////////////////////////////////////////////////////
 //// ParseTreeTypeInference
 
 /**
-   This class visits parse trees and infers a type for each node in the
-   parse tree.  This type is stored in the parse tree.
+ This class visits parse trees and infers a type for each node in the
+ parse tree.  This type is stored in the parse tree.
 
-   @author Steve Neuendorffer
-   @version $Id: ParseTreeTypeInference.java,v 1.56 2005/04/29 20:04:42 cxh Exp $
-   @since Ptolemy II 2.1
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (neuendor)
-   @see ptolemy.data.expr.ASTPtRootNode
-*/
+ @author Steve Neuendorffer
+ @version $Id: ParseTreeTypeInference.java,v 1.63 2006/08/21 23:13:17 cxh Exp $
+ @since Ptolemy II 2.1
+ @Pt.ProposedRating Green (neuendor)
+ @Pt.AcceptedRating Yellow (neuendor)
+ @see ptolemy.data.expr.ASTPtRootNode
+ */
 public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -95,9 +98,8 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
 
-        _setType(node,
-                new ArrayType(
-                        (Type) TypeLattice.lattice().leastUpperBound(childTypes)));
+        _setType(node, new ArrayType((Type) TypeLattice.lattice()
+                .leastUpperBound(childTypes)));
     }
 
     /** Set the type of the given node to be the type that is the
@@ -153,19 +155,16 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
                     _setType(node, ((ArrayType) baseType).getElementType());
                     return;
                 } else {
-                    _assert(true, node,
-                            "Cannot use array " + "indexing on '"
+                    _assert(true, node, "Cannot use array " + "indexing on '"
                             + node.getFunctionName()
                             + "' because it does not have an array type.");
                 }
             } else if (argCount == 2) {
-                if (baseType instanceof UnsizedMatrixType) {
-                    _setType(node,
-                            ((UnsizedMatrixType) baseType).getElementType());
+                if (baseType instanceof MatrixType) {
+                    _setType(node, ((MatrixType) baseType).getElementType());
                     return;
                 } else {
-                    _assert(true, node,
-                            "Cannot use matrix " + "indexing on '"
+                    _assert(true, node, "Cannot use matrix " + "indexing on '"
                             + node.getFunctionName()
                             + "' because it does not have a matrix type.");
                 }
@@ -177,13 +176,13 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
 
         // Psuedo-temporary hack for casts....
         if ((functionName.compareTo("cast") == 0) && (argCount == 2)) {
-            ASTPtRootNode castTypeNode = ((ASTPtRootNode) node.jjtGetChild(0
-                                                  + 1));
+            ASTPtRootNode castTypeNode = ((ASTPtRootNode) node
+                    .jjtGetChild(0 + 1));
             ParseTreeEvaluator parseTreeEvaluator = new ParseTreeEvaluator();
 
             try {
-                ptolemy.data.Token t = parseTreeEvaluator.evaluateParseTree(castTypeNode,
-                        _scope);
+                ptolemy.data.Token t = parseTreeEvaluator.evaluateParseTree(
+                        castTypeNode, _scope);
                 _setType(node, t.getType());
             } catch (IllegalActionException ex) {
                 _setType(node, childTypes[0]);
@@ -197,6 +196,29 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             //  _setType(node,
             //     ((ASTPtRootNode) node.jjtGetChild(0 + 1)).getType());
             //  return;
+        }
+
+        // A hack, because the result of the 'fix' function is
+        // dependent on its arguments, which should be constant.
+        if ((functionName.compareTo("fix") == 0) && (argCount == 3)) {
+            ASTPtRootNode lengthNode = ((ASTPtRootNode) node.jjtGetChild(1 + 1));
+            ASTPtRootNode integerBitsNode = ((ASTPtRootNode) node
+                    .jjtGetChild(2 + 1));
+            ParseTreeEvaluator parseTreeEvaluator = new ParseTreeEvaluator();
+
+            try {
+                ptolemy.data.Token length = parseTreeEvaluator
+                        .evaluateParseTree(lengthNode, _scope);
+
+                ptolemy.data.Token integerBits = parseTreeEvaluator
+                        .evaluateParseTree(integerBitsNode, _scope);
+                _setType(node, new FixType(new Precision(((ScalarToken) length)
+                        .intValue(), ((ScalarToken) integerBits).intValue())));
+                return;
+            } catch (Throwable throwable) {
+                // Do nothing... rely on the regular method resolution
+                // to generate the right type.
+            }
         }
 
         if (functionName.compareTo("eval") == 0) {
@@ -265,37 +287,37 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
         // Push the current scope.
         final ParserScope currentScope = _scope;
         ParserScope functionScope = new ParserScope() {
-                public ptolemy.data.Token get(String name) {
-                    return null;
+            public ptolemy.data.Token get(String name) {
+                return null;
+            }
+
+            public Type getType(String name) throws IllegalActionException {
+                Type type = (Type) map.get(name);
+
+                if ((type == null) && (currentScope != null)) {
+                    return currentScope.getType(name);
+                } else {
+                    return type;
                 }
+            }
 
-                public Type getType(String name) throws IllegalActionException {
-                    Type type = (Type) map.get(name);
+            public InequalityTerm getTypeTerm(String name)
+                    throws IllegalActionException {
+                Type type = (Type) map.get(name);
 
-                    if ((type == null) && (currentScope != null)) {
-                        return currentScope.getType(name);
-                    } else {
-                        return type;
-                    }
+                if ((type == null) && (currentScope != null)) {
+                    return currentScope.getTypeTerm(name);
+                } else {
+                    return new TypeConstant(type);
                 }
+            }
 
-                public InequalityTerm getTypeTerm(String name)
-                        throws IllegalActionException {
-                    Type type = (Type) map.get(name);
-
-                    if ((type == null) && (currentScope != null)) {
-                        return currentScope.getTypeTerm(name);
-                    } else {
-                        return new TypeConstant(type);
-                    }
-                }
-
-                public Set identifierSet() throws IllegalActionException {
-                    Set set = currentScope.identifierSet();
-                    set.addAll(map.keySet());
-                    return set;
-                }
-            };
+            public Set identifierSet() throws IllegalActionException {
+                Set set = currentScope.identifierSet();
+                set.addAll(map.keySet());
+                return set;
+            }
+        };
 
         _scope = functionScope;
         node.getExpressionTree().visit(this);
@@ -319,14 +341,14 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
         if (conditionalType != BaseType.BOOLEAN) {
             throw new IllegalActionException(
                     "Functional-if must branch on a boolean, "
-                    + "but instead type was " + conditionalType);
+                            + "but instead type was " + conditionalType);
         }
 
         Type trueType = _inferChild(node, 1);
         Type falseType = _inferChild(node, 2);
 
-        _setType(node,
-                (Type) TypeLattice.lattice().leastUpperBound(trueType, falseType));
+        _setType(node, (Type) TypeLattice.lattice().leastUpperBound(trueType,
+                falseType));
     }
 
     /** Set the type of the given node to be the type of constant the
@@ -385,9 +407,10 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
 
-        Type elementType = (Type) TypeLattice.lattice().leastUpperBound(childTypes);
+        Type elementType = (Type) TypeLattice.lattice().leastUpperBound(
+                childTypes);
 
-        Type matrixType = UnsizedMatrixType.getMatrixTypeForElementType(elementType);
+        Type matrixType = MatrixType.getMatrixTypeForElementType(elementType);
         _setType(node, matrixType);
     }
 
@@ -410,8 +433,8 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             }
         }
 
-        CachedMethod cachedMethod = CachedMethod.findMethod(node.getMethodName(),
-                childTypes, CachedMethod.METHOD);
+        CachedMethod cachedMethod = CachedMethod.findMethod(node
+                .getMethodName(), childTypes, CachedMethod.METHOD);
 
         if (cachedMethod.isValid()) {
             Type type = cachedMethod.getReturnType();
@@ -430,8 +453,8 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             }
 
             throw new IllegalActionException("No matching method "
-                    + childTypes[0].toString() + "." + node.getMethodName() + "( "
-                    + buffer + " ).");
+                    + childTypes[0].toString() + "." + node.getMethodName()
+                    + "( " + buffer + " ).");
         }
     }
 
@@ -458,7 +481,24 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
 
-        _setType(node, (Type) TypeLattice.lattice().leastUpperBound(childTypes));
+        List lexicalTokenList = node.getLexicalTokenList();
+        int numChildren = node.jjtGetNumChildren();
+
+        Type resultType = childTypes[0];
+        for (int i = 1; i < numChildren; i++) {
+            Token operator = (Token) lexicalTokenList.get(i - 1);
+            Type nextType = childTypes[i];
+            if (operator.kind == PtParserConstants.MULTIPLY) {
+                resultType = resultType.multiply(nextType);
+            } else if (operator.kind == PtParserConstants.DIVIDE) {
+                resultType = resultType.divide(nextType);
+            } else if (operator.kind == PtParserConstants.MODULO) {
+                resultType = resultType.modulo(nextType);
+            } else {
+                _assert(false, node, "Invalid operation");
+            }
+        }
+        _setType(node, resultType);
     }
 
     /** Set the type of the given node to be a record token that
@@ -472,8 +512,8 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
 
-        String[] names = (String[]) node.getFieldNames().toArray(new String[node
-                                                                         .jjtGetNumChildren()]);
+        String[] names = (String[]) node.getFieldNames().toArray(
+                new String[node.jjtGetNumChildren()]);
 
         _setType(node, new RecordType(names, childTypes));
     }
@@ -484,7 +524,7 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
      */
     public void visitRelationalNode(ASTPtRelationalNode node)
             throws IllegalActionException {
-        /* Type[] childTypes = */ _inferAllChildren(node);
+        /* Type[] childTypes = */_inferAllChildren(node);
 
         // FIXME: Check args are booleans?
         _setType(node, BaseType.BOOLEAN);
@@ -512,7 +552,22 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
     public void visitSumNode(ASTPtSumNode node) throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
 
-        _setType(node, (Type) TypeLattice.lattice().leastUpperBound(childTypes));
+        List lexicalTokenList = node.getLexicalTokenList();
+        int numChildren = node.jjtGetNumChildren();
+
+        Type resultType = childTypes[0];
+        for (int i = 1; i < numChildren; i++) {
+            Token operator = (Token) lexicalTokenList.get(i - 1);
+            Type nextType = childTypes[i];
+            if (operator.kind == PtParserConstants.PLUS) {
+                resultType = resultType.add(nextType);
+            } else if (operator.kind == PtParserConstants.MINUS) {
+                resultType = resultType.subtract(nextType);
+            } else {
+                _assert(false, node, "Invalid operation");
+            }
+        }
+        _setType(node, resultType);
     }
 
     /** Set the type of the given node to be the type of the
@@ -524,7 +579,11 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
             throws IllegalActionException {
         Type[] childTypes = _inferAllChildren(node);
         Type baseType = childTypes[0];
-        _setType(node, baseType);
+        if (node.isMinus()) {
+            _setType(node, baseType.zero().subtract(baseType));
+        } else {
+            _setType(node, baseType);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -621,5 +680,6 @@ public class ParseTreeTypeInference extends AbstractParseTreeVisitor {
     }
 
     protected ParserScope _scope;
+
     protected Type _inferredChildType;
 }

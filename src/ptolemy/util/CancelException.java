@@ -40,7 +40,7 @@ package ptolemy.util;
 
  @see MessageHandler
  @author Edward A. Lee
- @version $Id: CancelException.java,v 1.9.2.1 2005/07/14 20:44:05 cxh Exp $
+ @version $Id: CancelException.java,v 1.12 2005/07/14 20:45:05 cxh Exp $
  @since Ptolemy II 4.0
  @Pt.ProposedRating Green (eal)
  @Pt.AcceptedRating Green (janneck)

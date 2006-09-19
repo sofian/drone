@@ -1,72 +1,71 @@
 /** A class defining quantization to a FixPoint number.
 
-Copyright (c) 2002-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2002-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.math;
 
 import java.util.StringTokenizer;
 
-
 /**
-   The FixPointQuantization class defines the mapping of numeric values
-   with unlimited precision to the finite precision supported by arithmetic
-   using the FixPoint class.
-   <p>
-   It comprises a
-   <ul>
-   <li>
-   <b>Precision</b>: to define the accuracy of the finite precision numbers.
-   <li>
-   <b>Overflow</b>: to define the treatment of out-of-range numbers.
-   <li>
-   <b>Rounding</b>: to define the loss of precision for in-range numbers.
-   </ul>
-   The active class functionality is provided by the quantize method, which
-   is normally invoked from FixPoint.quantize to enforce quantization
-   constraints upon the result of an unconstrained computation.
-   <p>
-   An instance of the class is immutable, meaning
-   that its value is set in the constructor and cannot then be modified.
+ The FixPointQuantization class defines the mapping of numeric values
+ with unlimited precision to the finite precision supported by arithmetic
+ using the FixPoint class.
+ <p>
+ It comprises a
+ <ul>
+ <li>
+ <b>Precision</b>: to define the accuracy of the finite precision numbers.
+ <li>
+ <b>Overflow</b>: to define the treatment of out-of-range numbers.
+ <li>
+ <b>Rounding</b>: to define the loss of precision for in-range numbers.
+ </ul>
+ The active class functionality is provided by the quantize method, which
+ is normally invoked from FixPoint.quantize to enforce quantization
+ constraints upon the result of an unconstrained computation.
+ <p>
+ An instance of the class is immutable, meaning
+ that its value is set in the constructor and cannot then be modified.
 
-   @author Ed Willink
-   @version $Id: FixPointQuantization.java,v 1.19 2005/04/25 22:41:08 cxh Exp $
-   @since Ptolemy II 2.1
-   @Pt.ProposedRating Red (Ed.Willink)
-   @Pt.AcceptedRating Red
-   @see FixPoint
-   @see Precision
-   @see Overflow
-   @see Rounding
-*/
+ @author Ed Willink
+ @version $Id: FixPointQuantization.java,v 1.26 2006/02/07 00:48:59 cxh Exp $
+ @since Ptolemy II 2.1
+ @Pt.ProposedRating Red (Ed.Willink)
+ @Pt.AcceptedRating Red
+ @see ptolemy.math.FixPoint
+ @see ptolemy.math.Precision
+ @see ptolemy.math.Overflow
+ @see ptolemy.math.Rounding
+ */
 public class FixPointQuantization extends Quantization {
     /** Construct a FixPointQuantization object based on the provided
      *  string.  The string may consist of just <i>precision</i> or
-     *  <i>precision,overflow</i> or
-     *  <i>precision,overflow,rounding</i>, and may optionally be
+     *  <i>precision, overflow</i> or
+     *  <i>precision, overflow, rounding</i>, and may optionally be
      *  enclosed in parentheses.
      *
      *  <p> <i>precision</i> must be one of the Precision formats;
@@ -140,6 +139,9 @@ public class FixPointQuantization extends Quantization {
 
     /** Return true if the given object describes the same
      *  mapping to quantized values as this object.
+     *
+     *  @param object The FixPointQuantization object to use for equality
+     *  checking.
      *  @return True if the quantizations are equal.
      */
     public boolean equals(Object object) {
@@ -161,6 +163,16 @@ public class FixPointQuantization extends Quantization {
         return _precision;
     }
 
+    /**
+     * Return the precision.
+     * 
+     * @see #setPrecision(Precision)
+     * @return Precision object.
+     */
+    public Precision getPrecision() {
+        return _precision;
+    }
+
     /** Return a FixPointQuantization with a changed overflow strategy.
      *  @param overflow The new overflow strategy.
      *  @return A new quantization.
@@ -170,6 +182,8 @@ public class FixPointQuantization extends Quantization {
     }
 
     /** Return a FixPointQuantization with a changed precision.
+     *
+     *  @see #getPrecision()
      *  @param precision The new precision.
      *  @return A new quantization.
      */
@@ -186,7 +200,7 @@ public class FixPointQuantization extends Quantization {
     }
 
     /** Return a string representing this quantization. The string is
-     *  expressed as "(<i>m.n,o,p</i>)", where <i>m</i>
+     *  expressed as "(<i>m.n, o, p</i>)", where <i>m</i>
      *  indicates the number of integer bits, <i>n</i> represents
      *  the number of fractional bits and <i>o</i> represents
      *  the overflow strategy and <i>r</i> represents
@@ -194,10 +208,11 @@ public class FixPointQuantization extends Quantization {
      *  @return A string representing this quantization.
      */
     public String toString() {
-        String x = "(" + _precision.getIntegerBitLength() + "."
-            + _precision.getFractionBitLength() + ","
-            + getOverflow().toString() + "," + getRounding().toString() + ")";
-        return x;
+        // TODO: check for null precision
+        return "(" + _precision.getIntegerBitLength() + "."
+                + _precision.getFractionBitLength() + ","
+                + getOverflow().toString() + "," + getRounding().toString()
+                + ")";
     }
 
     ///////////////////////////////////////////////////////////////////

@@ -1,30 +1,30 @@
 /* Dataflow utilities
 
-Copyright (c) 2004-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2004-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.util;
 
 import java.util.Comparator;
@@ -35,6 +35,7 @@ import ptolemy.data.BooleanToken;
 import ptolemy.data.IntToken;
 import ptolemy.data.Token;
 import ptolemy.data.expr.Parameter;
+import ptolemy.data.expr.TemporaryVariable;
 import ptolemy.data.expr.Variable;
 import ptolemy.kernel.Port;
 import ptolemy.kernel.util.IllegalActionException;
@@ -43,23 +44,22 @@ import ptolemy.kernel.util.KernelException;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.Settable;
 
-
 ///////////////////////////////////////////////////////////
 //// DFUtilities
 
 /**
-   This class factors code out of the SDF domain, for use in different
-   schedulers, so that they can be implemented in a consistent fashion.
-   This interface contains static methods that are often useful from
-   outside of an SDFDirector, and so are provided here in an interface
-   that can be imported.
+ This class factors code out of the SDF domain, for use in different
+ schedulers, so that they can be implemented in a consistent fashion.
+ This interface contains static methods that are often useful from
+ outside of an SDFDirector, and so are provided here in an interface
+ that can be imported.
 
-   @author Stephen Neuendorffer
-   @version $Id: DFUtilities.java,v 1.16 2005/04/29 20:05:27 cxh Exp $
-   @since Ptolemy II 4.1
-   @Pt.ProposedRating Red (neuendor)
-   @Pt.AcceptedRating Red (neuendor)
-*/
+ @author Stephen Neuendorffer
+ @version $Id: DFUtilities.java,v 1.24 2006/09/16 22:43:04 eal Exp $
+ @since Ptolemy II 4.1
+ @Pt.ProposedRating Red (neuendor)
+ @Pt.AcceptedRating Red (neuendor)
+ */
 public class DFUtilities {
     ///////////////////////////////////////////////////////////////////
     ////                         public inner classes              ////
@@ -67,14 +67,22 @@ public class DFUtilities {
     /** A comparator for named objects.
      */
     public static class NamedObjComparator implements Comparator {
-        // Note: This is rather slow, because getFullName is not cached.
+        /** Compare two objects.
+         *  If the objects are not NamedObjs, then an InternalErrorException
+         *  is thrown.
+         *  @param object1 The first object to be compared.   
+         *  @param object2 The second object to be compared.   
+         *  @return 0 if the objects are the same.
+         */
         public int compare(Object object1, Object object2) {
+        // Note: This is rather slow, because getFullName is not cached.
+
             if ((object1 instanceof NamedObj) && (object2 instanceof NamedObj)) {
                 // Compare full names.
                 NamedObj namedObject1 = (NamedObj) object1;
                 NamedObj namedObject2 = (NamedObj) object2;
-                int compare = namedObject1.getFullName().compareTo(namedObject2
-                        .getFullName());
+                int compare = namedObject1.getFullName().compareTo(
+                        namedObject2.getFullName());
 
                 if (compare != 0) {
                     return compare;
@@ -120,12 +128,12 @@ public class DFUtilities {
      *  valid expression.
      *  @see #setRate
      */
-    public static int getRate(IOPort port)
-            throws NotSchedulableException, IllegalActionException {
+    public static int getRate(IOPort port) throws NotSchedulableException,
+            IllegalActionException {
         if (port.isInput() && port.isOutput()) {
             throw new NotSchedulableException(port,
                     "Port is both an input and an output, which is not"
-                    + " allowed in SDF.");
+                            + " allowed in SDF.");
         } else if (port.isInput()) {
             return getTokenConsumptionRate(port);
         } else if (port.isOutput()) {
@@ -133,7 +141,7 @@ public class DFUtilities {
         } else {
             throw new NotSchedulableException(port,
                     "Port is neither an input and an output, which is not"
-                    + " allowed in SDF.");
+                            + " allowed in SDF.");
         }
     }
 
@@ -144,6 +152,7 @@ public class DFUtilities {
      *  @param name The name of the variable.
      *  @return The variable with the specified name in the given port.
      *  @exception IllegalActionException Not thrown in this method.
+     *  @see #setRateVariable(Port, String, int)
      */
     public static Variable getRateVariable(Port port, String name) {
         Variable parameter = (Variable) port.getAttribute(name);
@@ -383,6 +392,37 @@ public class DFUtilities {
         }
     }
 
+    /** If a variable with the given name does not exist, then create
+     *  a variable with the given name. Then set the value of the
+     *  variable to the specified value. 
+     *  @param port The port.
+     *  @param name Name of the variable.
+     *  @param value The value.
+     *  @exception IllegalActionException If a new parameter can not be
+     *  created for the given port, or the given value is not an acceptable.
+     *  @see #getRateVariable(Port, String)
+     */
+    public static void setRateVariable(Port port, String name, int value)
+            throws IllegalActionException {
+        Variable rateParameter = (Variable) port.getAttribute(name);
+
+        if (rateParameter == null) {
+            try {
+                String altName = "_" + name;
+                rateParameter = (Variable) port.getAttribute(altName);
+
+                if (rateParameter == null) {
+                    rateParameter = new Parameter(port, altName);
+                    rateParameter.setVisibility(Settable.NOT_EDITABLE);
+                    rateParameter.setPersistent(false);
+                }
+            } catch (KernelException ex) {
+                throw new InternalErrorException(port, ex, "Should not occur");
+            }
+        }
+        rateParameter.setToken(new IntToken(value));
+    }
+
     /** Set the <i>tokenConsumptionRate</i> parameter of the given port
      *  to the given rate.  If no parameter exists, then create a new one.
      *  The new one is an instance of Variable, so it is not persistent.
@@ -469,7 +509,7 @@ public class DFUtilities {
 
         if (variable == null) {
             try {
-                variable = new Variable(container, name);
+                variable = new TemporaryVariable(container, name);
                 variable.setVisibility(Settable.NOT_EDITABLE);
                 variable.setPersistent(false);
             } catch (KernelException ex) {

@@ -1,6 +1,6 @@
 /* Utilities used to manipulate files
 
- Copyright (c) 2004-2005 The Regents of the University of California.
+ Copyright (c) 2004-2006 The Regents of the University of California.
  All rights reserved.
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
@@ -50,7 +50,7 @@ import java.net.URL;
  These utilities do not depend on any other ptolemy.* packages.
 
  @author Christopher Brooks
- @version $Id: FileUtilities.java,v 1.31.2.1 2005/07/14 20:44:07 cxh Exp $
+ @version $Id: FileUtilities.java,v 1.46 2006/08/23 01:08:48 cxh Exp $
  @since Ptolemy II 4.0
  @Pt.ProposedRating Green (cxh)
  @Pt.AcceptedRating Green (cxh)
@@ -86,9 +86,8 @@ public class FileUtilities {
         // If the sourceURL is not a jar URL, then check to see if we
         // have the same file.
         // FIXME: should we check for !/ and !\ everywhere?
-        if (sourceFile.getPath().indexOf("!/") == -1
-                && sourceFile.getPath().indexOf("!\\") == -1) {
-
+        if ((sourceFile.getPath().indexOf("!/") == -1)
+                && (sourceFile.getPath().indexOf("!\\") == -1)) {
             try {
                 if (sourceFile.getCanonicalFile().toURL().sameFile(
                         destinationURL)) {
@@ -147,7 +146,7 @@ public class FileUtilities {
     /** Given a file name or URL, construct a java.io.File object that
      *  refers to the file name or URL.  This method
      *  first attempts to directly use the file name to construct the
-     *  File. If the resulting File is a relative pathname, then 
+     *  File. If the resulting File is a relative pathname, then
      *  it is resolved relative to the specified base URI, if
      *  there is one.  If there is no such base URI, then it simply
      *  returns the relative File object.  See the java.io.File
@@ -161,7 +160,7 @@ public class FileUtilities {
      *  <p>This method is similar to
      *  {@link #nameToURL(String, URI, ClassLoader)}
      *  except that in this method, the file or URL must be readable.
-     *  Usually, this method is use for write a file and 
+     *  Usually, this method is use for write a file and
      *  {@link #nameToURL(String, URI, ClassLoader)} is used for reading.
      *
      *  @param name The file name or URL.
@@ -181,13 +180,13 @@ public class FileUtilities {
             // Try to resolve the base directory.
             if (base != null) {
                 URI newURI = base.resolve(name);
+
                 //file = new File(newURI);
                 String urlString = newURI.getPath();
                 file = new File(StringUtilities.substitute(urlString, "%20",
                         " "));
             }
         }
-
         return file;
     }
 
@@ -199,13 +198,13 @@ public class FileUtilities {
      *
      *  <p>Note that "xxxxxxCLASSPATHxxxxxx" is the value of the
      *  globally defined constant $CLASSPATH available in the Ptolemy
-     *  II expression language.  
+     *  II expression language.
      *
      *  <p>If no file is found, then throw an exception.
      *
      *  <p>This method is similar to {@link #nameToFile(String, URI)}
      *  except that in this method, the file or URL must be readable.
-     *  Usually, this method is use for reading a file and 
+     *  Usually, this method is use for reading a file and
      *  is used for writing {@link #nameToFile(String, URI)}.
      *
      *  @param name The name of a file or URL.
@@ -244,6 +243,7 @@ public class FileUtilities {
 
             if (classLoader == null) {
                 String referenceClassName = "ptolemy.util.FileUtilities";
+
                 try {
                     // WebStart: We might be in the Swing Event thread, so
                     // Thread.currentThread().getContextClassLoader()
@@ -284,21 +284,25 @@ public class FileUtilities {
                 file = new File(StringUtilities.substitute(name, "%20", " "));
 
                 URL possibleJarURL = null;
+
                 if (!file.canRead()) {
                     // ModelReference and FilePortParameters sometimes
                     // have paths that have !/ in them.
                     possibleJarURL = ClassUtilities.jarURLEntryResource(name);
+
                     if (possibleJarURL != null) {
                         file = new File(possibleJarURL.getFile());
                     }
                 }
+
                 if (!file.canRead()) {
-                    throw new IOException("Cannot read file '" + name
+                    throw new IOException("Cannot read file '"
+                            + name
                             + "' or '"
                             + StringUtilities.substitute(name, "%20", " ")
                             + "'"
-                            + (possibleJarURL == null ? "" :
-                                    " or '" + possibleJarURL.getFile() + ""));
+                            + ((possibleJarURL == null) ? "" : (" or '"
+                                    + possibleJarURL.getFile() + "")));
                 }
             }
 
@@ -320,6 +324,7 @@ public class FileUtilities {
                     String name2 = StringUtilities.substitute(name, "%20", " ");
                     try {
                         newURI = baseDirectory.resolve(name2);
+
                         name = name2;
                     } catch (Exception ex2) {
                         IOException io = new IOException(
@@ -341,18 +346,30 @@ public class FileUtilities {
                 }
 
                 String urlString = newURI.toString();
+
                 try {
                     // Adding another '/' for remote execution.
-                    if (newURI.getScheme() != null
-                            && newURI.getAuthority() == null) {
+                    if ((newURI.getScheme() != null)
+                            && (newURI.getAuthority() == null)) {
                         urlString = urlString.substring(0, 6) + "//"
                                 + urlString.substring(6);
+
                         //} else {
                         // urlString = urlString.substring(0, 6) + "/"
                         // + urlString.substring(6);
                     }
+
                     return new URL(urlString);
                 } catch (Exception ex3) {
+                    try {
+                        // Under Webstart, opening 
+                        // hoc/demo/ModelReference/ModelReference.xml
+                        // requires this because the URL is relative.
+                        return new URL(baseDirectory.toURL(), urlString);
+                    } catch (Exception ex4) {
+                        // Ignore
+                    }
+
                     IOException io = new IOException(
                             "Problem with URI format in '"
                                     + urlString
@@ -369,7 +386,21 @@ public class FileUtilities {
             }
 
             // As a last resort, try an absolute URL.
-            return new URL(name);
+
+            URL url = new URL(name);
+
+            // If we call new URL("http", null, /foo);
+            // then we get "http:/foo", which should be "http://foo"
+            // This change suggested by Dan Higgins and Kevin Kruland
+            // See kepler/src/util/URLToLocalFile.java
+            try {
+                String fixedURLAsString = url.toString().replaceFirst(
+                        "(https?:)//?", "$1//");
+                url = new URL(fixedURLAsString);
+            } catch (Exception e) {
+                // Ignore
+            }
+            return url;
         }
     }
 
@@ -392,9 +423,10 @@ public class FileUtilities {
      */
     public static BufferedReader openForReading(String name, URI base,
             ClassLoader classLoader) throws IOException {
-        if (name == null || name.trim().equals("")) {
+        if ((name == null) || name.trim().equals("")) {
             return null;
         }
+
         if (name.trim().equals("System.in")) {
             if (STD_IN == null) {
                 STD_IN = new BufferedReader(new InputStreamReader(System.in));
@@ -437,7 +469,7 @@ public class FileUtilities {
      */
     public static Writer openForWriting(String name, URI base, boolean append)
             throws IOException {
-        if (name == null || name.trim().equals("")) {
+        if ((name == null) || name.trim().equals("")) {
             return null;
         }
 

@@ -1,30 +1,30 @@
 /* An executable entity.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor;
 
 import java.util.ArrayList;
@@ -43,27 +43,26 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Nameable;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// AtomicActor
 
 /**
-   An AtomicActor is an executable entity that cannot itself contain
-   other actors. The Ports of AtomicActors are constrained to be IOPorts.
-   Derived classes may further constrain the ports by overriding the public
-   method newPort() to create a port of the appropriate subclass, and the
-   protected method _addPort() to throw an exception if its argument is a
-   port that is not of the appropriate subclass. In this base class, the
-   actor does nothing in the action methods (prefire, fire, ...).
+ An AtomicActor is an executable entity that cannot itself contain
+ other actors. The Ports of AtomicActors are constrained to be IOPorts.
+ Derived classes may further constrain the ports by overriding the public
+ method newPort() to create a port of the appropriate subclass, and the
+ protected method _addPort() to throw an exception if its argument is a
+ port that is not of the appropriate subclass. In this base class, the
+ actor does nothing in the action methods (prefire, fire, ...).
 
-   @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
-   @version $Id: AtomicActor.java,v 1.106 2005/04/29 20:05:11 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (neuendor)
-   @see ptolemy.actor.CompositeActor
-   @see ptolemy.actor.IOPort
-*/
+ @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
+ @version $Id: AtomicActor.java,v 1.114 2006/09/18 11:38:01 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (neuendor)
+ @see ptolemy.actor.CompositeActor
+ @see ptolemy.actor.IOPort
+ */
 public class AtomicActor extends ComponentEntity implements Actor {
     /** Construct an actor in the default workspace with an empty string
      *  as its name. Increment the version number of the workspace.
@@ -123,6 +122,7 @@ public class AtomicActor extends ComponentEntity implements Actor {
         // Reset to force reinitialization of cache.
         newObject._inputPortsVersion = -1;
         newObject._outputPortsVersion = -1;
+        newObject._functionDependency = null;
         return newObject;
     }
 
@@ -140,17 +140,20 @@ public class AtomicActor extends ComponentEntity implements Actor {
 
             if (castPort.isInput() && (getDirector() != null)) {
                 try {
+                    workspace().getWriteAccess();
                     castPort.createReceivers();
                 } catch (IllegalActionException ex) {
                     // Should never happen.
                     throw new InternalErrorException("cannot create receivers.");
+                } finally {
+                    workspace().doneWriting();
                 }
             }
         }
     }
 
     /** Do nothing.  Derived classes override this method to define their
-     *  their primary run-time action.
+     *  primary run-time action.
      *
      *  @exception IllegalActionException Not thrown in this base class.
      */
@@ -190,26 +193,21 @@ public class AtomicActor extends ComponentEntity implements Actor {
      *  @see ptolemy.actor.util.FunctionDependency
      */
     public FunctionDependency getFunctionDependency() {
-        // If the functionDependency object is not constructed,
-        // construct a FunctionDependencyOfAtomicActor object.
-        FunctionDependency functionDependency = (FunctionDependency) getAttribute(FunctionDependency.UniqueName);
-
-        if (functionDependency == null) {
+        if (_functionDependency == null) {
             try {
-                functionDependency = new FunctionDependencyOfAtomicActor(this,
-                        FunctionDependency.UniqueName);
+                _functionDependency = new FunctionDependencyOfAtomicActor(this);
             } catch (NameDuplicationException e) {
                 // This should not happen.
-                throw new InternalErrorException("Failed to construct a"
-                        + "function dependency object for " + getName());
+                throw new InternalErrorException("Failed to construct a "
+                        + "function dependency object for " + getFullName());
             } catch (IllegalActionException e) {
                 // This should not happen.
-                throw new InternalErrorException("Failed to construct a"
-                        + "function dependency object for " + getName());
+                throw new InternalErrorException("Failed to construct a "
+                        + "function dependency object for " + getFullName());
             }
         }
 
-        return functionDependency;
+        return _functionDependency;
     }
 
     /** Return the Manager responsible for execution of this actor,
@@ -276,6 +274,29 @@ public class AtomicActor extends ComponentEntity implements Actor {
         }
 
         return _cachedInputPorts;
+    }
+
+    /** Return true. Most actors are written so that the prefire() and
+     *  fire() methods do not change the state of the actor. Hence, for
+     *  convenience, this base class by default returns true. An actor
+     *  that does change state in prefire() or fire() must override
+     *  this method to return false.
+     *  
+     *  @return True.
+     */
+    public boolean isFireFunctional() {
+        return true;
+    }
+
+    /** Return true in this base class. By default, actors do not
+     *  check their inputs to see whether they are known.  They assume
+     *  they are known.  A derived class that can tolerate unknown
+     *  inputs should override this method to return false.
+     *  
+     *  @return True always in this base class.
+     */
+    public boolean isStrict() {
+        return true;
     }
 
     /** Invoke a specified number of iterations of the actor. An
@@ -600,8 +621,8 @@ public class AtomicActor extends ComponentEntity implements Actor {
      *  @exception NameDuplicationException If the port name coincides with a
      *   name already in the entity.
      */
-    protected void _addPort(Port port)
-            throws IllegalActionException, NameDuplicationException {
+    protected void _addPort(Port port) throws IllegalActionException,
+            NameDuplicationException {
         if (!(port instanceof IOPort)) {
             throw new IllegalActionException(this, port,
                     "Incompatible port class for this entity.");
@@ -615,10 +636,14 @@ public class AtomicActor extends ComponentEntity implements Actor {
      */
     protected void _createReceivers() throws IllegalActionException {
         Iterator inputPorts = inputPortList().iterator();
-
-        while (inputPorts.hasNext()) {
-            IOPort inputPort = (IOPort) inputPorts.next();
-            inputPort.createReceivers();
+        try {
+            workspace().getWriteAccess();
+            while (inputPorts.hasNext()) {
+                IOPort inputPort = (IOPort) inputPorts.next();
+                inputPort.createReceivers();
+            }
+        } finally {
+            workspace().doneWriting();
         }
     }
 
@@ -632,7 +657,13 @@ public class AtomicActor extends ComponentEntity implements Actor {
     ////                         private variables                 ////
     // Cached lists of input and output ports.
     private transient long _inputPortsVersion = -1;
+
     private transient List _cachedInputPorts;
+
     private transient long _outputPortsVersion = -1;
+
     private transient List _cachedOutputPorts;
+
+    /** The function dependency, if it is present. */
+    private FunctionDependency _functionDependency;
 }

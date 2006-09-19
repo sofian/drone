@@ -1,30 +1,30 @@
 /* Remove graphical classes
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.moml.filter;
 
 import java.util.HashMap;
@@ -34,31 +34,37 @@ import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLFilter;
 import ptolemy.moml.MoMLParser;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// RemoveGraphicalClasses
 
 /** When this class is registered with the MoMLParser.setMoMLFilter()
-    method, it will cause MoMLParser to filter out graphical classes.
+ method, it will cause MoMLParser to filter out graphical classes.
 
-    <p>This is very useful for running applets with out requiring files
-    like diva.jar to be downloaded.  It is also used by the nightly build to
-    run tests when there is no graphical display present.
+ <p>This is very useful for running applets with out requiring files
+ like diva.jar to be downloaded.  It is also used by the nightly build to
+ run tests when there is no graphical display present.
 
-    @author  Edward A. Lee, Christopher Hylands
-    @version $Id: RemoveGraphicalClasses.java,v 1.44 2005/04/29 20:05:29 cxh Exp $
-    @since Ptolemy II 2.0
-    @Pt.ProposedRating Red (cxh)
-    @Pt.AcceptedRating Red (cxh)
-*/
+ @author  Edward A. Lee, Christopher Hylands
+ @version $Id: RemoveGraphicalClasses.java,v 1.56 2006/08/21 03:04:09 cxh Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class RemoveGraphicalClasses implements MoMLFilter {
     /** Clear the map of graphical classes to be removed.
      */
-    public void clear() {
+    public static void clear() {
         _graphicalClasses = new HashMap();
     }
 
-    /** If the attributeValue is "ptolemy.vergil.icon.ValueIcon",
+    /** Filter for graphical classes and return new values if
+     *  a graphical class is found. 
+     *  An internal HashMap maps names of graphical entities to
+     *  new names.  The HashMap can also map a graphical entity
+     *  to null, which means the entity is removed from the model.
+     *  All class attributeValues that start with "ptolemy.domains.gr"
+     *  are deemed to be graphical elements and null is always returned.
+     *  For example, if the attributeValue is "ptolemy.vergil.icon.ValueIcon",
      *  or "ptolemy.vergil.basic.NodeControllerFactory"
      *  then return "ptolemy.kernel.util.Attribute"; if the attributeValue
      *  is "ptolemy.vergil.icon.AttributeValueIcon" or
@@ -80,27 +86,31 @@ public class RemoveGraphicalClasses implements MoMLFilter {
         // " X connection to foo:0 broken (explicit kill or server shutdown)."
         // Try uncommenting the next lines to see what is being
         // expanding before the error:
-        // System.out.println("filterAttributeValue: " + container + "\t"
+        //System.out.println("filterAttributeValue: " + container + "\t"
         //   +  attributeName + "\t" + attributeValue);
         if (attributeValue == null) {
             return null;
         } else if (_graphicalClasses.containsKey(attributeValue)) {
             MoMLParser.setModified(true);
             return (String) _graphicalClasses.get(attributeValue);
+        } else if (_removeGR && attributeValue.startsWith("ptolemy.domains.gr")) {
+            MoMLParser.setModified(true);
+            return null;
         }
 
         return attributeValue;
     }
 
-    /** Do nothing.
+    /** In this class, do nothing.
      *  @param container The object created by this element.
      *  @param elementName The element name.
+     *  @exception Exception Not thrown in this base class
      */
     public void filterEndElement(NamedObj container, String elementName)
             throws Exception {
     }
 
-    /** Remove a class to be filtered
+    /** Remove a class to be filtered.
      *  @param className The name of the class to be filtered
      *  out, for example "ptolemy.copernicus.kernel.GeneratorAttribute".
      *  @see #put(String, String)
@@ -128,6 +138,15 @@ public class RemoveGraphicalClasses implements MoMLFilter {
         // ptolemy.copernicus.kernel.KernelMain call this method
         // so as to filter out the GeneratorAttribute
         _graphicalClasses.put(className, replacement);
+    }
+
+    /** Set to true if we should removed classes that start with
+     *  ptolemy.domains.gr.
+     *  @param removeGR True if we should remove classes that start
+     *  with ptolemy.domains.gr.
+     */
+    public void setRemoveGR(boolean removeGR) {
+        _removeGR = removeGR;
     }
 
     /** Return a string that describes what the filter does.
@@ -179,9 +198,11 @@ public class RemoveGraphicalClasses implements MoMLFilter {
         // so we set it to null instead.
         _graphicalClasses.put("ptolemy.vergil.toolbox.AnnotationEditorFactory",
                 "ptolemy.kernel.util.Attribute");
-        _graphicalClasses.put("ptolemy.vergil.toolbox.VisibleParameterEditorFactory",
+        _graphicalClasses.put(
+                "ptolemy.vergil.toolbox.VisibleParameterEditorFactory",
                 "ptolemy.kernel.util.Attribute");
-        _graphicalClasses.put("ptolemy.vergil.fsm.modal.HierarchicalStateControllerFactory",
+        _graphicalClasses.put(
+                "ptolemy.vergil.fsm.modal.HierarchicalStateControllerFactory",
                 "ptolemy.kernel.util.Attribute");
         _graphicalClasses.put("ptolemy.vergil.fsm.modal.ModalTableauFactory",
                 "ptolemy.kernel.util.Attribute");
@@ -189,34 +210,36 @@ public class RemoveGraphicalClasses implements MoMLFilter {
         // 4/04 BooleanSwitch uses EditorIcon
         _graphicalClasses.put("ptolemy.vergil.icon.EditorIcon", null);
 
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.EllipseAttribute",
-                null);
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.EllipseAttribute", null);
 
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.FilledShapeAttribute",
-                null);
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.FilledShapeAttribute", null);
 
         _graphicalClasses.put("ptolemy.vergil.kernel.attributes.IDAttribute",
                 null);
 
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.ImageAttribute",
-                null);
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.ImageAttribute", null);
 
         _graphicalClasses.put("ptolemy.vergil.kernel.attributes.LineAttribute",
                 null);
 
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.ShapeAttribute",
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.ShapeAttribute", null);
+
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.ResizablePolygonAttribute",
                 null);
 
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.ResizablePolygonAttribute",
-                null);
-
-        _graphicalClasses.put("ptolemy.vergil.kernel.attributes.RectangleAttribute",
-                null);
+        _graphicalClasses.put(
+                "ptolemy.vergil.kernel.attributes.RectangleAttribute", null);
 
         _graphicalClasses.put("ptolemy.vergil.kernel.attributes.TextAttribute",
                 null);
 
-        _graphicalClasses.put("ptolemy.vergil.basic.NodeControllerFactory", null);
+        _graphicalClasses.put("ptolemy.vergil.basic.NodeControllerFactory",
+                null);
         _graphicalClasses.put("ptolemy.vergil.icon.AttributeValueIcon", null);
         _graphicalClasses.put("ptolemy.vergil.icon.BoxedValueIcon", null);
         _graphicalClasses.put("ptolemy.vergil.icon.CopyCatIcon", null);
@@ -237,10 +260,25 @@ public class RemoveGraphicalClasses implements MoMLFilter {
         _graphicalClasses.put("ptolemy.vergil.toolbox.AnnotationEditorFactory",
                 null);
         _graphicalClasses.put("ptolemy.vergil.toolbox"
-                + ".VisibleParameterEditorFactory", "ptolemy.kernel.util.Attribute");
+                + ".VisibleParameterEditorFactory",
+                "ptolemy.kernel.util.Attribute");
 
         // Shallow CG of actor/lib/test/auto/URLDirectoryReader3.xml fails
         // unless we remove CheckBoxStyle
         _graphicalClasses.put("ptolemy.actor.gui.style.CheckBoxStyle", null);
+
+        _graphicalClasses.put("ptolemy.actor.gui.PtolemyPreferences",
+                "ptolemy.data.expr.ScopeExtendingAttribute");
+
+        // Sinewave has a DocViewerFactory, which we need to remove
+        _graphicalClasses.put("ptolemy.vergil.basic.DocViewerFactory",
+                "ptolemy.kernel.util.Attribute");
+        // Sinewave has a DocAttribute, which we need to remove
+        _graphicalClasses.put("ptolemy.vergil.basic.DocAttribute",
+                "ptolemy.kernel.util.Attribute");
+
     }
+
+    /** True if we should remove the GR domain. */
+    private boolean _removeGR = false;
 }

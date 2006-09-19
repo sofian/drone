@@ -1,52 +1,51 @@
 /* A library of statistical operations on arrays of doubles.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
 
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.math;
 
 import java.util.Random;
-
 
 ///////////////////////////////////////////////////////////////
 //// DoubleArrayStat
 
 /**
-   This class provides a library for statistical operations on arrays of
-   doubles.
-   Unless explicitly noted otherwise, all array arguments are assumed to be
-   non-null. If a null array is passed to a method, a NullPointerException
-   will be thrown in the method or called methods.
+ This class provides a library for statistical operations on arrays of
+ doubles.
+ Unless explicitly noted otherwise, all array arguments are assumed to be
+ non-null. If a null array is passed to a method, a NullPointerException
+ will be thrown in the method or called methods.
 
-   @author Jeff Tsay
-   @version $Id: DoubleArrayStat.java,v 1.53 2005/04/25 22:40:41 cxh Exp $
-   @since Ptolemy II 0.3
-   @Pt.ProposedRating Yellow (ctsay)
-   @Pt.AcceptedRating Red (ctsay)
-*/
+ @author Jeff Tsay
+ @version $Id: DoubleArrayStat.java,v 1.58 2006/03/29 20:52:12 cxh Exp $
+ @since Ptolemy II 0.3
+ @Pt.ProposedRating Yellow (ctsay)
+ @Pt.AcceptedRating Red (ctsay)
+ */
 public class DoubleArrayStat extends DoubleArrayMath {
     // Protected constructor prevents construction of this class.
     protected DoubleArrayStat() {
@@ -163,8 +162,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
         return returnValue;
     }
 
-    /** Return the cross-correlation of two arrays at a certain lag value,
-     *  defined by :
+    /** Return the cross-correlation of two arrays at a certain lag value.
+     *  The cross-correlation is defined by :
      *  Rxy[d] = sum of i = 0 to N - 1 of x[i] * y[i + d]
      *  @param x The first array of doubles.
      *  @param y The second array of doubles.
@@ -207,6 +206,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
      *  The entropy is always non-negative.
      *  Throw an IllegalArgumentException if the length of the array is 0,
      *  or a negative probability is encountered.
+     *  @param p The array of probabilities.
+     *  @return The entropy of the array of probabilities.
      */
     public static final double entropy(double[] p) {
         int length = _nonZeroLength(p, "DoubleArrayStat.entropy");
@@ -217,7 +218,7 @@ public class DoubleArrayStat extends DoubleArrayMath {
             if (p[i] < 0.0) {
                 throw new IllegalArgumentException(
                         "ptolemy.math.DoubleArrayStat.entropy() : "
-                        + "Negative probability encountered.");
+                                + "Negative probability encountered.");
             } else if (p[i] == 0.0) {
                 // do nothing
             } else {
@@ -249,6 +250,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
 
     /** Return the maximum value in the array.
      *  Throw an exception if the length of the array is 0.
+     *  @param array The array of doubles.
+     *  @return The maximum value in the array.
      */
     public static final double max(double[] array) {
         Object[] maxReturn = maxAndIndex(array);
@@ -278,22 +281,23 @@ public class DoubleArrayStat extends DoubleArrayMath {
             }
         }
 
-        return new Object[] {
-            new Double(maxElement),
-            new Integer(maxIndex)
-        };
+        return new Object[] { new Double(maxElement), new Integer(maxIndex) };
     }
 
     /** Return the arithmetic mean of the elements in the array.
      *  If the length of the array is 0, return a NaN.
+     *  @param array The array of doubles.
+     *  @return The mean value in the array.
      */
     public static final double mean(double[] array) {
         _nonZeroLength(array, "DoubleArrayStat.mean");
-        return sumOfElements(array) / (double) array.length;
+        return sumOfElements(array) / array.length;
     }
 
     /** Return the minimum value in the array.
      *  Throw an exception if the length of the array is 0.
+     *  @param array The array of doubles.
+     *  @return The minimum value in the array.
      */
     public static final double min(double[] array) {
         Object[] minReturn = minAndIndex(array);
@@ -323,14 +327,13 @@ public class DoubleArrayStat extends DoubleArrayMath {
             }
         }
 
-        return new Object[] {
-            new Double(minElement),
-            new Integer(minIndex)
-        };
+        return new Object[] { new Double(minElement), new Integer(minIndex) };
     }
 
     /** Return the product of all of the elements in the array.
      *  Return 1.0 if the length of the array is 0.
+     *  @param array The array of doubles.
+     *  @return The product of the elements in the array.
      */
     public static final double productOfElements(double[] array) {
         double product = 1.0;
@@ -345,7 +348,13 @@ public class DoubleArrayStat extends DoubleArrayMath {
     /** Return a new array of Bernoulli random variables with a given
      *  probability of success p. On success, the random variable has
      *  value 1.0; on failure the random variable has value 0.0.
-     *  The number of elements to allocate is given by N.
+     *  @param p The probability, which should be a double between 0.0
+     *  and 1.0.  The probability is compared to the output of
+     *  java.lang.Random.nextDouble().  If the output is less than p, then
+     *  the array element will be 1.0.  If the output is greater than or
+     *  equal to p, then the array element will be 0.0.
+     *  @param N The number of elements to allocate.
+     *  @return The array of Bernoulli random variables.
      */
     public static final double[] randomBernoulli(double p, int N) {
         double[] returnValue = new double[N];
@@ -363,7 +372,9 @@ public class DoubleArrayStat extends DoubleArrayMath {
 
     /** Return a new array of exponentially distributed doubles with parameter
      *  lambda. The number of elements to allocate is given by N.
-     *  Note lambda may not be 0!
+     *  @param lambda The lambda, which may not by 0.0.
+     *  @param N The number of elements to allocate.
+     *  @return The array of exponential random variables.
      */
     public static final double[] randomExponential(double lambda, int N) {
         double[] returnValue = new double[N];
@@ -389,6 +400,10 @@ public class DoubleArrayStat extends DoubleArrayMath {
      *  mean and standard deviation. The number of elements to allocate
      *  is given by N.
      *  This algorithm is from [1].
+     *  @param mean The mean of the new array.
+     *  @param standardDeviation The standard deviation of the new array.
+     *  @param N The number of elements to allocate.
+     *  @return The array of random Gaussian variables.
      */
     public static final double[] randomGaussian(double mean,
             double standardDeviation, int N) {
@@ -400,7 +415,7 @@ public class DoubleArrayStat extends DoubleArrayMath {
 
         for (int i = 0; i < N; i++) {
             returnValue[i] = mean
-                + (_random.nextGaussian() * standardDeviation);
+                    + (_random.nextGaussian() * standardDeviation);
         }
 
         return returnValue;
@@ -409,6 +424,9 @@ public class DoubleArrayStat extends DoubleArrayMath {
     /** Return a new array of Poisson random variables (as doubles) with
      *  a given mean. The number of elements to allocate is given by N.
      *  This algorithm is from [1].
+     *  @param mean The mean of the new array.
+     *  @param N The number of elements to allocate.
+     *  @return The array of random Poisson variables.
      */
     public static final double[] randomPoisson(double mean, int N) {
         double[] returnValue = new double[N];
@@ -489,7 +507,7 @@ public class DoubleArrayStat extends DoubleArrayMath {
             if ((p[i] < 0.0) || (q[i] < 0.0)) {
                 throw new IllegalArgumentException(
                         "ptolemy.math.DoubleArrayStat.relativeEntropy() : "
-                        + "Negative probability encountered.");
+                                + "Negative probability encountered.");
             } else if (p[i] == 0.0) {
                 // do nothing
             } else if (q[i] == 0.0) {
@@ -504,6 +522,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
 
     /** Return the standard deviation of the elements in the array.
      *  Simply return standardDeviation(array, false).
+     *  @param array The input array.
+     *  @return The standard deviation.
      */
     public static double standardDeviation(double[] array) {
         return Math.sqrt(variance(array, false));
@@ -534,6 +554,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
 
     /** Return the sum of all of the elements in the array.
      *  Return 0.0 of the length of the array is 0.
+     *  @param array An array of doubles.
+     *  @return The sum of all of the elements in the array.
      */
     public static final double sumOfElements(double[] array) {
         double sum = 0.0;
@@ -548,6 +570,10 @@ public class DoubleArrayStat extends DoubleArrayMath {
     /** Return the variance of the elements in the array, assuming
      *  sufficient statistics.
      *  Simply return variance(array, false).
+     *  Throw a runtime exception if the array is of length 0, or if the
+     *  sample variance is taken on an array of length less than 2.
+     *  @param array An array of doubles.
+     *  @return The variance of the elements in the array.
      */
     public static double variance(double[] array) {
         return variance(array, false);
@@ -569,8 +595,11 @@ public class DoubleArrayStat extends DoubleArrayMath {
      *  </pre>
      *  <p>
      *
-     *  Throw an exception if the array is of length 0, or if the
+     *  Throw a runtime exception if the array is of length 0, or if the
      *  sample variance is taken on an array of length less than 2.
+     *  @param array An array of doubles.
+     *  @param sample True if the sample standard deviation is desired.
+     *  @return The variance of the elements in the array.
      */
     public static double variance(double[] array, boolean sample) {
         int length = _nonZeroLength(array, "DoubleArrayStat.variance");
@@ -578,8 +607,8 @@ public class DoubleArrayStat extends DoubleArrayMath {
         if (sample && (array.length < 2)) {
             throw new IllegalArgumentException(
                     "ptolemy.math.DoubleArrayStat.variance() : "
-                    + "sample variance and standard deviation of an array "
-                    + "of length less than 2 are not defined.");
+                            + "sample variance and standard deviation of an array "
+                            + "of length less than 2 are not defined.");
         }
 
         double ex2 = 0.0;

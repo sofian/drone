@@ -1,49 +1,48 @@
 /* A library for mathematical operations on arrays of longs.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
 
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.math;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// LongArrayMath
 
 /**
-   This class provides a library for mathematical operations on long arrays.
-   Unless explicitly noted otherwise, all array arguments are assumed to be
-   non-null. If a null array is passed to a method, a NullPointerException
-   will be thrown in the method or called methods.
+ This class provides a library for mathematical operations on long arrays.
+ Unless explicitly noted otherwise, all array arguments are assumed to be
+ non-null. If a null array is passed to a method, a NullPointerException
+ will be thrown in the method or called methods.
 
-   @author Albert Chen, William Wu, Edward A. Lee, Jeff Tsay
-   @version $Id: LongArrayMath.java,v 1.43 2005/04/25 22:42:07 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Yellow (ctsay)
-   @Pt.AcceptedRating Yellow (ctsay)
-*/
+ @author Albert Chen, William Wu, Edward A. Lee, Jeff Tsay
+ @version $Id: LongArrayMath.java,v 1.46 2006/03/29 00:01:22 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Yellow (ctsay)
+ @Pt.AcceptedRating Yellow (ctsay)
+ */
 public class LongArrayMath {
     // Protected constructor prevents construction of this class.
     protected LongArrayMath() {
@@ -196,8 +195,8 @@ public class LongArrayMath {
      *  (op.operate(array[i])).
      *  If the length of the array is 0, return a new array of length 0.
      */
-    public static final long[] applyUnaryOperation(
-            final LongUnaryOperation op, final long[] array) {
+    public static final long[] applyUnaryOperation(final LongUnaryOperation op,
+            final long[] array) {
         int length = array.length;
         long[] returnValue = new long[length];
 
@@ -517,8 +516,8 @@ public class LongArrayMath {
 
         System.arraycopy(array, 0, returnValue, 0, halfLengthCeil);
 
-        System.arraycopy(array, halfLengthFloor, returnValue,
-                newLength - halfLengthCeil, halfLengthCeil);
+        System.arraycopy(array, halfLengthFloor, returnValue, newLength
+                - halfLengthCeil, halfLengthCeil);
 
         return returnValue;
     }
@@ -558,7 +557,8 @@ public class LongArrayMath {
 
         if ((startIdx >= array.length) && (copySize > 0)) {
             throw new IllegalArgumentException("resize():  the start index '"
-                    + startIdx + "' is greather than equal to the array length '"
+                    + startIdx
+                    + "' is greather than equal to the array length '"
                     + array.length + "' and the number of items to be copied '"
                     + copySize + "' is greater than zero.");
         }
@@ -687,7 +687,7 @@ public class LongArrayMath {
         Complex[] returnValue = new Complex[length];
 
         for (int i = 0; i < length; i++) {
-            returnValue[i] = new Complex((double) array[i], 0.0);
+            returnValue[i] = new Complex(array[i], 0.0);
         }
 
         return returnValue;
@@ -705,7 +705,7 @@ public class LongArrayMath {
         double[] returnValue = new double[length];
 
         for (int i = 0; i < length; i++) {
-            returnValue[i] = (double) array[i];
+            returnValue[i] = array[i];
         }
 
         return returnValue;
@@ -723,7 +723,7 @@ public class LongArrayMath {
         float[] returnValue = new float[length];
 
         for (int i = 0; i < length; i++) {
-            returnValue[i] = (float) array[i];
+            returnValue[i] = array[i];
         }
 
         return returnValue;

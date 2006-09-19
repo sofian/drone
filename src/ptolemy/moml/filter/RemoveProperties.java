@@ -1,30 +1,30 @@
 /* Filter for removing properties.
 
-Copyright (c) 2004-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2004-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.moml.filter;
 
 import java.util.HashMap;
@@ -34,58 +34,57 @@ import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLFilter;
 import ptolemy.moml.MoMLParser;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// RemoveProperties
 
 /** When this class is registered with the MoMLParser.setMoMLFilter()
-    method, it will cause MoMLParser to filter out the properties included
-    in this classes.
+ method, it will cause MoMLParser to filter out the properties included
+ in this classes.
 
-    <p>For example, after Ptolemy II 5.0, the <i>stopTime</i> parameter has a
-    default value as Infinity instead of MaxDouble (a macro with value of
-    Double.MAX_VALUE). What is more, stopTime is not supposed to be stored in
-    the MoML file. Therefore, this filter filters out those stopTime parameters
-    with the old default value, MaxDouble. The new default value for the
-    stopTime parameter will be created automatically by the Java classes and
-    the parameter will not be exported into the MoML file.
-    <p>
-    A typical usage looks like the following.
-    <pre>
-    // stopTime after Ptolemy II 5.0
-    // The stopTime used to have a default value as the Double.MAX_VALUE.
-    // Now the default value is Infinity.
-    HashMap removePropertyStopTime = new HashMap();
+ <p>For example, after Ptolemy II 5.0, the <i>stopTime</i> parameter has a
+ default value as Infinity instead of MaxDouble (a macro with value of
+ Double.MAX_VALUE). What is more, stopTime is not supposed to be stored in
+ the MoML file. Therefore, this filter filters out those stopTime parameters
+ with the old default value, MaxDouble. The new default value for the
+ stopTime parameter will be created automatically by the Java classes and
+ the parameter will not be exported into the MoML file.
+ <p>
+ A typical usage looks like the following.
+ <pre>
+ // stopTime after Ptolemy II 5.0
+ // The stopTime used to have a default value as the Double.MAX_VALUE.
+ // Now the default value is Infinity.
+ HashMap removePropertyStopTime = new HashMap();
 
-    // Key = attribute name, Value = attribute value
-    removePropertyStopTime.put("1.7976931348623E308", null);
-    removePropertyStopTime.put("1.797693134862316E308", null);
-    removePropertyStopTime.put("MaxDouble", null);
-    removePropertyStopTime.put(""+Double.MAX_VALUE, null);
+ // Key = attribute name, Value = attribute value
+ removePropertyStopTime.put("1.7976931348623E308", null);
+ removePropertyStopTime.put("1.797693134862316E308", null);
+ removePropertyStopTime.put("MaxDouble", null);
+ removePropertyStopTime.put(""+Double.MAX_VALUE, null);
 
-    removePropertyStopTime.put("ptolemy.data.expr.Parameter", null);
-    </pre>
-    The removePropertyStopTime HashMap stores every bit of details of the
-    stopTime parameter to be removed including the class and value. Only when
-    all details match, will this parameter be removed. This prevents user
-    configuration of the stopTime parameter to be filtered.
+ removePropertyStopTime.put("ptolemy.data.expr.Parameter", null);
+ </pre>
+ The removePropertyStopTime HashMap stores every bit of details of the
+ stopTime parameter to be removed including the class and value. Only when
+ all details match, will this parameter be removed. This prevents user
+ configuration of the stopTime parameter to be filtered.
 
-    <pre>
-    _propertiesToBeRemoved.put("stopTime", removePropertyStopTime);
-    </pre>
-    The _propertiesToBeRemoved HashMap contains all the properties
-    such as the stopTime parameter that will be removed.
+ <pre>
+ _propertiesToBeRemoved.put("stopTime", removePropertyStopTime);
+ </pre>
+ The _propertiesToBeRemoved HashMap contains all the properties
+ such as the stopTime parameter that will be removed.
 
-    <p> Note that this filter has a limitation. This filter assumes that the
-    property to be removed always has three attributes, name, class, and
-    value, and they are always in this order.
+ <p> Note that this filter has a limitation. This filter assumes that the
+ property to be removed always has three attributes, name, class, and
+ value, and they are always in this order.
 
-    @author Haiyang Zheng
-    @version $Id: RemoveProperties.java,v 1.9 2005/04/29 20:05:29 cxh Exp $
-    @since Ptolemy II 4.1
-    @Pt.ProposedRating Red (hyzheng)
-    @Pt.AcceptedRating Red (hyzheng)
-*/
+ @author Haiyang Zheng
+ @version $Id: RemoveProperties.java,v 1.14 2006/08/21 03:04:09 cxh Exp $
+ @since Ptolemy II 4.1
+ @Pt.ProposedRating Red (hyzheng)
+ @Pt.AcceptedRating Red (hyzheng)
+ */
 public class RemoveProperties implements MoMLFilter {
     /** Return the old attribute value for properties that are not registered
      *  to be removed. Otherwise, return null to remove the property.
@@ -97,6 +96,8 @@ public class RemoveProperties implements MoMLFilter {
      */
     public String filterAttributeValue(NamedObj container, String element,
             String attributeName, String attributeValue) {
+        //System.out.println("RemoveProperties.filterAttributeValue: " + container + "\t"
+        //   +  attributeName + "\t" + attributeValue);
         if (attributeValue == null) {
             // attributeValue == null is fairly common, so we check for
             // that first.
@@ -107,7 +108,8 @@ public class RemoveProperties implements MoMLFilter {
             if (_propertiesToBeRemoved.containsKey(attributeValue)
                     && (element != null) && element.equals("property")) {
                 _foundPropertyToBeRemoved = true;
-                _propertyMap = (HashMap) _propertiesToBeRemoved.get(attributeValue);
+                _propertyMap = (HashMap) _propertiesToBeRemoved
+                        .get(attributeValue);
             } else {
                 _foundPropertyToBeRemoved = false;
             }
@@ -145,6 +147,7 @@ public class RemoveProperties implements MoMLFilter {
     /** Reset private variables.
      *  @param container The object created by this element.
      *  @param elementName The element name.
+     *  @exception Exception Not thrown in this base class
      */
     public void filterEndElement(NamedObj container, String elementName)
             throws Exception {
@@ -159,13 +162,14 @@ public class RemoveProperties implements MoMLFilter {
         StringBuffer results = new StringBuffer(getClass().getName()
                 + ": Remove the properties listed below:");
         Iterator propertiesToBeRemoved = _propertiesToBeRemoved.keySet()
-            .iterator();
+                .iterator();
 
         while (propertiesToBeRemoved.hasNext()) {
             String propertyToBeRemoved = (String) propertiesToBeRemoved.next();
             results.append("\t" + propertyToBeRemoved + "\n");
 
-            HashMap propertyMap = (HashMap) _propertiesToBeRemoved.get(propertyToBeRemoved);
+            HashMap propertyMap = (HashMap) _propertiesToBeRemoved
+                    .get(propertyToBeRemoved);
             Iterator attributes = propertyMap.keySet().iterator();
 
             while (attributes.hasNext()) {
@@ -185,13 +189,13 @@ public class RemoveProperties implements MoMLFilter {
     private static HashMap _propertiesToBeRemoved;
 
     // Flag indicating whether a property to be removed is truly found.
-    private static boolean _propertyToBeRemovedConfirmed = false;
+    private boolean _propertyToBeRemovedConfirmed = false;
 
     // Flag indicating whether a potential property to be removed is found.
-    private static boolean _foundPropertyToBeRemoved = false;
+    private boolean _foundPropertyToBeRemoved = false;
 
     // Cache of map from the property to be removed to its detailed information.
-    private static HashMap _propertyMap;
+    private HashMap _propertyMap;
 
     static {
         ///////////////////////////////////////////////////////////
@@ -225,13 +229,14 @@ public class RemoveProperties implements MoMLFilter {
         HashMap removePropertyDirectorClass = new HashMap();
 
         // Key = attribute name, Value = attribute value
-        removePropertyDirectorClass.put("ptolemy.domains.fsm.kernel.HSDirector",
-                null);
+        removePropertyDirectorClass.put(
+                "ptolemy.domains.fsm.kernel.HSDirector", null);
         removePropertyDirectorClass.put("ptolemy.kernel.util.StringAttribute",
                 null);
         removePropertyDirectorClass.put("ptolemy.data.expr.StringParameter",
                 null);
 
-        _propertiesToBeRemoved.put("directorClass", removePropertyDirectorClass);
+        _propertiesToBeRemoved
+                .put("directorClass", removePropertyDirectorClass);
     }
 }

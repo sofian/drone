@@ -1,30 +1,30 @@
 /* A relation supporting clustered graphs.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2005 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel;
 
 import java.util.Collections;
@@ -40,40 +40,39 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ComponentRelation
 
 /**
-   This class defines a relation supporting hierarchy (clustered graphs).
-   Specifically, a method is added for defining a container and for
-   performing deep traversals of
-   a graph. Most importantly, however, instances of this class refuse to link
-   to ports that are not instances of ComponentPort.  Thus, this class
-   ensures that ComponentPort instances are only connected to other
-   ComponentPort instances.
-   <p>
-   Derived classes may wish to further constrain linked ports to a subclass
-   of ComponentPort, or to disallow links under other circumstances,
-   for example if the relation cannot support any more links.
-   Such derived classes should override the protected method _checkPort()
-   to throw an exception.
-   <p>
-   To link a ComponentPort to a ComponentRelation, use the link() or
-   liberalLink() method in the ComponentPort class.  To remove a link,
-   use the unlink() method.
-   <p>
-   The container for instances of this class can only be instances of
-   ComponentEntity.  Derived classes may wish to further constrain the
-   container to subclasses of ComponentEntity.  To do this, they should
-   override the protected _checkContainer() method.
+ This class defines a relation supporting hierarchy (clustered graphs).
+ Specifically, a method is added for defining a container and for
+ performing deep traversals of
+ a graph. Most importantly, however, instances of this class refuse to link
+ to ports that are not instances of ComponentPort.  Thus, this class
+ ensures that ComponentPort instances are only connected to other
+ ComponentPort instances.
+ <p>
+ Derived classes may wish to further constrain linked ports to a subclass
+ of ComponentPort, or to disallow links under other circumstances,
+ for example if the relation cannot support any more links.
+ Such derived classes should override the protected method _checkPort()
+ to throw an exception.
+ <p>
+ To link a ComponentPort to a ComponentRelation, use the link() or
+ liberalLink() method in the ComponentPort class.  To remove a link,
+ use the unlink() method.
+ <p>
+ The container for instances of this class can only be instances of
+ ComponentEntity.  Derived classes may wish to further constrain the
+ container to subclasses of ComponentEntity.  To do this, they should
+ override the protected _checkContainer() method.
 
-   @author Edward A. Lee
-   @version $Id: ComponentRelation.java,v 1.86 2005/04/29 20:03:28 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (johnr)
-*/
+ @author Edward A. Lee
+ @version $Id: ComponentRelation.java,v 1.89 2005/10/24 19:09:11 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (johnr)
+ */
 public class ComponentRelation extends Relation {
     /** Construct a relation in the default workspace with an empty string
      *  as its name. Add the relation to the directory of the workspace.
@@ -126,7 +125,8 @@ public class ComponentRelation extends Relation {
      *  @return A new ComponentRelation.
      */
     public Object clone(Workspace workspace) throws CloneNotSupportedException {
-        ComponentRelation newObject = (ComponentRelation) super.clone(workspace);
+        ComponentRelation newObject = (ComponentRelation) super
+                .clone(workspace);
         newObject._container = null;
         return newObject;
     }
@@ -438,8 +438,6 @@ public class ComponentRelation extends Relation {
             } else {
                 // We have successfully set a new container for this
                 // object. Mark it modified to ensure MoML export.
-                // FIXME: Inappropriate?
-                // setOverrideDepth(0);
                 // Transfer any queued change requests to the
                 // new container.  There could be queued change
                 // requests if this component is deferring change
@@ -471,8 +469,8 @@ public class ComponentRelation extends Relation {
      *  @exception NameDuplicationException If there is already a relation
      *   with the same name in the container.
      */
-    public void setName(String name)
-            throws IllegalActionException, NameDuplicationException {
+    public void setName(String name) throws IllegalActionException,
+            NameDuplicationException {
         if (name == null) {
             name = "";
         }
@@ -508,18 +506,21 @@ public class ComponentRelation extends Relation {
             // Next, remove the links that are inside links of ports.
             _workspace.getWriteAccess();
 
-            int size = numLinks();
-            ComponentPort[] portArray = new ComponentPort[size];
-            int i = 0;
-            Enumeration ports = linkedPorts();
+            LinkedList ports = new LinkedList();
+            Enumeration links = _linkList.getContainers();
 
-            while (ports.hasMoreElements()) {
-                ComponentPort p = (ComponentPort) ports.nextElement();
-                portArray[i++] = p;
+            while (links.hasMoreElements()) {
+                Object link = links.nextElement();
+
+                if (link instanceof ComponentPort) {
+                    ports.add(link);
+                }
             }
 
-            for (i = 0; i < size; i++) {
-                portArray[i].unlinkInside(this);
+            Iterator portsIterator = ports.iterator();
+
+            while (portsIterator.hasNext()) {
+                ((ComponentPort) (portsIterator.next())).unlinkInside(this);
             }
         } finally {
             _workspace.doneWriting();
@@ -552,6 +553,25 @@ public class ComponentRelation extends Relation {
         }
     }
 
+    /** Throw an exception if the specified relation is not an instance
+     *  of ComponentRelation.
+     *  @param relation The relation to link to.
+     *  @param symmetric If true, the call _checkRelation on the specified
+     *   relation with this as an argument.
+     *  @exception IllegalActionException If this port has no container,
+     *   or if this port is not an acceptable port for the specified
+     *   relation.
+     */
+    protected void _checkRelation(Relation relation, boolean symmetric)
+            throws IllegalActionException {
+        if (!(relation instanceof ComponentRelation)) {
+            throw new IllegalActionException(this, relation,
+                    "ComponentRelation can only link to a ComponentRelation.");
+        }
+
+        super._checkRelation(relation, symmetric);
+    }
+
     /** Propagate existence of this object to the
      *  specified object. This overrides the base class
      *  to set the container.
@@ -565,7 +585,7 @@ public class ComponentRelation extends Relation {
             throws IllegalActionException {
         try {
             ComponentRelation newObject = (ComponentRelation) super
-                ._propagateExistence(container);
+                    ._propagateExistence(container);
             newObject.setContainer((CompositeEntity) container);
             return newObject;
         } catch (NameDuplicationException e) {
@@ -583,5 +603,6 @@ public class ComponentRelation extends Relation {
     // construct it.
     // 'transient' means that the variable will not be serialized.
     private transient List _deepLinkedPorts;
+
     private transient long _deepLinkedPortsVersion = -1;
 }

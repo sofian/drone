@@ -1,55 +1,58 @@
 /* Filter actors for port name changes.
 
-Copyright (c) 2002-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2002-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.moml.filter;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
+import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLFilter;
 import ptolemy.moml.MoMLParser;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// FilterBackwardCompatibility
 
 /** When this class is registered with the MoMLParser.setMoMLFilter()
-    method, it will cause MoMLParser to filter so that models from
-    earlier releases will run in the current release.
+ method, it will cause MoMLParser to filter so that models from
+ earlier releases will run in the current release.
 
-    <p>This class will filter for actors that have had port name changes
+ <p>This class will filter for actors that have had port name changes.
 
-    @author Christopher Hylands, Edward A. Lee
-    @version $Id: PortNameChanges.java,v 1.30 2005/04/29 20:05:29 cxh Exp $
-    @since Ptolemy II 2.0
-    @Pt.ProposedRating Red (cxh)
-    @Pt.AcceptedRating Red (cxh)
-*/
+ <p>NOTE: This class and ParameterNameChange might conflict if
+ a port and parameter have the same name.  
+
+ @author Christopher Hylands, Edward A. Lee
+ @version $Id: PortNameChanges.java,v 1.39 2006/08/21 03:04:09 cxh Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class PortNameChanges implements MoMLFilter {
     /**  If the attributeName is "class" and attributeValue names a
      *   class that has had its port names changed between releases,
@@ -107,12 +110,14 @@ public class PortNameChanges implements MoMLFilter {
                 _currentlyProcessingActorWithPortNameChanges = true;
                 _doneProcessingActorWithPortNameChanges = false;
                 _currentActorFullName = container.getFullName() + "."
-                    + _lastNameSeen;
-                _portMap = (HashMap) _actorsWithPortNameChanges.get(attributeValue);
+                        + _lastNameSeen;
+                _portMap = (HashMap) _actorsWithPortNameChanges
+                        .get(attributeValue);
             } else if (_currentlyProcessingActorWithPortNameChanges
                     && (container != null)
                     && !container.getFullName().equals(_currentActorFullName)
-                    && !container.getFullName().startsWith(_currentActorFullName)) {
+                    && !container.getFullName().startsWith(
+                            _currentActorFullName)) {
                 // We found another class in a different container
                 // while handling a class with port name changes, so
                 // set _doneProcessingActorWithPortNameChanges so we
@@ -122,12 +127,13 @@ public class PortNameChanges implements MoMLFilter {
             }
         } else if (_doneProcessingActorWithPortNameChanges
                 && attributeName.equals("port")
-                && _containerPortMap.containsKey(container.getFullName()
-                        + "." + attributeValue)) {
+                && _containerPortMap.containsKey(container.getFullName() + "."
+                        + attributeValue)) {
             // We are processing actors that have port names.
             // Now map the old port to the new port.
             String newPort = (String) _containerPortMap.get(container
-                    .getFullName() + "." + attributeValue);
+                    .getFullName()
+                    + "." + attributeValue);
 
             // Extreme chaos here because sometimes
             // container.getFullName() will be ".transform_2.transform" and
@@ -139,14 +145,47 @@ public class PortNameChanges implements MoMLFilter {
 
             MoMLParser.setModified(true);
             return newPort;
+            // The following else if() can be deleted if it causes trouble. 
+            // The reason to add the code is that a port may not be contained in 
+            // _containerPortMap if it is encountered the first time here --- Gang
+        } else if (_doneProcessingActorWithPortNameChanges
+                && attributeName.equals("port")) {
+            int lastIndex = attributeValue.lastIndexOf(".");
+            NamedObj portContainer = null;
+            String portContainerName = null;
+            String portName = null;
+            if (lastIndex > 0) {
+                portContainerName = attributeValue.substring(0, lastIndex);
+                portContainer = ((CompositeEntity) container)
+                        .getEntity(portContainerName);
+                portName = attributeValue.substring(lastIndex + 1);
+            } else {
+                portContainer = container;
+                portName = attributeValue;
+            }
+            if (portContainer != null) {
+                String className = portContainer.getClassName();
+                if (_actorsWithPortNameChanges.containsKey(className)) {
+                    HashMap portMap = (HashMap) _actorsWithPortNameChanges
+                            .get(className);
+                    if (portMap.containsKey(portName)) {
+                        String newPort = (String) portMap.get(portName);
+                        if (lastIndex > 0) {
+                            newPort = portContainerName + "." + newPort;
+                        }
+                        return newPort;
+                    }
+                }
+            }
         }
 
         return attributeValue;
     }
 
-    /** Do nothing.
+    /** In this class, do nothing.
      *  @param container The object created by this element.
      *  @param elementName The element name.
+     *  @exception Exception Not thrown in this base class
      */
     public void filterEndElement(NamedObj container, String elementName)
             throws Exception {
@@ -189,17 +228,17 @@ public class PortNameChanges implements MoMLFilter {
     private static HashMap _containerPortMap;
 
     // The the full name of the actor we are currently processing
-    private static String _currentActorFullName;
+    private String _currentActorFullName;
 
     // Set to true if we are currently processing an actor with port name
     // changes, set to false when we are done.
-    private static boolean _currentlyProcessingActorWithPortNameChanges = false;
+    private boolean _currentlyProcessingActorWithPortNameChanges = false;
 
     // Set to true if we are done processing an actor.
-    private static boolean _doneProcessingActorWithPortNameChanges = false;
+    private boolean _doneProcessingActorWithPortNameChanges = false;
 
     // Last "name" value seen, for use if we see a "class".
-    private static String _lastNameSeen;
+    private String _lastNameSeen;
 
     // Cache of map from old port names to new port names for
     // the actor we are working on.
@@ -215,11 +254,13 @@ public class PortNameChanges implements MoMLFilter {
         HashMap cartesianPorts = new HashMap();
         cartesianPorts.put("real", "x");
         cartesianPorts.put("imag", "y");
-        _actorsWithPortNameChanges.put("ptolemy.actor.lib.conversions.ComplexToCartesian",
+        _actorsWithPortNameChanges.put(
+                "ptolemy.actor.lib.conversions.ComplexToCartesian",
                 cartesianPorts);
 
         // CartesianToComplex has the same ports as ComplexToCartesian.
-        _actorsWithPortNameChanges.put("ptolemy.actor.lib.conversions.CartesianToComplex",
+        _actorsWithPortNameChanges.put(
+                "ptolemy.actor.lib.conversions.CartesianToComplex",
                 cartesianPorts);
 
         // Sleep
@@ -239,7 +280,8 @@ public class PortNameChanges implements MoMLFilter {
         convolutionalCoderPorts.put("initial", "initialState");
         convolutionalCoderPorts.put("uncodeBlockSize", "uncodedRate");
 
-        _actorsWithPortNameChanges.put("ptolemy.actor.lib.comm.ConvolutionalCoder",
+        _actorsWithPortNameChanges.put(
+                "ptolemy.actor.lib.comm.ConvolutionalCoder",
                 convolutionalCoderPorts);
 
         // ViterbiDecoder changed between 3.0.2 and 4.0
@@ -253,8 +295,9 @@ public class PortNameChanges implements MoMLFilter {
                 viterbiDecoderPorts);
 
         // Server: after 4.1, the newServiceTime is renamed to serviceTime.
+        // Regrettably, after 5.1, it reverted.
         HashMap serverPorts = new HashMap();
-        serverPorts.put("serviceTime", "newServiceTime");
+        serverPorts.put("newServiceTime", "serviceTime");
         _actorsWithPortNameChanges.put("ptolemy.domains.de.lib.Server",
                 serverPorts);
     }

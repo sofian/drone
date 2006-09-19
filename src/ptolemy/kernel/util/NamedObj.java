@@ -1,30 +1,30 @@
 /* Base class for objects with a name and a container.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel.util;
 
 import java.io.IOException;
@@ -47,89 +47,88 @@ import java.util.Set;
 
 import ptolemy.util.StringUtilities;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// NamedObj
 
 /**
-   This is a base class for almost all Ptolemy II objects.
-   <p>
-   This class supports a naming scheme, change requests, a persistent
-   file format (MoML), a mutual exclusion mechanism for models (the
-   workspace), an error handler, and a hierarchical class mechanism
-   with inheritance.
-   <p>
-   An instance of this class can also be parameterized by attaching
-   instances of the Attribute class.
-   Instances of Attribute can be attached by calling their setContainer()
-   method and passing this object as an argument. Those instances will
-   then be reported by the {@link #getAttribute(String)},
-   {@link #getAttribute(String, Class)}, {@link #attributeList()}
-   and {@link #attributeList(Class)} methods.
-   Classes derived from NamedObj may constrain attributes to be a
-   subclass of Attribute.  To do that, they should override the protected
-   {@link #_addAttribute(Attribute)} method to throw an exception if
-   the object provided is not of the right class.
-   <p>
-   An instance of this class has a name.
-   A name is an arbitrary string with no periods.  If no
-   name is provided, the name is taken to be an empty string (not a null
-   reference). An instance also has a full name, which is a concatenation
-   of the container's full name and the simple name, separated by a
-   period. If there is no container, then the full name begins with a
-   period. The full name is used for error reporting throughout Ptolemy
-   II.
-   <p>
-   Instances of this class are associated with a workspace, specified as
-   a constructor argument.  The reference to the workspace is immutable.
-   It cannot be changed during the lifetime of this object.  It is used for
-   synchronization of methods that depend on or modify the state of
-   objects within it. If no workspace is specified, then the default
-   workspace is used.  Note that the workspace should not be confused
-   with the container.  The workspace never serves as a container.
-   <p>
-   In this base class, the container is null by default, and no
-   method is provided to change it. Derived classes that support
-   hierarchy provide one or more methods that set the container.
-   By convention, if the container is set,
-   then the instance should be removed from the workspace directory, if
-   it is present.  The workspace directory is expected to list only
-   top-level objects in a hierarchy.  The NamedObj can still use the
-   workspace for synchronization.  Any object contained by another uses
-   the workspace of its container as its own workspace by default.
-   <p>
-   This class supports <i>change requests</i> or <i>mutations</i>,
-   which are changes to a model that are performed in a disciplined
-   fashion.  In particular, a mutation can be requested via the
-   {@link #requestChange(ChangeRequest)} method. By default, when
-   a change is requested, the change is executed immediately.
-   However, by calling {@link #setDeferringChangeRequests(boolean)},
-   you can ensure that change requests are queued to be executed
-   only when it is safe to execute them.
-   <p>
-   This class supports the notion of a <i>model error</i>, which is
-   an exception that is handled by a registered model error handler, or
-   passed up the container hierarchy if there is no registered model
-   error handler.  This mechanism complements the exception mechanism in
-   Java. Instead of unraveling the calling stack to handle exceptions,
-   this mechanism passes control up the Ptolemy II hierarchy.
-   <p>
-   Derived classes should override the _description() method to
-   append new fields if there is new information that should be included
-   in the description.
+ This is a base class for almost all Ptolemy II objects.
+ <p>
+ This class supports a naming scheme, change requests, a persistent
+ file format (MoML), a mutual exclusion mechanism for models (the
+ workspace), an error handler, and a hierarchical class mechanism
+ with inheritance.
+ <p>
+ An instance of this class can also be parameterized by attaching
+ instances of the Attribute class.
+ Instances of Attribute can be attached by calling their setContainer()
+ method and passing this object as an argument. Those instances will
+ then be reported by the {@link #getAttribute(String)},
+ {@link #getAttribute(String, Class)}, {@link #attributeList()}
+ and {@link #attributeList(Class)} methods.
+ Classes derived from NamedObj may constrain attributes to be a
+ subclass of Attribute.  To do that, they should override the protected
+ {@link #_addAttribute(Attribute)} method to throw an exception if
+ the object provided is not of the right class.
+ <p>
+ An instance of this class has a name.
+ A name is an arbitrary string with no periods.  If no
+ name is provided, the name is taken to be an empty string (not a null
+ reference). An instance also has a full name, which is a concatenation
+ of the container's full name and the simple name, separated by a
+ period. If there is no container, then the full name begins with a
+ period. The full name is used for error reporting throughout Ptolemy
+ II.
+ <p>
+ Instances of this class are associated with a workspace, specified as
+ a constructor argument.  The reference to the workspace is immutable.
+ It cannot be changed during the lifetime of this object.  It is used for
+ synchronization of methods that depend on or modify the state of
+ objects within it. If no workspace is specified, then the default
+ workspace is used.  Note that the workspace should not be confused
+ with the container.  The workspace never serves as a container.
+ <p>
+ In this base class, the container is null by default, and no
+ method is provided to change it. Derived classes that support
+ hierarchy provide one or more methods that set the container.
+ By convention, if the container is set,
+ then the instance should be removed from the workspace directory, if
+ it is present.  The workspace directory is expected to list only
+ top-level objects in a hierarchy.  The NamedObj can still use the
+ workspace for synchronization.  Any object contained by another uses
+ the workspace of its container as its own workspace by default.
+ <p>
+ This class supports <i>change requests</i> or <i>mutations</i>,
+ which are changes to a model that are performed in a disciplined
+ fashion.  In particular, a mutation can be requested via the
+ {@link #requestChange(ChangeRequest)} method. By default, when
+ a change is requested, the change is executed immediately.
+ However, by calling {@link #setDeferringChangeRequests(boolean)},
+ you can ensure that change requests are queued to be executed
+ only when it is safe to execute them.
+ <p>
+ This class supports the notion of a <i>model error</i>, which is
+ an exception that is handled by a registered model error handler, or
+ passed up the container hierarchy if there is no registered model
+ error handler.  This mechanism complements the exception mechanism in
+ Java. Instead of unraveling the calling stack to handle exceptions,
+ this mechanism passes control up the Ptolemy II hierarchy.
+ <p>
+ Derived classes should override the _description() method to
+ append new fields if there is new information that should be included
+ in the description.
 
-   @author Mudit Goel, Edward A. Lee, Neil Smyth
-   @version $Id: NamedObj.java,v 1.299 2005/04/29 20:05:09 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (cxh)
+ @author Mudit Goel, Edward A. Lee, Neil Smyth
+ @version $Id: NamedObj.java,v 1.319 2006/09/16 22:41:43 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (cxh)
 
-   @see Attribute
-   @see Workspace
-*/
+ @see Attribute
+ @see Workspace
+ */
 public class NamedObj implements Changeable, Cloneable, Debuggable,
-                                 DebugListener, Derivable, MoMLExportable, ModelErrorHandler, Moveable,
-                                 Serializable {
+        DebugListener, Derivable, MoMLExportable, ModelErrorHandler, Moveable,
+        Serializable {
     // Note that Nameable extends ModelErrorHandler, so this class
     // need not declare that it directly implements ModelErrorHandler.
 
@@ -201,6 +200,23 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      */
     public NamedObj(Workspace workspace, String name)
             throws IllegalActionException {
+        this(workspace, name, true);
+    }
+
+    /** Construct an object in the given workspace with the given name.
+     *  If the workspace argument is null, use the default workspace.
+     *  The object is added to the list of objects in the workspace.
+     *  If the name argument is null, then the name is set to the
+     *  empty string. Increment the version number of the workspace.
+     *  @param workspace Object for synchronization and version tracking
+     *  @param name Name of this object.
+     *  @param incrementWorkspaceVersion False to not add this to the workspace 
+     *   or do anything else that might change the workspace version number.
+     *  @exception IllegalActionException If the name has a period.
+     */
+    protected NamedObj(
+            Workspace workspace, String name, boolean incrementWorkspaceVersion)
+            throws IllegalActionException {
         if (workspace == null) {
             workspace = _DEFAULT_WORKSPACE;
         }
@@ -213,20 +229,17 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         // because the only side effect is adding to the directory,
         // and methods for adding and reading from the directory are
         // synchronized.
-        try {
-            workspace.add(this);
-        } catch (IllegalActionException ex) {
-            // This exception should not be thrown.
-            throw new InternalErrorException(null, ex,
-                    "Internal error in NamedObj constructor!");
-        }
-
-        try {
-            setName(name);
-        } catch (NameDuplicationException ex) {
-            // This exception should not be thrown.
-            throw new InternalErrorException(null, ex,
-                    "Internal error in NamedObj constructor!");
+        if (incrementWorkspaceVersion) {
+            try {
+                workspace.add(this);
+                setName(name);
+            } catch (NameDuplicationException ex) {
+                // This exception should not be thrown.
+                throw new InternalErrorException(null, ex,
+                        "Internal error in NamedObj constructor!");
+            }
+        } else {
+            _name = name;
         }
     }
 
@@ -253,7 +266,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public void addChangeListener(ChangeListener listener) {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.addChangeListener(listener);
@@ -457,14 +470,16 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
                 while (parameters.hasNext()) {
                     Attribute parameter = (Attribute) parameters.next();
-                    Attribute newParameter = (Attribute) parameter.clone(workspace);
+                    Attribute newParameter = (Attribute) parameter
+                            .clone(workspace);
 
                     try {
                         newParameter.setContainer(newObject);
                     } catch (KernelException exception) {
                         throw new CloneNotSupportedException(
                                 "Failed to clone attribute "
-                                + parameter.getFullName() + ": " + exception);
+                                        + parameter.getFullName() + ": "
+                                        + exception);
                     }
                 }
             }
@@ -618,7 +633,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public void executeChangeRequests() {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.executeChangeRequests();
@@ -677,7 +692,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
                     if (_debugging) {
                         _debug("-- Executing change request "
-                                + "with description: " + change.getDescription());
+                                + "with description: "
+                                + change.getDescription());
                     }
 
                     change.execute();
@@ -780,8 +796,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see #isPersistent()
      *  @see #getDerivedLevel()
      */
-    public final void exportMoML(Writer output, int depth)
-            throws IOException {
+    public final void exportMoML(Writer output, int depth) throws IOException {
         exportMoML(output, depth, getName());
     }
 
@@ -807,6 +822,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  &lt;!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
      *      "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd"&gt;
      *  </pre>
+     *  In the above, "entity" may be replaced by "property" or "port"
+     *  if somehow a top-level property or port is exported.
      *  <p>
      *  The text that is written is indented according to the specified
      *  depth, with each line (including the last one)
@@ -842,13 +859,18 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         if ((depth == 0) && (getContainer() == null)) {
             // No container, and this is a top level moml element.
             // Generate header information.
-            if (_elementName.equals("entity")) {
-                output.write("<?xml version=\"1.0\" standalone=\"no\"?>\n"
-                        + "<!DOCTYPE " + _elementName + " PUBLIC "
-                        + "\"-//UC Berkeley//DTD MoML 1//EN\"\n"
-                        + "    \"http://ptolemy.eecs.berkeley.edu"
-                        + "/xml/dtd/MoML_1.dtd\">\n");
-            }
+            // NOTE: Used to generate this only if the top-level
+            // was an entity, with the following test:
+            // if (_elementName.equals("entity")) {}
+            // However, this meant that when saving icons,
+            // they would not have the header information,
+            // and when opened, would open as a text file
+            // instead of in the icon editor.
+            output.write("<?xml version=\"1.0\" standalone=\"no\"?>\n"
+                    + "<!DOCTYPE " + _elementName + " PUBLIC "
+                    + "\"-//UC Berkeley//DTD MoML 1//EN\"\n"
+                    + "    \"http://ptolemy.eecs.berkeley.edu"
+                    + "/xml/dtd/MoML_1.dtd\">\n");
         }
 
         output.write(_getIndentPrefix(depth) + "<" + _elementName + " name=\""
@@ -864,6 +886,27 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
         // Write the close of the element.
         output.write(_getIndentPrefix(depth) + "</" + _elementName + ">\n");
+    }
+
+    /** Get a MoML description of this object without any XML headers.
+     *  This differs significantly from exportMoML() only if this
+     *  object has no container, because if it has a container, then
+     *  it will not export MoML headers anyway.
+     *  @return A MoML description, or the empty string if there is none.
+     *  @see #exportMoML()
+     */
+    public final String exportMoMLPlain() {
+        try {
+            StringWriter buffer = new StringWriter();
+            // Using a depth of 1 suppresses the XML header.
+            // It also, unfortunately, indents the result.
+            // But I guess this is harmless.
+            exportMoML(buffer, 1, getName());
+            return buffer.toString();
+        } catch (IOException ex) {
+            // This should not occur.
+            throw new InternalErrorException(this, ex, null);
+        }
     }
 
     /** Get the attribute with the given name. The name may be compound,
@@ -890,7 +933,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                     // is occurring.
                     throw new InternalErrorException(this, null,
                             "This should not be happening: getAttribute() "
-                            + "was called with a null name");
+                                    + "was called with a null name");
                 }
 
                 String[] subnames = _splitName(name);
@@ -931,9 +974,10 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         if (attribute != null) {
             if (!attributeClass.isInstance(attribute)) {
                 throw new IllegalActionException(attribute,
-                        "Expected attribute of class " + attributeClass.getName()
-                        + " but got attribute of class "
-                        + attribute.getClass().getName());
+                        "Expected attribute of class "
+                                + attributeClass.getName()
+                                + " but got attribute of class "
+                                + attribute.getClass().getName());
             }
         }
 
@@ -1012,10 +1056,23 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      */
     public List getDerivedList() {
         try {
-            return _getDerivedList(null, false, false, this, 0, null, null);
+            return _getDerivedList(null, false, false, this, 0, null, null, null);
         } catch (IllegalActionException ex) {
             throw new InternalErrorException(ex);
         }
+    }
+
+    /** Return a name to present to the user. If setDisplayName(String)
+     *  has been called, then return the name specified there, and
+     *  otherwise return the name returned by getName().
+     *  @return A name to present to the user.
+     *  @see #setDisplayName(String)
+     */
+    public String getDisplayName() {
+        if (_displayName != null) {
+            return _displayName;
+        }
+        return getName();
     }
 
     /** Get the MoML element name. This defaults to "entity"
@@ -1280,7 +1337,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public boolean isDeferringChangeRequests() {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             return container.isDeferringChangeRequests();
@@ -1444,7 +1501,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see #setDerivedLevel(int)
      */
     public List propagateExistence() throws IllegalActionException {
-        return _getDerivedList(null, false, true, this, 0, null, null);
+        return _getDerivedList(null, false, true, this, 0, null, null, null);
     }
 
     /** Propagate the value (if any) held by this
@@ -1463,7 +1520,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         _override = new LinkedList();
         _override.add(new Integer(0));
 
-        return _getDerivedList(null, true, false, this, 0, _override, null);
+        return _getDerivedList(null, true, false, this, 0, _override, null, null);
     }
 
     /** If this object has a value that has been set directly,
@@ -1481,7 +1538,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         // by propagation into it, then there is no need to do
         // any propagation.
         if (_override != null) {
-            _getDerivedList(null, true, false, this, 0, _override, null);
+            _getDerivedList(null, true, false, this, 0, _override, null, null);
         }
 
         Iterator containedObjects = containedObjectsIterator();
@@ -1500,7 +1557,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public synchronized void removeChangeListener(ChangeListener listener) {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.removeChangeListener(listener);
@@ -1511,7 +1568,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
                     while (listeners.hasNext()) {
                         WeakReference reference = (WeakReference) listeners
-                            .next();
+                                .next();
 
                         if (reference.get() == listener) {
                             listeners.remove();
@@ -1565,7 +1622,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public void requestChange(ChangeRequest change) {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.requestChange(change);
@@ -1620,7 +1677,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see Changeable
      */
     public boolean setDeferringChangeRequests(boolean isDeferring) {
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             return container.setDeferringChangeRequests(isDeferring);
@@ -1685,6 +1742,14 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         _override = null;
     }
 
+    /** Set a name to present to the user.
+     *  @param name A name to present to the user.
+     *  @see #getDisplayName()
+     */
+    public void setDisplayName(String name) {
+        _displayName = name;
+    }
+
     /** Set the model error handler.
      *  @param handler The error handler, or null to specify no handler.
      *  @see #getModelErrorHandler()
@@ -1707,8 +1772,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @see #getName()
      *  @see #getName(NamedObj)
      */
-    public void setName(String name)
-            throws IllegalActionException, NameDuplicationException {
+    public void setName(String name) throws IllegalActionException,
+            NameDuplicationException {
         String oldName = "";
 
         if (_debugging) {
@@ -1741,13 +1806,6 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         if (_debugging) {
             _debug("Changed name from " + oldName + " to " + getFullName());
         }
-    }
-
-    /** Set the verbose flag to false such that only normal debugging
-     *  information is exposed.
-     */
-    public void setNormalDebugging() {
-        _verbose = false;
     }
 
     /** Set the persistence of this object. If the persistence is not
@@ -1784,13 +1842,6 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      */
     public void setSource(String source) {
         _source = source;
-    }
-
-    /** Set the verbose flag to true such that more debugging
-     *  information is shown.
-     */
-    public void setVerboseDebugging() {
-        _verbose = true;
     }
 
     /** Return an ordered list of contained objects filtered by the specified
@@ -1834,7 +1885,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
         NamedObj result = this;
 
         while (result.getContainer() != null) {
-            result = (NamedObj) result.getContainer();
+            result = result.getContainer();
         }
 
         return result;
@@ -1879,23 +1930,9 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  the deeply contained attributes.
      */
     public void validateSettables() throws IllegalActionException {
-        // This base class contains only attributes, so check those.
-        Iterator attributes = attributeList().iterator();
-
-        while (attributes.hasNext()) {
-            Attribute attribute = (Attribute) attributes.next();
-
-            if (attribute instanceof Settable) {
-                try {
-                    ((Settable) attribute).validate();
-                } catch (IllegalActionException ex) {
-                    handleModelError(this, ex);
-                }
-            }
-
-            attribute.validateSettables();
-        }
+        _validateSettables(new HashSet());
     }
+
 
     /** Get the workspace. This method never returns null, since there
      *  is always a workspace.
@@ -1966,8 +2003,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @exception IllegalActionException If the attribute is not an
      *   an instance of the expect class (in derived classes).
      */
-    protected void _addAttribute(Attribute p)
-            throws NameDuplicationException, IllegalActionException {
+    protected void _addAttribute(Attribute p) throws NameDuplicationException,
+            IllegalActionException {
         try {
             _workspace.getWriteAccess();
 
@@ -2008,8 +2045,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      */
     protected void _attachText(String name, String text) {
         try {
-            SingletonConfigurableAttribute icon = new SingletonConfigurableAttribute(this,
-                    name);
+            SingletonConfigurableAttribute icon = new SingletonConfigurableAttribute(
+                    this, name);
             icon.setPersistent(false);
 
             // The first argument below is the base w.r.t. which to open
@@ -2019,8 +2056,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
             icon.configure(null, null, text);
         } catch (Exception ex) {
             throw new InternalErrorException(this, ex,
-                    "Error creating singleton attribute named " + name + " for "
-                    + getFullName());
+                    "Error creating singleton attribute named " + name
+                            + " for " + getFullName());
         }
     }
 
@@ -2057,9 +2094,9 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                 // initCause() and then throw.
                 CloneNotSupportedException cloneException = new CloneNotSupportedException(
                         "The field associated with " + fields[i].getName()
-                        + " could not be automatically cloned because "
-                        + ex.getMessage() + ".  This can be caused if "
-                        + "the field is not defined in a public class.");
+                                + " could not be automatically cloned because "
+                                + ex.getMessage() + ".  This can be caused if "
+                                + "the field is not defined in a public class.");
 
                 cloneException.initCause(ex);
                 throw cloneException;
@@ -2220,8 +2257,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
                     while (parameters.hasNext()) {
                         Attribute parameter = (Attribute) parameters.next();
-                        result += (parameter._description(detail, indent + 1, 2)
-                                + "\n");
+                        result += (parameter
+                                ._description(detail, indent + 1, 2) + "\n");
                     }
                 }
 
@@ -2424,6 +2461,11 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
     protected NamedObj _propagateExistence(NamedObj container)
             throws IllegalActionException {
         try {
+            // Look for error condition.
+            if (container == null) {
+                throw new IllegalActionException(this,
+                        "Attempting to propagate into a null container");
+            }
             return (NamedObj) clone(container.workspace());
         } catch (CloneNotSupportedException e) {
             throw new IllegalActionException(this, e,
@@ -2447,6 +2489,34 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
             throws IllegalActionException {
     }
 
+    /** If this object has a value that has been set directly,
+     *  or if it has a value that has propagated in, then
+     *  propagate that value to all derived objects, and
+     *  then repeat this for all objects this object contains.
+     *  Unlike propagateValue(), this does not assume this
+     *  object or any of its contained objects is having
+     *  its value set directly. Instead, it uses the current
+     *  state of override of this object as the starting point.
+     *  @param child If non-null, limit the propagation to
+     *   the specified child.
+     *  @exception IllegalActionException If propagation fails.
+     */
+    protected void _propagateValues(NamedObj child) throws IllegalActionException {
+        // If this object has not had its value set directly or
+        // by propagation into it, then there is no need to do
+        // any propagation.
+        if (_override != null) {
+            _getDerivedList(null, true, false, this, 0, _override, null, child);
+        }
+
+        Iterator containedObjects = containedObjectsIterator();
+
+        while (containedObjects.hasNext()) {
+            NamedObj containedObject = (NamedObj) containedObjects.next();
+            containedObject.propagateValues();
+        }
+    }
+
     /** Remove the given attribute.
      *  If there is no such attribute, do nothing.
      *  This method is write-synchronized on the workspace and increments its
@@ -2456,7 +2526,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
     protected void _removeAttribute(Attribute param) {
         try {
             _workspace.getWriteAccess();
-            _attributes.remove((Nameable) param);
+            _attributes.remove(param);
 
             if (_debugging) {
                 _debug("Removed attribute", param.getName(), "from",
@@ -2505,9 +2575,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
             char current = chars[i];
 
             if ((current == '0') || (current == '1') || (current == '2')
-                    || (current == '3') || (current == '4')
-                    || (current == '5') || (current == '6')
-                    || (current == '7') || (current == '8')
+                    || (current == '3') || (current == '4') || (current == '5')
+                    || (current == '6') || (current == '7') || (current == '8')
                     || (current == '9') || (current == '_')) {
                 length--;
             } else {
@@ -2523,6 +2592,39 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
             return new String(result);
         } else {
             return string;
+        }
+    }
+
+    /** Validate attributes deeply contained by this object if they
+     *  implement the Settable interface by calling their validate() method.
+     *  Errors that are triggered by this validation are handled by calling
+     *  handleModelError().
+     *  @param attributesValidated A collection of Settables that have
+     *  already been validated.  For example, Settables that implement
+     *  the ShareableSettable interface are validated only once.
+     *  @see #handleModelError(NamedObj context, IllegalActionException exception)
+     *  @exception IllegalActionException If there is a problem validating
+     *  the deeply contained attributes.
+     */
+    protected void _validateSettables(Collection attributesValidated) throws IllegalActionException {
+        Iterator attributes = attributeList(Settable.class).iterator();
+        while (attributes.hasNext()) {
+            Settable attribute = (Settable) attributes.next();
+            if (attributesValidated.contains(attribute)) {
+                continue;
+            }
+            try {
+                Collection validated = ((Settable) attribute).validate();
+                if (validated != null) {
+                    attributesValidated.addAll(validated);
+                }
+                attributesValidated.add(attribute);
+            } catch (IllegalActionException ex) {
+                if (!handleModelError(this, ex)) {
+                    throw ex;
+                }
+            }
+            ((NamedObj)attribute)._validateSettables(attributesValidated);
         }
     }
 
@@ -2605,6 +2707,9 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *   If propagate is true, then this should be a list with with
      *   a single Integer 0 for outside callers, and otherwise it
      *   should be null.
+     *  @param child If non-null, limit to this one child of the
+     *   context. It is an error if the specified child is not
+     *   a child of the context.
      *  @return A list of instances of the same class as this object
      *   which are derived from
      *   this object. The list is empty in this base class, but
@@ -2613,9 +2718,9 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  @exception IllegalActionException If propagate is true
      *   and propagation fails.
      */
-    private List _getDerivedList(HashSet visited, boolean propagate,
+    private List _getDerivedList(Collection visited, boolean propagate,
             boolean force, NamedObj context, int depth, List override,
-            String relativeName) throws IllegalActionException {
+            String relativeName, NamedObj child) throws IllegalActionException {
         try {
             workspace().getReadAccess();
 
@@ -2669,7 +2774,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                 }
 
                 result.addAll(_getDerivedList(visited, propagate, force,
-                                      container, depth + 1, newOverride, newRelativeName));
+                        container, depth + 1, newOverride, newRelativeName, null));
             }
 
             if (!(context instanceof Instantiable)) {
@@ -2686,7 +2791,13 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
             }
 
             // Iterate over the children.
-            List othersList = ((Instantiable) context).getChildren();
+            List othersList;
+            if (child == null) {
+                othersList = ((Instantiable) context).getChildren();
+            } else {
+                othersList = new LinkedList();
+                othersList.add(new WeakReference(child));
+            }
 
             if (othersList != null) {
                 Iterator others = othersList.iterator();
@@ -2714,10 +2825,15 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
 
                                 if (lastPeriod > 0) {
                                     String containerName = relativeName
-                                        .substring(0, lastPeriod);
+                                            .substring(0, lastPeriod);
+                                    // FIXME: The following may return null
+                                    // if the propagation hasn't occurred yet.
+                                    // This happens when invoking createHierarchy
+                                    // in classes. Why hasn't propagation of the
+                                    // container happened?
                                     remoteContainer = getContainer()
-                                        ._getContainedObject(other,
-                                                containerName);
+                                            ._getContainedObject(other,
+                                                    containerName);
                                 }
 
                                 candidate = _propagateExistence(remoteContainer);
@@ -2729,13 +2845,29 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                                 candidate.setDerivedLevel(depth);
                                 candidate._markContentsDerived(depth);
                             } else {
-                                // No candidate and no error.  In theory, we
-                                // should never reach this line.
-                                throw new InternalErrorException("Expected "
-                                        + other.getFullName()
-                                        + " to contain an object named "
-                                        + relativeName + " of type "
-                                        + getClass().toString());
+                                // No candidate and no error.
+                                // We can reach this line if this method
+                                // is called during construction of an object
+                                // in a class definition, before propagation has
+                                // occurred. For example, some constructors call
+                                // moveToLast() or moveToFirst() on attributes.
+                                // These methods normally propagate the change
+                                // to instances and derived classes. But if
+                                // those instances and derived classes have not
+                                // yet had the object propagated to them, then
+                                // this will fail.
+                                continue;
+                                /* NOTE: This used to throw the following exception,
+                                 * but this exception was spurious.
+                                 * To test, create a class an an instance, then
+                                 * drop an SDFDirector into the class. This used
+                                 * to result in this exception being thrown.
+                                 throw new InternalErrorException("Expected "
+                                 + other.getFullName()
+                                 + " to contain an object named "
+                                 + relativeName + " of type "
+                                 + getClass().toString());
+                                 */
                             }
                         }
 
@@ -2782,8 +2914,8 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                         // will be determined by the depth of propagation from
                         // this candidate.
                         result.addAll(candidate._getDerivedList(visited,
-                                              propagate, force, candidate, 0, newOverride,
-                                              null));
+                                propagate, force, candidate, 0, newOverride,
+                                null, null));
 
                         // Note that the above recursive call will
                         // add the candidate to the HashSet, so we
@@ -2840,7 +2972,7 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
                 return false;
             } else {
                 int candidateBreadth = ((Integer) candidate.get(index))
-                    .intValue();
+                        .intValue();
                 int changerBreadth = ((Integer) changer.get(index)).intValue();
 
                 if (candidateBreadth < changerBreadth) {
@@ -2876,15 +3008,18 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      */
     private transient boolean _deferChangeRequests = false;
 
+    // Variable indicating at what level above this object is derived.
+    // Integer.MAX_VALUE indicates that it is not derived.
+    private int _derivedLevel = Integer.MAX_VALUE;
+
+    /** The display name, if set. */
+    private String _displayName;
+
     // Cached value of the full name.
     private String _fullNameCache;
 
     // Version of the workspace when cache last updated.
     private long _fullNameVersion = -1;
-
-    // Variable indicating at what level above this object is derived.
-    // Integer.MAX_VALUE indicates that it is not derived.
-    private int _derivedLevel = Integer.MAX_VALUE;
 
     // The model error handler, if there is one.
     private ModelErrorHandler _modelErrorHandler = null;
@@ -2909,16 +3044,23 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
      *  ports, relations, and entities as well.
      */
     protected class ContainedObjectsIterator implements Iterator {
+
+        /** Create an iterator over all the contained objects. */
+        public ContainedObjectsIterator() {
+            super();
+            // This iterator gets called quite a bit, so at Kevin Ruland's
+            // suggestion, we move instantiation of the iterator 
+            // into the constructor so that hasNext() and next() don't
+            // have to check if _attributeListIterator is null each time.
+            _attributeListIterator = attributeList().iterator();
+        }
+
         /** Return true if the iteration has more elements.
          *  In this base class, this returns true if there are more
          *  attributes.
          *  @return True if there are more attributes.
          */
         public boolean hasNext() {
-            if (_attributeListIterator == null) {
-                _attributeListIterator = attributeList().iterator();
-            }
-
             return _attributeListIterator.hasNext();
         }
 
@@ -2927,18 +3069,20 @@ public class NamedObj implements Changeable, Cloneable, Debuggable,
          *  @return The next attribute.
          */
         public Object next() {
-            if (_attributeListIterator == null) {
-                _attributeListIterator = attributeList().iterator();
-            }
-
             return _attributeListIterator.next();
         }
 
-        /** Remove from the underlying collection the last element
-         *  returned by the iterator.
+        /** Throw a UnsupportedOperationException because remove() is not
+         *  supported.  The reason is because this iterator calls
+         *  attributeList().iterator(), which returns a NamedList that
+         *  is unmodifiable.
          */
         public void remove() {
-            _attributeListIterator.remove();
+            // Iterator requires a remove().
+            throw new UnsupportedOperationException("remove() not supported "
+                    + "because attributeList().iterator() returns a NamedList "
+                    + "that is unmodifiable");
+            //_attributeListIterator.remove();
         }
 
         private Iterator _attributeListIterator = null;

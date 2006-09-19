@@ -1,34 +1,34 @@
 /* Utilities to convert between java types and Token types
 
-Copyright (c) 1998-2005 The Regents of the University of California and
-Research in Motion Limited.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California and
+ Research in Motion Limited.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA OR RESEARCH IN MOTION
-LIMITED BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
-INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF THIS
-SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA
-OR RESEARCH IN MOTION LIMITED HAVE BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA OR RESEARCH IN MOTION
+ LIMITED BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF THIS
+ SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA
+ OR RESEARCH IN MOTION LIMITED HAVE BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA AND RESEARCH IN MOTION LIMITED
-SPECIFICALLY DISCLAIM ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
-BASIS, AND THE UNIVERSITY OF CALIFORNIA AND RESEARCH IN MOTION
-LIMITED HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA AND RESEARCH IN MOTION LIMITED
+ SPECIFICALLY DISCLAIM ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS"
+ BASIS, AND THE UNIVERSITY OF CALIFORNIA AND RESEARCH IN MOTION
+ LIMITED HAVE NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-@ProposedRating Yellow (nsmyth)
-@AcceptedRating Red (cxh)
+ @ProposedRating Yellow (nsmyth)
+ @AcceptedRating Red (cxh)
 
-Created : May 1998
-*/
+ Created : May 1998
+ */
 package ptolemy.data.expr;
 
 import ptolemy.data.ArrayToken;
@@ -49,6 +49,7 @@ import ptolemy.data.StringToken;
 import ptolemy.data.UnsignedByteToken;
 import ptolemy.data.type.ArrayType;
 import ptolemy.data.type.BaseType;
+import ptolemy.data.type.FixType;
 import ptolemy.data.type.RecordType;
 import ptolemy.data.type.Type;
 import ptolemy.kernel.util.IllegalActionException;
@@ -56,59 +57,58 @@ import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.math.Complex;
 import ptolemy.math.FixPoint;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ConversionUtilities
 
 /**
-   This class contains a series of static methods that facilitate the
-   runtime conversion of tokens to and from Java representations that are
-   not tokens.  One might call this "marshaling and unmarshaling" of
-   tokens.  Primarily this facility is used by the expression language to
-   properly type references to Java methods, and later invoke those
-   methods during expression evaluation.  Generally speaking this is
-   somewhat nasty from an Object-oriented point of view.  The nastiness
-   is fairly well encapsulated in this class.  The mapping is summarized
-   in the following table:
+ This class contains a series of static methods that facilitate the
+ runtime conversion of tokens to and from Java representations that are
+ not tokens.  One might call this "marshaling and unmarshaling" of
+ tokens.  Primarily this facility is used by the expression language to
+ properly type references to Java methods, and later invoke those
+ methods during expression evaluation.  Generally speaking this is
+ somewhat nasty from an Object-oriented point of view.  The nastiness
+ is fairly well encapsulated in this class.  The mapping is summarized
+ in the following table:
 
-   <p>
-   <pre>
-   Token type               Java type
-   ---------------------------------------------------
-   IntToken                 int
-   DoubleToken              double
-   LongToken                long
-   StringToken              java.lang.String
-   BooleanToken             boolean
-   ComplexToken             ptolemy.math.Complex
-   FixToken                 ptolemy.math.FixPoint
-   FixMatrixToken           ptolemy.math.FixPoint[][]
-   IntMatrixToken           int[][]
-   DoubleMatrixToken        double[][]
-   ComplexMatrixToken       ptolemy.math.Complex[][]
-   LongMatrixToken          long[][]
-   BooleanMatrixToken       boolean[][]
-   ArrayToken(FixToken)     ptolemy.math.FixPoint[]
-   ArrayToken(IntToken)     int[]
-   ArrayToken(LongToken)    long[]
-   ArrayToken(DoubleToken)  double[]
-   ArrayToken(ComplexToken) ptolemy.math.Complex[]
-   ArrayToken(StringToken)  java.lang.String[]
-   ArrayToken(BooleanToken) boolean[]
-   ArrayToken  (*)          Token[]
-   ---------------------------------------------------
-   (*) Only when converting from java to Token types
-   </pre>
+ <p>
+ <pre>
+ Token type               Java type
+ ---------------------------------------------------
+ IntToken                 int
+ DoubleToken              double
+ LongToken                long
+ StringToken              java.lang.String
+ BooleanToken             boolean
+ ComplexToken             ptolemy.math.Complex
+ FixToken                 ptolemy.math.FixPoint
+ FixMatrixToken           ptolemy.math.FixPoint[][]
+ IntMatrixToken           int[][]
+ DoubleMatrixToken        double[][]
+ ComplexMatrixToken       ptolemy.math.Complex[][]
+ LongMatrixToken          long[][]
+ BooleanMatrixToken       boolean[][]
+ ArrayToken(FixToken)     ptolemy.math.FixPoint[]
+ ArrayToken(IntToken)     int[]
+ ArrayToken(LongToken)    long[]
+ ArrayToken(DoubleToken)  double[]
+ ArrayToken(ComplexToken) ptolemy.math.Complex[]
+ ArrayToken(StringToken)  java.lang.String[]
+ ArrayToken(BooleanToken) boolean[]
+ ArrayToken  (*)          Token[]
+ ---------------------------------------------------
+ (*) Only when converting from java to Token types
+ </pre>
 
-   @author Neil Smyth, Edward A. Lee, Steve Neuendorffer
-   @author Zoltan Kemenczy, Research in Motion Limited
-   @version $Id: ConversionUtilities.java,v 1.22 2005/04/25 21:59:39 cxh Exp $
-   @see ptolemy.data.expr.ASTPtRootNode
-   @see ptolemy.data.expr.PtParser
-   @see ptolemy.data.Token
-   @see ptolemy.data.expr.UtilityFunctions
-   @see java.lang.Math
-*/
+ @author Neil Smyth, Edward A. Lee, Steve Neuendorffer
+ @author Zoltan Kemenczy, Research in Motion Limited
+ @version $Id: ConversionUtilities.java,v 1.27 2006/05/08 05:28:15 neuendor Exp $
+ @see ptolemy.data.expr.ASTPtRootNode
+ @see ptolemy.data.expr.PtParser
+ @see ptolemy.data.Token
+ @see ptolemy.data.expr.UtilityFunctions
+ @see java.lang.Math
+ */
 public class ConversionUtilities {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -222,19 +222,13 @@ public class ConversionUtilities {
             FixToken[] temp = new FixToken[((FixPoint[]) object).length];
 
             for (int j = 0; j < temp.length; j++) {
-                temp[j] = new FixToken((FixPoint) ((FixPoint[]) object)[j]);
+                temp[j] = new FixToken(((FixPoint[]) object)[j]);
             }
 
             returnValue = new ArrayToken(temp);
-        } else if (object instanceof Object) {
+        } else {
             // Package into an ObjectToken.
             returnValue = new ObjectToken(object);
-        } else {
-            // This should really never happen, since every class
-            // should be caught by "instanceof Object" above, but I
-            // don't like the dangling else if.
-            throw new InternalErrorException("object type not recognized: "
-                    + object);
         }
 
         return returnValue;
@@ -251,12 +245,12 @@ public class ConversionUtilities {
         try {
             if (tokenClass.equals(ptolemy.data.Token.class)) {
                 return BaseType.GENERAL;
-            } else if (ptolemy.data.ArrayToken.class.isAssignableFrom(
-                               tokenClass)) {
+            } else if (ptolemy.data.ArrayToken.class
+                    .isAssignableFrom(tokenClass)) {
                 Type type = new ArrayType(BaseType.GENERAL);
                 return type;
-            } else if (ptolemy.data.RecordToken.class.isAssignableFrom(
-                               tokenClass)) {
+            } else if (ptolemy.data.RecordToken.class
+                    .isAssignableFrom(tokenClass)) {
                 Type type = new RecordType(new String[0], new Type[0]);
                 return type;
             } else if (ptolemy.data.Token.class.isAssignableFrom(tokenClass)) {
@@ -290,7 +284,7 @@ public class ConversionUtilities {
             } else if (tokenClass.equals(Complex.class)) {
                 return BaseType.COMPLEX;
             } else if (tokenClass.equals(FixPoint.class)) {
-                return BaseType.FIX;
+                return BaseType.UNSIZED_FIX;
             } else if (tokenClass.equals(String.class)) {
                 return BaseType.STRING;
             } else if (tokenClass.equals(Class.forName("[[Z"))) {
@@ -301,15 +295,15 @@ public class ConversionUtilities {
                 return BaseType.LONG_MATRIX;
             } else if (tokenClass.equals(Class.forName("[[D"))) {
                 return BaseType.DOUBLE_MATRIX;
-            } else if (tokenClass.equals(Class.forName(
-                                                 "[[Lptolemy.math.Complex;"))) {
+            } else if (tokenClass.equals(Class
+                    .forName("[[Lptolemy.math.Complex;"))) {
                 return BaseType.COMPLEX_MATRIX;
-            } else if (tokenClass.equals(Class.forName(
-                                                 "[[Lptolemy.math.FixPoint;"))) {
+            } else if (tokenClass.equals(Class
+                    .forName("[[Lptolemy.math.FixPoint;"))) {
                 return BaseType.FIX_MATRIX;
             } else if (tokenClass.isArray()) {
-                return new ArrayType(convertJavaTypeToTokenType(
-                                             tokenClass.getComponentType()));
+                return new ArrayType(convertJavaTypeToTokenType(tokenClass
+                        .getComponentType()));
             } else if (java.lang.Object.class.isAssignableFrom(tokenClass)) {
                 return BaseType.OBJECT;
             } else {
@@ -320,8 +314,8 @@ public class ConversionUtilities {
                         + tokenClass);
             }
         } catch (ClassNotFoundException ex) {
-            throw new IllegalActionException(null, ex,
-                    "Could not find Class '" + tokenClass + "'");
+            throw new IllegalActionException(null, ex, "Could not find Class '"
+                    + tokenClass + "'");
         }
     }
 
@@ -387,7 +381,7 @@ public class ConversionUtilities {
 
                 for (int j = 0; j < array.length; j++) {
                     array[j] = ((FixToken) ((ArrayToken) token).getElement(j))
-                        .fixValue();
+                            .fixValue();
                 }
 
                 returnValue = array;
@@ -396,7 +390,7 @@ public class ConversionUtilities {
 
                 for (int j = 0; j < array.length; j++) {
                     array[j] = ((IntToken) ((ArrayToken) token).getElement(j))
-                        .intValue();
+                            .intValue();
                 }
 
                 returnValue = array;
@@ -405,7 +399,7 @@ public class ConversionUtilities {
 
                 for (int j = 0; j < array.length; j++) {
                     array[j] = ((LongToken) ((ArrayToken) token).getElement(j))
-                        .longValue();
+                            .longValue();
                 }
 
                 returnValue = array;
@@ -413,8 +407,8 @@ public class ConversionUtilities {
                 double[] array = new double[((ArrayToken) token).length()];
 
                 for (int j = 0; j < array.length; j++) {
-                    array[j] = ((DoubleToken) ((ArrayToken) token).getElement(j))
-                        .doubleValue();
+                    array[j] = ((DoubleToken) ((ArrayToken) token)
+                            .getElement(j)).doubleValue();
                 }
 
                 returnValue = array;
@@ -422,8 +416,8 @@ public class ConversionUtilities {
                 Complex[] array = new Complex[((ArrayToken) token).length()];
 
                 for (int j = 0; j < array.length; j++) {
-                    array[j] = ((ComplexToken) ((ArrayToken) token).getElement(j))
-                        .complexValue();
+                    array[j] = ((ComplexToken) ((ArrayToken) token)
+                            .getElement(j)).complexValue();
                 }
 
                 returnValue = array;
@@ -431,8 +425,8 @@ public class ConversionUtilities {
                 String[] array = new String[((ArrayToken) token).length()];
 
                 for (int j = 0; j < array.length; j++) {
-                    array[j] = ((StringToken) ((ArrayToken) token).getElement(j))
-                        .stringValue();
+                    array[j] = ((StringToken) ((ArrayToken) token)
+                            .getElement(j)).stringValue();
                 }
 
                 returnValue = array;
@@ -440,8 +434,8 @@ public class ConversionUtilities {
                 boolean[] array = new boolean[((ArrayToken) token).length()];
 
                 for (int j = 0; j < array.length; j++) {
-                    array[j] = ((BooleanToken) ((ArrayToken) token).getElement(j))
-                        .booleanValue();
+                    array[j] = ((BooleanToken) ((ArrayToken) token)
+                            .getElement(j)).booleanValue();
                 }
 
                 returnValue = array;
@@ -483,7 +477,9 @@ public class ConversionUtilities {
                 return Boolean.TYPE;
             } else if (type.equals(BaseType.COMPLEX)) {
                 return ptolemy.math.Complex.class;
-            } else if (type.equals(BaseType.FIX)) {
+            } else if (type.equals(BaseType.UNSIZED_FIX)) {
+                return ptolemy.math.FixPoint.class;
+            } else if (type instanceof FixType) {
                 return ptolemy.math.FixPoint.class;
             } else if (type.equals(BaseType.BOOLEAN)) {
                 return Class.forName("[[Lptolemy.math.FixPoint;");
@@ -510,8 +506,9 @@ public class ConversionUtilities {
                 } else if (elementType.equals(BaseType.BOOLEAN)) {
                     return Class.forName("[Z");
                 } else {
-                    return java.lang.reflect.Array.newInstance(convertTokenTypeToJavaType(
-                                                                       arrayType.getElementType()), 0).getClass();
+                    return java.lang.reflect.Array.newInstance(
+                            convertTokenTypeToJavaType(arrayType
+                                    .getElementType()), 0).getClass();
                 }
             } else {
                 // Bailout.  The type is not recognized, so defer to
@@ -519,8 +516,8 @@ public class ConversionUtilities {
                 return type.getTokenClass();
             }
         } catch (ClassNotFoundException ex) {
-            throw new IllegalActionException(null, ex,
-                    "Could not find Type '" + type + "'");
+            throw new IllegalActionException(null, ex, "Could not find Type '"
+                    + type + "'");
         }
     }
 }

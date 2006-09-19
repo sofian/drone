@@ -1,73 +1,73 @@
 /* An attribute that has a string value.
 
-Copyright (c) 2000-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2000-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
-*/
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
+ */
 package ptolemy.kernel.util;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import ptolemy.util.StringUtilities;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// StringAttribute
 
 /**
-   An attribute that has a string value.
-   Use setExpression() to define the value, as in for example
-   <pre>
-   attribute.setExpression("xxx");
-   </pre>
-   <p>The default value of the string contained by this attribute is the empty
-   string.
+ An attribute that has a string value.
+ Use setExpression() to define the value, as in for example
+ <pre>
+ attribute.setExpression("xxx");
+ </pre>
+ <p>The default value of the string contained by this attribute is the empty
+ string.
 
-   <p>By default, an instance of this class is fully visible in
-   a user interface.  The visibility is indicated to the user
-   interface when the user interface calls the getVisibility() method
-   of this class and the value Settable.FULL is returned to the userInterface.
+ <p>By default, an instance of this class is fully visible in
+ a user interface.  The visibility is indicated to the user
+ interface when the user interface calls the getVisibility() method
+ of this class and the value Settable.FULL is returned to the userInterface.
 
-   <p>Note that the string value within StringAttribute cannot reference
-   other StringAttributes or Parameters, so if an actor has a public
-   StringAttribute, then one cannot make the value of that attribute
-   dependent on a value higher in the hierarchy.  Usually, actors have
-   public ptolemy.data.expr.Parameters instead of public StringAttributes
-   so that the value can reference other parameters.  The primary reason
-   to use StringAttribute is if you want a string that will not be parsed
-   and you do not want to type a leading a trailing double quote.
+ <p>Note that the string value within StringAttribute cannot reference
+ other StringAttributes or Parameters, so if an actor has a public
+ StringAttribute, then one cannot make the value of that attribute
+ dependent on a value higher in the hierarchy.  Usually, actors have
+ public ptolemy.data.expr.Parameters instead of public StringAttributes
+ so that the value can reference other parameters.  The primary reason
+ to use StringAttribute is if you want a string that will not be parsed
+ and you do not want to type a leading a trailing double quote.
 
-   @see Settable#FULL
-   @author Edward A. Lee
-   @version $Id: StringAttribute.java,v 1.53 2005/04/29 20:05:09 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (cxh)
-*/
+ @see Settable#FULL
+ @author Edward A. Lee
+ @version $Id: StringAttribute.java,v 1.57 2006/09/16 11:20:46 eal Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (cxh)
+ */
 public class StringAttribute extends AbstractSettableAttribute {
     /** Construct an attribute in the default workspace with an empty string
      *  as its name.
@@ -158,11 +158,12 @@ public class StringAttribute extends AbstractSettableAttribute {
 
         if ((value != null) && !value.equals("")) {
             valueTerm = " value=\"" + StringUtilities.escapeForXML(value)
-                + "\"";
+                    + "\"";
         }
 
         output.write(_getIndentPrefix(depth) + "<" + _elementName + " name=\""
-                + name + "\" class=\"" + getClassName() + "\"" + valueTerm + ">\n");
+                + name + "\" class=\"" + getClassName() + "\"" + valueTerm
+                + ">\n");
         _exportMoMLContents(output, depth + 1);
         output.write(_getIndentPrefix(depth) + "</" + _elementName + ">\n");
     }
@@ -211,7 +212,7 @@ public class StringAttribute extends AbstractSettableAttribute {
 
         // Notify the container and any value listeners immediately,
         // rather than deferring to validate().
-        NamedObj container = (NamedObj) getContainer();
+        NamedObj container = getContainer();
 
         if (container != null) {
             container.attributeChanged(this);
@@ -236,20 +237,17 @@ public class StringAttribute extends AbstractSettableAttribute {
         _visibility = visibility;
     }
 
-    /** Validate any instances of Settable that this attribute may contain.
+    /** Do nothing.
      *  There is no need to notify the container or listeners of this
      *  attribute because they have presumably already been notified
      *  in setExpression().
+     *  @return Null, indicating that no other instances of Settable are
+     *   validated.
      *  @exception IllegalActionException If the change is not acceptable
      *   to the container.
      */
-    public void validate() throws IllegalActionException {
-        Iterator attributes = attributeList(Settable.class).iterator();
-
-        while (attributes.hasNext()) {
-            Settable attribute = (Settable) attributes.next();
-            attribute.validate();
-        }
+    public Collection validate() throws IllegalActionException {
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////

@@ -1,30 +1,30 @@
 /* A CompositeEntity is a cluster in a clustered graph.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.kernel;
 
 import java.io.IOException;
@@ -32,9 +32,11 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import ptolemy.kernel.attributes.VersionAttribute;
 import ptolemy.kernel.util.Attribute;
@@ -47,74 +49,73 @@ import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.Settable;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// CompositeEntity
 
 /**
-   A CompositeEntity is a cluster in a clustered graph.
-   I.e., it is a non-atomic entity, in that
-   it can contain other entities and relations.  It supports transparent ports,
-   where, in effect, the port of a contained entity is represented by a port
-   of this entity. Methods that "deeply" traverse the topology
-   see right through transparent ports.
-   It may be opaque, in which case its ports are opaque and methods
-   that "deeply" traverse the topology do not see through them.
-   For instance, deepEntityList() returns the opaque entities
-   directly or indirectly contained by this entity.
-   <p>
-   To add an entity or relation to this composite, call its
-   setContainer() method with this composite as an argument.  To
-   remove it, call its setContainer() method with a null argument (or
-   another container). The entity must be an instance of
-   ComponentEntity and the relation of ComponentRelation or an
-   exception is thrown.  Derived classes may further constrain these
-   to subclasses.  To do that, they should override the protected
-   methods _addEntity() and _addRelation() and the public member
-   newRelation().
-   <p>
-   A CompositeEntity may be contained by another CompositeEntity.
-   To set that up, call the setContainer() method of the inside entity.
-   Derived classes may further constrain the container to be
-   a subclass of CompositeEntity.  To do this, they should override
-   setContainer() to throw an exception.  Recursive containment
-   structures, where an entity directly or indirectly contains itself,
-   are disallowed, and an exception is thrown on an attempt to set up
-   such a structure.
-   <p>
-   A CompositeEntity can contain instances of ComponentPort.  By default
-   these ports will be transparent, although subclasses of CompositeEntity
-   can make them opaque by overriding the isOpaque() method to return
-   <i>true</i>. Derived classes may further constrain the ports to a
-   subclass of ComponentPort.
-   To do this, they should override the public method newPort() to create
-   a port of the appropriate subclass, and the protected method _addPort()
-   to throw an exception if its argument is a port that is not of the
-   appropriate subclass.
-   <p>
-   Since contained entities implement the
-   {@link ptolemy.kernel.util.Instantiable} interface,
-   some may be class definitions.  If an entity is a class definition,
-   then it is not included in the lists returned by
-   {@link #entityList()}, {@link #entityList(Class)},
-   {@link #deepEntityList()}, and {@link #allAtomicEntityList()}.
-   Correspondingly, if it is not a class definition, then it is not
-   included in the list returned by {@link #classDefinitionList()}.
-   Contained class definitions are nonetheless required to have names
-   distinct from contained entities that are not class definitions,
-   and the method {@link #getEntity(String)} will return either
-   a class definition or an entity that is not a class definition,
-   as long as the name matches.  Note that contained entities that
-   are class definitions cannot be connected to other entities.
-   Moreover, they cannot be deleted as long as there are either
-   subclasses or instances present.
+ A CompositeEntity is a cluster in a clustered graph.
+ I.e., it is a non-atomic entity, in that
+ it can contain other entities and relations.  It supports transparent ports,
+ where, in effect, the port of a contained entity is represented by a port
+ of this entity. Methods that "deeply" traverse the topology
+ see right through transparent ports.
+ It may be opaque, in which case its ports are opaque and methods
+ that "deeply" traverse the topology do not see through them.
+ For instance, deepEntityList() returns the opaque entities
+ directly or indirectly contained by this entity.
+ <p>
+ To add an entity or relation to this composite, call its
+ setContainer() method with this composite as an argument.  To
+ remove it, call its setContainer() method with a null argument (or
+ another container). The entity must be an instance of
+ ComponentEntity and the relation of ComponentRelation or an
+ exception is thrown.  Derived classes may further constrain these
+ to subclasses.  To do that, they should override the protected
+ methods _addEntity() and _addRelation() and the public member
+ newRelation().
+ <p>
+ A CompositeEntity may be contained by another CompositeEntity.
+ To set that up, call the setContainer() method of the inside entity.
+ Derived classes may further constrain the container to be
+ a subclass of CompositeEntity.  To do this, they should override
+ setContainer() to throw an exception.  Recursive containment
+ structures, where an entity directly or indirectly contains itself,
+ are disallowed, and an exception is thrown on an attempt to set up
+ such a structure.
+ <p>
+ A CompositeEntity can contain instances of ComponentPort.  By default
+ these ports will be transparent, although subclasses of CompositeEntity
+ can make them opaque by overriding the isOpaque() method to return
+ <i>true</i>. Derived classes may further constrain the ports to a
+ subclass of ComponentPort.
+ To do this, they should override the public method newPort() to create
+ a port of the appropriate subclass, and the protected method _addPort()
+ to throw an exception if its argument is a port that is not of the
+ appropriate subclass.
+ <p>
+ Since contained entities implement the
+ {@link ptolemy.kernel.util.Instantiable} interface,
+ some may be class definitions.  If an entity is a class definition,
+ then it is not included in the lists returned by
+ {@link #entityList()}, {@link #entityList(Class)},
+ {@link #deepEntityList()}, and {@link #allAtomicEntityList()}.
+ Correspondingly, if it is not a class definition, then it is not
+ included in the list returned by {@link #classDefinitionList()}.
+ Contained class definitions are nonetheless required to have names
+ distinct from contained entities that are not class definitions,
+ and the method {@link #getEntity(String)} will return either
+ a class definition or an entity that is not a class definition,
+ as long as the name matches.  Note that contained entities that
+ are class definitions cannot be connected to other entities.
+ Moreover, they cannot be deleted as long as there are either
+ subclasses or instances present.
 
-   @author John S. Davis II, Edward A. Lee
-   @version $Id: CompositeEntity.java,v 1.151 2005/04/29 20:03:28 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (eal)
-   @Pt.AcceptedRating Green (hyzheng)
-*/
+ @author John S. Davis II, Edward A. Lee
+ @version $Id: CompositeEntity.java,v 1.173 2006/09/17 17:56:16 cxh Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (eal)
+ @Pt.AcceptedRating Green (hyzheng)
+ */
 public class CompositeEntity extends ComponentEntity {
     /** Construct an entity in the default workspace with an empty string
      *  as its name. Add the entity to the workspace directory.
@@ -188,11 +189,49 @@ public class CompositeEntity extends ComponentEntity {
                 // We reduce the index i by one to match the index in
                 // the list.
                 i--;
-                entities.addAll(((CompositeEntity) entity).allAtomicEntityList());
+                entities.addAll(((CompositeEntity) entity)
+                        .allAtomicEntityList());
             }
         }
 
         return entities;
+    }
+
+    /** Return a list that consists of all the composite entities in a model.
+     *  This method differs from allAtomicEntityList() in that this method
+     *  returns CompositeEntities and allAtomicEntityList() returns atomic entities.
+     *  This method differs from {@link #deepEntityList()} in that
+     *  this method looks inside opaque entities, whereas deepEntityList()
+     *  does not. The returned list does not include any entities that
+     *  are class definitions.
+     *  @return a List of all Composite entities in the model.
+     */
+    public List allCompositeEntityList() {
+        try {
+            _workspace.getReadAccess();
+
+            LinkedList result = new LinkedList();
+
+            // This might be called from within a superclass constructor,
+            // in which case there are no contained entities yet.
+            if (_containedEntities != null) {
+                Iterator entities = _containedEntities.elementList().iterator();
+
+                while (entities.hasNext()) {
+                    ComponentEntity entity = (ComponentEntity) entities.next();
+                    if (/*!entity.isClassDefinition()&& */ !entity.isOpaque() /*entity instanceof CompositeEntity*/) {
+                        result.add((CompositeEntity) entity);
+                        result.addAll(((CompositeEntity) entity)
+                                    .allCompositeEntityList());
+
+                    }
+                }
+            }
+
+            return result;
+        } finally {
+            _workspace.doneReading();
+        }
     }
 
     /** Allow or disallow connections that are created using the connect()
@@ -275,7 +314,8 @@ public class CompositeEntity extends ComponentEntity {
         try {
             workspace().getReadAccess();
 
-            CompositeEntity newEntity = (CompositeEntity) super.clone(workspace);
+            CompositeEntity newEntity = (CompositeEntity) super
+                    .clone(workspace);
 
             newEntity._containedEntities = new NamedList(newEntity);
             newEntity._containedRelations = new NamedList(newEntity);
@@ -284,9 +324,10 @@ public class CompositeEntity extends ComponentEntity {
             Iterator relations = relationList().iterator();
 
             while (relations.hasNext()) {
-                ComponentRelation relation = (ComponentRelation) relations.next();
+                ComponentRelation relation = (ComponentRelation) relations
+                        .next();
                 ComponentRelation newRelation = (ComponentRelation) relation
-                    .clone(workspace);
+                        .clone(workspace);
 
                 // Assume that since we are dealing with clones,
                 // exceptions won't occur normally.  If they do, throw a
@@ -295,7 +336,8 @@ public class CompositeEntity extends ComponentEntity {
                     newRelation.setContainer(newEntity);
                 } catch (KernelException ex) {
                     throw new CloneNotSupportedException(
-                            "Failed to clone a CompositeEntity: " + ex.getMessage());
+                            "Failed to clone a CompositeEntity: "
+                                    + ex.getMessage());
                 }
             }
 
@@ -304,9 +346,9 @@ public class CompositeEntity extends ComponentEntity {
 
             while (classes.hasNext()) {
                 ComponentEntity classDefinition = (ComponentEntity) classes
-                    .next();
+                        .next();
                 ComponentEntity newSubentity = (ComponentEntity) classDefinition
-                    .clone(workspace);
+                        .clone(workspace);
 
                 // Assume that since we are dealing with clones,
                 // exceptions won't occur normally.  If they do, throw a
@@ -316,7 +358,7 @@ public class CompositeEntity extends ComponentEntity {
                 } catch (KernelException ex) {
                     throw new CloneNotSupportedException(
                             "Failed to clone a CompositeEntity: "
-                            + KernelException.stackTraceToString(ex));
+                                    + KernelException.stackTraceToString(ex));
                 }
             }
 
@@ -325,7 +367,8 @@ public class CompositeEntity extends ComponentEntity {
 
             while (entities.hasNext()) {
                 ComponentEntity entity = (ComponentEntity) entities.next();
-                ComponentEntity newSubentity = (ComponentEntity) entity.clone(workspace);
+                ComponentEntity newSubentity = (ComponentEntity) entity
+                        .clone(workspace);
 
                 // Assume that since we are dealing with clones,
                 // exceptions won't occur normally.  If they do, throw a
@@ -335,7 +378,7 @@ public class CompositeEntity extends ComponentEntity {
                 } catch (KernelException ex) {
                     throw new CloneNotSupportedException(
                             "Failed to clone a CompositeEntity: "
-                            + KernelException.stackTraceToString(ex));
+                                    + KernelException.stackTraceToString(ex));
                 }
 
                 // Clone the links of the ports of the cloned entities.
@@ -347,7 +390,7 @@ public class CompositeEntity extends ComponentEntity {
 
                     while (linkedRelations.hasMoreElements()) {
                         ComponentRelation rel = (ComponentRelation) linkedRelations
-                            .nextElement();
+                                .nextElement();
 
                         // A null link (supported since indexed links) might
                         // yield a null relation here. EAL 7/19/00.
@@ -355,11 +398,11 @@ public class CompositeEntity extends ComponentEntity {
                             if (rel.getContainer() != this) {
                                 throw new CloneNotSupportedException(
                                         "Cannot clone a CompositeEntity with "
-                                        + "level crossing transitions.");
+                                                + "level crossing transitions.");
                             }
 
                             ComponentRelation newRelation = newEntity
-                                .getRelation(rel.getName());
+                                    .getRelation(rel.getName());
                             Port newPort = newSubentity.getPort(port.getName());
 
                             try {
@@ -367,7 +410,7 @@ public class CompositeEntity extends ComponentEntity {
                             } catch (IllegalActionException ex) {
                                 throw new CloneNotSupportedException(
                                         "Failed to clone a CompositeEntity: "
-                                        + ex.getMessage());
+                                                + ex.getMessage());
                             }
                         }
                     }
@@ -383,8 +426,8 @@ public class CompositeEntity extends ComponentEntity {
 
                 while (relations.hasNext()) {
                     Relation relation = (Relation) relations.next();
-                    ComponentRelation newRelation = newEntity.getRelation(relation
-                            .getName());
+                    ComponentRelation newRelation = newEntity
+                            .getRelation(relation.getName());
                     Port newPort = newEntity.getPort(port.getName());
 
                     try {
@@ -392,7 +435,7 @@ public class CompositeEntity extends ComponentEntity {
                     } catch (IllegalActionException ex) {
                         throw new CloneNotSupportedException(
                                 "Failed to clone a CompositeEntity: "
-                                + ex.getMessage());
+                                        + ex.getMessage());
                     }
                 }
             }
@@ -457,8 +500,8 @@ public class CompositeEntity extends ComponentEntity {
      *   the specified name in this entity.
      */
     public ComponentRelation connect(ComponentPort port1, ComponentPort port2,
-            String relationName)
-            throws IllegalActionException, NameDuplicationException {
+            String relationName) throws IllegalActionException,
+            NameDuplicationException {
         if ((port1 == null) || (port2 == null)) {
             throw new IllegalActionException(this,
                     "Attempt to connect null port.");
@@ -516,6 +559,7 @@ public class CompositeEntity extends ComponentEntity {
      *  This method is read-synchronized on the workspace.
      *  @return A list of opaque ComponentEntity objects.
      *  @see #classDefinitionList()
+     *  @see #allAtomicEntityList()
      */
     public List deepEntityList() {
         try {
@@ -669,8 +713,7 @@ public class CompositeEntity extends ComponentEntity {
      *  <i>filter</i>.
      *  @exception IOException If an I/O error occurs.
      */
-    public String exportLinks(int depth, Collection filter)
-            throws IOException {
+    public String exportLinks(int depth, Collection filter) throws IOException {
         // To get the ordering right,
         // we read the links from the ports, not from the relations.
         StringBuffer result = new StringBuffer();
@@ -691,7 +734,8 @@ public class CompositeEntity extends ComponentEntity {
             while (relations.hasNext()) {
                 index++;
 
-                ComponentRelation relation = (ComponentRelation) relations.next();
+                ComponentRelation relation = (ComponentRelation) relations
+                        .next();
 
                 if (relation == null) {
                     // Gap in the links.  The next link has to use an
@@ -711,9 +755,12 @@ public class CompositeEntity extends ComponentEntity {
 
                 // Apply filter.
                 if ((filter == null)
-                        || (filter.contains(relation)
-                                && (filter.contains(port)
-                                        || filter.contains(port.getContainer())))) {
+                        || (filter.contains(relation) && (filter.contains(port) || filter
+                                .contains(port.getContainer())))) {
+                    // If the relation is not persistent, then do not export the link.
+                    if (!relation.isPersistent()) {
+                        continue;
+                    }
                     // In order to support level-crossing links, consider the
                     // possibility that the relation is not contained by this.
                     String relationName;
@@ -731,8 +778,8 @@ public class CompositeEntity extends ComponentEntity {
                                 + "\" relation=\"" + relationName + "\"/>\n");
                     } else {
                         result.append(_getIndentPrefix(depth) + "<link port=\""
-                                + port.getName() + "\" relation=\"" + relationName
-                                + "\"/>\n");
+                                + port.getName() + "\" relation=\""
+                                + relationName + "\"/>\n");
                     }
                 }
             }
@@ -759,7 +806,7 @@ public class CompositeEntity extends ComponentEntity {
                     index++;
 
                     ComponentRelation relation = (ComponentRelation) relations
-                        .next();
+                            .next();
 
                     if (relation == null) {
                         // Gap in the links.  The next link has to use an
@@ -774,16 +821,19 @@ public class CompositeEntity extends ComponentEntity {
                     // link is implied.
                     if ((relation.getDerivedLevel() <= depth)
                             && (port.getDerivedLevel() <= (depth + 1))
-                            && (((NamedObj) port.getContainer())
-                                    .getDerivedLevel() <= depth)) {
+                            && ((port.getContainer()).getDerivedLevel() <= depth)) {
                         continue;
                     }
 
                     // Apply filter.
                     if ((filter == null)
-                            || (filter.contains(relation)
-                                    && (filter.contains(port)
-                                            || filter.contains(port.getContainer())))) {
+                            || (filter.contains(relation) && (filter
+                                    .contains(port) || filter.contains(port
+                                    .getContainer())))) {
+                        // If the relation is not persistent, then do not export the link.
+                        if (!relation.isPersistent()) {
+                            continue;
+                        }
                         // In order to support level-crossing links,
                         // consider the possibility that the relation
                         // is not contained by this.
@@ -800,13 +850,82 @@ public class CompositeEntity extends ComponentEntity {
                             result.append(_getIndentPrefix(depth)
                                     + "<link port=\"" + entity.getName() + "."
                                     + port.getName() + "\" insertAt=\"" + index
-                                    + "\" relation=\"" + relationName + "\"/>\n");
+                                    + "\" relation=\"" + relationName
+                                    + "\"/>\n");
                         } else {
                             result.append(_getIndentPrefix(depth)
                                     + "<link port=\"" + entity.getName() + "."
                                     + port.getName() + "\" relation=\""
                                     + relationName + "\"/>\n");
                         }
+                    }
+                }
+            }
+        }
+
+        // Finally, produce the links that are between contained
+        // relations only. Slight trickiness here: Both relations
+        // on either side of a link have links to each other,
+        // but we only want to represent one of the links.
+        // It doesn't matter which one. We do this by accumulating
+        // a set of visited relations.
+        Set visitedRelations = new HashSet();
+        Iterator relations = relationList().iterator();
+
+        while (relations.hasNext()) {
+            ComponentRelation relation = (ComponentRelation) relations.next();
+            visitedRelations.add(relation);
+
+            Iterator portsAndRelations = relation.linkedObjectsList()
+                    .iterator();
+
+            while (portsAndRelations.hasNext()) {
+                Object portOrRelation = portsAndRelations.next();
+
+                if (portOrRelation instanceof Relation) {
+                    Relation otherRelation = (Relation) portOrRelation;
+
+                    // If we have visited the other relation already, then
+                    // we have already represented the link. Skip this.
+                    if (visitedRelations.contains(otherRelation)) {
+                        continue;
+                    }
+
+                    // If both ends of the link are inherited objects, then
+                    // suppress the export. This depends on the level of export
+                    // because if both ends of the link are implied, then the
+                    // link is implied.
+                    if ((relation.getDerivedLevel() <= depth)
+                            && (otherRelation.getDerivedLevel() <= depth)) {
+                        continue;
+                    }
+
+                    // Apply filter.
+                    if ((filter == null)
+                            || (filter.contains(relation) && filter
+                                    .contains(otherRelation))) {
+                        // In order to support level-crossing links, consider the
+                        // possibility that the relation is not contained by this.
+                        String relationName;
+
+                        if (relation.getContainer() == this) {
+                            relationName = relation.getName();
+                        } else {
+                            relationName = relation.getFullName();
+                        }
+
+                        String otherRelationName;
+
+                        if (otherRelation.getContainer() == this) {
+                            otherRelationName = otherRelation.getName();
+                        } else {
+                            otherRelationName = otherRelation.getFullName();
+                        }
+
+                        result.append(_getIndentPrefix(depth)
+                                + "<link relation1=\"" + relationName
+                                + "\" relation2=\"" + otherRelationName
+                                + "\"/>\n");
                     }
                 }
             }
@@ -966,7 +1085,8 @@ public class CompositeEntity extends ComponentEntity {
                     return null;
                 } else {
                     if (match instanceof CompositeEntity) {
-                        return ((CompositeEntity) match).getRelation(subnames[1]);
+                        return ((CompositeEntity) match)
+                                .getRelation(subnames[1]);
                     } else {
                         return null;
                     }
@@ -1051,25 +1171,10 @@ public class CompositeEntity extends ComponentEntity {
         return numberOfRelations();
     }
 
-    /** Return the number of contained class definitions.
-     *  This method is read-synchronized on the workspace.
-     *  @return The number of class definitions.
-     *  @see #numberOfEntities()
-     */
-    public int numberOfClassDefinitions() {
-        try {
-            _workspace.getReadAccess();
-            return classDefinitionList().size();
-        } finally {
-            _workspace.doneReading();
-        }
-    }
-
     /** Return the number of contained entities, not including
      *  class definitions.
      *  This method is read-synchronized on the workspace.
      *  @return The number of entities.
-     *  @see #numberOfClassDefinitions()
      */
     public int numberOfEntities() {
         try {
@@ -1132,7 +1237,7 @@ public class CompositeEntity extends ComponentEntity {
                     // This exception should not be thrown.
                     throw new InternalErrorException(this, ex,
                             "Internal error in CompositeEntity."
-                            + "removeAllEntities() method!");
+                                    + "removeAllEntities() method!");
                 }
             }
         } finally {
@@ -1152,7 +1257,8 @@ public class CompositeEntity extends ComponentEntity {
             Iterator relations = relationList().iterator();
 
             while (relations.hasNext()) {
-                ComponentRelation relation = (ComponentRelation) relations.next();
+                ComponentRelation relation = (ComponentRelation) relations
+                        .next();
 
                 try {
                     relation.setContainer(null);
@@ -1160,7 +1266,7 @@ public class CompositeEntity extends ComponentEntity {
                     // This exception should not be thrown.
                     throw new InternalErrorException(this, ex,
                             "Internal error in CompositeEntity."
-                            + "removeAllRelations() method!");
+                                    + "removeAllRelations() method!");
                 }
             }
         } finally {
@@ -1168,6 +1274,108 @@ public class CompositeEntity extends ComponentEntity {
         }
     }
 
+    /** Return a string describing how many actors, parameters,
+     * ports, and relations it has.
+     * @param className If non-null and non-empty, then also
+     * include the number of objects with the give name.
+     * @return a string describing the number of components.
+     * @exception IllegalActionException If the class named by
+     * actorClassName cannot be found.
+     */
+    public String statistics(String className) 
+        throws IllegalActionException {
+        // FIXME: The right way to do this is to have each class 
+        // in the hierarchy have a statistics method.
+        try {
+            _workspace.getReadAccess();
+            
+            Class clazz = null;
+            try {
+                if (className != null 
+                        && className.length() > 0) {
+                    clazz = Class.forName(className);
+                }
+            } catch (Exception ex) {
+                throw new IllegalActionException(null, ex,
+                        "Failed to instantiate \"" + className
+                        + "\"");
+            }
+    
+            List atomicEntities = allAtomicEntityList();
+            int entityCount = atomicEntities.size();
+            
+            int  attributeCount = 0, entityClassCount = 0;
+            Iterator entities = atomicEntities.iterator();
+            while (entities.hasNext()) {
+                ComponentEntity entity = (ComponentEntity) entities.next();
+                List attributeList = entity.attributeList();
+                attributeCount += attributeList.size();
+                if (clazz != null) {
+                    if (clazz.isAssignableFrom(entity.getClass())) {
+                        entityClassCount++;
+                    } else {
+                        // Search the attributes
+                        Iterator attributes = attributeList.iterator();
+                        while (attributes.hasNext()) {
+                            Attribute attribute = (Attribute) attributes.next();
+                            if (clazz.isAssignableFrom(attribute.getClass())) {
+                                entityClassCount++;
+                            }  
+                        }
+                    }
+                }
+            }
+            List relationList = relationList();
+            int compositeEntityCount = 0, relationCount = relationList.size();
+            if (clazz != null) {
+                // Search the relations
+                Iterator relations = relationList.iterator();
+                while (relations.hasNext()) {
+                    Relation relation = (Relation) relations.next();
+                    if (clazz.isAssignableFrom(relation.getClass())) {
+                        entityClassCount++;  
+                    }
+                }
+            }
+            
+            entities = allCompositeEntityList().iterator();
+
+            while (entities.hasNext()) {
+                Entity entity = (Entity) entities.next();
+                if (entity instanceof CompositeEntity) {
+                    compositeEntityCount++;
+                    relationList = ((CompositeEntity) entity).relationList();
+                    relationCount += relationList.size(); 
+                    if (clazz != null) {
+                        if (clazz.isAssignableFrom(entity.getClass())) {
+                            entityClassCount++;
+                        } else {
+                            // Search the relations
+                            Iterator relations = relationList.iterator();
+                            while (relations.hasNext()) {
+                                Relation relation = (Relation) relations.next();
+                                if (clazz.isAssignableFrom(relation.getClass())) {
+                                    entityClassCount++;
+                                }  
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return  "Size Statistics for " + getFullName()
+                + "\nAtomicEntities: " + entityCount
+                + "\nCompositeEntities: " + compositeEntityCount
+                + "\nRelations: " + relationCount
+                + "\nAttributes: " + attributeCount
+                + (clazz == null ? "" :
+                    "\nEntities of type \"" + clazz.getName() 
+                    + "\": " + entityClassCount);   
+        } finally {
+            _workspace.doneReading();
+        }
+    }
+    
     /** Return a name that is guaranteed to not be the name of
      *  any contained attribute, port, class, entity, or relation.
      *  In this implementation, the argument
@@ -1219,66 +1427,6 @@ public class CompositeEntity extends ComponentEntity {
         }
 
         return candidate;
-    }
-
-    /** Validate attributes deeply contained by this object if they
-     *  implement the Settable interface by calling their validate() method.
-     *  This method overrides the base class to check attributes contained
-     *  by the contained entities and relations.
-     *  Errors that are triggered by this validation are handled by calling
-     *  handleModelError().
-     *  @see ptolemy.kernel.util.NamedObj#handleModelError(NamedObj, IllegalActionException)
-     */
-    public void validateSettables() throws IllegalActionException {
-        super.validateSettables();
-
-        Iterator classes = classDefinitionList().iterator();
-
-        while (classes.hasNext()) {
-            Entity entity = (Entity) classes.next();
-
-            if (entity instanceof Settable) {
-                try {
-                    ((Settable) entity).validate();
-                } catch (IllegalActionException ex) {
-                    handleModelError(this, ex);
-                }
-            }
-
-            entity.validateSettables();
-        }
-
-        Iterator entities = entityList().iterator();
-
-        while (entities.hasNext()) {
-            Entity entity = (Entity) entities.next();
-
-            if (entity instanceof Settable) {
-                try {
-                    ((Settable) entity).validate();
-                } catch (IllegalActionException ex) {
-                    handleModelError(this, ex);
-                }
-            }
-
-            entity.validateSettables();
-        }
-
-        Iterator relations = relationList().iterator();
-
-        while (relations.hasNext()) {
-            Relation relation = (Relation) relations.next();
-
-            if (relation instanceof Settable) {
-                try {
-                    ((Settable) relation).validate();
-                } catch (IllegalActionException ex) {
-                    handleModelError(this, ex);
-                }
-            }
-
-            relation.validateSettables();
-        }
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -1409,8 +1557,7 @@ public class CompositeEntity extends ComponentEntity {
 
                 while (classes.hasNext()) {
                     ComponentEntity entity = (ComponentEntity) classes.next();
-                    result += (entity._description(detail, indent + 1, 2)
-                            + "\n");
+                    result += (entity._description(detail, indent + 1, 2) + "\n");
                 }
 
                 result += (_getIndentPrefix(indent) + "} entities {\n");
@@ -1419,8 +1566,7 @@ public class CompositeEntity extends ComponentEntity {
 
                 while (entities.hasNext()) {
                     ComponentEntity entity = (ComponentEntity) entities.next();
-                    result += (entity._description(detail, indent + 1, 2)
-                            + "\n");
+                    result += (entity._description(detail, indent + 1, 2) + "\n");
                 }
 
                 result += (_getIndentPrefix(indent) + "} relations {\n");
@@ -1429,8 +1575,7 @@ public class CompositeEntity extends ComponentEntity {
 
                 while (relations.hasNext()) {
                     Relation relation = (Relation) relations.next();
-                    result += (relation._description(detail, indent + 1, 2)
-                            + "\n");
+                    result += (relation._description(detail, indent + 1, 2) + "\n");
                 }
 
                 result += (_getIndentPrefix(indent) + "}");
@@ -1472,8 +1617,8 @@ public class CompositeEntity extends ComponentEntity {
             } else if (getAttribute("_createdBy") != null) {
                 try {
                     ((VersionAttribute) getAttribute("_createdBy"))
-                        .setExpression(VersionAttribute.CURRENT_VERSION
-                                .getExpression());
+                            .setExpression(VersionAttribute.CURRENT_VERSION
+                                    .getExpression());
                 } catch (IllegalActionException ex) {
                     throw new InternalErrorException(this, ex,
                             "Failed to update _createdBy");
@@ -1550,24 +1695,84 @@ public class CompositeEntity extends ComponentEntity {
         _containedRelations.remove(relation);
     }
 
+    /** Validate attributes deeply contained by this object if they
+     *  implement the Settable interface by calling their validate() method.
+     *  This method overrides the base class to check attributes contained
+     *  by the contained entities and relations.
+     *  Errors that are triggered by this validation are handled by calling
+     *  handleModelError().
+     *  @param attributesValidated A HashSet of Attributes that have
+     *  already been validated.  For example, Settables that implement
+     *  the SharedSettable interface are validated only once.
+     *  @see ptolemy.kernel.util.NamedObj#handleModelError(NamedObj, IllegalActionException)
+     *  @exception IllegalActionException If the superclass throws it
+     *  or if handleModelError() throws it.
+     */
+    protected void _validateSettables(Collection attributesValidated)
+            throws IllegalActionException {
+        super._validateSettables(attributesValidated);
+        Iterator classes = classDefinitionList().iterator();
+        while (classes.hasNext()) {
+            Entity entity = (Entity) classes.next();
+            if (entity instanceof Settable) {
+                try {
+                    Collection validated = ((Settable) entity).validate();
+                    if (validated != null) {
+                        attributesValidated.addAll(validated);
+                    }
+                    attributesValidated.add(entity);
+                } catch (IllegalActionException ex) {
+                    if (!handleModelError(this, ex)) {
+                        throw ex;
+                    }
+                }
+            }
+            entity._validateSettables(attributesValidated);
+        }
+
+        Iterator entities = entityList().iterator();
+        while (entities.hasNext()) {
+            Entity entity = (Entity) entities.next();
+            if (entity instanceof Settable) {
+                try {
+                    Collection validated = ((Settable) entity).validate();
+                    if (validated != null) {
+                        attributesValidated.addAll(validated);
+                    }
+                    attributesValidated.add(entity);
+                } catch (IllegalActionException ex) {
+                    if (!handleModelError(this, ex)) {
+                        throw ex;
+                    }
+                }
+            }
+            entity._validateSettables(attributesValidated);
+        }
+
+        Iterator relations = relationList().iterator();
+        while (relations.hasNext()) {
+            Relation relation = (Relation) relations.next();
+            if (relation instanceof Settable) {
+                try {
+                    Collection validated = ((Settable) relation).validate();
+                    if (validated != null) {
+                        attributesValidated.addAll(validated);
+                    }
+                    attributesValidated.add(relation);
+                } catch (IllegalActionException ex) {
+                    if (!handleModelError(this, ex)) {
+                        throw ex;
+                    }
+                }
+            }
+            relation.validateSettables();
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
     private void _addIcon() {
-        _attachText("_iconDescription",
-                "<svg>\n" + "<rect x=\"-30\" y=\"-20\" width=\"60\" "
-                + "height=\"40\" style=\"fill:red\"/>\n"
-                + "<rect x=\"-28\" y=\"-18\" width=\"56\" "
-                + "height=\"36\" style=\"fill:lightgrey\"/>\n"
-                + "<rect x=\"-15\" y=\"-10\" width=\"10\" height=\"8\" "
-                + "style=\"fill:white\"/>\n"
-                + "<rect x=\"-15\" y=\"2\" width=\"10\" height=\"8\" "
-                + "style=\"fill:white\"/>\n"
-                + "<rect x=\"5\" y=\"-4\" width=\"10\" height=\"8\" "
-                + "style=\"fill:white\"/>\n"
-                + "<line x1=\"-5\" y1=\"-6\" x2=\"0\" y2=\"-6\"/>"
-                + "<line x1=\"-5\" y1=\"6\" x2=\"0\" y2=\"6\"/>"
-                + "<line x1=\"0\" y1=\"-6\" x2=\"0\" y2=\"6\"/>"
-                + "<line x1=\"0\" y1=\"0\" x2=\"5\" y2=\"0\"/>" + "</svg>\n");
+        _attachText("_iconDescription", _defaultIcon);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -1590,6 +1795,25 @@ public class CompositeEntity extends ComponentEntity {
     /** Workspace version for cache. */
     private transient long _classDefinitionListVersion = -1L;
 
+    /** The default value icon.  This is static so that we avoid doing
+     *  string concatenation each time we construct this object.
+     */
+    private static String _defaultIcon = "<svg>\n"
+            + "<rect x=\"-30\" y=\"-20\" width=\"60\" "
+            + "height=\"40\" style=\"fill:red\"/>\n"
+            + "<rect x=\"-28\" y=\"-18\" width=\"56\" "
+            + "height=\"36\" style=\"fill:lightgrey\"/>\n"
+            + "<rect x=\"-15\" y=\"-10\" width=\"10\" height=\"8\" "
+            + "style=\"fill:white\"/>\n"
+            + "<rect x=\"-15\" y=\"2\" width=\"10\" height=\"8\" "
+            + "style=\"fill:white\"/>\n"
+            + "<rect x=\"5\" y=\"-4\" width=\"10\" height=\"8\" "
+            + "style=\"fill:white\"/>\n"
+            + "<line x1=\"-5\" y1=\"-6\" x2=\"0\" y2=\"-6\"/>"
+            + "<line x1=\"-5\" y1=\"6\" x2=\"0\" y2=\"6\"/>"
+            + "<line x1=\"0\" y1=\"-6\" x2=\"0\" y2=\"6\"/>"
+            + "<line x1=\"0\" y1=\"0\" x2=\"5\" y2=\"0\"/>" + "</svg>\n";
+
     /** Cache of entity list. */
     private transient List _entityListCache;
 
@@ -1607,38 +1831,34 @@ public class CompositeEntity extends ComponentEntity {
      *  objects are attributes first, then ports, then entities,
      *  then relations.
      */
-    protected class ContainedObjectsIterator
-        extends Entity.ContainedObjectsIterator {
+    protected class ContainedObjectsIterator extends
+            Entity.ContainedObjectsIterator {
+        /** Create an iterator over all the contained objects, which
+         *  for CompositeEntities are attributes, ports, classes
+         *  entities, and relations.
+         */
+        public ContainedObjectsIterator() {
+            super();
+            _classListIterator = classDefinitionList().iterator();
+            _entityListIterator = entityList().iterator();
+            _relationListIterator = relationList().iterator();
+        }
+
         /** Return true if the iteration has more elements.
          *  In this class, this returns true if there are more
-         *  attributes, ports, entities, or relations.
+         *  attributes, ports, classes, entities, or relations.
          *  @return True if there are more elements.
          */
         public boolean hasNext() {
             if (super.hasNext()) {
                 return true;
             }
-
-            if (_classListIterator == null) {
-                _classListIterator = classDefinitionList().iterator();
-            }
-
             if (_classListIterator.hasNext()) {
                 return true;
             }
-
-            if (_entityListIterator == null) {
-                _entityListIterator = entityList().iterator();
-            }
-
             if (_entityListIterator.hasNext()) {
                 return true;
             }
-
-            if (_relationListIterator == null) {
-                _relationListIterator = relationList().iterator();
-            }
-
             return _relationListIterator.hasNext();
         }
 
@@ -1651,52 +1871,28 @@ public class CompositeEntity extends ComponentEntity {
                 return super.next();
             }
 
-            if (_classListIterator == null) {
-                _classListIterator = classDefinitionList().iterator();
-            }
-
             if (_classListIterator.hasNext()) {
-                _lastElementWasClass = true;
                 return _classListIterator.next();
             }
 
-            if (_entityListIterator == null) {
-                _entityListIterator = entityList().iterator();
-            }
-
             if (_entityListIterator.hasNext()) {
-                _lastElementWasEntity = true;
                 return _entityListIterator.next();
             }
 
-            if (_relationListIterator == null) {
-                _relationListIterator = relationList().iterator();
-            }
-
-            _lastElementWasRelation = true;
             return _relationListIterator.next();
         }
 
-        /** Remove from the underlying collection the last element
-         *  returned by the iterator.
+        /** The remove() method is not supported because is is not
+         *  supported in NamedObj.ContainedObjectsIterator.remove().
          */
         public void remove() {
-            if (_lastElementWasClass) {
-                _entityListIterator.remove();
-            } else if (_lastElementWasEntity) {
-                _entityListIterator.remove();
-            } else if (_lastElementWasRelation) {
-                _relationListIterator.remove();
-            } else {
-                super.remove();
-            }
+            super.remove();
         }
 
         private Iterator _classListIterator = null;
-        private boolean _lastElementWasClass = false;
+
         private Iterator _entityListIterator = null;
-        private boolean _lastElementWasEntity = false;
-        private boolean _lastElementWasRelation = false;
+
         private Iterator _relationListIterator = null;
     }
 }

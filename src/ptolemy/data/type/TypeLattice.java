@@ -1,30 +1,30 @@
 /* Type hierarchy of token classes.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.data.type;
 
 import ptolemy.data.Token;
@@ -32,20 +32,19 @@ import ptolemy.graph.CPO;
 import ptolemy.graph.DirectedAcyclicGraph;
 import ptolemy.kernel.util.InternalErrorException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// TypeLattice
 
 /**
-   Type hierarchy for token classes.
+ Type hierarchy for token classes.
 
-   @author Yuhong Xiong, Steve Neuendorffer
-   @version $Id: TypeLattice.java,v 1.62 2005/04/25 22:03:16 cxh Exp $
-   @since Ptolemy II 0.4
-   @Pt.ProposedRating Red (yuhong)
-   @Pt.AcceptedRating Red
-   @see ptolemy.graph.CPO
-*/
+ @author Yuhong Xiong, Steve Neuendorffer
+ @version $Id: TypeLattice.java,v 1.80 2006/08/20 19:55:36 cxh Exp $
+ @since Ptolemy II 0.4
+ @Pt.ProposedRating Red (yuhong)
+ @Pt.AcceptedRating Red
+ @see ptolemy.graph.CPO
+ */
 public class TypeLattice {
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -73,8 +72,8 @@ public class TypeLattice {
         if ((token1 == null) || (token2 == null)) {
             throw new IllegalArgumentException(
                     "TypeLattice.compare(Token, Token): "
-                    + "one or both of the argument tokens is null: " + " token1 = "
-                    + token1 + ", token2 = " + token2);
+                            + "one or both of the argument tokens is null: "
+                            + " token1 = " + token1 + ", token2 = " + token2);
         }
 
         return compare(token1.getType(), token2.getType());
@@ -94,7 +93,8 @@ public class TypeLattice {
     public static int compare(Token token, Type type) {
         if (token == null) {
             throw new IllegalArgumentException(
-                    "TypeLattice.compare(Token, Type): " + "token argument is null");
+                    "TypeLattice.compare(Token, Type): "
+                            + "token argument is null");
         }
 
         return compare(token.getType(), type);
@@ -114,7 +114,8 @@ public class TypeLattice {
     public static int compare(Type type, Token token) {
         if (token == null) {
             throw new IllegalArgumentException(
-                    "TypeLattice.compare(Type, Token): " + "token argument is null");
+                    "TypeLattice.compare(Type, Token): "
+                            + "token argument is null");
         }
 
         return compare(type, token.getType());
@@ -134,8 +135,8 @@ public class TypeLattice {
         if ((type1 == null) || (type2 == null)) {
             throw new IllegalArgumentException(
                     "TypeLattice.compare(Type, Type): "
-                    + "one or both of the argument types is null: " + " type1 = "
-                    + type1 + ", type2 = " + type2);
+                            + "one or both of the argument types is null: "
+                            + " type1 = " + type1 + ", type2 = " + type2);
         }
 
         int i1 = type1.getTypeHash();
@@ -145,10 +146,10 @@ public class TypeLattice {
         // _lattice.compare() on ptolemy.data package performance... Run
         // ptolemy/data/type/test/performance.xml before and after...(zk)
         if ( /*false &&*/
-                (i1 != Type.HASH_INVALID) && (i2 != Type.HASH_INVALID)) {
+        (i1 != Type.HASH_INVALID) && (i2 != Type.HASH_INVALID)) {
             if (_getCachedTypeComparisonResult(i1, i2) == Type.HASH_INVALID) {
-                _setCachedTypeComparisonResult(i1, i2,
-                        _lattice.compare(type1, type2));
+                _setCachedTypeComparisonResult(i1, i2, _lattice.compare(type1,
+                        type2));
             }
 
             return _getCachedTypeComparisonResult(i1, i2);
@@ -166,6 +167,9 @@ public class TypeLattice {
     }
 
     /** Return the least upper bound of the two given types.
+     *  @param type1 The first given type.
+     *  @param type2 The second given type.
+     *  @return The least upper bound of type1 and type2.
      */
     public static Type leastUpperBound(Type type1, Type type2) {
         return (Type) _lattice.leastUpperBound(type1, type2);
@@ -229,10 +233,39 @@ public class TypeLattice {
 
             if (t1Rep.equals(t2Rep) && t1Rep instanceof StructuredType) {
                 return ((StructuredType) t1)._compare((StructuredType) t2);
+            } else if (t1Rep instanceof ArrayType
+                    && !(t2Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                int elementComparison = compare(((ArrayType) ct1)
+                        .getElementType(), t2Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return HIGHER;
+                } else {
+                    if (t2Rep == BaseType.GENERAL) {
+                        return LOWER;
+                    } else {
+                        return INCOMPARABLE;
+                    }
+                }
+            } else if (t2Rep instanceof ArrayType
+                    && !(t1Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                int elementComparison = compare(((ArrayType) ct2)
+                        .getElementType(), t1Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return LOWER;
+                } else {
+                    if (t1Rep == BaseType.GENERAL) {
+                        return HIGHER;
+                    } else {
+                        return INCOMPARABLE;
+                    }
+                }
             } else if (_basicLattice.containsNodeWeight(t1Rep)
                     && _basicLattice.containsNodeWeight(t2Rep)) {
-                // Both are not the same structured type, so their relation is
-                // defined by their relation in the basic lattice.
+                // Both are neither the same structured type, nor an array
+                // and non-array pair, so their type relation is defined
+                // by the basic lattice.
                 return _basicLattice.compare(t1Rep, t2Rep);
             } else {
                 // Both arguments are not the same structured type, and
@@ -259,7 +292,7 @@ public class TypeLattice {
         public Object[] downSet(Object e) {
             throw new UnsupportedOperationException(
                     "TheTypeLattice.downSet(): operation not supported for "
-                    + "the type lattice.");
+                            + "the type lattice.");
         }
 
         /** Return the greatest lower bound of two types.
@@ -273,7 +306,7 @@ public class TypeLattice {
             if (!(t1 instanceof Type) || !(t2 instanceof Type)) {
                 throw new IllegalArgumentException(
                         "TheTypeLattice.greatestLowerBound: "
-                        + "Arguments are not instances of Type.");
+                                + "Arguments are not instances of Type.");
             }
 
             Type ct1 = (Type) t1;
@@ -283,11 +316,57 @@ public class TypeLattice {
             Type t2Rep = _toRepresentative(ct2);
 
             if (t1Rep.equals(t2Rep) && t1Rep instanceof StructuredType) {
-                return ((StructuredType) t1)._greatestLowerBound((StructuredType) t2);
+                return ((StructuredType) t1)
+                        ._greatestLowerBound((StructuredType) t2);
+            } else if (t1Rep instanceof ArrayType
+                    && !(t2Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                int elementComparison = compare(((ArrayType) ct1)
+                        .getElementType(), t2Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return t2;
+                } else {
+                    if (t2Rep == BaseType.GENERAL) {
+                        return t1;
+                    } else {
+                        // INCOMPARABLE
+                        if (_basicLattice.containsNodeWeight(t2Rep)) {
+                            return _basicLattice.greatestLowerBound(t1Rep,
+                                    t2Rep);
+                        } else {
+                            // t2 is a user type (has no representative in the
+                            // basic lattice). Arrays of this type are not supported.
+                            return BaseType.UNKNOWN;
+                        }
+                    }
+                }
+            } else if (t2Rep instanceof ArrayType
+                    && !(t1Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                int elementComparison = compare(((ArrayType) ct2)
+                        .getElementType(), t1Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return t1;
+                } else {
+                    if (t1Rep == BaseType.GENERAL) {
+                        return t2;
+                    } else {
+                        // INCOMPARABLE
+                        if (_basicLattice.containsNodeWeight(t1Rep)) {
+                            return _basicLattice.greatestLowerBound(t1Rep,
+                                    t2Rep);
+                        } else {
+                            // t1 is a user type (has no representative in the
+                            // basic lattice). Arrays of this type are not supported.
+                            return BaseType.UNKNOWN;
+                        }
+                    }
+                }
             } else if (_basicLattice.containsNodeWeight(t1Rep)
                     && _basicLattice.containsNodeWeight(t2Rep)) {
-                // Both are not the same structured type, so their relation is
-                // defined by their relation in the basic lattice.
+                // Both are neither the same structured type, nor an array
+                // and non-array pair, so their type relation is defined
+                // by the basic lattice.
                 int relation = _basicLattice.compare(t1Rep, t2Rep);
 
                 if (relation == SAME) {
@@ -363,7 +442,7 @@ public class TypeLattice {
                     return subset[i];
                 }
             }
-
+            // FIXME: Shouldn't this return GENERAL?
             return null;
         }
 
@@ -400,7 +479,7 @@ public class TypeLattice {
                     return subset[i];
                 }
             }
-
+            // FIXME: Shouldn't thir return bottom?
             return null;
         }
 
@@ -413,7 +492,7 @@ public class TypeLattice {
             if (!(t1 instanceof Type) || !(t2 instanceof Type)) {
                 throw new IllegalArgumentException(
                         "TheTypeLattice.leastUpperBound: "
-                        + "Arguments are not instances of Type.");
+                                + "Arguments are not instances of Type.");
             }
 
             Type ct1 = (Type) t1;
@@ -423,11 +502,65 @@ public class TypeLattice {
             Type t2Rep = _toRepresentative(ct2);
 
             if (t1Rep.equals(t2Rep) && t1Rep instanceof StructuredType) {
-                return ((StructuredType) t1)._leastUpperBound((StructuredType) t2);
+                return ((StructuredType) t1)
+                        ._leastUpperBound((StructuredType) t2);
+            } else if (t1Rep instanceof ArrayType
+                    && !(t2Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                Type elementType = ((ArrayType) ct1).getElementType();
+                int elementComparison = compare(elementType, t2Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return t1;
+                } else {
+                    if (t2Rep == BaseType.GENERAL) {
+                        return t2;
+                    } else {
+                        // INCOMPARABLE
+                        if (_basicLattice.containsNodeWeight(t2Rep)
+                                && _basicLattice
+                                        .containsNodeWeight(elementType)) {
+                            // The least upper bound is an array of the LUB
+                            // of t2Rep and the element type of t1.
+                            return new ArrayType((Type) _basicLattice
+                                    .leastUpperBound(elementType, t2Rep));
+                        } else {
+                            // t2 is a user type (has no representative in the
+                            // basic lattice). Arrays of this type are not supported.
+                            return BaseType.GENERAL;
+                        }
+                    }
+                }
+            } else if (t2Rep instanceof ArrayType
+                    && !(t1Rep instanceof ArrayType)) {
+                // NOTE: Added by EAL, 7/16/06, to make scalar < {scalar}
+                Type elementType = ((ArrayType) ct2).getElementType();
+                int elementComparison = compare(elementType, t1Rep);
+                if (elementComparison == SAME || elementComparison == HIGHER) {
+                    return t2;
+                } else {
+                    if (t1Rep == BaseType.GENERAL) {
+                        return t1;
+                    } else {
+                        // INCOMPARABLE
+                        if (_basicLattice.containsNodeWeight(t1Rep)
+                                && _basicLattice
+                                        .containsNodeWeight(elementType)) {
+                            // The least upper bound is an array of the LUB
+                            // of t2Rep and the element type of t1.
+                            return new ArrayType((Type) _basicLattice
+                                    .leastUpperBound(elementType, t1Rep));
+                        } else {
+                            // t1 is a user type (has no representative in the
+                            // basic lattice). Arrays of this type are not supported.
+                            return BaseType.GENERAL;
+                        }
+                    }
+                }
             } else if (_basicLattice.containsNodeWeight(t1Rep)
                     && _basicLattice.containsNodeWeight(t2Rep)) {
-                // Both are not the same structured type, so their relation is
-                // defined by their relation in the basic lattice.
+                // Both are neither the same structured type, nor an array
+                // and non-array pair, so their type relation is defined
+                // by the basic lattice.
                 int relation = _basicLattice.compare(t1Rep, t2Rep);
 
                 if (relation == SAME) {
@@ -492,7 +625,7 @@ public class TypeLattice {
         public Object[] upSet(Object e) {
             throw new UnsupportedOperationException(
                     "TheTypeLattice.upSet(): operation not supported for "
-                    + "the type lattice.");
+                            + "the type lattice.");
         }
 
         ///////////////////////////////////////////////////////////////
@@ -502,14 +635,17 @@ public class TypeLattice {
             _basicLattice = new DirectedAcyclicGraph();
 
             StructuredType arrayRep = (new ArrayType(BaseType.UNKNOWN))
-                ._getRepresentative();
+                    ._getRepresentative();
 
             String[] labels = new String[0];
             Type[] types = new Type[0];
             StructuredType recordRep = (new RecordType(labels, types))
-                ._getRepresentative();
+                    ._getRepresentative();
+            StructuredType unionRep = (new UnionType(labels, types))
+                    ._getRepresentative();
 
-            StructuredType functionRep = new ptolemy.data.type.FunctionType(new ptolemy.data.type.Type[0],
+            /*StructuredType functionRep = */new ptolemy.data.type.FunctionType(
+                    new ptolemy.data.type.Type[0],
                     ptolemy.data.type.BaseType.UNKNOWN)._getRepresentative();
 
             _basicLattice.addNodeWeight(BaseType.BOOLEAN);
@@ -519,7 +655,8 @@ public class TypeLattice {
             _basicLattice.addNodeWeight(BaseType.COMPLEX_MATRIX);
             _basicLattice.addNodeWeight(BaseType.DOUBLE);
             _basicLattice.addNodeWeight(BaseType.DOUBLE_MATRIX);
-            _basicLattice.addNodeWeight(BaseType.FIX);
+            _basicLattice.addNodeWeight(BaseType.UNSIZED_FIX);
+            _basicLattice.addNodeWeight(BaseType.SIZED_FIX);
             _basicLattice.addNodeWeight(BaseType.FIX_MATRIX);
             _basicLattice.addNodeWeight(BaseType.INT);
             _basicLattice.addNodeWeight(BaseType.INT_MATRIX);
@@ -527,16 +664,20 @@ public class TypeLattice {
             _basicLattice.addNodeWeight(BaseType.LONG_MATRIX);
             _basicLattice.addNodeWeight(BaseType.MATRIX);
             _basicLattice.addNodeWeight(BaseType.UNKNOWN);
-            _basicLattice.addNodeWeight(BaseType.NUMERICAL);
+            // NOTE: Removed NUMERICAL from the type lattice, EAL 7/22/06.
+            // _basicLattice.addNodeWeight(BaseType.NUMERICAL);
             _basicLattice.addNodeWeight(BaseType.OBJECT);
             _basicLattice.addNodeWeight(BaseType.XMLTOKEN);
             _basicLattice.addNodeWeight(BaseType.SCALAR);
             _basicLattice.addNodeWeight(BaseType.STRING);
             _basicLattice.addNodeWeight(BaseType.EVENT);
             _basicLattice.addNodeWeight(BaseType.GENERAL);
+            _basicLattice.addNodeWeight(BaseType.PETITE);
+            _basicLattice.addNodeWeight(BaseType.NIL);
 
             _basicLattice.addNodeWeight(arrayRep);
             _basicLattice.addNodeWeight(recordRep);
+            _basicLattice.addNodeWeight(unionRep);
 
             _basicLattice.addEdge(BaseType.XMLTOKEN, BaseType.GENERAL);
             _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.XMLTOKEN);
@@ -546,29 +687,35 @@ public class TypeLattice {
             _basicLattice.addEdge(BaseType.MATRIX, BaseType.STRING);
             _basicLattice.addEdge(BaseType.BOOLEAN_MATRIX, BaseType.MATRIX);
             _basicLattice.addEdge(BaseType.BOOLEAN, BaseType.BOOLEAN_MATRIX);
+            _basicLattice.addEdge(BaseType.BOOLEAN, BaseType.SCALAR);
             _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.BOOLEAN);
 
-            _basicLattice.addEdge(BaseType.NUMERICAL, BaseType.MATRIX);
-            _basicLattice.addEdge(BaseType.FIX_MATRIX, BaseType.NUMERICAL);
-            _basicLattice.addEdge(BaseType.SCALAR, BaseType.NUMERICAL);
-            _basicLattice.addEdge(BaseType.LONG_MATRIX, BaseType.NUMERICAL);
-            _basicLattice.addEdge(BaseType.COMPLEX_MATRIX, BaseType.NUMERICAL);
+            // NOTE: Removed NUMERICAL from the type lattice, EAL 7/22/06.
+            // _basicLattice.addEdge(BaseType.NUMERICAL, BaseType.MATRIX);
+            _basicLattice.addEdge(BaseType.FIX_MATRIX, BaseType.MATRIX);
+            _basicLattice.addEdge(BaseType.SCALAR, BaseType.MATRIX);
+            _basicLattice.addEdge(BaseType.LONG_MATRIX, BaseType.MATRIX);
+            _basicLattice.addEdge(BaseType.COMPLEX_MATRIX, BaseType.MATRIX);
 
-            _basicLattice.addEdge(BaseType.FIX, BaseType.FIX_MATRIX);
-            _basicLattice.addEdge(BaseType.FIX, BaseType.SCALAR);
-            _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.FIX);
+            _basicLattice.addEdge(BaseType.UNSIZED_FIX, BaseType.FIX_MATRIX);
+            _basicLattice.addEdge(BaseType.SIZED_FIX, BaseType.UNSIZED_FIX);
+            _basicLattice.addEdge(BaseType.UNSIZED_FIX, BaseType.SCALAR);
+            _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.SIZED_FIX);
             _basicLattice.addEdge(BaseType.LONG, BaseType.SCALAR);
             _basicLattice.addEdge(BaseType.LONG, BaseType.LONG_MATRIX);
             _basicLattice.addEdge(BaseType.INT_MATRIX, BaseType.LONG_MATRIX);
             _basicLattice.addEdge(BaseType.INT, BaseType.LONG);
             _basicLattice.addEdge(BaseType.INT, BaseType.INT_MATRIX);
             _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.UNSIGNED_BYTE);
-
+            _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.PETITE);
             _basicLattice.addEdge(BaseType.INT_MATRIX, BaseType.DOUBLE_MATRIX);
             _basicLattice.addEdge(BaseType.DOUBLE_MATRIX,
                     BaseType.COMPLEX_MATRIX);
             _basicLattice.addEdge(BaseType.DOUBLE, BaseType.DOUBLE_MATRIX);
+            _basicLattice.addEdge(BaseType.INT, BaseType.DOUBLE);
+            _basicLattice.addEdge(BaseType.DOUBLE, BaseType.SCALAR);
 
+            _basicLattice.addEdge(BaseType.PETITE, BaseType.DOUBLE);
             _basicLattice.addEdge(BaseType.COMPLEX, BaseType.SCALAR);
             _basicLattice.addEdge(BaseType.COMPLEX, BaseType.COMPLEX_MATRIX);
 
@@ -579,12 +726,24 @@ public class TypeLattice {
             _basicLattice.addEdge(BaseType.EVENT, BaseType.GENERAL);
             _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.EVENT);
 
-            _basicLattice.addEdge(arrayRep, BaseType.GENERAL);
+            _basicLattice.addEdge(arrayRep, BaseType.STRING);
             _basicLattice.addEdge(BaseType.UNKNOWN, arrayRep);
 
-            _basicLattice.addEdge(recordRep, BaseType.GENERAL);
+            _basicLattice.addEdge(recordRep, BaseType.STRING);
             _basicLattice.addEdge(BaseType.UNKNOWN, recordRep);
 
+            _basicLattice.addEdge(unionRep, BaseType.GENERAL);
+            _basicLattice.addEdge(BaseType.UNKNOWN, unionRep);
+
+            _basicLattice.addEdge(BaseType.UNKNOWN, BaseType.NIL);
+            _basicLattice.addEdge(BaseType.NIL, BaseType.BOOLEAN);
+            // NOTE: Redundant, given edge to UnsignedByte
+            // _basicLattice.addEdge(BaseType.NIL, BaseType.DOUBLE);
+            // _basicLattice.addEdge(BaseType.NIL, BaseType.LONG);
+            // _basicLattice.addEdge(BaseType.NIL, BaseType.INT);
+            _basicLattice.addEdge(BaseType.NIL, BaseType.UNSIGNED_BYTE);
+
+            // FIXME: Replace this with an assert when we move to 1.5
             if (!_basicLattice.isLattice()) {
                 throw new InternalErrorException("TheTypeLattice: The "
                         + "type hierarchy is not a lattice.");
@@ -612,10 +771,11 @@ public class TypeLattice {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    // The infinite type lattice.
+
+    /** The infinite type lattice. */
     private static TheTypeLattice _lattice = new TheTypeLattice();
 
-    // The result cache for parts of the type lattice.
+    /** The result cache for parts of the type lattice. */
     private static int[][] _compareCache;
 
     static {

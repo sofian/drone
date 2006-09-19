@@ -1,33 +1,34 @@
 /* UnitAttribute used to specify either a Unit Expression or Unit Equations.
 
-Copyright (c) 2003-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2003-2005 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_3
-COPYRIGHTENDKEY
-*/
+ PT_COPYRIGHT_VERSION_3
+ COPYRIGHTENDKEY
+ */
 package ptolemy.data.unit;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -40,21 +41,20 @@ import ptolemy.kernel.util.Settable;
 import ptolemy.kernel.util.ValueListener;
 import ptolemy.util.StringUtilities;
 
-
 ///////////////////////////////////////////////////////////////////////////
 //// UnitAttribute
 
 /**
-   This class is used to implement the Unit Attribute. A
-   UnitsAttribute is either a UnitExpr, or a vector of
-   UnitConstraints.
+ This class is used to implement the Unit Attribute. A
+ UnitsAttribute is either a UnitExpr, or a vector of
+ UnitConstraints.
 
-   @author Rowland R Johnson
-   @version $Id: UnitAttribute.java,v 1.27 2005/04/29 20:04:56 cxh Exp $
-   @since Ptolemy II 4.0
-   @Pt.ProposedRating Red (rowland)
-   @Pt.AcceptedRating Red (rowland)
-*/
+ @author Rowland R Johnson
+ @version $Id: UnitAttribute.java,v 1.29 2006/09/16 11:18:43 eal Exp $
+ @since Ptolemy II 4.0
+ @Pt.ProposedRating Red (rowland)
+ @Pt.AcceptedRating Red (rowland)
+ */
 public class UnitAttribute extends AbstractSettableAttribute {
     /** Construct a UnitsAttribute with no specific name, or container.
      *  @exception IllegalActionException If the attribute is not of an
@@ -62,8 +62,8 @@ public class UnitAttribute extends AbstractSettableAttribute {
      *  @exception NameDuplicationException If the name coincides with
      *  an attribute already in the container.
      */
-    public UnitAttribute()
-            throws IllegalActionException, NameDuplicationException {
+    public UnitAttribute() throws IllegalActionException,
+            NameDuplicationException {
         super();
     }
 
@@ -112,7 +112,7 @@ public class UnitAttribute extends AbstractSettableAttribute {
 
         if ((value != null) && !value.equals("")) {
             valueTerm = " value=\"" + StringUtilities.escapeForXML(value)
-                + "\"";
+                    + "\"";
 
             output.write(_getIndentPrefix(depth) + "<" + _elementName
                     + " name=\"" + name + "\" class=\"" + getClassName() + "\""
@@ -194,12 +194,13 @@ public class UnitAttribute extends AbstractSettableAttribute {
 
         try {
             if (getName().equals("_unitConstraints")) {
-                Vector uEquations = UnitLibrary.getParser().parseEquations(expression);
+                Vector uEquations = UnitLibrary.getParser().parseEquations(
+                        expression);
                 UnitConstraints uConstraints = new UnitConstraints();
 
                 for (int i = 0; i < uEquations.size(); i++) {
                     uConstraints.addConstraint((UnitEquation) (uEquations
-                                                       .elementAt(i)));
+                            .elementAt(i)));
                 }
 
                 setUnitConstraints(uConstraints);
@@ -243,9 +244,12 @@ public class UnitAttribute extends AbstractSettableAttribute {
 
     /* Not really relevant to current capability.
      * But has to be included this class implements the Settable interface.
+     * @return Null, indicating that no other instances of Settable are
+     *   validated.
      * @see ptolemy.kernel.util.Settable#validate()
      */
-    public void validate() throws IllegalActionException {
+    public Collection validate() throws IllegalActionException {
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -271,9 +275,14 @@ public class UnitAttribute extends AbstractSettableAttribute {
 
     // Listeners for changes in value.
     private List _valueListeners;
+
     private UnitExpr _unitExpr = null;
+
     private UnitConstraints _unitConstraints = null;
+
     private int _type = -1;
+
     private static final int _EXPRESSION = 0;
+
     private static final int _CONSTRAINTS = 1;
 }

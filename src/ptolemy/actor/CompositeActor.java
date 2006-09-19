@@ -1,38 +1,37 @@
 /* An aggregation of actors.
 
-Copyright (c) 1997-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-FIXME: things to review:
-setDirector throws NameDuplicationException
-fire: call transferOutputs on local, not executive director.
-preinitialize: validate attributes of this composite and
-the attributes of its ports.
-setDirector invalidatesSchedule of executiveDirector.
-moved invalidation code from _addEntity to _finishedAddEntity
-initialize now clears receivers.. This helps SampleDelay inside a modal models with reset transition work better.
-*/
+ FIXME: things to review:
+ setDirector throws NameDuplicationException
+ preinitialize: validate attributes of this composite and
+ the attributes of its ports.
+ setDirector invalidatesSchedule of executiveDirector.
+ moved invalidation code from _addEntity to _finishedAddEntity
+ initialize now clears receivers.. This helps SampleDelay inside a modal models with reset transition work better.
+ */
 package ptolemy.actor;
 
 import java.util.Iterator;
@@ -55,69 +54,68 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Nameable;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// CompositeActor
 
 /**
-   A CompositeActor is an aggregation of actors.  It may have a
-   <i>local director</i>, which is an attribute of class Director that
-   is responsible for executing the contained actors.
-   At the top level of a hierarchy, a composite actor (the toplevel
-   CompositeActor of the topology) will normally exist with a local Director,
-   and no container.  A composite actor at a lower level
-   of the hierarchy may also have a local director.  A composite actor
-   with a local director is <i>opaque</i>, and serves the role of the
-   <i>wormhole</i> from Ptolemy Classic. Its ports are opaque, but it can
-   contain actors and relations.  The toplevel composite actor is also
-   associated with a Manager object that is responsible for managing
-   any execution within the topology at a high level.
-   <p>
-   The <i>executive director</i> of a composite actor is the local director of
-   the actor's container.   The toplevel composite actor has no executive
-   director, and getExecutiveDirector will return null.   For transparent
-   composite actors, the executive director and the local director will be the
-   same.
-   <p>
-   The getDirector() method returns the local director if there is one.
-   Otherwise, it returns the <i>executive director</i> of the CompositeActor,
-   if there is one.  Whatever it returns is called (simply) the
-   <i>director</i> of the composite (it may be local or executive).  This
-   Director is responsible for the execution of all the actors contained
-   within the composite actor.
-   <p>
-   A composite actor must have an executive director in order to communicate with
-   the hierarchy around it.   In fact, it cannot even receive data in its
-   input ports without an executive director, since the executive director
-   is responsible for supplying the receivers to the ports.
-   The toplevel composite actor has no executive director and cannot have
-   ports that transmit data, but it can still be executed as long as it has a
-   local director.  If the getDirector() method returns null, then the
-   composite is not executable.
-   <p>
-   When a composite actor has both a director and an executive director, then
-   the model of computation implemented by the director need not be the
-   same as the model of computation implemented by the executive director.
-   This is the source of the hierarchical heterogeneity in Ptolemy II.
-   Multiple models of computation can be cleanly nested.
-   <p>
-   The ports of a CompositeActor are constrained to be IOPorts, the
-   relations to be IORelations, and the actors to be instances of
-   ComponentEntity that implement the Actor interface.  Derived classes
-   may impose further constraints by overriding newPort(), _addPort(),
-   newRelation(), _addRelation(), and _addEntity().
+ A CompositeActor is an aggregation of actors.  It may have a
+ <i>local director</i>, which is an attribute of class Director that
+ is responsible for executing the contained actors.
+ At the top level of a hierarchy, a composite actor (the toplevel
+ CompositeActor of the topology) will normally exist with a local Director,
+ and no container.  A composite actor at a lower level
+ of the hierarchy may also have a local director.  A composite actor
+ with a local director is <i>opaque</i>, and serves the role of the
+ <i>wormhole</i> from Ptolemy Classic. Its ports are opaque, but it can
+ contain actors and relations.  The toplevel composite actor is also
+ associated with a Manager object that is responsible for managing
+ any execution within the topology at a high level.
+ <p>
+ The <i>executive director</i> of a composite actor is the local director of
+ the actor's container.   The toplevel composite actor has no executive
+ director, and getExecutiveDirector will return null.   For transparent
+ composite actors, the executive director and the local director will be the
+ same.
+ <p>
+ The getDirector() method returns the local director if there is one.
+ Otherwise, it returns the <i>executive director</i> of the CompositeActor,
+ if there is one.  Whatever it returns is called (simply) the
+ <i>director</i> of the composite (it may be local or executive).  This
+ Director is responsible for the execution of all the actors contained
+ within the composite actor.
+ <p>
+ A composite actor must have an executive director in order to communicate with
+ the hierarchy around it.   In fact, it cannot even receive data in its
+ input ports without an executive director, since the executive director
+ is responsible for supplying the receivers to the ports.
+ The toplevel composite actor has no executive director and cannot have
+ ports that transmit data, but it can still be executed as long as it has a
+ local director.  If the getDirector() method returns null, then the
+ composite is not executable.
+ <p>
+ When a composite actor has both a director and an executive director, then
+ the model of computation implemented by the director need not be the
+ same as the model of computation implemented by the executive director.
+ This is the source of the hierarchical heterogeneity in Ptolemy II.
+ Multiple models of computation can be cleanly nested.
+ <p>
+ The ports of a CompositeActor are constrained to be IOPorts, the
+ relations to be IORelations, and the actors to be instances of
+ ComponentEntity that implement the Actor interface.  Derived classes
+ may impose further constraints by overriding newPort(), _addPort(),
+ newRelation(), _addRelation(), and _addEntity().
 
-   @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
-   @version $Id: CompositeActor.java,v 1.188 2005/04/29 20:05:12 cxh Exp $
-   @since Ptolemy II 0.2
-   @Pt.ProposedRating Green (cxh)
-   @Pt.AcceptedRating Yellow (neuendor)
-   @see ptolemy.actor.IOPort
-   @see ptolemy.actor.IORelation
-   @see ptolemy.kernel.ComponentEntity
-   @see ptolemy.actor.Director
-   @see ptolemy.actor.Manager
-*/
+ @author Mudit Goel, Edward A. Lee, Lukito Muliadi, Steve Neuendorffer
+ @version $Id: CompositeActor.java,v 1.208 2006/09/18 11:38:24 eal Exp $
+ @since Ptolemy II 0.2
+ @Pt.ProposedRating Green (cxh)
+ @Pt.AcceptedRating Yellow (neuendor)
+ @see ptolemy.actor.IOPort
+ @see ptolemy.actor.IORelation
+ @see ptolemy.kernel.ComponentEntity
+ @see ptolemy.actor.Director
+ @see ptolemy.actor.Manager
+ */
 public class CompositeActor extends CompositeEntity implements Actor {
     /** Construct a CompositeActor in the default workspace with no container
      *  and an empty string as its name. Add the actor to the workspace
@@ -191,6 +189,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
         CompositeActor newObject = (CompositeActor) super.clone(workspace);
         newObject._inputPortsVersion = -1;
         newObject._outputPortsVersion = -1;
+        newObject._functionDependency = null;
         return newObject;
     }
 
@@ -212,13 +211,14 @@ public class CompositeActor extends CompositeEntity implements Actor {
             // NOTE: deepInsidePortList() is not the right thing here
             // since it will return the same port if it is opaque.
             Iterator insidePorts = ((ComponentPort) port).insidePortList()
-                .iterator();
+                    .iterator();
 
             try {
                 _inConnectionsChanged = true;
 
                 while (insidePorts.hasNext()) {
-                    ComponentPort insidePort = (ComponentPort) insidePorts.next();
+                    ComponentPort insidePort = (ComponentPort) insidePorts
+                            .next();
                     Entity portContainer = (Entity) insidePort.getContainer();
 
                     // Avoid an infinite loop where notifications are traded.
@@ -300,8 +300,9 @@ public class CompositeActor extends CompositeEntity implements Actor {
             // first because in some domains (e.g. SDF)
             // the behavior of the schedule might depend on rate variables
             // set from ParameterPorts.
-            for (Iterator inputPorts = inputPortList().iterator();
-                 inputPorts.hasNext() && !_stopRequested;) {
+            for (Iterator inputPorts = inputPortList().iterator(); inputPorts
+                    .hasNext()
+                    && !_stopRequested;) {
                 IOPort p = (IOPort) inputPorts.next();
 
                 if (p instanceof ParameterPort) {
@@ -313,8 +314,9 @@ public class CompositeActor extends CompositeEntity implements Actor {
             // everything that is not a port parameter.
             // The director will also update the schedule in
             // the process, if necessary.
-            for (Iterator inputPorts = inputPortList().iterator();
-                 inputPorts.hasNext() && !_stopRequested;) {
+            for (Iterator inputPorts = inputPortList().iterator(); inputPorts
+                    .hasNext()
+                    && !_stopRequested;) {
                 IOPort p = (IOPort) inputPorts.next();
 
                 if (!(p instanceof ParameterPort)) {
@@ -354,6 +356,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
      *  This method is read-synchronized on the workspace.
      *
      *  @return The director responsible for invocation of inside actors.
+     *  @see #setDirector(Director)
      */
     public Director getDirector() {
         try {
@@ -362,8 +365,17 @@ public class CompositeActor extends CompositeEntity implements Actor {
             if (_director != null) {
                 return _director;
             }
-
-            return getExecutiveDirector();
+            // NOTE: It is slightly more efficient to
+            // call this directly, rather than using
+            // getExecutiveDirector(), and this gets
+            // called alot.
+            // NOTE: Cast should be safe because this
+            // has to be contained by an actor to be run.
+            Nameable container = getContainer();
+            if (container instanceof Actor) {
+                return ((Actor)container).getDirector();
+            }
+            return null;
         } finally {
             _workspace.doneReading();
         }
@@ -400,24 +412,22 @@ public class CompositeActor extends CompositeEntity implements Actor {
      *  @see ptolemy.actor.util.FunctionDependency
      */
     public FunctionDependency getFunctionDependency() {
-        FunctionDependency functionDependency = (FunctionDependency) getAttribute(FunctionDependency.UniqueName);
-
-        if (functionDependency == null) {
+        if (_functionDependency == null) {
             try {
-                functionDependency = new FunctionDependencyOfCompositeActor(this,
-                        FunctionDependency.UniqueName);
+                _functionDependency = new FunctionDependencyOfCompositeActor(
+                        this);
             } catch (NameDuplicationException e) {
                 // This should not happen.
-                throw new InternalErrorException("Failed to construct a"
-                        + "function dependency object for " + getName());
+                throw new InternalErrorException("Failed to construct a "
+                        + "function dependency object for " + getFullName());
             } catch (IllegalActionException e) {
                 // This should not happen.
-                throw new InternalErrorException("Failed to construct a"
-                        + "function dependency object for " + getName());
+                throw new InternalErrorException("Failed to construct a "
+                        + "function dependency object for " + getFullName());
             }
         }
 
-        return functionDependency;
+        return _functionDependency;
     }
 
     /** Get the manager responsible for execution of this composite actor.
@@ -474,8 +484,8 @@ public class CompositeActor extends CompositeEntity implements Actor {
             }
 
             // Clear all of the contained actor's input ports.
-            for (Iterator actors = entityList(Actor.class).iterator();
-                 actors.hasNext();) {
+            for (Iterator actors = entityList(Actor.class).iterator(); actors
+                    .hasNext();) {
                 Entity actor = (Entity) actors.next();
                 Iterator ports = actor.portList().iterator();
 
@@ -483,21 +493,21 @@ public class CompositeActor extends CompositeEntity implements Actor {
                     IOPort port = (IOPort) ports.next();
 
                     if (port.isInput()) {
-                        // Clear all receivers.
+                        // Reset all receivers.
                         Receiver[][] receivers = port.getReceivers();
 
                         if (receivers == null) {
                             throw new InternalErrorException(this, null,
                                     "port.getReceivers() returned null! "
-                                    + "This should never happen. " + "port was '"
-                                    + port + "'");
+                                            + "This should never happen. "
+                                            + "port was '" + port + "'");
                         }
 
                         for (int i = 0; i < receivers.length; i++) {
                             Receiver[] receivers2 = receivers[i];
 
                             for (int j = 0; j < receivers2.length; j++) {
-                                receivers2[j].clear();
+                                receivers2[j].reset();
                             }
                         }
                     }
@@ -518,7 +528,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
                         Receiver[] receivers2 = receivers[i];
 
                         for (int j = 0; j < receivers2.length; j++) {
-                            receivers2[j].clear();
+                            receivers2[j].reset();
                         }
                     }
                 }
@@ -526,6 +536,9 @@ public class CompositeActor extends CompositeEntity implements Actor {
 
             // Note that this is assured of firing the local director,
             // not the executive director, because this is opaque.
+            // The initialize() method of the local director must be called
+            // after the ports are cleared, because the FixedPointDirector
+            // relies on this to reset the status of its receivers.
             getDirector().initialize();
         } finally {
             _workspace.doneReading();
@@ -565,12 +578,44 @@ public class CompositeActor extends CompositeEntity implements Actor {
         }
     }
 
+    /** If this actor is opaque, invoke the isFireFunctional() method 
+     *  of the local director and return its result. Otherwise, return true.
+     *  Normally this method will not be invoked on a non-opaque
+     *  composite actor.
+     *  
+     *  @return True if the local director's isFireFunctional() method
+     *   returns true or if this actor is not opaque.
+     */
+    public boolean isFireFunctional() {
+        if (isOpaque()) {
+            return getDirector().isFireFunctional();
+        } else {
+            return true;
+        }
+    }
+
     /** Return true if this actor contains a local director.
      *  Otherwise, return false.  This method is <i>not</i>
      *  synchronized on the workspace, so the caller should be.
      */
     public boolean isOpaque() {
         return _director != null;
+    }
+
+    /** If this actor is opaque, invoke the isStrict() method of the local 
+     *  director and return its result. Otherwise, return true.
+     *  Normally this method will not be invoked on a non-opaque
+     *  composite actor.
+     *  
+     *  @return True if the local director's isStrict() method returns true or 
+     *   if this actor is not opaque.
+     */
+    public boolean isStrict() {
+        if (isOpaque()) {
+            return getDirector().isStrict();
+        } else {
+            return true;
+        }
     }
 
     /** Invoke a specified number of iterations of the actor. An
@@ -787,7 +832,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
      */
     public boolean prefire() throws IllegalActionException {
         if (_debugging) {
-            _debug("Calling prefire()");
+            _debug("CompositeActor: Calling prefire()");
         }
 
         try {
@@ -795,19 +840,15 @@ public class CompositeActor extends CompositeEntity implements Actor {
 
             if (!isOpaque()) {
                 throw new IllegalActionException(this,
-                        "Cannot invoke prefire on a non-opaque actor.");
+                        "Cannot invoke prefire on a non-opaque actor, "
+                                + " please add a director.");
             }
 
             boolean result = getDirector().prefire();
 
             if (_debugging) {
-                _debug("Prefire returns (from director) " + result);
+                _debug("CompositeActor: prefire returns: " + result);
             }
-
-            if (_debugging) {
-                _debug("Called prefire()");
-            }
-
             return result;
         } finally {
             _workspace.doneReading();
@@ -829,6 +870,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
      *   is not opaque.
      */
     public void preinitialize() throws IllegalActionException {
+        _functionDependency = null;
         _stopRequested = false;
 
         if (_debugging) {
@@ -840,14 +882,22 @@ public class CompositeActor extends CompositeEntity implements Actor {
             _createReceivers();
 
             if (!isOpaque()) {
+                if (getContainer() == null && deepEntityList().size() == 0) {
+                    // If the user runs an empty model, they get
+                    // this error message.
+                    throw new IllegalActionException(this,
+                            "Cannot preinitialize an empty model, "
+                                    + "please add actors and a director.");
+                }
                 throw new IllegalActionException(this,
-                        "Cannot preinitialize a non-opaque actor.");
+                        "Cannot preinitialize a non-opaque actor, "
+                                + "please add a shdirector.");
             }
 
             if (_director == null) {
                 throw new InternalErrorException(
                         "Actor says it is opaque, but it has no director: "
-                        + getFullName());
+                                + getFullName());
             }
 
             // Note that this is assured of firing the local director,
@@ -920,9 +970,10 @@ public class CompositeActor extends CompositeEntity implements Actor {
      *  classes if the director is not compatible.
      *  @exception NameDuplicationException If an attribute already exists
      *  in this container with the same name as the given director.
+     *  @see #getDirector()
      */
-    public void setDirector(Director director)
-            throws IllegalActionException, NameDuplicationException {
+    public void setDirector(Director director) throws IllegalActionException,
+            NameDuplicationException {
         if (director != null) {
             director.setContainer(this);
         } else {
@@ -952,7 +1003,8 @@ public class CompositeActor extends CompositeEntity implements Actor {
 
             if ((getContainer() != null) && (manager != null)) {
                 throw new IllegalActionException(this, manager,
-                        "Cannot set the Manager of an actor " + "with a container.");
+                        "Cannot set the Manager of an actor "
+                                + "with a container.");
             }
 
             // If there was a previous manager, we need to reset it.
@@ -1109,7 +1161,7 @@ public class CompositeActor extends CompositeEntity implements Actor {
         if (!(entity instanceof Actor)) {
             throw new IllegalActionException(this, entity,
                     "CompositeActor can only contain entities that "
-                    + " implement the Actor interface.");
+                            + " implement the Actor interface.");
         }
 
         super._addEntity(entity);
@@ -1131,8 +1183,8 @@ public class CompositeActor extends CompositeEntity implements Actor {
      *  @exception NameDuplicationException If the port name collides with a
      *   name already in the actor.
      */
-    protected void _addPort(Port port)
-            throws IllegalActionException, NameDuplicationException {
+    protected void _addPort(Port port) throws IllegalActionException,
+            NameDuplicationException {
         if (!(port instanceof IOPort)) {
             throw new IllegalActionException(this, port,
                     "CompositeActor can only contain instances of IOPort.");
@@ -1161,6 +1213,28 @@ public class CompositeActor extends CompositeEntity implements Actor {
         }
 
         super._addRelation(relation);
+    }
+
+    /** Create receivers for each port. If the port is an
+     *  input port, then receivers are created for outside
+     *  connections. If it is an output port, then receivers
+     *  are created for inside connections. This method replaces
+     *  any pre-existing receivers, so any data they contain
+     *  will be lost.
+     *  @exception IllegalActionException If any port throws it.
+     */
+    protected void _createReceivers() throws IllegalActionException {
+        Iterator ports = portList().iterator();
+
+        try {
+            workspace().getWriteAccess();
+            while (ports.hasNext()) {
+                IOPort onePort = (IOPort) ports.next();
+                onePort.createReceivers();
+            }
+        } finally {
+            workspace().doneWriting();
+        }
     }
 
     /** Notify this actor that the given entity has been added inside it.
@@ -1227,23 +1301,14 @@ public class CompositeActor extends CompositeEntity implements Actor {
     ///////////////////////////////////////////////////////////////////
     ////                         protected variables               ////
 
+    /** The function dependency, if it is present. */
+    protected FunctionDependency _functionDependency;
+
     /** Indicator that a stop has been requested by a call to stop(). */
     protected boolean _stopRequested = false;
 
     ///////////////////////////////////////////////////////////////////
-    ////                         private methods                   ////
-
-    /*  Create receivers for each input port.
-     *  @exception IllegalActionException If any port throws it.
-     */
-    private void _createReceivers() throws IllegalActionException {
-        Iterator ports = portList().iterator();
-
-        while (ports.hasNext()) {
-            IOPort onePort = (IOPort) ports.next();
-            onePort.createReceivers();
-        }
-    }
+    ////                         private variables                 ////
 
     // The director for this composite actor.
     private Director _director;
@@ -1256,7 +1321,10 @@ public class CompositeActor extends CompositeEntity implements Actor {
 
     // Cached lists of input and output ports.
     private transient long _inputPortsVersion = -1;
+
     private transient List _cachedInputPorts;
+
     private transient long _outputPortsVersion = -1;
+
     private transient List _cachedOutputPorts;
 }

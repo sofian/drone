@@ -1,31 +1,31 @@
 /* A token that contains a 2-D FixPoint matrix.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
-This class does not handle operations well, because the result may have
-unusual precision.
-*/
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
+ This class does not handle operations well, because the result may have
+ unusual precision.
+ */
 package ptolemy.data;
 
 import ptolemy.data.expr.ASTPtRootNode;
@@ -41,20 +41,19 @@ import ptolemy.math.FixPoint;
 import ptolemy.math.Precision;
 import ptolemy.math.Quantizer;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// FixMatrixToken
 
 /**
-   A token that contains a 2-D FixToken matrix.
+ A token that contains a 2-D FixToken matrix.
 
-   @author Bart Kienhuis, Steve Neuendorffer
-   @version $Id: FixMatrixToken.java,v 1.57 2005/04/25 22:01:33 cxh Exp $
-   @since Ptolemy II 0.4
-   @Pt.ProposedRating Yellow (neuendor)
-   @Pt.AcceptedRating Yellow (kienhuis)
-   @see ptolemy.math.FixPoint
-*/
+ @author Bart Kienhuis, Steve Neuendorffer
+ @version $Id: FixMatrixToken.java,v 1.63 2006/08/21 23:13:23 cxh Exp $
+ @since Ptolemy II 0.4
+ @Pt.ProposedRating Yellow (neuendor)
+ @Pt.AcceptedRating Yellow (kienhuis)
+ @see ptolemy.math.FixPoint
+ */
 public class FixMatrixToken extends MatrixToken {
     /** Construct a FixMatrixToken with a one by one matrix. The only
      *  element present in the matrix has value 0.0 and a precision of
@@ -140,7 +139,10 @@ public class FixMatrixToken extends MatrixToken {
 
             if (token instanceof ScalarToken) {
                 _value[i / columns][i % columns] = ((ScalarToken) token)
-                    .fixValue();
+                        .fixValue();
+            } else if (token instanceof FixToken) {
+                _value[i / columns][i % columns] = ((FixToken) token)
+                        .fixValue();
             } else {
                 throw new IllegalActionException("FixMatrixToken: Element " + i
                         + " in the array with value " + token
@@ -174,8 +176,8 @@ public class FixMatrixToken extends MatrixToken {
         int compare = TypeLattice.compare(BaseType.FIX_MATRIX, token);
 
         if ((compare == CPO.LOWER) || (compare == CPO.INCOMPARABLE)) {
-            throw new IllegalActionException(notSupportedIncomparableConversionMessage(
-                                                     token, "[fix]"));
+            throw new IllegalActionException(
+                    notSupportedIncomparableConversionMessage(token, "[fix]"));
         }
 
         // try Fix
@@ -189,7 +191,7 @@ public class FixMatrixToken extends MatrixToken {
         // The argument is below FixMatrixToken in the type hierarchy,
         // but I don't recognize it.
         throw new IllegalActionException(notSupportedConversionMessage(token,
-                                                 "[fix]"));
+                "[fix]"));
     }
 
     /** Return true if the argument is an instance of FixMatrixToken
@@ -201,6 +203,9 @@ public class FixMatrixToken extends MatrixToken {
      *   matrices are equal.
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out instances of a subclass.
         if (object.getClass() != getClass()) {
             return false;
@@ -279,10 +284,10 @@ public class FixMatrixToken extends MatrixToken {
 
     /** Return the Type of the tokens contained in this matrix token.
      *  This must be a type representing a scalar token.
-     *  @return BaseType.FIX.
+     *  @return BaseType.UNSIZED_FIX.
      */
     public Type getElementType() {
-        return BaseType.FIX;
+        return BaseType.UNSIZED_FIX;
     }
 
     /** Return the number of rows in the matrix.
@@ -423,7 +428,7 @@ public class FixMatrixToken extends MatrixToken {
     /** Return a new token whose value is the value of the argument
      *  Token added from the value of each element of this Token. It is
      *  assumed that the type of the argument is the same as the type
-     *  of each element of this class.
+     *  of each element of this class or is a matrix with one element.
      *  @param rightArgument The token to add from this token.
      *  @exception IllegalActionException If this operation is not
      *  supported by the derived class.
@@ -431,7 +436,17 @@ public class FixMatrixToken extends MatrixToken {
      */
     protected MatrixToken _addElement(Token rightArgument)
             throws IllegalActionException {
-        FixPoint scalar = ((FixToken) rightArgument).fixValue();
+        FixPoint scalar;
+        if (rightArgument instanceof FixMatrixToken) {
+            if (((FixMatrixToken) rightArgument).getRowCount() != 1
+                    || ((FixMatrixToken) rightArgument).getColumnCount() != 1) {
+                // Throw an exception.
+                return super._moduloElement(rightArgument);
+            }
+            scalar = ((FixMatrixToken) rightArgument).getElementAt(0, 0);
+        } else {
+            scalar = ((FixToken) rightArgument).fixValue();
+        }
         FixPoint[][] result = fixMatrix();
 
         for (int i = 0; i < _rowCount; i++) {
@@ -464,11 +479,12 @@ public class FixMatrixToken extends MatrixToken {
 
         for (int i = 0; i < _rowCount; i++) {
             for (int j = 0; j < convertedArgument._columnCount; j++) {
-                FixPoint sum = _value[i][0].multiply(convertedArgument._value[0][j]);
+                FixPoint sum = _value[i][0]
+                        .multiply(convertedArgument._value[0][j]);
 
                 for (int k = 1; k < _columnCount; k++) {
-                    sum = sum.add(_value[i][k].multiply(
-                                          convertedArgument._value[k][j]));
+                    sum = sum.add(_value[i][k]
+                            .multiply(convertedArgument._value[k][j]));
                 }
 
                 result[i][j] = sum;
@@ -481,7 +497,7 @@ public class FixMatrixToken extends MatrixToken {
     /** Return a new token whose value is the value of the argument
      *  Token multiplyed from the value of each element of this Token. It is
      *  assumed that the type of the argument is the same as the type
-     *  of each element of this class.
+     *  of each element of this class or is a matrix with one element.
      *  @param rightArgument The token to multiply from this token.
      *  @exception IllegalActionException If this operation is not
      *  supported by the derived class.
@@ -489,7 +505,17 @@ public class FixMatrixToken extends MatrixToken {
      */
     protected MatrixToken _multiplyElement(Token rightArgument)
             throws IllegalActionException {
-        FixPoint scalar = ((FixToken) rightArgument).fixValue();
+        FixPoint scalar;
+        if (rightArgument instanceof FixMatrixToken) {
+            if (((FixMatrixToken) rightArgument).getRowCount() != 1
+                    || ((FixMatrixToken) rightArgument).getColumnCount() != 1) {
+                // Throw an exception.
+                return super._moduloElement(rightArgument);
+            }
+            scalar = ((FixMatrixToken) rightArgument).getElementAt(0, 0);
+        } else {
+            scalar = ((FixToken) rightArgument).fixValue();
+        }
         FixPoint[][] result = fixMatrix();
 
         for (int i = 0; i < _rowCount; i++) {
@@ -534,7 +560,7 @@ public class FixMatrixToken extends MatrixToken {
     /** Return a new token whose value is the value of the argument
      *  Token subtracted from the value of each element of this Token. It is
      *  assumed that the type of the argument is the same as the type
-     *  of each element of this class.
+     *  of each element of this class or is a matrix with one element.
      *  @param rightArgument The token to subtract from this token.
      *  @exception IllegalActionException If this operation is not
      *  supported by the derived class.
@@ -542,7 +568,17 @@ public class FixMatrixToken extends MatrixToken {
      */
     protected MatrixToken _subtractElement(Token rightArgument)
             throws IllegalActionException {
-        FixPoint scalar = ((FixToken) rightArgument).fixValue();
+        FixPoint scalar;
+        if (rightArgument instanceof FixMatrixToken) {
+            if (((FixMatrixToken) rightArgument).getRowCount() != 1
+                    || ((FixMatrixToken) rightArgument).getColumnCount() != 1) {
+                // Throw an exception.
+                return super._moduloElement(rightArgument);
+            }
+            scalar = ((FixMatrixToken) rightArgument).getElementAt(0, 0);
+        } else {
+            scalar = ((FixToken) rightArgument).fixValue();
+        }
         FixPoint[][] result = fixMatrix();
 
         for (int i = 0; i < _rowCount; i++) {
@@ -557,7 +593,7 @@ public class FixMatrixToken extends MatrixToken {
     /** Return a new token whose value is the value of the argument
      *  Token subtracted from the value of each element of this Token. It is
      *  assumed that the type of the argument is the same as the type
-     *  of each element of this class.
+     *  of each element of this class or is a matrix with one element.
      *  @param rightArgument The token to subtract from this token.
      *  @exception IllegalActionException If this operation is not
      *  supported by the derived class.
@@ -565,7 +601,17 @@ public class FixMatrixToken extends MatrixToken {
      */
     protected MatrixToken _subtractElementReverse(Token rightArgument)
             throws IllegalActionException {
-        FixPoint scalar = ((FixToken) rightArgument).fixValue();
+        FixPoint scalar;
+        if (rightArgument instanceof FixMatrixToken) {
+            if (((FixMatrixToken) rightArgument).getRowCount() != 1
+                    || ((FixMatrixToken) rightArgument).getColumnCount() != 1) {
+                // Throw an exception.
+                return super._moduloElement(rightArgument);
+            }
+            scalar = ((FixMatrixToken) rightArgument).getElementAt(0, 0);
+        } else {
+            scalar = ((FixToken) rightArgument).fixValue();
+        }
         FixPoint[][] result = fixMatrix();
 
         for (int i = 0; i < _rowCount; i++) {
@@ -595,7 +641,8 @@ public class FixMatrixToken extends MatrixToken {
                 if ((_precision != null) && !_precision.equals(precision)) {
                     throw new IllegalActionException(
                             "Attempt to create a FixMatrixToken"
-                            + " with unequal precisions.");
+                                    + " with unequal precisions: " + _precision
+                                    + " and " + precision);
                 }
 
                 _precision = precision;

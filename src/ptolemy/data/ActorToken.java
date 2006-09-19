@@ -1,29 +1,29 @@
 /* A token that contains an actor.
 
-Copyright (c) 2003-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2003-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
-*/
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
+ */
 package ptolemy.data;
 
 import java.io.Serializable;
@@ -32,24 +32,23 @@ import ptolemy.data.type.Type;
 import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.IllegalActionException;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// ActorToken
 
 /**
-   A token that contains an actor.  This token allows components to be
-   moved around in a model.  One subtlety is that actors are not,
-   generally immutable objects.  In order to prevent the actor
-   transmitted from appearing in multiple places in a model, and the
-   semantic fuzziness that would result, the actor is always cloned when
-   being retrieved from this token.
+ A token that contains an actor.  This token allows components to be
+ moved around in a model.  One subtlety is that actors are not,
+ generally immutable objects.  In order to prevent the actor
+ transmitted from appearing in multiple places in a model, and the
+ semantic fuzziness that would result, the actor is always cloned when
+ being retrieved from this token.
 
-   @author Steve Neuendorffer
-   @version $Id: ActorToken.java,v 1.24 2005/04/29 20:05:06 cxh Exp $
-   @since Ptolemy II 4.0
-   @Pt.ProposedRating Red (cxh)
-   @Pt.AcceptedRating Red (cxh)
-*/
+ @author Steve Neuendorffer
+ @version $Id: ActorToken.java,v 1.28 2006/08/21 23:13:49 cxh Exp $
+ @since Ptolemy II 4.0
+ @Pt.ProposedRating Red (cxh)
+ @Pt.AcceptedRating Red (cxh)
+ */
 public class ActorToken extends Token {
     /** Construct an ActorToken.
      *  @param entity The entity that this Token contains.
@@ -102,8 +101,8 @@ public class ActorToken extends Token {
         } else {
             throw new IllegalActionException(
                     "Equality test not supported between "
-                    + this.getClass().getName() + " and "
-                    + token.getClass().getName() + ".");
+                            + this.getClass().getName() + " and "
+                            + token.getClass().getName() + ".");
         }
     }
 
@@ -122,6 +121,17 @@ public class ActorToken extends Token {
     public static class ActorType implements Type, Serializable {
         ///////////////////////////////////////////////////////////////////
         ////                         public methods                    ////
+
+        /** Return a new type which represents the type that results from
+         *  adding a token of this type and a token of the given argument
+         *  type.
+         *  @param rightArgumentType The type to add to this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type add(Type rightArgumentType) {
+            return this;
+        }
 
         /** Return this, that is, return the reference to this object.
          *  @return A BaseType.
@@ -144,6 +154,17 @@ public class ActorToken extends Token {
                 throw new IllegalActionException("Attempt to convert token "
                         + token + " into a test token, which is not possible.");
             }
+        }
+
+        /** Return a new type which represents the type that results from
+         *  dividing a token of this type and a token of the given
+         *  argument type.
+         *  @param rightArgumentType The type to add to this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type divide(Type rightArgumentType) {
+            return this;
         }
 
         /** Return the class for tokens that this basetype represents.
@@ -206,11 +227,62 @@ public class ActorToken extends Token {
             return this == type;
         }
 
+        /** Return a new type which represents the type that results from
+         *  moduloing a token of this type and a token of the given
+         *  argument type.
+         *  @param rightArgumentType The type to add to this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type modulo(Type rightArgumentType) {
+            return this;
+        }
+
+        /** Return a new type which represents the type that results from
+         *  multiplying a token of this type and a token of the given
+         *  argument type.
+         *  @param rightArgumentType The type to add to this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type multiply(Type rightArgumentType) {
+            return this;
+        }
+
+        /** Return the type of the multiplicative identity for elements of
+         *  this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type one() {
+            return this;
+        }
+
+        /** Return a new type which represents the type that results from
+         *  subtracting a token of this type and a token of the given
+         *  argument type.
+         *  @param rightArgumentType The type to add to this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type subtract(Type rightArgumentType) {
+            return this;
+        }
+
         /** Return the string representation of this type.
          *  @return A String.
          */
         public String toString() {
             return "Actor";
+        }
+
+        /** Return the type of the additive identity for elements of
+         *  this type.
+         *  @return A new type, or BaseType.GENERAL, if the operation does
+         *  not make sense for the given types.
+         */
+        public Type zero() {
+            return this;
         }
     }
 

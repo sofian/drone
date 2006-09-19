@@ -1,31 +1,31 @@
 /* A token that contains an unsigned byte number in the range 0 through 255.
 
-Copyright (c) 1998-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 1998-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
 
-*/
+ */
 package ptolemy.data;
 
 import ptolemy.data.type.BaseType;
@@ -35,36 +35,35 @@ import ptolemy.graph.CPO;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.math.Complex;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// UnsignedByteToken
 
 /**
-   A token that contains a byte number in the range 0 through 255.  This
-   UnsignedByteToken definition is in contrast to Java's definition of a
-   byte as a number in the range -128 through 127.
+ A token that contains a byte number in the range 0 through 255.  This
+ UnsignedByteToken definition is in contrast to Java's definition of a
+ byte as a number in the range -128 through 127.
 
-   <p>Overflow and underflow are handled by returning the result of all
-   operations modulo 256.  Thus, the result is always in the range 0
-   through 255.  Likewise, constructors of this class generate tokens
-   whose values are the argument modulo 256.  Note, for example, that
-   UnsignedByteToken((byte)(-100)) generates a UnsignedByteToken
-   representing the value 156, which is -100 modulo 256.
+ <p>Overflow and underflow are handled by returning the result of all
+ operations modulo 256.  Thus, the result is always in the range 0
+ through 255.  Likewise, constructors of this class generate tokens
+ whose values are the argument modulo 256.  Note, for example, that
+ UnsignedByteToken((byte)(-100)) generates a UnsignedByteToken
+ representing the value 156, which is -100 modulo 256.
 
-   <p>Note, also, that the byteValue() method returns a Java byte in the
-   range -128 through 127.  This is in contrast to the intValue(),
-   longValue(), doubleValue(), and complexValue() methods which all
-   return values in the range 0 through 255.  The value returned by
-   byteValue() is the value represented by the UnsignedByteToken but with
-   256 subtracted if this value is greater than 127.  In other words, the
-   result and the argument are equal modulo 256.
+ <p>Note, also, that the byteValue() method returns a Java byte in the
+ range -128 through 127.  This is in contrast to the intValue(),
+ longValue(), doubleValue(), and complexValue() methods which all
+ return values in the range 0 through 255.  The value returned by
+ byteValue() is the value represented by the UnsignedByteToken but with
+ 256 subtracted if this value is greater than 127.  In other words, the
+ result and the argument are equal modulo 256.
 
-   @author Winthrop Williams, Steve Neuendorffer, Contributor: Christopher Hylands
-   @version $Id: UnsignedByteToken.java,v 1.30 2005/04/25 22:04:11 cxh Exp $
-   @since Ptolemy II 2.0
-   @Pt.ProposedRating Green (neuendor)
-   @Pt.AcceptedRating Yellow (winthrop)
-*/
+ @author Winthrop Williams, Steve Neuendorffer, Contributor: Christopher Hylands
+ @version $Id: UnsignedByteToken.java,v 1.43 2006/08/21 15:20:13 cxh Exp $
+ @since Ptolemy II 2.0
+ @Pt.ProposedRating Yellow (cxh) ONE, ZERO, nil Token
+ @Pt.AcceptedRating Red (winthrop)
+ */
 public class UnsignedByteToken extends ScalarToken {
     /** Construct a token with byte 0.
      */
@@ -79,6 +78,7 @@ public class UnsignedByteToken extends ScalarToken {
      *  127.  Due to the difference between these definitions, this
      *  method effectively adds 256 if the argument is negative,
      *  resulting in a positive value for the UnsignedByteToken.
+     *  @param value The specified value.   
      */
     public UnsignedByteToken(byte value) {
         _value = value;
@@ -92,6 +92,7 @@ public class UnsignedByteToken extends ScalarToken {
      *  order 8 bits of the integer.  This effectively adds or
      *  subtracts a multiple of 256 to/from the argument.  The
      *  resulting UnsignedByteToken falls in the range 0 through 255.
+     *  @param value The specified value.
      */
     public UnsignedByteToken(int value) {
         _value = (byte) value;
@@ -99,10 +100,16 @@ public class UnsignedByteToken extends ScalarToken {
 
     /** Construct a UnsignedByteToken from the specified string.  The string
      *  is parsed by the parseByte() method of the Java Byte object.
+     *  @param init The initialization string, which is an integer from
+     *  0 to 255.  -1 and 256 are illegal values.
      *  @exception IllegalActionException If the token could not
      *   be created from the given string.
      */
     public UnsignedByteToken(String init) throws IllegalActionException {
+        if (init == null || init.equals("nil")) {
+            throw new IllegalActionException(notSupportedNullNilStringMessage(
+                    "UnsignedByteToken", init));
+        }
         try {
             // Note that Byte.parseByte performs signed conversion,
             // which is not really what we want.
@@ -115,7 +122,8 @@ public class UnsignedByteToken extends ScalarToken {
 
             _value = (byte) value;
         } catch (NumberFormatException e) {
-            throw new IllegalActionException(e.getMessage());
+            throw new IllegalActionException(null, e, "Failed to parse \""
+                    + init + "\" as a number.");
         }
     }
 
@@ -140,22 +148,23 @@ public class UnsignedByteToken extends ScalarToken {
      *  @return A Complex.
      */
     public Complex complexValue() {
-        return new Complex((double) unsignedConvert(_value));
+        return new Complex(unsignedConvert(_value));
     }
 
     /** Convert the specified token into an instance of
      *  UnsignedByteToken.  The units of the returned token will be
      *  the same as the units of the given token.  If the argument is
      *  already an instance of UnsignedByteToken, it is returned
-     *  without any change. Otherwise, if the argument is above
-     *  UnsignedByteToken in the type hierarchy or is incomparable
-     *  with UnsignedByteToken, an exception is thrown with a message
-     *  stating that either the conversion is not supported, or the
-     *  types are incomparable.  If none of the above conditions is
-     *  met, then the argument must be below UnsignedByteToken in the
-     *  type hierarchy.  However, not such types exist at this time,
-     *  so an exception is thrown with a message stating simply that
-     *  the conversion is not supported.
+     *  without any change.  If the argument is null or a nil token,
+     *  then {@link #NIL} is returned.  Otherwise, if the argument is
+     *  above UnsignedByteToken in the type hierarchy or is
+     *  incomparable with UnsignedByteToken, an exception is thrown
+     *  with a message stating that either the conversion is not
+     *  supported, or the types are incomparable.  If none of the
+     *  above conditions is met, then the argument must be below
+     *  UnsignedByteToken in the type hierarchy.  However, not such
+     *  types exist at this time, so an exception is thrown with a
+     *  message stating simply that the conversion is not supported.
      *  @param token The token to be converted to a UnsignedByteToken.
      *  @return A UnsignedByteToken.
      *  @exception IllegalActionException If the conversion
@@ -167,33 +176,44 @@ public class UnsignedByteToken extends ScalarToken {
             return (UnsignedByteToken) token;
         }
 
+        if (token.isNil()) {
+            return UnsignedByteToken.NIL;
+        }
         int compare = TypeLattice.compare(BaseType.UNSIGNED_BYTE, token);
 
         if ((compare == CPO.LOWER) || (compare == CPO.INCOMPARABLE)) {
-            throw new IllegalActionException(notSupportedIncomparableConversionMessage(
-                                                     token, "byte"));
+            throw new IllegalActionException(
+                    notSupportedIncomparableConversionMessage(token, "byte"));
         }
 
         throw new IllegalActionException(notSupportedConversionMessage(token,
-                                                 "byte"));
+                "byte"));
     }
 
     /** Return the value in the token as a double.
      *  @return The value contained in this token as a double.
      */
     public double doubleValue() {
-        return (double) unsignedConvert(_value);
+        return unsignedConvert(_value);
     }
 
     /** Return true if the class of the argument is UnsignedByteToken,
      *  and it has the same value as this token.
      *  @param object An instance of Object.
      *  @return True if the argument is an instance of
-     *  UnsignedByteToken with the same value.
+     *  UnsignedByteToken with the same value.  If either this object
+     *  or the argument is a nil Token, return false.
      */
     public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
         // This test rules out subclasses.
         if (object.getClass() != getClass()) {
+            return false;
+        }
+
+        if (isNil() || ((UnsignedByteToken) object).isNil()) {
             return false;
         }
 
@@ -226,13 +246,28 @@ public class UnsignedByteToken extends ScalarToken {
         return unsignedConvert(_value);
     }
 
+    /** Return true if the token is nil, (aka null or missing).
+     *  Nil or missing tokens occur when a data source is sparsely populated.
+     *  @return True if the token is the {@link #NIL} token.
+     */
+    public boolean isNil() {
+        // We use a method here so that we can easily change how
+        // we determine if a token is nil without modify lots of classes.
+        // Can't use equals() here, or we'll go into an infinite loop.
+        return this == UnsignedByteToken.NIL;
+    }
+
     /** Returns a token representing the result of shifting the bits
      *  of this token towards the most significant bit, filling the
      *  least significant bits with zeros.
      *  @param bits The number of bits to shift.
      *  @return The left shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken leftShift(int bits) {
+        if (isNil()) {
+            return UnsignedByteToken.NIL;
+        }
         return new UnsignedByteToken(_value << bits);
     }
 
@@ -243,8 +278,12 @@ public class UnsignedByteToken extends ScalarToken {
      *  sign of the value.
      *  @param bits The number of bits to shift.
      *  @return The logical right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken logicalRightShift(int bits) {
+        if (isNil()) {
+            return UnsignedByteToken.NIL;
+        }
         return new UnsignedByteToken(_value >>> bits);
     }
 
@@ -252,14 +291,14 @@ public class UnsignedByteToken extends ScalarToken {
      *  @return The byte value contained in this token as a long.
      */
     public long longValue() {
-        return (long) unsignedConvert(_value);
+        return unsignedConvert(_value);
     }
 
-    /** Returns a new UnsignedByteToken with value 1.
-     *  @return A new UnsignedByteToken with value 1.
+    /** Returns an UnsignedByteToken with value 1.
+     *  @return an UnsignedByteToken with value 1.
      */
     public Token one() {
-        return new UnsignedByteToken(1);
+        return ONE;
     }
 
     /** Returns a token representing the result of shifting the bits
@@ -268,8 +307,12 @@ public class UnsignedByteToken extends ScalarToken {
      *  the sign of the result.
      *  @param bits The number of bits to shift.
      *  @return The right shift.
+     *  If this token is nil, then {@link #NIL} is returned.
      */
     public ScalarToken rightShift(int bits) {
+        if (isNil()) {
+            return UnsignedByteToken.NIL;
+        }
         // Note that this performs a logicalRightShift, since we are
         // interpreting the byte to always be unsigned.
         return new UnsignedByteToken(_value >>> bits);
@@ -288,6 +331,11 @@ public class UnsignedByteToken extends ScalarToken {
 
         if (!_isUnitless()) {
             unitString = " * " + unitsString();
+        }
+
+        if (isNil()) {
+            // FIXME: what about units?
+            return super.toString();
         }
 
         return Integer.toString(unsignedConvert(_value)) + "ub" + unitString;
@@ -310,12 +358,30 @@ public class UnsignedByteToken extends ScalarToken {
         return intValue;
     }
 
-    /** Returns a new UnsignedByteToken with value 0.
-     *  @return A new UnsignedByteToken with value 0.
+    /** Returns an UnsignedByteToken with value 0.
+     *  @return An UnsignedByteToken with value 0.
      */
     public Token zero() {
-        return new UnsignedByteToken(0);
+        return ZERO;
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ////                         public variablesds                ////
+
+    /** A token that represents a missing value.
+     *  Null or missing tokens are common in analytical systems
+     *  like R and SAS where they are used to handle sparsely populated data
+     *  sources.  In database parlance, missing tokens are sometimes called
+     *  null tokens.  Since null is a Java keyword, we use the term "nil".
+     *  The toString() method on a nil token returns the string "nil".
+     */
+    public static final UnsignedByteToken NIL = new UnsignedByteToken();
+
+    /** A UnsignedByteToken with the value 1. */
+    public static final UnsignedByteToken ONE = new UnsignedByteToken(1);
+
+    /** A UnsignedByteToken with the value 0. */
+    public static final UnsignedByteToken ZERO = new UnsignedByteToken(0);
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
@@ -344,19 +410,21 @@ public class UnsignedByteToken extends ScalarToken {
      *  @return A new UnsignedByteToken containing the result.
      */
     protected ScalarToken _add(ScalarToken rightArgument) {
-        byte sum = (byte) (_value
-                + ((UnsignedByteToken) rightArgument).byteValue());
+        byte sum = (byte) (_value + ((UnsignedByteToken) rightArgument)
+                .byteValue());
         return new UnsignedByteToken(sum);
     }
 
     /** Returns a token representing the bitwise AND of this token and
      *  the given token.  It is assumed that the type of the argument is
      *  UnsignedByteToken.
+     *  @param rightArgument The UnsignedByteToken to bitwise AND with
+     *  this one.
      *  @return The bitwise AND.
      */
     protected ScalarToken _bitwiseAnd(ScalarToken rightArgument) {
-        byte sum = (byte) (_value
-                & ((UnsignedByteToken) rightArgument).byteValue());
+        byte sum = (byte) (_value & ((UnsignedByteToken) rightArgument)
+                .byteValue());
         return new UnsignedByteToken(sum);
     }
 
@@ -371,22 +439,26 @@ public class UnsignedByteToken extends ScalarToken {
     /** Returns a token representing the bitwise OR of this token and
      *  the given token.  It is assumed that the type of the argument is
      *  UnsignedByteToken.
+     *  @param rightArgument The UnsignedByteToken to bitwise OR with
+     *  this one.
      *  @return The bitwise OR.
      */
     protected ScalarToken _bitwiseOr(ScalarToken rightArgument) {
-        byte sum = (byte) (_value
-                | ((UnsignedByteToken) rightArgument).byteValue());
+        byte sum = (byte) (_value | ((UnsignedByteToken) rightArgument)
+                .byteValue());
         return new UnsignedByteToken(sum);
     }
 
     /** Returns a token representing the bitwise XOR of this token and
      *  the given token.  It is assumed that the type of the argument is
      *  UnsignedByteToken.
+     *  @param rightArgument The UnsignedByteToken to bitwise XOR with
+     *  this one.
      *  @return The bitwise XOR.
      */
     protected ScalarToken _bitwiseXor(ScalarToken rightArgument) {
-        byte sum = (byte) (_value
-                ^ ((UnsignedByteToken) rightArgument).byteValue());
+        byte sum = (byte) (_value ^ ((UnsignedByteToken) rightArgument)
+                .byteValue());
         return new UnsignedByteToken(sum);
     }
 
@@ -401,7 +473,7 @@ public class UnsignedByteToken extends ScalarToken {
      */
     protected ScalarToken _divide(ScalarToken rightArgument) {
         byte quotient = (byte) (unsignedConvert(_value) / unsignedConvert(((UnsignedByteToken) rightArgument)
-                                        .byteValue()));
+                .byteValue()));
         return new UnsignedByteToken(quotient);
     }
 
@@ -434,8 +506,9 @@ public class UnsignedByteToken extends ScalarToken {
      */
     protected BooleanToken _isLessThan(ScalarToken rightArgument) {
         UnsignedByteToken convertedArgument = (UnsignedByteToken) rightArgument;
-        return BooleanToken.getInstance(unsignedConvert(_value) < unsignedConvert(
-                                                convertedArgument.byteValue()));
+        return BooleanToken
+                .getInstance(unsignedConvert(_value) < unsignedConvert(convertedArgument
+                        .byteValue()));
     }
 
     /** Return a new token whose value is the value of this token
@@ -447,7 +520,7 @@ public class UnsignedByteToken extends ScalarToken {
      */
     protected ScalarToken _modulo(ScalarToken rightArgument) {
         byte remainder = (byte) (unsignedConvert(_value) % unsignedConvert(((UnsignedByteToken) rightArgument)
-                                         .byteValue()));
+                .byteValue()));
         return new UnsignedByteToken(remainder);
     }
 
@@ -462,7 +535,7 @@ public class UnsignedByteToken extends ScalarToken {
      */
     protected ScalarToken _multiply(ScalarToken rightArgument) {
         byte product = (byte) (unsignedConvert(_value) * unsignedConvert(((UnsignedByteToken) rightArgument)
-                                       .byteValue()));
+                .byteValue()));
         return new UnsignedByteToken(product);
     }
 
@@ -475,8 +548,8 @@ public class UnsignedByteToken extends ScalarToken {
      *  @return A new UnsignedByteToken containing the difference modulo 256.
      */
     protected ScalarToken _subtract(ScalarToken rightArgument) {
-        byte difference = (byte) (unsignedConvert(_value)
-                - unsignedConvert(((UnsignedByteToken) rightArgument).byteValue()));
+        byte difference = (byte) (unsignedConvert(_value) - unsignedConvert(((UnsignedByteToken) rightArgument)
+                .byteValue()));
         return new UnsignedByteToken(difference);
     }
 

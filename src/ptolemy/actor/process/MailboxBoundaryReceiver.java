@@ -1,81 +1,81 @@
 /* A process receiver that stores tokens via a mailbox and can be used by
-   composite actors.
+ composite actors.
 
-   Copyright (c) 1997-2005 The Regents of the University of California.
-   All rights reserved.
-   Permission is hereby granted, without written agreement and without
-   license or royalty fees, to use, copy, modify, and distribute this
-   software and its documentation for any purpose, provided that the above
-   copyright notice and the following two paragraphs appear in all copies
-   of this software.
+ Copyright (c) 1997-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-   IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-   FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-   ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-   THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-   SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-   THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-   PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-   CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-   ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-   PT_COPYRIGHT_VERSION_2
-   COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.process;
 
 import ptolemy.actor.Actor;
+import ptolemy.actor.Director;
 import ptolemy.actor.IOPort;
 import ptolemy.actor.Mailbox;
 import ptolemy.data.Token;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.Workspace;
 
-
 //////////////////////////////////////////////////////////////////////////
 //// MailboxBoundaryReceiver
 
 /**
-   A process receiver that stores tokens via a mailbox and can be used by
-   composite actors. This receiver extends the functionality of the mailbox
-   receiver found in the actor package in two key ways. First it facilitates
-   blocking reads and writes. If a read (a call to get()) is attempted when
-   this mailbox is empty then the call will block until a token is placed in
-   the mailbox. Similarly if a write (a call to put()) is attempted when
-   this mailbox is full (has a token) then the call will block until the
-   token is removed from the mailbox.
-   <P>
-   The second key feature of this mailbox receiver is that it can be used
-   by opaque composite actors operating in process-oriented models of
-   computation. Indeed the name "MailboxBoundaryReceiver" is used to
-   indicate that this receiver can be contained on the boundary of an
-   opaque composite actor. The get() and put() methods of mailbox boundary
-   receiver can be invoked by a Branch object. In such cases any blocks that
-   occur are registered with the calling branch. The branch will then serve
-   as a proxy by communicating to the director through the branch controller.
-   <P>
-   Note that it is not necessary for a mailbox boundary receiver to be used
-   in the ports of an opaque composite actor. It is perfectly fine for a
-   mailbox boundary receiver to be used in the ports of an atomic actor. In
-   such cases the get() and put() methods are called without the use of a
-   branch object. If blocking reads or writes occur they are registered with
-   the controlling director without the need for a branch or branch
-   controller.
+ A process receiver that stores tokens via a mailbox and can be used by
+ composite actors. This receiver extends the functionality of the mailbox
+ receiver found in the actor package in two key ways. First it facilitates
+ blocking reads and writes. If a read (a call to get()) is attempted when
+ this mailbox is empty then the call will block until a token is placed in
+ the mailbox. Similarly if a write (a call to put()) is attempted when
+ this mailbox is full (has a token) then the call will block until the
+ token is removed from the mailbox.
+ <P>
+ The second key feature of this mailbox receiver is that it can be used
+ by opaque composite actors operating in process-oriented models of
+ computation. Indeed the name "MailboxBoundaryReceiver" is used to
+ indicate that this receiver can be contained on the boundary of an
+ opaque composite actor. The get() and put() methods of mailbox boundary
+ receiver can be invoked by a Branch object. In such cases any blocks that
+ occur are registered with the calling branch. The branch will then serve
+ as a proxy by communicating to the director through the branch controller.
+ <P>
+ Note that it is not necessary for a mailbox boundary receiver to be used
+ in the ports of an opaque composite actor. It is perfectly fine for a
+ mailbox boundary receiver to be used in the ports of an atomic actor. In
+ such cases the get() and put() methods are called without the use of a
+ branch object. If blocking reads or writes occur they are registered with
+ the controlling director without the need for a branch or branch
+ controller.
 
 
-   @author John S. Davis II
-   @version $Id: MailboxBoundaryReceiver.java,v 1.48 2005/04/25 21:36:09 cxh Exp $
-   @since Ptolemy II 1.0
-   @Pt.ProposedRating Green (mudit)
-   @Pt.AcceptedRating Yellow (davisj)
-   @see ptolemy.actor.process.Branch
-   @see ptolemy.actor.process.BranchController
+ @author John S. Davis II
+ @version $Id: MailboxBoundaryReceiver.java,v 1.57 2006/08/21 23:12:16 cxh Exp $
+ @since Ptolemy II 1.0
+ @Pt.ProposedRating Green (mudit)
+ @Pt.AcceptedRating Yellow (davisj)
+ @see ptolemy.actor.process.Branch
+ @see ptolemy.actor.process.BranchController
 
-*/
+ */
 public class MailboxBoundaryReceiver extends Mailbox implements ProcessReceiver {
     /** Construct an empty MailboxBoundaryReceiver with no container.
      */
@@ -108,54 +108,57 @@ public class MailboxBoundaryReceiver extends Mailbox implements ProcessReceiver 
      *  @return The token contained by this receiver.
      */
     public Token get() {
-        return get(null);
-    }
-
-    /** Get a token from the receiver and use the specified branch object
-     *  to manage the method invocation. If the receiver is empty then
-     *  block until a token becomes available. If the specified branch
-     *  object is non-null then use the branch object to coordinate the
-     *  blocking read with a branch controller. If the specified branch
-     *  object is null then use the local director to coordinate the block.
-     *  If this receiver is terminated during the execution of this method,
-     *  then throw a TerminateProcessException.
-     *
-     *  @param branch The Branch managing execution of this method.
-     *  @return The token contained by this receiver.
-     */
-    public Token get(Branch branch) {
         Workspace workspace = getContainer().workspace();
         Token result = null;
 
-        synchronized (this) {
-            if (!_terminate && !hasToken()) {
-                _readBlock = true;
-                prepareToBlock(branch);
+        // NOTE: This method used to be synchronized on this
+        // receiver, but since it calls synchronized methods in
+        // the director, that can cause deadlock.
+        synchronized (_director) {
+            while (!_terminate) {
+                // Try to read.
+                if (super.hasToken()) {
+                    result = super.get();
 
-                while (_readBlock && !_terminate) {
-                    try {
-                        workspace.wait(this);
-                    } catch (InterruptedException e) {
-                        _terminate = true;
-                        break;
+                    // Need to mark any thread that is write blocked
+                    // on this receiver unblocked now, before any
+                    // notification, or we will detect deadlock and
+                    // increase the buffer sizes.  Note that there is
+                    // no need to clear the _readPending reference
+                    // because that will have been cleared by the
+                    // write.
+                    if (_writePending != null) {
+                        _director.threadUnblocked(_writePending, this);
+                        _writePending = null;
                     }
+
+                    break;
+                }
+
+                // Wait to try again.
+                try {
+                    _readPending = Thread.currentThread();
+                    _director.threadBlocked(Thread.currentThread(), this);
+                    workspace.wait(_director);
+                } catch (InterruptedException e) {
+                    _terminate = true;
                 }
             }
 
             if (_terminate) {
                 throw new TerminateProcessException("");
-            } else {
-                result = super.get();
-
-                if (_writeBlock) {
-                    wakeUpBlockedPartner();
-                    _writeBlock = false;
-                    notifyAll();
-                }
-
-                return result;
             }
         }
+
+        return result;
+    }
+
+    /** Return the director in charge of this receiver, or null
+     *  if there is none.
+     *  @return The director in charge of this receiver.
+     */
+    public ProcessDirector getDirector() {
+        return _director;
     }
 
     /** Return true if this receiver is connected to a boundary port.
@@ -252,87 +255,31 @@ public class MailboxBoundaryReceiver extends Mailbox implements ProcessReceiver 
         return false;
     }
 
-    /** Return true if this receiver is read blocked; return false
-     *  otherwise.
-     *
-     *  @return True if this receiver is read blocked; return false
-     *   otherwise.
+    /** Return a true or false to indicate whether there is a read block
+     *  on this receiver or not, respectively.
+     *  @return a boolean indicating whether a read is blocked on this
+     *  receiver or not.
      */
     public boolean isReadBlocked() {
-        return _readBlock;
-    }
-
-    /** Return true if this receiver is write blocked; return false
-     *  otherwise.
-     *
-     *  @return True if this receiver is write blocked; return false
-     *   otherwise.
-     */
-    public boolean isWriteBlocked() {
-        return _writeBlock;
-    }
-
-    /** Prepare to register a block. If the branch object specified as
-     *  a parameter is non-null then register the block with the branch.
-     *  If the branch object specified as a parameter is null then
-     *  register the block with the local director.
-     *
-     *  @param branch The Branch managing execution of this method.
-     */
-    public synchronized void prepareToBlock(Branch branch) {
-        if (branch != null) {
-            branch.registerReceiverBlocked(this);
-            _otherBranch = branch;
-        } else {
-            ProcessDirector director = ((ProcessDirector) ((Actor) (getContainer()
-                                                                   .getContainer()))
-                    .getDirector());
-            director._actorBlocked(this);
-            _otherBranch = branch;
+        // NOTE: This method used to be synchronized on this
+        // receiver, but since it is called by synchronized methods in
+        // the director, that can cause deadlock.
+        synchronized (_director) {
+            return _readPending != null;
         }
     }
 
-    /** Put a token in the receiver and use the specified branch object
-     *  to manage the method invocation. If the receiver is full (contains
-     *  a token) then block until room becomes available. If the specified
-     *  branch object is non-null then use the branch object to coordinate the
-     *  blocking read with a branch controller. If the specified branch
-     *  object is null then use the local director to coordinate the block.
-     *  If this receiver is terminated during the execution of this method,
-     *  then throw a TerminateProcessException.
-     *
-     *  @param branch The Branch managing execution of this method.
-     *  @param token The token to be placed in this receiver.
+    /** Return a true or false to indicate whether there is a write block
+     *  on this receiver or not.
+     *  @return A boolean indicating whether a write is blocked  on this
+     *  receiver or not.
      */
-    public void put(Token token, Branch branch) {
-        Workspace workspace = getContainer().workspace();
-
-        synchronized (this) {
-            if (!_terminate && !hasRoom()) {
-                _writeBlock = true;
-                prepareToBlock(branch);
-
-                while (_writeBlock && !_terminate) {
-                    try {
-                        workspace.wait(this);
-                    } catch (InterruptedException e) {
-                        _terminate = true;
-                        break;
-                    }
-                }
-            }
-
-            if (_terminate) {
-                throw new TerminateProcessException("");
-            } else {
-                super.put(token);
-
-                if (_readBlock) {
-                    wakeUpBlockedPartner();
-                    _readBlock = false;
-                    notifyAll();
-                }
-            }
+    public boolean isWriteBlocked() {
+        // NOTE: This method used to be synchronized on this
+        // receiver, but since it is called by synchronized methods in
+        // the director, that can cause deadlock.
+        synchronized (_director) {
+            return _writePending != null;
         }
     }
 
@@ -345,7 +292,53 @@ public class MailboxBoundaryReceiver extends Mailbox implements ProcessReceiver 
      *  @param token The token being placed in this receiver.
      */
     public void put(Token token) {
-        put(token, null);
+        // NOTE: This used to synchronize on this, but since it calls
+        // director methods that are synchronized on the director,
+        // this can cause deadlock.
+        synchronized (_director) {
+            while (!_terminate) {
+                // Try to write.
+                if (super.hasRoom()) {
+                    super.put(token);
+
+                    // If any thread is blocked on a get(), then it will become
+                    // unblocked. Notify the director now so that there isn't a
+                    // spurious deadlock detection.
+                    if (_readPending != null) {
+                        _director.threadUnblocked(_readPending, this);
+                        _readPending = null;
+                    }
+
+                    // Normally, the _writePending reference will have
+                    // been cleared by the read that unblocked this
+                    // write.  However, it might be that the director
+                    // increased the buffer size, which would also
+                    // have the affect of unblocking this
+                    // write. Hence, we clear it here if it is set.
+                    if (_writePending != null) {
+                        _director.threadUnblocked(_writePending, this);
+                        _writePending = null;
+                    }
+
+                    break;
+                }
+
+                // Wait to try again.
+                try {
+                    _writePending = Thread.currentThread();
+                    _director.threadBlocked(_writePending, this);
+
+                    Workspace workspace = getContainer().workspace();
+                    workspace.wait(_director);
+                } catch (InterruptedException e) {
+                    _terminate = true;
+                }
+            }
+
+            if (_terminate) {
+                throw new TerminateProcessException("Process terminated.");
+            }
+        }
     }
 
     /** Set a local flag requesting that execution of the actor
@@ -360,36 +353,71 @@ public class MailboxBoundaryReceiver extends Mailbox implements ProcessReceiver 
      *  restarting execution.
      */
     public void reset() {
+        if (_readPending != null) {
+            _director.threadUnblocked(_readPending, this);
+        }
+
+        if (_writePending != null) {
+            _director.threadUnblocked(_writePending, this);
+        }
+
         _terminate = false;
-        _readBlock = false;
-        _writeBlock = false;
         _boundaryDetector.reset();
     }
 
-    /** Unblock this receiver and register this new state with
-     *  either the monitoring branch or the local director. If
-     *  there is no blocked branch waiting, then register the
-     *  new state with the local director; otherwise, register
-     *  the new state with the blocked branch.
+    /** Set the container. This overrides the base class to record
+     *  the director.
+     *  @param port The container.
+     *  @exception IllegalActionException If the container is not of
+     *   an appropriate subclass of IOPort, or if the container's director
+     *   is not an instance of ProcessDirector.
      */
-    public synchronized void wakeUpBlockedPartner() {
-        if (_otherBranch != null) {
-            _otherBranch.registerReceiverUnBlocked(this);
-        } else {
-            ProcessDirector director = ((ProcessDirector) ((Actor) (getContainer()
-                                                                   .getContainer()))
-                    .getDirector());
-            director._actorUnBlocked(this);
-        }
+    public void setContainer(IOPort port) throws IllegalActionException {
+        super.setContainer(port);
 
-        notifyAll();
+        if (port == null) {
+            _director = null;
+        } else {
+            Actor actor = (Actor) port.getContainer();
+            Director director;
+
+            // For a composite actor,
+            // the receiver type of an input port is decided by
+            // the executive director.
+            // While the receiver type of an output is decided by the director.
+            // NOTE: getExecutiveDirector() and getDirector() yield the same
+            // result for actors that do not contain directors.
+            if (port.isInput()) {
+                director = actor.getExecutiveDirector();
+            } else {
+                director = actor.getDirector();
+            }
+
+            if (!(director instanceof ProcessDirector)) {
+                throw new IllegalActionException(port,
+                        "Cannot use an instance of PNQueueReceiver "
+                                + "since the director is not a PNDirector.");
+            }
+
+            _director = (ProcessDirector) director;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
-    private boolean _terminate = false;
-    private boolean _readBlock = false;
-    private boolean _writeBlock = false;
-    private Branch _otherBranch = null;
+
+    /** The boundary detector. */
     private BoundaryDetector _boundaryDetector;
+
+    /** The director in charge of this receiver. */
+    private ProcessDirector _director;
+
+    /** Reference to a thread that is read blocked on this receiver. */
+    private Thread _readPending = null;
+
+    /** Flag indicating that termination has been requested. */
+    private boolean _terminate = false;
+
+    /** Reference to a thread that is write blocked on this receiver. */
+    private Thread _writePending = null;
 }

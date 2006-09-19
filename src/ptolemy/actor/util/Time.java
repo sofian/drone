@@ -1,30 +1,30 @@
 /* A class that represents model time.
 
-Copyright (c) 2004-2005 The Regents of the University of California.
-All rights reserved.
-Permission is hereby granted, without written agreement and without
-license or royalty fees, to use, copy, modify, and distribute this
-software and its documentation for any purpose, provided that the above
-copyright notice and the following two paragraphs appear in all copies
-of this software.
+ Copyright (c) 2004-2006 The Regents of the University of California.
+ All rights reserved.
+ Permission is hereby granted, without written agreement and without
+ license or royalty fees, to use, copy, modify, and distribute this
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
-FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
-THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
+ IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+ FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF
+ THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
 
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
-PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
-CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
-ENHANCEMENTS, OR MODIFICATIONS.
+ THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE
+ PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF
+ CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ ENHANCEMENTS, OR MODIFICATIONS.
 
-PT_COPYRIGHT_VERSION_2
-COPYRIGHTENDKEY
+ PT_COPYRIGHT_VERSION_2
+ COPYRIGHTENDKEY
 
-*/
+ */
 package ptolemy.actor.util;
 
 import java.math.BigInteger;
@@ -33,7 +33,6 @@ import ptolemy.actor.Director;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.math.ExtendedMath;
-
 
 //////////////////////////////////////////////////////////////////////////
 //// Time
@@ -79,7 +78,9 @@ import ptolemy.math.ExtendedMath;
  * 754 for Floating Point Numbers. In particular, adding two positive/negative
  * infinities yield a positive/negative infinity; adding a positive infinity and
  * a negative infinity, however, triggers an ArithmeticException; the negation
- * of a positive/negative infinity is a negative/positive infinity.
+ * of a positive/negative infinity is a negative/positive infinity. The 
+ * following link gives a list of operations, 
+ * http://en.wikipedia.org/wiki/Infinity.
  *
  * <p>
  * This class implements the Comparable interface, where two time objects can be
@@ -102,7 +103,7 @@ import ptolemy.math.ExtendedMath;
  * when a model is running (attempting to do so will trigger an exception).
  *
  * @author Haiyang Zheng, Edward A. Lee, Elaine Cheong
- * @version $Id: Time.java,v 1.43 2005/04/29 20:05:27 cxh Exp $
+ * @version $Id: Time.java,v 1.51 2006/08/21 23:12:47 cxh Exp $
  * @since Ptolemy II 4.1
  * @Pt.ProposedRating Yellow (hyzheng)
  * @Pt.AcceptedRating Red (hyzheng)
@@ -113,10 +114,8 @@ public class Time implements Comparable {
      *  information for quantization.
      *  @param director The director with which this time object is associated.
      *   This must not be null, or subsequent uses of the class will fail.
-     *  @exception IllegalActionException If the director has an invalid
-     *   value for its time resolution
      */
-    public Time(Director director) throws IllegalActionException {
+    public Time(Director director) {
         _director = director;
         _timeValue = BigInteger.ZERO;
     }
@@ -175,7 +174,6 @@ public class Time implements Comparable {
      */
     private Time(Director director, BigInteger timeValue) {
         _director = director;
-
         _timeValue = timeValue;
     }
 
@@ -239,7 +237,7 @@ public class Time implements Comparable {
                 if (_isPositiveInfinite) {
                     throw new ArithmeticException(
                             "Time: Adding a positive infinity to a negative "
-                            + "infinity results in an invalid time.");
+                                    + "infinity results in an invalid time.");
                 } else {
                     return NEGATIVE_INFINITY;
                 }
@@ -248,7 +246,7 @@ public class Time implements Comparable {
                 if (_isNegativeInfinite) {
                     throw new ArithmeticException(
                             "Time: Adding a negative infinity to a positive "
-                            + "infinity results in an invalid time.");
+                                    + "infinity results in an invalid time.");
                 } else {
                     return POSITIVE_INFINITY;
                 }
@@ -287,14 +285,14 @@ public class Time implements Comparable {
      *   (it is the sum of positive and negative infinity).
      */
     public Time add(Time time) {
-        // NOTE: a time value of a time object can be either positive infinite
+        // Note: a time value of a time object can be either positive infinite
         // or negative infinite.
         if (time._isNegativeInfinite) {
             // the time object has a negative infinity time value
             if (_isPositiveInfinite) {
                 throw new ArithmeticException(
                         "Time: Adding a positive infinity to a negative "
-                        + "infinity yields an invalid time.");
+                                + "infinity yields an invalid time.");
             } else {
                 return NEGATIVE_INFINITY;
             }
@@ -303,7 +301,7 @@ public class Time implements Comparable {
             if (_isNegativeInfinite) {
                 throw new ArithmeticException(
                         "Adding a negative infinity to a positive "
-                        + "infinity yields an invalid time.");
+                                + "infinity yields an invalid time.");
             } else {
                 return POSITIVE_INFINITY;
             }
@@ -389,66 +387,6 @@ public class Time implements Comparable {
         }
     }
 
-    /** Return the result of dividing this time by the
-     *  specified time interval. That is, the returned value represents
-     *  how many times the specified time interval fits within this
-     *  time.  If the two time resolutions are not the same, or
-     *  if the interval is zero, then throw an exception.
-     *  If the specified interval is infinite, then return 0.
-     *  If this time is infinite, and the specified time is finite,
-     *  then return either Long.MAX_VALUE or Long.MIN_VALUE, depending
-     *  on the sign.
-     *  If the result is larger than what fits in the returned
-     *  long value, then return the low-order 64 bits of the result.
-     *  Note if the result is interpreted numerically, then it could
-     *  be wrong by a considerable amount, including having the wrong
-     *  sign. A reasonable use of the returned result is to perform
-     *  a modulo operation on it by masking some low order bits.
-     *  @param interval The time interval to divide by.
-     *  @return The number of times the interval fits entirely
-     *   within this time.
-     *  @exception ArithmeticException If the interval is zero,
-     *   or if the time resolution of the specified interval is
-     *   not the same as that of this object.
-     */
-    public long divide(Time interval) {
-        if (_isPositiveInfinite || _isNegativeInfinite) {
-            if (!interval.isInfinite()) {
-                if ((_isPositiveInfinite && interval._isPositiveInfinite)
-                        || (_isNegativeInfinite
-                                && interval._isNegativeInfinite)) {
-                    return Long.MAX_VALUE;
-                } else {
-                    return Long.MIN_VALUE;
-                }
-            } else {
-                throw new ArithmeticException(
-                        "Time: Cannot divide infinity by infinity");
-            }
-        }
-
-        double resolution = _director.getTimeResolution();
-
-        if (resolution == interval._director.getTimeResolution()) {
-            return _timeValue.divide(interval._timeValue).longValue();
-        } else {
-            throw new ArithmeticException(
-                    "Cannot divide instances of Time that do not have the same time resolution.");
-        }
-    }
-
-    /** Return the result of dividing this time by the
-     *  specified integer. If this time is infinite,
-     *  then the result will be infinite.
-     *  @param divisor The number to divide by.
-     *  @return A new Time object representing the result of division.
-     *  @exception ArithmeticException If the divisor is zero.
-     */
-    public Time divide(long divisor) {
-        BigInteger divisorAsBigInteger = BigInteger.valueOf(divisor);
-        return new Time(_director, _timeValue.divide(divisorAsBigInteger));
-    }
-
     /** Return true if this time object has the same time value as
      *  that of the given time object.
      *  @param time The time object that this time object is compared to.
@@ -486,6 +424,7 @@ public class Time implements Comparable {
      *  resolution of the associated director.  Note that a Time value
      *  of positive infinity will return Long.MAX_VALUE and a Time
      *  value of negative infinity will return Long.MIN_VALUE.
+     *  @return The long representation of the time value.
      */
     public long getLongValue() {
         if (_isPositiveInfinite) {
@@ -513,24 +452,28 @@ public class Time implements Comparable {
         }
     }
 
+    // FIXME: profiling shows that the following three methods are called
+    // enormous times and performance can be greatly improved if no infinities
+    // are supported.
+
     /** Return true if the current time value is infinite.
      *  @return true if the current time value is infinite.
      */
-    public boolean isInfinite() {
+    public final boolean isInfinite() {
         return _isNegativeInfinite || _isPositiveInfinite;
     }
 
     /** Return true if the current time value is a negative infinity.
      *  @return true if the current time value is a negative infinity.
      */
-    public boolean isNegativeInfinite() {
+    public final boolean isNegativeInfinite() {
         return _isNegativeInfinite;
     }
 
     /** Return true if the current time value is a positive infinity.
      *  @return true if the current time value is a positive infinity.
      */
-    public boolean isPositiveInfinite() {
+    public final boolean isPositiveInfinite() {
         return _isPositiveInfinite;
     }
 
@@ -569,23 +512,12 @@ public class Time implements Comparable {
         // signal precision and
         // (-1)^(sign)x(1+significand)x2^(exponent-1023)
         // for double presision.
-        int minimumNumberOfBits = (int) Math.floor(-1 * ExtendedMath.log2(
-                                                           _director.getTimeResolution())) + 1;
+        int minimumNumberOfBits = (int) Math.floor(-1
+                * ExtendedMath.log2(_director.getTimeResolution())) + 1;
         int maximumGain = 52 - minimumNumberOfBits;
 
-        return ExtendedMath.DOUBLE_PRECISION_SIGNIFICAND_ONLY * Math.pow(2.0,
-                maximumGain);
-    }
-
-    /** Return the result of multiplying this time by the
-     *  specified integer. If this time is infinite,
-     *  then the result will be infinite.
-     *  @param multiplicand The number to multiply by.
-     *  @return A new Time object representing the product.
-     */
-    public Time multiply(long multiplicand) {
-        BigInteger multiplicandAsBigInteger = BigInteger.valueOf(multiplicand);
-        return new Time(_director, _timeValue.multiply(multiplicandAsBigInteger));
+        return ExtendedMath.DOUBLE_PRECISION_SIGNIFICAND_ONLY
+                * Math.pow(2.0, maximumGain);
     }
 
     /** Return a new time object whose time value is decreased by the
@@ -609,7 +541,13 @@ public class Time implements Comparable {
      *  @return A new time object with time value decremented.
      */
     public Time subtract(Time time) {
-        return add(new Time(time._director, time._timeValue.negate()));
+        if (time.isNegativeInfinite()) {
+            return add(POSITIVE_INFINITY);
+        } else if (time.isPositiveInfinite()) {
+            return add(NEGATIVE_INFINITY);
+        } else {
+            return add(new Time(time._director, time._timeValue.negate()));
+        }
     }
 
     /** Return the string representation of this time object.
@@ -630,10 +568,10 @@ public class Time implements Comparable {
             // but the resulution is absurd.
 
             /*
-              BigDecimal resolution = new BigDecimal(_director.getTimeResolution());
-              BigDecimal scale = new BigDecimal(_timeValue);
-              return resolution.multiply(scale).toString();
-            */
+             BigDecimal resolution = new BigDecimal(_director.getTimeResolution());
+             BigDecimal scale = new BigDecimal(_timeValue);
+             return resolution.multiply(scale).toString();
+             */
         }
     }
 
@@ -677,14 +615,16 @@ public class Time implements Comparable {
         long multiple = Math.round(value / precision);
 
         if (Math.abs((multiple * precision) - value) > precision) {
-            throw new IllegalActionException("The given time value " + value
-                    + " is too large to be converted precisely to an "
-                    + "instance of Time with the specified time resolution of "
-                    + precision
-                    + ". The maximum value that can always be precisely converted is "
-                    + maximumAccurateValueAsDouble()
-                    + ". A number close to your value that can be converted is "
-                    + (multiple * precision));
+            throw new IllegalActionException(
+                    "The given time value "
+                            + value
+                            + " is too large to be converted precisely to an "
+                            + "instance of Time with the specified time resolution of "
+                            + precision
+                            + ". The maximum value that can always be precisely converted is "
+                            + maximumAccurateValueAsDouble()
+                            + ". A number close to your value that can be converted is "
+                            + (multiple * precision));
         }
 
         return BigInteger.valueOf(multiple);
