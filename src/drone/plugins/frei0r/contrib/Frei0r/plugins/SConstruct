@@ -1,0 +1,74 @@
+SConsignFile()
+opts = Options('custom.py')
+opts.Add(PathOption('instdir',
+                    'Install path for frei0r plugins',
+                    '/usr/local/lib/frei0r-1/'))
+
+env = Environment(options = opts,
+                  SHLIBPREFIX='',
+                  CPPPATH=['../spec/','common/'])
+Help(opts.GenerateHelpText(env))
+env.Alias('install', '${instdir}')
+
+def frei0r_plugin(name, files):
+  plugin=env.SharedLibrary(name, files)
+  env.Install('${instdir}', plugin)
+  Default(plugin)  
+ 
+frei0r_plugin('nois0r',     'generator/nois0r/nois0r.cpp')
+frei0r_plugin('ising0r',    'generator/ising0r/ising0r.c')
+frei0r_plugin('lissajous0r','generator/lissajous0r/lissajous0r.cpp')
+frei0r_plugin('onecol0r',   'generator/onecol0r/onecol0r.cpp')
+
+frei0r_plugin('distort0r',  'filter/distort0r/distort0r.c')
+frei0r_plugin('invert0r',   'filter/invert0r/invert0r.c')
+frei0r_plugin('bw0r',       'filter/bw0r/bw0r.c')
+frei0r_plugin('pixeliz0r',  'filter/pixeliz0r/pixeliz0r.c')
+frei0r_plugin('tehroxx0r',  'filter/tehroxx0r/tehRoxx0r.c')
+frei0r_plugin('flippo',     'filter/flippo/flippo.c')
+frei0r_plugin('3dflippo',   'filter/3dflippo/3dflippo.c')
+frei0r_plugin('nosync0r',   'filter/nosync0r/nosync0r.cpp')
+frei0r_plugin('scanline0r', 'filter/scanline0r/scanline0r.cpp')
+frei0r_plugin('delay0r',    'filter/delay0r/delay0r.cpp')
+frei0r_plugin('twolay0r',   'filter/twolay0r/twolay0r.cpp')
+frei0r_plugin('brightness', 'filter/brightness/brightness.c')
+frei0r_plugin('contrast0r', 'filter/contrast0r/contrast0r.c')
+frei0r_plugin('saturat0r',  'filter/saturat0r/saturat0r.c')
+frei0r_plugin('threshold0r','filter/threshold0r/threshold0r.c')
+frei0r_plugin('squareblur', 'filter/squareblur/squareblur.c')
+frei0r_plugin('gamma',      'filter/gamma/gamma.c')
+frei0r_plugin('sobel',      'filter/sobel/sobel.cpp')
+frei0r_plugin('equaliz0r',  'filter/equaliz0r/equaliz0r.cpp')
+
+frei0r_plugin('xfade0r',  'mixer2/xfade0r/xfade0r.cpp')
+frei0r_plugin('alphaover','mixer2/alphaover/alphaover.cpp')
+frei0r_plugin('alphain','mixer2/alphain/alphain.cpp')
+frei0r_plugin('alphaout','mixer2/alphaout/alphaout.cpp')
+frei0r_plugin('alphaatop','mixer2/alphaatop/alphaatop.cpp')
+frei0r_plugin('alphaxor','mixer2/alphaxor/alphaxor.cpp')
+
+frei0r_plugin('blend','mixer2/blend/blend.cpp')
+frei0r_plugin('darken','mixer2/darken/darken.cpp')
+frei0r_plugin('lighten','mixer2/lighten/lighten.cpp')
+frei0r_plugin('hue','mixer2/hue/hue.cpp')
+frei0r_plugin('saturation','mixer2/saturation/saturation.cpp')
+frei0r_plugin('value','mixer2/value/value.cpp')
+frei0r_plugin('color_only','mixer2/color_only/color_only.cpp')
+frei0r_plugin('multiply','mixer2/multiply/multiply.cpp')
+frei0r_plugin('divide','mixer2/divide/divide.cpp')
+frei0r_plugin('screen','mixer2/screen/screen.cpp')
+frei0r_plugin('overlay','mixer2/overlay/overlay.cpp')
+frei0r_plugin('dodge','mixer2/dodge/dodge.cpp')
+frei0r_plugin('burn','mixer2/burn/burn.cpp')
+frei0r_plugin('hardlight','mixer2/hardlight/hardlight.cpp')
+frei0r_plugin('softlight','mixer2/softlight/softlight.cpp')
+frei0r_plugin('grain_extract','mixer2/grain_extract/grain_extract.cpp')
+frei0r_plugin('grain_merge','mixer2/grain_merge/grain_merge.cpp')
+frei0r_plugin('addition','mixer2/addition/addition.cpp')
+frei0r_plugin('subtract','mixer2/subtract/subtract.cpp')
+frei0r_plugin('difference','mixer2/difference/difference.cpp')
+
+
+
+
+

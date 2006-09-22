@@ -1,0 +1,21 @@
+You need scons[1] to build the frei0r plugins. 
+
+
+Building all frei0r plugins is triggered by:
+
+$ scons
+
+
+Use the followind command to install the plugins 
+at the systems default location. You'll need to be
+for that.
+ 
+$ scons install
+
+You need to set the "instdir" property to install the
+plugins at a different location
+
+$ scons instdir=$HOME/.frei0r-1/lib install
+
+
+[1] http://www.scons.org

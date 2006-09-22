@@ -1,0 +1,5 @@
+<project name="Frei0rPluginNative" basedir=".">
+	<target name="build">
+		<copydir dest="../../../../../build/drone/plugins/frei0r/contrib/" src="contrib/Frei0r/plugins/"></copydir>
+	</target>	
+</project>
