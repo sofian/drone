@@ -37,7 +37,7 @@ public class JMFSimpleTest {
 			// Create two actors.
 			MovieReader reader = new MovieReader(top, "reader");
 			ImageDisplay writer = new ImageDisplay(top, "display");
-			reader.fileOrURL.setExpression("/Users/tats/Documents/workspace/drone/src/ptolemy/actor/lib/jmf/MrPtolemy.mov");
+			reader.fileOrURL.setExpression("/Users/tats/Documents/workspace/drone/src/drone/plugins/jmf/demos/MrPtolemy.mov");
 			top.connect(reader.output, writer.input);
 			
 			top.getManager().startRun();
