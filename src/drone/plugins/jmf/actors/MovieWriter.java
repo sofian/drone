@@ -26,7 +26,7 @@
  COPYRIGHTENDKEY
 
  */
-package ptolemy.actor.lib.jmf;
+package drone.plugins.jmf.actors;
 
 import java.awt.Image;
 import java.io.File;
@@ -74,6 +74,8 @@ import ptolemy.kernel.util.InternalErrorException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.StringAttribute;
 import ptolemy.util.MessageHandler;
+
+import drone.plugins.jmf.data.JMFImageToken;
 
 //FIXME: This actor only works properly when a model containing this actor
 //       is run for the first time.  Vergil has to be reloaded each time

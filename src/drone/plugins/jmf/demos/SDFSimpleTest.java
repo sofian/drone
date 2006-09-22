@@ -1,4 +1,4 @@
-package ptolemy.actor.lib.jmf.test;
+package drone.plugins.jmf.demos;
 
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.util.IllegalActionException;
@@ -7,7 +7,6 @@ import ptolemy.domains.sdf.kernel.SDFDirector;
 import ptolemy.actor.Manager;
 import ptolemy.actor.lib.StringConst;
 import ptolemy.actor.lib.Writer;
-import ptolemy.kernel.util.StreamListener;
 
 public class SDFSimpleTest {
 

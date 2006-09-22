@@ -25,7 +25,7 @@
  PT_COPYRIGHT_VERSION 2
  COPYRIGHTENDKEY
  */
-package ptolemy.actor.lib.jmf;
+package drone.plugins.jmf.actors;
 
 import java.io.IOException;
 

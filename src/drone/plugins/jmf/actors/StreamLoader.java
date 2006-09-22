@@ -24,7 +24,7 @@
  PT_COPYRIGHT_VERSION_2
  COPYRIGHTENDKEY
  */
-package ptolemy.actor.lib.jmf;
+package drone.plugins.jmf.actors;
 
 import java.net.URL;
 

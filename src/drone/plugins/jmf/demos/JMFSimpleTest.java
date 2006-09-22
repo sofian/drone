@@ -1,11 +1,11 @@
-package ptolemy.actor.lib.jmf.test;
+package drone.plugins.jmf.demos;
 
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.domains.sdf.kernel.SDFDirector;
-import ptolemy.actor.lib.jmf.MovieReader;
-import ptolemy.actor.lib.jmf.ImageDisplay;
+import drone.plugins.jmf.actors.MovieReader;
+import drone.plugins.jmf.actors.ImageDisplay;
 
 //import ptolemy.kernel.util.Workspace;
 //import ptolemy.domains.de.kernel.DEDirector;

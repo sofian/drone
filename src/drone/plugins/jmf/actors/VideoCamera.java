@@ -55,7 +55,7 @@
  * facility. Licensee represents and warrants that it will not use or
  * redistribute the Software for such purposes.
  */
-package ptolemy.actor.lib.jmf;
+package drone.plugins.jmf.actors;
 
 import java.util.Iterator;
 import java.util.Vector;
@@ -89,6 +89,8 @@ import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.StringAttribute;
+
+import drone.plugins.jmf.data.JMFImageToken;
 
 //////////////////////////////////////////////////////////////////////////
 //// VideoCamera
