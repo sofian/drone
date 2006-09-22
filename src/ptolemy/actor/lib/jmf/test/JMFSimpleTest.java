@@ -27,7 +27,7 @@ public class JMFSimpleTest {
 			
 			// Create the director.
 			SDFDirector director = new SDFDirector(top, "director");
-			String period = Double.toString(1.0 / 27.0);
+			String period = Double.toString(1.0 / 5.0);
 			director.period.setExpression(period);
 			director.synchronizeToRealTime.setExpression("true");
 			director.iterations.setExpression("100");
