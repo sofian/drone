@@ -26,7 +26,7 @@
  COPYRIGHTENDKEY
 
  */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
 import java.awt.Image;
 
@@ -43,7 +43,7 @@ import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-import drone.plugins.jmf.data.JMFImageToken;
+import drone.jmf.data.JMFImageToken;
 
 //////////////////////////////////////////////////////////////////////////
 //// ImageToJMF

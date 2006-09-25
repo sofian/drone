@@ -1,4 +1,4 @@
-package drone.plugins.frei0r;
+package drone.frei0r;
 
 public class Frei0rException extends Exception {
 

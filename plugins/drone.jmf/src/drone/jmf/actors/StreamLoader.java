@@ -24,7 +24,7 @@
  PT_COPYRIGHT_VERSION_2
  COPYRIGHTENDKEY
  */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
 import java.net.URL;
 

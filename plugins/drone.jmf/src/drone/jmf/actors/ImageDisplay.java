@@ -25,7 +25,7 @@ ENHANCEMENTS, OR MODIFICATIONS.
 PT_COPYRIGHT_VERSION 2
 COPYRIGHTENDKEY
 */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

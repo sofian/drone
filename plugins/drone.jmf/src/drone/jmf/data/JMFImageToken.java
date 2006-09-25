@@ -24,7 +24,7 @@
  PT_COPYRIGHT_VERSION_2
  COPYRIGHTENDKEY
  */
-package drone.plugins.jmf.data;
+package drone.jmf.data;
 
 import java.awt.Image;
 

@@ -26,7 +26,7 @@
  COPYRIGHTENDKEY
 
  */
-package drone.plugins.frei0r.actors;
+package drone.frei0r.actors;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
@@ -45,7 +45,7 @@ import ptolemy.kernel.util.StringAttribute;
 import ptolemy.kernel.util.Settable.Visibility;
 import java.io.*;
 
-import drone.plugins.frei0r.Frei0rException;
+import drone.frei0r.Frei0rException;
 
 // ////////////////////////////////////////////////////////////////////////
 // // StringCompare

@@ -25,7 +25,7 @@
  PT_COPYRIGHT_VERSION 2
  COPYRIGHTENDKEY
  */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
 import javax.media.Buffer;
 import javax.media.format.VideoFormat;
@@ -41,7 +41,7 @@ import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-import drone.plugins.jmf.data.JMFImageToken;
+import drone.jmf.data.JMFImageToken;
 
 //////////////////////////////////////////////////////////////////////////
 //// ColorFinder

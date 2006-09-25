@@ -1,13 +1,12 @@
-/* An actor that plays a DataSource containing a music file.
+/* An actor that displays a AVI, Quicktime or MPEG video file.
 
- @Copyright (c) 2003-2006 The Regents of the University of California.
+ Copyright (c) 2003-2006 The Regents of the University of California.
  All rights reserved.
-
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
- software and its documentation for any purpose, provided that the
- above copyright notice and the following two paragraphs appear in all
- copies of this software.
+ software and its documentation for any purpose, provided that the above
+ copyright notice and the following two paragraphs appear in all copies
+ of this software.
 
  IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
@@ -22,12 +21,12 @@
  CALIFORNIA HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
  ENHANCEMENTS, OR MODIFICATIONS.
 
- PT_COPYRIGHT_VERSION 2
+ PT_COPYRIGHT_VERSION_2
  COPYRIGHTENDKEY
-
  */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.IOException;
@@ -43,28 +42,30 @@ import javax.swing.JFrame;
 
 import ptolemy.actor.lib.Sink;
 import ptolemy.data.ObjectToken;
+import ptolemy.data.Token;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
 //////////////////////////////////////////////////////////////////////////
-//// AudioPlayer
+//// VideoPlayer
 
-/**
- This actor accepts an ObjectToken that contains a DataSource.
- This is typically obtained from the output of the StreamLoader
- actor.  This actor will play Datasources containing a MP3, MIDI, and
- CD Audio file.  After the model is run, a window will pop up
- allowing control of playing, rate of playback, and volume control.
+/** An actor that displays a AVI, Quicktime or MPEG video file.
+
+ <p>This actor accepts an ObjectToken that contains a DataSource.  This
+ is typically obtained from the output of the {@link StreamLoader}
+ actor.  After the model is run, a window will pop up allowing control
+ of playing, rate of playback, and volume control.
 
  @author James Yeh
- @version $Id: AudioPlayer.java,v 1.23 2006/08/21 23:11:44 cxh Exp $
+ @version $Id: VideoPlayer.java,v 1.26 2006/08/21 23:11:51 cxh Exp $
  @since Ptolemy II 4.0
  @Pt.ProposedRating Red (cxh)
  @Pt.AcceptedRating Red (cxh)
+ @see StreamLoader
  */
-public class AudioPlayer extends Sink implements ControllerListener {
+public class VideoPlayer extends Sink implements ControllerListener {
     /** Construct an actor with the given container and name.
      *  @param container The container.
      *  @param name The name of this actor.
@@ -73,15 +74,12 @@ public class AudioPlayer extends Sink implements ControllerListener {
      *  @exception NameDuplicationException If the container already has an
      *   actor with this name.
      */
-    public AudioPlayer(CompositeEntity container, String name)
+    public VideoPlayer(CompositeEntity container, String name)
             throws IllegalActionException, NameDuplicationException {
         super(container, name);
 
         input.setTypeEquals(BaseType.OBJECT);
     }
-
-    ///////////////////////////////////////////////////////////////////
-    ////                         public methods                    ////
 
     /** React to notification of a change in controller status.
      *  @param event The event.
@@ -98,7 +96,20 @@ public class AudioPlayer extends Sink implements ControllerListener {
      *  @return super.postfire()
      */
     public boolean postfire() throws IllegalActionException {
-        ObjectToken objectToken = (ObjectToken) input.get(0);
+        ObjectToken objectToken;
+        Token token = input.get(0);
+
+        try {
+            objectToken = (ObjectToken) token;
+        } catch (ClassCastException ex) {
+            throw new IllegalActionException(this, ex, "Failed to cast "
+                    + token.getClass() + " to an ObjectToken.\n"
+                    + "The VideoPlayer actor expects to be connected to "
+                    + "actors like the StreamLoader.\n"
+                    + "Try connecting other actors to "
+                    + "actor.lib.image.ImageDisplay.");
+        }
+
         DataSource input = (DataSource) objectToken.getValue();
 
         if (_player != null) {
@@ -110,28 +121,30 @@ public class AudioPlayer extends Sink implements ControllerListener {
             _player.addControllerListener(this);
             _player.prefetch();
         } catch (IOException ex) {
-            throw new IllegalActionException(this, "Cannot open file: "
-                    + ex.toString());
+            throw new IllegalActionException(this, ex, "Cannot open file: "
+                    + input);
         } catch (MediaException ex) {
-            throw new IllegalActionException(this,
-                    "Exception thrown by media framework: " + ex.toString());
+            throw new IllegalActionException(this, ex,
+                    "Exception thrown by media framework on " + input);
         }
 
         _player.setMediaTime(_startTime);
 
         _frame = new JFrame();
         _container = _frame.getContentPane();
+        _container.setLayout(new BorderLayout());
 
         Component controlPanel = _player.getControlPanelComponent();
-        _container.add(controlPanel);
+        Component videoPanel = _player.getVisualComponent();
+        _container.add(videoPanel, BorderLayout.CENTER);
+        _container.add(controlPanel, BorderLayout.SOUTH);
+        _container.validate();
         _frame.pack();
         _frame.setVisible(true);
 
+        _player.start();
         return super.postfire();
     }
-
-    ///////////////////////////////////////////////////////////////////
-    ////                         private variables                 ////
 
     /** The container that contains the control panel components. */
     private Container _container;
@@ -142,6 +155,6 @@ public class AudioPlayer extends Sink implements ControllerListener {
     /** The player. */
     private Player _player;
 
-    /** Start time for the audio clip. */
+    /** Start time for the video clip. */
     private Time _startTime = new Time(0.0);
 }

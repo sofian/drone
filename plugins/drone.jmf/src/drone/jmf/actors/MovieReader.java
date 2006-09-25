@@ -26,7 +26,7 @@
  COPYRIGHTENDKEY
 
  */
-package drone.plugins.jmf.actors;
+package drone.jmf.actors;
 
 import java.io.File;
 import java.net.URL;
@@ -57,7 +57,7 @@ import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.KernelException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-import drone.plugins.jmf.data.JMFImageToken;
+import drone.jmf.data.JMFImageToken;
 
 //////////////////////////////////////////////////////////////////////////
 //// MovieReader
