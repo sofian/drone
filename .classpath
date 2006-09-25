@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="ptolemy/data/unit/BasicEdgeHighlighter.java|ptolemy/domains/de/lib/EventButton.java|ptolemy/actor/lib/image/|ptolemy/domains/sdf/lib/vq/ImageDisplay.java|drone/plugins/frei0r/contrib/Frei0r/|drone/plugins/frei0r/jni/|drone/plugins/frei0r/contrib/" kind="src" path="src"/>
+	<classpathentry output="pt2/build" kind="src" path="pt2/src"/>
+	<classpathentry output="pt2/build" kind="src" path="pt2/lib/com"/>
+	<classpathentry output="plugins/frei0r/build" kind="src" path="plugins/frei0r/src"/>
+	<classpathentry output="plugins/jmf/build" kind="src" path="plugins/jmf/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build"/>
