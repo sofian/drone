@@ -44,7 +44,8 @@ public class Frei0rTest {
 	public void testSetFrei0rLibraryNameAttribute() throws NameDuplicationException, IllegalActionException
 	{
 		Frei0r frei0rActor = new Frei0r(_top, "frei0rTest");
-		frei0rActor.frei0rLibraryName.setExpression("build/drone/plugins/frei0r/contrib/frei0r/plugins/darken.dylib");		
+		//TODO: change this to appropriate path, when the plugin architecture will be fixed
+		frei0rActor.frei0rLibraryName.setExpression("src/drone/plugins/frei0r/contrib/Frei0r/plugins/libnois0r.dylib");		
 	}
 	
 	

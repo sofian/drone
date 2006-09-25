@@ -21,12 +21,15 @@ extern "C" {
 #define drone_plugins_frei0r_actors_Frei0r_DEEP 16L
 #undef drone_plugins_frei0r_actors_Frei0r_ATTRIBUTES
 #define drone_plugins_frei0r_actors_Frei0r_ATTRIBUTES 32L
+
+void ThrowFrei0rException(JNIEnv *env, char* msg);
+
 /*
  * Class:     drone_plugins_frei0r_actors_Frei0r
  * Method:    openLibrary
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_drone_plugins_frei0r_actors_Frei0r_openLibrary
+JNIEXPORT void JNICALL Java_drone_plugins_frei0r_actors_Frei0r_openLibrary
   (JNIEnv *, jobject, jstring);
 
 /*
