@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+<plugin id="drone.core" version="0.0.4" class="drone.core.CorePlugin">
+	<runtime>
+		<library id="core" path="build/" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+</plugin>

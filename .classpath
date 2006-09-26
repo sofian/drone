@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry output="pt2/build" kind="src" path="pt2/src"/>
+	<classpathentry output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
 	<classpathentry output="plugins/drone.frei0r/build" kind="src" path="plugins/drone.frei0r/src"/>
 	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/vorbisspi1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/lti-civil.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/jl1.0.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/jffmpeg-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/fmj/lib/jdom.jar"/>
+	<classpathentry sourcepath="/fmj/src.ejmf/net/sf/fmj/ejmf/toolkit/util" kind="lib" path="lib/fmj/fmj.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/jpf/jpf.jar"/>
+	<classpathentry kind="lib" path="lib/jpf/jpf-tools.jar"/>
+	<classpathentry kind="lib" path="lib/jpf/jpf-boot.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/microstar.com-xml.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
