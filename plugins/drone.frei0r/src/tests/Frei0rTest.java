@@ -1,4 +1,4 @@
-package drone.plugins.frei0r.tests;
+package drone.frei0r.tests;
 
 import org.junit.*;
 import ptolemy.actor.TypedCompositeActor;
