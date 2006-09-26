@@ -11,8 +11,7 @@ public final class CorePlugin extends ApplicationPlugin implements Application {
     public static final String PLUGIN_ID = "drone.core";
 
 	@Override
-	protected org.java.plugin.boot.Application initApplication(
-			ExtendedProperties arg0, String[] arg1) throws Exception {
+	protected Application initApplication(ExtendedProperties arg0, String[] arg1) throws Exception {
 		// TODO Auto-generated method stub
 		return this;
 	}
