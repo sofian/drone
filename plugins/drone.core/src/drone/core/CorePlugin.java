@@ -4,7 +4,7 @@ import org.java.plugin.boot.Application;
 import org.java.plugin.boot.ApplicationPlugin;
 import org.java.plugin.util.ExtendedProperties;
 
-public final class CorePlugin extends ApplicationPlugin implements Application {
+public final class CorePlugin extends ApplicationPlugin {
     /**
      * This plug-in ID.
      */
@@ -13,7 +13,7 @@ public final class CorePlugin extends ApplicationPlugin implements Application {
 	@Override
 	protected Application initApplication(ExtendedProperties arg0, String[] arg1) throws Exception {
 		// TODO Auto-generated method stub
-		return this;
+		return new CoreApplication("ptolemy/configs", arg1);
 	}
 
 	@Override
@@ -26,11 +26,6 @@ public final class CorePlugin extends ApplicationPlugin implements Application {
 	protected void doStop() throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("STOP");
-	}
-
-	public void startApplication() throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("START APP");
 	}
 
 }
