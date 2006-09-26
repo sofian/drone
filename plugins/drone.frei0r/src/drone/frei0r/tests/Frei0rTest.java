@@ -2,7 +2,7 @@ package drone.frei0r.tests;
 
 import org.junit.*;
 import ptolemy.actor.TypedCompositeActor;
-import drone.plugins.frei0r.actors.*;
+import drone.frei0r.actors.*;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
