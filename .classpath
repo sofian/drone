@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/jpf/jpf-boot.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/microstar.com-xml.jar"/>
+	<classpathentry kind="lib" path="lib/qtjambi.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

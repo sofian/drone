@@ -11,9 +11,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.trolltech.qt.gui.*;
+
+
 import javax.swing.UIManager;
 
 import org.java.plugin.boot.Application;
+import org.java.plugin.boot.Boot;
 
 import ptolemy.actor.CompositeActor;
 import ptolemy.actor.Director;
@@ -102,7 +106,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		}
 
 		try {
-			_parseArgs(args);
+//			_parseArgs(args);
 
 			// Run if -run argument was specified.
 			if (_run) {
@@ -123,7 +127,8 @@ public class CoreApplication implements Application, ExecutionListener {
 
 					// Note that we start the thread here, which could
 					// be risky when we subclass, since the thread will be
-					// started before the subclass constructor finishes (FindBugs)
+					// started before the subclass constructor finishes
+					// (FindBugs)
 					waitThread.start();
 				}
 			}
@@ -155,10 +160,26 @@ public class CoreApplication implements Application, ExecutionListener {
 	}
 
 	public void startApplication() throws Exception {
-		// TODO Auto-generated method stub
 		System.out.println("START APP");
-	}
 
+		String[] args = new String[0];
+		QApplication.initialize(args);
+
+		MainWindow lineedits = new MainWindow();
+		lineedits.show();
+		
+		QApplication.exec();
+		try {
+			Boot.stopApplication(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	     System.exit(0);
+
+	}
+	
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
 
@@ -196,34 +217,34 @@ public class CoreApplication implements Application, ExecutionListener {
 		}
 	}
 
-//	/**
-//	* Create a new instance of this application, passing it the command-line
-//	* arguments.
-//	* 
-//	* @param args
-//	*            The command-line arguments.
-//	*/
-//	public static void main(String[] args) {
-//	try {
-//	new MoMLApplication(args);
-//	} catch (Throwable throwable) {
-//	MessageHandler.error("Command failed", throwable);
-//	// Be sure to print the stack trace so that
-//	// "$PTII/bin/moml -foo" prints something.
-//	System.err.print(KernelException.stackTraceToString(throwable));
-//	System.exit(1);
-//	}
+	// /**
+	// * Create a new instance of this application, passing it the command-line
+	// * arguments.
+	// *
+	// * @param args
+	// * The command-line arguments.
+	// */
+	// public static void main(String[] args) {
+	// try {
+	// new MoMLApplication(args);
+	// } catch (Throwable throwable) {
+	// MessageHandler.error("Command failed", throwable);
+	// // Be sure to print the stack trace so that
+	// // "$PTII/bin/moml -foo" prints something.
+	// System.err.print(KernelException.stackTraceToString(throwable));
+	// System.exit(1);
+	// }
 
-//	// If the -test arg was set, then exit after 2 seconds.
-//	if (_test) {
-//	try {
-//	Thread.sleep(2000);
-//	} catch (InterruptedException e) {
-//	}
+	// // If the -test arg was set, then exit after 2 seconds.
+	// if (_test) {
+	// try {
+	// Thread.sleep(2000);
+	// } catch (InterruptedException e) {
+	// }
 
-//	System.exit(0);
-//	}
-//	}
+	// System.exit(0);
+	// }
+	// }
 
 	/**
 	 * Do nothing.
@@ -248,7 +269,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		}
 
 		ModelDirectory directory = (ModelDirectory) _configuration
-		.getEntity(Configuration._DIRECTORY_NAME);
+				.getEntity(Configuration._DIRECTORY_NAME);
 		Iterator effigies = directory.entityList().iterator();
 
 		while (effigies.hasNext()) {
@@ -284,7 +305,7 @@ public class CoreApplication implements Application, ExecutionListener {
 	 *                of the URL is not a configuration.
 	 */
 	public static Configuration readConfiguration(URL specificationURL)
-	throws Exception {
+			throws Exception {
 		if (_initialSpecificationURL == null) {
 			_initialSpecificationURL = specificationURL;
 		}
@@ -307,7 +328,7 @@ public class CoreApplication implements Application, ExecutionListener {
 			} catch (NameDuplicationException ex) {
 				// Try deleting the old configuration
 				PtolemyEffigy oldEffigy = (PtolemyEffigy) ((ModelDirectory) directory)
-				.getEntity(configuration.getName());
+						.getEntity(configuration.getName());
 				oldEffigy.setContainer(null);
 				effigy = new PtolemyEffigy((ModelDirectory) directory,
 						configuration.getName());
@@ -321,14 +342,14 @@ public class CoreApplication implements Application, ExecutionListener {
 		// construct it. The _applicationInitializer parameter contains
 		// a string that names a class to be initialized.
 		StringParameter applicationInitializerParameter = (StringParameter) configuration
-		.getAttribute("_applicationInitializer", Parameter.class);
+				.getAttribute("_applicationInitializer", Parameter.class);
 
 		if (applicationInitializerParameter != null) {
 			String applicationInitializerClassName = applicationInitializerParameter
-			.stringValue();
+					.stringValue();
 			try {
 				Class applicationInitializer = Class
-				.forName(applicationInitializerClassName);
+						.forName(applicationInitializerClassName);
 				applicationInitializer.newInstance();
 			} catch (Throwable throwable) {
 				throw new Exception("Failed to call application initializer "
@@ -431,7 +452,7 @@ public class CoreApplication implements Application, ExecutionListener {
 				} catch (java.security.AccessControlException accessControl) {
 					IOException exception = new IOException(
 							"AccessControlException while "
-							+ "trying to read '" + absoluteFile + "'");
+									+ "trying to read '" + absoluteFile + "'");
 
 					// IOException does not have a cause argument constructor.
 					exception.initCause(accessControl);
@@ -458,7 +479,7 @@ public class CoreApplication implements Application, ExecutionListener {
 					// This works in Web Start, see
 					// http://java.sun.com/products/javawebstart/faq.html#54
 					specURL = Thread.currentThread().getContextClassLoader()
-					.getResource(spec);
+							.getResource(spec);
 
 					if (specURL == null) {
 						throw new Exception("getResource(\"" + spec
@@ -564,7 +585,7 @@ public class CoreApplication implements Application, ExecutionListener {
 			File configurationDirectory = new File(configurationURI);
 			ConfigurationFilenameFilter filter = new ConfigurationFilenameFilter();
 			File[] configurationDirectories = configurationDirectory
-			.listFiles(filter);
+					.listFiles(filter);
 
 			if (configurationDirectories != null) {
 				result.append("\nThe following (mutually exclusive) flags "
@@ -572,7 +593,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 				for (i = 0; i < configurationDirectories.length; i++) {
 					String configurationName = configurationDirectories[i]
-					                                                    .getName();
+							.getName();
 					result.append(" -" + configurationName);
 
 					// Pad out to a fixed number of spaces to get good
@@ -582,7 +603,7 @@ public class CoreApplication implements Application, ExecutionListener {
 					}
 
 					String configurationFileName = configurationDirectories[i]
-					                                                        + File.separator + "configuration.xml";
+							+ File.separator + "configuration.xml";
 
 					boolean printDefaultConfigurationMessage = true;
 
@@ -610,7 +631,7 @@ public class CoreApplication implements Application, ExecutionListener {
 									&& (configuration.getAttribute("_doc") != null)
 									&& configuration.getAttribute("_doc") instanceof Documentation) {
 								Documentation doc = (Documentation) configuration
-								.getAttribute("_doc");
+										.getAttribute("_doc");
 								result.append("\t\t" + doc.getValueAsString()
 										+ "\n");
 								printDefaultConfigurationMessage = false;
@@ -703,9 +724,9 @@ public class CoreApplication implements Application, ExecutionListener {
 			_test = true;
 		} else if (arg.equals("-version")) {
 			System.out
-			.println("Version "
-					+ VersionAttribute.CURRENT_VERSION.getExpression()
-					+ ", Build $Id: MoMLApplication.java,v 1.136 2006/09/10 16:00:28 cxh Exp $");
+					.println("Version "
+							+ VersionAttribute.CURRENT_VERSION.getExpression()
+							+ ", Build $Id: MoMLApplication.java,v 1.136 2006/09/10 16:00:28 cxh Exp $");
 
 			// NOTE: This means the test suites cannot test -version
 			StringUtilities.exit(0);
@@ -771,7 +792,7 @@ public class CoreApplication implements Application, ExecutionListener {
 				} else {
 					System.err.println("No configuration found.");
 					throw new IllegalActionException(newModel,
-					"No configuration found.");
+							"No configuration found.");
 				}
 			} else {
 				if (!arg.startsWith("-")) {
@@ -800,7 +821,7 @@ public class CoreApplication implements Application, ExecutionListener {
 					// assume the file is an XML file.
 					if (_configuration != null) {
 						ModelDirectory directory = (ModelDirectory) _configuration
-						.getEntity("directory");
+								.getEntity("directory");
 
 						if (directory == null) {
 							throw new InternalErrorException(
@@ -841,11 +862,11 @@ public class CoreApplication implements Application, ExecutionListener {
 								if ((inURL.toString().indexOf("!/") != -1)
 										&& (inURL.toString().indexOf("%20") != -1)) {
 									detailMessage = " The URL contains "
-										+ "'!/', so it may be a jar "
-										+ "URL, and jar URLs cannot contain "
-										+ "%20. This might happen if the "
-										+ "pathname to the jnlp file had a "
-										+ "space in it";
+											+ "'!/', so it may be a jar "
+											+ "URL, and jar URLs cannot contain "
+											+ "%20. This might happen if the "
+											+ "pathname to the jnlp file had a "
+											+ "space in it";
 								}
 							} catch (Exception ex2) {
 								// Ignored
@@ -917,7 +938,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 			boolean match = false;
 			ModelDirectory directory = (ModelDirectory) _configuration
-			.getEntity("directory");
+					.getEntity("directory");
 
 			if (directory == null) {
 				throw new InternalErrorException("No model directory!");
@@ -940,7 +961,7 @@ public class CoreApplication implements Application, ExecutionListener {
 						// Use a MoMLChangeRequest so that visual rendition (if
 						// any) is updated and listeners are notified.
 						String moml = "<property name=\"" + name
-						+ "\" value=\"" + value + "\"/>";
+								+ "\" value=\"" + value + "\"/>";
 						MoMLChangeRequest request = new MoMLChangeRequest(this,
 								model, moml);
 						model.requestChange(request);
@@ -956,7 +977,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 					if (model instanceof CompositeActor) {
 						Director director = ((CompositeActor) model)
-						.getDirector();
+								.getDirector();
 
 						if (director != null) {
 							attribute = director.getAttribute(name);
@@ -968,7 +989,7 @@ public class CoreApplication implements Application, ExecutionListener {
 								// rendition (if
 								// any) is updated and listeners are notified.
 								String moml = "<property name=\"" + name
-								+ "\" value=\"" + value + "\"/>";
+										+ "\" value=\"" + value + "\"/>";
 								MoMLChangeRequest request = new MoMLChangeRequest(
 										this, director, moml);
 								director.requestChange(request);
@@ -1019,7 +1040,7 @@ public class CoreApplication implements Application, ExecutionListener {
 	 * @deprecated Use readConfiguration() instead.
 	 */
 	protected Configuration _readConfiguration(URL specificationURL)
-	throws Exception {
+			throws Exception {
 		return readConfiguration(specificationURL);
 	}
 
@@ -1050,8 +1071,8 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	/** The command-line options that take arguments. */
 	protected static String[][] _commandOptions = {
-		{ "-class", "<classname>" },
-		{ "-<parameter name>", "<parameter value>" }, };
+			{ "-class", "<classname>" },
+			{ "-<parameter name>", "<parameter value>" }, };
 
 	/** The form of the command line. */
 	protected String _commandTemplate = "moml [ options ] [file ...]";
