@@ -162,8 +162,23 @@ public class CoreApplication implements Application, ExecutionListener {
 	public void startApplication() throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("START APP");
-	}
+		String[] args = new String[0];
+		QApplication.initialize(args);
+		MainWindow lineedits = new MainWindow();
+		lineedits.show();
+		
+		QApplication.exec();
+		try {
+			Boot.stopApplication(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	     System.exit(0);
 
+	}
+	
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
 
