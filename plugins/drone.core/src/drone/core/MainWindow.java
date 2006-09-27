@@ -24,7 +24,6 @@ public class MainWindow extends QMainWindow {
         dock.setWidget(textEdit);
         
         addDockWidget(QDockWidget.AllDockWidgetFeatures, dock);
-        throw new Exception("ttest");
         
     }
 
