@@ -664,19 +664,7 @@ public class CoreApplication implements Application, ExecutionListener {
                         + "/full/configuration.xml");
             }
         } catch (IOException ex) {
-            try {
-                // If we ship HyVisual without a full installation, then
-                // we try the hyvisual configuration.
-                // vergil -help needs this.
-                // FIXME: we could do better than this and either
-                // search for configurations or go through a list
-                // of them.
-                _configurationURL = specToURL(_basePath
-                        + "/hyvisual/configuration.xml");
-            } catch (IOException ex2) {
-                // Throw the original exception.
-                throw ex;
-            }
+          ///FIXME:w handle exception
         }
 
         // This has the side effects of merging properties from ptII.properties
@@ -696,7 +684,7 @@ public class CoreApplication implements Application, ExecutionListener {
         }
 
         // Read the user preferences, if any.
-        PtolemyPreferences.setDefaultPreferences(configuration);
+        // PtolemyPreferences.setDefaultPreferences(configuration);
 
         // If _hideUserLibraryAttribute is not present, or is false,
         // call openUserLibrary().  openUserLibrary() will open either the
@@ -709,8 +697,8 @@ public class CoreApplication implements Application, ExecutionListener {
 
             // Load the user library.
             try {
-                MoMLParser.setErrorHandler(new VergilErrorHandler());
-                UserActorLibrary.openUserLibrary(configuration);
+                //MoMLParser.setErrorHandler(new VergilErrorHandler());
+                //UserActorLibrary.openUserLibrary(configuration);
             } catch (Exception ex) {
                 MessageHandler.error("Failed to display user library.", ex);
             }
@@ -1238,4 +1226,13 @@ public class CoreApplication implements Application, ExecutionListener {
 	private static URL _initialSpecificationURL;
 	
 	private URL _configurationURL;
+	
+    ///////////////////////////////////////////////////////////////////
+    ////                         private variables                 ////
+    // The subdirectory (if any) of ptolemy/configs where the configuration
+    // may be found.  For example if vergil was called with -ptiny,
+    // then this variable will be set to "ptiny", and the configuration
+    // should be at ptolemy/configs/ptiny/configuration.xml
+    private String _configurationSubdirectory;
+
 }
