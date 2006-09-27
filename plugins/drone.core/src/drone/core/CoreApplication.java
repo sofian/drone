@@ -23,6 +23,12 @@ import ptolemy.actor.CompositeActor;
 import ptolemy.actor.Director;
 import ptolemy.actor.ExecutionListener;
 import ptolemy.actor.Manager;
+import ptolemy.actor.gui.Configuration;
+import ptolemy.actor.gui.Effigy;
+import ptolemy.actor.gui.ModelDirectory;
+import ptolemy.actor.gui.PtolemyEffigy;
+import ptolemy.actor.gui.PtolemyPreferences;
+import ptolemy.actor.gui.UserActorLibrary;
 import ptolemy.data.expr.Parameter;
 import ptolemy.data.expr.StringParameter;
 import ptolemy.kernel.ComponentEntity;
@@ -39,7 +45,9 @@ import ptolemy.moml.MoMLChangeRequest;
 import ptolemy.moml.MoMLParser;
 import ptolemy.moml.filter.BackwardCompatibility;
 import ptolemy.util.JNLPUtilities;
+import ptolemy.util.MessageHandler;
 import ptolemy.util.StringUtilities;
+import ptolemy.vergil.VergilErrorHandler;
 
 public class CoreApplication implements Application, ExecutionListener {
 
@@ -657,46 +665,148 @@ public class CoreApplication implements Application, ExecutionListener {
 		return result.toString();
 	}
 
-	/**
-	 * Return a default Configuration, or null to do without one. This
-	 * configuration will be created before any command-line arguments are
-	 * processed. If there are no command-line arguments, then the default
-	 * configuration is given by _createEmptyConfiguration() instead. This
-	 * method merges the compile-time configuration file values from
-	 * {@link ptolemy.util.StringUtilities#mergePropertiesFile()}. Subclasses
-	 * should call
-	 * {@link ptolemy.actor.gui.PtolemyPreferences#setDefaultPreferences(Configuration)}.
-	 * 
-	 * @return null
-	 * @exception Exception
-	 *                Thrown in derived classes if the default configuration
-	 *                cannot be opened.
-	 */
-	protected Configuration _createDefaultConfiguration() throws Exception {
-		// Load the properties file
+    ///////////////////////////////////////////////////////////////////
+    ////                         protected methods                 ////
+
+    /** Return a default Configuration.  The initial default configuration
+     *  is the MoML file full/configuration.xml under the _basePath
+     *  directory, which is usually ptolemy/configs.
+     *  using different command line arguments can change the value
+     *  Usually, we also open the user library, which is located
+     *  in the directory returned by
+     *  {@link ptolemy.util.StringUtilities#preferencesDirectory()}
+     *  If the configuration contains a top level Parameter named
+     *  _hideUserLibrary, then we do not open the user library.
+     *
+     *  @return A default configuration.
+     *  @exception Exception If the configuration cannot be opened.
+     */
+    protected Configuration _createDefaultConfiguration() throws Exception {
+        try {
+            if (_configurationURL == null) {
+                _configurationURL = specToURL(_basePath
+                        + "/full/configuration.xml");
+            }
+        } catch (IOException ex) {
+            try {
+                // If we ship HyVisual without a full installation, then
+                // we try the hyvisual configuration.
+                // vergil -help needs this.
+                // FIXME: we could do better than this and either
+                // search for configurations or go through a list
+                // of them.
+                _configurationURL = specToURL(_basePath
+                        + "/hyvisual/configuration.xml");
+            } catch (IOException ex2) {
+                // Throw the original exception.
+                throw ex;
+            }
+        }
+
+        // This has the side effects of merging properties from ptII.properties
+        try {
+            StringUtilities.mergePropertiesFile();
+        } catch (Exception ex) {
+            // FIXME: this should be logged, not ignored
+            // Ignore the exception, it clutters the start up.
+        }
+
+        Configuration configuration;
 		try {
-			StringUtilities.mergePropertiesFile();
-		} catch (Exception ex) {
-			// FIXME: this should be logged, not ignored
-			// Ignore the exception, it clutters the start up.
-		}
+            configuration = readConfiguration(_configurationURL);
+        } catch (Exception ex) {
+            throw new Exception("Failed to read configuration '"
+                    + _configurationURL + "'", ex);
+        }
 
-		return null;
-	}
+        // Read the user preferences, if any.
+        PtolemyPreferences.setDefaultPreferences(configuration);
 
-	/**
-	 * Return a default Configuration to use when there are no command-line
-	 * arguments, or null to do without one. This base class returns the
-	 * configuration returned by _createDefaultConfiguration().
-	 * 
-	 * @return null
-	 * @exception Exception
-	 *                Thrown in derived classes if the empty configuration
-	 *                cannot be opened.
-	 */
-	protected Configuration _createEmptyConfiguration() throws Exception {
-		return _createDefaultConfiguration();
-	}
+        // If _hideUserLibraryAttribute is not present, or is false,
+        // call openUserLibrary().  openUserLibrary() will open either the
+        // user library or the library named by the _alternateLibraryBuilder.
+        Parameter hideUserLibraryAttribute = (Parameter) configuration
+                .getAttribute("_hideUserLibrary", Parameter.class);
+
+        if ((hideUserLibraryAttribute == null)
+                || hideUserLibraryAttribute.getExpression().equals("false")) {
+
+            // Load the user library.
+            try {
+                MoMLParser.setErrorHandler(new VergilErrorHandler());
+                UserActorLibrary.openUserLibrary(configuration);
+            } catch (Exception ex) {
+                MessageHandler.error("Failed to display user library.", ex);
+            }
+        }
+
+        return configuration;
+    }
+
+    /** Return a default Configuration to use when there are no command-line
+     *  arguments. If the configuration contains a parameter 
+     *  _applicationBlankPtolemyEffigyAtStartup
+     *  then we create an empty up an empty PtolemyEffigy.
+     *  @return A configuration for when there no command-line arguments.
+     *  @exception Exception If the configuration cannot be opened.
+     */
+    protected Configuration _createEmptyConfiguration() throws Exception {
+        Configuration configuration = _createDefaultConfiguration();
+        URL welcomeURL = null;
+        URL introURL = null;
+
+        ModelDirectory directory = configuration.getDirectory();
+
+        Parameter applicationBlankPtolemyEffigyAtStartup = (Parameter) configuration
+                .getAttribute("_applicationBlankPtolemyEffigyAtStartup",
+                        Parameter.class);
+        if ((applicationBlankPtolemyEffigyAtStartup != null)
+                && applicationBlankPtolemyEffigyAtStartup.getExpression()
+                        .equals("true")) {
+            PtolemyEffigy.Factory factory = new PtolemyEffigy.Factory(
+                    directory, directory.uniqueName("ptolemyEffigy"));
+
+            Effigy effigy = factory.createEffigy(directory, null, null);
+            configuration.createPrimaryTableau(effigy);
+        }
+
+        try {
+            // First, we see if we can find the welcome window by
+            // looking at the default configuration.
+            // FIXME: this seems wrong, we should be able to get
+            // an attribute from the configuration that names the
+            // welcome window.
+            String configurationURLString = _configurationURL.toExternalForm();
+            String base = configurationURLString.substring(0,
+                    configurationURLString.lastIndexOf("/"));
+
+            welcomeURL = specToURL(base + "/welcomeWindow.xml");
+            introURL = specToURL(base + "/intro.htm");
+            _parser.reset();
+            _parser.setContext(configuration);
+            _parser.parse(welcomeURL, welcomeURL);
+        } catch (Throwable throwable) {
+            // OK, that did not work, try a different method.
+            if (_configurationSubdirectory == null) {
+                _configurationSubdirectory = "full";
+            }
+
+            // FIXME: This code is Dog slow for some reason.
+            welcomeURL = specToURL(_basePath + "/" + _configurationSubdirectory
+                    + "/welcomeWindow.xml");
+            introURL = specToURL(_basePath + "/" + _configurationSubdirectory
+                    + "/intro.htm");
+            _parser.reset();
+            _parser.setContext(configuration);
+            _parser.parse(welcomeURL, welcomeURL);
+        }
+
+        Effigy doc = (Effigy) configuration.getEntity("directory.doc");
+
+        doc.identifier.setExpression(introURL.toExternalForm());
+
+        return configuration;
+    }
 
 	/**
 	 * Parse a command-line argument.
@@ -1150,4 +1260,6 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	// URL from which the configuration was read.
 	private static URL _initialSpecificationURL;
+	
+	private URL _configurationURL;
 }
