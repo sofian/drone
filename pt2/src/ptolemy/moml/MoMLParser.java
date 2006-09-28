@@ -3589,6 +3589,7 @@ public class MoMLParser extends HandlerBase implements ChangeListener {
 
                 newEntity.propagateExistence();
 
+                // FIXME: See ticket # 54: https://lethe.koumbit.net/trac/drone/ticket/54
                 _loadIconForClass(className, newEntity);
 
                 _addParamsToParamsToParse(newEntity);

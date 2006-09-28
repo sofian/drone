@@ -90,7 +90,11 @@ public class BackwardCompatibility {
     static {
         _filterList = new LinkedList();
         _filterList.add(new AddEditorFactory());
-        _filterList.add(new AddIcon());
+        
+        //FIXME : removed for now because of too many dependencies on the vergil packages
+        // see ticket : https://lethe.koumbit.net/trac/drone/ticket/54
+        //_filterList.add(new AddIcon());
+        
         _filterList.add(new ClassChanges());
         _filterList.add(new HideAnnotationNames());
         _filterList.add(new MultiportToSinglePort());
