@@ -164,7 +164,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		String[] args = new String[0];
 		QApplication.initialize(args);
 		MainWindow lineedits = new MainWindow();
-		lineedits.show();
+		lineedits.showMaximized();
 		
 		QApplication.exec();
 		try {

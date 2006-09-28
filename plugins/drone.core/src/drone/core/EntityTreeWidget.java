@@ -11,8 +11,7 @@ import com.trolltech.qt.gui.QWidget;
 
 public class EntityTreeWidget extends QTreeWidget {
 	
-	public EntityTreeWidget(Entity root, QWidget parent) {
-		super(parent);
+	public EntityTreeWidget(Entity root) {
 		super.setColumnCount(1);
 		
 		ListIterator i = _childrenListIterator(root);
