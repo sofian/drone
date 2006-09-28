@@ -59,7 +59,6 @@ public class CoreApplication implements Application, ExecutionListener {
 	 */
 	public CoreApplication(String basePath, String[] args) throws Exception {
 		_basePath = basePath;
-		System.out.println(basePath);
 
 		// The Java look & feel is pretty lame, so we use the native
 		// look and feel of the platform we are running on.
