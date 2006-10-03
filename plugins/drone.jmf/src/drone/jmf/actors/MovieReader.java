@@ -76,6 +76,7 @@ import drone.jmf.data.JMFImageToken;
  @Pt.AcceptedRating Red (cxh)
  */
 public class MovieReader extends Source implements ControllerListener {
+
     /** Construct an actor with the given container and name.
      *  @param container The container.
      *  @param name The name of this actor.
@@ -89,20 +90,18 @@ public class MovieReader extends Source implements ControllerListener {
         super(container, name);
         output.setTypeEquals(BaseType.OBJECT);
         fileOrURL = new FileParameter(this, "fileOrURL");
-        fileOrURL
-                .setExpression("$CLASSPATH/ptolemy/actor/lib/jmf/MrPtolemy.mov");
+        
     }
 
     ///////////////////////////////////////////////////////////////////
     ////                     ports and parameters                  ////
 
     /** The file name or URL from which to read.  This is a string with
-     *  any form accepted by File Attribute.  The default value
-     *  is the string "file:///C:/program%20files/quicktime/Sample.mov".
+     *  any form accepted by File Attribute.  The default value is "".
      *  @see FileParameter
      */
     public FileParameter fileOrURL;
-
+    
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
