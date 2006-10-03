@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry output="pt2/build" kind="src" path="pt2/src"/>
+	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
+	<classpathentry kind="src" path="drone.spikes"/>
 	<classpathentry output="plugins/drone.spikes.tinygui/build" kind="src" path="plugins/drone.spikes.tinygui/src"/>
 	<classpathentry output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
 	<classpathentry output="plugins/drone.frei0r/build" kind="src" path="plugins/drone.frei0r/src"/>
@@ -13,5 +15,7 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/microstar.com-xml.jar"/>
 	<classpathentry kind="lib" path="lib/qtjambi.jar"/>
+	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
+	<classpathentry kind="lib" path="lib/jmf/jffmpeg-1.1.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
