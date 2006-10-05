@@ -5,6 +5,7 @@ import java.net.URL;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTree;
 
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
@@ -32,7 +33,7 @@ public class MainWindow extends JFrame {
 	public static final int UPPER_RIGHT_VIEW = 2;
 	public static final int BOTTOM_RIGHT_VIEW = 3;
 	
-	public MainWindow() {
+	public MainWindow() throws Exception {
 		createRootWindow();
 		setDefaultLayout();
 		showFrame();
@@ -113,8 +114,9 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Sets the default window layout.
+	 * @throws Exception 
 	 */
-	private void setDefaultLayout() {
+	private void setDefaultLayout() throws Exception {
 		_rootWindow.setWindow(
 				new SplitWindow(true,
 								0.25f,
@@ -127,6 +129,19 @@ public class MainWindow extends JFrame {
 												_upperRightView,
 												_bottomRightView))
 		);
+		// Open the configuration.
+		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
+		if (configuration == null) {
+			throw new Exception("There are no existing configurations.");
+		}
+
+		// Create the tree view of the actor library.
+		CompositeEntity actorList = (CompositeEntity) configuration.getEntity("actor library");
+////		QTreeView libraryTree = new EntityTreeWidget(actorList, dock);		
+////		dock.setWidget(libraryTree);
+
+		JTree libraryTree = new EntityTree(actorList);
+		_upperLeftView.setComponent(libraryTree);
 	}
 
 	/**

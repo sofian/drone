@@ -170,19 +170,24 @@ public class CoreApplication implements Application, ExecutionListener {
 	}
 	
 	protected void createMainWindow() {
-		MainWindow mainWindow = new MainWindow();
-	    mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainWindow.addWindowListener(new WindowAdapter() {
-            public void windowClosed(final WindowEvent e) {
-                try {
-                    JOptionPane.getRootFrame().dispose();
-                    Boot.stopApplication(CoreApplication.this);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                System.exit(0);
-            }
-        });
+		MainWindow mainWindow;
+		try {
+			mainWindow = new MainWindow();
+			mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			mainWindow.addWindowListener(new WindowAdapter() {
+				public void windowClosed(final WindowEvent e) {
+					try {
+						JOptionPane.getRootFrame().dispose();
+						Boot.stopApplication(CoreApplication.this);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					System.exit(0);
+				}
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
