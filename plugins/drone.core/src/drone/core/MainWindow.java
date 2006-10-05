@@ -142,19 +142,7 @@ public class MainWindow extends JFrame {
 												_upperRightView,
 												_bottomRightView))
 		);
-		// Open the configuration.
-		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
-		if (configuration == null) {
-			throw new Exception("There are no existing configurations.");
-		}
 
-		// Create the tree view of the actor library.
-		CompositeEntity actorList = (CompositeEntity) configuration.getEntity("actor library");
-////		QTreeView libraryTree = new EntityTreeWidget(actorList, dock);		
-////		dock.setWidget(libraryTree);
-
-		JTree libraryTree = new EntityTree(actorList);
-		_upperLeftView.setComponent(libraryTree);
 	}
 
 	/**

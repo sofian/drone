@@ -47,6 +47,8 @@ import ptolemy.util.JNLPUtilities;
 import ptolemy.util.MessageHandler;
 import ptolemy.util.StringUtilities;
 
+import drone.core.extensions.*;
+
 public class CoreApplication implements Application, ExecutionListener {
 
 	/**
@@ -214,13 +216,14 @@ public class CoreApplication implements Application, ExecutionListener {
                 Class dockedExtCls = classLoader.loadClass(
                         ext.getParameter("class").valueAsString());
                 // Create Tool instance.
-                dockedExtensions.add((DockedExtension) dockedExtCls.newInstance());
+                String label = ext.getParameter("label").valueAsString();
+        		//_mainWindow.addDockedExtension((DockedExtension) dockedExtCls.newInstance(), label);
+
             } catch (Throwable t) {
             }
 		}
 		//Add all dockedExtensions to the mainWindow
 		//TODO: to be implemented in mainwindow
-		//_mainWindow.addDockedExtensions(dockedExtensions);
 	}
 
 	// /////////////////////////////////////////////////////////////////

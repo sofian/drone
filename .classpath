@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry output="pt2/build" kind="src" path="pt2/src"/>
+	<classpathentry output="plugins/drone.librarybrowser/build" kind="src" path="plugins/drone.librarybrowser/src"/>
 	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="src" path="drone.spikes"/>
 	<classpathentry output="plugins/drone.spikes.tinygui/build" kind="src" path="plugins/drone.spikes.tinygui/src"/>
-	<classpathentry excluding="drone/core/EntityTreeWidgetItem.java|drone/core/EntityTreeWidget.java" output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
+	<classpathentry output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
 	<classpathentry output="plugins/drone.frei0r/build" kind="src" path="plugins/drone.frei0r/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
