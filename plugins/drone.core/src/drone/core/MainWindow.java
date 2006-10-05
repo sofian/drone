@@ -117,9 +117,10 @@ public class MainWindow extends JFrame {
 		_bottomLeftTabWindow = new TabWindow();
 		_upperRightTabWindow = new TabWindow();
 		_bottomRightTabWindow = new TabWindow();
-
+		
+		// FIXME: c'est la qu'on est rendus!
 		_rootWindow = DockingUtil.createRootWindow(_viewMap, true); 
-
+		
 		// Set gradient theme. The theme properties object is the super object of our properties object, which
 	    // means our property value settings will override the theme values
 		DockingWindowsTheme shapedGradientDockingTheme = new ShapedGradientDockingTheme();	    
