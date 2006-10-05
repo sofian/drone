@@ -7,4 +7,11 @@
 		</library>
 		<library id="qtjambi" path="../../lib/qtjambi.jar" type="code"/>		
 	</runtime>
+
+	<extension-point id="DockedExtension">
+		<parameter-def id="class"/>
+		<parameter-def id="name"/>
+		<parameter-def id="description" multiplicity="none-or-one"/>
+	</extension-point>
+	
 </plugin>

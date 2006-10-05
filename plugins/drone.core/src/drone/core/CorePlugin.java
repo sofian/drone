@@ -14,7 +14,7 @@ public final class CorePlugin extends ApplicationPlugin {
 	@Override
 	protected Application initApplication(ExtendedProperties arg0, String[] arg1) throws Exception {
 		// TODO Auto-generated method stub
-		return new CoreApplication(arg0.getProperty("basePath"), arg1);
+		return new CoreApplication(arg0.getProperty("basePath"), arg1, this);
 	}
 
 	@Override

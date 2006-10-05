@@ -13,6 +13,9 @@ import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.WindowBar;
+import net.infonode.docking.properties.RootWindowProperties;
+import net.infonode.docking.theme.DockingWindowsTheme;
+import net.infonode.docking.theme.ShapedGradientDockingTheme;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
@@ -110,6 +113,16 @@ public class MainWindow extends JFrame {
 		viewMap.addView(UPPER_RIGHT_VIEW, _upperRightView = new View("Upper right", null, new JLabel("This is upper right view")));
 		viewMap.addView(BOTTOM_RIGHT_VIEW, _bottomRightView = new View("Bottom right", null, new JLabel("This is bottom right view")));
 		_rootWindow = DockingUtil.createRootWindow(viewMap, true); 
+
+		// Set gradient theme. The theme properties object is the super object of our properties object, which
+	    // means our property value settings will override the theme values
+		DockingWindowsTheme shapedGradientDockingTheme = new ShapedGradientDockingTheme();	    
+		_rootWindowProperties.addSuperObject(shapedGradientDockingTheme.getRootWindowProperties());
+
+	    // Our properties object is the super object of the root window properties object, so all property values of the
+	    // theme and in our property object will be used by the root window
+	    _rootWindow.getRootWindowProperties().addSuperObject(_rootWindowProperties);
+		
 	}
 
 	/**
@@ -160,6 +173,12 @@ public class MainWindow extends JFrame {
 	private View _bottomLeftView;
 	private View _upperRightView;
 	private View _bottomRightView;
+	  /**
+	   * In this properties object the modified property values for close buttons etc. are stored. This object is cleared
+	   * when the theme is changed.
+	   */
+	private RootWindowProperties _rootWindowProperties = new RootWindowProperties();
+
 	
 //	protected void buildMenu() {
 //	// Create file menu.

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,8 @@ import javax.swing.UIManager;
 
 import org.java.plugin.boot.Application;
 import org.java.plugin.boot.Boot;
+import org.java.plugin.registry.Extension;
+import org.java.plugin.registry.ExtensionPoint;
 
 import ptolemy.actor.CompositeActor;
 import ptolemy.actor.Director;
@@ -59,8 +62,9 @@ public class CoreApplication implements Application, ExecutionListener {
 	 * @exception Exception
 	 *                If command line arguments have problems.
 	 */
-	public CoreApplication(String basePath, String[] args) throws Exception {
+	public CoreApplication(String basePath, String[] args, CorePlugin corePlugin) throws Exception {
 		_basePath = basePath;
+		_corePlugin = corePlugin;
 
 		// The Java look & feel is pretty lame, so we use the native
 		// look and feel of the platform we are running on.
@@ -129,7 +133,8 @@ public class CoreApplication implements Application, ExecutionListener {
 
 					// Note that we start the thread here, which could
 					// be risky when we subclass, since the thread will be
-					// started before the subclass constructor finishes (FindBugs)
+					// started before the subclass constructor finishes
+					// (FindBugs)
 					waitThread.start();
 				}
 			}
@@ -161,34 +166,63 @@ public class CoreApplication implements Application, ExecutionListener {
 	}
 
 	public void startApplication() throws Exception {
-	    // Docking windwos should be run in the Swing thread
-	    SwingUtilities.invokeLater(new Runnable() {
-	      public void run() {
-	    	  createMainWindow();
-	      }
-	    });	    
+		// Docking windwos should be run in the Swing thread
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createMainWindow();
+				parseDockedExtensions();
+			}
+		});
 	}
-	
+
 	protected void createMainWindow() {
-		MainWindow mainWindow;
 		try {
-			mainWindow = new MainWindow();
-			mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			mainWindow.addWindowListener(new WindowAdapter() {
-				public void windowClosed(final WindowEvent e) {
-					try {
-						JOptionPane.getRootFrame().dispose();
-						Boot.stopApplication(CoreApplication.this);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					System.exit(0);
+		_mainWindow = new MainWindow(); 
+		_mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		_mainWindow.addWindowListener(new WindowAdapter() {
+			public void windowClosed(final WindowEvent e) {
+				try {
+					JOptionPane.getRootFrame().dispose();
+					Boot.stopApplication(CoreApplication.this);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-			});
-		} catch (Exception ex) {
+				System.exit(0);
+			}
+		});
+		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 	}
+
+	protected void parseDockedExtensions() {
+		ArrayList<DockedExtension> dockedExtensions = new ArrayList<DockedExtension>();
+		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
+				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "DockedExtension");
+		
+		for (Iterator it = dockedExtPoint.getConnectedExtensions().iterator(); it
+				.hasNext();) {
+			Extension ext = (Extension) it.next();
+            try {
+                // Activate plug-in that declares extension.
+            	_corePlugin.getManager().activatePlugin(
+                        ext.getDeclaringPluginDescriptor().getId());
+                // Get plug-in class loader.
+                ClassLoader classLoader = _corePlugin.getManager().getPluginClassLoader(
+                        ext.getDeclaringPluginDescriptor());
+                // Load Tool class.
+                Class dockedExtCls = classLoader.loadClass(
+                        ext.getParameter("class").valueAsString());
+                // Create Tool instance.
+                dockedExtensions.add((DockedExtension) dockedExtCls.newInstance());
+            } catch (Throwable t) {
+            }
+		}
+		//Add all dockedExtensions to the mainWindow
+		//TODO: to be implemented in mainwindow
+		//_mainWindow.addDockedExtensions(dockedExtensions);
+	}
+
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
 
@@ -226,34 +260,34 @@ public class CoreApplication implements Application, ExecutionListener {
 		}
 	}
 
-//	/**
-//	* Create a new instance of this application, passing it the command-line
-//	* arguments.
-//	* 
-//	* @param args
-//	*            The command-line arguments.
-//	*/
-//	public static void main(String[] args) {
-//	try {
-//	new MoMLApplication(args);
-//	} catch (Throwable throwable) {
-//	MessageHandler.error("Command failed", throwable);
-//	// Be sure to print the stack trace so that
-//	// "$PTII/bin/moml -foo" prints something.
-//	System.err.print(KernelException.stackTraceToString(throwable));
-//	System.exit(1);
-//	}
+	// /**
+	// * Create a new instance of this application, passing it the command-line
+	// * arguments.
+	// *
+	// * @param args
+	// * The command-line arguments.
+	// */
+	// public static void main(String[] args) {
+	// try {
+	// new MoMLApplication(args);
+	// } catch (Throwable throwable) {
+	// MessageHandler.error("Command failed", throwable);
+	// // Be sure to print the stack trace so that
+	// // "$PTII/bin/moml -foo" prints something.
+	// System.err.print(KernelException.stackTraceToString(throwable));
+	// System.exit(1);
+	// }
 
-//	// If the -test arg was set, then exit after 2 seconds.
-//	if (_test) {
-//	try {
-//	Thread.sleep(2000);
-//	} catch (InterruptedException e) {
-//	}
+	// // If the -test arg was set, then exit after 2 seconds.
+	// if (_test) {
+	// try {
+	// Thread.sleep(2000);
+	// } catch (InterruptedException e) {
+	// }
 
-//	System.exit(0);
-//	}
-//	}
+	// System.exit(0);
+	// }
+	// }
 
 	/**
 	 * Do nothing.
@@ -351,14 +385,14 @@ public class CoreApplication implements Application, ExecutionListener {
 		// construct it. The _applicationInitializer parameter contains
 		// a string that names a class to be initialized.
 		StringParameter applicationInitializerParameter = (StringParameter) configuration
-		.getAttribute("_applicationInitializer", Parameter.class);
+				.getAttribute("_applicationInitializer", Parameter.class);
 
 		if (applicationInitializerParameter != null) {
 			String applicationInitializerClassName = applicationInitializerParameter
-			.stringValue();
+					.stringValue();
 			try {
 				Class applicationInitializer = Class
-				.forName(applicationInitializerClassName);
+						.forName(applicationInitializerClassName);
 				applicationInitializer.newInstance();
 			} catch (Throwable throwable) {
 				throw new Exception("Failed to call application initializer "
@@ -461,7 +495,7 @@ public class CoreApplication implements Application, ExecutionListener {
 				} catch (java.security.AccessControlException accessControl) {
 					IOException exception = new IOException(
 							"AccessControlException while "
-							+ "trying to read '" + absoluteFile + "'");
+									+ "trying to read '" + absoluteFile + "'");
 
 					// IOException does not have a cause argument constructor.
 					exception.initCause(accessControl);
@@ -488,7 +522,7 @@ public class CoreApplication implements Application, ExecutionListener {
 					// This works in Web Start, see
 					// http://java.sun.com/products/javawebstart/faq.html#54
 					specURL = Thread.currentThread().getContextClassLoader()
-					.getResource(spec);
+							.getResource(spec);
 
 					if (specURL == null) {
 						throw new Exception("getResource(\"" + spec
@@ -594,7 +628,7 @@ public class CoreApplication implements Application, ExecutionListener {
 			File configurationDirectory = new File(configurationURI);
 			ConfigurationFilenameFilter filter = new ConfigurationFilenameFilter();
 			File[] configurationDirectories = configurationDirectory
-			.listFiles(filter);
+					.listFiles(filter);
 
 			if (configurationDirectories != null) {
 				result.append("\nThe following (mutually exclusive) flags "
@@ -640,7 +674,7 @@ public class CoreApplication implements Application, ExecutionListener {
 									&& (configuration.getAttribute("_doc") != null)
 									&& configuration.getAttribute("_doc") instanceof Documentation) {
 								Documentation doc = (Documentation) configuration
-								.getAttribute("_doc");
+										.getAttribute("_doc");
 								result.append("\t\t" + doc.getValueAsString()
 										+ "\n");
 								printDefaultConfigurationMessage = false;
@@ -666,136 +700,140 @@ public class CoreApplication implements Application, ExecutionListener {
 		return result.toString();
 	}
 
-    ///////////////////////////////////////////////////////////////////
-    ////                         protected methods                 ////
+	// /////////////////////////////////////////////////////////////////
+	// // protected methods ////
 
-    /** Return a default Configuration.  The initial default configuration
-     *  is the MoML file full/configuration.xml under the _basePath
-     *  directory, which is usually ptolemy/configs.
-     *  using different command line arguments can change the value
-     *  Usually, we also open the user library, which is located
-     *  in the directory returned by
-     *  {@link ptolemy.util.StringUtilities#preferencesDirectory()}
-     *  If the configuration contains a top level Parameter named
-     *  _hideUserLibrary, then we do not open the user library.
-     *
-     *  @return A default configuration.
-     *  @exception Exception If the configuration cannot be opened.
-     */
-    protected Configuration _createDefaultConfiguration() throws Exception {
-        try {
-            if (_configurationURL == null) {
-                _configurationURL = specToURL(_basePath
-                        + "/full/configuration.xml");
-            }
-        } catch (IOException ex) {
-          ///FIXME:w handle exception
-        }
-
-        // This has the side effects of merging properties from ptII.properties
-        try {
-            StringUtilities.mergePropertiesFile();
-        } catch (Exception ex) {
-            // FIXME: this should be logged, not ignored
-            // Ignore the exception, it clutters the start up.
-        }
-
-        Configuration configuration;
+	/**
+	 * Return a default Configuration. The initial default configuration is the
+	 * MoML file full/configuration.xml under the _basePath directory, which is
+	 * usually ptolemy/configs. using different command line arguments can
+	 * change the value Usually, we also open the user library, which is located
+	 * in the directory returned by
+	 * {@link ptolemy.util.StringUtilities#preferencesDirectory()} If the
+	 * configuration contains a top level Parameter named _hideUserLibrary, then
+	 * we do not open the user library.
+	 * 
+	 * @return A default configuration.
+	 * @exception Exception
+	 *                If the configuration cannot be opened.
+	 */
+	protected Configuration _createDefaultConfiguration() throws Exception {
 		try {
-            configuration = readConfiguration(_configurationURL);
-        } catch (Exception ex) {
-            throw new Exception("Failed to read configuration '"
-                    + _configurationURL + "'", ex);
-        }
+			if (_configurationURL == null) {
+				_configurationURL = specToURL(_basePath
+						+ "/full/configuration.xml");
+			}
+		} catch (IOException ex) {
+			// /FIXME:w handle exception
+		}
 
-        // Read the user preferences, if any.
-        // PtolemyPreferences.setDefaultPreferences(configuration);
+		// This has the side effects of merging properties from ptII.properties
+		try {
+			StringUtilities.mergePropertiesFile();
+		} catch (Exception ex) {
+			// FIXME: this should be logged, not ignored
+			// Ignore the exception, it clutters the start up.
+		}
 
-        // If _hideUserLibraryAttribute is not present, or is false,
-        // call openUserLibrary().  openUserLibrary() will open either the
-        // user library or the library named by the _alternateLibraryBuilder.
-        Parameter hideUserLibraryAttribute = (Parameter) configuration
-                .getAttribute("_hideUserLibrary", Parameter.class);
+		Configuration configuration;
+		try {
+			configuration = readConfiguration(_configurationURL);
+		} catch (Exception ex) {
+			throw new Exception("Failed to read configuration '"
+					+ _configurationURL + "'", ex);
+		}
 
-        if ((hideUserLibraryAttribute == null)
-                || hideUserLibraryAttribute.getExpression().equals("false")) {
+		// Read the user preferences, if any.
+		// PtolemyPreferences.setDefaultPreferences(configuration);
 
-            // Load the user library.
-            try {
-                //MoMLParser.setErrorHandler(new VergilErrorHandler());
-                //UserActorLibrary.openUserLibrary(configuration);
-            } catch (Exception ex) {
-                MessageHandler.error("Failed to display user library.", ex);
-            }
-        }
+		// If _hideUserLibraryAttribute is not present, or is false,
+		// call openUserLibrary(). openUserLibrary() will open either the
+		// user library or the library named by the _alternateLibraryBuilder.
+		Parameter hideUserLibraryAttribute = (Parameter) configuration
+				.getAttribute("_hideUserLibrary", Parameter.class);
 
-        return configuration;
-    }
+		if ((hideUserLibraryAttribute == null)
+				|| hideUserLibraryAttribute.getExpression().equals("false")) {
 
-    /** Return a default Configuration to use when there are no command-line
-     *  arguments. If the configuration contains a parameter 
-     *  _applicationBlankPtolemyEffigyAtStartup
-     *  then we create an empty up an empty PtolemyEffigy.
-     *  @return A configuration for when there no command-line arguments.
-     *  @exception Exception If the configuration cannot be opened.
-     */
-    protected Configuration _createEmptyConfiguration() throws Exception {
-        Configuration configuration = _createDefaultConfiguration();
-        URL welcomeURL = null;
-        URL introURL = null;
+			// Load the user library.
+			try {
+				// MoMLParser.setErrorHandler(new VergilErrorHandler());
+				// UserActorLibrary.openUserLibrary(configuration);
+			} catch (Exception ex) {
+				MessageHandler.error("Failed to display user library.", ex);
+			}
+		}
 
-        ModelDirectory directory = configuration.getDirectory();
+		return configuration;
+	}
 
-        Parameter applicationBlankPtolemyEffigyAtStartup = (Parameter) configuration
-                .getAttribute("_applicationBlankPtolemyEffigyAtStartup",
-                        Parameter.class);
-        if ((applicationBlankPtolemyEffigyAtStartup != null)
-                && applicationBlankPtolemyEffigyAtStartup.getExpression()
-                        .equals("true")) {
-            PtolemyEffigy.Factory factory = new PtolemyEffigy.Factory(
-                    directory, directory.uniqueName("ptolemyEffigy"));
+	/**
+	 * Return a default Configuration to use when there are no command-line
+	 * arguments. If the configuration contains a parameter
+	 * _applicationBlankPtolemyEffigyAtStartup then we create an empty up an
+	 * empty PtolemyEffigy.
+	 * 
+	 * @return A configuration for when there no command-line arguments.
+	 * @exception Exception
+	 *                If the configuration cannot be opened.
+	 */
+	protected Configuration _createEmptyConfiguration() throws Exception {
+		Configuration configuration = _createDefaultConfiguration();
+		URL welcomeURL = null;
+		URL introURL = null;
 
-            Effigy effigy = factory.createEffigy(directory, null, null);
-            configuration.createPrimaryTableau(effigy);
-        }
+		ModelDirectory directory = configuration.getDirectory();
 
-//        try {
-//            // First, we see if we can find the welcome window by
-//            // looking at the default configuration.
-//            // FIXME: this seems wrong, we should be able to get
-//            // an attribute from the configuration that names the
-//            // welcome window.
-//            String configurationURLString = _configurationURL.toExternalForm();
-//            String base = configurationURLString.substring(0,
-//                    configurationURLString.lastIndexOf("/"));
-//
-//            welcomeURL = specToURL(base + "/welcomeWindow.xml");
-//            introURL = specToURL(base + "/intro.htm");
-//            _parser.reset();
-//            _parser.setContext(configuration);
-//            _parser.parse(welcomeURL, welcomeURL);
-//        } catch (Throwable throwable) {
-//            // OK, that did not work, try a different method.
-//            if (_configurationSubdirectory == null) {
-//                _configurationSubdirectory = "full";
-//            }
-//
-//            // FIXME: This code is Dog slow for some reason.
-//            welcomeURL = specToURL(_basePath + "/" + _configurationSubdirectory
-//                    + "/welcomeWindow.xml");
-//            introURL = specToURL(_basePath + "/" + _configurationSubdirectory
-//                    + "/intro.htm");
-//            _parser.reset();
-//            _parser.setContext(configuration);
-//            _parser.parse(welcomeURL, welcomeURL);
-//        }
-//
-//        Effigy doc = (Effigy) configuration.getEntity("directory.doc");
-//
-//        doc.identifier.setExpression(introURL.toExternalForm());
+		Parameter applicationBlankPtolemyEffigyAtStartup = (Parameter) configuration
+				.getAttribute("_applicationBlankPtolemyEffigyAtStartup",
+						Parameter.class);
+		if ((applicationBlankPtolemyEffigyAtStartup != null)
+				&& applicationBlankPtolemyEffigyAtStartup.getExpression()
+						.equals("true")) {
+			PtolemyEffigy.Factory factory = new PtolemyEffigy.Factory(
+					directory, directory.uniqueName("ptolemyEffigy"));
 
-        return configuration;
-    }
+			Effigy effigy = factory.createEffigy(directory, null, null);
+			configuration.createPrimaryTableau(effigy);
+		}
+
+		// try {
+		// // First, we see if we can find the welcome window by
+		// // looking at the default configuration.
+		// // FIXME: this seems wrong, we should be able to get
+		// // an attribute from the configuration that names the
+		// // welcome window.
+		// String configurationURLString = _configurationURL.toExternalForm();
+		// String base = configurationURLString.substring(0,
+		// configurationURLString.lastIndexOf("/"));
+		//
+		// welcomeURL = specToURL(base + "/welcomeWindow.xml");
+		// introURL = specToURL(base + "/intro.htm");
+		// _parser.reset();
+		// _parser.setContext(configuration);
+		// _parser.parse(welcomeURL, welcomeURL);
+		// } catch (Throwable throwable) {
+		// // OK, that did not work, try a different method.
+		// if (_configurationSubdirectory == null) {
+		// _configurationSubdirectory = "full";
+		// }
+		//
+		// // FIXME: This code is Dog slow for some reason.
+		// welcomeURL = specToURL(_basePath + "/" + _configurationSubdirectory
+		// + "/welcomeWindow.xml");
+		// introURL = specToURL(_basePath + "/" + _configurationSubdirectory
+		// + "/intro.htm");
+		// _parser.reset();
+		// _parser.setContext(configuration);
+		// _parser.parse(welcomeURL, welcomeURL);
+		// }
+		//
+		// Effigy doc = (Effigy) configuration.getEntity("directory.doc");
+		//
+		// doc.identifier.setExpression(introURL.toExternalForm());
+
+		return configuration;
+	}
 
 	/**
 	 * Parse a command-line argument.
@@ -823,9 +861,9 @@ public class CoreApplication implements Application, ExecutionListener {
 			_test = true;
 		} else if (arg.equals("-version")) {
 			System.out
-			.println("Version "
-					+ VersionAttribute.CURRENT_VERSION.getExpression()
-					+ ", Build $Id: MoMLApplication.java,v 1.136 2006/09/10 16:00:28 cxh Exp $");
+					.println("Version "
+							+ VersionAttribute.CURRENT_VERSION.getExpression()
+							+ ", Build $Id: MoMLApplication.java,v 1.136 2006/09/10 16:00:28 cxh Exp $");
 
 			// NOTE: This means the test suites cannot test -version
 			StringUtilities.exit(0);
@@ -891,7 +929,7 @@ public class CoreApplication implements Application, ExecutionListener {
 				} else {
 					System.err.println("No configuration found.");
 					throw new IllegalActionException(newModel,
-					"No configuration found.");
+							"No configuration found.");
 				}
 			} else {
 				if (!arg.startsWith("-")) {
@@ -920,7 +958,7 @@ public class CoreApplication implements Application, ExecutionListener {
 					// assume the file is an XML file.
 					if (_configuration != null) {
 						ModelDirectory directory = (ModelDirectory) _configuration
-						.getEntity("directory");
+								.getEntity("directory");
 
 						if (directory == null) {
 							throw new InternalErrorException(
@@ -961,11 +999,11 @@ public class CoreApplication implements Application, ExecutionListener {
 								if ((inURL.toString().indexOf("!/") != -1)
 										&& (inURL.toString().indexOf("%20") != -1)) {
 									detailMessage = " The URL contains "
-										+ "'!/', so it may be a jar "
-										+ "URL, and jar URLs cannot contain "
-										+ "%20. This might happen if the "
-										+ "pathname to the jnlp file had a "
-										+ "space in it";
+											+ "'!/', so it may be a jar "
+											+ "URL, and jar URLs cannot contain "
+											+ "%20. This might happen if the "
+											+ "pathname to the jnlp file had a "
+											+ "space in it";
 								}
 							} catch (Exception ex2) {
 								// Ignored
@@ -1037,7 +1075,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 			boolean match = false;
 			ModelDirectory directory = (ModelDirectory) _configuration
-			.getEntity("directory");
+					.getEntity("directory");
 
 			if (directory == null) {
 				throw new InternalErrorException("No model directory!");
@@ -1060,7 +1098,7 @@ public class CoreApplication implements Application, ExecutionListener {
 						// Use a MoMLChangeRequest so that visual rendition (if
 						// any) is updated and listeners are notified.
 						String moml = "<property name=\"" + name
-						+ "\" value=\"" + value + "\"/>";
+								+ "\" value=\"" + value + "\"/>";
 						MoMLChangeRequest request = new MoMLChangeRequest(this,
 								model, moml);
 						model.requestChange(request);
@@ -1076,7 +1114,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 					if (model instanceof CompositeActor) {
 						Director director = ((CompositeActor) model)
-						.getDirector();
+								.getDirector();
 
 						if (director != null) {
 							attribute = director.getAttribute(name);
@@ -1088,7 +1126,7 @@ public class CoreApplication implements Application, ExecutionListener {
 								// rendition (if
 								// any) is updated and listeners are notified.
 								String moml = "<property name=\"" + name
-								+ "\" value=\"" + value + "\"/>";
+										+ "\" value=\"" + value + "\"/>";
 								MoMLChangeRequest request = new MoMLChangeRequest(
 										this, director, moml);
 								director.requestChange(request);
@@ -1170,8 +1208,8 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	/** The command-line options that take arguments. */
 	protected static String[][] _commandOptions = {
-		{ "-class", "<classname>" },
-		{ "-<parameter name>", "<parameter value>" }, };
+			{ "-class", "<classname>" },
+			{ "-<parameter name>", "<parameter value>" }, };
 
 	/** The form of the command line. */
 	protected String _commandTemplate = "moml [ options ] [file ...]";
@@ -1249,15 +1287,18 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	// URL from which the configuration was read.
 	private static URL _initialSpecificationURL;
-	
+
 	private URL _configurationURL;
+
+	// /////////////////////////////////////////////////////////////////
+	// // private variables ////
+	// The subdirectory (if any) of ptolemy/configs where the configuration
+	// may be found. For example if vergil was called with -ptiny,
+	// then this variable will be set to "ptiny", and the configuration
+	// should be at ptolemy/configs/ptiny/configuration.xml
+	private String _configurationSubdirectory;
 	
-    ///////////////////////////////////////////////////////////////////
-    ////                         private variables                 ////
-    // The subdirectory (if any) of ptolemy/configs where the configuration
-    // may be found.  For example if vergil was called with -ptiny,
-    // then this variable will be set to "ptiny", and the configuration
-    // should be at ptolemy/configs/ptiny/configuration.xml
-    private String _configurationSubdirectory;
+	private CorePlugin _corePlugin;
+	private MainWindow _mainWindow;
 
 }
