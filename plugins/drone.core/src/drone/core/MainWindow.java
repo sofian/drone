@@ -2,7 +2,10 @@ package drone.core;
 
 import java.awt.BorderLayout;
 import java.net.URL;
+import java.util.List;
+import java.util.ListIterator;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -24,6 +27,9 @@ import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.moml.MoMLParser;
 
+import drone.core.extensions.DockedExtension;
+import drone.core.extensions.FailToCreateComponentException;
+
 public class MainWindow extends JFrame {
 
 	/**
@@ -31,10 +37,9 @@ public class MainWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final int UPPER_LEFT_VIEW = 0;
-	public static final int BOTTOM_LEFT_VIEW = 1;
-	public static final int UPPER_RIGHT_VIEW = 2;
-	public static final int BOTTOM_RIGHT_VIEW = 3;
+	public static final float DEFAULT_LEFT_PROPORTION = 0.25f;
+	public static final float DEFAULT_UPPER_LEFT_PROPORTION = 0.5f;
+	public static final float DEFAULT_UPPER_RIGHT_PROPORTION = 0.75f;
 	
 	public MainWindow() throws Exception {
 		createRootWindow();
@@ -107,12 +112,13 @@ public class MainWindow extends JFrame {
 	 * Creates the root window and the views.
 	 */
 	private void createRootWindow() {
-		ViewMap viewMap = new ViewMap();
-		viewMap.addView(UPPER_LEFT_VIEW, _upperLeftView = new View("Upper left", null, new JLabel("This is upper left view")));
-		viewMap.addView(BOTTOM_LEFT_VIEW, _bottomLeftView = new View("Bottom  left", null, new JLabel("This is bottom left view")));
-		viewMap.addView(UPPER_RIGHT_VIEW, _upperRightView = new View("Upper right", null, new JLabel("This is upper right view")));
-		viewMap.addView(BOTTOM_RIGHT_VIEW, _bottomRightView = new View("Bottom right", null, new JLabel("This is bottom right view")));
-		_rootWindow = DockingUtil.createRootWindow(viewMap, true); 
+		_viewMap = new ViewMap();
+		_upperLeftTabWindow = new TabWindow();
+		_bottomLeftTabWindow = new TabWindow();
+		_upperRightTabWindow = new TabWindow();
+		_bottomRightTabWindow = new TabWindow();
+
+		_rootWindow = DockingUtil.createRootWindow(_viewMap, true); 
 
 		// Set gradient theme. The theme properties object is the super object of our properties object, which
 	    // means our property value settings will override the theme values
@@ -125,22 +131,49 @@ public class MainWindow extends JFrame {
 		
 	}
 
+	public void addDockedExtension(String label, DockedExtension extension) {
+		DockedExtension.Position position = extension.position();
+		View view = null;
+		try {
+			view = new View(label, null, extension.createComponent());
+		} catch (FailToCreateComponentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		_viewMap.addView(_viewMap.getViewCount(), view);
+		if (position == DockedExtension.Position.UPPER_LEFT) {
+			_upperLeftTabWindow.addTab(view);
+		} else if (position == DockedExtension.Position.BOTTOM_LEFT) {
+			_bottomLeftTabWindow.addTab(view);
+		} else if (position == DockedExtension.Position.UPPER_RIGHT) {
+			_upperRightTabWindow.addTab(view);
+		} else {
+			_bottomRightTabWindow.addTab(view);
+		}
+		
+	}
+	
 	/**
 	 * Sets the default window layout.
 	 * @throws Exception 
 	 */
 	private void setDefaultLayout() throws Exception {
+		
+//		_upperLeftTabWindow.getChildWindowCount();
+//		i = extensionList.iterator();
+//		
+//		for (; it.hasNext(); it.next())
 		_rootWindow.setWindow(
 				new SplitWindow(true,
-								0.25f,
+								DEFAULT_LEFT_PROPORTION,
 								new SplitWindow(false,
-												0.5f,
-												_upperLeftView,
-												_bottomLeftView),
+												DEFAULT_UPPER_LEFT_PROPORTION,
+												_upperLeftTabWindow,
+												_bottomLeftTabWindow),
 								new SplitWindow(false,
-												0.75f,
-												_upperRightView,
-												_bottomRightView))
+												DEFAULT_UPPER_RIGHT_PROPORTION,
+												_upperRightTabWindow,
+												_bottomRightTabWindow))
 		);
 
 	}
@@ -157,10 +190,11 @@ public class MainWindow extends JFrame {
 	}
 
 	private RootWindow _rootWindow;
-	private View _upperLeftView;
-	private View _bottomLeftView;
-	private View _upperRightView;
-	private View _bottomRightView;
+	private ViewMap _viewMap;
+	private TabWindow _upperLeftTabWindow;
+	private TabWindow _bottomLeftTabWindow;
+	private TabWindow _upperRightTabWindow;
+	private TabWindow _bottomRightTabWindow;
 	  /**
 	   * In this properties object the modified property values for close buttons etc. are stored. This object is cleared
 	   * when the theme is changed.

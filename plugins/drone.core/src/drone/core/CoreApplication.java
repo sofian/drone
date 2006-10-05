@@ -24,6 +24,8 @@ import org.java.plugin.boot.Boot;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
+import drone.core.extensions.DockedExtension;
+
 import ptolemy.actor.CompositeActor;
 import ptolemy.actor.Director;
 import ptolemy.actor.ExecutionListener;
