@@ -1,5 +1,7 @@
 package drone.core;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -11,9 +13,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.trolltech.qt.gui.*;
-
-
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.java.plugin.boot.Application;
@@ -159,25 +161,29 @@ public class CoreApplication implements Application, ExecutionListener {
 	}
 
 	public void startApplication() throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("START APP");
-		String[] args = new String[0];
-		QApplication.initialize(args);
-		MainWindow lineedits = new MainWindow();
-		lineedits.showMaximized();
-		
-		QApplication.exec();
-		try {
-			Boot.stopApplication(this);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	     System.exit(0);
-
+	    // Docking windwos should be run in the Swing thread
+	    SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+	    	  createMainWindow();
+	      }
+	    });	    
 	}
 	
+	protected void createMainWindow() {
+		MainWindow mainWindow = new MainWindow();
+	    mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainWindow.addWindowListener(new WindowAdapter() {
+            public void windowClosed(final WindowEvent e) {
+                try {
+                    JOptionPane.getRootFrame().dispose();
+                    Boot.stopApplication(CoreApplication.this);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.exit(0);
+            }
+        });
+	}
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
 

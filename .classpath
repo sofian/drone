@@ -4,7 +4,7 @@
 	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="src" path="drone.spikes"/>
 	<classpathentry output="plugins/drone.spikes.tinygui/build" kind="src" path="plugins/drone.spikes.tinygui/src"/>
-	<classpathentry output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
+	<classpathentry excluding="drone/core/EntityTreeWidgetItem.java|drone/core/EntityTreeWidget.java" output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
 	<classpathentry output="plugins/drone.frei0r/build" kind="src" path="plugins/drone.frei0r/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
@@ -14,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/jpf/jpf-boot.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/microstar.com-xml.jar"/>
-	<classpathentry kind="lib" path="lib/qtjambi.jar"/>
 	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
 	<classpathentry kind="lib" path="lib/jmf/jffmpeg-1.1.0.jar"/>
 	<classpathentry kind="lib" path="plugins/drone.core/lib/net.infonode.jar"/>
