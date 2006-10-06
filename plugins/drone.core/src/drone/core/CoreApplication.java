@@ -200,7 +200,6 @@ public class CoreApplication implements Application, ExecutionListener {
 	}
 
 	protected void parseDockedExtensions() {
-		ArrayList<DockedExtension> dockedExtensions = new ArrayList<DockedExtension>();
 		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
 				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "DockedExtension");
 		
@@ -219,9 +218,11 @@ public class CoreApplication implements Application, ExecutionListener {
                         ext.getParameter("class").valueAsString());
                 // Create Tool instance.
                 String label = ext.getParameter("label").valueAsString();
-        		//_mainWindow.addDockedExtension((DockedExtension) dockedExtCls.newInstance(), label);
+        		_mainWindow.addDockedExtension(label, (DockedExtension) dockedExtCls.newInstance());
 
             } catch (Throwable t) {
+            	//TODO: log4net
+            	System.out.println(t.getMessage());
             }
 		}
 		//Add all dockedExtensions to the mainWindow

@@ -15,11 +15,13 @@ import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
+import net.infonode.docking.ViewSerializer;
 import net.infonode.docking.WindowBar;
 import net.infonode.docking.properties.RootWindowProperties;
 import net.infonode.docking.theme.DockingWindowsTheme;
 import net.infonode.docking.theme.ShapedGradientDockingTheme;
 import net.infonode.docking.util.DockingUtil;
+import net.infonode.docking.util.StringViewMap;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
 
@@ -112,14 +114,13 @@ public class MainWindow extends JFrame {
 	 * Creates the root window and the views.
 	 */
 	private void createRootWindow() {
-		_viewMap = new ViewMap();
+		_viewMap = new StringViewMap();
 		_upperLeftTabWindow = new TabWindow();
 		_bottomLeftTabWindow = new TabWindow();
 		_upperRightTabWindow = new TabWindow();
 		_bottomRightTabWindow = new TabWindow();
 		
-		// FIXME: c'est la qu'on est rendus!
-		_rootWindow = DockingUtil.createRootWindow(_viewMap, true); 
+		_rootWindow = new RootWindow(_viewMap);
 		
 		// Set gradient theme. The theme properties object is the super object of our properties object, which
 	    // means our property value settings will override the theme values
@@ -141,7 +142,8 @@ public class MainWindow extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		_viewMap.addView(_viewMap.getViewCount(), view);
+		//TODO: must have unique naming for window view name, for serialization
+		_viewMap.addView(label, view);
 		if (position == DockedExtension.Position.UPPER_LEFT) {
 			_upperLeftTabWindow.addTab(view);
 		} else if (position == DockedExtension.Position.BOTTOM_LEFT) {
@@ -191,7 +193,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private RootWindow _rootWindow;
-	private ViewMap _viewMap;
+	private StringViewMap _viewMap;
 	private TabWindow _upperLeftTabWindow;
 	private TabWindow _bottomLeftTabWindow;
 	private TabWindow _upperRightTabWindow;
