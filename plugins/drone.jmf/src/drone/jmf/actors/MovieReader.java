@@ -43,13 +43,19 @@ import javax.media.Player;
 import javax.media.PrefetchCompleteEvent;
 import javax.media.RealizeCompleteEvent;
 import javax.media.ResourceUnavailableEvent;
+import javax.media.Time;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.control.FramePositioningControl;
 import javax.media.protocol.DataSource;
 
 import ptolemy.util.JNLPUtilities;
+import ptolemy.actor.TypedIOPort;
 import ptolemy.actor.lib.Source;
+import ptolemy.data.BooleanToken;
+import ptolemy.data.IntToken;
+import ptolemy.data.ScalarToken;
 import ptolemy.data.expr.FileParameter;
+import ptolemy.data.expr.Parameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.Attribute;
@@ -90,7 +96,10 @@ public class MovieReader extends Source implements ControllerListener {
         super(container, name);
         output.setTypeEquals(BaseType.OBJECT);
         fileOrURL = new FileParameter(this, "fileOrURL");
-        
+        fileOrURL.setExpression("");
+        isFrameBased = new Parameter(this, "isFrameBased");
+        isFrameBased.setTypeEquals(BaseType.BOOLEAN);
+        isFrameBased.setExpression("true");
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -101,6 +110,17 @@ public class MovieReader extends Source implements ControllerListener {
      *  @see FileParameter
      */
     public FileParameter fileOrURL;
+    
+    public Parameter isFrameBased;
+
+//    // Input for either frame number or time. Default is -1.
+//    public TypedIOPort frameTimeInput;
+//    
+//    // Image output.
+//    public TypedIOPort imageOutput;
+
+    public static final String FRAME_POSITIONING_CONTROL_NAME = "javax.media.control.FramePositioningControl";
+    public static final String FRAME_GRABBING_CONTROL_NAME = "javax.media.control.FrameGrabbingControl";
     
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
@@ -151,6 +171,12 @@ public class MovieReader extends Source implements ControllerListener {
                     }
                 }
             }
+        } else if (attribute == isFrameBased) {
+        	try {
+        		_isFrameBased = ((BooleanToken)isFrameBased.getToken()).booleanValue();
+        	} catch (Exception ex) {
+        		throw new IllegalActionException(this, ex, "Parameter isFrameBased is invalid.");
+        	}
         } else {
             super.attributeChanged(attribute);
         }
@@ -188,8 +214,28 @@ public class MovieReader extends Source implements ControllerListener {
      *  @exception IllegalActionException If there's no director.
      */
     public void fire() throws IllegalActionException {
-        super.fire();
-        output.send(0, new JMFImageToken(_frame));
+    	
+        // NOTE: It might seem that using trigger.numberOfSources() is
+        // correct here, but it is not. It is possible for channels
+        // to be connected, for example, to other output ports or
+        // even back to this same trigger port, in which case higher
+        // numbered channels will not have their inputs read.
+    	if (trigger.getWidth() > 0) {
+    		for (int i = 0; i < trigger.getWidth(); i++) {
+    			if (trigger.hasToken(i)) {
+    				try {
+    					_updateFrameTime((ScalarToken)trigger.get(i));
+    				} catch (Exception ex) {
+    					throw new IllegalActionException(this, ex, "Error processing trigger token " + i);
+    				}
+    				output.send(0, new JMFImageToken(_frame));
+    			}
+    		}
+    	} else {
+    		_updateFrameTime(new IntToken(-1));
+    		output.send(0, new JMFImageToken(_frame));
+    	}
+    	super.fire();
     }
 
     /** An attempt is made to acquire both the frame grabbing and
@@ -230,32 +276,30 @@ public class MovieReader extends Source implements ControllerListener {
                             + "http://java.sun.com/products/java-media/jmf/reference/faqs/index.html");
         }
 
-        String framePostioningControlName = "javax.media.control.FramePositioningControl";
         _framePositioningControl = (FramePositioningControl) _player
-                .getControl(framePostioningControlName);
+        .getControl(FRAME_POSITIONING_CONTROL_NAME);
 
         if (_framePositioningControl == null) {
-            throw new IllegalActionException(this,
-                    "Failed to get Frame Positioning Control '"
-                            + framePostioningControlName
-                            + "' possible controls are:\n" + _controlNames()
-                            + "\nThe data source was: "
-                            + _dataSource.getLocator().toExternalForm());
+        	throw new IllegalActionException(this,
+        			"Failed to get Frame Positioning Control '"
+        			+ FRAME_POSITIONING_CONTROL_NAME
+        			+ "' possible controls are:\n" + _controlNames()
+        			+ "\nThe data source was: "
+        			+ _dataSource.getLocator().toExternalForm());
         }
-
-        String frameGrabbingControlName = "javax.media.control.FrameGrabbingControl";
+        
         _frameGrabbingControl = (FrameGrabbingControl) _player
-                .getControl(frameGrabbingControlName);
+        .getControl(FRAME_GRABBING_CONTROL_NAME);
 
         if (_frameGrabbingControl == null) {
-            throw new IllegalActionException(this,
-                    "Failed to get Frame Grabbing Control '"
-                            + frameGrabbingControlName
-                            + "' possible controls are:\n" + _controlNames()
-                            + "\nThe data source was: "
-                            + _dataSource.getLocator().toExternalForm());
+        	throw new IllegalActionException(this,
+        			"Failed to get Frame Grabbing Control '"
+        			+ FRAME_GRABBING_CONTROL_NAME
+        			+ "' possible controls are:\n" + _controlNames()
+        			+ "\nThe data source was: "
+        			+ _dataSource.getLocator().toExternalForm());
         }
-
+        
         _player.prefetch();
 
         if (!_waitForState(Controller.Prefetched)) {
@@ -264,10 +308,9 @@ public class MovieReader extends Source implements ControllerListener {
                             + _stateTransitionEvent + "\nThe data source was: "
                             + _dataSource.getLocator().toExternalForm());
         }
-
-        //load first frame
-        _frame = _frameGrabbingControl.grabFrame();
+        
         _framePositioningControl.skip(1);
+        _frame = _frameGrabbingControl.grabFrame();
     }
 
     /** If the player is no longer open, then disconnect the
@@ -278,14 +321,7 @@ public class MovieReader extends Source implements ControllerListener {
      *  @exception IllegalActionException If thrown by the super class.
      */
     public boolean postfire() throws IllegalActionException {
-        if (_playerOpen == false) {
-            _dataSource.disconnect();
-            return false;
-        } else {
-            _frame = _frameGrabbingControl.grabFrame();
-            _framePositioningControl.skip(1);
-            return super.postfire();
-        }
+    	return super.postfire();
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -313,6 +349,41 @@ public class MovieReader extends Source implements ControllerListener {
         return _stateTransitionOK;
     }
 
+    protected boolean _updateFrameTime(ScalarToken inputToken) throws IllegalActionException {
+        if (_playerOpen == false) {
+            _dataSource.disconnect();
+            return false;
+        } else {
+        	try {
+        		if (_isFrameBased) {
+            		// frame based
+            		int frameNo = inputToken.intValue();
+            		if (frameNo < 0)
+            			// default: skip to next frame
+            			_framePositioningControl.skip(1);
+            		else
+            			_framePositioningControl.seek(frameNo);
+            	} else {
+            		// time based
+            		double mediaTimeDouble = inputToken.doubleValue();
+            		Time mediaTime;
+            		if (mediaTimeDouble < 0) {
+            			mediaTime = new Time(getDirector().getModelTime().getDoubleValue());
+            		} else {
+            			mediaTime = new Time(mediaTimeDouble);
+            		}
+            		// FIXME: if mediaTimeDouble < 0 there is a much more efficient way to
+            		// do this by skipping a number of frames
+            		_framePositioningControl.seek(_framePositioningControl.mapTimeToFrame(mediaTime));
+            	}
+        		_frame = _frameGrabbingControl.grabFrame();
+        	} catch (Exception ex) {
+        		throw new IllegalActionException(this, ex, "Problem in call to postfire().");
+        	}
+            return true;
+        }
+    }
+    
     // Return a string containing the names of the possible controls
     private String _controlNames() {
         StringBuffer controlNames = new StringBuffer();
@@ -366,4 +437,7 @@ public class MovieReader extends Source implements ControllerListener {
 
     // Object to allow synchronization in this actor.
     private Object _waitSync = new Object();
+    
+    // This is the boolean corresponding to the isFrameBased parameter.
+    private boolean _isFrameBased = true;
 }
