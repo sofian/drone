@@ -119,7 +119,6 @@ public class MainWindow extends JFrame {
 		_bottomLeftTabWindow = new TabWindow();
 		_upperRightTabWindow = new TabWindow();
 		_bottomRightTabWindow = new TabWindow();
-		
 		_rootWindow = new RootWindow(_viewMap);
 		
 		// Set gradient theme. The theme properties object is the super object of our properties object, which
@@ -130,7 +129,9 @@ public class MainWindow extends JFrame {
 	    // Our properties object is the super object of the root window properties object, so all property values of the
 	    // theme and in our property object will be used by the root window
 	    _rootWindow.getRootWindowProperties().addSuperObject(_rootWindowProperties);
-		
+
+	    // Enable the bottom window bar
+	    _rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 	}
 
 	public void addDockedExtension(String label, DockedExtension extension) {
@@ -153,7 +154,6 @@ public class MainWindow extends JFrame {
 		} else {
 			_bottomRightTabWindow.addTab(view);
 		}
-		
 	}
 	
 	/**
