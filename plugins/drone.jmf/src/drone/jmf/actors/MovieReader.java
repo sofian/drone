@@ -96,7 +96,7 @@ public class MovieReader extends Source implements ControllerListener {
         super(container, name);
         output.setTypeEquals(BaseType.OBJECT);
         fileOrURL = new FileParameter(this, "fileOrURL");
-        fileOrURL.setExpression("");
+        fileOrURL.setExpression("/Users/tats/Documents/workspace/drone/plugins/drone.jmf/build/drone/jmf/demos/MrPtolemy.mov");
         isFrameBased = new Parameter(this, "isFrameBased");
         isFrameBased.setTypeEquals(BaseType.BOOLEAN);
         isFrameBased.setExpression("true");
@@ -133,6 +133,7 @@ public class MovieReader extends Source implements ControllerListener {
      */
     public void attributeChanged(Attribute attribute)
             throws IllegalActionException {
+    	// FIXME: if the attribute fileOrURL is invalid, simply output a default (black? blue?) screen
         if (attribute == fileOrURL) {
             URL url = fileOrURL.asURL();
 

@@ -24,6 +24,7 @@ import org.java.plugin.boot.Boot;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
+import drone.core.extensions.FailToCreateComponentException;
 import drone.core.extensions.ViewExtension;
 
 import ptolemy.actor.CompositeActor;
@@ -33,6 +34,7 @@ import ptolemy.actor.Manager;
 import ptolemy.data.expr.Parameter;
 import ptolemy.data.expr.StringParameter;
 import ptolemy.kernel.ComponentEntity;
+import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.attributes.VersionAttribute;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
@@ -174,6 +176,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createMainWindow();
+				parseEntityLibraryExtensions();
 				parseViewExtensions();
 			}
 		});
@@ -198,6 +201,45 @@ public class CoreApplication implements Application, ExecutionListener {
 			ex.printStackTrace();
 		}
 	}
+	
+	protected void parseEntityLibraryExtensions() {
+		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
+		ExtensionPoint extensionPoint = _corePlugin.getManager().getRegistry()
+				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "entity-library");
+		System.out.println(extensionPoint.getConnectedExtensions().toString());
+		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it
+				.hasNext();) {
+			Extension ext = (Extension) it.next();
+            try {
+                // Activate plug-in that declares extension.
+            	_corePlugin.getManager().activatePlugin(
+                        ext.getDeclaringPluginDescriptor().getId());
+            	URL fileURL = _corePlugin.getManager().getPluginClassLoader(ext.getDeclaringPluginDescriptor())
+            		.getResource(ext.getParameter("file").valueAsString());
+            	// TODO: do we need this?
+                String label = ext.getParameter("label").valueAsString();
+                String description = ext.getParameter("description").valueAsString();
+                
+        		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
+        		if (configuration == null) {
+        			throw new IllegalActionException("There are no existing configurations.");
+        		}
+
+        		MoMLParser parser = new MoMLParser(configuration.workspace());
+        		parser.reset();
+
+        		CompositeEntity library = (CompositeEntity) parser.parse(fileURL, fileURL);
+        		// FIXME: je suis rendu la...
+        		library.setContainer((CompositeEntity)configuration.getEntity("actor library"));
+            } catch (Throwable t) {
+            	//TODO: log4net
+            	System.out.println(t.getMessage());
+            }
+		}
+		//Add all dockedExtensions to the mainWindow
+		//TODO: to be implemented in mainwindow
+	}
+
 
 	protected void parseViewExtensions() {
 		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
@@ -213,11 +255,12 @@ public class CoreApplication implements Application, ExecutionListener {
                 // Get plug-in class loader.
                 ClassLoader classLoader = _corePlugin.getManager().getPluginClassLoader(
                         ext.getDeclaringPluginDescriptor());
-                // Load Tool class.
+                // Load class.
                 Class dockedExtCls = classLoader.loadClass(
                         ext.getParameter("class").valueAsString());
-                // Create Tool instance.
+                // Create instance.
                 String label = ext.getParameter("label").valueAsString();
+                // TODO: change addDockedExtension to addViewExtension
         		_mainWindow.addDockedExtension(label, (ViewExtension) dockedExtCls.newInstance());
 
             } catch (Throwable t) {
@@ -228,6 +271,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		//Add all dockedExtensions to the mainWindow
 		//TODO: to be implemented in mainwindow
 	}
+
 
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
