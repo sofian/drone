@@ -174,7 +174,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createMainWindow();
-				parseDockedExtensions();
+				parseViewExtensions();
 			}
 		});
 	}
@@ -199,7 +199,7 @@ public class CoreApplication implements Application, ExecutionListener {
 		}
 	}
 
-	protected void parseDockedExtensions() {
+	protected void parseViewExtensions() {
 		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
 				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "view");
 		
