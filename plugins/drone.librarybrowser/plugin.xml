@@ -11,8 +11,8 @@
 		</library>
 	</runtime>
 
-	<extension plugin-id="drone.core" point-id="DockedExtension" id="libraryBrowser">
-		<parameter id="class" value="drone.librarybrowser.LibraryBrowserDockedExtension"/>
+	<extension plugin-id="drone.core" point-id="view" id="library-browser">
+		<parameter id="class" value="drone.librarybrowser.LibraryBrowserViewExtension"/>
 		<parameter id="label" value="Library Browser"/>
 		<parameter id="description" value="Tree browser for availabe actors"/>
 	</extension>

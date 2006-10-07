@@ -24,7 +24,7 @@ import org.java.plugin.boot.Boot;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
-import drone.core.extensions.DockedExtension;
+import drone.core.extensions.ViewExtension;
 
 import ptolemy.actor.CompositeActor;
 import ptolemy.actor.Director;
@@ -201,7 +201,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	protected void parseDockedExtensions() {
 		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
-				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "DockedExtension");
+				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "view");
 		
 		for (Iterator it = dockedExtPoint.getConnectedExtensions().iterator(); it
 				.hasNext();) {
@@ -218,7 +218,7 @@ public class CoreApplication implements Application, ExecutionListener {
                         ext.getParameter("class").valueAsString());
                 // Create Tool instance.
                 String label = ext.getParameter("label").valueAsString();
-        		_mainWindow.addDockedExtension(label, (DockedExtension) dockedExtCls.newInstance());
+        		_mainWindow.addDockedExtension(label, (ViewExtension) dockedExtCls.newInstance());
 
             } catch (Throwable t) {
             	//TODO: log4net

@@ -7,10 +7,10 @@ import ptolemy.kernel.CompositeEntity;
 
 import net.infonode.docking.View;
 import drone.core.Configuration;
-import drone.core.extensions.DockedExtension;
+import drone.core.extensions.ViewExtension;
 import drone.core.extensions.FailToCreateComponentException;
 
-public class LibraryBrowserDockedExtension implements DockedExtension {
+public class LibraryBrowserViewExtension implements ViewExtension {
 
 	public Position position() {
 		return Position.UPPER_LEFT;
