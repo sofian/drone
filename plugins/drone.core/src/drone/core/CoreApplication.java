@@ -206,7 +206,6 @@ public class CoreApplication implements Application, ExecutionListener {
 		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
 		ExtensionPoint extensionPoint = _corePlugin.getManager().getRegistry()
 				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "entity-library");
-		System.out.println(extensionPoint.getConnectedExtensions().toString());
 		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it
 				.hasNext();) {
 			Extension ext = (Extension) it.next();

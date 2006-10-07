@@ -96,7 +96,8 @@ public class MovieReader extends Source implements ControllerListener {
         super(container, name);
         output.setTypeEquals(BaseType.OBJECT);
         fileOrURL = new FileParameter(this, "fileOrURL");
-        fileOrURL.setExpression("/Users/tats/Documents/workspace/drone/plugins/drone.jmf/build/drone/jmf/demos/MrPtolemy.mov");
+        // TODO: change MrPtolemy.mov to a more "dronesque" movie
+        fileOrURL.setExpression("$CLASSPATH/drone/jmf/demos/MrPtolemy.mov");
         isFrameBased = new Parameter(this, "isFrameBased");
         isFrameBased.setTypeEquals(BaseType.BOOLEAN);
         isFrameBased.setExpression("true");
