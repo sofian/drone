@@ -8,6 +8,7 @@
 	</runtime>
 
 	<!-- General extension points -->
+	<!-- TODO: field file should be many (?) -->
 	<extension-point id="entity-library">
 		<parameter-def id="file" multiplicity="one"/>
 		<parameter-def id="label" multiplicity="one"/>
