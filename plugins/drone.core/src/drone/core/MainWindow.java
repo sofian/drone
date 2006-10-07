@@ -29,7 +29,7 @@ import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.moml.MoMLParser;
 
-import drone.core.extensions.DockedExtension;
+import drone.core.extensions.ViewExtension;
 import drone.core.extensions.FailToCreateComponentException;
 
 public class MainWindow extends JFrame {
@@ -134,8 +134,8 @@ public class MainWindow extends JFrame {
 	    _rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 	}
 
-	public void addDockedExtension(String label, DockedExtension extension) {
-		DockedExtension.Position position = extension.position();
+	public void addDockedExtension(String label, ViewExtension extension) {
+		ViewExtension.Position position = extension.position();
 		View view = null;
 		try {
 			view = new View(label, null, extension.createComponent());
@@ -145,11 +145,11 @@ public class MainWindow extends JFrame {
 		}
 		//TODO: must have unique naming for window view name, for serialization
 		_viewMap.addView(label, view);
-		if (position == DockedExtension.Position.UPPER_LEFT) {
+		if (position == ViewExtension.Position.UPPER_LEFT) {
 			_upperLeftTabWindow.addTab(view);
-		} else if (position == DockedExtension.Position.BOTTOM_LEFT) {
+		} else if (position == ViewExtension.Position.BOTTOM_LEFT) {
 			_bottomLeftTabWindow.addTab(view);
-		} else if (position == DockedExtension.Position.UPPER_RIGHT) {
+		} else if (position == ViewExtension.Position.UPPER_RIGHT) {
 			_upperRightTabWindow.addTab(view);
 		} else {
 			_bottomRightTabWindow.addTab(view);
