@@ -27,7 +27,7 @@ public class JMFMovieDemo {
 			
 			// Create the director.
 			SDFDirector director = new SDFDirector(top, "director");
-			String period = Double.toString(1.0 / 400.0);
+			String period = Double.toString(1.0 / 100.0);
 			director.period.setExpression(period);
 			director.synchronizeToRealTime.setExpression("true");
 			//director.iterations.setExpression("100");
@@ -38,7 +38,7 @@ public class JMFMovieDemo {
 			MovieReader reader = new MovieReader(top, "reader");
 			ImageDisplay writer = new ImageDisplay(top, "display");
 			reader.fileOrURL.setExpression(args[0]);
-			reader.isFrameBased.setExpression("false");
+			reader.isFrameBased.setExpression("true");
 			top.connect(reader.output, writer.input);
 			
 			top.getManager().startRun();

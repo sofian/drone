@@ -17,6 +17,6 @@
 	<classpathentry kind="lib" path="lib/microstar.com-xml.jar"/>
 	<classpathentry kind="lib" path="plugins/drone.core/lib/net.infonode.jar"/>
 	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
-	<classpathentry kind="lib" path="lib/jmf/jffmpeg-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jffmpeg/jffmpeg-1.1.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
