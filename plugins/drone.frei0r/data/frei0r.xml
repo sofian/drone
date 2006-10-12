@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE plot PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="Frei0r" class="ptolemy.moml.EntityLibrary">
+  <configure>
+    <?moml
+      <group>
+        <doc>Frei0r processing actors</doc>
+
+		<entity name="Frei0r_nois0r" class="drone.frei0r.actors.Frei0r">
+		<property name="frei0rLibraryName" "$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/libnois0r.dylib" />
+		</entity>
+      </group>
+    ?>
+  </configure>
+</entity>
