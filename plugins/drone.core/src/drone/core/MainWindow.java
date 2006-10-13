@@ -198,6 +198,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private void createMenus() {
+		// Create the "File" menu.
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem newMenuItem = new JMenuItem("New");
 		JMenuItem openMenuItem = new JMenuItem("Open");
@@ -205,8 +206,22 @@ public class MainWindow extends JFrame {
 		fileMenu.add(newMenuItem);
 		fileMenu.add(openMenuItem);
 		fileMenu.add(closeMenuItem);
+		
+		// Create the "Edit" menu.
+		JMenu editMenu = new JMenu("Edit");
+		JMenuItem cutMenuItem = new JMenuItem("Cut");
+		JMenuItem copyMenuItem = new JMenuItem("Copy");
+		JMenuItem pasteMenuItem = new JMenuItem("Paste");
+		JMenuItem deleteMenuItem = new JMenuItem("Delete");
+		editMenu.add(cutMenuItem);
+		editMenu.add(copyMenuItem);
+		editMenu.add(pasteMenuItem);
+		editMenu.add(deleteMenuItem);
+		
+		// Create the menu bar.
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
 		menuBar.setVisible(true);
 		setJMenuBar(menuBar);
 	}
