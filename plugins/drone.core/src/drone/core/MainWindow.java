@@ -1,6 +1,7 @@
 package drone.core;
 
 import java.awt.BorderLayout;
+import java.awt.MenuBar;
 import java.net.URL;
 import java.util.List;
 import java.util.ListIterator;
@@ -8,6 +9,9 @@ import java.util.ListIterator;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JTree;
 
 import net.infonode.docking.DockingWindow;
@@ -44,6 +48,7 @@ public class MainWindow extends JFrame {
 	public static final float DEFAULT_UPPER_RIGHT_PROPORTION = 0.75f;
 	
 	public MainWindow() throws Exception {
+		createMenus();
 		createRootWindow();
 		setDefaultLayout();
 		showFrame();
@@ -192,6 +197,20 @@ public class MainWindow extends JFrame {
 		setVisible(true);
 	}
 
+	private void createMenus() {
+		JMenu fileMenu = new JMenu("File");
+		JMenuItem newMenuItem = new JMenuItem("New");
+		JMenuItem openMenuItem = new JMenuItem("Open");
+		JMenuItem closeMenuItem = new JMenuItem("Close");
+		fileMenu.add(newMenuItem);
+		fileMenu.add(openMenuItem);
+		fileMenu.add(closeMenuItem);
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.add(fileMenu);
+		menuBar.setVisible(true);
+		setJMenuBar(menuBar);
+	}
+	
 	private RootWindow _rootWindow;
 	private StringViewMap _viewMap;
 	private TabWindow _upperLeftTabWindow;
