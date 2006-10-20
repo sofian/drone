@@ -1,0 +1,56 @@
+package drone.frei0r.tests;
+
+import org.junit.*;
+import ptolemy.actor.TypedCompositeActor;
+import drone.frei0r.actors.*;
+import ptolemy.kernel.util.IllegalActionException;
+import ptolemy.kernel.util.NameDuplicationException;
+
+public class Frei0rTest {
+
+	private TypedCompositeActor _top;
+	@Before
+	public void setUp() throws Exception {
+		_top = new TypedCompositeActor();
+		_top.setName("Frei0r unit tests");
+	}
+
+	/**
+	 * Nothing specific to test in the constructor, but
+	 * the frei0rJNI lib is loaded in a static statement,
+	 * so any problems with the native lib will be reported
+	 * at the first instanciation.
+	 */
+	@Test 
+	public void testConstructor()
+	{
+		try
+		{
+			new Frei0r(_top, "frei0rTest");
+			
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+	
+	@Test(expected=IllegalActionException.class)
+	public void testSetFrei0rLibraryNameAttributeWrong() throws NameDuplicationException, IllegalActionException
+	{
+		Frei0r frei0rActor = new Frei0r(_top, "frei0rTest");
+		frei0rActor.frei0rLibraryName.setExpression("wrongLibraryName");		
+	}
+	
+	@Test
+	public void testSetFrei0rLibraryNameAttribute() throws NameDuplicationException, IllegalActionException
+	{
+		Frei0r frei0rActor = new Frei0r(_top, "frei0rTest");
+		//TODO: change this to appropriate path, when the plugin architecture will be fixed
+		frei0rActor.frei0rLibraryName.setExpression("src/drone/plugins/frei0r/contrib/Frei0r/plugins/libnois0r.dylib");		
+	}
+	
+	
+	@After
+	public void tearDown() throws Exception {
+	}
+
+}

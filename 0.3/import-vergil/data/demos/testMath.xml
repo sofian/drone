@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="MyProject" class="ptolemy.actor.TypedCompositeActor">
+	<entity name="MyCompositeActor" class="ptolemy.actor.TypedCompositeActor">
+	    <entity name="MyAbsoluteValue" class="ptolemy.actor.lib.AbsoluteValue">
+    	</entity>
+	    <entity name="MyOtherAbsoluteValue" class="ptolemy.actor.lib.AbsoluteValue">
+    	</entity>
+    </entity>
+</entity>
