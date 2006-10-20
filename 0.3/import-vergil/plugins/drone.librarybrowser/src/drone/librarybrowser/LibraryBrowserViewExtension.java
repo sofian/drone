@@ -3,10 +3,10 @@ package drone.librarybrowser;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 
+import ptolemy.actor.gui.Configuration;
 import ptolemy.kernel.CompositeEntity;
 
 import net.infonode.docking.View;
-import drone.core.Configuration;
 import drone.core.extensions.ViewExtension;
 import drone.core.extensions.FailToCreateComponentException;
 

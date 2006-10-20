@@ -1,12 +1,52 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE entity PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
-<entity name="configuration" class="drone.core.Configuration">
+<entity name="configuration" class="ptolemy.actor.gui.Configuration">
     <doc>Configuration to run but not edit Ptolemy II models</doc>
-    <entity name="directory" class="drone.core.ModelDirectory"/>
+    <entity name="directory" class="ptolemy.actor.gui.ModelDirectory"/>
     <entity name="effigyFactory"
-            class="drone.core.PtolemyEffigy$Factory"/>
+            class="ptolemy.actor.gui.PtolemyEffigy$Factory"/>
 
+  <!-- Specify the about file to open. -->
+  <property name="_about"
+            class="ptolemy.data.expr.FileParameter"
+            value="$CLASSPATH/data/configs/full/intro.htm"/>
+
+  <!-- Specify the help file to open. -->
+<!--  <property name="_help"
+            class="ptolemy.data.expr.FileParameter"
+            value="$CLASSPATH/ptolemy/configs/doc/docs.htm"/>
+ -->
+ 
+ 
+  <!-- The directory of open models, each represented by an effigy. -->
+  <!-- Note that this begins empty. -->
+  <entity name="directory" class="ptolemy.actor.gui.ModelDirectory">
+  </entity>
+
+  <!-- Specify the name of the class that initialized the application. -->
+  <property name="_applicationInitializer"
+            class="ptolemy.data.expr.StringParameter"
+            value="ptolemy.vergil.VergilInitializer"/>
+
+  <!-- Create a blank Graph Editor at start time. -->
+  <!--  Used in VergilApplication.java-->
+  <property name="_applicationBlankPtolemyEffigyAtStartup"
+            class="ptolemy.data.expr.Parameter"
+            value="false"/>
+                       
+   <!-- The list of effigy factories, which defines what goes in  -->
+  <!-- the New menu, and also what sorts of files can be opened. -->
+  <!-- These are searched in the order listed here, until one of -->
+  <!-- the effigies agrees to open the file. -->
+  <!-- Any of these effigies that return true to canCreateBlankEffigy -->
+  <!-- will appear in the New menu.  If there is a contained entity   -->
+  <!-- named "blank", then the effigy will initially refer to a clone -->
+  <!-- of that blank entity. -->
+  <entity name="effigyFactory" class="ptolemy.actor.gui.EffigyFactory">
+    <input source="drone-import-vergil/data/config/graphEffigyFactory.xml"/>
+  </entity>
+ 
   <!-- Main default library. -->
-  <input source="drone/data/config/basicLibrary.xml"/>
+  <input source="drone-import-vergil/data/config/basicLibrary.xml"/>
 </entity>

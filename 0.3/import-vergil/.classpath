@@ -5,7 +5,7 @@
 	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="src" path="drone.spikes"/>
 	<classpathentry output="plugins/drone.spikes.tinygui/build" kind="src" path="plugins/drone.spikes.tinygui/src"/>
-	<classpathentry output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
+	<classpathentry excluding="ptolemy/vergil/MoMLViewerApplet.java|ptolemy/vergil/TypeAnimatorApplet.java|diva/util/java2d/svg/|ptolemy/actor/gui/PlotTableauFrame.java|ptolemy/actor/gui/PlotTableau.java|ptolemy/actor/gui/PlotEffigy.java|ptolemy/vergil/fsm/" output="plugins/drone.core/build" kind="src" path="plugins/drone.core/src"/>
 	<classpathentry output="plugins/drone.frei0r/build" kind="src" path="plugins/drone.frei0r/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
