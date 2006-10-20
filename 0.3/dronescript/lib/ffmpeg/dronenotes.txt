@@ -1,0 +1,2 @@
+if you want to recompile, you have to add -fno-common since we use the static lib from a shared lib
+also, you have to rename libs libavformat.a to libavformatmac.c and libavcodec.a to libavcodecmac.a

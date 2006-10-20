@@ -1,0 +1,9 @@
+TEMPLATE=lib
+SOURCES+=MY_FREI0R_PLUGIN.c
+INCLUDEPATH+=../../
+
+#linux
+unix:!macx:TARGET=../../../../../gears/frei0r/MY_FREI0R_PLUGIN
+
+#osx
+macx:TARGET=../../../../../drone.app/Contents/PlugIns/frei0r/MY_FREI0R_PLUGIN

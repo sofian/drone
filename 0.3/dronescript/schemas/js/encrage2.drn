@@ -1,0 +1,60 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="12" PosY="8" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/tatien/drone/trunk/movies/Evolutio2001.mpg" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="24.2759" TouchPadVerticalPos="24.27590" PosX="11" PosY="258" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="288" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="165.621" TouchPadVerticalPos="165.621136.353" PosX="22" PosY="376" Type="TouchPad" Name="TouchPad2" >
+            <Properties Horizontal_higher_Bound="1024" Horizontal_lower_Bound="1" Vertical_lower_Bound="1" Vertical_higher_Bound="768" />
+        </Gear>
+        <Gear PosX="538" PosY="246" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="314" PosY="113" Type="EncrageMask" Name="EncrageMask1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="154" PosY="284" Type="PlaceArea" Name="PlaceArea1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="273" PosY="441" Type="Slider" SliderPos="1.82927e-05" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="0.0001" />
+        </Gear>
+        <Gear PosX="266" PosY="379" Type="Slider" SliderPos="0.000134146" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="0.001" />
+        </Gear>
+        <Gear PosX="422" PosY="331" Type="AreaArrayMask" Name="AreaArrayMask2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="552" PosY="311" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="8" PosY="137" Type="VideoSource" Name="VideoSource2" >
+            <Properties Filename="/home/tatien/drone/trunk/movies/panorama_ephemera2004.mpg" />
+        </Gear>
+        <Gear PosX="152" PosY="153" Type="Rescale" Name="Rescale1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="EncrageMask1" Input="ImgInkIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="AreaArrayMask2" Input="Width" Output="..ValueType" />
+        <Connection GearA="VideoSource1" GearB="Rescale1" Input="Width" Output="..ValueType" />
+        <Connection GearA="VideoSource1" GearB="AreaArrayMask2" Input="Height" Output="..ValueType" />
+        <Connection GearA="VideoSource1" GearB="Rescale1" Input="Height" Output="..ValueType" />
+        <Connection GearA="TouchPad1" GearB="PlaceArea1" Input="X" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="PlaceArea1" Input="Y" Output="VValue" />
+        <Connection GearA="TouchPad2" GearB="PlaceArea1" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad2" GearB="PlaceArea1" Input="Height" Output="VValue" />
+        <Connection GearA="EncrageMask1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="PlaceArea1" GearB="EncrageMask1" Input="AreaIN" Output="Area" />
+        <Connection GearA="PlaceArea1" GearB="AreaArrayMask2" Input="AreaIN" Output="Area" />
+        <Connection GearA="Slider1" GearB="EncrageMask1" Input="Decay" Output="Value" />
+        <Connection GearA="Slider2" GearB="EncrageMask1" Input="Ink" Output="Value" />
+        <Connection GearA="AreaArrayMask2" GearB="TV1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoSource2" GearB="Rescale1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Rescale1" GearB="EncrageMask1" Input="ImgDecayIN" Output="ImgOUT" />
+    </Connections>
+</Schema>

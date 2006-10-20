@@ -1,0 +1,14 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="222" PosY="227" Type="TA_DataSource" Name="TA_DataSource.1" >
+                <Properties Filename="/Users/tats/devel/drone/trunk/src/exp/piksel05/data/data_example.xml" />
+                <Plugs>
+                    <Plug Name="DataOut" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections/>
+    </Schema>
+</Project>

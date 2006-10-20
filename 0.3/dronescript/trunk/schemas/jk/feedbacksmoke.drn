@@ -1,0 +1,56 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="260" PosY="321" Type="Contrast" Name="Contrast1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="613" PosY="242" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="184" PosY="194" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/downloads/AlienSon2001.mpg" />
+        </Gear>
+        <Gear PosX="177" PosY="101" Type="Slider" SliderPos="24.878" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="425" PosY="127" Type="VideoBlend" Name="VideoBlend1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="631" PosY="79" Type="Blur" Name="Blur1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="207" PosY="466" Type="Slider" SliderPos="243.659" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="999" />
+        </Gear>
+        <Gear PosX="483" PosY="49" Type="Slider" SliderPos="0" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="100" />
+        </Gear>
+        <Gear PosX="660" PosY="346" Type="VideoBlend" Name="VideoBlend2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="499" PosY="454" Type="Edge" Name="Edge1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="545" PosY="531" Type="Slider" SliderPos="109.646" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="999" />
+        </Gear>
+        <Gear PosX="706" PosY="505" Type="Blur" Name="Blur2" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="Contrast1" GearB="VideoBlend1" Input="ImgB" Output="ImgOUT" />
+        <Connection GearA="Contrast1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="VideoSource1" GearB="VideoBlend1" Input="ImgA" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="VideoBlend2" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="Slider1" GearB="VideoBlend1" Input="Alpha" Output="Value" />
+        <Connection GearA="VideoBlend1" GearB="Blur1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Blur1" GearB="Contrast1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider2" GearB="Contrast1" Input="Amount" Output="Value" />
+        <Connection GearA="Slider3" GearB="Blur1" Input="Amount" Output="Value" />
+        <Connection GearA="VideoBlend2" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Edge1" GearB="Blur2" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider4" GearB="VideoBlend2" Input="Alpha" Output="Value" />
+        <Connection GearA="Blur2" GearB="VideoBlend2" Input="ImgA" Output="ImgOUT" />
+    </Connections>
+</Schema>

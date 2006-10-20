@@ -1,0 +1,105 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="62" PosY="47" Type="VideoSource" Name="VideoSource1" >
+                <Properties Filename="/home/mathieu/Desktop/downloads/videos/mpg/Nine Inch Nails - Closer (Uncut).mpg" />
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                    <Plug Name="Mode" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="517" PosY="106" Type="AsciiArt" Name="AsciiArt1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIn" Exposed="0" />
+                    <Plug Name="Render" Exposed="0" />
+                    <Plug Name="Dither" Exposed="0" />
+                    <Plug Name="Brightness" Exposed="0" />
+                    <Plug Name="Contrast" Exposed="0" />
+                    <Plug Name="Noise" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear ListBoxPos="1" PosX="92" PosY="188" Type="ListBox" Name="ListBox1" >
+                <Properties Number_of_elements="3" Labels_of_elements="None,Error-distribution,Floyd-Steinberg" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear ListBoxPos="1" PosX="53" PosY="123" Type="ListBox" Name="ListBox2" >
+                <Properties Number_of_elements="2" Labels_of_elements="Fast,Good" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="92" PosY="315" Type="Slider" SliderPos="40.4268" Name="Slider1" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="90" PosY="250" Type="Slider" SliderPos="49.7561" Name="Slider2" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="90" PosY="376" Type="Slider" SliderPos="0" Name="Slider3" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="356" PosY="46" Type="Rescale" Name="Rescale1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="202" PosY="87" Type="Slider" SliderPos="94.5366" Name="Slider4" >
+                <Properties Lower_Bound="1" Higher_Bound="768" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="201" PosY="20" Type="Slider" SliderPos="175.659" Name="Slider5" >
+                <Properties Lower_Bound="1" Higher_Bound="1024" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="283" PosY="392" Type="Slider" SliderPos="7.31707" Name="Slider6" >
+                <Properties Lower_Bound="0" Higher_Bound="10" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="474" PosY="308" Type="AggTest" Name="AggTest1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Amount" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="VideoSource1" GearB="Rescale1" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="ListBox1" GearB="AsciiArt1" Input="Dither" Output="Value" />
+            <Connection GearA="ListBox2" GearB="AsciiArt1" Input="Render" Output="Value" />
+            <Connection GearA="Slider1" GearB="AsciiArt1" Input="Contrast" Output="Value" />
+            <Connection GearA="Slider2" GearB="AsciiArt1" Input="Brightness" Output="Value" />
+            <Connection GearA="Slider3" GearB="AsciiArt1" Input="Noise" Output="Value" />
+            <Connection GearA="Rescale1" GearB="AggTest1" Input="ImgIN" Output="ImgOUT" />
+            <Connection GearA="Slider4" GearB="Rescale1" Input="Height" Output="Value" />
+            <Connection GearA="Slider5" GearB="Rescale1" Input="Width" Output="Value" />
+            <Connection GearA="Slider6" GearB="AggTest1" Input="Amount" Output="Value" />
+            <Connection GearA="AggTest1" GearB="AsciiArt1" Input="ImgIn" Output="ImgOUT" />
+        </Connections>
+    </Schema>
+</Project>

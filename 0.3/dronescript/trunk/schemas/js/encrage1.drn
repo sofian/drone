@@ -1,0 +1,54 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="44" PosY="71" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="4.04598" TouchPadVerticalPos="4.0459898.2588" PosX="19" PosY="205" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="352" Horizontal_lower_Bound="0" Vertical_lower_Bound="0" Vertical_higher_Bound="288" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="95.069" TouchPadVerticalPos="95.06991.2353" PosX="11" PosY="353" Type="TouchPad" Name="TouchPad2" >
+            <Properties Horizontal_higher_Bound="1024" Horizontal_lower_Bound="1" Vertical_lower_Bound="1" Vertical_higher_Bound="768" />
+        </Gear>
+        <Gear PosX="538" PosY="246" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="485" PosY="65" Type="EncrageMask" Name="EncrageMask1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="259" PosY="63" Type="PlaceArea" Name="PlaceArea1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="273" PosY="441" Type="Slider" SliderPos="1.82927e-05" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="0.0001" />
+        </Gear>
+        <Gear PosX="210" PosY="353" Type="Slider" SliderPos="8.53659e-05" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="0.001" />
+        </Gear>
+        <Gear TouchPadHorizontalPos="330.241" TouchPadVerticalPos="330.241288" PosX="229" PosY="190" Type="TouchPad" Name="TouchPad3" >
+            <Properties Horizontal_higher_Bound="1024" Horizontal_lower_Bound="1" Vertical_lower_Bound="1" Vertical_higher_Bound="288" />
+        </Gear>
+        <Gear PosX="419" PosY="358" Type="AreaArrayMask" Name="AreaArrayMask2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="552" PosY="311" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="TouchPad1" GearB="PlaceArea1" Input="X" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="PlaceArea1" Input="Y" Output="VValue" />
+        <Connection GearA="TouchPad2" GearB="PlaceArea1" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad2" GearB="PlaceArea1" Input="Height" Output="VValue" />
+        <Connection GearA="EncrageMask1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="PlaceArea1" GearB="EncrageMask1" Input="AreaIN" Output="Area" />
+        <Connection GearA="PlaceArea1" GearB="AreaArrayMask2" Input="AreaIN" Output="Area" />
+        <Connection GearA="Slider1" GearB="EncrageMask1" Input="Decay" Output="Value" />
+        <Connection GearA="Slider2" GearB="EncrageMask1" Input="Ink" Output="Value" />
+        <Connection GearA="TouchPad3" GearB="EncrageMask1" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad3" GearB="AreaArrayMask2" Input="Width" Output="HValue" />
+        <Connection GearA="TouchPad3" GearB="EncrageMask1" Input="Height" Output="VValue" />
+        <Connection GearA="TouchPad3" GearB="AreaArrayMask2" Input="Height" Output="VValue" />
+        <Connection GearA="AreaArrayMask2" GearB="TV1" Input="ImgIN" Output="ImgOUT" />
+    </Connections>
+</Schema>

@@ -1,0 +1,43 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="77" PosY="217" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/julien/dev/drone/media/Wonderfu1960.mpg" />
+        </Gear>
+        <Gear PosX="311" PosY="215" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="337" PosY="490" Type="Slider" SliderPos="3.41463" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="20" />
+        </Gear>
+        <Gear PosX="498" PosY="335" Type="VideoMix" Name="VideoMix1" >
+            <Properties MIX_FUNCTION_:_See_the_code_or_just_have_fun="" />
+        </Gear>
+        <Gear PosX="96" PosY="396" Type="Oscillator" Name="Oscillator1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="230" PosY="396" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="102" PosY="512" Type="Slider" SliderPos="0.695122" Name="Slider2" >
+            <Properties Lower_Bound="0" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="86" PosY="585" Type="Slider" SliderPos="34.1463" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="100" />
+        </Gear>
+        <Gear PosX="648" PosY="239" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="VideoMix1" Input="ImgB" Output="ImgOut" />
+        <Connection GearA="VideoDelay1" GearB="VideoMix1" Input="ImgA" Output="ImgOUT" />
+        <Connection GearA="Slider1" GearB="VideoMix1" Input="MixFunc" Output="Value" />
+        <Connection GearA="VideoMix1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgO" />
+        <Connection GearA="Oscillator1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="VideoDelay1" Input="Delay" Output="Out" />
+        <Connection GearA="Slider2" GearB="Oscillator1" Input="Freq" Output="Value" />
+        <Connection GearA="Slider3" GearB="Oscillator1" Input="Amp" Output="Value" />
+    </Connections>
+</Schema>

@@ -1,0 +1,68 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="12" PosY="15" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/lezardus/videos/Airheads2001.mpeg" />
+        </Gear>
+        <Gear PosX="16" PosY="171" Type="AudioInput" Name="AudioInput1" >
+            <Properties FramesPerBuffer="512" NbBuffers="8" />
+        </Gear>
+        <Gear PosX="212" PosY="169" Type="Enveloppe" Name="Enveloppe1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="356" PosY="179" Type="SignalStat" Name="SignalStat1" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="-0.54023" TouchPadVerticalPos="-0.540230" PosX="12" PosY="310" Type="TouchPad" Name="TouchPad1" >
+            <Properties Horizontal_higher_Bound="3" Horizontal_lower_Bound="-1" Vertical_lower_Bound="-1" Vertical_higher_Bound="3" />
+        </Gear>
+        <Gear PosX="199" PosY="316" Type="Oscilloscope" Name="Oscilloscope1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="347" PosY="300" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="523" PosY="214" Type="AffineTransform" Name="AffineTransform1" >
+            <Properties/>
+        </Gear>
+        <Gear TouchPadHorizontalPos="1" TouchPadVerticalPos="1110" PosX="497" PosY="328" Type="TouchPad" Name="TouchPad2" >
+            <Properties Horizontal_higher_Bound="255" Horizontal_lower_Bound="-1" Vertical_lower_Bound="-10" Vertical_higher_Bound="256" />
+        </Gear>
+        <Gear PosX="183" PosY="28" Type="Edge" Name="Edge1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="719" PosY="32" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="409" PosY="58" Type="TV" Name="TV2" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="271" PosY="460" Type="Gain" Name="Gain1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="18" PosY="478" Type="Slider" SliderPos="1" Name="Slider1" >
+            <Properties Lower_Bound="-1" Higher_Bound="1" />
+        </Gear>
+        <Gear PosX="142" PosY="466" Type="FlatSignal" Name="FlatSignal1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="Edge1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="TV2" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="AudioInput1" GearB="Gain1" Input="In" Output="Left" />
+        <Connection GearA="Enveloppe1" GearB="SignalStat1" Input="In" Output="Out" />
+        <Connection GearA="Enveloppe1" GearB="Oscilloscope1" Input="In" Output="Out" />
+        <Connection GearA="SignalStat1" GearB="AffineTransform1" Input="In" Output="Out" />
+        <Connection GearA="TouchPad1" GearB="Enveloppe1" Input="Rel" Output="HValue" />
+        <Connection GearA="TouchPad1" GearB="Enveloppe1" Input="Att" Output="VValue" />
+        <Connection GearA="Oscilloscope1" GearB="TV1" Input="ImgIN" Output="Out" />
+        <Connection GearA="AffineTransform1" GearB="Edge1" Input="Amount" Output="Out" />
+        <Connection GearA="TouchPad2" GearB="AffineTransform1" Input="Scale" Output="HValue" />
+        <Connection GearA="TouchPad2" GearB="AffineTransform1" Input="Offset" Output="VValue" />
+        <Connection GearA="Edge1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="Gain1" GearB="Enveloppe1" Input="In" Output="Out" />
+        <Connection GearA="Slider1" GearB="FlatSignal1" Input="In" Output="Value" />
+        <Connection GearA="FlatSignal1" GearB="Gain1" Input="Gain" Output="Out" />
+    </Connections>
+</Schema>

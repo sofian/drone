@@ -1,0 +1,62 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="13" PosY="13" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/lezardus/videos/Tao/vaches-tao04.mpg" />
+        </Gear>
+        <Gear PosX="0" PosY="177" Type="Slider" SliderPos="2.41463" Name="Slider1" >
+            <Properties Lower_Bound="-1" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="2" PosY="233" Type="Slider" SliderPos="0.219512" Name="Slider2" >
+            <Properties Lower_Bound="-1" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="152" PosY="5" Type="TV" Name="TV1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="309" PosY="195" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="141" PosY="184" Type="ColorAdjust" Name="ColorAdjust1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="1" PosY="288" Type="Slider" SliderPos="2.70732" Name="Slider3" >
+            <Properties Lower_Bound="-1" Higher_Bound="3" />
+        </Gear>
+        <Gear PosX="139" PosY="292" Type="Edge" Name="Edge1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="-3" PosY="370" Type="Slider" SliderPos="102.622" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="255" />
+        </Gear>
+        <Gear PosX="283" PosY="252" Type="VideoLoop" Name="VideoLoop1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="274" PosY="384" Type="PushButton" Name="PushButton1" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="344" PosY="387" Type="PushButton" Name="PushButton2" >
+            <Properties On_Value="1" One_Shot="0" Off_Value="0" />
+        </Gear>
+        <Gear PosX="137" PosY="388" Type="Slider" SliderPos="121.951" Name="Slider5" >
+            <Properties Lower_Bound="0" Higher_Bound="125" />
+        </Gear>
+        <Gear ListBoxPos="0" PosX="131" PosY="457" Type="ListBox" Name="ListBox1" >
+            <Properties Number_of_elements="3" Labels_of_elements="Foward,Backward,Ping pong" />
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="ColorAdjust1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="TV1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="Slider1" GearB="ColorAdjust1" Input="Red" Output="Value" />
+        <Connection GearA="Slider2" GearB="ColorAdjust1" Input="Green" Output="Value" />
+        <Connection GearA="ColorAdjust1" GearB="Edge1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider3" GearB="ColorAdjust1" Input="Blue" Output="Value" />
+        <Connection GearA="Edge1" GearB="VideoLoop1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider4" GearB="Edge1" Input="Amount" Output="Value" />
+        <Connection GearA="VideoLoop1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+        <Connection GearA="PushButton1" GearB="VideoLoop1" Input="PunchIn" Output="Value" />
+        <Connection GearA="PushButton2" GearB="VideoLoop1" Input="PunchOut" Output="Value" />
+        <Connection GearA="Slider5" GearB="VideoLoop1" Input="Memory" Output="Value" />
+        <Connection GearA="ListBox1" GearB="VideoLoop1" Input="Mode" Output="Value" />
+    </Connections>
+</Schema>

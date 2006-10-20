@@ -1,0 +1,63 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="232" PosY="74" Type="TA_TestGridPosition" Name="TA_TestGridPosition.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="X0" Exposed="0" />
+                    <Plug Name="Y0" Exposed="0" />
+                    <Plug Name="X1" Exposed="0" />
+                    <Plug Name="Y1" Exposed="0" />
+                    <Plug Name="DataOut" Exposed="0" />
+                    <Plug Name="RGBAOut" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="66" PosY="88" Type="TouchPad" Name="TouchPad.1" >
+                <Properties Horizontal_higher_Bound="1.5" Horizontal_lower_Bound="-0.5" Vertical_lower_Bound="-0.5" Vertical_higher_Bound="1.5" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="58" PosY="233" Type="TouchPad" Name="TouchPad.2" >
+                <Properties Horizontal_higher_Bound="1.5" Horizontal_lower_Bound="-0.5" Vertical_lower_Bound="-0.5" Vertical_higher_Bound="1.5" />
+                <Plugs>
+                    <Plug Name="HValue" Exposed="0" />
+                    <Plug Name="VValue" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="556" PosY="120" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="425" PosY="90" Type="Rescale" Name="Rescale.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Width" Exposed="0" />
+                    <Plug Name="Height" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="228" PosY="280" Type="Slider" SliderPos="352" Name="Slider.1" >
+                <Properties Lower_Bound="1" Higher_Bound="1024" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="TA_TestGridPosition.1" GearB="Rescale.1" Input="ImgIN" Output="RGBAOut" />
+            <Connection GearA="TouchPad.1" GearB="TA_TestGridPosition.1" Input="X0" Output="HValue" />
+            <Connection GearA="TouchPad.1" GearB="TA_TestGridPosition.1" Input="Y0" Output="VValue" />
+            <Connection GearA="TouchPad.2" GearB="TA_TestGridPosition.1" Input="X1" Output="HValue" />
+            <Connection GearA="TouchPad.2" GearB="TA_TestGridPosition.1" Input="Y1" Output="VValue" />
+            <Connection GearA="Rescale.1" GearB="VideoOutput.1" Input="IN" Output="ImgOUT" />
+            <Connection GearA="Slider.1" GearB="Rescale.1" Input="Width" Output="Value" />
+            <Connection GearA="Slider.1" GearB="Rescale.1" Input="Height" Output="Value" />
+        </Connections>
+    </Schema>
+</Project>

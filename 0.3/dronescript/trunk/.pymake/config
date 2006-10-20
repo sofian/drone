@@ -1,0 +1,335 @@
+#!python
+   
+#############################################################################################################
+## WARNING                                                                                                  #
+#  if you add options don't forget to add in the pymake file                                                #
+#       optionargs.remove('myoption')                                                                       #
+#  If you don't, because of the follwing pymake command                                                     #
+#       #Building name of object subdirectory                                                               #
+#       objsdir = join('OBJS', platform + '__' + string.join(options,'_'))                                  #
+#       print '*** Running pymake using following options: ' + string.join(map(lambda o: '-'+o, options))   #
+# you will create useless OBJS repertory                                                                    #
+# (unless the option changes the resulting OBJS files)                                                      #
+#############################################################################################################
+
+
+
+# Qt Specific stuff
+
+qtdir = '/usr/share/qt3/'
+
+dronedir = "/home/tatien/drone/trunk/src/"
+
+nice_value = '1'
+
+libdir =''
+
+# to get more or less verbosity (currently verbose in {1,2,3,4})
+# 1 -> get *** Running ... / ++++ Computing
+# 2 -> get Launched / Finished / Still waiting
+# 3 -> get lauched command (default)
+# 4 -> get extra information
+verbose = 2;
+
+# List of directories in which to look for .h includes and corresponding .cc files to compile and link with your program
+# (no need to include the current directory, it is implicit)
+sourcedirs =   [dronedir,dronedir+'types/',dronedir+'gears/'] 
+
+# will be added as list of includes (-I...) to all compilations
+mandatory_includedirs = [dronedir,dronedir+'types/',dronedir+'gears/',qtdir] 
+
+# The platform variable contains the type of platform from which pymake has been invoked. 
+# This is something like 'linux-i386', 'linux-alpha', 'sunos5', 'irix6', 'irix6-n32' etc...
+# Feel free to use it to adapt configuration to that platform.
+
+# (sys.byteorder does not exist in older versions of python)
+if platform=='linux-i386':
+    compileflags = '-DLINUX -DLITTLEENDIAN -ftemplate-depth-100'
+#    compileflags = '-DLINUX -DLITTLEENDIAN -mcpu=i686 -march=i686 -ftemplate-depth-100'
+elif platform=='linux-ppc':
+    compileflags = '-DLINUXPPC -DBIGENDIAN'
+elif platform=='linux-alpha':
+    compileflags = '-DSPARC -DBIGENDIAN'
+elif platform=='linux-ia64':
+    compileflags = '-DLINUX -DLITTLEENDIAN'
+elif platform=='sunos5' :
+    compileflags = '-DSPARC -DBIGENDIAN'
+elif platform=='irix6'  :
+    compileflags = '-DSGI -DBIGENDIAN'
+elif platform=='irix6-n32' :
+    compileflags = '-DSGI -DBIGENDIAN'
+elif platform=='win32' :
+    compileflags = '-DWIN32 -D_MINGW_ -DLITTLEENDIAN'
+elif platform=='darwin' :
+    compileflags = '-DDARWIN -DBIGENDIAN'
+else:
+    print 'Unknown platform: ' + platform
+    sys.exit()
+
+# If the DBDIR environment variable is not defined, we use the default "/u/lisa/Database"
+dbdir = os.environ.get('DBDIR','/u/lisa/Database')
+compileflags = compileflags + ' -DDBDIR=\\"' + dbdir + '\\"' 
+
+# Add available external libraries In the order in which the linkeroptions
+# must appear on the linker command line (typically most basic libraries
+# last) If you do not give any specific triggers, any included .h file
+# found in the specified includedirs will trigger the library Triggers can
+# be a list of includes that will trigger the use of the library, and they
+# can have wildcards (such as ['GreatLibInc/*.h','Magick*.h'] for instance)
+
+optionalLibrary( name = 'xml',
+                 includedirs = [os.path.join(libdir,'xml/gcc_3.2/xerces-c-src2_1_0/include'), 
+                                os.path.join(libdir,'xml/gcc_3.2/xerces-c-src2_1_0/include/xercesc'), 
+                                os.path.join(libdir,'xml/gcc_3.2/xml-xalan/c/src')],
+                 linkeroptions = (' -Xlinker -rpath -Xlinker ' +
+                                  os.path.join(libdir,'xml/gcc_3.2/xerces-c-src2_1_0/lib') +
+                                  ' -Xlinker -rpath -Xlinker ' +
+                                  os.path.join(libdir,'xml/gcc_3.2/xml-xalan/lib') + ' -L' +
+                                  os.path.join(libdir,'xml/gcc_3.2/xerces-c-src2_1_0/lib') + ' -L' +
+                                  os.path.join(libdir,'xml/gcc_3.2/xml-xalan/lib') + ' -lxalan-c1_4_0 -lxerces-c' ) )
+
+optionalLibrary( name = 'xml-apstat',
+                 includedirs = ['/usr/include/xercesc', '/usr/include/xalanc'],
+                 linkeroptions = ( ' -lxalan-c -lxerces-c' ) )
+                                  
+optionalLibrary( name = 'arpack',
+                 triggers = 'arpack_proto.h',
+                 linkeroptions = '-L/u/lisa/local/linux-i386/lib/ARPACK/OBJS/' + platform + ' -larpack' )
+
+optionalLibrary( name = 'opengl',
+                 triggers = 'GL/gl.h',
+                 linkeroptions = '-lGL -lGLU'
+                 )
+
+optionalLibrary( name = 'ncurses',
+                 triggers = 'curses.h',
+                 linkeroptions = '-lncurses'
+                 )
+
+optionalLibrary( name = 'wordnet',
+                 triggers = 'wn.h',
+                 includedirs = '/u/lisa/WordNet/v2.0/include',
+                 linkeroptions = '-L /u/lisa/WordNet/v2.0/lib -lwn'
+                 )
+
+optionalLibrary( name = 'X',
+                 triggers='?',
+                 includedirs = '?',
+                 linkeroptions = '-L/usr/X11R6/lib/ -lXi -lXext -lX11'
+                 )
+
+optionalLibrary( name='boost_date_time',
+                 triggers = 'boost/date_time/*',
+                 linkeroptions = '-lboost_date_time' )
+
+optionalLibrary( name='boost_filesystem',
+                 triggers = 'boost/filesystem/*',
+                 linkeroptions = '-lboost_filesystem' )
+
+optionalLibrary( name='boost_date_time',
+                 triggers = 'boost/date_time',
+                 linkeroptions = '-lboost_date_time' )
+
+optionalLibrary( name = 'boost_python',
+                 triggers = 'boost/python.hpp',
+                 includedirs = '/usr/include/python2.3',
+                 linkeroptions = '-lboost_python'
+                 )
+
+optionalLibrary( name='boost_regex',
+                 triggers = 'boost/regex*',
+                 linkeroptions = '-lboost_regex' )
+
+optionalLibrary( name='boost_signals',
+                 triggers = 'boost/signals*',
+                 linkeroptions = '-lboost_signals' )
+
+optionalLibrary( name='boost_thread',
+                 triggers = 'boost/thread*',
+                 linkeroptions = '-lboost_thread' )
+
+optionalLibrary( name='libmpeg3',
+                 triggers = 'libmpeg3.h',
+                 includedirs = '/usr/include/libmpeg3',
+                 linkeroptions = '-lmpeg3' )
+
+optionalLibrary( name='portaudio',
+                 triggers = 'portaudio.h',
+                 linkeroptions = '-lportaudio' )
+
+optionalLibrary( name='sndfile',
+                 triggers = 'sndfile.h',
+                 linkeroptions = '-lsndfile' )
+
+optionalLibrary( name='stk',
+                 triggers = ['RtAudio.h','Stk.h'],
+                 includedirs = dronedir+'stk-4.1.3/include/',
+                 linkeroptions = '-L'+dronedir+'stk-4.1.3/src/ -lstk -lasound' )
+
+
+# What linker options to put always after those from the optional libraries
+linkeroptions_tail = '-lm'
+
+# List of lists of mutually exclusive pymake options.
+# First option that appears in each group is the default, and is assumed if you don't specify any option from that group
+options_choices = [
+  [ 'g++', 'g++3', 'icc', 'mpi', 'purify' ],
+  [ 'dbg', 'opt', 'pintel', 'gprof', 'safegprof', 'safeopt', 'checkopt' ],
+  [ 'double', 'float' ],
+  [ 'throwerrors', 'exiterrors' ], 
+  [ 'noblas', 'blas', 'p3blas','p4blas','athlonblas','pentiumblas', 'veclib', 'scs'],
+]
+
+
+# Description of options, and associated settings
+
+pymakeOption( name = 'g++',
+              description = 'compiling with g++, with no MPI support',
+              compiler = 'g++',
+              compileroptions = '-Wno-deprecated -pedantic -DUSING_MPI=0 -Wno-long-long',
+              linker = 'g++' )
+
+pymakeOption( name = 'g++3',
+              description = 'compiling with g++3 (version 3.0), with no MPI support',
+              compiler = 'g++3',
+              compileroptions = '-Wno-deprecated -pedantic -DUSING_MPI=0 ',
+              linker = 'g++3' )
+
+pymakeOption( name = 'icc',
+              description = 'compiling with Intel Compiler (version 8.0), with no MPI support',
+              compiler = 'icc -w',
+              compileroptions = '-DUSING_MPI=0 ',
+              linker = 'icc'
+						)
+
+pymakeOption( name = 'mpi',
+              description = 'compiling and linking with MPI support (and USING_MPI=1)',
+              compiler = 'mpiCC',               
+              compileroptions = '-DUSING_MPI=1',
+              linker = 'mpiCC' )
+
+pymakeOption( name = 'purify',
+              description = 'compiling and linking with purify g++',
+              compiler = 'purify g++',               
+              compileroptions = '-DUSING_MPI=0',
+              linker = 'purify g++' )
+
+pymakeOption( name = 'dbg',
+              description = 'debug mode',
+              compileroptions = '-Wall -g -DBOUNDCHECK' )
+
+# is -fomit-frame-pointer helping?
+# does -malign-double indeed create core-dumps?
+# is -finline hurting?
+# is -funroll-loops hurting?
+
+pymakeOption( name = 'opt',
+              description = 'optimized mode',
+              compileroptions = '-Wall -O3');
+
+pymakeOption( name = 'pintel',
+              description = 'parallelized for intel compiler',
+              compileroptions = '-O3 -parallel');
+
+pymakeOption( name = 'safeopt',
+              description = 'safe optimized mode (includes bound checking)',
+              compileroptions = '-Wall -O3 -DBOUNDCHECK' )
+
+pymakeOption( name = 'checkopt',
+              description = 'some variation on optimized mode',
+              compileroptions = '-Wall -O3 -funroll-loops' )
+  
+### Same optimization options as -opt
+pymakeOption( name = 'gprof',
+              description = 'optimized mode with profiler support (-pg)',
+              compileroptions = '-Wall -O3 -pg',
+              linkeroptions = '-pg' )
+
+pymakeOption( name = 'safegprof',
+              description = 'safe optimized mode with profiler support (-pg)',
+              compileroptions = '-Wall -O3 -DBOUNDCHECK -pg',
+              linkeroptions = '-pg' )
+
+lapack_linkeroptions = '-llapack'
+blas_linkeroptions = '-lblas'
+
+# Jasmin : In OS X, there is a framework with blas and lapack
+#if platform=='darwin':
+#    lapack_linkeroptions = '-L/sw/lib/ -llapack'
+if platform=='darwin':
+    blas_linkeroptions = '-framework vecLib'
+    lapack_linkeroptions = ''
+#    blas_linkeroptions = '-L/sw/lib/ -lcblas -lf77blas -latlas -lg2c'
+
+pymakeOption( name = 'noblas',
+              description = 'compilation and linking without BLAS',
+              linkeroptions = '-L/usr/X11R6/lib/ -lXxf86vm -lpthread -lGL -lXv'              
+              )
+
+pymakeOption( name = 'blas',
+              description = 'compilation and linking basic BLAS',
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = blas_linkeroptions + ' ' + lapack_linkeroptions
+              )
+
+pymakeOption( name = 'pentiumblas',
+              description = 'compilation and linking BLAS for Intel Pentium processor',
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl -lvml -lpthread')
+
+pymakeOption( name = 'p3blas',
+              description = 'compilation and linking BLAS for Intel Pentium 3 processor',
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p3 -lmkl_vml_p3 -lpthread')
+
+pymakeOption( name = 'athlonblas',
+              description = 'compilation and linking atlas BLAS for AMD Athlon processor',
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/atlas_athlon256 -lcblas -lf77blas -latlas')
+
+pymakeOption( name = 'p4blas',
+              description = 'compilation and linking BLAS for Intel Pentium 4 processor',
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = '-L/u/lisa/local/linux-i386/lib/intelmkl/lib/32 -lmkl_p4 -lmkl_vml_p4 -lpthread')
+
+pymakeOption( name = 'veclib',
+              description = "Apple's vecLib library, a version of the BLAS library for the G4 and G5 under OS X",
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = '-framework vecLib')
+
+pymakeOption( name = 'scs',
+              description = "BLAS and lapack intel super optimized library",
+              compileroptions = '-D USE_BLAS_SPECIALISATIONS',
+              linkeroptions = '-lscs')
+
+pymakeOption( name = 'float',
+              description = 'float mode (real==float)',
+              compileroptions = '-DUSEFLOAT')
+
+pymakeOption( name = 'double',
+              description = 'double mode (real==double)',
+              compileroptions = '-DUSEDOUBLE')
+
+pymakeOption( name = 'throwerrors',
+              description = 'defines the USE_EXCEPTIONS flag so that PLERROR throws an exception (?)',
+              compileroptions = '-DUSE_EXCEPTIONS' )
+
+pymakeOption( name = 'exiterrors',
+              description = 'PLERROR will not throw exceptions, but write the error message and exit' )
+
+pymakeOption( name = 'spc',
+              description = 'Use of Smart Parallel Compilation')
+              
+              
+nprocesses_per_processor = 1
+
+# LISA hack to set the number of processes per processor on a 'machine name' basis
+if myhostname[0:5]=='troll':
+    nprocesses_per_processor = 16
+if myhostname[0:4]=='zeus':
+    nprocesses_per_processor = 18
+if myhostname[0:6]=='canari':
+    nprocesses_per_processor = 2
+if myhostname[0:7]=='frontal':
+    nprocesses_per_processor = 4
+if myhostname[0:6]=='merlin':
+    nprocesses_per_processor = 1

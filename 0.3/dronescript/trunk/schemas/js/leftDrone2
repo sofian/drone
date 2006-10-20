@@ -1,0 +1,72 @@
+<!DOCTYPE DroneSchema>
+<Schema>
+    <Gears>
+        <Gear PosX="95" PosY="118" Type="VideoSource" Name="VideoSource1" >
+            <Properties Filename="/home/mathieu/video_phil/2friday-part1.mpg" />
+        </Gear>
+        <Gear PosX="444" PosY="77" Type="VideoDelay" Name="VideoDelay1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="581" PosY="67" Type="ApplyDisplaceGrid" Name="ApplyDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="283" PosY="272" Type="GenDisplaceGrid" Name="GenDisplaceGrid1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="6" PosY="366" Type="Slider" SliderPos="46.3415" Name="Slider1" >
+            <Properties Lower_Bound="0" Higher_Bound="50" />
+        </Gear>
+        <Gear PosX="646" PosY="241" Type="VideoOutput" Name="VideoOutput1" >
+            <Properties YRes="240" XRes="352" FullScreen="0" />
+        </Gear>
+        <Gear PosX="11" PosY="484" Type="Slider" SliderPos="1.45586" Name="Slider2" >
+            <Properties Lower_Bound="-3.14159" Higher_Bound="3.14159" />
+        </Gear>
+        <Gear PosX="44" PosY="285" Type="Slider" SliderPos="0.914634" Name="Slider3" >
+            <Properties Lower_Bound="0" Higher_Bound="5" />
+        </Gear>
+        <Gear PosX="18" PosY="553" Type="Slider" SliderPos="1.22599" Name="Slider4" >
+            <Properties Lower_Bound="0" Higher_Bound="6.28319" />
+        </Gear>
+        <Gear PosX="251" PosY="538" Type="Slider" SliderPos="-15.1219" Name="Slider5" >
+            <Properties Lower_Bound="-124" Higher_Bound="0" />
+        </Gear>
+        <Gear PosX="259" PosY="460" Type="Slider" SliderPos="6.09756" Name="Slider6" >
+            <Properties Lower_Bound="0" Higher_Bound="125" />
+        </Gear>
+        <Gear PosX="299" PosY="31" Type="ColorQuantize" Name="ColorQuantize1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="271" PosY="190" Type="Slider" SliderPos="10.0488" Name="Slider7" >
+            <Properties Lower_Bound="2" Higher_Bound="32" />
+        </Gear>
+        <Gear PosX="151" PosY="14" Type="Saturation" Name="Saturation1" >
+            <Properties/>
+        </Gear>
+        <Gear PosX="-6" PosY="75" Type="Slider" SliderPos="5.85366" Name="Slider8" >
+            <Properties Lower_Bound="0" Higher_Bound="30" />
+        </Gear>
+        <Gear PosX="461" PosY="251" Type="MedianFilter" Name="MedianFilter1" >
+            <Properties/>
+        </Gear>
+    </Gears>
+    <Connections>
+        <Connection GearA="VideoSource1" GearB="Saturation1" Input="ImgIN" Output="ImgOut" />
+        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="XSIZE" Output="..ValueType" />
+        <Connection GearA="VideoSource1" GearB="GenDisplaceGrid1" Input="YSIZE" Output="..ValueType" />
+        <Connection GearA="VideoDelay1" GearB="ApplyDisplaceGrid1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="ApplyDisplaceGrid1" GearB="MedianFilter1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="GenDisplaceGrid1" GearB="ApplyDisplaceGrid1" Input="Grid" Output="GRID" />
+        <Connection GearA="Slider1" GearB="GenDisplaceGrid1" Input="PARAM1" Output="Value" />
+        <Connection GearA="Slider2" GearB="GenDisplaceGrid1" Input="PARAM2" Output="Value" />
+        <Connection GearA="Slider3" GearB="GenDisplaceGrid1" Input="TYPE" Output="Value" />
+        <Connection GearA="Slider4" GearB="GenDisplaceGrid1" Input="PARAM3" Output="Value" />
+        <Connection GearA="Slider5" GearB="VideoDelay1" Input="Delay" Output="Value" />
+        <Connection GearA="Slider6" GearB="VideoDelay1" Input="Memory" Output="Value" />
+        <Connection GearA="ColorQuantize1" GearB="VideoDelay1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider7" GearB="ColorQuantize1" Input="NColors" Output="Value" />
+        <Connection GearA="Saturation1" GearB="ColorQuantize1" Input="ImgIN" Output="ImgOUT" />
+        <Connection GearA="Slider8" GearB="Saturation1" Input="Amount" Output="Value" />
+        <Connection GearA="MedianFilter1" GearB="VideoOutput1" Input="VideoOutput1" Output="ImgOUT" />
+    </Connections>
+</Schema>

@@ -1,0 +1,155 @@
+<!DOCTYPE DroneProject>
+<Project>
+    <Schema>
+        <Gears>
+            <Gear PosX="629" PosY="277" Type="AreaVideoReplace" Name="AreaVideoReplace.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoOut" Exposed="0" />
+                    <Plug Name="ReplaceArea" Exposed="0" />
+                    <Plug Name="ReplaceVideo" Exposed="0" />
+                    <Plug Name="VideoIn" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="315" PosY="244" Type="AreaVideoSelect" Name="AreaVideoSelect.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="VideoOut" Exposed="0" />
+                    <Plug Name="Select" Exposed="0" />
+                    <Plug Name="Video" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="156" PosY="179" Type="VideoSource" Name="VideoSource.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="AudioOut" Exposed="0" />
+                    <Plug Name="Reset" Exposed="0" />
+                    <Plug Name="Movie" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="884" PosY="264" Type="VideoOutput" Name="VideoOutput.1" >
+                <Properties YRes="240" XRes="352" FullScreen="0" />
+                <Plugs>
+                    <Plug Name="IN" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="20" PosY="207" Type="StringSource" Name="StringSource.1" >
+                <Properties Source="/Users/tats/Movies/nivea_visage_3steps.mpg" />
+                <Plugs>
+                    <Plug Name="str" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="113" PosY="593" Type="Slider" SliderPos="251.89" Name="Slider.2" >
+                <Properties Lower_Bound="0" Higher_Bound="255" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="474" PosY="116" Type="VideoDelay" Name="VideoDelay.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                    <Plug Name="Memory" Exposed="0" />
+                    <Plug Name="Delay" Exposed="0" />
+                    <Plug Name="Rec" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="162" PosY="528" Type="Slider" SliderPos="-12.0976" Name="Slider.3" >
+                <Properties Lower_Bound="-124" Higher_Bound="0" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="475" PosY="222" Type="Slider" SliderPos="1" Name="Slider.4" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="37" PosY="88" Type="PushButton" Name="PushButton.1" >
+                <Properties On_Value="1" Midi_Note="0" One_Shot="1" Off_Value="0" Midi_Channel="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="473" PosY="16" Type="ValueMix" Name="ValueMix.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In1" Exposed="0" />
+                    <Plug Name="In2" Exposed="0" />
+                    <Plug Name="Blend" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="322" PosY="99" Type="Slider" SliderPos="0.195122" Name="Slider.5" >
+                <Properties Lower_Bound="0" Higher_Bound="1" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="622" PosY="22" Type="AffineTransform" Name="AffineTransform.5" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="In" Exposed="0" />
+                    <Plug Name="Scale" Exposed="0" />
+                    <Plug Name="Offset" Exposed="0" />
+                    <Plug Name="Out" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="744" PosY="132" Type="VideoMix" Name="VideoMix.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgA" Exposed="0" />
+                    <Plug Name="ImgB" Exposed="0" />
+                    <Plug Name="ImgOut" Exposed="0" />
+                    <Plug Name="ArgA" Exposed="0" />
+                    <Plug Name="MixFunc" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="456" PosY="294" Type="Invert" Name="Invert.2" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="ImgIN" Exposed="0" />
+                    <Plug Name="ImgOUT" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="332" PosY="25" Type="TA_RandomArea" Name="TA_RandomArea.1" >
+                <Properties/>
+                <Plugs>
+                    <Plug Name="Next" Exposed="0" />
+                    <Plug Name="Area" Exposed="0" />
+                </Plugs>
+            </Gear>
+            <Gear PosX="598" PosY="113" Type="Slider" SliderPos="8170.73" Name="Slider.1" >
+                <Properties Lower_Bound="0" Higher_Bound="10000" Midi_Channel="0" Midi_controller="0" Accept_Midi="0" />
+                <Plugs>
+                    <Plug Name="Value" Exposed="0" />
+                </Plugs>
+            </Gear>
+        </Gears>
+        <Connections>
+            <Connection GearA="AreaVideoReplace.1" GearB="VideoMix.1" Input="ImgB" Output="VideoOut" />
+            <Connection GearA="AreaVideoSelect.1" GearB="Invert.2" Input="ImgIN" Output="VideoOut" />
+            <Connection GearA="VideoSource.1" GearB="VideoDelay.1" Input="ImgIN" Output="ImgOut" />
+            <Connection GearA="VideoSource.1" GearB="AreaVideoSelect.1" Input="Video" Output="ImgOut" />
+            <Connection GearA="StringSource.1" GearB="VideoSource.1" Input="Movie" Output="str" />
+            <Connection GearA="VideoDelay.1" GearB="AreaVideoReplace.1" Input="VideoIn" Output="ImgOUT" />
+            <Connection GearA="VideoDelay.1" GearB="VideoMix.1" Input="ImgA" Output="ImgOUT" />
+            <Connection GearA="Slider.3" GearB="VideoDelay.1" Input="Delay" Output="Value" />
+            <Connection GearA="Slider.4" GearB="VideoDelay.1" Input="Rec" Output="Value" />
+            <Connection GearA="PushButton.1" GearB="ValueMix.1" Input="In1" Output="Value" />
+            <Connection GearA="PushButton.1" GearB="TA_RandomArea.1" Input="Next" Output="Value" />
+            <Connection GearA="ValueMix.1" GearB="ValueMix.1" Input="In2" Output="Out" />
+            <Connection GearA="ValueMix.1" GearB="AffineTransform.5" Input="In" Output="Out" />
+            <Connection GearA="Slider.5" GearB="ValueMix.1" Input="Blend" Output="Value" />
+            <Connection GearA="AffineTransform.5" GearB="VideoMix.1" Input="ArgA" Output="Out" />
+            <Connection GearA="VideoMix.1" GearB="VideoOutput.1" Input="IN" Output="ImgOut" />
+            <Connection GearA="Invert.2" GearB="AreaVideoReplace.1" Input="ReplaceVideo" Output="ImgOUT" />
+            <Connection GearA="TA_RandomArea.1" GearB="AreaVideoReplace.1" Input="ReplaceArea" Output="Area" />
+            <Connection GearA="TA_RandomArea.1" GearB="AreaVideoSelect.1" Input="Select" Output="Area" />
+            <Connection GearA="Slider.1" GearB="AffineTransform.5" Input="Scale" Output="Value" />
+        </Connections>
+    </Schema>
+</Project>
