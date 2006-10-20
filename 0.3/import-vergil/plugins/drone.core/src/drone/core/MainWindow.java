@@ -2,6 +2,8 @@ package drone.core;
 
 import java.awt.BorderLayout;
 import java.awt.MenuBar;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.net.URL;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JTree;
 
 import net.infonode.docking.DockingWindow;
+import net.infonode.docking.DockingWindowListener;
+import net.infonode.docking.OperationAbortedException;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.SplitWindow;
 import net.infonode.docking.TabWindow;
@@ -38,7 +42,7 @@ import ptolemy.moml.MoMLParser;
 import drone.core.extensions.ViewExtension;
 import drone.core.extensions.FailToCreateComponentException;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements DockingWindowListener {
 
 	/**
 	 * 
@@ -170,10 +174,8 @@ public class MainWindow extends JFrame {
 			((Top)tableauFrame).setCentering(false);
 		}
 		tableauFrame.pack();
-		JMenuBar menuBar = tableauFrame.getJMenuBar();
-		menuBar.setVisible(true);
-		setJMenuBar(menuBar);
-		view = new View(tableau.getTitle(), null, tableau.getFrame().getComponent(0));
+		view = new TableauView(null, tableau);
+		view.addListener(this);
 		//TODO: must have unique naming for window view name, for serialization
 		_viewMap.addView(tableau.getTitle(), view);
 		if (position == ViewExtension.Position.UPPER_LEFT) {
@@ -295,5 +297,45 @@ public class MainWindow extends JFrame {
 	}
 
 	private static MainWindow _instance = null;
+
+	public void viewFocusChanged(View previouslyFocusedView, View focusedView) {
+		// TODO Auto-generated method stub
+		if (focusedView instanceof TableauView) {
+			JMenuBar menuBar = ((TableauView)focusedView).getTableau().getFrame().getJMenuBar();
+			menuBar.setVisible(true);
+			setJMenuBar(menuBar);
+		}
+	}
+
+	public void windowAdded(DockingWindow addedToWindow, DockingWindow addedWindow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosed(DockingWindow window) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosing(DockingWindow window) throws OperationAbortedException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowHidden(DockingWindow window) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowRemoved(DockingWindow removedFromWindow, DockingWindow removedWindow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowShown(DockingWindow window) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
