@@ -29,6 +29,8 @@ import net.infonode.docking.util.StringViewMap;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
 
+import ptolemy.actor.gui.Tableau;
+import ptolemy.gui.Top;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.moml.MoMLParser;
@@ -47,8 +49,8 @@ public class MainWindow extends JFrame {
 	public static final float DEFAULT_UPPER_LEFT_PROPORTION = 0.5f;
 	public static final float DEFAULT_UPPER_RIGHT_PROPORTION = 0.75f;
 	
-	public MainWindow() throws Exception {
-		createMenus();
+	private MainWindow() throws Exception {
+//		createMenus();
 		createRootWindow();
 		setDefaultLayout();
 		showFrame();
@@ -161,6 +163,31 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
+	public void showTableau(Tableau tableau, ViewExtension.Position position) {
+		View view = null;
+		JFrame tableauFrame = tableau.getFrame();
+		if (tableauFrame instanceof Top) {
+			((Top)tableauFrame).setCentering(false);
+		}
+		tableauFrame.pack();
+		JMenuBar menuBar = tableauFrame.getJMenuBar();
+		menuBar.setVisible(true);
+		setJMenuBar(menuBar);
+		view = new View(tableau.getTitle(), null, tableau.getFrame().getComponent(0));
+		//TODO: must have unique naming for window view name, for serialization
+		_viewMap.addView(tableau.getTitle(), view);
+		if (position == ViewExtension.Position.UPPER_LEFT) {
+			_upperLeftTabWindow.addTab(view);
+		} else if (position == ViewExtension.Position.BOTTOM_LEFT) {
+			_bottomLeftTabWindow.addTab(view);
+		} else if (position == ViewExtension.Position.UPPER_RIGHT) {
+			_upperRightTabWindow.addTab(view);
+		} else {
+			_bottomRightTabWindow.addTab(view);
+		}
+		
+	}
+	
 	/**
 	 * Sets the default window layout.
 	 * @throws Exception 
@@ -256,5 +283,17 @@ public class MainWindow extends JFrame {
 //	// Create edit menu.
 //	QMenu editMenu = menuBar().addMenu(tr("Edit"));
 //	}
+	public static MainWindow instance() { 
+		if (_instance == null) {
+			try {
+				_instance = new MainWindow();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}	
+		return _instance; 
+	}
 
+	private static MainWindow _instance = null;
 }
+

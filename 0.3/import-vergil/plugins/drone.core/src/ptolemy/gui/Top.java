@@ -272,6 +272,11 @@ public abstract class Top extends JFrame {
         _hideMenuBar = true;
     }
 
+    // XXX: overriden to fit Drone docked windows needs
+    public JMenuBar getJMenuBar() {
+    	return _menubar;
+    }
+
     /** Return true if the menu of this window has been populated.
      *  The menu is populated as a side effect of the first invocation to
      *  the pack() method.
@@ -1077,4 +1082,5 @@ public abstract class Top extends JFrame {
             repaint();
         }
     }
+    
 }

@@ -32,6 +32,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import drone.core.MainWindow;
+import drone.core.extensions.ViewExtension;
+
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
@@ -335,45 +338,8 @@ public class Tableau extends CompositeEntity {
      *  If no frame has been set, then do nothing.
      */
     public void show() {
-        JFrame frame = getFrame();
-
-        if (frame != null) {
-            if (!frame.isVisible()) {
-                size.setSize(frame);
-
-                // NOTE: This used to override the location that might
-                // have been set in the _windowProperties attribute.
-                /*
-                 if (frame instanceof Top) {
-                 ((Top)frame).centerOnScreen();
-                 }
-                 */
-                frame.pack();
-                frame.setVisible(true);
-
-                // NOTE: The above calls Component.show()...
-                // We used to override Top.show() (Top extends JFrame)
-                // to call pack(), but this had the unfortunate side
-                // effect of overriding manual placement of windows.
-                // However, due to some weirdness in Swing or the AWT,
-                // calling pack before setVisible() does not have the
-                // same effect as calling pack() within show().
-                // Calling it after, however, is not sufficient.
-
-                // We used to have to call pack() both before and
-                // after setVisible() because the the HTML welcome
-                // window that appears when vergil starts up was the
-                // wrong size.  However, if we call pack() twice, then
-                // under Java 1.5, the View XML window is too large, 
-                // the horizontal scrollbar ends up off the screen.
-
-                //frame.pack();
-            }
-
-            // Deiconify the window.
-            frame.setState(Frame.NORMAL);
-            frame.toFront();
-        }
+    	// XXX: replaced default frame MDI behavior by a call to the MainWindow singleton
+        MainWindow.instance().showTableau(this, ViewExtension.Position.UPPER_RIGHT);
     }
 
     ///////////////////////////////////////////////////////////////////

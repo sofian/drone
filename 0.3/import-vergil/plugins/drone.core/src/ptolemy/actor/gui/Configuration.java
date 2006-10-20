@@ -33,6 +33,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import drone.core.MainWindow;
+import drone.core.extensions.ViewExtension;
+
 import ptolemy.actor.ApplicationConfigurer;
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.graph.Inequality;
@@ -931,9 +934,9 @@ public class Configuration extends CompositeEntity implements
 
         while (entities.hasNext()) {
             Object entity = entities.next();
-
+      
             if (entity instanceof Tableau) {
-                ((Tableau) entity).show();
+            	((Tableau)entity).show();
             } else if (entity instanceof CompositeEntity) {
                 _showTableaux((CompositeEntity) entity);
             }

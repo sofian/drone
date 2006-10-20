@@ -178,34 +178,34 @@ public class CoreApplication extends VergilApplication implements Application, E
 
 	public void startApplication() throws Exception {
 		// Docking windwos should be run in the Swing thread
-//		SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				createMainWindow();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createMainWindow();
 //				parseEntityLibraryExtensions();
 //				parseViewExtensions();
-//			}
-//		});
+			}
+		});
 	}
 
-//	protected void createMainWindow() {
-//		try {
-//		_mainWindow = new MainWindow(); 
-//		_mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//		_mainWindow.addWindowListener(new WindowAdapter() {
-//			public void windowClosed(final WindowEvent e) {
-//				try {
-//					JOptionPane.getRootFrame().dispose();
-//					Boot.stopApplication(CoreApplication.this);
-//				} catch (Exception ex) {
-//					ex.printStackTrace();
-//				}
-//				System.exit(0);
-//			}
-//		});
-//		} catch(Exception ex) {
-//			ex.printStackTrace();
-//		}
-//	}
+	protected void createMainWindow() {
+		try {
+		_mainWindow = MainWindow.instance();
+		_mainWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		_mainWindow.addWindowListener(new WindowAdapter() {
+			public void windowClosed(final WindowEvent e) {
+				try {
+					JOptionPane.getRootFrame().dispose();
+					Boot.stopApplication(CoreApplication.this);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				System.exit(0);
+			}
+		});
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 //	protected void parseEntityLibraryExtensions() {
 //		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
@@ -276,6 +276,73 @@ public class CoreApplication extends VergilApplication implements Application, E
 //		//TODO: to be implemented in mainwindow
 //	}
 //	
-//	MainWindow _mainWindow;
+	
+//	   /** Return a default Configuration to use when there are no command-line
+//     *  arguments. If the configuration contains a parameter 
+//     *  _applicationBlankPtolemyEffigyAtStartup
+//     *  then we create an empty up an empty PtolemyEffigy.
+//     *  @return A configuration for when there no command-line arguments.
+//     *  @exception Exception If the configuration cannot be opened.
+//     */
+//    protected Configuration _createEmptyConfiguration() throws Exception {
+//        Configuration configuration = _createDefaultConfiguration();
+//        URL welcomeURL = null;
+//        URL introURL = null;
+//
+//        ModelDirectory directory = configuration.getDirectory();
+//
+//        Parameter applicationBlankPtolemyEffigyAtStartup = (Parameter) configuration
+//                .getAttribute("_applicationBlankPtolemyEffigyAtStartup",
+//                        Parameter.class);
+//        if ((applicationBlankPtolemyEffigyAtStartup != null)
+//                && applicationBlankPtolemyEffigyAtStartup.getExpression()
+//                        .equals("true")) {
+//            PtolemyEffigy.Factory factory = new PtolemyEffigy.Factory(
+//                    directory, directory.uniqueName("ptolemyEffigy"));
+//
+//            Effigy effigy = factory.createEffigy(directory, null, null);
+//            configuration.createPrimaryTableau(effigy);
+//        }
+//
+//        try {
+//            // First, we see if we can find the welcome window by
+//            // looking at the default configuration.
+//            // FIXME: this seems wrong, we should be able to get
+//            // an attribute from the configuration that names the
+//            // welcome window.
+//            String configurationURLString = _configurationURL.toExternalForm();
+//            String base = configurationURLString.substring(0,
+//                    configurationURLString.lastIndexOf("/"));
+//
+////            welcomeURL = specToURL(base + "/welcomeWindow.xml");
+////            introURL = specToURL(base + "/intro.htm");
+//            _parser.reset();
+//            _parser.setContext(configuration);
+//            _parser.parse(welcomeURL, welcomeURL);
+//        } catch (Throwable throwable) {
+//            // OK, that did not work, try a different method.
+//            if (_configurationSubdirectory == null) {
+//                _configurationSubdirectory = "full";
+//            }
+//
+//            // FIXME: This code is Dog slow for some reason.
+//            // XXX: In Drone we HATE welcoming people
+////            welcomeURL = specToURL(_basePath + "/" + _configurationSubdirectory
+////                    + "/welcomeWindow.xml");
+////            introURL = specToURL(_basePath + "/" + _configurationSubdirectory
+////                    + "/intro.htm");
+//            _parser.reset();
+//            _parser.setContext(configuration);
+//            _parser.parse(welcomeURL, welcomeURL);
+//        }
+//
+//        Effigy doc = (Effigy) configuration.getEntity("directory.doc");
+//
+//        doc.identifier.setExpression(introURL.toExternalForm());
+//
+//        return configuration;
+//    }
+    
+	MainWindow _mainWindow;
 
 }
