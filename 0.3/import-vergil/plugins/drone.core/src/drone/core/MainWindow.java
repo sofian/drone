@@ -54,7 +54,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	public static final float DEFAULT_UPPER_RIGHT_PROPORTION = 0.75f;
 	
 	private MainWindow() throws Exception {
-//		createMenus();
+		createMenus();
 		createRootWindow();
 		setDefaultLayout();
 		showFrame();
@@ -187,7 +187,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		} else {
 			_bottomRightTabWindow.addTab(view);
 		}
-		
+		_focusTableau(tableau);
 	}
 	
 	/**
@@ -227,30 +227,11 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	}
 
 	private void createMenus() {
-		// Create the "File" menu.
-		JMenu fileMenu = new JMenu("File");
-		JMenuItem newMenuItem = new JMenuItem("New");
-		JMenuItem openMenuItem = new JMenuItem("Open");
-		JMenuItem closeMenuItem = new JMenuItem("Close");
-		fileMenu.add(newMenuItem);
-		fileMenu.add(openMenuItem);
-		fileMenu.add(closeMenuItem);
-		
-		// Create the "Edit" menu.
-		JMenu editMenu = new JMenu("Edit");
-		JMenuItem cutMenuItem = new JMenuItem("Cut");
-		JMenuItem copyMenuItem = new JMenuItem("Copy");
-		JMenuItem pasteMenuItem = new JMenuItem("Paste");
-		JMenuItem deleteMenuItem = new JMenuItem("Delete");
-		editMenu.add(cutMenuItem);
-		editMenu.add(copyMenuItem);
-		editMenu.add(pasteMenuItem);
-		editMenu.add(deleteMenuItem);
-		
-		// Create the menu bar.
+		// Creates dummy menus.
+		// This ensures that the menu is created first, thus avoiding buggy behavior upon
+		// calling _focusTableau().
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.add(fileMenu);
-		menuBar.add(editMenu);
+		menuBar.add(new JMenu("Dummy"));
 		menuBar.setVisible(true);
 		setJMenuBar(menuBar);
 	}
@@ -296,14 +277,18 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		return _instance; 
 	}
 
+	private void _focusTableau(Tableau tableau) {
+		JMenuBar menuBar = tableau.getFrame().getJMenuBar();
+		menuBar.setVisible(true);
+		setJMenuBar(menuBar);
+	}
+	
 	private static MainWindow _instance = null;
 
 	public void viewFocusChanged(View previouslyFocusedView, View focusedView) {
 		// TODO Auto-generated method stub
 		if (focusedView instanceof TableauView) {
-			JMenuBar menuBar = ((TableauView)focusedView).getTableau().getFrame().getJMenuBar();
-			menuBar.setVisible(true);
-			setJMenuBar(menuBar);
+			_focusTableau(((TableauView)focusedView).getTableau());
 		}
 	}
 
