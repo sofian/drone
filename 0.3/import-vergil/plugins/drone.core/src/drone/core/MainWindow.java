@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.MenuBar;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 
 import net.infonode.docking.DockingWindow;
@@ -26,6 +28,9 @@ import net.infonode.docking.TabWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.ViewSerializer;
 import net.infonode.docking.WindowBar;
+import net.infonode.docking.drag.DockingWindowDragSource;
+import net.infonode.docking.drag.DockingWindowDragger;
+import net.infonode.docking.drag.DockingWindowDraggerProvider;
 import net.infonode.docking.properties.RootWindowProperties;
 import net.infonode.docking.theme.DockingWindowsTheme;
 import net.infonode.docking.theme.ShapedGradientDockingTheme;
@@ -62,6 +67,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		createRootWindow();
 		setDefaultLayout();
 		createDefaultViews();
+		createToolBar();
 		showFrame();
 //		setWindowTitle(tr("Drone"));
 
@@ -155,6 +161,16 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		//TODO: must have unique naming for window view name, for serialization
 		_viewMap.addView("Library browser", _libraryBrowser);
 		_upperLeftTabWindow.addTab(_libraryBrowser);
+	}
+	
+	
+	protected void createToolBar() {
+		if (_defaultToolBar == null) {
+			_defaultToolBar = new JToolBar();
+			_defaultToolBar.add(new JLabel("No toolbar available in this view."));
+		}
+		_toolBar = _defaultToolBar;
+		getContentPane().add(_toolBar, BorderLayout.NORTH);
 	}
 
 	public void addDockedExtension(String label, ViewExtension extension) {
@@ -299,12 +315,18 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		if (frame instanceof Top)
 			((Top)frame).hideMenuBar();
 		
-		// Check if we have a library tree associated.
 		if (frame instanceof BasicGraphFrame) {
+			// Check if we have a library tree associated.
 			_libraryBrowser.setComponent(((BasicGraphFrame)frame).getLibrary());
+			// Check if we have a toolbar associated.
+			getContentPane().remove(_toolBar);
+			_toolBar = ((BasicGraphFrame)frame).getJToolbar();
 		} else {
 			_libraryBrowser.setComponent(_defaultLibraryBrowserComponent);
+			getContentPane().remove(_toolBar);
+			_toolBar = _defaultToolBar;
 		}
+		getContentPane().add(_toolBar, BorderLayout.NORTH);
 		
 	}
 	
@@ -349,5 +371,8 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 
 	private View _libraryBrowser;
 	private static JComponent _defaultLibraryBrowserComponent = new JLabel("Library not available for this view.");
+	
+	private JToolBar _toolBar;
+	private static JToolBar _defaultToolBar = null;
 }
 

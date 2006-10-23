@@ -1302,6 +1302,10 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
     	return _rightComponent;
     }
     
+    public JToolBar getJToolbar() {
+    	return _toolbar;
+    }
+    
     ///////////////////////////////////////////////////////////////////
     ////                         public variables                  ////
 
