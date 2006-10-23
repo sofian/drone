@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -150,7 +151,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	}
 	
 	public void createDefaultViews() {
-		_libraryBrowser = new View("Library browser", null, null);
+		_libraryBrowser = new View("Library browser", null, _defaultLibraryBrowserComponent);
 		//TODO: must have unique naming for window view name, for serialization
 		_viewMap.addView("Library browser", _libraryBrowser);
 		_upperLeftTabWindow.addTab(_libraryBrowser);
@@ -301,8 +302,10 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		// Check if we have a library tree associated.
 		if (frame instanceof BasicGraphFrame) {
 			_libraryBrowser.setComponent(((BasicGraphFrame)frame).getLibrary());
-			
+		} else {
+			_libraryBrowser.setComponent(_defaultLibraryBrowserComponent);
 		}
+		
 	}
 	
 	private static MainWindow _instance = null;
@@ -345,5 +348,6 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	}
 
 	private View _libraryBrowser;
+	private static JComponent _defaultLibraryBrowserComponent = new JLabel("Library not available for this view.");
 }
 
