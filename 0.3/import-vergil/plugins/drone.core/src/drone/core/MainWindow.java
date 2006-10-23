@@ -38,6 +38,9 @@ import ptolemy.gui.Top;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.moml.MoMLParser;
+import ptolemy.vergil.basic.BasicGraphFrame;
+import ptolemy.vergil.tree.PTree;
+import ptolemy.vergil.tree.VisibleTreeModel;
 
 import drone.core.extensions.ViewExtension;
 import drone.core.extensions.FailToCreateComponentException;
@@ -57,6 +60,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		createMenus();
 		createRootWindow();
 		setDefaultLayout();
+		createDefaultViews();
 		showFrame();
 //		setWindowTitle(tr("Drone"));
 
@@ -143,6 +147,13 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 
 	    // Enable the bottom window bar
 	    _rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
+	}
+	
+	public void createDefaultViews() {
+		_libraryBrowser = new View("Library browser", null, null);
+		//TODO: must have unique naming for window view name, for serialization
+		_viewMap.addView("Library browser", _libraryBrowser);
+		_upperLeftTabWindow.addTab(_libraryBrowser);
 	}
 
 	public void addDockedExtension(String label, ViewExtension extension) {
@@ -278,9 +289,20 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	}
 
 	private void _focusTableau(Tableau tableau) {
-		JMenuBar menuBar = tableau.getFrame().getJMenuBar();
+		// Change menu bar.
+		JFrame frame = tableau.getFrame();
+		JMenuBar menuBar = frame.getJMenuBar();
 		menuBar.setVisible(true);
 		setJMenuBar(menuBar);
+		
+		if (frame instanceof Top)
+			((Top)frame).hideMenuBar();
+		
+		// Check if we have a library tree associated.
+		if (frame instanceof BasicGraphFrame) {
+			_libraryBrowser.setComponent(((BasicGraphFrame)frame).getLibrary());
+			
+		}
 	}
 	
 	private static MainWindow _instance = null;
@@ -322,5 +344,6 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		
 	}
 
+	private View _libraryBrowser;
 }
 

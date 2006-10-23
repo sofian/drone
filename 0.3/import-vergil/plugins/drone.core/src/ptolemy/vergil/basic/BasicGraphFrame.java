@@ -1294,6 +1294,14 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
         }
     }
 
+    public JTree getLibrary() {
+    	return _library;
+    }
+        
+    public JComponent getRightComponent() {
+    	return _rightComponent;
+    }
+    
     ///////////////////////////////////////////////////////////////////
     ////                         public variables                  ////
 
