@@ -31,7 +31,7 @@
     <configure>
       <?moml
         <group>
-          <input source="drone/data/config/basicActorLibrary.xml"/>
+          <input source="data/config/basicActorLibrary.xml"/>
         </group>
       ?>
     </configure>

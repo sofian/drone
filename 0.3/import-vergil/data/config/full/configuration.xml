@@ -10,12 +10,12 @@
   <!-- Specify the about file to open. -->
   <property name="_about"
             class="ptolemy.data.expr.FileParameter"
-            value="$CLASSPATH/data/configs/full/intro.htm"/>
+            value="$CLASSPATH/data/config/full/intro.htm"/>
 
   <!-- Specify the help file to open. -->
 <!--  <property name="_help"
             class="ptolemy.data.expr.FileParameter"
-            value="$CLASSPATH/ptolemy/configs/doc/docs.htm"/>
+            value="$CLASSPATH/data/config/doc/docs.htm"/>
  -->
  
  
@@ -44,7 +44,7 @@
   <!-- named "blank", then the effigy will initially refer to a clone -->
   <!-- of that blank entity. -->
   <entity name="effigyFactory" class="ptolemy.actor.gui.EffigyFactory">
-    <input source="drone-import-vergil/data/config/graphEffigyFactory.xml"/>
+    <input source="data/config/graphEffigyFactory.xml"/>
   </entity>
   
   
@@ -57,7 +57,8 @@
 <!--    <input source="ptolemy/configs/iaTableauFactory.xml"/>
     <input source="ptolemy/configs/fsmTableauFactory.xml"/>
     <input source="ptolemy/configs/caseTableauFactory.xml"/> -->
-    <input source="drone-import-vergil/data/config/graphTableauFactory.xml"/>
+
+    <input source="data/config/graphTableauFactory.xml"/>
     <!-- Add the code generator to the full configuration. -->
     <!-- property name="factory2" class="ptolemy.actor.gui.PtolemyTableauFactory" -->
        <!--property name="Code Generator"
@@ -67,5 +68,5 @@
   </property>
  
   <!-- Main default library. -->
-  <input source="drone-import-vergil/data/config/basicLibrary.xml"/>
+  <input source="data/config/basicLibrary.xml"/>
 </entity>

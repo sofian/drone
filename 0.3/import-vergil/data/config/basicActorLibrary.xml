@@ -12,7 +12,7 @@
   <input source="ptolemy/actor/lib/io/io.xml"/>
   <input source="ptolemy/actor/lib/logic/logic.xml"/>
 -->
-  <input source="drone/data/config/math.xml"/>
+  <input source="data/config/math.xml"/>
 <!--
   <input source="ptolemy/actor/lib/matrix.xml"/>
   <input source="ptolemy/actor/lib/random.xml"/>
