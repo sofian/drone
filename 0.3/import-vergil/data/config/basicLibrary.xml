@@ -14,17 +14,15 @@
   <!-- Default director library. -->
   <!-- This uses configure so that directors are not instantiated -->
   <!-- until (and unless) the library is opened. -->
-  <!--
   <entity name="Directors" class="ptolemy.moml.EntityLibrary">
     <configure>
       <?moml
         <group>
-          <input source="drone/data/config/basicDirectors.xml"/>
+          <input source="data/config/basicDirectors.xml"/>
         </group>
       ?>
     </configure>
   </entity>
-  -->
 
   <!-- Default actor library. -->
   <entity name="Actors" class="ptolemy.moml.EntityLibrary">
