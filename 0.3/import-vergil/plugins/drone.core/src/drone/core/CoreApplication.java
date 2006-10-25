@@ -75,7 +75,7 @@ public class CoreApplication extends VergilApplication implements Application, E
 	 */
 	public CoreApplication(String basePath, String[] args, CorePlugin corePlugin) throws Exception {
 		super(basePath, args);
-//		_corePlugin = corePlugin;
+		_corePlugin = corePlugin;
 //
 //		// The Java look & feel is pretty lame, so we use the native
 //		// look and feel of the platform we are running on.
@@ -181,7 +181,7 @@ public class CoreApplication extends VergilApplication implements Application, E
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createMainWindow();
-//				parseEntityLibraryExtensions();
+				parseEntityLibraryExtensions();
 //				parseViewExtensions();
 			}
 		});
@@ -207,44 +207,44 @@ public class CoreApplication extends VergilApplication implements Application, E
 		}
 	}
 	
-//	protected void parseEntityLibraryExtensions() {
-//		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
-//		ExtensionPoint extensionPoint = _corePlugin.getManager().getRegistry()
-//				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "entity-library");
-//		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it
-//				.hasNext();) {
-//			Extension ext = (Extension) it.next();
-//            try {
-//                // Activate plug-in that declares extension.
-//            	_corePlugin.getManager().activatePlugin(
-//                        ext.getDeclaringPluginDescriptor().getId());
-//            	URL fileURL = _corePlugin.getManager().getPluginClassLoader(ext.getDeclaringPluginDescriptor())
-//            		.getResource(ext.getParameter("file").valueAsString());
-//            	// TODO: do we need this?
-//                String label = ext.getParameter("label").valueAsString();
-//                String description = ext.getParameter("description").valueAsString();
-//                
-//        		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
-//        		if (configuration == null) {
-//        			throw new IllegalActionException("There are no existing configurations.");
-//        		}
-//
-//        		MoMLParser parser = new MoMLParser(configuration.workspace());
-//        		parser.reset();
-//
-//        		CompositeEntity library = (CompositeEntity) parser.parse(fileURL, fileURL);
-//        		// FIXME: je suis rendu la...
-//        		library.setContainer((CompositeEntity)configuration.getEntity("actor library"));
-//            } catch (Throwable t) {
-//            	//TODO: log4net
-//            	System.out.println(t.getMessage());
-//            }
-//		}
-//		//Add all dockedExtensions to the mainWindow
-//		//TODO: to be implemented in mainwindow
-//	}
-//
-//
+	protected void parseEntityLibraryExtensions() {
+		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
+		ExtensionPoint extensionPoint = _corePlugin.getManager().getRegistry()
+				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "entity-library");
+		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it
+				.hasNext();) {
+			Extension ext = (Extension) it.next();
+            try {
+                // Activate plug-in that declares extension.
+            	_corePlugin.getManager().activatePlugin(
+                        ext.getDeclaringPluginDescriptor().getId());
+            	URL fileURL = _corePlugin.getManager().getPluginClassLoader(ext.getDeclaringPluginDescriptor())
+            		.getResource(ext.getParameter("file").valueAsString());
+            	// TODO: do we need this?
+                String label = ext.getParameter("label").valueAsString();
+                String description = ext.getParameter("description").valueAsString();
+                
+        		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
+        		if (configuration == null) {
+        			throw new IllegalActionException("There are no existing configurations.");
+        		}
+
+        		MoMLParser parser = new MoMLParser(configuration.workspace());
+        		parser.reset();
+
+        		CompositeEntity library = (CompositeEntity) parser.parse(fileURL, fileURL);
+        		// FIXME: je suis rendu la...
+        		library.setContainer((CompositeEntity)((CompositeEntity)configuration.getEntity("actor library")).getEntity("Actors"));
+            } catch (Throwable t) {
+            	//TODO: log4net
+            	System.out.println(t.getMessage());
+            }
+		}
+		//Add all dockedExtensions to the mainWindow
+		//TODO: to be implemented in mainwindow
+	}
+
+
 //	protected void parseViewExtensions() {
 //		ExtensionPoint dockedExtPoint = _corePlugin.getManager().getRegistry()
 //				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "view");
@@ -343,6 +343,8 @@ public class CoreApplication extends VergilApplication implements Application, E
 //        return configuration;
 //    }
     
-	MainWindow _mainWindow;
+	private MainWindow _mainWindow;
+	
+	private CorePlugin _corePlugin;
 
 }
