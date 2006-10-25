@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 
@@ -69,67 +70,6 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		createDefaultViews();
 		createToolBar();
 		showFrame();
-//		setWindowTitle(tr("Drone"));
-
-//		QTabWidget leftTab = new QTabWidget(this);
-//		QTabWidget centerTab = new QTabWidget(this);
-//		QTabWidget bottomTab = new QTabWidget(this);
-
-//		QSplitter vsplitter = new QSplitter(Qt.Horizontal,this);
-//		QSplitter hsplitter = new QSplitter(Qt.Vertical, this);
-
-//		vsplitter.addWidget(leftTab);
-//		vsplitter.addWidget(hsplitter);
-//		hsplitter.addWidget(centerTab);
-//		hsplitter.addWidget(bottomTab);
-
-//		setCentralWidget(vsplitter);
-//		//layout based on 800x600 resolution
-//		leftTab.setSizePolicy(75, 800);
-//		centerTab.setSizePolicy(725, 500);
-//		bottomTab.setSizePolicy(725, 100);
-
-
-//		// Open the configuration.
-//		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
-//		if (configuration == null) {
-//		throw new Exception("There are no existing configurations.");
-//		}
-
-//		// Create the tree view of the actor library.
-//		CompositeEntity actorList = (CompositeEntity) configuration.getEntity("actor library");
-////		QTreeView libraryTree = new EntityTreeWidget(actorList, dock);		
-////		dock.setWidget(libraryTree);
-
-//		QTreeView libraryTree = new EntityTreeWidget(actorList);		
-//		leftTab.addTab(libraryTree, "Library");
-
-//		// Create the tree view of the opened model.
-////		MoMLParser parser = new MoMLParser();
-////		URL url = new URL("file:/Users/tats/Documents/workspace/drone/data/demos/testMath.xml");
-////		Entity myEntity = (Entity) parser.parse(url, url);
-////		QTreeView projectTree = new EntityTreeWidget(myEntity, dock);
-////		dock.setWidget(projectTree);
-////		Tableau modelTableau = configuration.openModel(url, url, url.toExternalForm());
-
-
-//		// Add the dock widget to the view.
-////		addDockWidget(QDockWidget.AllDockWidgetFeatures, dock);
-
-//		//creation of Julien
-//		QTextEdit txtJulien = new QTextEdit();
-//		centerTab.addTab(txtJulien, "Julien");
-
-//		//creation of croquet
-//		QTextEdit txtCroquet = new QTextEdit();
-//		centerTab.addTab(txtCroquet, "Croquet");
-
-//		//creation of rag
-//		QTextEdit txtRag = new QTextEdit();
-//		bottomTab.addTab(txtRag, "Rag");
-
-
-//		buildMenu();
 	}
 
 	/**
@@ -317,7 +257,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		
 		if (frame instanceof BasicGraphFrame) {
 			// Check if we have a library tree associated.
-			_libraryBrowser.setComponent(((BasicGraphFrame)frame).getLibrary());
+			_libraryBrowser.setComponent(new JScrollPane(((BasicGraphFrame)frame).getLibrary()));
 			// Check if we have a toolbar associated.
 			getContentPane().remove(_toolBar);
 			_toolBar = ((BasicGraphFrame)frame).getJToolbar();
