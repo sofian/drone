@@ -40,7 +40,7 @@ public:
     addSubType(_typeWidth);
     addSubType(_typeHeight);
     resize(width, height);
-    fill(fillValue);
+    std::fill(this->begin(), this->end(), fillValue);
   }
 
   virtual void resize(size_type size)
