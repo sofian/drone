@@ -33,6 +33,7 @@ public class JMFCameraDemo {
 			//director.iterations.setExpression("100");
 			Manager manager = new Manager("manager");
 			top.setManager(manager);
+			top.setDirector(director);
 			
 			// Create two actors.
 			VideoCamera reader = new VideoCamera(top, "reader");
