@@ -75,6 +75,14 @@ import ptolemy.kernel.util.InternalErrorException;
  @Pt.AcceptedRating Red (cxh)
  */
 public class RecordType extends StructuredType {
+	
+    /** Construct an empty RecordType. Elements can be added by calling the
+     *  put() method.
+     *  @see RecordToken.put
+     */
+	public RecordType() {
+	}
+	
     /** Construct a new RecordType with the specified labels and types.
      *  To leave the types of some fields undeclared, use BaseType.UNKNOWN.
      *  The labels and the types are specified in two arrays. These two
@@ -100,7 +108,30 @@ public class RecordType extends StructuredType {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////
+    /** Construct a RecordType with the labels and values specified
+     *  by a given Map object. The object cannot contain any null keys or values.
+     *  @param fields A Map of String
+     *  @param values An array of Tokens.
+     *  @exception IllegalActionException If the map contains null keys or values, or if
+     *   it contains non-String keys or non-Type values
+     */
+    public RecordType(Map fields)
+    		throws IllegalActionException
+    {
+    	Iterator it = fields.entrySet().iterator();
+    	while (it.hasNext()) {
+    		Map.Entry entry = (Map.Entry)it.next();
+    		if (entry.getKey() == null || entry.getValue() == null) {
+    			throw new IllegalActionException("RecordType: given map contains either null keys or null values.");
+    		}
+    		if (!(entry.getKey() instanceof String) || !(entry.getValue() instanceof Type)) {
+    			throw new IllegalActionException("RecordType: given map contains either non-String keys or non-Type values.");
+    		}
+    		_fields.put(entry.getKey(), new FieldType((Type)entry.getValue()));
+    	}
+    }
+    
+     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
     /** Return a deep copy of this RecordType if it is a variable, or
@@ -135,6 +166,21 @@ public class RecordType extends StructuredType {
 
             return newObj;
         }
+    }
+
+    /** Adds a type with the specified label. If the label already contains
+     *  a value, this function will override the value.
+     *  @param label A String label.
+     *  @param value A Type value.
+     *  @exception IllegalActionException If the label or value is null.
+     */
+    public void put(String label, Type value) throws IllegalActionException {
+    	if (label == null || value == null) {
+    		throw new IllegalActionException("RecordToken: trying to put a null label " +
+    										 "or value in the token.");
+    	}
+
+    	_fields.put(label, value);
     }
 
     /** Convert the argument token into a RecordToken having this

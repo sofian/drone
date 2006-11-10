@@ -62,6 +62,7 @@ import ptolemy.kernel.util.InternalErrorException;
  @Pt.AcceptedRating Yellow (cxh)
  */
 public class RecordToken extends AbstractNotConvertibleToken {
+
     /** Construct a RecordToken with the specified labels and values.
      *  The labels and values arrays must have the same length, and have one
      *  to one correspondence with each other.  That is, the i'th entry in
@@ -78,6 +79,29 @@ public class RecordToken extends AbstractNotConvertibleToken {
         _initialize(labels, values);
     }
 
+    /** Construct a RecordToken with the labels and values specified
+     *  by a given Map object. The object cannot contain any null keys or values.
+     *  @param fields A Map of String
+     *  @param values An array of Tokens.
+     *  @exception IllegalActionException If the map contains null keys or values, or if
+     *   it contains non-String keys or non-Token values
+     */
+    public RecordToken(Map fields)
+    		throws IllegalActionException
+    {
+    	Iterator it = fields.entrySet().iterator();
+    	while (it.hasNext()) {
+    		Map.Entry entry = (Map.Entry)it.next();
+    		if (entry.getKey() == null || entry.getValue() == null) {
+    			throw new IllegalActionException("RecordToken: given map contains either null keys or null values.");
+    		}
+    		if (!(entry.getKey() instanceof String) || !(entry.getValue() instanceof Token)) {
+    			throw new IllegalActionException("RecordToken: given map contains either non-String keys or non-Token values.");
+    		}
+    	}
+    	_fields.putAll(fields);
+    }
+    
     /** Construct a RecordToken from the specified string.
      *  @param init A string expression of a record.
      *  @exception IllegalActionException If the string does not
