@@ -6,6 +6,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -44,6 +45,7 @@ import ptolemy.actor.gui.Tableau;
 import ptolemy.gui.Top;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
+import ptolemy.kernel.util.Attribute;
 import ptolemy.moml.MoMLParser;
 import ptolemy.vergil.basic.BasicGraphFrame;
 import ptolemy.vergil.tree.PTree;
@@ -97,10 +99,16 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	}
 	
 	public void createDefaultViews() {
+		// Library browser
 		_libraryBrowser = new View("Library browser", null, _defaultLibraryBrowserComponent);
 		//TODO: must have unique naming for window view name, for serialization
 		_viewMap.addView("Library browser", _libraryBrowser);
 		_upperLeftTabWindow.addTab(_libraryBrowser);
+		
+		// Attribute browser
+		_attributeBrowser = new View("Attribute browser", null, _defaultAttributeBrowserComponent);
+		_viewMap.addView("Attribute browser", _libraryBrowser);
+		_bottomLeftTabWindow.addTab(_attributeBrowser);
 	}
 	
 	
@@ -245,6 +253,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		return _instance; 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void _focusTableau(Tableau tableau) {
 		// Change menu bar.
 		JFrame frame = tableau.getFrame();
@@ -255,6 +264,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		if (frame instanceof Top)
 			((Top)frame).hideMenuBar();
 		
+		// Set library browser and toolbar.
 		if (frame instanceof BasicGraphFrame) {
 			// Check if we have a library tree associated.
 			_libraryBrowser.setComponent(new JScrollPane(((BasicGraphFrame)frame).getLibrary()));
@@ -268,6 +278,14 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 		}
 		getContentPane().add(_toolBar, BorderLayout.NORTH);
 		
+		// Set attributes browser.
+		Enumeration attributes = tableau.getAttributes();
+		String attStr = new String();
+		while (attributes.hasMoreElements()) {
+			Attribute att = (Attribute) attributes.nextElement();
+			attStr += att.getName() + "\n";
+		}
+		_attributeBrowser.setComponent(new JLabel(attStr));
 	}
 	
 	private static MainWindow _instance = null;
@@ -311,6 +329,9 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 
 	private View _libraryBrowser;
 	private static JComponent _defaultLibraryBrowserComponent = new JLabel("Library not available for this view.");
+	
+	private View _attributeBrowser;
+	private static JComponent _defaultAttributeBrowserComponent = new JLabel("No attributes available for this view.");
 	
 	private JToolBar _toolBar;
 	private static JToolBar _defaultToolBar = null;
