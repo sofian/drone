@@ -14,13 +14,18 @@ import net.infonode.docking.View;
 public class TableauView extends View {
 
 	public TableauView(Icon icon, Tableau tableau) {
-		super(_createViewTitle(tableau), icon, _createViewComponent(tableau));
+		super(_getViewTitle(tableau), icon, _createViewComponent(tableau));
 		// TODO Auto-generated constructor stub
 		_tableau = tableau;
 	}
 	
-	private static String _createViewTitle(Tableau tableau) {
-		return tableau.getTitle();
+	private static String _getViewTitle(Tableau tableau) {
+		String viewTitle = tableau.getTitle();
+		int slashIndex = viewTitle.lastIndexOf('/');
+		if (slashIndex >= 0) {
+			viewTitle = viewTitle.substring(slashIndex+1);
+		}
+		return viewTitle;
 	}
 	
 	private static Component _createViewComponent(Tableau tableau) {
