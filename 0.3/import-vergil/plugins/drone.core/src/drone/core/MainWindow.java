@@ -41,7 +41,10 @@ import net.infonode.docking.util.StringViewMap;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
 
+import ptolemy.actor.gui.Configuration;
+import ptolemy.actor.gui.Effigy;
 import ptolemy.actor.gui.Tableau;
+import ptolemy.actor.gui.TableauFrame;
 import ptolemy.gui.Top;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
@@ -150,19 +153,32 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 			((Top)tableauFrame).setCentering(false);
 		}
 		tableauFrame.pack();
-		view = new TableauView(null, tableau);
-		view.addListener(this);
-		//TODO: must have unique naming for window view name, for serialization
-		_viewMap.addView(tableau.getTitle(), view);
-		if (position == ViewExtension.Position.UPPER_LEFT) {
-			_upperLeftTabWindow.addTab(view);
-		} else if (position == ViewExtension.Position.BOTTOM_LEFT) {
-			_bottomLeftTabWindow.addTab(view);
-		} else if (position == ViewExtension.Position.UPPER_RIGHT) {
-			_upperRightTabWindow.addTab(view);
+
+    	view = new TableauView(null, tableau);
+    	view.addListener(this);
+    	//TODO: must have unique naming for window view name, for serialization
+    	_viewMap.addView(tableau.getTitle(), view);
+
+		// XXX Hack: Don't display intro.htm
+		Configuration configuration;
+		if (tableauFrame instanceof TableauFrame) {
+			configuration = ((TableauFrame)tableauFrame).getConfiguration();
 		} else {
-			_bottomRightTabWindow.addTab(view);
+			configuration = (Configuration) Configuration.configurations().iterator().next();
 		}
+		
+    	Tableau intro = (Tableau) configuration.getEntity("directory.doc.tableau");
+        if (!tableau.equals(intro)) {
+        	if (position == ViewExtension.Position.UPPER_LEFT) {
+        		_upperLeftTabWindow.addTab(view);
+        	} else if (position == ViewExtension.Position.BOTTOM_LEFT) {
+        		_bottomLeftTabWindow.addTab(view);
+        	} else if (position == ViewExtension.Position.UPPER_RIGHT) {
+        		_upperRightTabWindow.addTab(view);
+        	} else {
+        		_bottomRightTabWindow.addTab(view);
+        	}
+        }
 		_focusTableau(tableau);
 	}
 	
@@ -335,5 +351,7 @@ public class MainWindow extends JFrame implements DockingWindowListener {
 	
 	private JToolBar _toolBar;
 	private static JToolBar _defaultToolBar = null;
+	
+	private JMenuBar _defaultMenuBar = null;
 }
 
