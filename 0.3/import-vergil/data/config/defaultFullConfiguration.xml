@@ -69,4 +69,22 @@
  
   <!-- Main default library. -->
   <input source="data/config/basicLibrary.xml"/>
+
+  <!-- Modifications to the library. -->
+  <entity name="actor library" class="ptolemy.kernel.CompositeEntity">
+    <!-- First, additional directors. -->
+    <entity name="Directors" class="ptolemy.moml.EntityLibrary">
+      <configure>
+        <?moml
+          <group>
+            <!-- NOTE: because this is in a configure, this list completely -->
+            <!-- replaces anything in basicLibrary.xml, so we repeat this.  -->
+            <input source="ptolemy/configs/basicDirectors.xml"/>
+            <input source="ptolemy/configs/experimentalDirectors.xml"/>
+          </group>
+        ?>
+      </configure>
+    </entity>
+
+    </entity>
 </group>
