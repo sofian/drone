@@ -3,8 +3,6 @@
     "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
 <group>
 <!--
-  <input source="drone/data/config/sources.xml"/>
-  <input source="ptolemy/actor/lib/sinks.xml"/>
   <input source="ptolemy/actor/lib/array.xml"/>
   <input source="ptolemy/actor/lib/conversions/conversions.xml"/>
   <input source="ptolemy/actor/lib/flowcontrol.xml"/>
@@ -12,6 +10,8 @@
   <input source="ptolemy/actor/lib/io/io.xml"/>
   <input source="ptolemy/actor/lib/logic/logic.xml"/>
 -->
+  <input source="data/config/sources.xml"/>
+  <input source="data/config/sinks.xml"/>
   <input source="data/config/math.xml"/>
 <!--
   <input source="ptolemy/actor/lib/matrix.xml"/>
