@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry output="pt2/build" kind="src" path="pt2/src"/>
+	<classpathentry output="plugins/drone.util/build" kind="src" path="plugins/drone.util/src"/>
 	<classpathentry output="plugins/drone.librarybrowser/build" kind="src" path="plugins/drone.librarybrowser/src"/>
 	<classpathentry output="plugins/drone.jmf/build" kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="src" path="drone.spikes"/>
@@ -18,5 +19,8 @@
 	<classpathentry kind="lib" path="plugins/drone.core/lib/net.infonode.jar"/>
 	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
 	<classpathentry kind="lib" path="lib/jffmpeg/jffmpeg-1.1.0.jar"/>
+	<classpathentry kind="lib" path="dist/pt2.jar"/>
+	<classpathentry kind="lib" path="dist/drone-frei0r.jar"/>
+	<classpathentry sourcepath="plugins/drone.core/src" kind="lib" path="dist/drone-core.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
