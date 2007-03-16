@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<project name="drone.core" default="main">
+	<property name="distdir" location="../../dist"/>
+
+	<target name="main">
+		<echo>Building Core.</echo>
+        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib">
+        	<exclude name="ptolemy/vergil/MoMLViewerApplet.java"/>
+        	<exclude name="ptolemy/vergil/TypeAnimatorApplet.java"/>
+        	<exclude name="diva/util/java2d/svg/**"/>
+        	<exclude name="ptolemy/vergil/fsm/**"/>
+        	<exclude name="ptolemy/actor/lib/gui/HistogramPlotter.java" />
+    	</javac>
+		<copy todir="build">
+			<fileset dir=".">
+				<include name="plugin.xml" />
+			</fileset>
+		</copy>
+		<jar destfile="${distdir}/drone-core.jar" basedir="build"/>
+	</target>
+</project>

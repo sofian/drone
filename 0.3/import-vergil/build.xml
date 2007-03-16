@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<project name="drone" default="main">
+	
+	<property name="pt2dir" location="pt2"/>
+	<property name="dronedir" location="plugins"/>
+	<property name="distdir" location="dist"/>
+
+	<target name="main" depends="pt2, drone" description="Main target">
+        <echo>
+            Building the project.
+        </echo>
+    </target>
+	
+	<target name="pt2" description="Ptolemy II target">
+		<echo>
+			Building Ptolemy II.
+		</echo>
+        <javac srcdir="pt2/src" destdir="pt2/build"/>
+		<jar destfile="${distdir}/pt2.jar" basedir="pt2/build"/>
+	</target>
+	
+    <target name="drone" description="Drone plugins">
+    	<echo>
+    		Building plugins.
+    	</echo>
+    	<ant dir="plugins" inheritAll="true"/>
+    </target>
+  
+</project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<project name="drone.jmf" default="main">
+	
+	<property name="distdir" location="../../dist"/>
+
+	<target name="main">
+		<echo>Building JMF.</echo>
+        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib" />
+		<copy todir="build/data">
+			<fileset dir="data" />
+		</copy>
+		<copy todir="build" file="plugin.xml" />
+		<jar destfile="${distdir}/drone-jmf.jar" basedir="build"/>
+	</target>
+	
+</project>

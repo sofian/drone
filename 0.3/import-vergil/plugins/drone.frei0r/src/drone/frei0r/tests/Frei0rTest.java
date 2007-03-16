@@ -1,53 +1,78 @@
 package drone.frei0r.tests;
 
 import org.junit.*;
-import ptolemy.actor.TypedCompositeActor;
-import drone.frei0r.actors.*;
-import ptolemy.kernel.util.IllegalActionException;
+import drone.frei0r.jni.Frei0r;
+import drone.frei0r.Frei0rException;
 import ptolemy.kernel.util.NameDuplicationException;
 
 public class Frei0rTest {
 
-	private TypedCompositeActor _top;
+	public String TEST_LIBRARY_PATH = "contrib/Frei0r/plugins/nois0r.dylib";
+	public String TEST_WRONG_LIBRARY = "wrongLibraryName";
+	
 	@Before
 	public void setUp() throws Exception {
-		_top = new TypedCompositeActor();
-		_top.setName("Frei0r unit tests");
 	}
 
-	/**
-	 * Nothing specific to test in the constructor, but
-	 * the frei0rJNI lib is loaded in a static statement,
-	 * so any problems with the native lib will be reported
-	 * at the first instanciation.
-	 */
-	@Test 
-	public void testConstructor()
+	@Test(expected=Frei0rException.class)
+	public void testLoadLibraryWrong() throws NameDuplicationException, Frei0rException
 	{
-		try
-		{
-			new Frei0r(_top, "frei0rTest");
-			
-		} catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-	
-	@Test(expected=IllegalActionException.class)
-	public void testSetFrei0rLibraryNameAttributeWrong() throws NameDuplicationException, IllegalActionException
-	{
-		Frei0r frei0rActor = new Frei0r(_top, "frei0rTest");
-		frei0rActor.frei0rLibraryName.setExpression("wrongLibraryName");		
+		new Frei0r(TEST_WRONG_LIBRARY);
 	}
 	
 	@Test
-	public void testSetFrei0rLibraryNameAttribute() throws NameDuplicationException, IllegalActionException
+	public void testLoadLibrary() throws NameDuplicationException, Frei0rException
 	{
-		Frei0r frei0rActor = new Frei0r(_top, "frei0rTest");
-		//TODO: change this to appropriate path, when the plugin architecture will be fixed
-		frei0rActor.frei0rLibraryName.setExpression("src/drone/plugins/frei0r/contrib/Frei0r/plugins/libnois0r.dylib");		
+		new Frei0r(TEST_LIBRARY_PATH);
+	}
+
+	@Test
+	public void testInit() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r.init();
 	}
 	
+	@Test
+	public void testDeinit() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r.init();
+		frei0r.deinit();
+	}
+	
+	@Test
+	public void testConstruct() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r.construct(100, 100);
+	}
+
+	@Test
+	public void testDestruct() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r.destruct(frei0r.construct(100, 100));
+	}
+	
+	@Test
+	public void testCreateInstance() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r.createInstance(100, 100);
+	}
+
+	@Test
+	public void testUpdateInstance() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		Frei0r.Instance instance = frei0r.createInstance(100, 100);
+		int[] inframe = new int[100*100];
+		int[] outframe = new int[100*100];
+		instance.update(0, inframe, outframe);
+	}
+	
+	@Test
+	public void testPluginInfo() throws Frei0rException {
+		Frei0r frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		Assert.assertEquals("Nois0r", frei0r.getName());
+		Assert.assertEquals("Generates white noise images", frei0r.getExplanation());
+		Assert.assertEquals("Martin Bayer", frei0r.getAuthor());
+	}
 	
 	@After
 	public void tearDown() throws Exception {
