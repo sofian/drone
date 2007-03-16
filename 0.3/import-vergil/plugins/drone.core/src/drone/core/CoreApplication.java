@@ -23,6 +23,7 @@ import org.java.plugin.boot.Application;
 import org.java.plugin.boot.Boot;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
+import org.java.plugin.registry.Extension.Parameter;
 
 import drone.core.extensions.FailToCreateComponentException;
 import drone.core.extensions.ViewExtension;
@@ -35,8 +36,6 @@ import ptolemy.actor.gui.Configuration;
 import ptolemy.actor.gui.Effigy;
 import ptolemy.actor.gui.ModelDirectory;
 import ptolemy.actor.gui.PtolemyEffigy;
-import ptolemy.data.expr.Parameter;
-import ptolemy.data.expr.StringParameter;
 import ptolemy.kernel.ComponentEntity;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.attributes.VersionAttribute;
@@ -211,24 +210,22 @@ public class CoreApplication extends VergilApplication implements Application, E
 		// TODO cleanup this code a bit, lots of things in common with parseViewExtensions
 		ExtensionPoint extensionPoint = _corePlugin.getManager().getRegistry()
 				.getExtensionPoint(_corePlugin.getDescriptor().getId(), "entity-library");
-		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it
-				.hasNext();) {
+		for (Iterator it = extensionPoint.getConnectedExtensions().iterator(); it.hasNext();) {
 			Extension ext = (Extension) it.next();
             try {
                 // Activate plug-in that declares extension.
-            	_corePlugin.getManager().activatePlugin(
-                        ext.getDeclaringPluginDescriptor().getId());
-            	URL fileURL = _corePlugin.getManager().getPluginClassLoader(ext.getDeclaringPluginDescriptor())
-            		.getResource(ext.getParameter("file").valueAsString());
+            	_corePlugin.getManager().activatePlugin(ext.getDeclaringPluginDescriptor().getId());
+            	Parameter file = ext.getParameter("file");
+                Parameter label = ext.getParameter("label");
+                Parameter description = ext.getParameter("description");
+                ClassLoader extClassLoader = _corePlugin.getManager().getPluginClassLoader(ext.getDeclaringPluginDescriptor());
+            	URL fileURL = extClassLoader.getResource(file.valueAsString());
             	// TODO: do we need this?
-                String label = ext.getParameter("label").valueAsString();
-                String description = ext.getParameter("description").valueAsString();
                 
         		Configuration configuration = (Configuration) Configuration.configurations().iterator().next();
         		if (configuration == null) {
         			throw new IllegalActionException("There are no existing configurations.");
         		}
-
         		MoMLParser parser = new MoMLParser(configuration.workspace());
         		parser.reset();
 
