@@ -46,6 +46,10 @@
 		<entity name="Frei0r_brightness" class="drone.frei0r.actors.Frei0rActor">
 			<property name="frei0rLibraryName" value="$CLASSPATH/contrib/Frei0r/plugins/brightness.dylib" class="ptolemy.data.expr.FileParameter" />
 		</entity>
+
+		<entity name="Frei0r_pixeliz0r" class="drone.frei0r.actors.Frei0rActor">
+			<property name="frei0rLibraryName" value="$CLASSPATH/contrib/Frei0r/plugins/pixeliz0r.dylib" class="ptolemy.data.expr.FileParameter" />
+		</entity>
       </group>
     ?>
   </configure>

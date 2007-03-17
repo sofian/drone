@@ -27,6 +27,38 @@ public class Frei0r {
 	/** three inputs and one output */
 	public static final int F0R_PLUGIN_TYPE_MIXER3 = 3;
 
+	/**
+	 * In BGRA8888, each pixel is represented by 4 consecutive
+	 * unsigned bytes, where the first byte value represents
+	 * the blue, the second the green, and the third the red color
+	 * component of the pixel. The last value represents the
+	 * alpha value.
+	 */
+	public static final int F0R_COLOR_MODEL_BGRA8888 = 0;
+
+	/**
+	 * In RGBA8888, each pixel is represented by 4 consecutive
+	 * unsigned bytes, where the first byte value represents
+	 * the red, the second the green, and the third the blue color
+	 * component of the pixel. The last value represents the
+	 * alpha value.
+	 */
+	public static final int F0R_COLOR_MODEL_RGBA8888 = 1;
+
+	/**
+	 * In PACKED32, each pixel is represented by 4 consecutive
+	 * bytes, but it is not defined how the color componets are
+	 * stored. The true color format could be RGBA8888,
+	 * BGRA8888, a packed 32 bit YUV format, or any other
+	 * color format that stores pixels in 32 bit.
+	 *
+	 * This is useful for effects that don't work on color but
+	 * only on pixels (for example a mirror effect).
+	 *
+	 * Note that source effects must not use this color model.
+	 */
+	public static final int F0R_COLOR_MODEL_PACKED32 = 2;
+
 
 	public Frei0r(String frei0rLibName) throws Frei0rException {
 		try {
@@ -196,6 +228,12 @@ public class Frei0r {
 						out.getWidth() + "x" + out.getHeight() + ", should be " +
 						_width + "x" + _height);
 
+			// Make sure images are of TYPE_INT_ARGB.
+			in = ImageConvert.toARGB(in);
+			if (out.getType() != BufferedImage.TYPE_INT_ARGB) {
+				throw new Frei0rException("Output image must be of type ARGB.");
+			}
+			
 			// Extract input data buffer.
 			DataBuffer bufferIn = in.getData().getDataBuffer();
 			if (bufferIn.getDataType() != DataBuffer.TYPE_INT) {
@@ -203,12 +241,10 @@ public class Frei0r {
 			}
 			
 			int[] inframe = ((DataBufferInt)bufferIn).getData();
-
-			// Convert input to RGBA.
-			if (in.getType() == BufferedImage.TYPE_INT_ARGB) {
-				ImageConvert.convertARGBtoRGBA(inframe);
-			} else {
-				throw new Frei0rException("Input image has wrong type (should be TYPE_INT_ARGB).");
+			
+			// Convert input to ABGR if needed.
+			if (getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+				ImageConvert.convertARGBtoABGR(inframe);
 			}
 			
 			// Output frame buffer.
@@ -217,11 +253,9 @@ public class Frei0r {
 			// Update frames.
 			update(time, inframe, outframe);
 			
-			// Convert output to ARGB
-			if (out.getType() == BufferedImage.TYPE_INT_ARGB) {
-				ImageConvert.convertRGBAtoARGB(outframe);
-			} else {
-				throw new Frei0rException("Output image has wrong type (should be TYPE_INT_ARGB).");
+			// Convert output to ABGR if needed.
+			if (getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+				ImageConvert.convertARGBtoABGR(inframe);
 			}
 
 			// Copy data to the output image buffer.

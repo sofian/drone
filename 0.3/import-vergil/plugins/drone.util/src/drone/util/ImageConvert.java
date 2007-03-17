@@ -133,11 +133,10 @@ public class ImageConvert {
 	}
 
 	/**
-	 * Convert pixels from java default ARGB int format to byte array in RGBA format.
-	 * @param pixels the given pixels
-	 * @return
+	 * Convert pixels from java default ARGB int format to byte array in ABGR format.
+	 * @param pixels the pixels to convert
 	 */
-	public static void convertARGBtoRGBA(int[] pixels)
+	public static void convertARGBtoABGR(int[] pixels)
 	{
 		int p, r, g, b, a;
 		for (int i = 0; i < pixels.length; i++) {
@@ -146,17 +145,15 @@ public class ImageConvert {
 			r = (p >> 16) & 0xFF;
 			g = (p >> 8) & 0xFF;
 			b = (p >> 0) & 0xFF;
-//			opixels[i] = r | (g << 8) | (b << 16) | (a << 24);
 			pixels[i] = (a << 24) | (b << 16) | (g << 8) | (r << 0);
 		}
 	}
 
 	/**
-	 * Convert pixels from java default ARGB int format to byte array in RGBA format.
-	 * @param jpixels
-	 * @return
+	 * Convert pixels from java default ABGR int format to byte array in ARGB format.
+	 * @param pixels the pixels to convert
 	 */
-	public static void convertRGBAtoARGB(int[] pixels)
+	public static void convertABGRtoARGB(int[] pixels)
 	{
 		int p, r, g, b, a;
 		for (int i = 0; i < pixels.length; i++) {
@@ -165,7 +162,6 @@ public class ImageConvert {
 			b = (p >> 16) & 0xFF;
 			g = (p >> 8) & 0xFF;
 			r = (p >> 0) & 0xFF;
-//			opixels[i] = a | (r << 8) | (g << 16) | (b << 24);
 			pixels[i] = (a << 24) | (r << 16) | (g << 8) | (b << 0);
 		}
 	}
