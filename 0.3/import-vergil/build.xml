@@ -5,7 +5,7 @@
 	<property name="dronedir" location="plugins"/>
 	<property name="distdir" location="dist"/>
 
-	<target name="main" depends="pt2, drone" description="Main target">
+	<target name="main" depends="pt2, util, drone" description="Main target">
         <echo>
             Building the project.
         </echo>
@@ -19,7 +19,14 @@
 		<jar destfile="${distdir}/pt2.jar" basedir="pt2/build"/>
 	</target>
 	
-    <target name="drone" description="Drone plugins">
+    <target name="util" description="Drone utilities">
+    	<echo>
+    		Building utilities.
+    	</echo>
+    	<ant dir="plugins/drone.util" inheritAll="true"/>
+    </target>
+
+	<target name="drone" description="Drone plugins">
     	<echo>
     		Building plugins.
     	</echo>
