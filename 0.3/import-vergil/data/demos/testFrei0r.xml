@@ -30,10 +30,10 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="[525.0, 205.0]">
         </property>
     </entity>
-    <entity name="Frei0r_invert0r" class="drone.frei0r.actors.Frei0rActor">
-        <property name="frei0rLibraryName" class="ptolemy.data.expr.FileParameter" value="$CLASSPATH/contrib/Frei0r/plugins/invert0r.dylib">
+    <entity name="Frei0r_sobel" class="drone.frei0r.actors.Frei0rActor">
+        <property name="frei0rLibraryName" class="ptolemy.data.expr.FileParameter" value="$CLASSPATH/contrib/Frei0r/plugins/sobel.dylib">
         </property>
-        <property name="_location" class="ptolemy.kernel.util.Location" value="[321.25, 205.0]">
+        <property name="_location" class="ptolemy.kernel.util.Location" value="{310, 270}">
         </property>
     </entity>
     <relation name="relation" class="ptolemy.actor.TypedIORelation">
@@ -46,6 +46,6 @@
     </relation>
     <link port="MovieReader.output" relation="relation"/>
     <link port="ImageDisplay.input" relation="relation2"/>
-    <link port="Frei0r_invert0r.input1" relation="relation"/>
-    <link port="Frei0r_invert0r.output" relation="relation2"/>
+    <link port="Frei0r_sobel.input1" relation="relation"/>
+    <link port="Frei0r_sobel.output" relation="relation2"/>
 </entity>
