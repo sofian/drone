@@ -1,5 +1,6 @@
 package drone.util;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -89,6 +90,84 @@ public class ImageConvert {
 		g.dispose();
 
 		return bimage;
+	}
+
+	public static BufferedImage toOpaque(BufferedImage src) {
+		int w = src.getWidth();
+		int h = src.getHeight();
+		BufferedImage dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		int[] alpha = new int[w*h];
+		for (int i=0; i<alpha.length; ++i)
+			alpha[i] = Transparency.OPAQUE;
+		int buf[] = new int[w];
+		for (int y = 0; y < h; y++) {
+			src.getRGB(0, y, w, 1, buf, 0, w);
+			dest.setRGB(0, y, w, 1, buf, 0, w);
+		}
+		dest.getAlphaRaster().setPixels(0, 0, w, h, alpha);
+//		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//		GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+//		BufferedImage dest = gc.createCompatibleImage(w, h, Transparency.BITMASK);
+//		int buf[] = new int[w];
+//		for (int y = 0; y < h; y++) {
+//		src.getRGB(0, y, w, 1, buf, 0, w);
+//		dest.setRGB(0, y, w, 1, buf, 0, w);
+//		}
+		return dest;
+	}
+
+	/**
+	 * Converts a BufferedImage to a BufferedImage with an alpha channel. If the given image already
+	 * has an alpha channel, just returns it.
+	 * @param src the source image
+	 * @return an image with an alpha channel (opaque by default)
+	 */
+	public static BufferedImage toARGB(BufferedImage src) {
+		if (hasAlpha(src))
+			return src;
+		int w = src.getWidth();
+		int h = src.getHeight();
+		BufferedImage dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		dest.setRGB(0, 0, w, h, src.getRGB(0, 0, w, h, null, 0, w), 0, w);
+		return dest;
+	}
+
+	/**
+	 * Convert pixels from java default ARGB int format to byte array in RGBA format.
+	 * @param pixels the given pixels
+	 * @return
+	 */
+	public static void convertARGBtoRGBA(int[] pixels)
+	{
+		int p, r, g, b, a;
+		for (int i = 0; i < pixels.length; i++) {
+			p = pixels[i];
+			a = (p >> 24) & 0xFF;  // get pixel bytes in ARGB order
+			r = (p >> 16) & 0xFF;
+			g = (p >> 8) & 0xFF;
+			b = (p >> 0) & 0xFF;
+//			opixels[i] = r | (g << 8) | (b << 16) | (a << 24);
+			pixels[i] = (a << 24) | (b << 16) | (g << 8) | (r << 0);
+		}
+	}
+
+	/**
+	 * Convert pixels from java default ARGB int format to byte array in RGBA format.
+	 * @param jpixels
+	 * @return
+	 */
+	public static void convertRGBAtoARGB(int[] pixels)
+	{
+		int p, r, g, b, a;
+		for (int i = 0; i < pixels.length; i++) {
+			p = pixels[i];
+			a = (p >> 24) & 0xFF;  // get pixel bytes in ARGB order
+			b = (p >> 16) & 0xFF;
+			g = (p >> 8) & 0xFF;
+			r = (p >> 0) & 0xFF;
+//			opixels[i] = a | (r << 8) | (g << 16) | (b << 24);
+			pixels[i] = (a << 24) | (r << 16) | (g << 8) | (b << 0);
+		}
 	}
 
 	/**

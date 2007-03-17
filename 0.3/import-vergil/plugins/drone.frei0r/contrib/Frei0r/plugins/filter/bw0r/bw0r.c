@@ -72,7 +72,7 @@ void f0r_update(f0r_instance_t instance, double time,
 	  int tmpbw;
 	  unsigned char* tmpc = (unsigned char*)src;
 	  tmpbw = (tmpc[0] + tmpc[1] + tmpc[2]) / 3;
-	  *dst = (tmpbw << 16) | (tmpbw << 8) | tmpbw;
+	  *dst = (tmpc[3] << 24) | (tmpbw << 16) | (tmpbw << 8) | tmpbw;
 	}
 }
 

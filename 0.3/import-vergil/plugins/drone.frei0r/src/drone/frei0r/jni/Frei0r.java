@@ -8,6 +8,7 @@ import java.awt.image.Raster;
 import java.net.URL;
 
 import drone.frei0r.Frei0rException;
+import drone.util.ImageConvert;
 
 /**
  * Provide a bridge for Frei0r, minimalistic plugin API for video effects.
@@ -200,12 +201,28 @@ public class Frei0r {
 			if (bufferIn.getDataType() != DataBuffer.TYPE_INT) {
 				throw new Frei0rException("Data buffer of input image has wrong type.");
 			}
+			
+			int[] inframe = ((DataBufferInt)bufferIn).getData();
 
+			// Convert input to RGBA.
+			if (in.getType() == BufferedImage.TYPE_INT_ARGB) {
+				ImageConvert.convertARGBtoRGBA(inframe);
+			} else {
+				throw new Frei0rException("Input image has wrong type (should be TYPE_INT_ARGB).");
+			}
+			
 			// Output frame buffer.
 			int[] outframe = new int[bufferIn.getSize()];
 
 			// Update frames.
-			update(time, ((DataBufferInt)bufferIn).getData(), outframe);
+			update(time, inframe, outframe);
+			
+			// Convert output to ARGB
+			if (out.getType() == BufferedImage.TYPE_INT_ARGB) {
+				ImageConvert.convertRGBAtoARGB(outframe);
+			} else {
+				throw new Frei0rException("Output image has wrong type (should be TYPE_INT_ARGB).");
+			}
 
 			// Copy data to the output image buffer.
 			// XXX it would be nice to find a way NOT to copy the data

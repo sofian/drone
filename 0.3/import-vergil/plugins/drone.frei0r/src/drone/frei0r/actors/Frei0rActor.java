@@ -20,6 +20,7 @@ import ptolemy.kernel.util.Settable;
 import ptolemy.kernel.util.StringAttribute;
 import ptolemy.kernel.util.Settable.Visibility;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -168,7 +169,19 @@ public class Frei0rActor extends TypedAtomicActor {
 				hasInput = true;
 				Image imageIn = ((ImageToken)input1.get(0)).asAWTImage();
 				bufferedImageIn = ImageConvert.toBufferedImage(imageIn);
+				if (bufferedImageIn.getType() != BufferedImage.TYPE_INT_ARGB) {
+					bufferedImageIn = ImageConvert.toARGB(bufferedImageIn);
+					
+//					BufferedImage tmp = bufferedImageIn;
+//					bufferedImageIn = new BufferedImage(bufferedImageIn.getWidth(), bufferedImageIn.getHeight(), 
+//													    BufferedImage.TYPE_INT_ARGB);
+//					bufferedImageIn.setRGB(0, 0, bufferedImageIn.getWidth(), bufferedImageIn.getHeight(),
+//											 tmp.getRGB(0, 0, bufferedImageIn.getWidth(), bufferedImageIn.getHeight(), 
+//													    null, 0, bufferedImageIn.getWidth()),
+//													    0, bufferedImageIn.getWidth());
+				}
 			}
+			
 
 			// TODO implement support for params
 			// If this is a source and there is no image input, put a dummy instead
@@ -219,7 +232,7 @@ public class Frei0rActor extends TypedAtomicActor {
 				}
 				
 				// XXX hack for test
-				// This works: bufferedImageOut = bufferedImageIn;
+				//bufferedImageOut = bufferedImageIn;
 				output.send(0, new AWTImageToken(bufferedImageOut));
 				
 			}
