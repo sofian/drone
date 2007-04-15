@@ -57,8 +57,6 @@ public:
           g[i] = CLAMP0255(
                            abs(p1[i] + p2[i]*2 + p3[i] - p7[i] - p8[i]*2 - p9[i]) +
                            abs(p3[i] + p6[i]*2 + p9[i] - p1[i] - p4[i]*2 - p7[i]) );
-
-        g[3] = ((unsigned char*)&in[y*width+x])[3]; // copy alpha
       }
     }
   }

@@ -101,11 +101,11 @@ void f0r_get_param_value(f0r_instance_t instance,
     {
     case 0:
       // scale back to [0..1]
-      *((double*)param) = (inst->block_size_x-1)/(inst->width/2);
+      *((double*)param) = (double)(inst->block_size_x-1)/(inst->width/2);
       break;
     case 1:
       // scale back to [0..1]
-      *((double*)param) = (inst->block_size_y-1)/(inst->height/2);
+      *((double*)param) = (double)(inst->block_size_y-1)/(inst->height/2);
       break;
     }  
 }
@@ -177,8 +177,8 @@ static uint32_t average(const uint32_t* start,
 			int bxsize, int bysize, int xsize)
 {
   const uint32_t* p = start;
-  uint32_t red = 0, green = 0, blue = 0;
-  uint32_t avg_red, avg_green, avg_blue;
+  uint32_t alpha = 0, red = 0, green = 0, blue = 0;
+  uint32_t avg_alpha, avg_red, avg_green, avg_blue;
   int x, y;
   const uint32_t* pp;
   uint32_t c;
@@ -189,6 +189,7 @@ static uint32_t average(const uint32_t* start,
       for (x = 0; x < bxsize; ++x)
 	{
 	  c = *(pp++);
+          alpha += (c & 0xff000000) >> 24;
 	  red   += (c & 0x00ff0000) >> 16;
 	  green += (c & 0x0000ff00) >> 8;
 	  blue  += (c & 0x000000ff);
@@ -196,11 +197,12 @@ static uint32_t average(const uint32_t* start,
       p += xsize;
     }
   
+  avg_alpha = (alpha / (bxsize*bysize)) & 0xff;
   avg_red   = (red   / (bxsize*bysize)) & 0xff;
   avg_green = (green / (bxsize*bysize)) & 0xff;
   avg_blue  = (blue  / (bxsize*bysize)) & 0xff;
   
-  return (avg_red << 16) + (avg_green << 8) + avg_blue;
+  return (avg_alpha << 24) + (avg_red << 16) + (avg_green << 8) + avg_blue;
 }
 
 static void fill_block(uint32_t* start, int bxsize, int bysize,

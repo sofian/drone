@@ -33,6 +33,7 @@ public class JMFMovieDemo {
 			//director.iterations.setExpression("100");
 			Manager manager = new Manager("manager");
 			top.setManager(manager);
+			top.setDirector(director);
 			
 			// Create two actors.
 			MovieReader reader = new MovieReader(top, "reader");

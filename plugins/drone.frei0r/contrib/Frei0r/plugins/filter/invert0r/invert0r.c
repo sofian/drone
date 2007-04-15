@@ -69,6 +69,6 @@ void f0r_update(f0r_instance_t instance, double time,
   const uint32_t* src = inframe;
   for(y=0;y<h;++y)
       for(x=0;x<w;++x,++src)
-	  *dst++ = 0xffffffff^(*src); 
+	  *dst++ = 0x00ffffff^(*src); 
 }
 

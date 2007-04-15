@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<project name="plugins" default="main">
+	<property name="distdir" location="../dist"/>
+	
+	<target name="main">
+		<ant dir="drone.core"/>
+		<ant dir="drone.frei0r"/>
+		<ant dir="drone.jmf"/>
+	</target>
+</project>

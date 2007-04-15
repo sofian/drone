@@ -28,12 +28,8 @@ COPYRIGHTENDKEY
 package drone.jmf.actors;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -45,7 +41,6 @@ import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
-import ptolemy.kernel.util.KernelException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.Workspace;
 import ptolemy.media.Picture;
@@ -142,6 +137,8 @@ public class ImageDisplay extends Sink {
     public boolean postfire() throws IllegalActionException {
         if (input.hasToken(0)) {
             final Token in = input.get(0);
+            if (in == null)
+            	throw new IllegalActionException("Got null token");
 
             // Display probably to be done in the Swing event thread.
             Runnable doDisplay = new Runnable() {
@@ -176,49 +173,53 @@ public class ImageDisplay extends Sink {
 
         if (_picture != null) {
             Image image = ((ImageToken) in).asAWTImage();
-            int xSize = image.getWidth(null);
-            int ySize = image.getHeight(null);
-
-            // If the size has changed, have to recreate the Picture object.
-            if ((_oldXSize != xSize) || (_oldYSize != ySize)) {
-                if (_debugging) {
-                    _debug("Image size has changed.");
-                }
-
-                _oldXSize = xSize;
-                _oldYSize = ySize;
-                
-                Container container = _picture.getParent();
-        
-                if (_picture != null) {
-                    container.remove(_picture);
-                }
-
-                _picture = new Picture(xSize, ySize);
-                _picture.setImage(image);
-                _picture.setBackground(null);
-                _frame.pack();
-                container.add(_picture, BorderLayout.CENTER);
-                container.validate();
-                container.invalidate();
-                container.repaint();
-                container.doLayout();
-
-                Container c = container.getParent();
-
-                while (c.getParent() != null) {
-                    c.invalidate();
-                    c.validate();
-                    c = c.getParent();
-
-                    if (c instanceof JFrame) {
-                        ((JFrame) c).pack();
-                    }
-                }
-            } else {
-                _picture.setImage(((ImageToken) in).asAWTImage());
-                _picture.displayImage();
-                _picture.repaint();
+            
+            if (image != null) {
+            
+	            int xSize = image.getWidth(null);
+	            int ySize = image.getHeight(null);
+	
+	            // If the size has changed, have to recreate the Picture object.
+	            if ((_oldXSize != xSize) || (_oldYSize != ySize)) {
+	                if (_debugging) {
+	                    _debug("Image size has changed.");
+	                }
+	
+	                _oldXSize = xSize;
+	                _oldYSize = ySize;
+	                
+	                Container container = _picture.getParent();
+	        
+	                if (_picture != null) {
+	                    container.remove(_picture);
+	                }
+	
+	                _picture = new Picture(xSize, ySize);
+	                _picture.setImage(image);
+	                _picture.setBackground(null);
+	                _frame.pack();
+	                container.add(_picture, BorderLayout.CENTER);
+	                container.validate();
+	                container.invalidate();
+	                container.repaint();
+	                container.doLayout();
+	
+	                Container c = container.getParent();
+	
+	                while (c.getParent() != null) {
+	                    c.invalidate();
+	                    c.validate();
+	                    c = c.getParent();
+	
+	                    if (c instanceof JFrame) {
+	                        ((JFrame) c).pack();
+	                    }
+	                }
+	            } else {
+	                _picture.setImage(image);
+	                _picture.displayImage();
+	                _picture.repaint();
+	            }
             }
         }
     }
