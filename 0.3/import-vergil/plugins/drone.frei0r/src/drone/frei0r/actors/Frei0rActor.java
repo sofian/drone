@@ -25,22 +25,21 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.Vector;
 
 import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
 import drone.util.ImageConvert;
 
 
-// ////////////////////////////////////////////////////////////////////////
-// // StringCompare
+////////////////////////////////////////////////////////////////////////
+// Frei0rActor
 
 /**
- * Provide a bridge for Frei0r, minimalistic plugin API for video effects.
+ * Provides a bridge for Frei0r, minimalistic plugin API for video effects.
  * http://www.piksel.org/frei0r/1.0/spec/index.html
  * 
- * 
- * 
- * @author Mathieu Guindon
+ * @author Mathieu Guindon, Jean-Sebastien Senecal
  */
 public class Frei0rActor extends TypedAtomicActor {
 
@@ -101,7 +100,8 @@ public class Frei0rActor extends TypedAtomicActor {
 		if (attribute == frei0rLibraryName) {
 			try {
 				if (_frei0r == null) {
-					
+
+					// Create bridge.
 					_frei0r = new Frei0r(frei0rLibraryName.asURL().getFile());
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
 															 ((IntToken)defaultHeight.getToken()).intValue());
@@ -115,9 +115,25 @@ public class Frei0rActor extends TypedAtomicActor {
 						_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input2.setContainer(null);
 					}
-	
+					
 					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input3.setContainer(null);
+					}
+					
+					params.clear();
+					for (int i=0; i<_frei0r.nParams(); ++i) {
+						// TODO: check unicity of param name
+						TypedIOPort param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+						switch (_frei0r.getParamType(i)) {
+						case Frei0r.F0R_PARAM_BOOL:
+							param.setTypeEquals(BaseType.BOOLEAN);
+							break;
+						case Frei0r.F0R_PARAM_DOUBLE:
+							param.setTypeEquals(BaseType.DOUBLE);
+							break;
+						case Frei0r.F0R_PARAM_POSITION:
+							param.setTypeEquals(type)
+						}
 					}
 					
 				}
@@ -129,13 +145,6 @@ public class Frei0rActor extends TypedAtomicActor {
 			super.attributeChanged(attribute);
 		}
 	}
-
-	/**
-	 * Used by native code exclusively. Handle on the frei0r struct in the
-	 * native code.
-	 */
-	@SuppressWarnings("unused")
-	private int _handle;
 
 	// /////////////////////////////////////////////////////////////////
 	// // ports and parameters ////
@@ -171,18 +180,9 @@ public class Frei0rActor extends TypedAtomicActor {
 				bufferedImageIn = ImageConvert.toBufferedImage(imageIn);
 				if (bufferedImageIn.getType() != BufferedImage.TYPE_INT_ARGB) {
 					bufferedImageIn = ImageConvert.toARGB(bufferedImageIn);
-					
-//					BufferedImage tmp = bufferedImageIn;
-//					bufferedImageIn = new BufferedImage(bufferedImageIn.getWidth(), bufferedImageIn.getHeight(), 
-//													    BufferedImage.TYPE_INT_ARGB);
-//					bufferedImageIn.setRGB(0, 0, bufferedImageIn.getWidth(), bufferedImageIn.getHeight(),
-//											 tmp.getRGB(0, 0, bufferedImageIn.getWidth(), bufferedImageIn.getHeight(), 
-//													    null, 0, bufferedImageIn.getWidth()),
-//													    0, bufferedImageIn.getWidth());
 				}
 			}
 			
-
 			// TODO implement support for params
 			// If this is a source and there is no image input, put a dummy instead
 			if (!hasInput && _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
@@ -251,6 +251,7 @@ public class Frei0rActor extends TypedAtomicActor {
 	public TypedIOPort input2;
 	public TypedIOPort input3;
 	
+	public Vector<TypedIOPort> params;
 	public Parameter defaultWidth;
 	public Parameter defaultHeight;
 

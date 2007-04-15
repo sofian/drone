@@ -45,6 +45,42 @@ public class Frei0r {
 	 */
 	public static final int F0R_COLOR_MODEL_RGBA8888 = 1;
 
+	/** \addtogroup PARAM_TYPE Parameter Types
+	 *
+	 *  @{
+	 */
+
+
+	/**
+	 * Parameter type for boolean values
+	 * \see f0r_param_bool
+	 */
+	public static final int F0R_PARAM_BOOL = 0;
+
+	/**
+	 * Parameter type for doubles
+	 * \see f0r_param_double
+	 */
+	public static final int F0R_PARAM_DOUBLE = 1;
+
+	/**
+	 * Parameter type for color
+	 * \see f0r_param_color
+	 */
+	public static final int F0R_PARAM_COLOR = 2;
+	
+	/**
+	 * Parameter type for position
+	 * \see f0r_param_position
+	 */
+	public static final int F0R_PARAM_POSITION = 3;
+
+	/**
+	 * Parameter type for string
+	 * \see f0r_param_string
+	 */
+	public static final int F0R_PARAM_STRING = 4;
+
 	/**
 	 * In PACKED32, each pixel is represented by 4 consecutive
 	 * bytes, but it is not defined how the color componets are
@@ -162,7 +198,6 @@ public class Frei0r {
 		System.loadLibrary("Frei0rJNI");
 	}
 
-
 	/**
 	 * Creates a handle to a frei0r dynamic library.
 	 * @param libName the full path to the dynamic library
@@ -186,13 +221,17 @@ public class Frei0r {
 	public native void update2(long instance, double time,
 			int[] inframe1, int[] inframe2, int[] inframe3,
 			int[] outframe) throws Frei0rException;
-
-	public native long getParamInfo(int paramIndex) throws Frei0rException;
-
-	public native void setParamValue(long instance, long param, int paramIndex) throws Frei0rException;
-
-	public native void getParamValue(long instance, long param, int paramIndex) throws Frei0rException;
-
+	
+	public native String getParamName(int paramIndex) throws Frei0rException;
+	
+	public native int getParamType(int paramIndex) throws Frei0rException;
+	
+	public native String getParamExplanation(int paramIndex) throws Frei0rException;
+	
+	public native void setParamValue(long instance, Object param, int paramIndex) throws Frei0rException;
+	
+	public native Object getParamValue(long instance, int paramIndex) throws Frei0rException;
+	
 	// XXX: there should be different instance types for different plugins (eg. source, mixer2, mixer3)
 	public class Instance {
 
@@ -323,6 +362,17 @@ public class Frei0r {
 		private int _width, _height;
 	}
 
+	public class Position {
+		public int x;
+		public int y;
+	}
+	
+	public class Color {
+		public int r;
+		public int g;
+		public int b;
+	}
+	
 	// /////////////////////////////////////////////////////////////////
 	// // private variables ////
 
@@ -332,17 +382,4 @@ public class Frei0r {
 	@SuppressWarnings("unused")
 	private long _handle;
 
-//	// Plugin info.
-//	private String _name;    /**< The (short) name of the plugin                   */
-//	private String _author;  /**< The plugin author                                */
-//	/** The plugin type
-//	 * \see PLUGIN_TYPE
-//	 */
-//	private int _pluginType;    
-//	private int _colorModel;     /**< The color model used                             */
-//	private int _frei0rVersion;  /**< The frei0r major version this plugin is built for*/
-//	private int _majorVersion;   /**< The major version of the plugin                  */
-//	private int _minorVersion;   /**< The minor version of the plugin                  */
-//	private int _numParams;      /**< The number of parameters of the plugin           */
-//	private String _explanation; /**< An optional explanation string               */
 }
