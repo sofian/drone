@@ -5,14 +5,14 @@
 #include <algorithm>
 #include "common.h"
 #include "ARToolKitPlus/TrackerMultiMarker.h"
-#include "ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker.h"
+#include "drone_artkp_kernel_TrackerMultiMarker.h"
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    init
  * Signature: (Ljava/lang/String;Ljava/lang/String;FF)Z
  */
-JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_init
+JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_init
   (JNIEnv *env, jobject obj, jstring nCamParamFile, jstring nMultiFile, jfloat nNearClip, jfloat nFarClip)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
@@ -30,11 +30,11 @@ JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarke
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    calc
  * Signature: ([B)I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_calc
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_calc
   (JNIEnv *env, jobject obj, jbyteArray nImage)
 {
   //  printf("In calc()\n");
@@ -62,11 +62,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_ca
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    getNumDetectedMarkers
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_getNumDetectedMarkers
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getNumDetectedMarkers
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
@@ -74,11 +74,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_ge
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    setUseDetectLite
  * Signature: (Z)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_setUseDetectLite
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_setUseDetectLite
   (JNIEnv *env, jobject obj, jboolean nEnable)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
@@ -86,11 +86,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_se
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    getDetectedMarkers
  * Signature: ([I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_getDetectedMarkers
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMarkers
   (JNIEnv *env, jobject obj, jintArray nMarkerIDs)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
@@ -113,11 +113,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_ge
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    getDetectedMarker
  * Signature: (I)J
  */
-JNIEXPORT jlong JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_getDetectedMarker
+JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMarker
   (JNIEnv *env, jobject obj, jint nWhich)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
@@ -126,11 +126,11 @@ JNIEXPORT jlong JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_g
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker
+ * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    calcOpenGLMatrixFromDetectedMarker
  * Signature: (IFFF[F)V
  */
-JNIEXPORT jfloat JNICALL Java_ptolemy_actor_lib_artkp_kernel_TrackerMultiMarker_calcOpenGLMatrixFromDetectedMarker
+JNIEXPORT jfloat JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_calcOpenGLMatrixFromDetectedMarker
   (JNIEnv *env, jobject obj, jint nWhich, jfloat nPatternCenterX, jfloat nPatternCenterY, jfloat nPatternSize, jfloatArray nOpenGLMatrix)
 {
   ARFloat c_nPatternCenter[2] = { (ARFloat) nPatternCenterX, (ARFloat) nPatternCenterY };

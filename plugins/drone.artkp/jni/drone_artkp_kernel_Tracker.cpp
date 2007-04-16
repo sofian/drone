@@ -3,17 +3,17 @@
 #include <string.h>
 #include <dlfcn.h>
 #include "ARToolKitPlus/Tracker.h"
-#include "ptolemy_actor_lib_artkp_kernel_Tracker.h"
+#include "drone_artkp_kernel_Tracker.h"
 #include "common.h"
 
 MyLogger logger;
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    _initTracker
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker__1initTracker
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker__1initTracker
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -21,11 +21,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker__1initTracker
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    _destroyTrackerHandle
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker__1destroyTrackerHandle
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker__1destroyTrackerHandle
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -34,11 +34,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker__1destroyTrac
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    cleanup
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_cleanup
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_cleanup
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -46,11 +46,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_cleanup
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setPixelFormat
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setPixelFormat
+JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_setPixelFormat
   (JNIEnv *env, jobject obj, jint nFormat)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -58,11 +58,11 @@ JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setPixelF
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    loadCameraFile
  * Signature: (Ljava/lang/String;FF)Z
  */
-JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_loadCameraFile
+JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_loadCameraFile
   (JNIEnv *env, jobject obj, jstring nCamParamFile, jfloat nNearClip, jfloat nFarClip)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -72,11 +72,11 @@ JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_loadCamer
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setLoadUndistLUT
  * Signature: (Z)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setLoadUndistLUT
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setLoadUndistLUT
   (JNIEnv *env, jobject obj, jboolean nSet)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -84,11 +84,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setLoadUndist
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    activateBinaryMarker
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_activateBinaryMarker
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_activateBinaryMarker
   (JNIEnv *env, jobject obj, jint nThreshold)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -96,11 +96,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_activateBinar
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setMarkerMode
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setMarkerMode
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setMarkerMode
   (JNIEnv *env, jobject obj, jint nMarkerMode)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -108,11 +108,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setMarkerMode
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    changeCameraSize
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_changeCameraSize
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_changeCameraSize
   (JNIEnv *env, jobject obj, jint nWidth, jint nHeight)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -120,11 +120,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_changeCameraS
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setUndistortionMode
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setUndistortionMode
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setUndistortionMode
   (JNIEnv *env, jobject obj, jint nMode)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -132,11 +132,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setUndistorti
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setPoseEstimator
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setPoseEstimator
+JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_setPoseEstimator
 (JNIEnv *env, jobject obj, jint nMethod)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -144,11 +144,11 @@ JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setPoseEs
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setBorderWidth
  * Signature: (F)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setBorderWidth
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setBorderWidth
   (JNIEnv *env, jobject obj, jfloat nFraction)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -156,11 +156,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setBorderWidt
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setThreshold
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setThreshold
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setThreshold
   (JNIEnv *env, jobject obj, jint nValue)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -168,11 +168,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setThreshold
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getThreshold
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getThreshold
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_Tracker_getThreshold
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -180,11 +180,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getThreshold
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    activateAutoThreshold
  * Signature: (Z)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_activateAutoThreshold
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_activateAutoThreshold
   (JNIEnv *env, jobject obj, jboolean nEnable)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -192,11 +192,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_activateAutoT
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    isAutoThresholdActivated
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_isAutoThresholdActivated
+JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_isAutoThresholdActivated
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -204,11 +204,11 @@ JNIEXPORT jboolean JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_isAutoThr
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setNumAutoThresholdRetries
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setNumAutoThresholdRetries
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setNumAutoThresholdRetries
   (JNIEnv *env, jobject obj, jint nNumRetries)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -216,11 +216,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setNumAutoThr
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    setImageProcessingMode
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setImageProcessingMode
+JNIEXPORT void JNICALL Java_drone_artkp_kernel_Tracker_setImageProcessingMode
   (JNIEnv *env, jobject obj, jint nMode)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -228,11 +228,11 @@ JNIEXPORT void JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_setImageProce
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getModelViewMatrix
  * Signature: ()[F
  */
-JNIEXPORT jfloatArray JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getModelViewMatrix
+JNIEXPORT jfloatArray JNICALL Java_drone_artkp_kernel_Tracker_getModelViewMatrix
   (JNIEnv *env, jobject obj)
 {
   jfloatArray modelViewMatrix;
@@ -244,11 +244,11 @@ JNIEXPORT jfloatArray JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getMod
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getProjectionMatrix
  * Signature: ()[F
  */
-JNIEXPORT jfloatArray JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getProjectionMatrix
+JNIEXPORT jfloatArray JNICALL Java_drone_artkp_kernel_Tracker_getProjectionMatrix
   (JNIEnv *env, jobject obj)
 {
   jfloatArray projectionMatrix;
@@ -260,11 +260,11 @@ JNIEXPORT jfloatArray JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getPro
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getDescription
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getDescription
+JNIEXPORT jstring JNICALL Java_drone_artkp_kernel_Tracker_getDescription
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -272,11 +272,11 @@ JNIEXPORT jstring JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getDescrip
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getPixelFormat
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getPixelFormat
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_Tracker_getPixelFormat
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -284,11 +284,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getPixelForma
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getBitsPerPixel
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getBitsPerPixel
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_Tracker_getBitsPerPixel
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -296,11 +296,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getBitsPerPix
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    getNumLoadablePatterns
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getNumLoadablePatterns
+JNIEXPORT jint JNICALL Java_drone_artkp_kernel_Tracker_getNumLoadablePatterns
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::Tracker *tracker = getTracker(env, obj);
@@ -308,11 +308,11 @@ JNIEXPORT jint JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_getNumLoadabl
 }
 
 /*
- * Class:     ptolemy_actor_lib_artkp_kernel_Tracker
+ * Class:     drone_artkp_kernel_Tracker
  * Method:    calcOpenGLMatrixFromMarker
  * Signature: (JFFF[F)F
  */
-JNIEXPORT jfloat JNICALL Java_ptolemy_actor_lib_artkp_kernel_Tracker_calcOpenGLMatrixFromMarker
+JNIEXPORT jfloat JNICALL Java_drone_artkp_kernel_Tracker_calcOpenGLMatrixFromMarker
   (JNIEnv *env, jobject obj, jlong nMarkerInfo, jfloat nPatternCenterX, jfloat nPatternCenterY, jfloat nPatternSize, jfloatArray nOpenGLMatrix)
 {
   ARFloat c_nPatternCenter[2] = { (ARFloat) nPatternCenterX, (ARFloat) nPatternCenterY };

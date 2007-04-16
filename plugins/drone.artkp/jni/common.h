@@ -1,8 +1,8 @@
 #include <jni.h>
 #include "ARToolKitPlus/Tracker.h"
 
-#ifndef _Included_ptolemy_actor_lib_artkp_kernel_common
-#define _Included_ptolemy_actor_lib_artkp_kernel_common
+#ifndef _Included_drone_artkp_kernel_common
+#define _Included_drone_artkp_kernel_common
 #ifdef __cplusplus
 extern "C" {
 #endif
