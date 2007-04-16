@@ -25,13 +25,14 @@
  PT_COPYRIGHT_VERSION 2
  COPYRIGHTENDKEY
  */
-package drone.jmf.actors;
+package drone.actors.jmf;
 
 import java.io.IOException;
 
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
+import javax.media.EndOfMediaEvent;
 import javax.media.GainControl;
 import javax.media.Manager;
 import javax.media.MediaException;
@@ -42,6 +43,7 @@ import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
 import ptolemy.actor.parameters.IntRangeParameter;
 import ptolemy.data.BooleanToken;
+import ptolemy.data.DoubleToken;
 import ptolemy.data.IntToken;
 import ptolemy.data.expr.FileParameter;
 import ptolemy.data.expr.Parameter;
@@ -94,6 +96,14 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
         // Set the default value to full scale.
         percentGain.setToken(new IntToken(100));
+        
+        period = new Parameter(this, "period");
+        period.setTypeEquals(BaseType.DOUBLE);
+        period.setExpression("1.0");
+        
+        phase = new Parameter(this, "phase");
+        phase.setTypeEquals(BaseType.DOUBLE);
+        phase.setExpression("0.0");
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -118,9 +128,18 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
      */
     public Parameter synchronizedPlay;
 
+    public Parameter period;
+    
+    public Parameter phase;
+
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
 
+    public void initialize() throws IllegalActionException {
+    	_lastTime = -1.0;
+    	super.initialize();
+    }
+    
     /** If the attribute is <i>fileNameOrURL</i>, then create a new
      *  player.
      *  @param attribute The attribute that changed.
@@ -141,7 +160,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
                     _player.addControllerListener(this);
 
                     // Initiate as much preprocessing as possible.
-                    // _player.realize();
                     _player.prefetch();
                     _gainControl = _player.getGainControl();
 
@@ -159,6 +177,13 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
             }
         } else if ((attribute == percentGain) && (_gainControl != null)) {
             _gainControl.setLevel(0.01f * percentGain.getCurrentValue());
+        } else if (attribute == synchronizedPlay) {
+        	_synchronizedPlay = 
+        		((BooleanToken) synchronizedPlay.getToken()).booleanValue();
+            // Call this whether we have synchronized play or not, since
+            // we may now have synchronized play but not have had it before.
+        	if (_player != null)
+                _player.stop();
         } else {
             super.attributeChanged(attribute);
         }
@@ -168,6 +193,13 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
      *  event The event.
      */
     public synchronized void controllerUpdate(ControllerEvent event) {
+        System.out.println (event.getClass().getName());
+        if (event instanceof EndOfMediaEvent) {
+            // Specify that play should start at the beginning of the audio.
+            _playSound = false;
+            _player.setMediaTime(_startTime);
+            _player.stop();
+        }
         notifyAll();
     }
 
@@ -179,11 +211,24 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
         // Consume the inputs.
         // Default if there is no input is to play the sound.
-        boolean playSound = true;
+        _playSound = true; // big motherfucking hack
 
-        if ((onOff.getWidth() > 0) && onOff.hasToken(0)) {
-            playSound = ((BooleanToken) onOff.get(0)).booleanValue();
-        }
+//        if ((onOff.getWidth() > 0) && onOff.hasToken(0)) {
+//        	System.out.println("New input token.");
+//            _playSound = ((BooleanToken) onOff.get(0)).booleanValue();
+//            System.out.println("playsound = " + _playSound);
+//        }
+        
+        boolean canPlay = false;
+        double currentTime = getDirector().getModelTime().getDoubleValue();
+//        System.out.println("Director: " + getDirector().getName() + ", currentime = " + currentTime);
+        
+        if ((_lastTime < 0.0 && currentTime >= ((DoubleToken)phase.getToken()).doubleValue()) ||
+        	(_lastTime >= 0.0 && currentTime - _lastTime > ((DoubleToken)period.getToken()).doubleValue())) {
+        		canPlay = true;
+        		_lastTime = currentTime;
+//        		System.out.println("can play");
+        	}
 
         // If there is no player, then no sound file has been specified.
         // Just return.
@@ -191,27 +236,23 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
             return;
         }
 
-        // Call this whether we have synchronized play or not, since
-        // we may now have synchronized play but not have had it before.
-        _player.stop();
-
-        if (playSound) {
-            // Specify that play should start at the beginning of the audio.
+        
+        if (_playSound && canPlay && _player.getState() != Controller.Started) {
+//        	System.out.println("playing....");
+        	_player.stop();
+        	_playSound = false;
             _player.setMediaTime(_startTime);
-
             _player.start();
 
             // If synchronizedPlay is true, then wait for the play to complete.
-            boolean synch = ((BooleanToken) synchronizedPlay.getToken())
-                    .booleanValue();
-
-            if (synch) {
+            if (_synchronizedPlay) {
                 synchronized (this) {
                     while ((_player.getState() == Controller.Started)
                             && !_stopRequested) {
                         try {
                             wait();
                         } catch (InterruptedException ex) {
+                        	System.out.println("interrupted");
                             break;
                         }
                     }
@@ -224,30 +265,44 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
      */
     public void stopFire() {
         super.stopFire();
-
-        if (_player != null) {
-            // FIXME: Doesn't seem to stop the sound.
-            _player.stop();
-        }
+//        System.out.println("stopfire");
+//
+//        if (_player != null) {
+//            // FIXME: Doesn't seem to stop the sound.
+//            _player.stop();
+//        }
     }
 
+    public void finalize() {
+    	if (_player != null)
+    		_player.stop();
+    }
+    
     /** Close the media processor.
      */
     public void wrapup() {
-        if (_player != null) {
-            _player.stop();
-        }
+//    	System.out.println("wrapup");
+//        if (_player != null) {
+//            _player.stop();
+//        }
     }
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
 
+    
     /** The gain control associated with the player. */
     private GainControl _gainControl;
 
     /** The player. */
     private Player _player;
 
+    private boolean _synchronizedPlay = false;
+    
     /** Start time for an audio clip. */
-    private Time _startTime = new Time(0.0);
+    private static Time _startTime = new Time(0.0);
+    
+    private double _lastTime;
+    
+    boolean _playSound = false;
 }
