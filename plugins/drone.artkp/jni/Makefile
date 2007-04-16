@@ -1,7 +1,4 @@
-build_path=./
-
-TARGETS = drone_artkp_kernel_Tracker 
-
+build_path=./lib/
 
 all: 
 	${MAKE} $(build_path)libTracker.so
