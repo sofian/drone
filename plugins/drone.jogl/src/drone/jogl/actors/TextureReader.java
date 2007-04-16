@@ -27,6 +27,8 @@ import javax.swing.ImageIcon;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
+import drone.jogl.data.TextureToken;
+
 import ptolemy.actor.lib.Source;
 import ptolemy.data.AWTImageToken;
 import ptolemy.data.expr.FileParameter;

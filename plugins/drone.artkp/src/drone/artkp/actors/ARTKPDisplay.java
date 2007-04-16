@@ -23,6 +23,8 @@ import java.awt.Image;
 import java.nio.FloatBuffer;
 import java.util.Map;
 
+import drone.artkp.util.ARTKPUtils;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
@@ -42,9 +44,9 @@ import com.sun.opengl.util.texture.TextureIO;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
-import ptolemy.actor.lib.artkp.jogl.ImageDisplay;
-import ptolemy.actor.lib.artkp.jogl.JOGLUtils;
-import ptolemy.actor.lib.artkp.jogl.TextureToken;
+import drone.jogl.actors.ImageDisplay;
+import drone.jogl.util.JOGLUtils;
+import drone.jogl.data.TextureToken;
 import ptolemy.data.ArrayToken;
 import ptolemy.data.ImageToken;
 import ptolemy.data.IntToken;
@@ -82,6 +84,8 @@ import ptolemy.media.Picture;
 @SuppressWarnings("serial")
 public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 
+	public static final int DUMMY_ID = -1;
+	
 	/** Construct an actor with the given container and name.
 	 *  @param container The container.
 	 *  @param name The name of this actor.
@@ -299,7 +303,7 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 	}
 
 	private void _drawMarker(GL gl, int markerID, TextureData replacement, float[] markerMatrix) {
-		if (markerID == Dictionary.DUMMY_ID)
+		if (markerID == DUMMY_ID)
 			return; // do nothing
 		
 	    float[]   mat_ambient     = {0.0f, 0.0f, 1.0f, 1.0f};

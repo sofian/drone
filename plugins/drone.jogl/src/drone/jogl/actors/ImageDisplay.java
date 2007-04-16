@@ -35,8 +35,10 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
+import drone.jogl.data.TextureToken;
+import drone.jogl.util.JOGLUtils;
+
 import ptolemy.actor.lib.Sink;
-import ptolemy.actor.lib.artkp.jogl.TextureToken;
 import ptolemy.data.BooleanToken;
 import ptolemy.data.ImageToken;
 import ptolemy.data.Token;

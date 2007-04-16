@@ -39,10 +39,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 
 import ptolemy.actor.lib.Transformer;
-import ptolemy.actor.lib.artkp.kernel.ARToolKitPlus;
-import ptolemy.actor.lib.artkp.kernel.Tracker;
-import ptolemy.actor.lib.artkp.kernel.TrackerMultiMarker;
-import ptolemy.actor.lib.artkp.kernel.TrackerMultiMarkerImpl;
+import drone.artkp.kernel.*;
 import ptolemy.actor.parameters.DoubleRangeParameter;
 import ptolemy.data.ArrayToken;
 import ptolemy.data.BooleanToken;

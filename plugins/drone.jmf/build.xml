@@ -5,7 +5,7 @@
 	<property name="libdir" location="../../lib"/>
 
 	<target name="main">
-		<echo>Building JMF.</echo>
+		<echo>Building JMF plugin.</echo>
         <javac srcdir="src" destdir="build">
 			<classpath>
 		    	<fileset dir="${libdir}">

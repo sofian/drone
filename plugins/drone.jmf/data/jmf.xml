@@ -52,6 +52,9 @@
 	<entity name="VideoPlayer" class="drone.jmf.actors.VideoPlayer">
 	</entity>
 
+	<entity name="StringToImage" class="drone.jmf.actors.StringToImage">
+	</entity>	
+
 	<entity name="ImageDisplay" class="drone.jmf.actors.ImageDisplay">
 	</entity>
       </group>

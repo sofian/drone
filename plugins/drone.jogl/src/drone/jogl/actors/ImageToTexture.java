@@ -23,6 +23,9 @@ import java.awt.Image;
 
 import com.sun.opengl.util.texture.TextureData;
 
+import drone.jogl.data.TextureToken;
+import drone.jogl.util.JOGLUtils;
+
 import ptolemy.actor.lib.Transformer;
 import ptolemy.data.ImageToken;
 import ptolemy.data.type.BaseType;

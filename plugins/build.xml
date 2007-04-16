@@ -5,5 +5,7 @@
 	<target name="main">
 		<ant dir="drone.frei0r"/>
 		<ant dir="drone.jmf"/>
+		<ant dir="drone.artkp"/>
+		<ant dir="drone.jogl"/>
 	</target>
 </project>
