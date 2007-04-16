@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="pt2/src"/>
+	<classpathentry kind="src" path="plugins/drone.util/src"/>
 	<classpathentry kind="src" path="plugins/drone.librarybrowser/src"/>
 	<classpathentry kind="src" path="plugins/drone.jmf/src"/>
 	<classpathentry kind="src" path="drone.spikes"/>
@@ -18,5 +19,6 @@
 	<classpathentry kind="lib" path="plugins/drone.core/lib/net.infonode.jar"/>
 	<classpathentry kind="lib" path="lib/jmf/jmf.jar"/>
 	<classpathentry kind="lib" path="lib/jffmpeg/jffmpeg-1.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/tats/lib/jmf/lib/jmf.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
