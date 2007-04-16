@@ -10,7 +10,7 @@
 	
 	<target name="main" depends="jni, frei0r">
 		<echo>Building Frei0r.</echo>
-        <javac srcdir="src" destdir="build">
+		<javac srcdir="src" destdir="build">
 			<classpath>
 		    	<fileset dir="${libdir}">
 		    		<include name="**/*.jar"/>
@@ -19,7 +19,7 @@
 		    		<include name="**/*.jar"/>
 		    	</fileset>
 			</classpath>
-        </javac>
+		</javac>
 		<copy todir="build/data">
 			<fileset dir="data" />
 		</copy>
