@@ -57,6 +57,9 @@
  */
 package drone.jmf.actors;
 
+import drone.jmf.data.JMFImageToken;
+
+import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -65,32 +68,42 @@ import javax.media.CaptureDeviceInfo;
 import javax.media.CaptureDeviceManager;
 import javax.media.Codec;
 import javax.media.ConfigureCompleteEvent;
+import javax.media.Controller;
+import javax.media.ControllerClosedEvent;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
 import javax.media.EndOfMediaEvent;
 import javax.media.Format;
 import javax.media.Manager;
 import javax.media.MediaLocator;
+import javax.media.NoDataSourceException;
+import javax.media.NoPlayerException;
+import javax.media.Player;
 import javax.media.PrefetchCompleteEvent;
 import javax.media.Processor;
 import javax.media.RealizeCompleteEvent;
 import javax.media.ResourceUnavailableEvent;
+import javax.media.StartEvent;
+import javax.media.StopEvent;
 import javax.media.UnsupportedPlugInException;
+import javax.media.control.FormatControl;
+import javax.media.control.FrameGrabbingControl;
 import javax.media.control.TrackControl;
 import javax.media.format.RGBFormat;
 import javax.media.format.VideoFormat;
 import javax.media.format.YUVFormat;
+import javax.media.protocol.CaptureDevice;
+import javax.media.protocol.DataSource;
 
 import ptolemy.actor.lib.Source;
 import ptolemy.data.IntToken;
 import ptolemy.data.expr.Parameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
+import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.kernel.util.StringAttribute;
-
-import drone.jmf.data.JMFImageToken;
 
 //////////////////////////////////////////////////////////////////////////
 //// VideoCamera
@@ -109,6 +122,9 @@ import drone.jmf.data.JMFImageToken;
  @Pt.AcceptedRating Red
  */
 public class VideoCamera extends Source implements ControllerListener {
+
+	public static final String FRAME_GRABBING_CONTROL_NAME = "javax.media.control.FrameGrabbingControl";
+
     /** Construct an actor with the given container and name.
      *  @param container The container.
      *  @param name The name of this actor.
@@ -124,7 +140,11 @@ public class VideoCamera extends Source implements ControllerListener {
         formatName = new StringAttribute(this, "formatName");
         formatName.setExpression("RGB");
 
-        deviceNumber = new Parameter(this, "deviceNumber", new IntToken(0));
+        formatNumber = new Parameter(this, "formatNumber");
+        formatNumber.setExpression("0");
+        
+        deviceNumber = new Parameter(this, "deviceNumber");
+        deviceNumber.setExpression("0");
 
         // FIXME: output should perhaps be named "video"?
         // In case there is audio track.
@@ -139,6 +159,13 @@ public class VideoCamera extends Source implements ControllerListener {
      *  attribute that defaults to the type RGB.
      */
     public StringAttribute formatName;
+    
+    /**
+     * Index to use for format in the format list.
+     * 
+     * TODO: find a better way to handle formats
+     */
+    public Parameter formatNumber;
 
     /** This parameter lets the user select the device to use.
      *  Typically this parameter is of no concern and should be left
@@ -149,40 +176,50 @@ public class VideoCamera extends Source implements ControllerListener {
 
     ///////////////////////////////////////////////////////////////////
     ////                         public methods                    ////
-
-    /**
-     * Controller Listener.
+    
+    /** The controller listener.  This method controls the
+     *  initializing of the player.  It also senses when the
+     *  file is done playing, in which case it closes the
+     *  player.
+     *  @param event The controller event.
      */
-    public void controllerUpdate(ControllerEvent evt) {
-        if (evt instanceof ConfigureCompleteEvent
-                || evt instanceof RealizeCompleteEvent
-                || evt instanceof PrefetchCompleteEvent) {
+    public void controllerUpdate(ControllerEvent event) {
+        if (event instanceof ConfigureCompleteEvent
+                || event instanceof RealizeCompleteEvent
+                || event instanceof PrefetchCompleteEvent
+                || event instanceof StartEvent
+                || event instanceof StopEvent) {
             synchronized (_waitSync) {
+                _stateTransitionEvent = event;
                 _stateTransitionOK = true;
                 _waitSync.notifyAll();
             }
-        } else if (evt instanceof ResourceUnavailableEvent) {
-            synchronized (_waitSync) {
-                _stateTransitionOK = false;
-                _waitSync.notifyAll();
-            }
-        } else if (evt instanceof EndOfMediaEvent) {
-            _processor.close();
-
-            //System.exit(0);
+        } else if (event instanceof ControllerClosedEvent) {
+            _stateTransitionEvent = event;
+            _player.close();
+            _playerOpen = false;
         }
+        // TODO: verify if there are other events to catch
     }
 
+    public boolean prefire() throws IllegalActionException {
+        if (_playerOpen == false) {
+            _dataSource.disconnect();
+            return false;
+        } else {
+        	_bufferNew = _frameGrabbingControl.grabFrame();
+        	return super.prefire();
+        }
+    }
+    
     /** Capture a frame and send a java.awt.Image object
      *  to the output port.
      *  @exception IllegalActionException If there's no director.
      */
     public void fire() throws IllegalActionException {
         super.fire();
-        _bufferNew = _cameraCodec.getFrame();
-
         if (_bufferNew != null) {
-            output.send(0, new JMFImageToken(_bufferNew));
+        	output.send(0, new JMFImageToken(_bufferNew));
         }
     }
 
@@ -193,6 +230,11 @@ public class VideoCamera extends Source implements ControllerListener {
     public void initialize() throws IllegalActionException {
         super.initialize();
 
+        try {
+        	Class.forName("javax.media.Codec");
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
         // Set the video format type given which setting
         // the formatName parameter is set to.
         String typeName = formatName.getExpression();
@@ -205,7 +247,7 @@ public class VideoCamera extends Source implements ControllerListener {
             throw new IllegalActionException(this,
                     "Unrecognized interpolation type: " + typeName);
         }
-
+        
         // Get the list of devices that are compatible with the
         // chosen video format.
         // FIXME: Devicelist should be a static private member
@@ -236,105 +278,99 @@ public class VideoCamera extends Source implements ControllerListener {
         // Choose the device from the device list.
         // FIXME: This isn't crashing gracefully at all.
         CaptureDeviceInfo captureDeviceInfo = (CaptureDeviceInfo) deviceList
-                .get(((IntToken) deviceNumber.getToken()).intValue());
+        	.get(((IntToken) deviceNumber.getToken()).intValue());
 
-        // Create a locator for this device.
-        MediaLocator locator = captureDeviceInfo.getLocator();
-
-        // Attempt to create a processor for this locator.
+        System.out.println("-----------------------------------------------------------");
+        System.out.println("CaptureDevice Name is " + captureDeviceInfo.getName());
+        System.out.println("-----------------------------------------------------------");
+        System.out.println("Media Locator is " + captureDeviceInfo.getLocator() );
+        System.out.println("***********************************************************");
         try {
-            _processor = Manager.createProcessor(locator);
-        } catch (Exception ex) {
+        	_dataSource = Manager.createDataSource(captureDeviceInfo.getLocator());
+            FormatControl [] formatControlArray = ((CaptureDevice) _dataSource).getFormatControls();
+            if (formatControlArray != null && formatControlArray.length > 0) {
+                System.out.println("Found " + formatControlArray.length + " FormatControls");
+                Format[] formats = formatControlArray[0].getSupportedFormats();
+                System.out.println("Found " + formats.length + " supported formats from format control # 0");
+                for (int i=0; i<formats.length; i++) {
+                	System.out.println("[" + i + "] = " + formats[i].toString());
+                }
+                int i = ((IntToken)formatNumber.getToken()).intValue();
+                if (formats[i].matches(_format)) {
+                	formatControlArray[0].setFormat(formats[i]);
+            		System.out.println("Format #" + i + " matches");
+                }
+                else {
+                	throw new IllegalActionException(this, "Chosen format number does not match chosen format.");
+                }
+//                if ( formatControlArray[0].setFormat(format) == null ) {
+//                    System.out.println("Failed to set Format " + format);
+//                    System.exit(0);
+//                }
+            } else {
+            	throw new IllegalActionException(this, "Failed to find FormatControls");
+            }
+            // Create player
+            _player = Manager.createPlayer(_dataSource);
+        } catch (NoDataSourceException e) {
+        	throw new IllegalActionException(this, e, "No data source found.");
+        } catch (java.io.IOException e) {
+        	throw new IllegalActionException(this, e, "I/O problem.");
+        } catch (NoPlayerException e) {
+        	throw new IllegalActionException(this, e, "Cannot create player.");
+        }
+        _player.addControllerListener(this);
+
+        _player.realize();
+        if (!_waitForState(Controller.Realized)) {
             throw new IllegalActionException(
                     null,
-                    ex,
-                    "Failed to create a processor for the media locator '"
-                            + locator
-                            + "'. Note that you may need to run jmfinit, "
-                            + "which is found in the JMF directory, for example "
-                            + "c:/Program Files/JMF2.1.1/bin");
+                    "Failed to realize player, last controller event was: "
+                            + _stateTransitionEvent
+                            + "\nThe data source was: "
+                            + _dataSource.getLocator().toExternalForm()
+                            + "\nNote that not all formats are supported, see:\n"
+                            + "http://java.sun.com/products/java-media/jmf/reference/faqs/index.html");
+        }
+        
+        _frameGrabbingControl = (FrameGrabbingControl) _player.getControl(FRAME_GRABBING_CONTROL_NAME);
+
+        if (_frameGrabbingControl == null) {
+        	System.out.println(
+        			"Failed to get Frame Grabbing Control '"
+        			+ FRAME_GRABBING_CONTROL_NAME );       
         }
 
-        // Make this a control listener.
-        _processor.addControllerListener(this);
+        _player.prefetch();
 
-        // Put the Processor into configured state.
-        _processor.configure();
-
-        if (!_waitForState(Processor.Configured)) {
-            throw new IllegalActionException(
-                    "Failed to configure the processor.");
+        if (!_waitForState(Controller.Prefetched)) {
+            throw new IllegalActionException(this,
+                    "Failed to prefetch player, last controller event was: "
+                            + _stateTransitionEvent + "\nThe data source was: "
+                            + _dataSource.getLocator().toExternalForm());
         }
-
-        // So I can use it as a player.
-        // FIXME: What does this mean?
-        _processor.setContentDescriptor(null);
-
-        // Obtain the track controls.
-        TrackControl[] trackControls = _processor.getTrackControls();
-
-        if (trackControls == null) {
-            throw new IllegalActionException(
-                    "Failed to obtain track controls from the processor.");
+        
+        _player.start();
+        System.out.println("Called start on player");
+        
+        if (!_waitForState(Controller.Started)) {
+            throw new IllegalActionException(this,
+                    "Failed to prefetch player, last controller event was: "
+                            + _stateTransitionEvent + "\nThe data source was: "
+                            + _dataSource.getLocator().toExternalForm());
         }
-
-        // Search for the track control for the video track (vs. audio).
-        // FIXME: We want the audio track too on a separate output, maybe.
-        TrackControl videoTrack = null;
-
-        for (int i = 0; i < trackControls.length; i++) {
-            if (trackControls[i].getFormat() instanceof VideoFormat) {
-                videoTrack = trackControls[i];
-                break;
-            }
-        }
-
-        // If the previous loop goes through and does not find a
-        // video track, then we throw an exception here.
-        if (videoTrack == null) {
-            throw new IllegalActionException(
-                    "The input media does not contain a video track.");
-        }
-
-        // Displays the video format in the debug window.
-        if (_debugging) {
-            _debug("Video format: " + videoTrack.getFormat());
-        }
-
-        // Instantiate and set the frame access codec to the data flow path.
-        try {
-            _cameraCodec = new PreAccessCodec();
-
-            Codec[] codec = { _cameraCodec };
-            videoTrack.setCodecChain(codec);
-        } catch (UnsupportedPlugInException e) {
-            throw new IllegalActionException(
-                    "The process does not support codec plug ins.");
-        }
-
-        // Realize the processor.
-        // After this is called, cannot make modifications to the processor,
-        // such as format changes?
-        _processor.prefetch();
-
-        if (!_waitForState(Processor.Prefetched)) {
-            throw new IllegalActionException("Failed to realize the processor.");
-        }
-
-        // NOTE: Can get a visual component (which displays the video)
-        // by calling _processor.getVisualComponent(), and a small control
-        // panel with a pause button by calling
-        // _processor.getControlPanelComponent().
-        // Start the processor.
-        // This will trigger callbacks to the codecs.
-        _processor.start();
+        
+        _playerOpen = true;
+        
+        System.out.println("Player started");
+    	_bufferNew = _frameGrabbingControl.grabFrame();
     }
 
     /** Close the media processor.
      */
     public void wrapup() {
-        if (_processor != null) {
-            _processor.close();
+        if (_player != null) {
+            _player.close();
         }
     }
 
@@ -349,7 +385,7 @@ public class VideoCamera extends Source implements ControllerListener {
     protected boolean _waitForState(int state) {
         synchronized (_waitSync) {
             try {
-                while ((_processor.getState() != state) && _stateTransitionOK) {
+                while ((_player.getState() != state) && _stateTransitionOK) {
                     _waitSync.wait();
                 }
             } catch (Exception e) {
@@ -359,159 +395,36 @@ public class VideoCamera extends Source implements ControllerListener {
         return _stateTransitionOK;
     }
 
-    /**
-     * A pass-through codec to access to individual frames.
-     */
-    public class PreAccessCodec implements Codec {
-
-        /** Construct a PreAccessCodec. 
-         *  @exception IllegalActionException Not thrown in this base class.
-         */
-        public PreAccessCodec() throws IllegalActionException {
-        }
-
-        /**
-         * Callback to access individual video frames.
-         * @param frame The individual video frame.
-         */
-        synchronized void accessFrame(Buffer frame) {
-            _frameBuffer = frame;
-            _newFrame = true;
-            notifyAll();
-        }
-
-        /**
-         * The code for a pass through codec.
-         * @return the frame.
-         */
-        synchronized Buffer getFrame() throws IllegalActionException {
-            while (!_newFrame) {
-                try {
-                    wait();
-                } catch (InterruptedException ex) {
-                    throw new IllegalActionException("Error");
-                }
-            }
-
-            _newFrame = false;
-            return _frameBuffer;
-        }
-
-        /** The input format. */
-        Format input = null;
-
-        /** The output format. */
-        Format output = null;
-
-        /** Return the name of this codec.
-         *  @return Always return "Pre-Access Codec".
-         */
-        public String getName() {
-            return "Pre-Access Codec";
-        }
-
-        /** In this class, do nothing. */
-        public void open() {
-        }
-
-        /** In this class, do nothing. */
-        public void close() {
-        }
-
-        /** In this class, do nothing. */
-        public void reset() {
-        }
-
-        /** Return the supported input formats, which are YUV and RGB.
-         *  @return the supported input formats.
-         */
-        public Format[] getSupportedInputFormats() {
-            return new Format[] { new YUVFormat(), new RGBFormat() };
-        }
-
-        /** Return the supported output formats.
-         *  @param in The input format.  If the input format is null,
-         *  then YUV and RGB format are returned.  If the input format
-         *  is non-null, then it is returned.
-         *  @return the supported output formats.
-         */
-        public Format[] getSupportedOutputFormats(Format in) {
-            if (in == null) {
-                return new Format[] { new YUVFormat(), new RGBFormat() };
-            } else {
-                // If an input format is given, we use that input format
-                // as the output since we are not modifying the bit stream
-                // at all.
-                Format[] outs = new Format[1];
-                outs[0] = in;
-                return outs;
-            }
-        }
-
-        /** Set the input format.
-         *  @param format The input format.
-         *  @return the input format.
-         */
-        public Format setInputFormat(Format format) {
-            input = format;
-            return input;
-        }
-
-        /** Set the output format.
-         *  @param format The output format.
-         *  @return the output format.
-         */
-        public Format setOutputFormat(Format format) {
-            output = format;
-            return output;
-        }
-
-        /** Process a individual frame.
-         *  @param in The input buffer.
-         *  @param out The output buffer.
-         *  @return BUFFER_PROCESSED_OK if no exceptin was thrown.
-         */
-        public int process(Buffer in, Buffer out) {
-            // This is the "Callback" to access individual frames.
-            accessFrame(in);
-            return BUFFER_PROCESSED_OK;
-        }
-
-        /** Return the controls, in this case, an empty array
-         *  of size 0.
-         *  @return The controls.
-         */
-        public Object[] getControls() {
-            return new Object[0];
-        }
-
-        /** Get the control for a type.
-         *  @param type The type, which is ignored.
-         *  @return Always return null.
-         */
-        public Object getControl(String type) {
-            return null;
-        }
+    protected void createDataSource() {
+    	
     }
-
+    
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
+    // The datasource that encapsulates the video file.
+    private DataSource _dataSource;
 
     private VideoFormat _format;
 
     /** The java.awt.Image that we are producing/ */
     private Buffer _bufferNew;
 
-    private boolean _newFrame = false;
+    // The player.
+    private Player _player;
 
-    /** The video processor. */
-    private Processor _processor;
+    // Boolean that keeps track of whether the player is open or not.
+    private boolean _playerOpen = false;
 
-    private PreAccessCodec _cameraCodec;
-
-    private Object _waitSync = new Object();
+   private Object _waitSync = new Object();
 
     private boolean _stateTransitionOK = true;
 
-    private Buffer _frameBuffer = new Buffer();
+    // The Frame grabbing control class that allows individual frames
+    // to be acquired from the file.
+    private FrameGrabbingControl _frameGrabbingControl = null;
+    
+    // The ControllerEvent that was present when _stateTransitionOK
+    // was last set;
+    private ControllerEvent _stateTransitionEvent;
+
 }
