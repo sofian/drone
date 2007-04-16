@@ -25,7 +25,7 @@
  PT_COPYRIGHT_VERSION 2
  COPYRIGHTENDKEY
  */
-package drone.actors.jmf;
+package drone.jmf.actors;
 
 import java.io.IOException;
 
