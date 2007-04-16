@@ -5,6 +5,7 @@
 	<property name="libdir" location="../../lib"/>
 
 	<property name="make" value="make" />
+	<property name="qmake" value="qmake" />
 	<property name="scons" value="scons" />
 	
 	<target name="main" depends="jni, frei0r">
@@ -31,6 +32,7 @@
 	
 	<target name="jni">
 		<echo>Building Frei0r JNI lib.</echo>
+		<exec dir="jni" executable="${qmake}" />
 		<exec dir="jni" executable="${make}" />
 		<copy todir="build/jni">
 			<fileset dir="jni/lib" />
