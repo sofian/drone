@@ -1,0 +1,19 @@
+This directory contains the Drone plugins. Each plugin is contained in a separate 
+directory with the name of the plugin, in the form
+drone.<plugin_name>
+
+Each plugin directory has the following structure:
+build.xml  The plugin's Ant Build file
+plugin.xml The plugin's JPF config file (not necessary for compilation)
+src/       Contains the .java source files
+build/     Contains the built .class files after building
+
+To build a plugin:
+cd drone.<plugin_name>/
+ant
+
+Ant will then built the plugin and put all compilation results in the "build" directory. 
+Then it will make a jar file with name drone-<plugin_name>.jar and will put it in Drone 
+distribution directory (which lies in ../dist/).
+
+To build all plugins, just run "ant" from within the plugins directory.

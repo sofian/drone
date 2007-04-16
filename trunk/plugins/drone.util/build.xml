@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<project name="drone.util" default="main">
+	
+	<property name="distdir" location="../../dist"/>
+
+	<target name="main">
+		<echo>Building Util.</echo>
+        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib" />
+		<jar destfile="${distdir}/drone-util.jar" basedir="build"/>
+	</target>
+	
+</project>

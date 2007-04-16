@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<project name="drone.frei0r" default="main">
+	
+	<property name="distdir" location="../../dist"/>
+	<property name="libdir" location="../../lib"/>
+
+	<property name="make" value="make" />
+	<property name="qmake" value="qmake" />
+	<property name="scons" value="scons" />
+	
+	<target name="main" depends="jni, frei0r">
+		<echo>Building Frei0r.</echo>
+		<javac srcdir="src" destdir="build">
+			<classpath>
+		    	<fileset dir="${libdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+		    	<fileset dir="${distdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+			</classpath>
+		</javac>
+		<copy todir="build/data">
+			<fileset dir="data" />
+		</copy>
+		<copy todir="build/contrib">
+			<fileset dir="contrib" />
+		</copy>
+		<copy todir="build" file="plugin.xml" />
+		<jar destfile="${distdir}/drone-frei0r.jar" basedir="build"/>
+	</target>
+	
+	<target name="jni">
+		<echo>Building Frei0r JNI lib.</echo>
+		<exec dir="jni" executable="${qmake}" />
+		<exec dir="jni" executable="${make}" />
+		<copy todir="build/jni">
+			<fileset dir="jni/lib" />
+		</copy>
+	</target>
+	
+	<target name="frei0r">
+		<exec dir="contrib/Frei0r/plugins" executable="${scons}" />
+	</target>
+</project>

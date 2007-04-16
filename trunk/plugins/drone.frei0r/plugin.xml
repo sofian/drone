@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+<plugin id="drone.frei0r" version="0.3.0">
+	<requires>
+		<import plugin-id="drone.core"/>
+	</requires>
+
+	<runtime>
+		<library id="frei0r" type="code" path="build/">
+			<export prefix="*"/>
+		</library>
+		<library id="data" type="resources" path="data/" />
+		<library id="nativelib" type="resources" path="jni/" />
+	</runtime>
+	
+	<extension id="frei0r-entity-library" plugin-id="drone.core" point-id="entity-library">
+		<parameter id="file" value="frei0r.xml"/>
+		<parameter id="label" value="Frei0r processing actors"/>
+		<parameter id="description" value="Frei0r processing actors"/>
+	</extension>
+	
+<!--	<extension id="frei0r-native-library" plugin-id="drone.core" point-id="native-library">
+		<parameter id="file" value="
+	</extension>
+	-->
+	
+</plugin>

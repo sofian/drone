@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+<plugin id="drone.core" version="0.3.0" class="drone.core.CorePlugin">
+	<runtime>
+		<library id="core" path="build/" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+
+	<!-- General extension points -->
+	<!-- TODO: field file should be many (?) -->
+	<extension-point id="entity-library">
+		<parameter-def id="file" multiplicity="one"/>
+		<parameter-def id="label" multiplicity="one"/>
+		<parameter-def id="description" multiplicity="none-or-one"/>	
+	</extension-point>
+	
+	<!-- GUI-dependent extension points -->
+	<!-- TODO: move the GUI plugin outside of the core, together with those extension points -->
+	<extension-point id="view">
+		<parameter-def id="class" multiplicity="one"/>
+		<parameter-def id="label" multiplicity="one"/>
+		<parameter-def id="description" multiplicity="none-or-one"/>
+	</extension-point>
+	
+</plugin>

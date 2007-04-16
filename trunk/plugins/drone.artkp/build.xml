@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<project name="drone.artkp" default="main">
+	
+	<property name="distdir" location="../../dist"/>
+	<property name="libdir" location="../../lib"/>
+
+	<property name="make" value="make" />
+	
+	<target name="main" depends="jni, jogl">
+		<echo>Building ARToolKitPlus plugin.</echo>
+		<javac srcdir="src" destdir="build">
+			<classpath>
+		    	<fileset dir="${libdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+		    	<fileset dir="${distdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+			</classpath>
+		</javac>
+		<copy todir="build/data">
+			<fileset dir="data" />
+		</copy>
+		<copy todir="build" file="plugin.xml" />
+		<jar destfile="${distdir}/drone-artkp.jar" basedir="build"/>
+	</target>
+	
+	<target name="jni">
+		<echo>Building ARToolKitPlus JNI lib.</echo>
+		<exec dir="jni" executable="${make}" />
+		<copy todir="build/jni">
+			<fileset dir="jni/lib" />
+		</copy>
+	</target>
+	
+	<target name="jogl">
+		<ant dir="../drone.jogl"/>
+	</target>
+</project>
