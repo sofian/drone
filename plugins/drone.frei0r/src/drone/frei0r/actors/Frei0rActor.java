@@ -132,7 +132,9 @@ public class Frei0rActor extends TypedAtomicActor {
 							param.setTypeEquals(BaseType.DOUBLE);
 							break;
 						case Frei0r.F0R_PARAM_POSITION:
-							param.setTypeEquals(type)
+// TODO: define
+							break;
+							//param.setTypeEquals(type)
 						}
 					}
 					

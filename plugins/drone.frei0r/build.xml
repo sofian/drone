@@ -3,16 +3,14 @@
 	
 	<property name="distdir" location="../../dist"/>
 	<property name="libdir" location="../../lib"/>
-	<property name="classpath" location="../../../"/>
 
 	<property name="make" value="make" />
-	<property name="scons" value="/sw/bin/scons" />
+	<property name="scons" value="scons" />
 	
 	<target name="main" depends="jni, frei0r">
 		<echo>Building Frei0r.</echo>
         <javac srcdir="src" destdir="build">
 			<classpath>
-				<pathelement path="${classpath}"/>
 		    	<fileset dir="${libdir}">
 		    		<include name="**/*.jar"/>
 		    	</fileset>
@@ -20,7 +18,7 @@
 		    		<include name="**/*.jar"/>
 		    	</fileset>
 			</classpath>
-        	</javac>
+        </javac>
 		<copy todir="build/data">
 			<fileset dir="data" />
 		</copy>
@@ -34,7 +32,9 @@
 	<target name="jni">
 		<echo>Building Frei0r JNI lib.</echo>
 		<exec dir="jni" executable="${make}" />
-		<copy file="jni/libFrei0rJNI.jnilib" todir="build/jni" />
+		<copy todir="build/jni">
+			<fileset dir="jni/lib" />
+		</copy>
 	</target>
 	
 	<target name="frei0r">

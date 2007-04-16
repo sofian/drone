@@ -4,7 +4,7 @@
 	<property name="pt2dir" location="pt2"/>
 	<property name="dronedir" location="plugins"/>
 	<property name="distdir" location="dist"/>
-
+	
 	<target name="main" depends="pt2, util, drone" description="Main target">
         <echo>
             Building the project.

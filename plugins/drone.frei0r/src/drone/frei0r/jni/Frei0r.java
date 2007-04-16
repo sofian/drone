@@ -153,14 +153,14 @@ public class Frei0r {
 	/**< An optional explanation string               */
 	public native String getExplanation() throws Frei0rException;
 
-	/**<The (short) name of the param */
-	public native String getParamName(int index) throws Frei0rException;
-	
-	/**<The type (see the F0R_PARAM_* defines) */
-	public native int getParamType(int index) throws Frei0rException;
-	
-	/**<Optional explanation (can be 0) */
-	public native String getParamExplanation(int index) throws Frei0rException;
+//	/**<The (short) name of the param */
+//	public native String getParamName(int index) throws Frei0rException;
+//	
+//	/**<The type (see the F0R_PARAM_* defines) */
+//	public native int getParamType(int index) throws Frei0rException;
+//	
+//	/**<Optional explanation (can be 0) */
+//	public native String getParamExplanation(int index) throws Frei0rException;
 	
 //	/**< The (short) name of the plugin                   */
 //	public String getName() { return _name; }

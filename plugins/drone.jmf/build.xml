@@ -2,10 +2,20 @@
 <project name="drone.jmf" default="main">
 	
 	<property name="distdir" location="../../dist"/>
+	<property name="libdir" location="../../lib"/>
 
 	<target name="main">
 		<echo>Building JMF.</echo>
-        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib" />
+        <javac srcdir="src" destdir="build">
+			<classpath>
+		    	<fileset dir="${libdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+		    	<fileset dir="${distdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+			</classpath>
+        </javac>
 		<copy todir="build/data">
 			<fileset dir="data" />
 		</copy>

@@ -5,7 +5,7 @@
 TEMPLATE = lib
 INCLUDEPATH += /System/Library/Frameworks/JavaVM.framework/Headers ../contrib/Frei0r/spec
 TARGET = Frei0rJNI
-QMAKE_POST_LINK = cp libFrei0rJNI.dylib libFrei0rJNI.jnilib
+QMAKE_POST_LINK = mv libFrei0rJNI* lib/
 
 # Input
 HEADERS += drone_frei0r_jni_Frei0r.h
