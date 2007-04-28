@@ -5,13 +5,19 @@
 	<property name="dronedir" location="plugins"/>
 	<property name="distdir" location="dist"/>
 	
-	<target name="main" depends="pt2, util, drone" description="Main target">
+	<target name="main" depends="no-gui, pt2-gui" description="Main target">
         <echo>
             Building the project.
         </echo>
     </target>
 	
-	<target name="pt2" description="Ptolemy II target">
+	<target name="no-gui" depends="pt2, util, drone" description="No GUI">
+        <echo>
+            Building the project's non-GUI library.
+        </echo>
+    </target>
+
+    <target name="pt2" description="Ptolemy II target">
 		<echo>
 			Building Ptolemy II.
 		</echo>
@@ -19,7 +25,21 @@
 		<jar destfile="${distdir}/pt2.jar" basedir="pt2/build"/>
 	</target>
 	
-    <target name="util" description="Drone utilities">
+	<target name="pt2-gui" description="Ptolemy II GUI target">
+		<echo>
+			Building Ptolemy II GUI.
+		</echo>
+        <javac srcdir="pt2-gui/src" destdir="pt2-gui/build">
+			<classpath>
+		    	<fileset dir="${distdir}">
+		    		<include name="**/*.jar"/>
+		    	</fileset>
+			</classpath>
+        </javac>
+		<jar destfile="${distdir}/pt2-gui.jar" basedir="pt2-gui/build"/>
+	</target>
+
+	<target name="util" description="Drone utilities">
     	<echo>
     		Building utilities.
     	</echo>
