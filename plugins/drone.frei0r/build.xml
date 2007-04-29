@@ -4,13 +4,16 @@
 	<property name="distdir" location="../../dist"/>
 	<property name="libdir" location="../../lib"/>
 
+	<property name="debug" value="on"/>
+	<property name="debuglevel" location="lines,vars,source"/>
+
 	<property name="make" value="make" />
 	<property name="qmake" value="qmake" />
 	<property name="scons" value="scons" />
 	
 	<target name="main" depends="jni, frei0r">
 		<echo>Building Frei0r.</echo>
-		<javac srcdir="src" destdir="build">
+		<javac srcdir="src" destdir="build" debug="${debug}" debuglevel="${debuglevel}">
 			<classpath>
 		    	<fileset dir="${libdir}">
 		    		<include name="**/*.jar"/>
@@ -28,6 +31,7 @@
 		</copy>
 		<copy todir="build" file="plugin.xml" />
 		<jar destfile="${distdir}/drone-frei0r.jar" basedir="build"/>
+		<jar destfile="${distdir}/drone-frei0r-src.jar" basedir="src"/>
 	</target>
 	
 	<target name="jni">
@@ -42,4 +46,15 @@
 	<target name="frei0r">
 		<exec dir="contrib/Frei0r/plugins" executable="${scons}" />
 	</target>
+
+	<target name="clean">
+		<echo>
+			Cleaning Frei0r plugin.
+		</echo>
+		<delete file="${distdir}/drone-frei0r.jar"/>
+		<delete includeEmptyDirs="true">
+			<fileset dir="build" includes="**/*"/>
+		</delete>
+	</target>
+
 </project>

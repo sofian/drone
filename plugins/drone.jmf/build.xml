@@ -4,9 +4,12 @@
 	<property name="distdir" location="../../dist"/>
 	<property name="libdir" location="../../lib"/>
 
+	<property name="debug" value="true"/>
+	<property name="debuglevel" location="lines,vars,source"/>
+
 	<target name="main">
 		<echo>Building JMF plugin.</echo>
-        <javac srcdir="src" destdir="build">
+        <javac srcdir="src" destdir="build" debug="${debug}" debuglevel="${debuglevel}">
 			<classpath>
 		    	<fileset dir="${libdir}">
 		    		<include name="**/*.jar"/>
@@ -21,6 +24,17 @@
 		</copy>
 		<copy todir="build" file="plugin.xml" />
 		<jar destfile="${distdir}/drone-jmf.jar" basedir="build"/>
+		<jar destfile="${distdir}/drone-jmf-src.jar" basedir="src"/>
 	</target>
 	
+	<target name="clean">
+		<echo>
+			Cleaning JMF.
+		</echo>
+		<delete file="${distdir}/drone-jmf.jar"/>
+		<delete includeEmptyDirs="true">
+			<fileset dir="build" includes="**/*"/>
+		</delete>
+	</target>
+
 </project>

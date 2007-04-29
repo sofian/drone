@@ -8,4 +8,12 @@
 		<ant dir="drone.artkp"/>
 		<ant dir="drone.jogl"/>
 	</target>
+	
+	<target name="clean">
+		<ant dir="drone.frei0r" target="clean"/>
+		<ant dir="drone.jmf" target="clean"/>
+		<ant dir="drone.artkp" target="clean"/>
+		<ant dir="drone.jogl" target="clean"/>
+	</target>
+
 </project>

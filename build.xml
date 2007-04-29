@@ -6,6 +6,9 @@
 	<property name="distdir" location="dist"/>
 	<property name="libdir" location="lib"/>
 	
+	<property name="debug" value="true"/>
+	<property name="debuglevel" location="lines,vars,source"/>
+
 	<target name="main" depends="no-gui, pt2-gui" description="Main target">
         <echo>
             Building the project.
@@ -24,8 +27,7 @@
         		<pathelement path="."/>
           		<pathelement path="${java.class.path}"/>
         	</classpath>
-        	<jvmarg 
-value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plugins/drone.artkp/jni/lib"/>
+        	<jvmarg value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plugins/drone.artkp/jni/lib"/>
       	</java>
 	</target>
 	
@@ -39,15 +41,16 @@ value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plu
 		<echo>
 			Building Ptolemy II.
 		</echo>
-        <javac srcdir="pt2/src" destdir="pt2/build"/>
+        <javac srcdir="pt2/src" destdir="pt2/build" debug="${debug}" debuglevel="${debuglevel}"/>
 		<jar destfile="${distdir}/pt2.jar" basedir="pt2/build"/>
+		<jar destfile="${distdir}/pt2-src.jar" basedir="pt2/src"/>
 	</target>
 	
 	<target name="pt2-gui" description="Ptolemy II GUI target">
 		<echo>
 			Building Ptolemy II GUI.
 		</echo>
-        <javac srcdir="pt2-gui/src" destdir="pt2-gui/build">
+        <javac srcdir="pt2-gui/src" destdir="pt2-gui/build" debug="${debug}" debuglevel="${debuglevel}">
 			<classpath>
 		    	<fileset dir="${distdir}">
 		    		<include name="**/*.jar"/>
@@ -55,6 +58,7 @@ value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plu
 			</classpath>
         </javac>
 		<jar destfile="${distdir}/pt2-gui.jar" basedir="pt2-gui/build"/>
+		<jar destfile="${distdir}/pt2-gui-src.jar" basedir="pt2-gui/src"/>
 	</target>
 
 	<target name="util" description="Drone utilities">
@@ -70,5 +74,17 @@ value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plu
     	</echo>
     	<ant dir="plugins" inheritAll="true"/>
     </target>
-  
+	
+	<target name="clean">
+		<echo>
+			Cleaning Drone.
+		</echo>
+		<delete>
+			<fileset dir="${distdir}" includes="**/pt2*.jar"/>
+			<fileset dir="pt2/build" includes="**/*"/>
+			<fileset dir="pt2-gui/build" includes="**/*"/>
+		</delete>
+		<ant dir="plugins" inheritAll="true" target="clean"/>
+		<ant dir="plugins/drone.util" inheritAll="true" target="clean"/>
+	</target>
 </project>

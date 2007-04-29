@@ -4,11 +4,14 @@
 	<property name="distdir" location="../../dist"/>
 	<property name="libdir" location="../../lib"/>
 
+	<property name="debug" value="on"/>
+	<property name="debuglevel" location="lines,vars,source"/>
+
 	<property name="make" value="make" />
 	
 	<target name="main" depends="jni, jogl">
 		<echo>Building ARToolKitPlus plugin.</echo>
-		<javac srcdir="src" destdir="build">
+		<javac srcdir="src" destdir="build"  debug="${debug}" debuglevel="${debuglevel}">
 			<classpath>
 		    	<fileset dir="${libdir}">
 		    		<include name="**/*.jar"/>
@@ -36,4 +39,15 @@
 	<target name="jogl">
 		<ant dir="../drone.jogl"/>
 	</target>
+
+	<target name="clean">
+		<echo>
+			Cleaning ARTKP plugin.
+		</echo>
+		<delete file="${distdir}/drone-artkp.jar"/>
+		<delete includeEmptyDirs="true">
+			<fileset dir="build" includes="**/*"/>
+		</delete>
+	</target>
+
 </project>

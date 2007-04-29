@@ -3,10 +3,23 @@
 	
 	<property name="distdir" location="../../dist"/>
 
+	<property name="debug" value="true"/>
+	<property name="debuglevel" location="lines,vars,source"/>
+
 	<target name="main">
 		<echo>Building Util.</echo>
-        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib" />
+        <javac srcdir="src" destdir="build" classpath="${distdir}/pt2.jar,lib" debug="${debug}" debuglevel="${debuglevel}"/>
 		<jar destfile="${distdir}/drone-util.jar" basedir="build"/>
 	</target>
 	
+	<target name="clean">
+		<echo>
+			Cleaning Util.
+		</echo>
+		<delete file="${distdir}/drone-util.jar"/>
+		<delete includeEmptyDirs="true">
+			<fileset dir="build" includes="**/*"/>
+		</delete>
+	</target>
+
 </project>
