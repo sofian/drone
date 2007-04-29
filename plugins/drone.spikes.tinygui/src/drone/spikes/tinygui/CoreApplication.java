@@ -45,7 +45,7 @@ public class CoreApplication implements Application, ExecutionListener {
 	 * 
 	 * @param basePath
 	 *            The basePath to look for configurations in, usually
-	 *            "ptolemy/configs", but other tools might have other
+	 *            "config", but other tools might have other
 	 *            configurations in other directories
 	 * @param args
 	 *            The command-line arguments.
@@ -512,9 +512,9 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	/**
 	 * Return a string summarizing the command-line arguments, including any
-	 * configuration directories in a base path, typically "ptolemy/configs".
-	 * Some subclasses of this class use configurations from ptolemy/configs.
-	 * For example, if ptolemy/configs/full/configuration.xml exists then -full
+	 * configuration directories in a base path, typically "config".
+	 * Some subclasses of this class use configurations from config.
+	 * For example, if config/full/configuration.xml exists then -full
 	 * is a legitimate argument.
 	 * 
 	 * @param commandTemplate
@@ -557,7 +557,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 		try {
 			// Look for configuration directories in _basePath
-			// This will likely fail if ptolemy/configs is in a jar file
+			// This will likely fail if config is in a jar file
 			// We use a URI here so that we cause call File(URI).
 			URI configurationURI = new URI(specToURL(_basePath)
 					.toExternalForm().replaceAll(" ", "%20"));
@@ -1038,11 +1038,11 @@ public class CoreApplication implements Application, ExecutionListener {
 	// // protected variables ////
 
 	/**
-	 * The base path of the configuration directory, usually "ptolemy/configs"
+	 * The base path of the configuration directory, usually "config"
 	 * for Ptolemy II, but subclasses might have configurations in a different
 	 * directory.
 	 */
-	protected String _basePath = "ptolemy/configs";
+	protected String _basePath = "config";
 
 	/** The command-line options that are either present or not. */
 	protected String[] _commandFlags = { "-help", "-run", "-runThenExit",

@@ -4,12 +4,28 @@
 	<property name="pt2dir" location="pt2"/>
 	<property name="dronedir" location="plugins"/>
 	<property name="distdir" location="dist"/>
+	<property name="libdir" location="lib"/>
 	
 	<target name="main" depends="no-gui, pt2-gui" description="Main target">
         <echo>
             Building the project.
         </echo>
     </target>
+	
+	<target name="run" description="Run drone">
+		<java classname="ptolemy.vergil.VergilApplication" fork="true">
+        	<classpath>
+	    		<fileset dir="${libdir}">
+	    			<include name="**/*.jar"/>
+	    		</fileset>
+	    		<fileset dir="${distdir}">
+	    			<include name="**/*.jar"/>
+	    		</fileset>
+        		<pathelement path="."/>
+          		<pathelement path="${java.class.path}"/>
+        	</classpath>
+      	</java>
+	</target>
 	
 	<target name="no-gui" depends="pt2, util, drone" description="No GUI">
         <echo>

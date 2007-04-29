@@ -5,11 +5,11 @@
   <configure>
     <?moml
       <group>
-        <input source="ptolemy/data/unit/BasicUnits.xml"/>
-        <input source="ptolemy/data/unit/CGSUnitBase.xml"/>
-        <input source="ptolemy/data/unit/ElectronicUnitBase.xml"/>
-        <input source="ptolemy/data/unit/SI.xml"/>
-        <input source="ptolemy/data/unit/UnitConversions.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/BasicUnits.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/CGSUnitBase.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/ElectronicUnitBase.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/SI.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/UnitConversions.xml"/>
       </group>
     ?>
   </configure>

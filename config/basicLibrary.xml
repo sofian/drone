@@ -9,7 +9,7 @@
             class="ptolemy.kernel.util.SingletonAttribute"/>
 
   <!-- Default utilities library. -->
-<!--  <input source="config/utilitiesLibrary.xml"/> -->
+  <input source="config/utilitiesLibrary.xml"/>
 
   <!-- Default director library. -->
   <!-- This uses configure so that directors are not instantiated -->

@@ -64,7 +64,7 @@ import ptolemy.util.StringUtilities;
  <p>
  The applications <i>vergil</i> and <i>moml</i> (at least) use
  configurations defined in MoML files, typically located in
- ptII/ptolemy/configs. The <i>moml</i> application takes as
+ ptII/config. The <i>moml</i> application takes as
  command line arguments a list of MoML files, the first of which
  is expected to define an instance of Configuration and its contents.
  That configuration is then used to open subsequent MoML files on the

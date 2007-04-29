@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="pt2/src"/>
+	<classpathentry kind="src" path="pt2-gui/src"/>
 	<classpathentry kind="src" path="plugins/drone.util/src"/>
 	<classpathentry kind="src" path="plugins/drone.librarybrowser/src"/>
 	<classpathentry kind="src" path="plugins/drone.jmf/src"/>

@@ -78,7 +78,7 @@ public class CoreApplication implements Application, ExecutionListener {
 	 * 
 	 * @param basePath
 	 *            The basePath to look for configurations in, usually
-	 *            "ptolemy/configs", but other tools might have other
+	 *            "config", but other tools might have other
 	 *            configurations in other directories
 	 * @param args
 	 *            The command-line arguments.
@@ -642,9 +642,9 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	/**
 	 * Return a string summarizing the command-line arguments, including any
-	 * configuration directories in a base path, typically "ptolemy/configs".
-	 * Some subclasses of this class use configurations from ptolemy/configs.
-	 * For example, if ptolemy/configs/full/configuration.xml exists then -full
+	 * configuration directories in a base path, typically "config".
+	 * Some subclasses of this class use configurations from config.
+	 * For example, if config/full/configuration.xml exists then -full
 	 * is a legitimate argument.
 	 * 
 	 * @param commandTemplate
@@ -687,7 +687,7 @@ public class CoreApplication implements Application, ExecutionListener {
 
 		try {
 			// Look for configuration directories in _basePath
-			// This will likely fail if ptolemy/configs is in a jar file
+			// This will likely fail if config is in a jar file
 			// We use a URI here so that we cause call File(URI).
 			URI configurationURI = new URI(specToURL(_basePath)
 					.toExternalForm().replaceAll(" ", "%20"));
@@ -772,7 +772,7 @@ public class CoreApplication implements Application, ExecutionListener {
 	/**
 	 * Return a default Configuration. The initial default configuration is the
 	 * MoML file full/configuration.xml under the _basePath directory, which is
-	 * usually ptolemy/configs. using different command line arguments can
+	 * usually config. using different command line arguments can
 	 * change the value Usually, we also open the user library, which is located
 	 * in the directory returned by
 	 * {@link ptolemy.util.StringUtilities#preferencesDirectory()} If the
@@ -1262,11 +1262,11 @@ public class CoreApplication implements Application, ExecutionListener {
 	// // protected variables ////
 
 	/**
-	 * The base path of the configuration directory, usually "ptolemy/configs"
+	 * The base path of the configuration directory, usually "config"
 	 * for Ptolemy II, but subclasses might have configurations in a different
 	 * directory.
 	 */
-	protected String _basePath = "ptolemy/configs";
+	protected String _basePath = "config";
 
 	/** The command-line options that are either present or not. */
 	protected String[] _commandFlags = { "-help", "-run", "-runThenExit",
@@ -1358,10 +1358,10 @@ public class CoreApplication implements Application, ExecutionListener {
 
 	// /////////////////////////////////////////////////////////////////
 	// // private variables ////
-	// The subdirectory (if any) of ptolemy/configs where the configuration
+	// The subdirectory (if any) of config where the configuration
 	// may be found. For example if vergil was called with -ptiny,
 	// then this variable will be set to "ptiny", and the configuration
-	// should be at ptolemy/configs/ptiny/configuration.xml
+	// should be at config/ptiny/configuration.xml
 	private String _configurationSubdirectory;
 	
 	private CorePlugin _corePlugin;

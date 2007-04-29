@@ -10,11 +10,10 @@
         <input source="config/utilityCompositeActor.xml"/>
         <class name="CompositeClassDefinition" extends="ptolemy.actor.TypedCompositeActor"/>
 		<input source="config/utilityModalModel.xml"/>
-        <input source="config/utilityPtalonActor.xml"/>
         <input source="config/basicUtilities.xml"/>
         <!-- Do not include this as singleton parameters are buggy. -->
         <!-- input source="config/customize.xml"/ -->
-        <input source="ptolemy/data/unit/unitSystems.xml"/>
+        <input source="pt2/src/ptolemy/data/unit/unitSystems.xml"/>
       </group>
     ?>
   </configure>

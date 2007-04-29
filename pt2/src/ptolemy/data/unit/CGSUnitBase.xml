@@ -63,7 +63,7 @@
 
 
 <!---------------------Include large file of Unit Conversions---------------->
-<input source="ptolemy/data/unit/UnitConversions.xml"/>
+<input source="pt2/src/ptolemy/data/unit/UnitConversions.xml"/>
 <!---------------------Included large file of Unit Conversions---------------->
 
 
