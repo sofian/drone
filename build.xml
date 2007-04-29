@@ -24,6 +24,8 @@
         		<pathelement path="."/>
           		<pathelement path="${java.class.path}"/>
         	</classpath>
+        	<jvmarg 
+value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plugins/drone.artkp/jni/lib"/>
       	</java>
 	</target>
 	
