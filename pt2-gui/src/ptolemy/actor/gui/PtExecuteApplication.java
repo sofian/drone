@@ -44,18 +44,18 @@ import ptolemy.util.MessageHandler;
  command line.
  <p>
  The exact facilities that are available are determined by an optional
- command line argument that names a directory in ptolemy/configs that
+ command line argument that names a directory in config that
  contains a configuration.xml file.  For example, if we call vergil
- -ptiny, then we will use ptolemy/configs/ptiny/configuration.xml and
- ptolemy/configs/ptiny/intro.htm.  The default configuration is
- ptolemy/configs/runConfiguration.xml, which is loaded before any
+ -ptiny, then we will use config/ptiny/configuration.xml and
+ config/ptiny/intro.htm.  The default configuration is
+ config/runConfiguration.xml, which is loaded before any
  other command-line arguments are processed.
 
  <p>This application also takes an optional command line argument pair
  <code>-conf <i>configurationFile.xml</i></code> that names a configuration
  to be read.  For example,
  <pre>
- $PTII/bin/ptexecute -conf ptolemy/configs/full/configuration.xml ../../domains/sdf/demo/Butterfly/Butterfly.xml
+ $PTII/bin/ptexecute -conf config/full/configuration.xml ../../domains/sdf/demo/Butterfly/Butterfly.xml
  </pre>
  and
  <pre>
@@ -64,7 +64,7 @@ import ptolemy.util.MessageHandler;
  are equivalent
  <p>
  If no configuration is specified on the command line, then
- the MoML file ptolemy/configs/runConfiguration.xml is loaded before
+ the MoML file config/runConfiguration.xml is loaded before
  other command line arguments are processed.
 
  <p> If one of the command-line arguments is -exit, then System.exit()
@@ -175,7 +175,7 @@ public class PtExecuteApplication extends MoMLApplication {
     ////                         protected methods                 ////
 
     /** Return a default Configuration, which in this case is given by
-     *  the MoML file ptolemy/configs/runConfiguration.xml.
+     *  the MoML file config/runConfiguration.xml.
      *  The default configuration supports executing, but not editing,
      *  Ptolemy models.
      *  If there is an _applicationInitializer parameter, then
@@ -187,7 +187,7 @@ public class PtExecuteApplication extends MoMLApplication {
      */
     protected Configuration _createDefaultConfiguration() throws Exception {
         if (_configurationURL == null) {
-            _configurationURL = specToURL("ptolemy/configs/runConfiguration.xml");
+            _configurationURL = specToURL("config/runConfiguration.xml");
         }
 
         _configuration = readConfiguration(_configurationURL);
@@ -263,7 +263,7 @@ public class PtExecuteApplication extends MoMLApplication {
 
     /** The command-line options that take arguments. */
     protected static String[][] _localCommandOptions = { { "-config",
-            "<configuration URL, defaults to ptolemy/configs/runConfiguration.xml>" }, };
+            "<configuration URL, defaults to config/runConfiguration.xml>" }, };
 
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
@@ -281,18 +281,18 @@ public class PtExecuteApplication extends MoMLApplication {
         if (arg.startsWith("-conf")) {
             _expectingConfiguration = true;
         } else if (arg.startsWith("-")) {
-            // If the argument names a directory in ptolemy/configs
+            // If the argument names a directory in config
             // that contains a file named configuration.xml that can
             // be found either as a URL or in the classpath, then
             // assume that it is a configuration.  For example, -ptiny
-            // will look for ptolemy/configs/ptiny/configuration.xml
+            // will look for config/ptiny/configuration.xml
             // If the argument does not name a configuration, then
             // we return false so that the argument can be processed
             // by the parent class.
             try {
                 _configurationSubdirectory = arg.substring(1);
 
-                String potentialConfiguration = "ptolemy/configs/"
+                String potentialConfiguration = "config/"
                         + _configurationSubdirectory + "/configuration.xml";
 
                 // This will throw an Exception if we can't find the config.
@@ -314,10 +314,10 @@ public class PtExecuteApplication extends MoMLApplication {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    // The subdirectory (if any) of ptolemy/configs where the configuration
+    // The subdirectory (if any) of config where the configuration
     // may be found.  For example if vergil was called with -ptiny,
     // then this variable will be set to "ptiny", and the configuration
-    // should be at ptolemy/configs/ptiny/configuration.xml
+    // should be at config/ptiny/configuration.xml
     private String _configurationSubdirectory;
 
     // URL of the configuration to read.

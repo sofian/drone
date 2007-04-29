@@ -34,7 +34,7 @@ package ptolemy.vergil;
  could do things like add constants.
 
  <p>How this works is that
- ptII/ptolemy/configs/defaultFullConfiguration.xml sets a
+ ptII/config/defaultFullConfiguration.xml sets a
  StringParameter called "_applicationInitializer" that names this
  class.  VergilApplication reads the parameter and instantiates this class.
 

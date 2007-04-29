@@ -37,10 +37,10 @@ import ptolemy.util.MessageHandler;
 /**
  This application opens run control panels for models specified on the
  command line.  The exact facilities that are available are determined
- by the configuration file ptolemy/configs/runPanelConfiguration.xml,
+ by the configuration file config/runPanelConfiguration.xml,
  which is loaded before any command-line arguments are processed.
  If there are no command-line arguments at all, then the file
- ptolemy/configs/runBlankConfiguration.xml is read instead.
+ config/runBlankConfiguration.xml is read instead.
 
  @author Edward A. Lee and Steve Neuendorffer
  @version $Id: PtolemyApplication.java,v 1.60 2006/06/19 23:27:28 cxh Exp $
@@ -90,14 +90,14 @@ public class PtolemyApplication extends MoMLApplication {
     ////                         protected methods                 ////
 
     /** Return a default Configuration, which in this case is given by
-     *  the MoML file ptolemy/configs/runPanelConfiguration.xml.
+     *  the MoML file config/runPanelConfiguration.xml.
      *  That configuration supports executing, but not editing,
      *  Ptolemy models.
      *  @return A default configuration.
      *  @exception Exception If the configuration cannot be opened.
      */
     protected Configuration _createDefaultConfiguration() throws Exception {
-        URL specificationURL = specToURL("ptolemy/configs/runPanelConfiguration.xml");
+        URL specificationURL = specToURL("config/runPanelConfiguration.xml");
 
         Configuration configuration = readConfiguration(specificationURL);
 
@@ -113,19 +113,19 @@ public class PtolemyApplication extends MoMLApplication {
     /** Return a default Configuration to use when there are no command-line
      *  arguments, which in this case is the same as the default configuration
      *  given by _createDefaultConfiguration, but with the additional
-     *  contents of the file ptolemy/configs/runWelcomeWindow.xml.
+     *  contents of the file config/runWelcomeWindow.xml.
      *  @return A configuration for when there no command-line arguments.
      *  @exception Exception If the configuration cannot be opened.
      */
     protected Configuration _createEmptyConfiguration() throws Exception {
         Configuration configuration = _createDefaultConfiguration();
-        URL inURL = specToURL("ptolemy/configs/runWelcomeWindow.xml");
+        URL inURL = specToURL("config/runWelcomeWindow.xml");
         _parser.reset();
         _parser.setContext(configuration);
         _parser.parse(inURL, inURL);
 
         Effigy doc = (Effigy) configuration.getEntity("directory.doc");
-        URL idURL = specToURL("ptolemy/configs/full/intro.htm");
+        URL idURL = specToURL("config/full/intro.htm");
         doc.identifier.setExpression(idURL.toExternalForm());
         return configuration;
     }

@@ -1136,7 +1136,7 @@ public class DocManager extends HandlerBase {
     public static String DocML_DTD_1 = "<!ELEMENT doc (author | description | port | property | Pt.AcceptedRating | Pt.ProposedRating | since | version)*><!ATTLIST doc name CDATA #REQUIRED class CDATA #REQUIRED><!ELEMENT author (#PCDATA)><!ELEMENT description (#PCDATA)><!ELEMENT port (#PCDATA)><!ATTLIST port name CDATA #REQUIRED><!ELEMENT property (#PCDATA)><!ATTLIST property name CDATA #REQUIRED><!ELEMENT Pt.acceptedRating (#PCDATA)><!ELEMENT Pt.proposedRating (#PCDATA)><!ELEMENT since (#PCDATA)><!ELEMENT version (#PCDATA)>";
 
     // NOTE: The master file for the above DTD is at
-    // $PTII/ptolemy/vergil/basic/DocML_1.dtd.  If modified, it needs to be also
+    // $PTII/pt2-gui/src/ptolemy/vergil/basic/DocML_1.dtd.  If modified, it needs to be also
     // updated at http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd
 
     ///////////////////////////////////////////////////////////////////

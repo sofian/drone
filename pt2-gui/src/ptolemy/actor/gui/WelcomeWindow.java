@@ -58,7 +58,7 @@ import ptolemy.util.MessageHandler;
  is used is to edit the <code>welcomeWindow.xml</code> file that corresponds
  with the configuration and set the tableau to be
  <code>ptolemy.actor.gui.WelcomeWindowTableau</code>
- For example, <code>$PTII/ptolemy/configs/full/welcomeWindow.xml</code>
+ For example, <code>$PTII/config/full/welcomeWindow.xml</code>
  might look like:
  <pre>
  &lt;?xml version="1.0" standalone="no"?&gt;
@@ -69,14 +69,14 @@ import ptolemy.util.MessageHandler;
  &lt;entity name="tableau" class="ptolemy.actor.gui.WelcomeWindowTableau"&gt;
  &lt;!-- If you adjust the size, be sure to try it under Java 1.5 --&gt;
  &lt;property name="size" value="[600, 220]"/&gt;
- &lt;property name="url" value="ptolemy/configs/full/intro.htm"/&gt;
+ &lt;property name="url" value="config/full/intro.htm"/&gt;
  &lt;/entity&gt;
  &lt;/entity&gt;
  &lt;/entity&gt;
  </pre>
  The above configuration will create a WelcomeWindow with a 600x200
  size that displays the contents of
- <code>ptolemy/configs/full/intro.htm</code>
+ <code>config/full/intro.htm</code>
 
  <p>Note that since this widow has no menus, if you use this window, then
  you will want to set the

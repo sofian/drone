@@ -56,18 +56,18 @@ import ptolemy.util.MessageHandler;
  command line.
  <p>
  The exact facilities that are available are determined by an optional
- command line argument that names a directory in ptolemy/configs that
+ command line argument that names a directory in config that
  contains a configuration.xml file.  For example, if we call vergil
- -ptiny, then we will use ptolemy/configs/ptiny/configuration.xml and
- ptolemy/configs/ptiny/intro.htm.  The default configuration is
- ptolemy/configs/full/configuration.xml, which is loaded before any
+ -ptiny, then we will use config/ptiny/configuration.xml and
+ config/ptiny/intro.htm.  The default configuration is
+ config/full/configuration.xml, which is loaded before any
  other command-line arguments are processed.
 
  <p>This application also takes an optional command line argument pair
  <code>-configuration <i>configurationFile.xml</i></code> that names a configuration
  to be read.  For example,
  <pre>
- $PTII/bin/vergil -configuration ptolemy/configs/ptiny/configuration.xml
+ $PTII/bin/vergil -configuration config/ptiny/configuration.xml
  </pre>
  and
  <pre>
@@ -76,7 +76,7 @@ import ptolemy.util.MessageHandler;
  are equivalent
  <p>
  If there are no command-line arguments at all, then the configuration
- file is augmented by the MoML file ptolemy/configs/full/welcomeWindow.xml
+ file is augmented by the MoML file config/full/welcomeWindow.xml
 
  @author Edward A. Lee, Steve Neuendorffer, Christopher Hylands, contributor: Chad Berkeley
  @version $Id: VergilApplication.java,v 1.166 2006/06/25 17:32:17 cxh Exp $
@@ -90,12 +90,12 @@ import ptolemy.util.MessageHandler;
 public class VergilApplication extends MoMLApplication {
     /** Parse the specified command-line arguments, creating models
      *  and frames to interact with them.
-     *  Look for configurations in "ptolemy/configs"
+     *  Look for configurations in "config"
      *  @param args The command-line arguments.
      *  @exception Exception If command line arguments have problems.
      */
     public VergilApplication(String[] args) throws Exception {
-        super("ptolemy/configs", args);
+        super("config", args);
 
         // Create register an error handler with the parser so that
         // MoML errors are tolerated more than the default.
@@ -105,7 +105,7 @@ public class VergilApplication extends MoMLApplication {
     /** Parse the specified command-line arguments, creating models
      *  and frames to interact with them.
      *  @param basePath The basePath to look for configurations
-     *  in, usually "ptolemy/configs", but other tools might
+     *  in, usually "config", but other tools might
      *  have other configurations in other directories
      *  @param args The command-line arguments.
      *  @exception Exception If command line arguments have problems.
@@ -191,7 +191,7 @@ public class VergilApplication extends MoMLApplication {
 
     /** Return a default Configuration.  The initial default configuration
      *  is the MoML file full/configuration.xml under the _basePath
-     *  directory, which is usually ptolemy/configs.
+     *  directory, which is usually config.
      *  using different command line arguments can change the value
      *  Usually, we also open the user library, which is located
      *  in the directory returned by
@@ -373,7 +373,7 @@ public class VergilApplication extends MoMLApplication {
 
     /** The command-line options that take arguments. */
     protected static String[][] _commandOptions = { { "-configuration",
-            "<configuration URL, defaults to ptolemy/configs/full/configuration.xml>" }, };
+            "<configuration URL, defaults to config/full/configuration.xml>" }, };
 
     ///////////////////////////////////////////////////////////////////
     ////                         private methods                   ////
@@ -391,11 +391,11 @@ public class VergilApplication extends MoMLApplication {
         if (arg.startsWith("-conf")) {
             _expectingConfiguration = true;
         } else if (arg.startsWith("-")) {
-            // If the argument names a directory in ptolemy/configs
+            // If the argument names a directory in config
             // that contains a file named configuration.xml that can
             // be found either as a URL or in the classpath, then
             // assume that it is a configuration.  For example, -ptiny
-            // will look for ptolemy/configs/ptiny/configuration.xml
+            // will look for config/ptiny/configuration.xml
             // If the argument does not name a configuration, then
             // we return false so that the argument can be processed
             // by the parent class.
@@ -467,10 +467,10 @@ public class VergilApplication extends MoMLApplication {
 
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
-    // The subdirectory (if any) of ptolemy/configs where the configuration
+    // The subdirectory (if any) of config where the configuration
     // may be found.  For example if vergil was called with -ptiny,
     // then this variable will be set to "ptiny", and the configuration
-    // should be at ptolemy/configs/ptiny/configuration.xml
+    // should be at config/ptiny/configuration.xml
     private String _configurationSubdirectory;
 
     // URL of the configuration to read.

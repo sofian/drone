@@ -82,7 +82,7 @@ public class ImageAttribute extends VisibleAttribute {
 
         // Put the gif in the local directory so that it stays with this actor.
         source
-                .setExpression("$CLASSPATH/ptolemy/vergil/kernel/attributes/ptIIplanetIcon.gif");
+                .setExpression("$CLASSPATH/pt2-gui/src/ptolemy/vergil/kernel/attributes/ptIIplanetIcon.gif");
 
         scale = new Parameter(this, "scale");
         scale.setTypeEquals(BaseType.DOUBLE);
@@ -107,7 +107,7 @@ public class ImageAttribute extends VisibleAttribute {
     public Parameter scale;
 
     /** The source image file. This is a file name or URL, where the default
-     *  is "$CLASSPATH/ptolemy/vergil/kernel/attributes/ptIIplanetIcon.gif".
+     *  is "$CLASSPATH/pt2-gui/src/ptolemy/vergil/kernel/attributes/ptIIplanetIcon.gif".
      */
     public FileParameter source;
 

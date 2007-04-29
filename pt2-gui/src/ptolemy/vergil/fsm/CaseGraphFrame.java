@@ -114,7 +114,7 @@ public class CaseGraphFrame extends ActorGraphFrame implements ChangeListener {
 
         // Override the default help file.
         // FIXME
-        // helpFile = "ptolemy/configs/doc/vergilFsmEditorHelp.htm";
+        // helpFile = "config/doc/vergilFsmEditorHelp.htm";
     }
 
     ///////////////////////////////////////////////////////////////////

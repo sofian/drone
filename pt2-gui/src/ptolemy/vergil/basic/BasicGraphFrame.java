@@ -2439,13 +2439,13 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/zoomin.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomin.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomin_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomin_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomin_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomin_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomin_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomin_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+Shift+=)");
@@ -2485,13 +2485,13 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/zoomreset.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomreset.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomreset_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomreset_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomreset_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomreset_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomreset_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomreset_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             // Control-m is usually carriage return.  In this case, we use
@@ -2528,13 +2528,13 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/zoomfit.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomfit.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomfit_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomfit_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomfit_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomfit_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomfit_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomfit_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+Shift+-)");
@@ -2570,13 +2570,13 @@ public abstract class BasicGraphFrame extends PtolemyFrame implements
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/zoomout.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomout.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomout_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomout_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomout_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomout_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/zoomout_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/zoomout_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+-)");

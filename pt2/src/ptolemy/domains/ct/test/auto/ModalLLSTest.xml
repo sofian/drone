@@ -111,7 +111,7 @@
             <property name="initialStateName" class="ptolemy.kernel.util.StringAttribute" value="state">
             </property>
             <property name="_library" class="ptolemy.moml.LibraryAttribute">
-                <configure><entity name="state library" class="ptolemy.kernel.CompositeEntity"><input source="ptolemy/configs/basicUtilities.xml"></input><entity name="state" class="ptolemy.domains.fsm.kernel.State"><property name="_centerName" class="ptolemy.kernel.util.Attribute"></property></entity></entity></configure>
+                <configure><entity name="state library" class="ptolemy.kernel.CompositeEntity"><input source="config/basicUtilities.xml"></input><entity name="state" class="ptolemy.domains.fsm.kernel.State"><property name="_centerName" class="ptolemy.kernel.util.Attribute"></property></entity></entity></configure>
             </property>
             <property name="annotation" class="ptolemy.kernel.util.Attribute">
                 <property name="_hideName" class="ptolemy.kernel.util.SingletonAttribute">

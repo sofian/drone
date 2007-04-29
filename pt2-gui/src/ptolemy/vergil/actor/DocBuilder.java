@@ -228,7 +228,7 @@ public class DocBuilder extends Attribute {
                                     + "\" ptolemy.moml.filter.ActorIndex doc/codeDoc/allNamedObjs.txt "
                                     + "\""
                                     + ptII
-                                    + "/ptolemy/configs/doc/models.txt\" doc/codeDoc");
+                                    + "/config/doc/models.txt\" doc/codeDoc");
                 }
             } else {
                 if (((BooleanToken) cleanFirst.getToken()).booleanValue()) {

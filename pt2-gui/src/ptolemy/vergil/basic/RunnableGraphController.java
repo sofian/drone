@@ -231,13 +231,13 @@ public abstract class RunnableGraphController extends WithIconGraphController
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/run.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/run.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/run_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/run_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/run_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/run_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/run_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/run_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+R)");
@@ -281,13 +281,13 @@ public abstract class RunnableGraphController extends WithIconGraphController
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/pause.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/pause.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/pause_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/pause_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/pause_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/pause_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/pause_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/pause_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+U)");
@@ -326,13 +326,13 @@ public abstract class RunnableGraphController extends WithIconGraphController
             // For more information, see
             // jdk1.3/docs/guide/resources/resources.html
             GUIUtilities.addIcons(this, new String[][] {
-                    { "/ptolemy/vergil/basic/img/stop.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/stop.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/ptolemy/vergil/basic/img/stop_o.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/stop_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/ptolemy/vergil/basic/img/stop_ov.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/stop_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/ptolemy/vergil/basic/img/stop_on.gif",
+                    { "/pt2-gui/src/ptolemy/vergil/basic/img/stop_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
             putValue("tooltip", description + " (Ctrl+H)");

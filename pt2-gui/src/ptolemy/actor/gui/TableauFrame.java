@@ -238,19 +238,19 @@ public class TableauFrame extends Top {
      *  This file should be relative to the home installation directory.
      *  This file is used if the configuration does not specify an about file.
      */
-    public String aboutFile = "ptolemy/configs/intro.htm";
+    public String aboutFile = "config/intro.htm";
 
     /** The name of the default file to open when Help is invoked.
      *  This file should be relative to the home installation directory.
      *  This file is used if the configuration does not specify a help file.
      */
-    public String helpFile = "ptolemy/configs/doc/basicHelp.htm";
+    public String helpFile = "config/doc/basicHelp.htm";
 
     ///////////////////////////////////////////////////////////////////
     ////                         protected methods                 ////
 
     /** Override the base class to open the intro.htm splash window,
-     *  which is in the directory ptolemy/configs.
+     *  which is in the directory config.
      */
     protected void _about() {
         // NOTE: We take some care here to ensure that this window is
@@ -1133,7 +1133,7 @@ public class TableauFrame extends Top {
                     //each incoming JMenuItems as a property of the
                     //Action itself - see
                     //diva.gui.GUIUtilities.addMenuItem(), line 202,
-                    //ans so does kepler/src/exp/ptolemy/vergil/basic/
+                    //ans so does kepler/src/exp/pt2-gui/src/ptolemy/vergil/basic/
                     //BasicGraphFrame.storeSubMenus() line 2519...
 
                     JMenuItem originalMenuItem = (JMenuItem) action

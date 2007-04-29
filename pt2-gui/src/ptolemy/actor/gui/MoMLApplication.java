@@ -79,7 +79,7 @@ import ptolemy.util.StringUtilities;
  <p>For example, this command uses the HyVisual configuration to
  open a model:
  <pre>
- $PTII/bin/moml $PTII/ptolemy/configs/hyvisual/configuration.xml $PTII/ptolemy/domains/ct/demo/StickyMasses/StickyMasses.xml
+ $PTII/bin/moml $PTII/config/hyvisual/configuration.xml $PTII/ptolemy/domains/ct/demo/StickyMasses/StickyMasses.xml
  </pre>
  <p>
  If a Ptolemy model is instantiated on the command line, either
@@ -148,13 +148,13 @@ public class MoMLApplication implements ExecutionListener {
      *  @exception Exception If command line arguments have problems.
      */
     public MoMLApplication(String[] args) throws Exception {
-        this("ptolemy/configs", args);
+        this("config", args);
     }
 
     /** Parse the specified command-line arguments, instanting classes
      *  and reading files that are specified.
      *  @param basePath The basePath to look for configurations
-     *  in, usually "ptolemy/configs", but other tools might
+     *  in, usually "config", but other tools might
      *  have other configurations in other directories
      *  @param args The command-line arguments.
      *  @exception Exception If command line arguments have problems.
@@ -587,9 +587,9 @@ public class MoMLApplication implements ExecutionListener {
 
     /** Return a string summarizing the command-line arguments,
      *  including any configuration directories in a base path,
-     *  typically "ptolemy/configs".
-     *  Some subclasses of this class use configurations from ptolemy/configs.
-     *  For example, if ptolemy/configs/full/configuration.xml exists
+     *  typically "config".
+     *  Some subclasses of this class use configurations from config.
+     *  For example, if config/full/configuration.xml exists
      *  then -full is a legitimate argument.
      *  @param commandTemplate The form of the command line
      *  @param commandOptions Command-line options that take arguments.
@@ -628,7 +628,7 @@ public class MoMLApplication implements ExecutionListener {
 
         try {
             // Look for configuration directories in _basePath
-            // This will likely fail if ptolemy/configs is in a jar file
+            // This will likely fail if config is in a jar file
             // We use a URI here so that we cause call File(URI).
             URI configurationURI = new URI(specToURL(_basePath)
                     .toExternalForm().replaceAll(" ", "%20"));
@@ -1083,10 +1083,10 @@ public class MoMLApplication implements ExecutionListener {
     ////                         protected variables               ////
 
     /** The base path of the configuration directory, usually
-     *  "ptolemy/configs" for Ptolemy II, but subclasses might
+     *  "config" for Ptolemy II, but subclasses might
      *  have configurations in a different directory.
      */
-    protected String _basePath = "ptolemy/configs";
+    protected String _basePath = "config";
 
     /** The command-line options that are either present or not. */
     protected String[] _commandFlags = { "-help", "-run", "-runThenExit",

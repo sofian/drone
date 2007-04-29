@@ -64,9 +64,9 @@ test URIAttribute-2.1 {setURL with a space in the URL  } {
     set output [java::new java.io.StringWriter]
     $u1 exportMoML $output 1
 
-    $u1 setURL [java::new java.net.URL "file:/C:/ptuser/pt II/ptolemy/configs/full/configuration.xml#bar"]
+    $u1 setURL [java::new java.net.URL "file:/C:/ptuser/pt II/config/full/configuration.xml#bar"]
     set url [$u1 getURL]
     set output2 [java::new java.io.StringWriter]
     $u1 exportMoML $output2 1
     list [$u1 toString] [$output toString] [$url toString] [$output2 toString]
-} {{ptolemy.kernel.attributes.URIAttribute {.myNamedObj.myURIAttribute}} {} file:/C:/ptuser/pt%20II/ptolemy/configs/full/configuration.xml#bar {}}
+} {{ptolemy.kernel.attributes.URIAttribute {.myNamedObj.myURIAttribute}} {} file:/C:/ptuser/pt%20II/config/full/configuration.xml#bar {}}

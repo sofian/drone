@@ -64,7 +64,7 @@ import diva.graph.JGraph;
  <i>configuration</i>:
  The relative pathname to a Ptolemy II xml configuration file.
  for example, if the configuration applet parameter is set to
- "ptolemy/configs/full/configuration.xml", then the user will
+ "config/full/configuration.xml", then the user will
  have the full vergil interface, including look inside capability.
  (<b>Experimental</b>).
  <li>

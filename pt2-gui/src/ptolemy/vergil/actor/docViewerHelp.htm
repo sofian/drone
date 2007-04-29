@@ -50,19 +50,19 @@ This rule runs
 <a href="../../../doc/doclets/PtDoclet.java"><code>$PTII/doc/doclets/PtDoclet.java</code></a>.  This doclet is run while running
 <code>make</code> in <code>$PTII/doc</code>.
 
-<dt> <a href="../../configs/doc/models.txt"><code>$PTII/ptolemy/configs/doc/models.txt</code></a>
+<dt> <a href="../../configs/doc/models.txt"><code>$PTII/config/doc/models.txt</code></a>
 <dd> The names of all the demonstrations in
-<a href="../../configs/doc/completeDemos.htm"><code>$PTII/ptolemy/configs/doc/completeDemos.htm</code></a>.
+<a href="../../configs/doc/completeDemos.htm"><code>$PTII/config/doc/completeDemos.htm</code></a>.
 <br>This file is created by running 
 <pre>
-cd $PTII/ptolemy/configs
+cd $PTII/config
 make
 </pre>
 That rule runs 
  <a href="../../../doc/codeDoc/ptolemy/actor/gui/HTMLAbout.html">HTMLAbout.main()</a>
 which creates <code>models.txt</code>.
 <br>Note: <code>models.txt</code> need only be updated if
-<a href="../../configs/doc/completeDemos.htm"><code>$PTII/ptolemy/configs/doc/completeDemos.htm</code></a> changes.
+<a href="../../configs/doc/completeDemos.htm"><code>$PTII/config/doc/completeDemos.htm</code></a> changes.
 </dl>
 
  <a href="../../../doc/codeDoc/moml/filter/ActorIndex.html">ptolemy.moml.filter.ActorIndex</a> reads these two files and creates <code>.idx</code>

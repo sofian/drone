@@ -121,7 +121,7 @@ public class ActorGraphFrame extends ExtendedGraphFrame {
         super(entity, tableau, defaultLibrary);
 
         // Override the default help file.
-        helpFile = "ptolemy/configs/doc/vergilGraphEditorHelp.htm";
+        helpFile = "config/doc/vergilGraphEditorHelp.htm";
 
         _createHierarchyAction = new CreateHierarchyAction();
         _layoutAction = new LayoutAction();

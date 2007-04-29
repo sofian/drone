@@ -77,7 +77,7 @@ public class GenerateCopyrights {
      *  StringAttribute, then the value of that attributed is used
      *  as the location of the copyright html file.  If
      *  _applicationCopyright is not present, then
-     *  "ptolemy/configs/doc/copyright.htm" is used.
+     *  "config/doc/copyright.htm" is used.
      *
      *  <p>If the configuration has a parameter called
      *  _applicationCopyrights that is an array of records where
@@ -201,7 +201,7 @@ public class GenerateCopyrights {
             // Ignore and use the default applicationName
         }
 
-        String defaultApplicationCopyright = "ptolemy/configs/doc/copyright.htm";
+        String defaultApplicationCopyright = "config/doc/copyright.htm";
         String applicationCopyright = defaultApplicationCopyright;
 
         try {

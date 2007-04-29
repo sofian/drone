@@ -100,7 +100,7 @@ public class FSMGraphFrame extends ExtendedGraphFrame {
         super(entity, tableau, defaultLibrary);
 
         // Override the default help file.
-        helpFile = "ptolemy/configs/doc/vergilFsmEditorHelp.htm";
+        helpFile = "config/doc/vergilFsmEditorHelp.htm";
     }
 
     ///////////////////////////////////////////////////////////////////

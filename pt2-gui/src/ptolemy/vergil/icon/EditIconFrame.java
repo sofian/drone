@@ -102,7 +102,7 @@ public class EditIconFrame extends BasicGraphFrame {
         _setDropIntoEnabled(false);
 
         // Override the default help file.
-        helpFile = "ptolemy/configs/doc/vergilGraphEditorHelp.htm";
+        helpFile = "config/doc/vergilGraphEditorHelp.htm";
 
         zoomReset();
 

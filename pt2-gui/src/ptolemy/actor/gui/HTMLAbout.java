@@ -128,7 +128,7 @@ public class HTMLAbout {
                     + "<code>about:checkCompleteDemos</code></a> "
                     + "Check that each of the demos listed in the individual "
                     + "files is present in "
-                    + "<code>ptolemy/configs/doc/completeDemos.htm</code>.\n");
+                    + "<code>config/doc/completeDemos.htm</code>.\n");
         }
 
         htmlBuffer.append("</ul>\n<table>\n");
@@ -137,40 +137,40 @@ public class HTMLAbout {
         if (_configurationExists("full")) {
             htmlBuffer
                     .append("<tr rowspan=4><center><b>Full</b></center></tr>\n"
-                            + _aboutHTML("ptolemy/configs/doc/completeDemos.htm")
-                            + _aboutHTML("ptolemy/configs/doc/demos.htm")
-                            + _aboutHTML("ptolemy/configs/doc/whatsNew"
+                            + _aboutHTML("config/doc/completeDemos.htm")
+                            + _aboutHTML("config/doc/demos.htm")
+                            + _aboutHTML("config/doc/whatsNew"
                                     + version + ".htm")
-                            + _aboutHTML("ptolemy/configs/doc/whatsNew5.1.htm")
-                            + _aboutHTML("ptolemy/configs/doc/whatsNew5.0.htm")
-                            + _aboutHTML("ptolemy/configs/doc/whatsNew4.0.htm")
-                            + _aboutHTML("ptolemy/configs/doc/whatsNew3.0.2.htm"));
+                            + _aboutHTML("config/doc/whatsNew5.1.htm")
+                            + _aboutHTML("config/doc/whatsNew5.0.htm")
+                            + _aboutHTML("config/doc/whatsNew4.0.htm")
+                            + _aboutHTML("config/doc/whatsNew3.0.2.htm"));
         }
 
         // Don't include DSP here, it uses the Ptiny demos anyway.
         if (_configurationExists("hyvisual")) {
             htmlBuffer
                     .append("<tr rowspan=4><center><b>HyVisual</b></center></tr>\n"
-                            + _aboutHTML("ptolemy/configs/hyvisual/intro.htm"));
+                            + _aboutHTML("config/hyvisual/intro.htm"));
         }
 
         if (_configurationExists("ptiny")) {
             htmlBuffer
                     .append("<tr rowspan=4><center><b>Ptiny</b></center></tr>\n"
-                            + _aboutHTML("ptolemy/configs/doc/completeDemosPtiny.htm")
-                            + _aboutHTML("ptolemy/configs/doc/demosPtiny.htm"));
+                            + _aboutHTML("config/doc/completeDemosPtiny.htm")
+                            + _aboutHTML("config/doc/demosPtiny.htm"));
         }
 
         if (_configurationExists("ptinyKepler")) {
             htmlBuffer
                     .append("<tr rowspan=4><center><b>Ptiny for Kepler</b></center></tr>\n"
-                            + _aboutHTML("ptolemy/configs/doc/completeDemosPtinyKepler.htm")
-                            + _aboutHTML("ptolemy/configs/doc/demosPtinyKepler.htm"));
+                            + _aboutHTML("config/doc/completeDemosPtinyKepler.htm")
+                            + _aboutHTML("config/doc/demosPtinyKepler.htm"));
         }
         if (_configurationExists("visualsense")) {
             htmlBuffer
                     .append("<tr rowspan=4><center><b>VisualSense</b></center></tr>\n"
-                            + _aboutHTML("ptolemy/configs/visualsense/intro.htm"));
+                            + _aboutHTML("config/visualsense/intro.htm"));
         }
 
         try {
@@ -207,7 +207,7 @@ public class HTMLAbout {
      *  @param demosFileName The name of the HTML file that contains links
      *  to the .xml, .htm and .html files.
      *  If this argument is the empty string, then
-     *  "ptolemy/configs/doc/completeDemos.htm" is used.
+     *  "config/doc/completeDemos.htm" is used.
      *  @param regexp The regular expression of the links we are interested
      *  in.
      *  @param configuration  The configuration to open the files in.
@@ -255,7 +255,7 @@ public class HTMLAbout {
                     "checkCompleteDemos",
                     ".htm",
                     _checkCompleteDemos(
-                            "ptolemy/configs/doc/completeDemos.htm", _demosURLs));
+                            "config/doc/completeDemos.htm", _demosURLs));
         } else if (event.getDescription().startsWith("about:checkModelSizes")) {
             // Expand all the local .xml files in the fragment
             // and check their sizes and locations
@@ -280,7 +280,7 @@ public class HTMLAbout {
                 // Could be that we were running with -sandbox and
                 // cannot write the temporary file.
                 newURL = FileUtilities.nameToURL(
-                        "$CLASSPATH/ptolemy/configs/doc/copyright.htm", null,
+                        "$CLASSPATH/config/doc/copyright.htm", null,
                         null);
             }
         } else if (event.getDescription().equals("about:configuration")) {
@@ -297,7 +297,7 @@ public class HTMLAbout {
             // Expand all the local .xml files in the fragment
             // and return a URL pointing to the fragment.
             // If there is no fragment, then use
-            // "ptolemy/configs/doc/completeDemos.htm"
+            // "config/doc/completeDemos.htm"
             URI aboutURI = new URI(event.getDescription());
             newURL = generateLinks(aboutURI.getFragment(), ".*.xml$",
                     configuration);
@@ -305,7 +305,7 @@ public class HTMLAbout {
             // Expand all the local .html, .htm, .pdf, .xml files in
             // the fragment and return a URL pointing to the fragment.
             // If there is no fragment, then use
-            // "ptolemy/configs/doc/completeDemos.htm"
+            // "config/doc/completeDemos.htm"
             URI aboutURI = new URI(event.getDescription());
             newURL = generateLinks(aboutURI.getFragment(),
                     ".*(.htm|.html|.pdf|.xml)", configuration);
@@ -323,13 +323,13 @@ public class HTMLAbout {
     /** Generate a file that contains urls of models.
      *  @param args The optional name of the file containing the demos
      *  followed by the optional name of the output file.  The default
-     *  demo file is ptolemy/configs/doc/completeDemos.htm, the default
+     *  demo file is config/doc/completeDemos.htm, the default
      *  output file is models.txt.
      *  @exception IOException If there is a problem reading the demo
      *  file or writing the model file.
      */
     public static void main(String[] args) throws IOException {
-        String demoFileName = "ptolemy/configs/doc/completeDemos.htm";
+        String demoFileName = "config/doc/completeDemos.htm";
         String outputFileName = "models.txt";
 
         if (args.length > 2) {
@@ -350,7 +350,7 @@ public class HTMLAbout {
     /** Run all the local .xml files that are linked to from an HTML file.
      *  @param demosFileName The name of the HTML file that contains links
      *  to the .xml files.  If this argument is the empty string, then
-     *  "ptolemy/configs/doc/completeDemos.htm" is used.
+     *  "config/doc/completeDemos.htm" is used.
      *  @param configuration  The configuration to run the files in.
      *  @return the URL of the HTML file that was searched.
      *  @exception Exception If there is a problem running a demo.
@@ -393,7 +393,7 @@ public class HTMLAbout {
      * other .htm* files.  The children of demoURLName are scanned,
      * but not the grandchildren.  The names of the demos will have
      * $CLASSPATH/ prepended. This method is used to generate a list of all
-     * demos in ptolemy/configs/doc/models.txt.
+     * demos in config/doc/models.txt.
      * @param demosFileName The name of the demo file.
      * @param outputFileName The name of the file that is generated.
      * @exception IOException If there is a problem reading the demo file
@@ -469,7 +469,7 @@ public class HTMLAbout {
         // Open the completeDemos.htm file and read the contents into
         // a String
         if ((demosFileName == null) || (demosFileName.length() == 0)) {
-            demosFileName = "ptolemy/configs/doc/completeDemos.htm";
+            demosFileName = "config/doc/completeDemos.htm";
         }
 
         return MoMLApplication.specToURL(demosFileName);
@@ -660,7 +660,7 @@ public class HTMLAbout {
     // Return true if a configuration can be found
     // @param configurationName The name of the configuration, for
     // example "full"
-    // @returns True if ptolemy/configs/<i>configuration</i>/configuration.xml
+    // @returns True if config/<i>configuration</i>/configuration.xml
     // can be found
     private static boolean _configurationExists(String configurationName) {
         boolean configurationExists = false;
@@ -668,7 +668,7 @@ public class HTMLAbout {
         try {
             URL url = Thread.currentThread().getContextClassLoader()
                     .getResource(
-                            "ptolemy/configs/" + configurationName
+                            "config/" + configurationName
                                     + "/configuration.xml");
 
             if (url != null) {

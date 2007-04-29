@@ -122,28 +122,28 @@ proc expandConfiguration {configuration} {
 ####
 #
 test VergilConfiguration-1.1 {make sure that everything inside the DSP configuration can be expanded} {
-    expandConfiguration "ptolemy/configs/dsp/configuration.xml"
+    expandConfiguration "config/dsp/configuration.xml"
 } {0}
 
 ######################################################################
 ####
 #
 test VergilConfiguration-1.2 {make sure that everything inside the Ptiny configuration can be expanded} {
-    expandConfiguration "ptolemy/configs/ptiny/configuration.xml"
+    expandConfiguration "config/ptiny/configuration.xml"
 } {0}
 
 ######################################################################
 ####
 #
 test VergilConfiguration-1.2.1 {make sure that everything inside the Hybrid configuration can be expanded} {
-    expandConfiguration "ptolemy/configs/hyvisual/configuration.xml"
+    expandConfiguration "config/hyvisual/configuration.xml"
 } {0}
 
 ######################################################################
 ####
 #
 test VergilConfiguration-1.3 {make sure that everything inside the Full configuration (with the matlab and serial actors removed) can be expanded} {
-    expandConfiguration "ptolemy/configs/full/configuration.xml"
+    expandConfiguration "config/full/configuration.xml"
 } {0}
 
 
@@ -151,6 +151,6 @@ test VergilConfiguration-1.3 {make sure that everything inside the Full configur
 ####
 #
 #test VergilConfiguration-1.4 {make sure that everything inside the Full configuration can be expanded} {
-#    expandConfiguration "ptolemy/configs/vergilConfiguration.xml"
+#    expandConfiguration "config/vergilConfiguration.xml"
 #    # This is a known Failure because of matlab problems
 #} {0} {Known Failure}

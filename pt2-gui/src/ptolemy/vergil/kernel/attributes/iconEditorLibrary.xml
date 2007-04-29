@@ -5,7 +5,7 @@
   <!-- Marker so that tree view expands the library. -->
   <property name="_libraryMarker"
             class="ptolemy.kernel.util.SingletonAttribute"/>
-  <input source="ptolemy/configs/annotation.xml"/>
+  <input source="config/annotation.xml"/>
   <property name="ellipse" class="ptolemy.vergil.kernel.attributes.EllipseAttribute">
     <property name="width" value="30"/>
     <property name="height" value="30"/>
