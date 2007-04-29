@@ -7,13 +7,13 @@
   <configure>
     <?moml
       <group>
-        <input source="ptolemy/configs/utilityCompositeActor.xml"/>
+        <input source="config/utilityCompositeActor.xml"/>
         <class name="CompositeClassDefinition" extends="ptolemy.actor.TypedCompositeActor"/>
-		<input source="ptolemy/configs/utilityModalModel.xml"/>
-        <input source="ptolemy/configs/utilityPtalonActor.xml"/>
-        <input source="ptolemy/configs/basicUtilities.xml"/>
+		<input source="config/utilityModalModel.xml"/>
+        <input source="config/utilityPtalonActor.xml"/>
+        <input source="config/basicUtilities.xml"/>
         <!-- Do not include this as singleton parameters are buggy. -->
-        <!-- input source="ptolemy/configs/customize.xml"/ -->
+        <!-- input source="config/customize.xml"/ -->
         <input source="ptolemy/data/unit/unitSystems.xml"/>
       </group>
     ?>

@@ -9,11 +9,11 @@
 
         <!-- use ptolemy/ instead of ../ here so that we look in the jar-->
         <!-- NOTE: javasound actors only work under jdk1.3. -->
-        <input source="ptolemy/actor/lib/javasound/javasound.xml"/>
-        <input source="ptolemy/actor/lib/comm/comm.xml"/>
-        <input source="ptolemy/actor/lib/filtering.xml"/>
-        <input source="ptolemy/actor/lib/spectrum.xml"/>
-        <input source="ptolemy/actor/lib/statistical.xml"/>
+        <!--<input source="pt2/src/ptolemy/actor/lib/javasound/javasound.xml"/>-->
+        <!--<input source="pt2/src/ptolemy/actor/lib/comm/comm.xml"/>-->
+        <input source="pt2/src/ptolemy/actor/lib/filtering.xml"/>
+<!--        <input source="pt2/src/ptolemy/actor/lib/spectrum.xml"/>-->
+        <input source="pt2/src/ptolemy/actor/lib/statistical.xml"/>
 
       </group>
     ?>

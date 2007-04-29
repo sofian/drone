@@ -14,15 +14,15 @@
         class="ptolemy.domains.ct.lib.ContinuousClock"/>
 <entity name="TriggeredContinuousClock" 
         class="ptolemy.domains.ct.lib.TriggeredContinuousClock"/>
-<entity name="ContinuousSinewave"
+<!--<entity name="ContinuousSinewave"
         class="ptolemy.domains.ct.lib.ContinuousSinewave"/>
-
+-->
 <entity name="CTCompositeActor"
         class="ptolemy.domains.ct.kernel.CTCompositeActor"/>
 
-<input source="ptolemy/domains/ct/lib/dynamics.xml"/>
-<input source="ptolemy/domains/ct/lib/eventgenerators.xml"/>
-<input source="ptolemy/domains/ct/lib/wavegenerators.xml"/>
+<input source="pt2/src/ptolemy/domains/ct/lib/dynamics.xml"/>
+<input source="pt2/src/ptolemy/domains/ct/lib/eventgenerators.xml"/>
+<input source="pt2/src/ptolemy/domains/ct/lib/wavegenerators.xml"/>
 
       </group>
     ?>

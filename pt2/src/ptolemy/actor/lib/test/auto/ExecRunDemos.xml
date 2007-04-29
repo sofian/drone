@@ -43,7 +43,7 @@
         <property name="_location" class="ptolemy.kernel.util.Location" value="25.0, 270.0">
         </property>
     </property>
-    <property name="fileParameter" class="ptolemy.data.expr.FileParameter" value="$PTII/ptolemy/actor/lib/test/auto/">
+    <property name="fileParameter" class="ptolemy.data.expr.FileParameter" value="$PTII/pt2/src/ptolemy/actor/lib/test/auto/">
         <property name="_hideName" class="ptolemy.kernel.util.SingletonAttribute">
         </property>
         <property name="_icon" class="ptolemy.vergil.icon.ValueIcon">

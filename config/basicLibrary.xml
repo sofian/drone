@@ -9,7 +9,7 @@
             class="ptolemy.kernel.util.SingletonAttribute"/>
 
   <!-- Default utilities library. -->
-<!--  <input source="drone/data/config/utilitiesLibrary.xml"/> -->
+<!--  <input source="config/utilitiesLibrary.xml"/> -->
 
   <!-- Default director library. -->
   <!-- This uses configure so that directors are not instantiated -->
@@ -19,7 +19,7 @@
     <configure>
       <?moml
         <group>
-          <input source="drone/data/config/basicDirectors.xml"/>
+          <input source="config/basicDirectors.xml"/>
         </group>
       ?>
     </configure>
@@ -31,7 +31,7 @@
     <configure>
       <?moml
         <group>
-          <input source="drone/data/config/basicActorLibrary.xml"/>
+          <input source="config/basicActorLibrary.xml"/>
         </group>
       ?>
     </configure>

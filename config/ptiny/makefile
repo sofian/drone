@@ -29,7 +29,7 @@
 # 						PT_COPYRIGHT_VERSION_2
 # 						COPYRIGHTENDKEY
 
-ME =		config/ptiny
+ME =		ptolemy/configs/ptiny
 
 # There is no demo directory, put demos in the corresponding domain
 # directory so that we can find them if we are looking at domains.

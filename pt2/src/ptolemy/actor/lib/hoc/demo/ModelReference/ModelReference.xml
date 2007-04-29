@@ -64,7 +64,7 @@
         </property>
     </entity>
     <entity name="VisualModelReference2" class="ptolemy.vergil.actor.lib.VisualModelReference">
-        <property name="modelFileOrURL" class="ptolemy.actor.parameters.FilePortParameter" value="$PTII/ptolemy/actor/lib/hoc/demo/MobileFunction/MobileFunction.xml">
+        <property name="modelFileOrURL" class="ptolemy.actor.parameters.FilePortParameter" value="$PTII/pt2/src/ptolemy/actor/lib/hoc/demo/MobileFunction/MobileFunction.xml">
         </property>
         <property name="lingerTime" class="ptolemy.data.expr.Parameter" value="20000L">
         </property>

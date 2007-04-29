@@ -53,7 +53,7 @@
         <doc>The inside model of this composite actor can be dynamically defined.</doc>
       </entity>
 
-      <input source="config/utilityModalModel.xml"/>
+<!--      <input source="config/utilityModalModel.xml"/> -->
 
       <entity name="ModelReference" class="ptolemy.actor.lib.hoc.ModelReference"/>
 

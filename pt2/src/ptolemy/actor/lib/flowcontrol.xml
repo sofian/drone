@@ -6,10 +6,10 @@
     <?moml
       <group>
   <doc>Actors that route tokens or otherwise affect the flow of control.</doc>
-  <input source="ptolemy/actor/lib/aggregators.xml"/>
-  <input source="ptolemy/actor/lib/booleanflowcontrol.xml"/>
-  <input source="ptolemy/actor/lib/sequencecontrol.xml"/>
-  <input source="ptolemy/actor/lib/executioncontrol.xml"/>
+  <input source="pt2/src/ptolemy/actor/lib/aggregators.xml"/>
+  <input source="pt2/src/ptolemy/actor/lib/booleanflowcontrol.xml"/>
+  <input source="pt2/src/ptolemy/actor/lib/sequencecontrol.xml"/>
+  <input source="pt2/src/ptolemy/actor/lib/executioncontrol.xml"/>
       </group>
     ?>
   </configure>
