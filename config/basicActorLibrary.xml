@@ -17,4 +17,5 @@
   <input source="pt2/src/ptolemy/actor/lib/signalprocessing.xml"/>
   <input source="pt2/src/ptolemy/actor/lib/string/string.xml"/>
   <input source="pt2/src/ptolemy/domains/ptinyDomains.xml"/>
+  <input source="plugins/plugins.xml"/>
 </group>

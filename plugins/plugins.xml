@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE plot PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="Drone" class="ptolemy.moml.EntityLibrary">
+  <input source="plugins/drone.frei0r/data/frei0r.xml"/>
+  <input source="plugins/drone.jmf/data/jmf.xml"/>
+  <input source="plugins/drone.artkp/data/artkp.xml"/>
+</entity>
+
