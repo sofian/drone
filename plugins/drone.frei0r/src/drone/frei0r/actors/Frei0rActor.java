@@ -138,23 +138,23 @@ public class Frei0rActor extends TypedAtomicActor {
 						input3.setContainer(null);
 					}
 					
-					params.clear();
-					for (int i=0; i<_frei0r.nParams(); ++i) {
-						// TODO: check unicity of param name
-						TypedIOPort param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
-						switch (_frei0r.getParamType(i)) {
-						case Frei0r.F0R_PARAM_BOOL:
-							param.setTypeEquals(BaseType.BOOLEAN);
-							break;
-						case Frei0r.F0R_PARAM_DOUBLE:
-							param.setTypeEquals(BaseType.DOUBLE);
-							break;
-						case Frei0r.F0R_PARAM_POSITION:
-// TODO: define
-							break;
-							//param.setTypeEquals(type)
-						}
-					}
+//					params.clear();
+//					for (int i=0; i<_frei0r.nParams(); ++i) {
+//						// TODO: check unicity of param name
+//						TypedIOPort param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+//						switch (_frei0r.getParamType(i)) {
+//						case Frei0r.F0R_PARAM_BOOL:
+//							param.setTypeEquals(BaseType.BOOLEAN);
+//							break;
+//						case Frei0r.F0R_PARAM_DOUBLE:
+//							param.setTypeEquals(BaseType.DOUBLE);
+//							break;
+//						case Frei0r.F0R_PARAM_POSITION:
+//// TODO: define
+//							break;
+//							//param.setTypeEquals(type)
+//						}
+//					}
 					
 				}
 				
