@@ -5,7 +5,7 @@
 	<property name="libdir" location="../../lib"/>
 
 	<property name="debug" value="on"/>
-	<property name="debuglevel" location="lines,vars,source"/>
+	<property name="debuglevel" value="lines,vars,source"/>
 
 	<property name="make" value="make" />
 	<property name="qmake" value="qmake" />

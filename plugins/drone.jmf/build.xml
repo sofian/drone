@@ -5,7 +5,7 @@
 	<property name="libdir" location="../../lib"/>
 
 	<property name="debug" value="true"/>
-	<property name="debuglevel" location="lines,vars,source"/>
+	<property name="debuglevel" value="lines,vars,source"/>
 
 	<target name="main">
 		<echo>Building JMF plugin.</echo>
