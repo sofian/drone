@@ -127,7 +127,7 @@ public class ImageDisplay extends Sink {
      *   if the base class throws it.
      */
     public boolean postfire() throws IllegalActionException {
-        if (input.hasToken(0)) {
+        if (input.getWidth() > 0 && input.hasToken(0)) {
             final Token in = input.get(0);
             if (in == null)
             	throw new IllegalActionException("Got null token");
