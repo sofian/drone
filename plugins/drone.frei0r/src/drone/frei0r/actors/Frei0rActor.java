@@ -195,66 +195,65 @@ public class Frei0rActor extends TypedAtomicActor {
 			boolean hasInput = false;
 			
 			if (input1.getWidth() > 0 && input1.hasToken(0)) {
-				hasInput = true;
 				Image imageIn = ((ImageToken)input1.get(0)).asAWTImage();
-				bufferedImageIn = ImageConvert.toBufferedImage(imageIn);
-				if (bufferedImageIn.getType() != BufferedImage.TYPE_INT_ARGB) {
-					bufferedImageIn = ImageConvert.toARGB(bufferedImageIn);
+				if (imageIn == null)
+					hasInput = false;
+				else {
+					hasInput = true;
+					bufferedImageIn = ImageConvert.toBufferedImage(imageIn);
+					if (bufferedImageIn.getType() != BufferedImage.TYPE_INT_ARGB) {
+						bufferedImageIn = ImageConvert.toARGB(bufferedImageIn);
+					}
 				}
 			}
 			
 			// TODO implement support for params
-			// If this is a source and there is no image input, put a dummy instead
-			if (!hasInput && _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
-				bufferedImageIn = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-													BufferedImage.TYPE_INT_ARGB);
-			}
-			
-			// Create instance or resize it.
-			if (_frei0rInstance == null ||
-				_frei0rInstance.getWidth() != bufferedImageIn.getWidth() ||
-				_frei0rInstance.getHeight() != bufferedImageIn.getHeight()) {
-				_frei0rInstance = _frei0r.createInstance(bufferedImageIn.getWidth(), bufferedImageIn.getHeight());
-			}
-			
-			// Update.
-			if (hasInput || _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
-				
-				BufferedImage bufferedImageOut = new BufferedImage(_frei0rInstance.getWidth(), 
-																	_frei0rInstance.getHeight(), 
-																	BufferedImage.TYPE_INT_ARGB);
-				
-				if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
-						_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-					
-					BufferedImage bufferedImageIn2 = null;
-					BufferedImage bufferedImageIn3 = null;
-					if (input2.getWidth() > 0 && input2.hasToken(0)) {
-						Image imageIn = ((ImageToken)input2.get(0)).asAWTImage();
-						bufferedImageIn2 = ImageConvert.toBufferedImage(imageIn);
-					} else {
-						bufferedImageIn2 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-								BufferedImage.TYPE_INT_ARGB);
-					}
-					
-					if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3 &&
-							input3.getWidth() > 0 && input3.hasToken(0)) {
-						Image imageIn = ((ImageToken)input3.get(0)).asAWTImage();
-						bufferedImageIn3 = ImageConvert.toBufferedImage(imageIn);
-					} else {
-						bufferedImageIn3 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-								BufferedImage.TYPE_INT_ARGB);
-					}
-					_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn,
-											bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
-				} else {
-					_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn, bufferedImageOut);
+			// If there is no image input, do nothing.
+			// NOTICE: Even sources thus need to have an input, the which acts as a trigger.
+			if (hasInput) {
+				// Create instance or resize it.
+				if (_frei0rInstance == null ||
+					_frei0rInstance.getWidth() != bufferedImageIn.getWidth() ||
+					_frei0rInstance.getHeight() != bufferedImageIn.getHeight()) {
+					_frei0rInstance = _frei0r.createInstance(bufferedImageIn.getWidth(), bufferedImageIn.getHeight());
 				}
 				
-				// XXX hack for test
-				//bufferedImageOut = bufferedImageIn;
-				output.send(0, new AWTImageToken(bufferedImageOut));
-				
+				// Update.
+				if (hasInput || _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
+					
+					BufferedImage bufferedImageOut = new BufferedImage(_frei0rInstance.getWidth(), 
+																		_frei0rInstance.getHeight(), 
+																		BufferedImage.TYPE_INT_ARGB);
+					
+					if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
+							_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+						
+						BufferedImage bufferedImageIn2 = null;
+						BufferedImage bufferedImageIn3 = null;
+						if (input2.getWidth() > 0 && input2.hasToken(0)) {
+							Image imageIn = ((ImageToken)input2.get(0)).asAWTImage();
+							bufferedImageIn2 = ImageConvert.toBufferedImage(imageIn);
+						} else {
+							bufferedImageIn2 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
+									BufferedImage.TYPE_INT_ARGB);
+						}
+						
+						if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3 &&
+								input3.getWidth() > 0 && input3.hasToken(0)) {
+							Image imageIn = ((ImageToken)input3.get(0)).asAWTImage();
+							bufferedImageIn3 = ImageConvert.toBufferedImage(imageIn);
+						} else {
+							bufferedImageIn3 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
+									BufferedImage.TYPE_INT_ARGB);
+						}
+						_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn,
+												bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
+					} else {
+						_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn, bufferedImageOut);
+					}
+					
+					output.send(0, new AWTImageToken(bufferedImageOut));
+				}				
 			}
 			
 		} catch (Frei0rException e) {
