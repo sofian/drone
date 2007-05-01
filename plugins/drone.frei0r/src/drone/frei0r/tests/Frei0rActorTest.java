@@ -1,33 +1,15 @@
-/* 
- * Copyright (c) 2006 Jean-Sebastien Senecal (js@drone.ws)
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
 package drone.frei0r.tests;
 
-import org.junit.*;
 import ptolemy.actor.TypedCompositeActor;
-import drone.frei0r.actors.*;
-import drone.frei0r.*;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
+import drone.frei0r.actors.Frei0rActor;
+import junit.framework.TestCase;
 
-public class Frei0rActorTest {
-
+public class Frei0rActorTest extends TestCase {
+	
 	private TypedCompositeActor _top;
-	@Before
+	
 	public void setUp() throws Exception {
 		_top = new TypedCompositeActor();
 		_top.setName("Frei0r unit tests");
@@ -39,7 +21,6 @@ public class Frei0rActorTest {
 	 * so any problems with the native lib will be reported
 	 * at the first instanciation.
 	 */
-	@Test 
 	public void testConstructor()
 	{
 		try
@@ -47,11 +28,10 @@ public class Frei0rActorTest {
 			new Frei0rActor(_top, "frei0rTest");
 			
 		} catch (Exception e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 	}
 	
-	@Test
 	public void testSetFrei0rLibraryNameAttributeWrong() throws NameDuplicationException, IllegalActionException
 	{
 		Frei0rActor frei0rActor = new Frei0rActor(_top, "frei0rTest");
@@ -59,7 +39,6 @@ public class Frei0rActorTest {
 		frei0rActor.fire();
 	}
 	
-	@Test
 	public void testSetFrei0rLibraryNameAttribute() throws NameDuplicationException, IllegalActionException
 	{
 		Frei0rActor frei0rActor = new Frei0rActor(_top, "frei0rTest");
@@ -67,8 +46,6 @@ public class Frei0rActorTest {
 		frei0rActor.frei0rLibraryName.setExpression("$CLASSPATH/contrib/Frei0r/plugins/libnois0r.dylib");		
 	}
 	
-	
-	@After
 	public void tearDown() throws Exception {
 	}
 
