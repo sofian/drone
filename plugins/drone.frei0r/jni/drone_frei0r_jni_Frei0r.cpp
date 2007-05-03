@@ -309,13 +309,6 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r__1openLibrary
   		return;
   	}	
 
-//  	*(void**) (&frei0rHandle->f0r_get_plugin_info) = dlsym(handle, "f0r_get_plugin_info");
-//  	if (*(void**) (&frei0rHandle->f0r_get_plugin_info)==NULL)
-//  	{
-//  		ThrowFrei0rException(env, "Failed to bind f0r_get_plugin_info.", dlerror());
-//  		return;
-//  	}	
-
   	*(void**) (&frei0rHandle->f0r_get_param_info) = dlsym(handle, "f0r_get_param_info");
   	if (*(void**) (&frei0rHandle->f0r_get_param_info)==NULL)
   	{
@@ -569,29 +562,111 @@ JNIEXPORT jobject JNICALL Java_drone_frei0r_jni_Frei0r_getParamValue
 			jmethodID newObjConstructorID = NULL;
 			switch (paramInfo.type)
 			{
+			// BOOLEAN
 			case F0R_PARAM_BOOL:
 				{
-					double boolValue;
-					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&boolValue, (int)paramIndex);
+					f0r_param_bool value;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 					newObjClass = env->FindClass("java/lang/Boolean");
 					if (newObjClass == NULL)
 					{
 						ThrowFrei0rException(env, "Cannot find class java.lang.Boolean.");
 						return NULL;
 					}
-					newObjConstructorID = env->GetMethodId(newObjClass, "<init>", "(Z)");
+					newObjConstructorID = env->GetMethodID(newObjClass, "<init>", "(Z)");
 					if (newObjConstructorID == NULL)
 					{
 						ThrowFrei0rException(env, "Cannot find constructor Boolean(boolean).");
 						return NULL;
 					}
 					
-					return env->NewObject(newObjClass, newObjConstructorID, (jboolean)boolValue);
+					return env->NewObject(newObjClass, newObjConstructorID, (jboolean)(value >= 0.5));
 				}
 				break;
-			}		
+				
+			// DOUBLE
+			case F0R_PARAM_DOUBLE:
+				{
+					f0r_param_double value;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+					newObjClass = env->FindClass("java/lang/Double");
+					if (newObjClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class java.lang.Double.");
+						return NULL;
+					}
+					newObjConstructorID = env->GetMethodID(newObjClass, "<init>", "(D)");
+					if (newObjConstructorID == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find constructor Double(double).");
+						return NULL;
+					}
+					
+					return env->NewObject(newObjClass, newObjConstructorID, (jdouble)value);
+				}
+				break;
+			
+			// COLOR
+			case F0R_PARAM_COLOR:
+				{
+					f0r_param_color_t value;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+					newObjClass = env->FindClass("drone/frei0r/jni/Frei0r$Color");
+					if (newObjClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class drone.frei0r.jni.Frei0r$Color.");
+						return NULL;
+					}
+					newObjConstructorID = env->GetMethodID(newObjClass, "<init>", "(FFF)");
+					if (newObjConstructorID == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find constructor drone.frei0r.jni.Frei0r$Color(float,float,float).");
+						return NULL;
+					}
+					
+					return env->NewObject(newObjClass, newObjConstructorID, (jfloat)value.r, (jfloat)value.g, (jfloat)value.b);
+				}
+				break;
+
+			// POSITION
+			case F0R_PARAM_POSITION:
+				{
+					f0r_param_position_t value;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+					newObjClass = env->FindClass("drone/frei0r/jni/Frei0r$Position");
+					if (newObjClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class drone.frei0r.jni.Frei0r$Position.");
+						return NULL;
+					}
+					newObjConstructorID = env->GetMethodID(newObjClass, "<init>", "(DD)");
+					if (newObjConstructorID == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find constructor drone.frei0r.jni.Frei0r$Position(double,double).");
+						return NULL;
+					}
+					
+					return env->NewObject(newObjClass, newObjConstructorID, (jdouble)value.x, (jdouble)value.y);
+				}
+				break;
+
+			// STRING
+			case F0R_PARAM_STRING:
+				{
+					f0r_param_string value;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+				  	return env->NewStringUTF(&value);
+				}
+				break;
+				
+			default:
+				ThrowFrei0rException(env, "Specified param type is unrecognized.");
+			}
+		}
 	}
 	else
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);	
-  
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return NULL;
+	}
   }
