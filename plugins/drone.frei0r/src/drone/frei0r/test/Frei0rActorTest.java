@@ -1,9 +1,10 @@
-package drone.frei0r.tests;
+package drone.frei0r.test;
 
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
-import drone.frei0r.actors.Frei0rActor;
+import drone.frei0r.actor.Frei0rActor;
+
 import junit.framework.TestCase;
 
 public class Frei0rActorTest extends TestCase {

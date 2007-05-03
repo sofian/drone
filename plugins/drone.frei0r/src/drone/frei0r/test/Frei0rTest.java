@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package drone.frei0r.tests;
+package drone.frei0r.test;
 
 import junit.framework.TestCase;
 import drone.frei0r.jni.Frei0r;

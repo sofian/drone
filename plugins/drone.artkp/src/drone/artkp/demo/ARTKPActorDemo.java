@@ -1,4 +1,4 @@
-package drone.artkp.demos;
+package drone.artkp.demo;
 
 import ptolemy.actor.Director;
 import ptolemy.actor.TypedCompositeActor;
@@ -7,8 +7,8 @@ import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.domains.sdf.kernel.SDFDirector;
 
 import ptolemy.actor.Manager;
-import drone.artkp.actors.ARTKPActor;
-import drone.jmf.actors.*;
+import drone.artkp.actor.ARTKPActor;
+import drone.jmf.actor.*;
 
 public class ARTKPActorDemo {
 

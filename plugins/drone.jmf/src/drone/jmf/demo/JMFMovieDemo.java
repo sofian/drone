@@ -15,14 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package drone.jmf.demos;
+package drone.jmf.demo;
 
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import ptolemy.domains.sdf.kernel.SDFDirector;
-import drone.jmf.actors.VideoCamera;
-import drone.jmf.actors.ImageDisplay;
+import drone.jmf.actor.MovieReader;
+import drone.jmf.actor.ImageDisplay;
 
 //import ptolemy.kernel.util.Workspace;
 //import ptolemy.domains.de.kernel.DEDirector;
@@ -36,7 +36,7 @@ import ptolemy.actor.Manager;
 //import java.awt.event.*;
 //import java.awt.image.*;
 
-public class JMFCameraDemo {
+public class JMFMovieDemo {
 
 	public static void main(String[] args) throws NameDuplicationException, IllegalActionException {
 		
@@ -44,7 +44,7 @@ public class JMFCameraDemo {
 			
 			// Create the director.
 			SDFDirector director = new SDFDirector(top, "director");
-			String period = Double.toString(1.0 / 27.0);
+			String period = Double.toString(1.0 / 100.0);
 			director.period.setExpression(period);
 			director.synchronizeToRealTime.setExpression("true");
 			//director.iterations.setExpression("100");
@@ -53,11 +53,10 @@ public class JMFCameraDemo {
 			top.setDirector(director);
 			
 			// Create two actors.
-			VideoCamera reader = new VideoCamera(top, "reader");
+			MovieReader reader = new MovieReader(top, "reader");
 			ImageDisplay writer = new ImageDisplay(top, "display");
-			reader.formatName.setExpression("RGB");
-//			reader.deviceNumber.setExpression(args[0]);
-//			reader.isFrameBased.setExpression("false");
+			reader.fileOrURL.setExpression(args[0]);
+			reader.isFrameBased.setExpression("true");
 			top.connect(reader.output, writer.input);
 			
 			top.getManager().startRun();

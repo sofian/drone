@@ -15,29 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package drone.jmf.actors.test;
-
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+package drone.jmf.test;
 
 import ptolemy.actor.Manager;
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.data.BooleanToken;
 import ptolemy.domains.sdf.kernel.SDFDirector;
 
-import drone.jmf.actors.ImageDisplay;
-import drone.jmf.actors.MovieReader;
+import junit.framework.TestCase;
 
-public class MovieReaderTest {
+import drone.jmf.actor.ImageDisplay;
+import drone.jmf.actor.MovieReader;
+
+public class MovieReaderTest extends TestCase {
 
 	static final String MOVIE_URL = "http://drone.ws/media/TravelAgent.mov";
 	
-	@Test
 	public final void testCloneAndConstruction() {
 		
 		try {
@@ -54,7 +47,6 @@ public class MovieReaderTest {
 		}
 	}
 	
-	@Test
 	public final void testSDF() {
 		try {
 			TypedCompositeActor top = new TypedCompositeActor();

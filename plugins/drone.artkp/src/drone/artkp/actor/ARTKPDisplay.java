@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package drone.artkp.actors;
+package drone.artkp.actor;
 
 import java.awt.Font;
 import java.awt.Image;
@@ -44,7 +44,7 @@ import com.sun.opengl.util.texture.TextureIO;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
-import drone.jogl.actors.ImageDisplay;
+import drone.jogl.actor.ImageDisplay;
 import drone.jogl.util.JOGLUtils;
 import drone.jogl.data.TextureToken;
 import ptolemy.data.ArrayToken;
