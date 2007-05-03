@@ -7,8 +7,7 @@
 	<property name="long.name"    value="ARToolKitPlus"/>
 	<property name="project.name" value="drone-${short.name}"/>
 	<property name="package.name" value="drone.${short.name}"/>
-
-	<property name="test.dir" location="${build.dir}/drone/${short.name}/test"/>
+	<property name="test.dir"     value="drone/${short.name}/test"/>
 	
 	<property name="make" value="make" />
 
@@ -34,12 +33,11 @@
 	<target name="test">
 		<junit>
 			<classpath refid="test.path"/>
-			
 			<formatter type="brief" usefile="false" />
 		    <batchtest fork="true">
 				<!-- Yes I know this totally looks strange but please don't touch: -->
 				<!-- it seems to be the only way to make it work in Ant -->
-		    	<fileset dir="${build.dir}" includes="${test.dir}/*.class" />
+		    	<fileset dir="${build.dir}" includes="**/${test.dir}/*.class" />
 		    </batchtest>
 		</junit>
 	</target>

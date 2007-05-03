@@ -29,7 +29,7 @@
 	</path>
 	
 	<path id="test.path">
-		<pathelement path="${base.path}"/>
+		<path refid="base.path"/>
 		<pathelement path="${junit.dir}"/>
 		<pathelement path="${ant-junit.dir}"/>
 	</path>
