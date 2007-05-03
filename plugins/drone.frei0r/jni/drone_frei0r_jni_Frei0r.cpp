@@ -536,7 +536,143 @@ JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getParamExplanation
  * Signature: (JLjava/lang/Object;I)V
  */
 JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
-  (JNIEnv *env, jobject obj, jlong, jobject, jint);
+  (JNIEnv *env, jobject obj, jlong inst, jobject paramValue, jint paramIndex)
+  {
+   	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+		if (paramIndex < 0 || paramIndex >= handle->pluginInfo.num_params)
+		{
+			ThrowFrei0rException(env, "Given index parameter is out of bounds.");
+		}
+		else
+		{
+			f0r_param_info_t paramInfo;
+			handle->f0r_get_param_info(&paramInfo, (int)paramIndex);
+			jclass expectedClass = NULL;
+			switch (paramInfo.type)
+			{
+			// BOOLEAN
+			case F0R_PARAM_BOOL:
+				{
+					// Check param class.
+					expectedClass = env->FindClass("java/lang/Boolean");
+					if (expectedClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class java.lang.Boolean.");
+					}
+					if (!env->IsInstanceOf(paramValue, expectedClass)) 
+					{
+						ThrowFrei0rException(env, "Given parameter is of wrong class.");
+					}	
+					// Get value 
+					jboolean boolValue = (jboolean)env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "booleanValue", "()Z"));
+					// Set value
+					f0r_param_bool value = (boolValue ? 1. : 0.);
+					handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+				}
+				break;
+				
+			// DOUBLE
+			case F0R_PARAM_DOUBLE:
+				{
+					// Check param class.
+					expectedClass = env->FindClass("java/lang/Double");
+					if (expectedClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class java.lang.Double.");
+					}
+					if (!env->IsInstanceOf(paramValue, expectedClass)) 
+					{
+						ThrowFrei0rException(env, "Given parameter is of wrong class.");
+					}	
+					// Get value 
+					f0r_param_double value = (f0r_param_double) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "doubleValue", "()D"));
+					// Set value
+					handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+				}
+				break;
+
+			// COLOR
+			case F0R_PARAM_COLOR:
+				{
+					// Check param class.
+					expectedClass = env->FindClass("drone/frei0r/jni/Frei0r$Color");
+					if (expectedClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class drone.frei0r.jni.Frei0r$Color.");
+					}
+					if (!env->IsInstanceOf(paramValue, expectedClass)) 
+					{
+						ThrowFrei0rException(env, "Given parameter is of wrong class.");
+					}	
+					// Get value
+					f0r_param_color value;
+					value.r = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getRed", "()F"));
+					value.g = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getGreen", "()F"));
+					value.b = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getBlue", "()F"));
+					// Set value
+					handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+				}
+				break;
+
+			// POSITION
+			case F0R_PARAM_POSITION:
+				{
+					// Check param class.
+					expectedClass = env->FindClass("drone/frei0r/jni/Frei0r$Position");
+					if (expectedClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class drone.frei0r.jni.Frei0r$Position.");
+					}
+					if (!env->IsInstanceOf(paramValue, expectedClass)) 
+					{
+						ThrowFrei0rException(env, "Given parameter is of wrong class.");
+					}	
+					// Get value
+					f0r_param_position value;
+					value.x = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getX", "()D"));
+					value.y = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getY", "()D"));
+					// Set value
+					handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
+				}
+				break;
+
+			// STRING
+			case F0R_PARAM_STRING:
+				{
+					// Check param class.
+					expectedClass = env->FindClass("java/lang/String");
+					if (expectedClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class java.lang.String.");
+					}
+					if (!env->IsInstanceOf(paramValue, expectedClass)) 
+					{
+						ThrowFrei0rException(env, "Given parameter is of wrong class.");
+					}	
+					// Get value 
+					jstring stringValue = (jstring)paramValue;
+					// Set value
+					const f0r_param_string *value = env->GetStringUTFChars(stringValue, NULL);
+					if (value != NULL)
+					{
+						handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)value, (int)paramIndex);
+					}
+				  	env->ReleaseStringUTFChars(stringValue, value);
+				}
+				break;
+
+			default:
+				ThrowFrei0rException(env, "Specified param type is unrecognized.");
+			}
+		}
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	} 	
+  }
 
 /*
  * Class:     drone_frei0r_jni_Frei0r
@@ -661,6 +797,7 @@ JNIEXPORT jobject JNICALL Java_drone_frei0r_jni_Frei0r_getParamValue
 				
 			default:
 				ThrowFrei0rException(env, "Specified param type is unrecognized.");
+				return NULL;
 			}
 		}
 	}
