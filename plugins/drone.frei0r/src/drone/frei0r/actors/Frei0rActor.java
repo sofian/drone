@@ -43,6 +43,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Vector;
 
 import drone.frei0r.Frei0rException;
@@ -107,6 +108,8 @@ public class Frei0rActor extends TypedAtomicActor {
 		defaultHeight.setTypeEquals(BaseType.INT);
 		defaultHeight.setExpression("320");
 		
+		params = new Vector<TypedIOPort>();
+		
 		_attachText("_iconDescription", "<svg>\n"
 				+ "<rect x=\"-30\" y=\"-15\" " + "width=\"60\" height=\"30\" "
 				+ "style=\"fill:white\"/>\n" + "</svg>\n");
@@ -138,24 +141,59 @@ public class Frei0rActor extends TypedAtomicActor {
 						input3.setContainer(null);
 					}
 					
-//					params.clear();
-//					for (int i=0; i<_frei0r.nParams(); ++i) {
-//						// TODO: check unicity of param name
-//						TypedIOPort param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
-//						switch (_frei0r.getParamType(i)) {
-//						case Frei0r.F0R_PARAM_BOOL:
-//							param.setTypeEquals(BaseType.BOOLEAN);
-//							break;
-//						case Frei0r.F0R_PARAM_DOUBLE:
-//							param.setTypeEquals(BaseType.DOUBLE);
-//							break;
-//						case Frei0r.F0R_PARAM_POSITION:
-//// TODO: define
-//							break;
-//							//param.setTypeEquals(type)
-//						}
-//					}
-					
+					if (params.size() == 0) {
+						for (int i=0; i<_frei0r.nParams(); ++i) {
+							// TODO: check unicity of param name
+							TypedIOPort param;
+							switch (_frei0r.getParamType(i)) {
+							case Frei0r.F0R_PARAM_BOOL:
+								// Add a boolean port.
+								param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+								param.setTypeEquals(BaseType.BOOLEAN);
+								params.add(param);
+								break;
+							case Frei0r.F0R_PARAM_DOUBLE:
+								// Add a double port.
+								param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								break;
+							case Frei0r.F0R_PARAM_POSITION:
+								// Add a double port for X.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (x)", true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								// Add a double port for Y.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (y)", true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								break;
+							case Frei0r.F0R_PARAM_COLOR:
+								// Add a double port for R.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (r)", true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								// Add a double port for G.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (g)", true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								// Add a double port for B.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (b)", true, false);
+								param.setTypeEquals(BaseType.DOUBLE);
+								params.add(param);
+								break;
+							case Frei0r.F0R_PARAM_STRING:
+								// Add a string port.
+								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (b)", true, false);
+								param.setTypeEquals(BaseType.STRING);
+								params.add(param);
+								break;
+							default:
+								throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
+																 	", please verify the frei0r plugin.");
+							}
+						}
+					}					
 				}
 				
 			} catch (Exception e) {

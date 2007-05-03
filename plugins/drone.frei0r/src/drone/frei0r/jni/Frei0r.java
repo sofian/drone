@@ -142,6 +142,7 @@ public class Frei0r {
 		return new Instance(this, width, height);
 	}
 
+	// Public methods.
 	/**< The (short) name of the plugin                   */
 	public native String getName() throws Frei0rException;
 	
@@ -171,44 +172,6 @@ public class Frei0r {
 	/**< An optional explanation string               */
 	public native String getExplanation() throws Frei0rException;
 
-//	/**<The (short) name of the param */
-//	public native String getParamName(int index) throws Frei0rException;
-//	
-//	/**<The type (see the F0R_PARAM_* defines) */
-//	public native int getParamType(int index) throws Frei0rException;
-//	
-//	/**<Optional explanation (can be 0) */
-//	public native String getParamExplanation(int index) throws Frei0rException;
-	
-//	/**< The (short) name of the plugin                   */
-//	public String getName() { return _name; }
-//	
-//	/**< The plugin author                                */
-//	public String getAuthor() { return _author; }
-//	/** The plugin type
-//	 * \see PLUGIN_TYPE
-//	 */
-//	
-//	public int getPluginType() { return _pluginType; }
-//	
-//    /**< The color model used                             */
-//	public int getColorModel() { return _colorModel; }
-//	
-//	/**< The frei0r major version this plugin is built for*/
-//	public int getFrei0rVersion() { return _frei0rVersion; }
-//	
-//	 /**< The major version of the plugin                  */
-//	public int getMajorVersion() { return _majorVersion; }
-//	
-//	  /**< The minor version of the plugin                  */
-//	public int getMinorVersion() { return _minorVersion; }
-//	
-//    /**< The number of parameters of the plugin           */
-//	public int nParams() { return _numParams; }
-//	
-//	/**< An optional explanation string               */
-//	public String getExplanation() { return _explanation; }
-
 	// /////////////////////////////////////////////////////////////////
 	// // JNI section ////
 
@@ -216,6 +179,8 @@ public class Frei0r {
 		System.loadLibrary("Frei0rJNI");
 	}
 
+	// Protected methods.
+	
 	/**
 	 * Creates a handle to a frei0r dynamic library.
 	 * @param libName the full path to the dynamic library

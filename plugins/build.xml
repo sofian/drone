@@ -2,18 +2,27 @@
 <project name="plugins" default="main">
 	<property name="distdir" location="../dist"/>
 	
+	<macrodef name="iterate">
+		<attribute name="target"/>
+	   	<sequential>
+	    	<subant target="@{target}">
+	        	<fileset dir="drone.frei0r" includes="**/build.xml"/>
+	        	<fileset dir="drone.jmf" includes="**/build.xml"/>
+		        <fileset dir="drone.artkp" includes="**/build.xml"/>
+		        <fileset dir="drone.jogl" includes="**/build.xml"/>
+	        </subant>
+	     </sequential>
+	</macrodef>
+
 	<target name="main">
-		<ant dir="drone.frei0r"/>
-		<ant dir="drone.jmf"/>
-		<ant dir="drone.artkp"/>
-		<ant dir="drone.jogl"/>
+		<iterate target="main"/>
 	</target>
 	
 	<target name="clean">
-		<ant dir="drone.frei0r" target="clean"/>
-		<ant dir="drone.jmf" target="clean"/>
-		<ant dir="drone.artkp" target="clean"/>
-		<ant dir="drone.jogl" target="clean"/>
+		<iterate target="clean"/>
 	</target>
 
+	<target name="test">
+		<iterate target="test"/>
+	</target>
 </project>

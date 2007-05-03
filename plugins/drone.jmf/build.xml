@@ -1,40 +1,46 @@
 <?xml version="1.0" ?>
-<project name="drone.jmf" default="main">
+<project name="drone-jmf" default="main">
 	
-	<property name="distdir" location="../../dist"/>
-	<property name="libdir" location="../../lib"/>
+	<import file="../common.xml"/>
 
-	<property name="debug" value="true"/>
-	<property name="debuglevel" value="lines,vars,source"/>
+	<property name="short.name"   value="jmf"/>
+	<property name="long.name"    value="JMF"/>
+	<property name="project.name" value="drone-${short.name}"/>
+	<property name="package.name" value="drone.${short.name}"/>
+
+	<property name="test.dir" location="${build.dir}/drone/${short.name}/test"/>
+	
+	<property name="make" value="make" />
 
 	<target name="main">
-		<echo>Building JMF plugin.</echo>
-        <javac srcdir="src" destdir="build" debug="${debug}" debuglevel="${debuglevel}">
-			<classpath>
-		    	<fileset dir="${libdir}">
-		    		<include name="**/*.jar"/>
-		    	</fileset>
-		    	<fileset dir="${distdir}">
-		    		<include name="**/*.jar"/>
-		    	</fileset>
-			</classpath>
-        </javac>
-		<copy todir="build/data">
-			<fileset dir="data" />
-		</copy>
-		<copy todir="build" file="plugin.xml" />
-		<jar destfile="${distdir}/drone-jmf.jar" basedir="build"/>
-		<jar destfile="${distdir}/drone-jmf-src.jar" basedir="src"/>
+		<echo>
+			Building ${long.name} plugin.
+		</echo>
+		<antcall target="compile.default" />
+		<jar destfile="${dist.dir}/${project.name}.jar" 	basedir="${build.dir}"/>
+		<jar destfile="${dist.dir}/${project.name}-src.jar" basedir="${src.dir}"/>
 	</target>
 	
 	<target name="clean">
 		<echo>
-			Cleaning JMF.
+			Cleaning ${long.name} plugin.
 		</echo>
-		<delete file="${distdir}/drone-jmf.jar"/>
-		<delete includeEmptyDirs="true">
-			<fileset dir="build" includes="**/*"/>
-		</delete>
+		<antcall target="clean.default"/>
+		<delete file="${distdir}/${project.name}.jar"/>
+		<delete file="${dist.dir}/${project.name}-src.jar"/>
 	</target>
 
+	<target name="test">
+		<echo>
+			Testing ${long.name} plugin.
+		</echo>
+		<junit>
+			<classpath refid="test.path"/>
+			<formatter type="brief" usefile="false" />
+		    <batchtest fork="true">
+		    	<fileset dir="${test.dir}" includes="**/*.class" />
+		    </batchtest>
+		</junit>
+	</target>
+	
 </project>

@@ -1,53 +1,53 @@
 <?xml version="1.0" ?>
-<project name="drone.artkp" default="main">
+<project name="drone-artkp" default="main">
 	
-	<property name="distdir" location="../../dist"/>
-	<property name="libdir" location="../../lib"/>
+	<import file="../common.xml"/>
 
-	<property name="debug" value="on"/>
-	<property name="debuglevel" value="lines,vars,source"/>
+	<property name="short.name"   value="artkp"/>
+	<property name="long.name"    value="ARToolKitPlus"/>
+	<property name="project.name" value="drone-${short.name}"/>
+	<property name="package.name" value="drone.${short.name}"/>
 
+	<property name="test.dir" location="${build.dir}/drone/${short.name}/test"/>
+	
 	<property name="make" value="make" />
-	
-	<target name="main" depends="jni, jogl">
-		<echo>Building ARToolKitPlus plugin.</echo>
-		<javac srcdir="src" destdir="build"  debug="${debug}" debuglevel="${debuglevel}">
-			<classpath>
-		    	<fileset dir="${libdir}">
-		    		<include name="**/*.jar"/>
-		    	</fileset>
-		    	<fileset dir="${distdir}">
-		    		<include name="**/*.jar"/>
-		    	</fileset>
-			</classpath>
-		</javac>
-		<copy todir="build/data">
-			<fileset dir="data" />
-		</copy>
-		<copy todir="build" file="plugin.xml" />
-		<jar destfile="${distdir}/drone-artkp.jar" basedir="build"/>
+
+	<target name="main" depends="jni">
+		<echo>
+			Building ${long.name} plugin.
+		</echo>
+		<ant dir="../drone.jogl" target="main"/>
+		<antcall target="compile.default" />
+		<jar destfile="${dist.dir}/${project.name}.jar" 	basedir="${build.dir}"/>
+		<jar destfile="${dist.dir}/${project.name}-src.jar" basedir="${src.dir}"/>
 	</target>
 	
+	<target name="clean">
+		<echo>
+			Cleaning ${long.name} plugin.
+		</echo>
+		<antcall target="clean.default"/>
+		<delete file="${distdir}/${project.name}.jar"/>
+		<delete file="${dist.dir}/${project.name}-src.jar"/>
+	</target>
+
+	<target name="test">
+		<junit>
+			<classpath refid="test.path"/>
+			
+			<formatter type="brief" usefile="false" />
+		    <batchtest fork="true">
+		    	<fileset dir="${test.dir}" includes="**/*.class" />
+		    </batchtest>
+		</junit>
+	</target>
+
 	<target name="jni">
-		<echo>Building ARToolKitPlus JNI lib.</echo>
+		<echo>Building ${long.name} JNI lib.</echo>
 		<exec dir="jni" executable="${make}" />
-		<copy todir="build/jni">
+		<copy todir="${build.dir}/jni">
 			<fileset dir="jni/lib" />
 		</copy>
 	</target>
 	
-	<target name="jogl">
-		<ant dir="../drone.jogl"/>
-	</target>
-
-	<target name="clean">
-		<echo>
-			Cleaning ARTKP plugin.
-		</echo>
-		<delete file="${distdir}/drone-artkp.jar"/>
-		<delete includeEmptyDirs="true">
-			<fileset dir="build" includes="**/*"/>
-		</delete>
-	</target>
-
 </project>

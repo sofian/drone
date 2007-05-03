@@ -53,6 +53,189 @@ Frei0rHandle* GetHandle (JNIEnv *env, jobject obj)
 }
 
 /*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getName
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getName
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+#ifdef __DEBUG
+		fprintf(stderr, "Name = %s\n", handle->pluginInfo.name);
+#endif
+	  	return env->NewStringUTF(handle->pluginInfo.name);
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return env->NewStringUTF(0);
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getAuthor
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getAuthor
+  (JNIEnv *env, jobject obj)
+{
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return env->NewStringUTF(handle->pluginInfo.author);
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return env->NewStringUTF(0);
+	}
+}
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getPluginType
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getPluginType
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.plugin_type;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getColorModel
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getColorModel
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.color_model;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getFrei0rVersion
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getFrei0rVersion
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.frei0r_version;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getMajorVersion
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getMajorVersion
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.major_version;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getMinorVersion
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getMinorVersion
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.minor_version;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    nParams
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_nParams
+  (JNIEnv *env, jobject obj)
+  {
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return (jint) handle->pluginInfo.num_params;
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return (jint)-1;
+	}
+  }
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getExplanation
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getExplanation
+  (JNIEnv *env, jobject obj)
+{
+	Frei0rHandle* handle = GetHandle(env, obj);
+	if (handle)
+	{
+	  	return env->NewStringUTF(handle->pluginInfo.explanation);
+	}
+	else
+	{
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+  		return env->NewStringUTF(0);
+	}
+}
+
+/*
  * Class:     ptolemy_actor_lib_frei0r_Frei0r
  * Method:    openLibrary
  * Signature: (Ljava/lang/String;)V
@@ -330,238 +513,85 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_update2
   		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);	
   }
 
-///*
-// * Class:     drone_frei0r_jni_Frei0r
-// * Method:    getPluginInfo
-// * Signature: ()J
-// */
-//JNIEXPORT jlong JNICALL Java_drone_frei0r_jni_Frei0r_getPluginInfo
-//  (JNIEnv *env, jobject obj)
-//  {
-//	Frei0rHandle* handle = GetHandle(env, obj);
-//	if (handle)
-//	{
-//		plugin_info_t info;
-//		hangle->get_plugin_info();
-//	}
-//	else
-//  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);	  	
-//  	
-//  }
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getParamName
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getParamName
+  (JNIEnv *env, jobject obj, jint);
 
 /*
  * Class:     drone_frei0r_jni_Frei0r
- * Method:    getParamInfo
- * Signature: (I)J
+ * Method:    getParamType
+ * Signature: (I)I
  */
-JNIEXPORT jlong JNICALL Java_drone_frei0r_jni_Frei0r_getParamInfo
-  (JNIEnv *env, jobject obj, jint paramIndex)
-  {
-  	
-  }
+JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getParamType
+  (JNIEnv *env, jobject obj, jint);
+
+/*
+ * Class:     drone_frei0r_jni_Frei0r
+ * Method:    getParamExplanation
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getParamExplanation
+  (JNIEnv *env, jobject obj, jint);
 
 /*
  * Class:     drone_frei0r_jni_Frei0r
  * Method:    setParamValue
- * Signature: (JJI)V
+ * Signature: (JLjava/lang/Object;I)V
  */
 JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
-  (JNIEnv *env, jobject obj, jlong instance, jlong param, jint paramIndex)
-  {
-  	
-  }
+  (JNIEnv *env, jobject obj, jlong, jobject, jint);
 
 /*
  * Class:     drone_frei0r_jni_Frei0r
  * Method:    getParamValue
- * Signature: (JJI)V
+ * Signature: (JI)Ljava/lang/Object;
  */
-JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_getParamValue
-  (JNIEnv *env, jobject obj, jlong instance, jlong param, jint paramIndex)
-{
-	
-}
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getName
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getName
-  (JNIEnv *env, jobject obj)
+JNIEXPORT jobject JNICALL Java_drone_frei0r_jni_Frei0r_getParamValue
+  (JNIEnv *env, jobject obj, jlong inst, jint paramIndex)
   {
-	Frei0rHandle* handle = GetHandle(env, obj);
+  	Frei0rHandle* handle = GetHandle(env, obj);
 	if (handle)
 	{
-#ifdef __DEBUG
-		fprintf(stderr, "Name = %s\n", handle->pluginInfo.name);
-#endif
-	  	return env->NewStringUTF(handle->pluginInfo.name);
+		if (paramIndex < 0 || paramIndex >= handle->pluginInfo.num_params)
+		{
+			ThrowFrei0rException(env, "Given index parameter is out of bounds.");
+			return NULL;
+		}
+		else
+		{
+			f0r_param_info_t paramInfo;
+			handle->f0r_get_param_info(&paramInfo, (int)paramIndex);
+			jclass newObjClass = NULL;
+			jmethodID newObjConstructorID = NULL;
+			switch (paramInfo.type)
+			{
+			case F0R_PARAM_BOOL:
+				{
+					double boolValue;
+					handle->f0r_get_param_value((f0r_instance_t)inst, (f0r_param_t)&boolValue, (int)paramIndex);
+					newObjClass = env->FindClass("java/lang/Boolean");
+					if (newObjClass == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find class java.lang.Boolean.");
+						return NULL;
+					}
+					newObjConstructorID = env->GetMethodId(newObjClass, "<init>", "(Z)");
+					if (newObjConstructorID == NULL)
+					{
+						ThrowFrei0rException(env, "Cannot find constructor Boolean(boolean).");
+						return NULL;
+					}
+					
+					return env->NewObject(newObjClass, newObjConstructorID, (jboolean)boolValue);
+				}
+				break;
+			}		
 	}
 	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return env->NewStringUTF(0);
-	}
+  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);	
+  
   }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getAuthor
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getAuthor
-  (JNIEnv *env, jobject obj)
-{
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return env->NewStringUTF(handle->pluginInfo.author);
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return env->NewStringUTF(0);
-	}
-}
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getPluginType
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getPluginType
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.plugin_type;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getColorModel
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getColorModel
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.plugin_type;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getFrei0rVersion
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getFrei0rVersion
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.frei0r_version;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getMajorVersion
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getMajorVersion
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.major_version;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getMinorVersion
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getMinorVersion
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.minor_version;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    nParams
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_nParams
-  (JNIEnv *env, jobject obj)
-  {
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return (jint) handle->pluginInfo.num_params;
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return (jint)-1;
-	}
-  }
-
-/*
- * Class:     drone_frei0r_jni_Frei0r
- * Method:    getExplanation
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_drone_frei0r_jni_Frei0r_getExplanation
-  (JNIEnv *env, jobject obj)
-{
-	Frei0rHandle* handle = GetHandle(env, obj);
-	if (handle)
-	{
-	  	return env->NewStringUTF(handle->pluginInfo.explanation);
-	}
-	else
-	{
-  		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return env->NewStringUTF(0);
-	}
-}
-
