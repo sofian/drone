@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<project>
+
+	<!-- Local directories -->
+	<property name="src.dir"      value="src"/>
+	<property name="build.dir"    value="build"/>
+	
+	<!-- Common directories -->
+	<property name="dist.dir" 	  location="../../dist"/>
+	<property name="lib.dir"      location="../../lib"/>
+	
+	<!-- JUnit directory -->
+	<property name="junit.dir"    location="/usr/share/ant/lib/junit.jar"/>
+	<property name="ant-junit.dir" location="/usr/share/ant/lib/ant-junit.jar"/>
+	
+	<!-- Debug properties -->
+	<property name="debug" value="true"/>
+	<property name="debug.level" value="lines,vars,source"/>
+	
+	<!-- Default paths -->
+	<path id="base.path">
+		<pathelement path="${java.class.path}"/>
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${dist.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="test.path">
+		<pathelement path="${base.path}"/>
+		<pathelement path="${junit.dir}"/>
+		<pathelement path="${ant-junit.dir}"/>
+	</path>
+	
+	<!-- Default targets -->
+	<target name="compile.default">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" 
+			debug="${debug}" debuglevel="${debug.level}" 
+			classpathref="base.path"/>
+		<copy todir="build/data">
+			<fileset dir="data" />
+		</copy>
+		<copy todir="${build.dir}" file="plugin.xml" />
+	</target>
+	
+	<target name="clean.default">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build.dir}" includes="**/*"/>
+		</delete>
+	</target>
+	
+</project>
