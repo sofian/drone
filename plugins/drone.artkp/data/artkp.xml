@@ -7,10 +7,10 @@
       <group>
         <doc>ARTKP processing actors</doc>
 
-	<entity name="ARTKPActor" class="drone.artkp.actors.ARTKPActor">
+	<entity name="ARTKPActor" class="drone.artkp.actor.ARTKPActor">
 	</entity>
 
-	<entity name="ARTKPDisplay" class="drone.artkp.actors.ARTKPDisplay">
+	<entity name="ARTKPDisplay" class="drone.artkp.actor.ARTKPDisplay">
 	</entity>
 
       </group>

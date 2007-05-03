@@ -7,19 +7,19 @@
       <group>
         <doc>JMF processing actors</doc>
 
-	<entity name="AudioPlayer" class="drone.jmf.actors.AudioPlayer">
+	<entity name="AudioPlayer" class="drone.jmf.actor.AudioPlayer">
 	</entity>
 
-	<entity name="ColorFinder" class="drone.jmf.actors.ColorFinder">
+	<entity name="ColorFinder" class="drone.jmf.actor.ColorFinder">
 	</entity>
 
-	<entity name="ImageToJMF" class="drone.jmf.actors.ImageToJMF">
+	<entity name="ImageToJMF" class="drone.jmf.actor.ImageToJMF">
 	</entity>
 
-	<entity name="MovieReader" class="drone.jmf.actors.MovieReader">
+	<entity name="MovieReader" class="drone.jmf.actor.MovieReader">
 	</entity>	
 
-	<entity name="MovieWriter" class="drone.jmf.actors.MovieWriter">
+	<entity name="MovieWriter" class="drone.jmf.actor.MovieWriter">
 <!--	<property name="fileType" value>
 	  <property name="style" class="ptolemy.actor.gui.style.ChoiceStyle">
 	          <property name="AVI" value="AVI"
@@ -32,13 +32,13 @@
 	      </property>  -->
 	</entity>	
 
-	<entity name="PlaySound" class="drone.jmf.actors.PlaySound">
+	<entity name="PlaySound" class="drone.jmf.actor.PlaySound">
 	</entity>	
 	
-	<entity name="StreamLoader" class="drone.jmf.actors.StreamLoader">
+	<entity name="StreamLoader" class="drone.jmf.actor.StreamLoader">
 	</entity>
 
-	<entity name="VideoCamera" class="drone.jmf.actors.VideoCamera">
+	<entity name="VideoCamera" class="drone.jmf.actor.VideoCamera">
 <!--	<property name="formatName">
 	  <property name="style" class="ptolemy.actor.gui.style.ChoiceStyle">
 	          <property name="RGB" value="RGB"
@@ -49,13 +49,13 @@
 	      </property>   -->
 	</entity>
 
-	<entity name="VideoPlayer" class="drone.jmf.actors.VideoPlayer">
+	<entity name="VideoPlayer" class="drone.jmf.actor.VideoPlayer">
 	</entity>
 
-	<entity name="StringToImage" class="drone.jmf.actors.StringToImage">
+	<entity name="StringToImage" class="drone.jmf.actor.StringToImage">
 	</entity>	
 
-	<entity name="ImageDisplay" class="drone.jmf.actors.ImageDisplay">
+	<entity name="ImageDisplay" class="drone.jmf.actor.ImageDisplay">
 	</entity>
       </group>
     ?>
