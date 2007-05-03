@@ -14,7 +14,7 @@
 	<property name="qmake" value="qmake" />
 	<property name="scons" value="scons" />
 
-	<target name="main" depends="jni, frei0r">
+	<target name="main">
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
@@ -38,7 +38,9 @@
 			<classpath refid="test.path"/>	
 			<formatter type="brief" usefile="false" />
 		    <batchtest fork="true">
-		    	<fileset dir="${test.dir}" includes="**/*.class" />
+				<!-- Yes I know this totally looks strange but please don't touch: -->
+				<!-- it seems to be the only way to make it work in Ant -->
+		    	<fileset dir="${build.dir}" includes="${test.dir}/*.class" />
 		    </batchtest>
 		</junit>
 	</target>
