@@ -29,7 +29,7 @@
 		<delete file="${dist.dir}/${project.name}-src.jar"/>
 	</target>
 
-	<target name="test">
+	<target name="test" depends="main">
 		<echo>
 			Testing ${long.name} plugin.
 		</echo>

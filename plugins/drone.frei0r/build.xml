@@ -13,7 +13,7 @@
 	<property name="qmake" value="qmake" />
 	<property name="scons" value="scons" />
 
-	<target name="main">
+	<target name="main" depends="jni, frei0r">
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
@@ -50,6 +50,9 @@
 		<exec dir="jni" executable="${make}" />
 		<copy todir="${build.dir}/jni">
 			<fileset dir="jni/lib" />
+		</copy>
+		<copy todir="${native.dir}">
+			<fileset dir="jni/lib" includes="**/*.so"/>
 		</copy>
 	</target>
 

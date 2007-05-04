@@ -8,6 +8,7 @@
 	<!-- Common directories -->
 	<property name="dist.dir" 	  location="../../dist"/>
 	<property name="lib.dir"      location="../../lib"/>
+	<property name="native.dir"   location="${lib.dir}/native/${os.arch}"/>
 	
 	<!-- JUnit directory -->
 	<property name="junit.dir"    location="/usr/share/ant/lib/junit.jar"/>

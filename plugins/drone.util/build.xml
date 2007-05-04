@@ -22,4 +22,10 @@
 		</delete>
 	</target>
 
+	<target name="test">
+		<echo>
+			Testing Util (for the moment it does nothing).
+		</echo>
+	</target>
+
 </project>

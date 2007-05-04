@@ -48,6 +48,9 @@
 		<copy todir="${build.dir}/jni">
 			<fileset dir="jni/lib" />
 		</copy>
+		<copy todir="${native.dir}">
+			<fileset dir="jni/lib" includes="**/*.so"/>
+		</copy>
 	</target>
 	
 </project>
