@@ -36,6 +36,16 @@ import drone.util.ImageConvert;
  */
 public class Frei0r {
 	
+	/**
+	 * The frei0r API major version
+	 */
+	public static final int FREI0R_MAJOR_VERSION  = 1;
+
+	/**
+	 * The frei0r API minor version
+	 */
+	public static final int FREI0R_MINOR_VERSION = 1;
+
 	/** one input and one output */
 	public static final int F0R_PLUGIN_TYPE_FILTER = 0;
 	/** just one output */
@@ -216,7 +226,7 @@ public class Frei0r {
 	public native Object getParamValue(long instance, int paramIndex) throws Frei0rException;
 	
 	// XXX: there should be different instance types for different plugins (eg. source, mixer2, mixer3)
-	public class Instance {
+	public static class Instance {
 
 		protected Instance(Frei0r parent, int width, int height) throws Frei0rException {
 			if (width < 0 || height < 0)
@@ -265,7 +275,7 @@ public class Frei0r {
 			int[] inframe = ((DataBufferInt)bufferIn).getData();
 			
 			// Convert input to ABGR if needed.
-			if (getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
 				ImageConvert.convertARGBtoABGR(inframe);
 			}
 			
@@ -276,7 +286,7 @@ public class Frei0r {
 			update(time, inframe, outframe);
 			
 			// Convert output to ABGR if needed.
-			if (getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
 				ImageConvert.convertARGBtoABGR(inframe);
 			}
 
@@ -340,22 +350,53 @@ public class Frei0r {
 			_parent.update2(_instanceHandle, time, inframe1, inframe2, inframe3, outframe);
 		}
 		
+		public Object getParamValue(int paramIndex) throws Frei0rException {
+			return _parent.getParamValue(_instanceHandle, paramIndex);
+		}
+		
+		public void setParamValue(Object param, int paramIndex) throws Frei0rException {
+			_parent.setParamValue(_instanceHandle, param, paramIndex);
+		}
+
 		private long _instanceHandle;
 		private Frei0r _parent;
 		private int _width, _height;
 	}
 
-	public class Position {
-		public int x;
-		public int y;
+	public static class Color {
+		public Color(float r, float g, float b) {
+			_r = r;
+			_g = g;
+			_b = b;
+		}
+		public float getRed() { return _r; }
+		public float getGreen() { return _g; }
+		public float getBlue() { return _b; }
+
+		public void setRed(float r) { _r = r; }
+		public void setGreen(float g) { _g = g; }
+		public void setBlue(float b) { _b = b; }
+		
+		private float _r;
+		private float _g;
+		private float _b;
 	}
-	
-	public class Color {
-		public int r;
-		public int g;
-		public int b;
+
+	public static class Position {
+		public Position(double x, double y) {
+			_x = x;
+			_y = y;
+		}
+		public double getX() { return _x; }
+		public double getY() { return _y; }
+		
+		public void setX(double x) { _x = x; }
+		public void setY(double y) { _y = y; }
+		
+		private double _x;
+		private double _y;
 	}
-	
+		
 	// /////////////////////////////////////////////////////////////////
 	// // private variables ////
 

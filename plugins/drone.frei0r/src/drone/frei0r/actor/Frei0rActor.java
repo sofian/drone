@@ -23,8 +23,10 @@ import ptolemy.actor.TypedIOPort;
 import ptolemy.actor.parameters.PortParameter;
 import ptolemy.data.AWTImageToken;
 import ptolemy.data.BooleanToken;
+import ptolemy.data.DoubleToken;
 import ptolemy.data.ImageToken;
 import ptolemy.data.IntToken;
+import ptolemy.data.ScalarToken;
 import ptolemy.data.StringToken;
 import ptolemy.data.expr.FileParameter;
 import ptolemy.data.expr.Parameter;
@@ -145,46 +147,59 @@ public class Frei0rActor extends TypedAtomicActor {
 						for (int i=0; i<_frei0r.nParams(); ++i) {
 							// TODO: check unicity of param name
 							TypedIOPort param;
+							String paramName = _frei0r.getParamName(i);
+							if (getPort(paramName) != null) {
+								// Don't re-add the same port.
+								// XXX This is a bit of a hack to prevent errors when loading a file
+								// We should find a better way to do that
+								params.add((TypedIOPort)getPort(paramName));
+								continue;
+							}
 							switch (_frei0r.getParamType(i)) {
+							// BOOLEAN
 							case Frei0r.F0R_PARAM_BOOL:
 								// Add a boolean port.
-								param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+								param = new TypedIOPort(this, paramName, true, false);
 								param.setTypeEquals(BaseType.BOOLEAN);
 								params.add(param);
 								break;
+							// DOUBLE
 							case Frei0r.F0R_PARAM_DOUBLE:
 								// Add a double port.
-								param = new TypedIOPort(this, _frei0r.getParamName(i), true, false);
+								param = new TypedIOPort(this, paramName, true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								break;
+							// POSITION
 							case Frei0r.F0R_PARAM_POSITION:
 								// Add a double port for X.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (x)", true, false);
+								param = new TypedIOPort(this, paramName + " (x)", true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								// Add a double port for Y.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (y)", true, false);
+								param = new TypedIOPort(this, paramName + " (y)", true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								break;
+							// COLOR
 							case Frei0r.F0R_PARAM_COLOR:
 								// Add a double port for R.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (r)", true, false);
+								param = new TypedIOPort(this, paramName + " (r)", true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								// Add a double port for G.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (g)", true, false);
+								param = new TypedIOPort(this, paramName + " (g)", true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								// Add a double port for B.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (b)", true, false);
+								param = new TypedIOPort(this, paramName + " (b)", true, false);
 								param.setTypeEquals(BaseType.DOUBLE);
 								params.add(param);
 								break;
+							// STRING
 							case Frei0r.F0R_PARAM_STRING:
 								// Add a string port.
-								param = new TypedIOPort(this, _frei0r.getParamName(i)+" (b)", true, false);
+								param = new TypedIOPort(this, paramName, true, false);
 								param.setTypeEquals(BaseType.STRING);
 								params.add(param);
 								break;
@@ -229,6 +244,98 @@ public class Frei0rActor extends TypedAtomicActor {
 		
 		try {
 			
+			// Process params.
+			if (_frei0rInstance != null) {
+				int k = 0;
+				for (int i=0; i<_frei0r.nParams(); i++) {
+					TypedIOPort paramPort;
+					Object paramValue = null;
+					switch (_frei0r.getParamType(i)) {
+					// BOOLEAN
+					case Frei0r.F0R_PARAM_BOOL:
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							paramValue = new Boolean( ((BooleanToken)paramPort.get(0)).booleanValue() );
+						}
+						break;
+					// DOUBLE
+					case Frei0r.F0R_PARAM_DOUBLE:
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							paramValue = new Double( ((ScalarToken)paramPort.get(0)).doubleValue() );
+						}
+						break;
+					// POSITION
+					case Frei0r.F0R_PARAM_POSITION:
+						Frei0r.Position positionValue = (Frei0r.Position)_frei0rInstance.getParamValue(i);
+						if (positionValue == null) {
+							positionValue = new Frei0r.Position(0.0, 0.0);
+						}
+						boolean positionSet = false;
+						// X
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							positionValue.setX( ((DoubleToken)paramPort.get(0)).doubleValue() );
+							positionSet = true;
+						}
+						// Y
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							positionValue.setY( ((DoubleToken)paramPort.get(0)).doubleValue() );
+							positionSet = true;
+						}
+						// Assign.
+						if (positionSet)
+							paramValue = positionValue;
+						break;
+					// COLOR
+					case Frei0r.F0R_PARAM_COLOR:
+						Frei0r.Color colorValue = (Frei0r.Color)_frei0rInstance.getParamValue(i);
+						if (colorValue == null) {
+							colorValue = new Frei0r.Color(0.0f, 0.0f, 0.0f);
+						}
+						boolean colorSet = false;
+						// RED
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							colorValue.setRed( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
+							colorSet = true;
+						}
+						// GREEN
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							colorValue.setGreen( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
+							colorSet = true;
+						}
+						// BLUE
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							colorValue.setBlue( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
+							colorSet = true;
+						}
+						// Assign.
+						if (colorSet)
+							paramValue = colorValue;
+						break;
+					// STRING
+					case Frei0r.F0R_PARAM_STRING:
+						paramPort = params.get(k++);
+						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
+							paramValue = ((StringToken)paramPort.get(0)).stringValue();
+						}
+						break;
+					default:
+						throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
+															", please verify the frei0r plugin.");
+					}
+					
+					// Set the value.
+					if (paramValue != null)
+						_frei0rInstance.setParamValue(paramValue, i);
+				}
+			}
+			
+			// Process image.
 			BufferedImage bufferedImageIn = null;
 			boolean hasInput = false;
 			
@@ -245,7 +352,6 @@ public class Frei0rActor extends TypedAtomicActor {
 				}
 			}
 			
-			// TODO implement support for params
 			// If there is no image input, do nothing.
 			// NOTICE: Even sources thus need to have an input, the which acts as a trigger.
 			if (hasInput) {
@@ -257,41 +363,38 @@ public class Frei0rActor extends TypedAtomicActor {
 				}
 				
 				// Update.
-				if (hasInput || _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
-					
-					BufferedImage bufferedImageOut = new BufferedImage(_frei0rInstance.getWidth(), 
-																		_frei0rInstance.getHeight(), 
-																		BufferedImage.TYPE_INT_ARGB);
-					
-					if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
-							_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-						
-						BufferedImage bufferedImageIn2 = null;
-						BufferedImage bufferedImageIn3 = null;
-						if (input2.getWidth() > 0 && input2.hasToken(0)) {
-							Image imageIn = ((ImageToken)input2.get(0)).asAWTImage();
-							bufferedImageIn2 = ImageConvert.toBufferedImage(imageIn);
-						} else {
-							bufferedImageIn2 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-									BufferedImage.TYPE_INT_ARGB);
-						}
-						
-						if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3 &&
-								input3.getWidth() > 0 && input3.hasToken(0)) {
-							Image imageIn = ((ImageToken)input3.get(0)).asAWTImage();
-							bufferedImageIn3 = ImageConvert.toBufferedImage(imageIn);
-						} else {
-							bufferedImageIn3 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-									BufferedImage.TYPE_INT_ARGB);
-						}
-						_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn,
-												bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
+				BufferedImage bufferedImageOut = new BufferedImage(_frei0rInstance.getWidth(), 
+						_frei0rInstance.getHeight(), 
+						BufferedImage.TYPE_INT_ARGB);
+
+				if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
+						_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+
+					BufferedImage bufferedImageIn2 = null;
+					BufferedImage bufferedImageIn3 = null;
+					if (input2.getWidth() > 0 && input2.hasToken(0)) {
+						Image imageIn = ((ImageToken)input2.get(0)).asAWTImage();
+						bufferedImageIn2 = ImageConvert.toBufferedImage(imageIn);
 					} else {
-						_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn, bufferedImageOut);
+						bufferedImageIn2 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
+								BufferedImage.TYPE_INT_ARGB);
 					}
-					
-					output.send(0, new AWTImageToken(bufferedImageOut));
-				}				
+
+					if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3 &&
+							input3.getWidth() > 0 && input3.hasToken(0)) {
+						Image imageIn = ((ImageToken)input3.get(0)).asAWTImage();
+						bufferedImageIn3 = ImageConvert.toBufferedImage(imageIn);
+					} else {
+						bufferedImageIn3 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
+								BufferedImage.TYPE_INT_ARGB);
+					}
+					_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn,
+							bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
+				} else {
+					_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn, bufferedImageOut);
+				}
+
+				output.send(0, new AWTImageToken(bufferedImageOut));
 			}
 			
 		} catch (Frei0rException e) {

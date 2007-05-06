@@ -597,6 +597,9 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
    	Frei0rHandle* handle = GetHandle(env, obj);
 	if (handle)
 	{
+		if (paramValue == NULL)
+			return;
+		
 		f0r_param_info_t paramInfo;
 		GetParamInfo(env, obj, handle, &paramInfo, (int)paramIndex);
 		jclass expectedClass = NULL;
@@ -616,7 +619,7 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 					ThrowFrei0rException(env, "Given parameter is of wrong class.");
 				}	
 				// Get value 
-				jboolean boolValue = (jboolean)env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "booleanValue", "()Z"));
+				jboolean boolValue = (jboolean)env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "booleanValue", "()Z"));
 				// Set value
 				f0r_param_bool value = (boolValue ? 1. : 0.);
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
@@ -637,7 +640,7 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 					ThrowFrei0rException(env, "Given parameter is of wrong class.");
 				}	
 				// Get value 
-				f0r_param_double value = (f0r_param_double) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "doubleValue", "()D"));
+				f0r_param_double value = (f0r_param_double) env->CallDoubleMethod(paramValue, env->GetMethodID(expectedClass, "doubleValue", "()D"));
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
@@ -658,9 +661,9 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 				}	
 				// Get value
 				f0r_param_color value;
-				value.r = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getRed", "()F"));
-				value.g = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getGreen", "()F"));
-				value.b = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getBlue", "()F"));
+				value.r = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getRed", "()F"));
+				value.g = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getGreen", "()F"));
+				value.b = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getBlue", "()F"));
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
@@ -681,8 +684,8 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 				}	
 				// Get value
 				f0r_param_position value;
-				value.x = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getX", "()D"));
-				value.y = (float) env->CallBooleanMethod(obj,env->GetMethodID(expectedClass, "getY", "()D"));
+				value.x = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getX", "()D"));
+				value.y = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getY", "()D"));
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
