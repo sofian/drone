@@ -129,11 +129,6 @@ public class Frei0rActor extends TypedAtomicActor {
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
 															 ((IntToken)defaultHeight.getToken()).intValue());
 					
-					System.out.println("Instantiating frei0r actor for frei0r lib '" + _frei0r.getName() + "'");
-					System.out.println("  Plugin type = " + _frei0r.getPluginType());
-					System.out.println("  Color model = " + _frei0r.getColorModel());
-					System.out.println("  Num params = " + _frei0r.nParams());
-					
 					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
 						_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input2.setContainer(null);
