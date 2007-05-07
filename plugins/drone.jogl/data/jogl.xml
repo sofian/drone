@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE plot PUBLIC "-//UC Berkeley//DTD MoML 1//EN"
+    "http://ptolemy.eecs.berkeley.edu/xml/dtd/MoML_1.dtd">
+<entity name="ARTKP" class="ptolemy.moml.EntityLibrary">
+  <configure>
+    <?moml
+      <group>
+        <doc>ARTKP processing actors</doc>
+
+	<entity name="ImageDisplay" class="drone.jogl.actor.ImageDisplay">
+	</entity>
+
+	<entity name="ImageToTexture" class="drone.jogl.actor.ImageToTexture">
+	</entity>
+
+	<entity name="TextureReader" class="drone.jogl.actor.TextureReader">
+	</entity>
+
+      </group>
+    ?>
+  </configure>
+</entity>

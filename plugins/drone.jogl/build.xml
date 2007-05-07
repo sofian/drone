@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<project name="drone-jmf" default="main">
+	
+	<import file="../common.xml"/>
+
+	<property name="short.name"   value="jogl"/>
+	<property name="long.name"    value="JOGL"/>
+	<property name="project.name" value="drone-${short.name}"/>
+	<property name="package.name" value="drone.${short.name}"/>
+	<property name="test.dir"     value="drone/${short.name}/test"/>
+	
+	<property name="make" value="make" />
+
+	<target name="main">
+		<echo>
+			Building ${long.name} plugin.
+		</echo>
+		<antcall target="compile.default" />
+		<jar destfile="${dist.dir}/${project.name}.jar" 	basedir="${build.dir}"/>
+		<jar destfile="${dist.dir}/${project.name}-src.jar" basedir="${src.dir}"/>
+	</target>
+	
+	<target name="clean">
+		<echo>
+			Cleaning ${long.name} plugin.
+		</echo>
+		<antcall target="clean.default"/>
+		<delete file="${distdir}/${project.name}.jar"/>
+		<delete file="${dist.dir}/${project.name}-src.jar"/>
+	</target>
+
+	<target name="test">
+		<echo>
+			Testing ${long.name} plugin.
+		</echo>
+		<junit>
+			<classpath refid="test.path"/>
+			<formatter type="brief" usefile="false" />
+		    <batchtest fork="true">
+				<!-- Yes I know this totally looks strange but please don't touch: -->
+				<!-- it seems to be the only way to make it work in Ant -->
+				<fileset dir="${build.dir}" includes="**/${test.dir}/*.class" />
+		    </batchtest>
+		</junit>
+	</target>
+	
+</project>
