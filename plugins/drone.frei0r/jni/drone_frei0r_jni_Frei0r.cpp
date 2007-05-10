@@ -7,8 +7,8 @@
 
 //#define __DEBUG
 
-const char* FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE =
-	FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE;
+const char* FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE = 
+	"Trying to call a function with an uninitialized handle, please call _openLibrary(String).";
 
 struct Frei0rHandle
 {
