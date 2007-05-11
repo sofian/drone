@@ -12,8 +12,16 @@ extern "C" {
  * Method:    _createTrackerHandle
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarkerImpl__1createTrackerHandle
-  (JNIEnv *, jobject);
+JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarkerImpl__1createTrackerHandle__
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     drone_artkp_kernel_TrackerMultiMarkerImpl
+ * Method:    _createTrackerHandle
+ * Signature: (II)J
+ */
+JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarkerImpl__1createTrackerHandle__II
+  (JNIEnv *, jclass, jint, jint);
 
 #ifdef __cplusplus
 }

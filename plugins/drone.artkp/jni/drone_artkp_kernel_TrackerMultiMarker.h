@@ -58,7 +58,7 @@ JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMa
 /*
  * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    calcOpenGLMatrixFromDetectedMarker
- * Signature: (IFFF[F)V
+ * Signature: (IFFF[F)F
  */
 JNIEXPORT jfloat JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_calcOpenGLMatrixFromDetectedMarker
   (JNIEnv *, jobject, jint, jfloat, jfloat, jfloat, jfloatArray);

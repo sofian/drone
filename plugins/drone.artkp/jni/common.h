@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+const char* ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE = 
+	"Trying to call a function with an uninitialized handle, please call _createTreackerHandle().";
+
 class MyLogger : public ARToolKitPlus::Logger
 {
     void artLog(const char* nStr)
@@ -15,13 +18,13 @@ class MyLogger : public ARToolKitPlus::Logger
     }
 };
   
-void ThrowARTKPException(JNIEnv *env, char* msg)
+void ThrowARTKPException(JNIEnv *env, const char* msg)
 {
 	/* We don't do much with the exception, except that
 	    we print a debug message for it, clear it, and 
 	    throw a new exception. */
 	 jclass newExcCls;
-	 newExcCls = env->FindClass("ptolemy/actor/lib/artkp/ARTKPException");
+	 newExcCls = env->FindClass("drone/artkp/ARTKPException");
 	 if (newExcCls == NULL) {
 	     /* Unable to find the exception class, give up. */
 	     return;
@@ -35,9 +38,6 @@ ARToolKitPlus::Tracker *getTracker(JNIEnv *env, jobject obj)
     reinterpret_cast<ARToolKitPlus::Tracker*>(
       env->GetLongField(obj, env->GetFieldID(env->GetObjectClass(obj), "_trackerHandle", "J"))
     );
-
-  if (tracker==NULL)
-    ThrowARTKPException(env, "Cannot retrieve tracker, make sure you have called the _createTrackerHandle() function.");
 
   return tracker;
 }

@@ -18,7 +18,13 @@
  */
 package drone.artkp.kernel;
 
+import drone.artkp.ARTKPException;
+
 public abstract class TrackerMultiMarker extends Tracker {
+
+	protected TrackerMultiMarker(long trackerHandle) throws ARTKPException {
+		super(trackerHandle);
+	}
 
 	/// initializes ARToolKit
 	/// initializes TrackerSingleMarker
@@ -27,16 +33,16 @@ public abstract class TrackerMultiMarker extends Tracker {
 	 *  nNearClip & nFarClip are near and far clipping values for the OpenGL projection matrix
 	 *  nLogger is an instance which implements the ARToolKit::Logger interface
 	 */
-	public native boolean init(String nCamParamFile, String nMultiFile, float nNearClip, float nFarClip/*, ARToolKitPlus::Logger* nLogger=NULL*/);
+	public native boolean init(String nCamParamFile, String nMultiFile, float nNearClip, float nFarClip/*, ARToolKitPlus::Logger* nLogger=NULL*/) throws ARTKPException;
 
 	/// calculates the transformation matrix
 	/**
 	 *	pass the image as RGBX (32-bits) in 320x240 pixels.
 	 */
-	public native int calc(byte[] nImage);
+	public native int calc(byte[] nImage) throws ARTKPException;
 
 	/// Returns the number of detected markers used for multi-marker tracking
-	public native int getNumDetectedMarkers();
+	public native int getNumDetectedMarkers() throws ARTKPException;
 
 	/// Enables usage of arDetectMarkerLite. Otherwise arDetectMarker is used
 	/**
@@ -44,19 +50,19 @@ public abstract class TrackerMultiMarker extends Tracker {
 	 * In some cases such as very low camera refresh rates it is advantegous to change this.
 	 * Using the non-lite version treats each image independent.
 	 */
-	public native void setUseDetectLite(boolean nEnable);
+	public native void setUseDetectLite(boolean nEnable) throws ARTKPException;
 
 	/// Returns array of detected marker IDs
 	/**
 	 * Only access the first getNumDetectedMarkers() markers
 	 */
-	public native void getDetectedMarkers(int[] nMarkerIDs);
+	public native void getDetectedMarkers(int[] nMarkerIDs) throws ARTKPException;
 
 	/// Returns the ARMarkerInfo object for a found marker
-	public native long getDetectedMarker(int nWhich);
+	public native long getDetectedMarker(int nWhich) throws ARTKPException;
 	
 	/// Calculates the OpenGL transformation matrix for the specified detected markers.
-	public native float calcOpenGLMatrixFromDetectedMarker(int nWhich, float nPatternCenterX, float nPatternCenterY, float nPatternSize, float[] nOpenGLMatrix);
+	public native float calcOpenGLMatrixFromDetectedMarker(int nWhich, float nPatternCenterX, float nPatternCenterY, float nPatternSize, float[] nOpenGLMatrix) throws ARTKPException;
 	
 	/// Returns the loaded ARMultiMarkerInfoT object
 	/**

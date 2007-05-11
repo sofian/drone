@@ -18,18 +18,20 @@
  */
 package drone.artkp.kernel;
 
+import drone.artkp.ARTKPException;
+
 public class TrackerMultiMarkerImpl extends TrackerMultiMarker {
 
- 	public TrackerMultiMarkerImpl() {
-		super();
+ 	public TrackerMultiMarkerImpl() throws ARTKPException {
+		super(_createTrackerHandle());
 	}
 
-	public TrackerMultiMarkerImpl(int width, int height) {
-		super();
-		changeCameraSize(width, height);
+	public TrackerMultiMarkerImpl(int width, int height) throws ARTKPException {
+		super(_createTrackerHandle(width, height));
 	}
 	
-	protected native long _createTrackerHandle();
+	protected static native long _createTrackerHandle() throws ARTKPException;
+	protected static native long _createTrackerHandle(int width, int height) throws ARTKPException;
 
 	static {
 		System.loadLibrary("TrackerMultiMarkerImpl");

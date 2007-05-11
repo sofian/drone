@@ -39,6 +39,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 
 import ptolemy.actor.lib.Transformer;
+import drone.artkp.ARTKPException;
 import drone.artkp.kernel.*;
 import ptolemy.actor.parameters.DoubleRangeParameter;
 import ptolemy.data.ArrayToken;
@@ -120,7 +121,11 @@ public class ARTKPActor extends Transformer {
 		
 		output.setTypeEquals(ARTKPActor.TRACKER_INFO_TYPE);
 		
+		try {
 		_tracker = new TrackerMultiMarkerImpl();
+		} catch (ARTKPException e) {
+			throw new IllegalActionException(this, e.getMessage());
+		}
 		
 		patternSize = new Parameter(this, "patternSize");
 		patternSize.setExpression("80.0");
@@ -168,39 +173,43 @@ public class ARTKPActor extends Transformer {
 		if (mFile == null)
 			throw new IllegalActionException("Given multi file cannot be opened.");
 		
-		_tracker.init(cFile.getAbsolutePath(), mFile.getAbsolutePath(),
-				     (float)((ScalarToken)nearClipping.getToken()).doubleValue(), 
-				     (float)((ScalarToken)farClipping.getToken()).doubleValue());
-				     
-//		System.out.println("pixel format");
-		_tracker.setPixelFormat(ARToolKitPlus.PIXEL_FORMAT_LUM);
-		
-//		System.out.println("set border width");
-		// the marker in the BCH test image has a thiner border...
-//	    _tracker.setBorderWidth(0.125f);
-	    _tracker.setBorderWidth(0.25f);
-
-	    // set a threshold. we could also activate automatic thresholding
-//		System.out.println("set threshold");
-	    _tracker.setThreshold(((IntToken)threshold.getToken()).intValue());
-
-	    // let's use lookup-table undistortion for high-speed
-	    // note: LUT only works with images up to 1024x1024
-//		System.out.println("set undist");
-	    _tracker.setUndistortionMode(ARToolKitPlus.UNDIST_LUT);
-
-	    _tracker.setUseDetectLite(((BooleanToken)useDetectLite.getToken()).booleanValue());
-	    
-	    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_ORIGINAL);
-//	    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_RPP);
-	    // RPP is more robust than ARToolKit's standard pose estimator
-	    //tracker->setPoseEstimator(ARToolKitPlus::POSE_ESTIMATOR_RPP);
-
-	    // switch to simple ID based markers
-	    // use the tool in tools/IdPatGen to generate markers
-//		System.out.println("set marker mode");
-	    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_SIMPLE);
-//	    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_BCH);
+		try {
+			_tracker.init(cFile.getAbsolutePath(), mFile.getAbsolutePath(),
+					     (float)((ScalarToken)nearClipping.getToken()).doubleValue(), 
+					     (float)((ScalarToken)farClipping.getToken()).doubleValue());
+					     
+	//		System.out.println("pixel format");
+			_tracker.setPixelFormat(ARToolKitPlus.PIXEL_FORMAT_LUM);
+			
+	//		System.out.println("set border width");
+			// the marker in the BCH test image has a thiner border...
+	//	    _tracker.setBorderWidth(0.125f);
+		    _tracker.setBorderWidth(0.25f);
+	
+		    // set a threshold. we could also activate automatic thresholding
+	//		System.out.println("set threshold");
+		    _tracker.setThreshold(((IntToken)threshold.getToken()).intValue());
+	
+		    // let's use lookup-table undistortion for high-speed
+		    // note: LUT only works with images up to 1024x1024
+	//		System.out.println("set undist");
+		    _tracker.setUndistortionMode(ARToolKitPlus.UNDIST_LUT);
+	
+		    _tracker.setUseDetectLite(((BooleanToken)useDetectLite.getToken()).booleanValue());
+		    
+		    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_ORIGINAL);
+	//	    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_RPP);
+		    // RPP is more robust than ARToolKit's standard pose estimator
+		    //tracker->setPoseEstimator(ARToolKitPlus::POSE_ESTIMATOR_RPP);
+	
+		    // switch to simple ID based markers
+		    // use the tool in tools/IdPatGen to generate markers
+	//		System.out.println("set marker mode");
+		    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_SIMPLE);
+	//	    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_BCH);
+		} catch (ARTKPException e) {
+			throw new IllegalActionException(this, e.getMessage());
+		}
 	}
 	
 	public void attributeChanged(Attribute attribute)
@@ -236,7 +245,11 @@ public class ARTKPActor extends Transformer {
 					_camWidth = bimage.getWidth();
 					_camHeight = bimage.getHeight();
 					System.out.println("New camera size detected: " + _camWidth + "x" + _camHeight);
-					_tracker.changeCameraSize(_camWidth, _camHeight);
+					try {
+						_tracker.changeCameraSize(_camWidth, _camHeight);
+					} catch (ARTKPException e) {
+						throw new IllegalActionException(this, e.getMessage());
+					}
 				}
 				DataBuffer buffer = bimage.getData().getDataBuffer();
 				if (buffer.getDataType() != DataBuffer.TYPE_BYTE) {
@@ -247,35 +260,39 @@ public class ARTKPActor extends Transformer {
 				if (imageBuffer.length != bimage.getWidth() * bimage.getHeight())
 					throw new IllegalActionException(this, 
 							"Image buffer has wrong length " + imageBuffer.length + ".");
-				_tracker.calc(imageBuffer);
-				int nMarkers = _tracker.getNumDetectedMarkers();
-				int[] markerIDs = new int[nMarkers];
-				float[][] markerMatrix = new float[nMarkers][16];
-				float[] projectionMatrix = _tracker.getProjectionMatrix();
-//				System.out.println("Num. detected markers: " + nMarkers);
-//				System.out.println("Trying to get the ids");
-				_tracker.getDetectedMarkers(markerIDs);
-				for (int i=0; i<nMarkers; i++) {
-//					System.out.print(markerIDs[i] + " ");
-					_tracker.calcOpenGLMatrixFromDetectedMarker(i,
-							0.0f,0.0f,_patternSize,
-							markerMatrix[i]
-							);
+//				_tracker.calc(imageBuffer);
+				try {
+					int nMarkers = _tracker.getNumDetectedMarkers();
+					int[] markerIDs = new int[nMarkers];
+					float[][] markerMatrix = new float[nMarkers][16];
+					float[] projectionMatrix = _tracker.getProjectionMatrix();
+	//				System.out.println("Num. detected markers: " + nMarkers);
+	//				System.out.println("Trying to get the ids");
+					_tracker.getDetectedMarkers(markerIDs);
+					for (int i=0; i<nMarkers; i++) {
+	//					System.out.print(markerIDs[i] + " ");
+						_tracker.calcOpenGLMatrixFromDetectedMarker(i,
+								0.0f,0.0f,_patternSize,
+								markerMatrix[i]
+								);
+					}
+	//				System.out.println();
+	//				System.out.println("---------");
+					
+					TreeMap record = new TreeMap();
+					record.put("projectionMatrix", new ObjectToken(projectionMatrix));
+					IntToken[] tokenMarkerIDs = new IntToken[markerIDs.length];
+					for (int i=0; i<tokenMarkerIDs.length; i++)
+						tokenMarkerIDs[i] = new IntToken(markerIDs[i]);
+					record.put("markerIds", new ArrayToken(BaseType.INT, tokenMarkerIDs));
+					ObjectToken[] tokenMarkerMatrix = new ObjectToken[markerMatrix.length];
+					for (int i=0; i<tokenMarkerMatrix.length; i++)
+						tokenMarkerMatrix[i] = new ObjectToken(markerMatrix[i]);
+					record.put("markerMatrix", new ArrayToken(BaseType.OBJECT, tokenMarkerMatrix));
+					output.send(0, new RecordToken(record));
+				} catch (ARTKPException e) {
+					throw new IllegalActionException(this, e.getMessage());
 				}
-//				System.out.println();
-//				System.out.println("---------");
-				
-				TreeMap record = new TreeMap();
-				record.put("projectionMatrix", new ObjectToken(projectionMatrix));
-				IntToken[] tokenMarkerIDs = new IntToken[markerIDs.length];
-				for (int i=0; i<tokenMarkerIDs.length; i++)
-					tokenMarkerIDs[i] = new IntToken(markerIDs[i]);
-				record.put("markerIds", new ArrayToken(BaseType.INT, tokenMarkerIDs));
-				ObjectToken[] tokenMarkerMatrix = new ObjectToken[markerMatrix.length];
-				for (int i=0; i<tokenMarkerMatrix.length; i++)
-					tokenMarkerMatrix[i] = new ObjectToken(markerMatrix[i]);
-				record.put("markerMatrix", new ArrayToken(BaseType.OBJECT, tokenMarkerMatrix));
-				output.send(0, new RecordToken(record));
 			}
 		}
 		

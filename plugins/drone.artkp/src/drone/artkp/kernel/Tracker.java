@@ -18,31 +18,31 @@
  */
 package drone.artkp.kernel;
 
+import drone.artkp.ARTKPException;
+
 public abstract class Tracker {
 
-	protected Tracker() {
-		_trackerHandle = _createTrackerHandle();
+	protected Tracker(long trackerHandle) throws ARTKPException {
+		if (trackerHandle == 0)
+			throw new ARTKPException("Trying to initialize Tracker with an uninitialized ");
+		_trackerHandle = trackerHandle;
 		_initTracker();
-		if (_trackerHandle == 0)
-			throw new InternalError("Created handle is null, cannot proceed.");
 	}
 	
-
-	public void finalize() {
+	public void finalize() throws ARTKPException {
 		if (_trackerHandle != 0) {
 			cleanup();
 			_destroyTrackerHandle();
 		}
 	}
 	
-	private native void _initTracker();
+	protected native void _initTracker() throws ARTKPException;
 
 	// This is a pointer to the C tracker object. It should be allocated by
 	// the subclasses constructors.
-	protected long _trackerHandle = 0;
+	private long _trackerHandle = 0;
 	
-	protected abstract long _createTrackerHandle();
-	private native void _destroyTrackerHandle();
+	private native void _destroyTrackerHandle() throws ARTKPException;
 	
 	/// does final clean up (memory deallocation)
 	public native void cleanup();
@@ -51,7 +51,7 @@ public abstract class Tracker {
 	/**
 	 *  Default format is RGB888 (ARToolkitPlus.PIXEL_FORMAT_RGB)
 	 */
-	public native boolean setPixelFormat(int nFormat) ;
+	public native boolean setPixelFormat(int nFormat) throws ARTKPException;
 
 	/// Loads a camera calibration file and stores data internally
 	/**
@@ -61,7 +61,7 @@ public abstract class Tracker {
 	*  On destruction, ARToolKitPlus will only destroy the currently set camera. All other
 	*  cameras have to be destroyed manually.
 	*/
-	public native boolean loadCameraFile(String nCamParamFile, float nNearClip, float nFarClip) ;
+	public native boolean loadCameraFile(String nCamParamFile, float nNearClip, float nFarClip) throws ARTKPException;
 
 	/// Set to true to try loading camera undistortion table from a cache file
 	/**
@@ -70,7 +70,7 @@ public abstract class Tracker {
 	 *  If set to true and no cache file could be found a new one will be created.
 	 *  The cache file will get the same name as the camera file with the added extension '.LUT'
 	 */
-	public native void setLoadUndistLUT(boolean nSet) ;
+	public native void setLoadUndistLUT(boolean nSet) throws ARTKPException;
 
 
 //	/// sets an instance which implements the ARToolKit::Logger interface
@@ -126,7 +126,7 @@ public abstract class Tracker {
 	/**
 	 *  markers are converted to pure black/white during loading
 	 */
-	public native void activateBinaryMarker(int nThreshold) ;
+	public native void activateBinaryMarker(int nThreshold) throws ARTKPException;
 
 	/// activate the usage of id-based markers rather than template based markers
 	/**
@@ -137,7 +137,7 @@ public abstract class Tracker {
 	 *  See arBitFieldPattern.h for more information.
 	 *  In order to use id-based markers, the marker size has to be 6x6, 12x12 or 18x18.
 	 */
-	public native void setMarkerMode(int nMarkerMode) ;
+	public native void setMarkerMode(int nMarkerMode) throws ARTKPException;
 
 
 	/// activates the complensation of brightness falloff in the corners of the camera image
@@ -157,7 +157,7 @@ public abstract class Tracker {
 
 	
 	/// changes the resolution of the camera after the camerafile was already loaded
-	public native void changeCameraSize(int nWidth, int nHeight) ;
+	public native void changeCameraSize(int nWidth, int nHeight) throws ARTKPException;
 
 
 	/// Changes the undistortion mode
@@ -165,14 +165,14 @@ public abstract class Tracker {
 	 * Default value is UNDIST_STD which means that
 	 * artoolkit's standard undistortion method is used.
 	 */
-	public native void setUndistortionMode(int nMode) ;
+	public native void setUndistortionMode(int nMode) throws ARTKPException;
 
 	/// Changes the Pose Estimation Algorithm
 	/**
 	* POSE_ESTIMATOR_ORIGINAL (default): arGetTransMat()
 	* POSE_ESTIMATOR_RPP: "Robust Pose Estimation from a Planar Target"
 	*/
-	public native boolean setPoseEstimator(int nMethod) ;
+	public native boolean setPoseEstimator(int nMethod) throws ARTKPException;
 
 	/// Sets a new relative border width. ARToolKit's default value is 0.25
 	/**
@@ -181,23 +181,23 @@ public abstract class Tracker {
 	 * but only for id-encoded markers. It might be that the pattern creation process
 	 * needs to be updated too.
 	 */
-	public native void setBorderWidth(float nFraction) ;
+	public native void setBorderWidth(float nFraction) throws ARTKPException;
 
 
 	/// Sets the threshold value that is used for black/white conversion
-	public native void setThreshold(int nValue) ;
+	public native void setThreshold(int nValue) throws ARTKPException;
 
 
 	/// Returns the current threshold value.
-	public native int getThreshold();
+	public native int getThreshold() throws ARTKPException;
 
 
 	/// Enables or disables automatic threshold calculation
-	public native void activateAutoThreshold(boolean nEnable) ;
+	public native void activateAutoThreshold(boolean nEnable) throws ARTKPException;
 
 	
 	/// Returns true if automatic threshold calculation is activated
-	public native boolean isAutoThresholdActivated();
+	public native boolean isAutoThresholdActivated() throws ARTKPException;
 
 	/// Sets the number of times the threshold is randomized in case no marker was visible (Default: 2)
 	/**
@@ -209,7 +209,7 @@ public abstract class Tracker {
 	 *  if it does not find a marker the first time. Each unsuccessful try uses less processing power
 	 *  than a single full successful position estimation.
 	 */
-	public native void setNumAutoThresholdRetries(int nNumRetries) ;
+	public native void setNumAutoThresholdRetries(int nNumRetries) throws ARTKPException;
 
 
 	/// Sets an image processing mode (half or full resolution)
@@ -222,19 +222,19 @@ public abstract class Tracker {
 
 
 	/// Returns an opengl-style modelview transformation matrix
-	public native float[] getModelViewMatrix();
+	public native float[] getModelViewMatrix() throws ARTKPException;
 
 
 	/// Returns an opengl-style projection transformation matrix
-	public native float[] getProjectionMatrix();
+	public native float[] getProjectionMatrix() throws ARTKPException;
 
 
 	/// Returns a short description with compiled-in settings
-	public native String getDescription() ;
+	public native String getDescription() throws ARTKPException;
 
 
 	/// Returns the compiled-in pixel format
-	public native int getPixelFormat();
+	public native int getPixelFormat() throws ARTKPException;
 
 
 	/// Returns the number of bits required to store a single pixel

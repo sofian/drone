@@ -16,7 +16,13 @@ JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_init
   (JNIEnv *env, jobject obj, jstring nCamParamFile, jstring nMultiFile, jfloat nNearClip, jfloat nFarClip)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
-  //  printf("found tracker: %p\n", tracker);
+
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return false;
+  }
+  
   const char* c_nCamParamFile = env->GetStringUTFChars(nCamParamFile, 0);
   const char* c_nMultiFile = env->GetStringUTFChars(nMultiFile, 0);
   //  printf("cam file: %s, multi file: %s\n", c_nCamParamFile, c_nMultiFile);
@@ -37,27 +43,46 @@ JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_init
 JNIEXPORT jint JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_calc
   (JNIEnv *env, jobject obj, jbyteArray nImage)
 {
-  //  printf("In calc()\n");
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
-  //  printf("Tracker found: %p.\n", tracker);
+  
+  if (!nImage)
+  {
+  	env->ThrowNew(env->FindClass("java/lang/NullPointerException"),
+  					"Trying to call function with a null image array.");
+    return (-1);
+  }
+  
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return (-1);
+  }
+
   // Verify if image has the right size.
   jsize arrayLength = env->GetArrayLength(nImage);
   ARToolKitPlus::Camera *cam = tracker->getCamera();
+  if (!cam)
+  {
+  	ThrowARTKPException(env, "Camera not initialized, please load one before calling this function.");
+  	return (-1);
+  }
+  
   jsize camLength = (jsize) (cam->xsize * cam->ysize);
   if (arrayLength != camLength)
   {
     char msg[512];
     sprintf(msg, "Image array has wrong length %d, should be (%dx%d=%d).", arrayLength, cam->xsize, cam->ysize, camLength);
     ThrowARTKPException(env, msg);
+    return (-1);
   }
   jbyte *p_nImage = env->GetByteArrayElements(nImage, 0);
-//   if (p_nImage == 0)
-//     printf("image is null\n");
-//   printf("Trying to calc\n");
+  if (p_nImage == 0)
+  {
+  	env->ThrowNew(env->FindClass("java/lang/NullPointerException"),
+  					"Image array is null.");
+  }
   jint result = (jint)tracker->calc((unsigned char*)p_nImage);
-//   printf("Done: result is %d.\n", result);
   env->ReleaseByteArrayElements(nImage, p_nImage, 0);
-//   printf("Reseale done. All done.\n");
   return result;
 }
 
@@ -70,6 +95,13 @@ JNIEXPORT jint JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getNumDetected
   (JNIEnv *env, jobject obj)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
+
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return (-1);
+  }
+
   return (jint)tracker->getNumDetectedMarkers();
 }
 
@@ -82,6 +114,13 @@ JNIEXPORT void JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_setUseDetectLi
   (JNIEnv *env, jobject obj, jboolean nEnable)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
+
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return;
+  }
+
   tracker->setUseDetectLite((bool)nEnable);
 }
 
@@ -94,6 +133,20 @@ JNIEXPORT void JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMar
   (JNIEnv *env, jobject obj, jintArray nMarkerIDs)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
+
+  if (!nMarkerIDs)
+  {
+  	env->ThrowNew(env->FindClass("java/lang/NullPointerException"),
+  					"Trying to call function with a null array.");
+    return;
+  }
+	
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return;
+  }
+
   jsize arrayLength = env->GetArrayLength(nMarkerIDs);
   jsize numDetectedMarkers = tracker->getNumDetectedMarkers();
   if (arrayLength != numDetectedMarkers)
@@ -101,12 +154,16 @@ JNIEXPORT void JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMar
     char msg[512];
     sprintf(msg, "Provided array has wrong length %d, should be %d.", arrayLength, numDetectedMarkers);
     ThrowARTKPException(env, msg);
+    return;
   }
   jint *p_nMarkerIDs = env->GetIntArrayElements(nMarkerIDs, 0);
   int *c_nMarkerIDs = 0;
   tracker->getDetectedMarkers(c_nMarkerIDs);
   if (c_nMarkerIDs == 0)
+  {
     ThrowARTKPException(env, "In JNI call to getDetectedMarkers(), marker ID array is NULL.");
+    return;
+  }
   int nMarkers = tracker->getNumDetectedMarkers();
   std::copy(c_nMarkerIDs, c_nMarkerIDs + nMarkers, (int*)p_nMarkerIDs);
   env->ReleaseIntArrayElements(nMarkerIDs, p_nMarkerIDs, 0);
@@ -121,6 +178,13 @@ JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMa
   (JNIEnv *env, jobject obj, jint nWhich)
 {
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
+
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return (-1L);
+  }
+
   const ARToolKitPlus::ARMarkerInfo& info = tracker->getDetectedMarker(nWhich);
   return (jlong) &info;
 }
@@ -128,13 +192,20 @@ JNIEXPORT jlong JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_getDetectedMa
 /*
  * Class:     drone_artkp_kernel_TrackerMultiMarker
  * Method:    calcOpenGLMatrixFromDetectedMarker
- * Signature: (IFFF[F)V
+ * Signature: (IFFF[F)F
  */
 JNIEXPORT jfloat JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_calcOpenGLMatrixFromDetectedMarker
   (JNIEnv *env, jobject obj, jint nWhich, jfloat nPatternCenterX, jfloat nPatternCenterY, jfloat nPatternSize, jfloatArray nOpenGLMatrix)
 {
-  ARFloat c_nPatternCenter[2] = { (ARFloat) nPatternCenterX, (ARFloat) nPatternCenterY };
   ARToolKitPlus::TrackerMultiMarker *tracker = (ARToolKitPlus::TrackerMultiMarker*)getTracker(env, obj);
+
+  if (!tracker)
+  {
+  	ThrowARTKPException(env, ARTKP_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
+	return (-0.0f);
+  }
+
+  ARFloat c_nPatternCenter[2] = { (ARFloat) nPatternCenterX, (ARFloat) nPatternCenterY };
   jsize arrayLength = env->GetArrayLength(nOpenGLMatrix);
   if (arrayLength != 16)
   {
