@@ -20,6 +20,7 @@ package drone.frei0r.actor;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
+import ptolemy.actor.parameters.ParameterPort;
 import ptolemy.actor.parameters.PortParameter;
 import ptolemy.data.AWTImageToken;
 import ptolemy.data.BooleanToken;
@@ -53,8 +54,8 @@ import drone.frei0r.jni.Frei0r;
 import drone.util.ImageConvert;
 
 
-////////////////////////////////////////////////////////////////////////
-// Frei0rActor
+
+//Frei0rActor
 
 /**
  * Provides a bridge for Frei0r, minimalistic plugin API for video effects.
@@ -84,7 +85,7 @@ public class Frei0rActor extends TypedAtomicActor {
 	 *                If the container already has an actor with this name.
 	 */
 	public Frei0rActor(CompositeEntity container, String name)
-			throws NameDuplicationException, IllegalActionException {
+	throws NameDuplicationException, IllegalActionException {
 		super(container, name);
 
 		frei0rLibraryName = new FileParameter(this, "frei0rLibraryName");
@@ -98,27 +99,27 @@ public class Frei0rActor extends TypedAtomicActor {
 
 		input3 = new TypedIOPort(this, "input3", true, false);
 		input3.setTypeEquals(BaseType.OBJECT);
-		
+
 		output = new TypedIOPort(this, "output", false, true);
 		output.setTypeEquals(BaseType.OBJECT);
 
 		defaultWidth = new Parameter(this, "defaultWidth");
 		defaultWidth.setTypeEquals(BaseType.INT);
 		defaultWidth.setExpression("320");
-		
+
 		defaultHeight = new Parameter(this, "defaultHeight");
 		defaultHeight.setTypeEquals(BaseType.INT);
 		defaultHeight.setExpression("320");
-		
-		params = new Vector<TypedIOPort>();
-		
+
+		params = new Vector<PortParameter>();
+
 		_attachText("_iconDescription", "<svg>\n"
 				+ "<rect x=\"-30\" y=\"-15\" " + "width=\"60\" height=\"30\" "
 				+ "style=\"fill:white\"/>\n" + "</svg>\n");
 	}
 
 	public void attributeChanged(Attribute attribute)
-			throws IllegalActionException {
+	throws IllegalActionException {
 
 		if (attribute == frei0rLibraryName) {
 			try {
@@ -127,89 +128,100 @@ public class Frei0rActor extends TypedAtomicActor {
 					// Create bridge.
 					_frei0r = new Frei0r(frei0rLibraryName.asURL().getFile());
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-															 ((IntToken)defaultHeight.getToken()).intValue());
-					
+							((IntToken)defaultHeight.getToken()).intValue());
+
 					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
-						_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input2.setContainer(null);
 					}
-					
+
 					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input3.setContainer(null);
 					}
-					
+
 					if (params.size() == 0) {
 						for (int i=0; i<_frei0r.nParams(); ++i) {
 							// TODO: check unicity of param name
-							TypedIOPort param;
+							PortParameter param;
 							String paramName = _frei0r.getParamName(i);
-							if (getPort(paramName) != null) {
+							if (getAttribute(paramName) != null) {
 								// Don't re-add the same port.
 								// XXX This is a bit of a hack to prevent errors when loading a file
 								// We should find a better way to do that
-								params.add((TypedIOPort)getPort(paramName));
+								params.add((PortParameter)getAttribute(paramName));
 								continue;
 							}
 							switch (_frei0r.getParamType(i)) {
 							// BOOLEAN
 							case Frei0r.F0R_PARAM_BOOL:
 								// Add a boolean port.
-								param = new TypedIOPort(this, paramName, true, false);
+								param = new PortParameter(this, paramName);
 								param.setTypeEquals(BaseType.BOOLEAN);
+								param.setExpression("true");
 								params.add(param);
 								break;
-							// DOUBLE
+								// DOUBLE
 							case Frei0r.F0R_PARAM_DOUBLE:
 								// Add a double port.
-								param = new TypedIOPort(this, paramName, true, false);
+								param = new PortParameter(this, paramName);
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("0.5");
 								params.add(param);
 								break;
-							// POSITION
+								// POSITION
 							case Frei0r.F0R_PARAM_POSITION:
 								// Add a double port for X.
-								param = new TypedIOPort(this, paramName + " (x)", true, false);
+								param = new PortParameter(this, paramName + " (x)");
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("0.5");
 								params.add(param);
 								// Add a double port for Y.
-								param = new TypedIOPort(this, paramName + " (y)", true, false);
+								param = new PortParameter(this, paramName + " (y)");
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("0.5");
 								params.add(param);
 								break;
-							// COLOR
+								// COLOR
 							case Frei0r.F0R_PARAM_COLOR:
 								// Add a double port for R.
-								param = new TypedIOPort(this, paramName + " (r)", true, false);
+								param = new PortParameter(this, paramName + " (r)");
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("1.0");
 								params.add(param);
 								// Add a double port for G.
-								param = new TypedIOPort(this, paramName + " (g)", true, false);
+								param = new PortParameter(this, paramName + " (g)");
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("0.0");
 								params.add(param);
 								// Add a double port for B.
-								param = new TypedIOPort(this, paramName + " (b)", true, false);
+								param = new PortParameter(this, paramName + " (b)");
 								param.setTypeEquals(BaseType.DOUBLE);
+								param.setExpression("0.0");
 								params.add(param);
 								break;
-							// STRING
+								// STRING
 							case Frei0r.F0R_PARAM_STRING:
 								// Add a string port.
-								param = new TypedIOPort(this, paramName, true, false);
+								param = new PortParameter(this, paramName);
 								param.setTypeEquals(BaseType.STRING);
+								param.setExpression("");
 								params.add(param);
 								break;
 							default:
 								throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
-																 	", please verify the frei0r plugin.");
+								", please verify the frei0r plugin.");
 							}
 						}
 					}					
 				}
-				
+
 			} catch (Exception e) {
 				throw new IllegalActionException(e.getMessage());
 			}
 		} else {
+			for (int i=0; i<params.size(); i++)
+				if (attribute == params.get(i))
+					System.out.println("Param " + i + " has changed.");
 			super.attributeChanged(attribute);
 		}
 	}
@@ -236,104 +248,19 @@ public class Frei0rActor extends TypedAtomicActor {
 	 */
 	public void fire() throws IllegalActionException {
 		super.fire();
-		
+
+		// Call update on each param, so that they consume their associated port's token.
+		// This is required, otherwise a ptolemy.actor.NoRoomException will be thrown.
+		for (int i=0; i<params.size(); i++) {
+			params.get(i).update();
+		}
+
 		try {
-			
-			// Process params.
-			if (_frei0rInstance != null) {
-				int k = 0;
-				for (int i=0; i<_frei0r.nParams(); i++) {
-					TypedIOPort paramPort;
-					Object paramValue = null;
-					switch (_frei0r.getParamType(i)) {
-					// BOOLEAN
-					case Frei0r.F0R_PARAM_BOOL:
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							paramValue = new Boolean( ((BooleanToken)paramPort.get(0)).booleanValue() );
-						}
-						break;
-					// DOUBLE
-					case Frei0r.F0R_PARAM_DOUBLE:
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							paramValue = new Double( ((ScalarToken)paramPort.get(0)).doubleValue() );
-						}
-						break;
-					// POSITION
-					case Frei0r.F0R_PARAM_POSITION:
-						Frei0r.Position positionValue = (Frei0r.Position)_frei0rInstance.getParamValue(i);
-						if (positionValue == null) {
-							positionValue = new Frei0r.Position(0.0, 0.0);
-						}
-						boolean positionSet = false;
-						// X
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							positionValue.setX( ((DoubleToken)paramPort.get(0)).doubleValue() );
-							positionSet = true;
-						}
-						// Y
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							positionValue.setY( ((DoubleToken)paramPort.get(0)).doubleValue() );
-							positionSet = true;
-						}
-						// Assign.
-						if (positionSet)
-							paramValue = positionValue;
-						break;
-					// COLOR
-					case Frei0r.F0R_PARAM_COLOR:
-						Frei0r.Color colorValue = (Frei0r.Color)_frei0rInstance.getParamValue(i);
-						if (colorValue == null) {
-							colorValue = new Frei0r.Color(0.0f, 0.0f, 0.0f);
-						}
-						boolean colorSet = false;
-						// RED
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							colorValue.setRed( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
-							colorSet = true;
-						}
-						// GREEN
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							colorValue.setGreen( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
-							colorSet = true;
-						}
-						// BLUE
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							colorValue.setBlue( (float) ((DoubleToken)paramPort.get(0)).doubleValue() );
-							colorSet = true;
-						}
-						// Assign.
-						if (colorSet)
-							paramValue = colorValue;
-						break;
-					// STRING
-					case Frei0r.F0R_PARAM_STRING:
-						paramPort = params.get(k++);
-						if (paramPort.getWidth() > 0 && paramPort.hasToken(0)) {
-							paramValue = ((StringToken)paramPort.get(0)).stringValue();
-						}
-						break;
-					default:
-						throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
-															", please verify the frei0r plugin.");
-					}
-					
-					// Set the value.
-					if (paramValue != null)
-						_frei0rInstance.setParamValue(paramValue, i);
-				}
-			}
-			
+
 			// Process image.
 			BufferedImage bufferedImageIn = null;
 			boolean hasInput = false;
-			
+
 			if (input1.getWidth() > 0 && input1.hasToken(0)) {
 				Image imageIn = ((ImageToken)input1.get(0)).asAWTImage();
 				if (imageIn == null)
@@ -346,19 +273,85 @@ public class Frei0rActor extends TypedAtomicActor {
 					}
 				}
 			}
-			
+
 			// If there is no image input, do nothing.
 			// NOTICE: Even sources thus need to have an input, the which acts as a trigger.
 			if (hasInput) {
+				
 				// Create instance or resize it.
 				if (_frei0rInstance == null ||
-					_frei0rInstance.getWidth() != bufferedImageIn.getWidth() ||
-					_frei0rInstance.getHeight() != bufferedImageIn.getHeight()) {
+						_frei0rInstance.getWidth() != bufferedImageIn.getWidth() ||
+						_frei0rInstance.getHeight() != bufferedImageIn.getHeight()) {
 					_frei0rInstance = _frei0r.createInstance(bufferedImageIn.getWidth(), bufferedImageIn.getHeight());
+				}
+
+				// Process params.
+				int k = 0;
+				for (int i=0; i<_frei0r.nParams(); i++) {
+					PortParameter paramPort;
+					Object paramValue = null;
+					switch (_frei0r.getParamType(i)) {
+					// BOOLEAN
+					case Frei0r.F0R_PARAM_BOOL:
+						paramPort = params.get(k++);
+						paramValue = new Boolean( ((BooleanToken)paramPort.getToken()).booleanValue() );
+						break;
+					// DOUBLE
+					case Frei0r.F0R_PARAM_DOUBLE:
+						paramPort = params.get(k++);
+						paramValue = new Double( ((ScalarToken)paramPort.getToken()).doubleValue() );
+						break;
+					// POSITION
+					case Frei0r.F0R_PARAM_POSITION:
+						Frei0r.Position positionValue = (Frei0r.Position)_frei0rInstance.getParamValue(i);
+						if (positionValue == null) {
+							positionValue = new Frei0r.Position(0.0, 0.0);
+						}
+						// X
+						paramPort = params.get(k++);
+						positionValue.setX( ((DoubleToken)paramPort.getToken()).doubleValue() );
+						// Y
+						paramPort = params.get(k++);
+						positionValue.setY( ((DoubleToken)paramPort.getToken()).doubleValue() );
+						// Assign.
+						paramValue = positionValue;
+						break;
+					// COLOR
+					case Frei0r.F0R_PARAM_COLOR:
+						Frei0r.Color colorValue = (Frei0r.Color)_frei0rInstance.getParamValue(i);
+						if (colorValue == null) {
+							colorValue = new Frei0r.Color(0.0f, 0.0f, 0.0f);
+						}
+						// RED
+						paramPort = params.get(k++);
+						colorValue.setRed( (float) ((DoubleToken)paramPort.getToken()).doubleValue() );
+						// GREEN
+						paramPort = params.get(k++);
+						colorValue.setGreen( (float) ((DoubleToken)paramPort.getToken()).doubleValue() );
+						// BLUE
+						paramPort = params.get(k++);
+						colorValue.setBlue( (float) ((DoubleToken)paramPort.getToken()).doubleValue() );
+						// Assign.
+						paramValue = colorValue;
+						break;
+					// STRING
+					case Frei0r.F0R_PARAM_STRING:
+						paramPort = params.get(k++);
+						paramValue = ((StringToken)paramPort.getToken()).stringValue();
+						break;
+					default:
+						throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
+															", please verify the frei0r plugin.");
+					}
+
+					// Set the value.
+					if (paramValue != null)
+						_frei0rInstance.setParamValue(paramValue, i);
 				}
 				
 				// Update.
-				BufferedImage bufferedImageOut = new BufferedImage(_frei0rInstance.getWidth(), 
+				BufferedImage bufferedImageOut = 
+					new BufferedImage(_frei0rInstance.getWidth(), 
 						_frei0rInstance.getHeight(), 
 						BufferedImage.TYPE_INT_ARGB);
 
@@ -391,7 +384,7 @@ public class Frei0rActor extends TypedAtomicActor {
 
 				output.send(0, new AWTImageToken(bufferedImageOut));
 			}
-			
+
 		} catch (Frei0rException e) {
 			throw new IllegalActionException(this, e.getMessage());
 		}
@@ -399,14 +392,14 @@ public class Frei0rActor extends TypedAtomicActor {
 
 	private Frei0r _frei0r = null;
 	private Frei0r.Instance _frei0rInstance;
-	
+
 	public TypedIOPort output;
-	
+
 	public TypedIOPort input1;
 	public TypedIOPort input2;
 	public TypedIOPort input3;
-	
-	public Vector<TypedIOPort> params;
+
+	public Vector<PortParameter> params;
 	public Parameter defaultWidth;
 	public Parameter defaultHeight;
 
