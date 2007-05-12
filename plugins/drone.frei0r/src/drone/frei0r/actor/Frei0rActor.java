@@ -219,9 +219,6 @@ public class Frei0rActor extends TypedAtomicActor {
 				throw new IllegalActionException(e.getMessage());
 			}
 		} else {
-			for (int i=0; i<params.size(); i++)
-				if (attribute == params.get(i))
-					System.out.println("Param " + i + " has changed.");
 			super.attributeChanged(attribute);
 		}
 	}
