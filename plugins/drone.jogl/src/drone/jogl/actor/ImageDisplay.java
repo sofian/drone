@@ -19,6 +19,7 @@
 package drone.jogl.actor;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
 import javax.media.opengl.GL;
@@ -183,7 +184,6 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	}
 	
 	public void display(GLAutoDrawable drawable) {
-//		System.out.println("display - repaint - called");
 	    GL gl = drawable.getGL();
 	    if (_displayOnTexture) {
 	    	if (_textureData != null) {
@@ -196,10 +196,10 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	    } else {
 	    	JOGLUtils.drawPixelsFromBuffer(gl, _imageBuffer, _imageWidth, _imageHeight);
 	    }
+	    drawable.swapBuffers();
 	}
 	
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-//		System.out.println("reshaped called");
 		GL gl = drawable.getGL();
 	    if (_displayOnTexture) {
 	    	JOGLUtils.rescale(gl, _glu, _imageWidth, _imageHeight, width, height);
@@ -216,7 +216,6 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	 *  @param in The token to display
 	 */
 	protected void _display(Token in) {
-//		System.out.println("_display called");
 	    if (_displayOnTexture) {
 	    	
 	    	if (in instanceof ImageToken) {
@@ -240,7 +239,7 @@ public class ImageDisplay extends Sink implements GLEventListener {
     			_resizeCanvas(_textureData.getWidth(), _textureData.getHeight());    			
     			_canvas.display();
 	    	} else {
-	    		throw new InternalErrorException("Input is not an ImageToken nor TextureToken. It is: " + in);	    		
+	    		throw new InternalErrorException("Input is not an ImageToken nor TextureToken. It is: " + in.getClass().toString());	    		
 	    	}
 
 	    	
@@ -258,12 +257,11 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	    			// tough I'm far from being sure about that.
 	    			_imageBuffer = JOGLUtils.createPixelDrawingBufferFromImage(image);
 	    			_canvas.display();
-//	    			_canvas.repaint();
 	    		} else {
 	    			System.out.println("Image is null");
 	    		}
 	    	} else {
-	    		throw new InternalErrorException("Input is not an ImageToken. It is: " + in);
+	    		throw new InternalErrorException("Input is not an ImageToken. It is: " + in.getClass().toString());
 	    	}
 	    	
 	    }
