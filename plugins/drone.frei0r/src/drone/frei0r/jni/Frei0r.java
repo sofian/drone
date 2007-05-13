@@ -261,7 +261,7 @@ public class Frei0r {
 						_width + "x" + _height);
 
 			// Make sure images are of TYPE_INT_ARGB.
-			in = ImageConvert.toARGB(in);
+			in = ImageConvert.convertType(in, BufferedImage.TYPE_INT_ARGB);
 			if (out.getType() != BufferedImage.TYPE_INT_ARGB) {
 				throw new Frei0rException("Output image must be of type ARGB.");
 			}
