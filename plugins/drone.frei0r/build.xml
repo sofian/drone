@@ -34,7 +34,7 @@
 			Testing ${long.name} plugin.
 		</echo>
 		<junit>
-			<classpath refid="test.path" />
+			<classpath refid="test.path"/>
 			<formatter type="brief" usefile="false" />
 		    <batchtest fork="true">
 				<!-- Yes I know this totally looks strange but please don't touch: -->
