@@ -188,7 +188,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
      *  event The event.
      */
     public synchronized void controllerUpdate(ControllerEvent event) {
-        System.out.println (event.getClass().getName());
         if (event instanceof EndOfMediaEvent) {
             // Specify that play should start at the beginning of the audio.
             _playSound = false;
@@ -216,24 +215,19 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
         
         boolean canPlay = false;
         double currentTime = getDirector().getModelTime().getDoubleValue();
-//        System.out.println("Director: " + getDirector().getName() + ", currentime = " + currentTime);
         
         if ((_lastTime < 0.0 && currentTime >= ((DoubleToken)phase.getToken()).doubleValue()) ||
         	(_lastTime >= 0.0 && currentTime - _lastTime > ((DoubleToken)period.getToken()).doubleValue())) {
         		canPlay = true;
         		_lastTime = currentTime;
-//        		System.out.println("can play");
         	}
 
-        // If there is no player, then no sound file has been specified.
-        // Just return.
+        // If there is no player, then no sound file has been specified: just return.
         if (_player == null) {
             return;
         }
-
         
         if (_playSound && canPlay && _player.getState() != Controller.Started) {
-//        	System.out.println("playing....");
         	_player.stop();
         	_playSound = false;
             _player.setMediaTime(_startTime);
@@ -260,12 +254,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
      */
     public void stopFire() {
         super.stopFire();
-//        System.out.println("stopfire");
-//
-//        if (_player != null) {
-//            // FIXME: Doesn't seem to stop the sound.
-//            _player.stop();
-//        }
     }
 
     public void finalize() {
@@ -276,10 +264,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
     /** Close the media processor.
      */
     public void wrapup() {
-//    	System.out.println("wrapup");
-//        if (_player != null) {
-//            _player.stop();
-//        }
     }
 
     ///////////////////////////////////////////////////////////////////
