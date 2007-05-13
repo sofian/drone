@@ -174,9 +174,12 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 	public void fire() throws IllegalActionException {
 		super.fire();
 		if (imageIn.getWidth() > 0 && imageIn.hasToken(0)) {
+			
 			Token img = imageIn.get(0);
+			
 			if (imageIn.hasToken(0))
-				throw new IllegalActionException(this, "image has too many tokens");
+				throw new IllegalActionException(this, "Image has too many tokens");
+			
 			if (img == null)
 				throw new IllegalActionException("Got null token");
 			

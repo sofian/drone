@@ -49,8 +49,11 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.media.Buffer;
+
 import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
+import drone.jmf.data.JMFImageToken;
 import drone.util.ImageConvert;
 
 
@@ -251,7 +254,7 @@ public class Frei0rActor extends TypedAtomicActor {
 		for (int i=0; i<params.size(); i++) {
 			params.get(i).update();
 		}
-
+		
 		try {
 
 			// Process image.
@@ -264,10 +267,7 @@ public class Frei0rActor extends TypedAtomicActor {
 					hasInput = false;
 				else {
 					hasInput = true;
-					bufferedImageIn = ImageConvert.toBufferedImage(imageIn);
-					if (bufferedImageIn.getType() != BufferedImage.TYPE_INT_ARGB) {
-						bufferedImageIn = ImageConvert.toARGB(bufferedImageIn);
-					}
+					bufferedImageIn = ImageConvert.toBufferedImage(imageIn, BufferedImage.TYPE_INT_ARGB);
 				}
 			}
 
@@ -349,8 +349,8 @@ public class Frei0rActor extends TypedAtomicActor {
 				// Update.
 				BufferedImage bufferedImageOut = 
 					new BufferedImage(_frei0rInstance.getWidth(), 
-						_frei0rInstance.getHeight(), 
-						BufferedImage.TYPE_INT_ARGB);
+										_frei0rInstance.getHeight(),
+										BufferedImage.TYPE_INT_ARGB);
 
 				if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
 						_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {

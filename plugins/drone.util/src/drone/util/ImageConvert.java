@@ -20,6 +20,7 @@ package drone.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -59,6 +60,34 @@ public class ImageConvert {
 		return bimage;
 	}
 
+
+	/**
+	 * Converts an AWT Image into a BufferedImage, with specific type.
+	 * 
+	 * @param image the image to convert
+	 * @param type the BufferedImage type
+	 * @return a BufferedImage with the contents of the image
+	 */
+	public static BufferedImage toBufferedImage(Image image, int type) {
+		if (image instanceof BufferedImage) {
+			return convertType((BufferedImage)image, type);
+		}
+
+		// This code ensures that all the pixels in the image are loaded
+		image = new ImageIcon(image).getImage();
+
+		// Create a buffered image with a format that's compatible with the screen
+		BufferedImage bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+
+		// Copy image to buffered image
+		Graphics g = bimage.createGraphics();
+
+		// Paint the image onto the buffered image
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+
+		return bimage;
+	}
 
 	/**
 	 * Converts an AWT Image into a BufferedImage.
@@ -123,14 +152,6 @@ public class ImageConvert {
 			dest.setRGB(0, y, w, 1, buf, 0, w);
 		}
 		dest.getAlphaRaster().setPixels(0, 0, w, h, alpha);
-//		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//		GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-//		BufferedImage dest = gc.createCompatibleImage(w, h, Transparency.BITMASK);
-//		int buf[] = new int[w];
-//		for (int y = 0; y < h; y++) {
-//		src.getRGB(0, y, w, 1, buf, 0, w);
-//		dest.setRGB(0, y, w, 1, buf, 0, w);
-//		}
 		return dest;
 	}
 
@@ -140,14 +161,17 @@ public class ImageConvert {
 	 * @param src the source image
 	 * @return an image with an alpha channel (opaque by default)
 	 */
-	public static BufferedImage toARGB(BufferedImage src) {
-		if (hasAlpha(src))
+	public static BufferedImage convertType(BufferedImage src, int type) {
+		if (src.getType() == type)
 			return src;
+		
 		int w = src.getWidth();
 		int h = src.getHeight();
-		BufferedImage dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		dest.setRGB(0, 0, w, h, src.getRGB(0, 0, w, h, null, 0, w), 0, w);
-		return dest;
+		BufferedImage image = new BufferedImage(w, h, type);
+		Graphics2D g2 = image.createGraphics();
+		g2.drawRenderedImage(src, null);
+		g2.dispose();
+		return image;
 	}
 
 	/**

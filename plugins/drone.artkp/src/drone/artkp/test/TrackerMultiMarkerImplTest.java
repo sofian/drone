@@ -1,9 +1,18 @@
 package drone.artkp.test;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+
+import javax.swing.ImageIcon;
+
+import ptolemy.kernel.util.IllegalActionException;
 import drone.artkp.ARTKPException;
 import drone.artkp.kernel.ARToolKitPlus;
 import drone.artkp.kernel.TrackerMultiMarker;
 import drone.artkp.kernel.TrackerMultiMarkerImpl;
+import drone.util.ImageConvert;
 import junit.framework.TestCase;
 
 public class TrackerMultiMarkerImplTest extends TestCase {
@@ -13,12 +22,10 @@ public class TrackerMultiMarkerImplTest extends TestCase {
 	final int HEIGHT = 240;
 	final String CAMERA_FILENAME = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/LogitechPro4000.dat";
 	final String MARKER_FILENAME = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/markerboard_480-499.cfg";
+	final String SIMPLE_IMAGE = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/simple_test.png";
 	
 	public void setUp() throws ARTKPException {
 		tracker = new TrackerMultiMarkerImpl();
-//		tracker.init(CAMERA_FILENAME, MARKER_FILENAME, 1.0f, 1000.0f);
-//		tracker = new TrackerMultiMarkerImpl(WIDTH, HEIGHT);
-//		tracker.init(CAMERA_FILENAME, MARKER_FILENAME, 1.0f, 1000.0f);
 	}
 	
 	public void tearDown() {
@@ -44,7 +51,7 @@ public class TrackerMultiMarkerImplTest extends TestCase {
 		assertFalse(tracker.init(CAMERA_FILENAME, "wrongfile", 1.0f, 1000.0f));
 	}
 	
-	public void testCalc() throws ARTKPException {
+	public void testCalc() throws Exception {
 		try {
 			tracker.calc(new byte[WIDTH*HEIGHT]);
 			fail("Exception expected when tryin to call function without yet a camera.");
@@ -61,6 +68,27 @@ public class TrackerMultiMarkerImplTest extends TestCase {
 			tracker.calc(null);
 			fail("Exception expected when trying to call function on null argument.");
 		} catch (Exception e) {}
+		// Test with an obvious marker.
+		tracker.setBorderWidth(0.25f);
+		tracker.setImageProcessingMode(ARToolKitPlus.IMAGE_HALF_RES);
+		tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_SIMPLE);
+	    tracker.setUndistortionMode(ARToolKitPlus.UNDIST_LUT);
+	    tracker.setUseDetectLite(true);
+	    tracker.setThreshold(160);
+	    Image image = new ImageIcon(SIMPLE_IMAGE).getImage();
+		BufferedImage bimage = ImageConvert.toGrayBufferedImage(image);
+		tracker.changeCameraSize(bimage.getWidth(), bimage.getHeight());
+		DataBuffer buffer = bimage.getData().getDataBuffer();
+		if (buffer.getDataType() != DataBuffer.TYPE_BYTE)
+			throw new Exception("Data has wrong type.");
+		byte[] imageBuffer = ((DataBufferByte)buffer).getData();
+		if (imageBuffer.length != bimage.getWidth() * bimage.getHeight())
+			throw new Exception("Image buffer has wrong length " + imageBuffer.length + ".");
+		tracker.calc(imageBuffer);
+		assertEquals(tracker.getNumDetectedMarkers(), 1);
+		int[] markerIDs = new int[tracker.getNumDetectedMarkers()];
+		tracker.getDetectedMarkers(markerIDs);
+		assertEquals(markerIDs[0], 0);
 	}
 
 	public void testGetNumDetectedMarkers() throws ARTKPException {

@@ -41,6 +41,7 @@ import javax.swing.ImageIcon;
 import ptolemy.actor.lib.Transformer;
 import drone.artkp.ARTKPException;
 import drone.artkp.kernel.*;
+import drone.util.ImageConvert;
 import ptolemy.actor.parameters.DoubleRangeParameter;
 import ptolemy.data.ArrayToken;
 import ptolemy.data.BooleanToken;
@@ -166,38 +167,39 @@ public class ARTKPActor extends Transformer {
 	    //  - Std. ARToolKit
 	    //  - MATLAB Camera Calibration Toolbox
 		File cFile = camParamFile.asFile();
-		if (cFile == null)
+		if (cFile == null || !cFile.exists())
 			throw new IllegalActionException("Given camera parameters file cannot be opened.");
 
 		File mFile = multiFile.asFile();
-		if (mFile == null)
+		if (mFile == null || !mFile.exists())
 			throw new IllegalActionException("Given multi file cannot be opened.");
 		
 		try {
-			_tracker.init(cFile.getAbsolutePath(), mFile.getAbsolutePath(),
+			if (!_tracker.init(cFile.getAbsolutePath(), mFile.getAbsolutePath(),
 					     (float)((ScalarToken)nearClipping.getToken()).doubleValue(), 
-					     (float)((ScalarToken)farClipping.getToken()).doubleValue());
+					     (float)((ScalarToken)farClipping.getToken()).doubleValue()))
+				throw new IllegalActionException(this, "Problem at tracker initialization.");
 					     
 	//		System.out.println("pixel format");
-			_tracker.setPixelFormat(ARToolKitPlus.PIXEL_FORMAT_LUM);
+			if (!_tracker.setPixelFormat(ARToolKitPlus.PIXEL_FORMAT_LUM))
+				throw new IllegalActionException(this, "Wrong pixel format specified.");
 			
-	//		System.out.println("set border width");
+			// Important: this is needed (otherwise for an unknown reason it doesn't work...)
+			_tracker.setImageProcessingMode(ARToolKitPlus.IMAGE_HALF_RES);
+
 			// the marker in the BCH test image has a thiner border...
-	//	    _tracker.setBorderWidth(0.125f);
 		    _tracker.setBorderWidth(0.25f);
 	
 		    // set a threshold. we could also activate automatic thresholding
-	//		System.out.println("set threshold");
 		    _tracker.setThreshold(((IntToken)threshold.getToken()).intValue());
 	
 		    // let's use lookup-table undistortion for high-speed
 		    // note: LUT only works with images up to 1024x1024
-	//		System.out.println("set undist");
 		    _tracker.setUndistortionMode(ARToolKitPlus.UNDIST_LUT);
 	
 		    _tracker.setUseDetectLite(((BooleanToken)useDetectLite.getToken()).booleanValue());
 		    
-		    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_ORIGINAL);
+//		    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_ORIGINAL);
 	//	    _tracker.setPoseEstimator(ARToolKitPlus.POSE_ESTIMATOR_RPP);
 		    // RPP is more robust than ARToolKit's standard pose estimator
 		    //tracker->setPoseEstimator(ARToolKitPlus::POSE_ESTIMATOR_RPP);
@@ -240,7 +242,7 @@ public class ARTKPActor extends Transformer {
 		if (input.getWidth() > 0 && input.hasToken(0)) {
 			Image image = ((ImageToken)input.get(0)).asAWTImage();
 			if (image != null) {
-				BufferedImage bimage = toGrayBufferedImage(image);
+				BufferedImage bimage = ImageConvert.toGrayBufferedImage(image);
 				if (_camWidth != bimage.getWidth() || _camHeight != bimage.getHeight()) {
 					_camWidth = bimage.getWidth();
 					_camHeight = bimage.getHeight();
@@ -260,8 +262,11 @@ public class ARTKPActor extends Transformer {
 				if (imageBuffer.length != bimage.getWidth() * bimage.getHeight())
 					throw new IllegalActionException(this, 
 							"Image buffer has wrong length " + imageBuffer.length + ".");
-//				_tracker.calc(imageBuffer);
+			
 				try {
+					// Run calculation.
+					_tracker.calc(imageBuffer);
+
 					int nMarkers = _tracker.getNumDetectedMarkers();
 					int[] markerIDs = new int[nMarkers];
 					float[][] markerMatrix = new float[nMarkers][16];
@@ -382,21 +387,4 @@ public class ARTKPActor extends Transformer {
 //	return cm.hasAlpha();
 //	}
 //	
-	public static BufferedImage toGrayBufferedImage(Image image) {
-	if (image instanceof BufferedImage && ((BufferedImage)image).getType() == BufferedImage.TYPE_BYTE_GRAY)
-	return (BufferedImage)image;
-	// This code ensures that all the pixels in the image are loaded
-	image = new ImageIcon(image).getImage();
-	// Create a buffered image with a format that's compatible with the screen
-	BufferedImage bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_BYTE_GRAY);
-	
-	// Copy image to buffered image
-	Graphics g = bimage.createGraphics();
-	
-	// Paint the image onto the buffered image
-	g.drawImage(image, 0, 0, null);
-	g.dispose();
-	
-	return bimage;
-	}
 }

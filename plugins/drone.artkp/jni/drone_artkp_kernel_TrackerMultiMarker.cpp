@@ -25,13 +25,13 @@ JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_TrackerMultiMarker_init
   
   const char* c_nCamParamFile = env->GetStringUTFChars(nCamParamFile, 0);
   const char* c_nMultiFile = env->GetStringUTFChars(nMultiFile, 0);
-  //  printf("cam file: %s, multi file: %s\n", c_nCamParamFile, c_nMultiFile);
+  printf("cam file: %s, multi file: %s\n", c_nCamParamFile, c_nMultiFile);
   // init with a NULL logger
   jboolean result = (jboolean)tracker->init(c_nCamParamFile, c_nMultiFile, (ARFloat)nNearClip, (ARFloat)nFarClip);
-  //  printf("init done");
+  printf("init done: %d\n", (int)result);
   env->ReleaseStringUTFChars(nCamParamFile, c_nCamParamFile);
   env->ReleaseStringUTFChars(nMultiFile, c_nMultiFile);
-  //  printf("release done");
+  printf("release done\n");
   return (result);
 }
 
