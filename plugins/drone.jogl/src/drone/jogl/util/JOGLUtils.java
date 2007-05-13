@@ -42,19 +42,17 @@ import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
+import drone.util.ImageConvert;
+
 public class JOGLUtils {
 
     public static TextureData createTextureDataFromImage(Image image) {
-		BufferedImage bimage;
-		if (image instanceof BufferedImage)
-			bimage = (BufferedImage) image;
-		else {
-			bimage = new BufferedImage (image.getWidth(null),
-										image.getHeight(null),
-										BufferedImage.TYPE_INT_BGR);
-			bimage.createGraphics().drawImage( image, 0, 0, null);
-		}
-    	return TextureIO.newTextureData(bimage, false);
+    	// For a yet unsolved reason, the TextureIO.newTexture data function needs 
+    	// the BufferedImage to be of type TYPE_INT_RGB.
+    	return TextureIO.newTextureData(
+    			ImageConvert.convertType(ImageConvert.toBufferedImage(image),
+    										BufferedImage.TYPE_INT_RGB),
+    			false);
     }
     
     public static Buffer createPixelDrawingBufferFromImage(Image image) {
