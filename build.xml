@@ -30,7 +30,7 @@
         	<jvmarg value="-Djava.library.path=${java.library.path}:plugins/drone.frei0r/jni/lib:plugins/drone.artkp/jni/lib"/>
       	</java>
 	</target>
-	
+		
 	<target name="no-gui" depends="pt2, util, drone" description="No GUI">
         <echo>
             Building the project's non-GUI library.
@@ -72,7 +72,9 @@
     	<echo>
     		Building plugins.
     	</echo>
-    	<ant dir="plugins" inheritAll="true"/>
+    	<subant target="main">
+			<fileset dir="plugins" includes="**/build.xml"/>
+		</subant>
     </target>
 	
 	<target name="clean">
@@ -84,7 +86,20 @@
 			<fileset dir="pt2/build" includes="**/*"/>
 			<fileset dir="pt2-gui/build" includes="**/*"/>
 		</delete>
-		<ant dir="plugins" inheritAll="true" target="clean"/>
-		<ant dir="plugins/drone.util" inheritAll="true" target="clean"/>
+		<subant target="clean">
+			<fileset dir="plugins" includes="**/build.xml"/>
+			<fileset dir="plugins/drone.util" includes="**/build.xml"/>
+		</subant>
 	</target>
+
+	<target name="test">
+		<echo>
+			Running Drone test suite.
+		</echo>
+		<subant target="test">
+			<fileset dir="plugins" includes="**/build.xml"/>
+			<fileset dir="plugins/drone.util" includes="**/build.xml"/>
+		</subant>
+	</target>
+
 </project>
