@@ -21,6 +21,7 @@ public class TrackerMultiMarkerImplTest extends TestCase {
 	final int WIDTH = 320;
 	final int HEIGHT = 240;
 	final String CAMERA_FILENAME = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/LogitechPro4000.dat";
+	final String MY_CAMERA_FILENAME = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/Camera_A.dat";
 	final String MARKER_FILENAME = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/markerboard_480-499.cfg";
 	final String SIMPLE_IMAGE = "/home/tats/eclipse/drone/plugins/drone.artkp/src/drone/artkp/test/simple_test.png";
 	
@@ -46,6 +47,7 @@ public class TrackerMultiMarkerImplTest extends TestCase {
 	}
 
 	public void testInit() throws ARTKPException {
+		assertTrue(tracker.init(MY_CAMERA_FILENAME, MARKER_FILENAME, 1.0f, 1000.0f));
 		assertTrue(tracker.init(CAMERA_FILENAME, MARKER_FILENAME, 1.0f, 1000.0f));
 		assertFalse(tracker.init("wrongfile", MARKER_FILENAME, 1.0f, 1000.0f));
 		assertFalse(tracker.init(CAMERA_FILENAME, "wrongfile", 1.0f, 1000.0f));
