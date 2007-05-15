@@ -26,6 +26,10 @@
 			Cleaning ${long.name} plugin.
 		</echo>
 		<antcall target="clean.default"/>
+		<!-- Clean up JNI dir -->
+		<exec dir="jni" executable="${make}">
+			<arg value="clean"/>
+		</exec>
 		<delete file="${distdir}/${project.name}.jar"/>
 	</target>
 
