@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.nio.FloatBuffer;
 import java.util.Map;
+import java.util.Random;
 
 import drone.artkp.util.ARTKPUtils;
 
@@ -50,6 +51,7 @@ import drone.jogl.data.TextureToken;
 import ptolemy.data.ArrayToken;
 import ptolemy.data.ImageToken;
 import ptolemy.data.IntToken;
+import ptolemy.data.MatrixToken;
 import ptolemy.data.ObjectToken;
 import ptolemy.data.RecordToken;
 import ptolemy.data.Token;
@@ -107,10 +109,8 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 		textureReplacements = new TypedIOPort(this, "textureReplacements", true, false);
 		textureReplacements.setTypeEquals(BaseType.OBJECT);
 		
-//		// FIXME: This is required to be an ImageToken, but
-//		// we don't see to have that class.
-//		textureIn = new TypedIOPort(this, "textureIn", true, false);
-//		textureIn.setTypeEquals(BaseType.OBJECT);
+//		transformationMatrix = new TypedIOPort(this, "transformationMatrix", true, false);
+//		transformationMatrix.setTypeEquals(BaseType.DOUBLE_MATRIX);
 		
 		_frame = null;
 	}
@@ -155,7 +155,6 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 		SwingUtilities.invokeLater(doDisplay);
 
 	    _glu = new GLU();
-	    _glut = new GLUT();
 	}
 	
 	public void finalize() {
@@ -228,6 +227,19 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 			Token in = textureReplacements.get(0);
 			_textureReplacements = (TextureData[])((ObjectToken)in).getValue();
 		}
+//		if (transformationMatrix.getWidth() > 0 && transformationMatrix.hasToken(0)) {
+//			MatrixToken in = (MatrixToken)transformationMatrix.get(0);
+//			if (in.getRowCount() != 4 && in.getColumnCount() != 4)
+//				throw new IllegalActionException(this, "Given transformation matrix has wrong dimensions, should be 4x4.");
+//			double[][] m = in.doubleMatrix();
+//			_transformationMatrix = new float[16];
+//			int k=0;
+//			for (int i=0; i<in.getRowCount(); i++)
+//				for (int j=0; j<in.getColumnCount(); j++)
+//					_transformationMatrix[k++] = (float)m[i][j];
+//		} else {
+//			_transformationMatrix = null;
+//		}
 		if (_canvas != null)
 			_canvas.display();
 	}
@@ -258,6 +270,16 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 		_glu.gluOrtho2D(0, 1, 0, 1);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
+
+		// Apply transformation matrix.
+//		gl.glScaled(1.1, 1.1, 1.1);
+//	    Random rnd = new Random();
+//	    double DIVIDE = 100;
+//	    double tx = (rnd.nextDouble() - 0.5)/ DIVIDE;
+//	    double ty = (rnd.nextDouble() - 0.5)/ DIVIDE;
+//	    double tz = (rnd.nextDouble() - 0.5)/ DIVIDE;
+//	    tz = 0;
+//	    gl.glTranslated(tx, ty, tz);
 		
 		// Display image.
 	    if (_imageTextureData != null) {
@@ -279,19 +301,15 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 	    		_drawMarker(gl, _markerIDs[i], _textureReplacements[i], _markerMatrix[i]);
 	    	}
 	    }
+	    
+	    
 	    // does not seem to be useful
 	    drawable.swapBuffers();
 	}
 	
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-		System.out.println("Reshape");
 		GL gl = drawable.getGL();
-		_windowWidth = width;
-		_windowHeight = height;
-//		ARTKPUtils.argDrawMode2D(gl, _windowWidth, _windowHeight);
-		System.out.println("done.");
-//		GL gl = drawable.getGL();
-//		JOGLUtils.rescale(gl, _glu, _imageWidth, _imageHeight, width, height);
+	    JOGLUtils.drawPixelsRescale(gl, _glu, _imageWidth, _imageHeight, width, height);
 	}
 	
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
@@ -350,17 +368,17 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 			TextureCoords coords = _texture.getImageTexCoords();
 			
 			gl.glBegin(GL.GL_QUADS);
-			float DIMENSION = 40.0f;
+			float DIMENSION = 100.0f;
 			// A droite
 //			float x0 = DIMENSION * 0.5f;
 //			float x1 = x0 + 3*DIMENSION;
 //			float y0 = - DIMENSION * 0.5f;
 //			float y1 = y0 + DIMENSION;
 			// En bas
-			float x0 = - 0.5f * DIMENSION;
 			float width = DIMENSION;
-			float height = 0.25f * DIMENSION;
-			float y0 = - (0.5f * DIMENSION + 1.5f * height);
+			float height = 1.2f * DIMENSION;
+			float x0 = - 0.5f * DIMENSION;
+			float y0 = - 0.7f * DIMENSION;
 			float y1 = y0 + height;
 			float x1 = x0 + width;
 			gl.glTexCoord2f(coords.left(), coords.bottom());
@@ -490,7 +508,7 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 	
 	public TypedIOPort textureReplacements;
 	
-	public TypedIOPort algorithm;
+	public TypedIOPort transformationMatrix;
 	
 	private float[] _projectionMatrix = null;
 	private float[][] _markerMatrix = null;
@@ -498,17 +516,14 @@ public class ARTKPDisplay extends TypedAtomicActor implements GLEventListener {
 	
 	private TextureData[] _textureReplacements = null;
 	
-	int _nMarkers = -1;
+//	private float[] _transformationMatrix = null;
 	
-	private int _markerId = -1;
+	int _nMarkers = -1;
 	
 	private int _imageWidth = 0;
 	private int _imageHeight = 0;
-	private int _windowWidth = 0;
-	private int _windowHeight = 0;
 	
 	private GLU _glu;
-	private GLUT _glut;
 	
 	/** The picture panel. */
 	protected Picture _picture;
