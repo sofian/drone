@@ -219,7 +219,7 @@ public class Frei0rActor extends TypedAtomicActor {
 				}
 
 			} catch (Exception e) {
-				throw new IllegalActionException(e.getMessage());
+				throw new IllegalActionException(this, e, "Cannot create link to frei0r library '" + frei0rLibraryName.getValueAsString() + "'.");
 			}
 		} else {
 			super.attributeChanged(attribute);
@@ -383,7 +383,7 @@ public class Frei0rActor extends TypedAtomicActor {
 			}
 
 		} catch (Frei0rException e) {
-			throw new IllegalActionException(this, e.getMessage());
+			throw new IllegalActionException(this, e, "Processing of image failed.");
 		}
 	}
 

@@ -210,7 +210,7 @@ public class ARTKPActor extends Transformer {
 		    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_SIMPLE);
 	//	    _tracker.setMarkerMode(ARToolKitPlus.MARKER_ID_BCH);
 		} catch (ARTKPException e) {
-			throw new IllegalActionException(this, e.getMessage());
+			throw new IllegalActionException(this, e, "Initialization problem.");
 		}
 	}
 	
@@ -250,7 +250,8 @@ public class ARTKPActor extends Transformer {
 					try {
 						_tracker.changeCameraSize(_camWidth, _camHeight);
 					} catch (ARTKPException e) {
-						throw new IllegalActionException(this, e.getMessage());
+						throw new IllegalActionException(this, e, 
+								"Resize of camera to " + _camWidth + "x" + _camHeight + " failed.");
 					}
 				}
 				DataBuffer buffer = bimage.getData().getDataBuffer();
@@ -296,7 +297,7 @@ public class ARTKPActor extends Transformer {
 					record.put("markerMatrix", new ArrayToken(BaseType.OBJECT, tokenMarkerMatrix));
 					output.send(0, new RecordToken(record));
 				} catch (ARTKPException e) {
-					throw new IllegalActionException(this, e.getMessage());
+					throw new IllegalActionException(this, e, "Calculation of markers failed.");
 				}
 			}
 		}
