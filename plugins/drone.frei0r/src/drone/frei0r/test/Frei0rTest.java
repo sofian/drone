@@ -168,5 +168,19 @@ public class Frei0rTest extends TestCase {
 			assertEquals(inframe[i], reinverted[i]); // ... but reinverted should be same
 		}
 	}
+	
+	public void testParamBounds() throws Frei0rException {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/squareblur.so");
+		Frei0r.Instance instance = frei0r.createInstance(100, 100);
+		int[] inframe = new int[100*100];
+		int[] outframe = new int[100*100];
+		// Init with dummy data.
+		for (int i=0; i<inframe.length; i++)
+			inframe[i] = i;
+		instance.setParamValue(new Double(-1.0), 0);
+		instance.update(0, inframe, outframe);
+		instance.setParamValue(new Double(2.0), 0);
+		instance.update(0, inframe, outframe);
+	}
 
 }

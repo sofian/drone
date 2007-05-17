@@ -5,6 +5,9 @@
 #include "drone_frei0r_jni_Frei0r.h"
 #include "frei0r.h"
 
+//! Clamp x at lower = l and upper = u.
+#define CLAMP(x,l,u) ( x < l ? l : ( x > u ? u : x ) )
+
 //#define __DEBUG
 
 const char* FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE = 
@@ -641,6 +644,8 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 				}	
 				// Get value 
 				f0r_param_double value = (f0r_param_double) env->CallDoubleMethod(paramValue, env->GetMethodID(expectedClass, "doubleValue", "()D"));
+				// Clamp value in [0,1]
+				value = CLAMP(value, 0.0, 1.0);
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
@@ -664,6 +669,10 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 				value.r = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getRed", "()F"));
 				value.g = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getGreen", "()F"));
 				value.b = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getBlue", "()F"));
+				// Clamp values.
+				value.r = CLAMP(value.r, 0.0f, 1.0f);
+				value.g = CLAMP(value.g, 0.0f, 1.0f);
+				value.b = CLAMP(value.b, 0.0f, 1.0f);
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
@@ -686,6 +695,9 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_setParamValue
 				f0r_param_position value;
 				value.x = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getX", "()D"));
 				value.y = (float) env->CallBooleanMethod(paramValue, env->GetMethodID(expectedClass, "getY", "()D"));
+				// Clamp values.
+				value.x = CLAMP(value.x, 0.0, 1.0);
+				value.y = CLAMP(value.y, 0.0, 1.0);
 				// Set value
 				handle->f0r_set_param_value((f0r_instance_t)inst, (f0r_param_t)&value, (int)paramIndex);
 			}
