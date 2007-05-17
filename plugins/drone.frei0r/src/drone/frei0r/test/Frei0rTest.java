@@ -17,6 +17,9 @@
  */
 package drone.frei0r.test;
 
+import java.io.FileNotFoundException;
+import java.net.URL;
+
 import junit.framework.TestCase;
 import drone.frei0r.jni.Frei0r;
 import drone.frei0r.Frei0rException;
@@ -26,8 +29,9 @@ public class Frei0rTest extends TestCase {
 
 	Frei0r frei0r;
 	
-	public String TEST_LIBRARY_PATH = "/usr/local/lib/frei0r/brightness.so";
-	public String TEST_WRONG_LIBRARY = "wrongLibraryName";
+	public final String FREI0R_DIRECTORY = "/usr/local/lib/frei0r-1";
+	public final String TEST_LIBRARY = "brightness.so";
+	public final String TEST_WRONG_LIBRARY = "wrongLibraryName.so";
 	
 	public String TEST_LIBRARY_NAME = "Brightness";
 	public String TEST_LIBRARY_AUTHOR = "Jean-Sebastien Senecal";
@@ -39,10 +43,24 @@ public class Frei0rTest extends TestCase {
 	public int TEST_LIBRARY_NUM_PARAMS =  1; 
 	public String TEST_LIBRARY_EXPLANATION = "Adjusts the brightness of a source image";
 	
+	public String getAbsolutePath(String libraryName) throws FileNotFoundException {
+		ClassLoader cl = TestCase.class.getClassLoader();
+		URL url = cl.getResource(libraryName);
+		if (url == null)
+			throw new FileNotFoundException("File not found: " + libraryName);
+		return url.getPath();
+	}
+	
 	public void setUp() throws Exception {
-		frei0r = new Frei0r(TEST_LIBRARY_PATH);
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY);
+		frei0r.init();
 	}
 
+
+	public void tearDown() throws Exception {
+		frei0r.deinit();
+	}
+	
 	/*****************************************
 	 * Library loading tests 
 	 *****************************************/ 
@@ -56,9 +74,9 @@ public class Frei0rTest extends TestCase {
 		fail("This call should have generated a Frei0rException.");
 	}
 	
-	public void testLoadLibrary() throws NameDuplicationException, Frei0rException
+	public void testLoadLibrary() throws NameDuplicationException, Frei0rException, FileNotFoundException
 	{
-		new Frei0r(TEST_LIBRARY_PATH);
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY);
 	}
 
 	/*****************************************
@@ -132,9 +150,23 @@ public class Frei0rTest extends TestCase {
 		int[] outframe = new int[100*100];
 		instance.update(0, inframe, outframe);
 	}
-		
-	public void tearDown() throws Exception {
-		frei0r = null;
+	
+	public void testUpdateCheckImage() throws Frei0rException {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/invert0r.so");
+		Frei0r.Instance instance = frei0r.createInstance(100, 100);
+		int[] inframe = new int[100*100];
+		// Init with dummy data.
+		for (int i=0; i<inframe.length; i++)
+			inframe[i] = i;
+		int[] inverted = new int[100*100];
+		int[] reinverted = new int[100*100];
+		instance.update(0, inframe, inverted);
+		instance.update(0, inverted, reinverted);
+		// Check if they are the same
+		for (int i=0; i<inframe.length; i++) {
+			assertTrue(inframe[i] != inverted[i]); // Inverted should differ
+			assertEquals(inframe[i], reinverted[i]); // ... but reinverted should be same
+		}
 	}
 
 }

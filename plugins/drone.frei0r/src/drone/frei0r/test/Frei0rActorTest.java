@@ -16,6 +16,9 @@ public class Frei0rActorTest extends TestCase {
 		_top.setName("Frei0r unit tests");
 	}
 
+	public void tearDown() throws Exception {
+	}
+
 	/**
 	 * Nothing specific to test in the constructor, but
 	 * the frei0rJNI lib is loaded in a static statement,
@@ -46,8 +49,5 @@ public class Frei0rActorTest extends TestCase {
 		//TODO: change this to appropriate path, when the plugin architecture will be fixed
 		frei0rActor.frei0rLibraryName.setExpression("$CLASSPATH/contrib/Frei0r/plugins/libnois0r.dylib");		
 	}
-	
-	public void tearDown() throws Exception {
-	}
-
+		
 }
