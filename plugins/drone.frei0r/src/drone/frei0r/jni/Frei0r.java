@@ -235,6 +235,7 @@ public class Frei0r {
 			_height = height;
 			_instanceHandle = parent.construct(width, height);
 			_parent = parent;
+			_size = _width * _height;
 		}
 
 		protected void finalize() throws Frei0rException {
@@ -246,108 +247,132 @@ public class Frei0r {
 
 		public int getHeight() { return _height; }
 		
+		public int getSize() { return _size; }
+		
 		public Frei0r getParent() { return _parent; }
 
 		public void update(double time, BufferedImage in, BufferedImage out) throws Frei0rException {
-
-			// Check dimensions.
-			if (_width != in.getWidth() || _height != in.getHeight())
-				throw new Frei0rException("Input image has wrong dimensions: " +
-						in.getWidth() + "x" + in.getHeight() + ", should be " +
-						_width + "x" + _height);
-			if (_width != out.getWidth() || _height != out.getHeight())
-				throw new Frei0rException("Output image has wrong dimensions: " +
-						out.getWidth() + "x" + out.getHeight() + ", should be " +
-						_width + "x" + _height);
-
-			// Make sure images are of TYPE_INT_ARGB.
-			in = ImageConvert.convertType(in, BufferedImage.TYPE_INT_ARGB);
-			if (out.getType() != BufferedImage.TYPE_INT_ARGB) {
-				throw new Frei0rException("Output image must be of type ARGB.");
-			}
+			int[] inframe = null;
 			
-			// Extract input data buffer.
-			DataBuffer bufferIn = in.getData().getDataBuffer();
-			if (bufferIn.getDataType() != DataBuffer.TYPE_INT) {
-				throw new Frei0rException("Data buffer of input image has wrong type.");
+			// Sanity check and extract data buffers.
+			if (_parent.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
+				inframe = _inputImageToFrame(in);
 			}
-			
-			int[] inframe = ((DataBufferInt)bufferIn).getData();
-			
-			// Convert input to ABGR if needed.
-			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
-				ImageConvert.convertARGBtoABGR(inframe);
-			}
+			_verifyImage(out);
 			
 			// Output frame buffer.
-			int[] outframe = new int[bufferIn.getSize()];
+			int[] outframe = new int[_size];
 
 			// Update frames.
 			update(time, inframe, outframe);
 			
-			// Convert output to ABGR if needed.
-			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
-				ImageConvert.convertARGBtoABGR(inframe);
-			}
-
-			// Copy data to the output image buffer.
-			// XXX it would be nice to find a way NOT to copy the data
-			out.setRGB(0, 0, _width, _height, outframe, 0, _width);
+			// Set output frame.
+			_outputImageSetFrame(out, outframe);
 		}
 
 		public void update(double time, int[] inframe, int[] outframe) throws Frei0rException {
+			// Sanity check.
+			if (_parent.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
+				_verifyFrame(inframe);
+			}
+			_verifyFrame(outframe);
+			
+			// Update.
 			_parent.update(_instanceHandle, time, inframe, outframe);
 		}
 
 		public void update2(double time, BufferedImage in1, BufferedImage in2,
 								BufferedImage in3, BufferedImage out) throws Frei0rException {
-
-			// Check dimensions.
-			if (_width != in1.getWidth() || _height != in1.getHeight())
-				throw new Frei0rException("Input image 1 has wrong dimensions: " +
-						in1.getWidth() + "x" + in1.getHeight() + ", should be " +
-						_width + "x" + _height);
-			if (_width != in2.getWidth() || _height != in2.getHeight())
-				throw new Frei0rException("Input image 2 has wrong dimensions: " +
-						in2.getWidth() + "x" + in2.getHeight() + ", should be " +
-						_width + "x" + _height);
-			if (_width != in3.getWidth() || _height != in3.getHeight())
-				throw new Frei0rException("Input image 3 has wrong dimensions: " +
-						in3.getWidth() + "x" + in3.getHeight() + ", should be " +
-						_width + "x" + _height);
-			if (_width != out.getWidth() || _height != out.getHeight())
-				throw new Frei0rException("Output image has wrong dimensions: " +
-						out.getWidth() + "x" + out.getHeight() + ", should be " +
-						_width + "x" + _height);
-
-			// Extract input data buffer.
-			DataBuffer bufferIn1 = in1.getData().getDataBuffer();
-			if (bufferIn1.getDataType() != DataBuffer.TYPE_INT) {
-				throw new Frei0rException("Data buffer of input image 1 has wrong type.");
+			int[] inframe1 = null;
+			int[] inframe2 = null;
+			int[] inframe3 = null;
+			
+			// Sanity check and extract data buffers.
+			switch (_parent.getPluginType()) {
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
+				inframe3 = _inputImageToFrame(in3);
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
+				inframe2 = _inputImageToFrame(in2);
+			case Frei0r.F0R_PLUGIN_TYPE_FILTER:
+				inframe1 = _inputImageToFrame(in1);
 			}
-			DataBuffer bufferIn2 = in2.getData().getDataBuffer();
-			if (bufferIn2.getDataType() != DataBuffer.TYPE_INT) {
-				throw new Frei0rException("Data buffer of input image 2 has wrong type.");
-			}
-			DataBuffer bufferIn3 = in3.getData().getDataBuffer();
-			if (bufferIn3.getDataType() != DataBuffer.TYPE_INT) {
-				throw new Frei0rException("Data buffer of input image 3 has wrong type.");
-			}
+			_verifyImage(out);
 
 			// Output frame buffer.
-			int[] outframe = new int[bufferIn1.getSize()];
+			int[] outframe = new int[_size];
 
 			// Update frames.
-			update2(time, ((DataBufferInt)bufferIn1).getData(),  ((DataBufferInt)bufferIn2).getData(),
-					 ((DataBufferInt)bufferIn3).getData(), outframe);
+			update2(time, inframe1, inframe2, inframe3, outframe);
 
-			// Copy data to the output image buffer.
-			// XXX it would be nice to find a way NOT to copy the data
-			out.setRGB(0, 0, _width, _height, outframe, 0, _width);
+			// Set output frame.
+			_outputImageSetFrame(out, outframe);
 		}
 
 		public void update2(double time, int[] inframe1, int[] inframe2, int[] inframe3, int[] outframe) throws Frei0rException {
+			// Sanity check.
+			switch (_parent.getPluginType()) {
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
+				_verifyFrame(inframe3);
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
+				_verifyFrame(inframe2);
+			case Frei0r.F0R_PLUGIN_TYPE_FILTER:
+				_verifyFrame(inframe1);
+			}
+			_verifyFrame(outframe);
+
+			// Update.
 			_parent.update2(_instanceHandle, time, inframe1, inframe2, inframe3, outframe);
+		}
+		
+		private void _verifyFrame(int[] frame) throws Frei0rException {
+			// Check for null.
+			if (frame == null)
+				throw new NullPointerException("Frame is null.");
+			// Check dimensions.
+			if (frame.length != _size)
+				throw new Frei0rException("Frame has wrong size " + frame.length + ", should be " + _size);
+		}
+		
+		private void _verifyImage(BufferedImage img) throws Frei0rException {
+			// Check for null.
+			if (img == null)
+				throw new NullPointerException("Input image is null.");
+			// Check dimensions.
+			if (_width != img.getWidth() || _height != img.getHeight())
+				throw new Frei0rException("Input image has wrong dimensions: " +
+						img.getWidth() + "x" + img.getHeight() + ", should be " +
+						_width + "x" + _height);
+			// Make sure images are of TYPE_INT_ARGB.
+			if (img.getType() != BufferedImage.TYPE_INT_ARGB) {
+				throw new Frei0rException("Output image must be of type ARGB.");
+			}
+		}
+		
+		private int[] _inputImageToFrame(BufferedImage img) throws Frei0rException {
+			_verifyImage(img);
+			// Make sure the image has the right format.
+			img = ImageConvert.convertType(img, BufferedImage.TYPE_INT_ARGB);
+			// Get and verify data buffer.
+			DataBuffer buffer = img.getData().getDataBuffer();
+			if (buffer.getDataType() != DataBuffer.TYPE_INT) {
+				throw new Frei0rException("Data buffer of input image has wrong type.");
+			}
+			// Convert input to ABGR if needed.
+			int[] data = ((DataBufferInt)buffer).getData();
+			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+				ImageConvert.convertARGBtoABGR(data);
+			}
+			return data;
+		}
+		
+		private void _outputImageSetFrame(BufferedImage img, int[] frame) throws Frei0rException {
+			// Convert output to ABGR if needed.
+			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
+				ImageConvert.convertABGRtoARGB(frame);
+			}
+			// Copy data to the output image buffer.
+			// XXX it would be nice to find a way NOT to copy the data
+			img.setRGB(0, 0, _width, _height, frame, 0, _width);
 		}
 		
 		public Object getParamValue(int paramIndex) throws Frei0rException {
@@ -360,7 +385,7 @@ public class Frei0r {
 
 		private long _instanceHandle;
 		private Frei0r _parent;
-		private int _width, _height;
+		private int _width, _height, _size;
 	}
 
 	public static class Color {

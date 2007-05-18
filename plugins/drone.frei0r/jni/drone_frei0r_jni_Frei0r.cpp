@@ -493,29 +493,42 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_update2
   (JNIEnv *env, jobject obj, jlong inst, jdouble time, jintArray inArray1, 
   	jintArray inArray2, jintArray inArray3, jintArray outArray)
   {
+	
 	Frei0rHandle* handle = GetHandle(env, obj);
 	if (handle)
 	{
-		if (handle->pluginInfo.plugin_type == F0R_PLUGIN_TYPE_MIXER2 ||
-			handle->pluginInfo.plugin_type == F0R_PLUGIN_TYPE_MIXER3 ||
-			*(void**) (&handle->f0r_update2)!=NULL)
-		{
-		  	jint* inframe1 = env->GetIntArrayElements(inArray1, 0);
-		  	jint* inframe2 = env->GetIntArrayElements(inArray2, 0);
-		  	jint* inframe3 = env->GetIntArrayElements(inArray3, 0);
-		  	jint* outframe = env->GetIntArrayElements(outArray, 0);
-		  	handle->f0r_update2((f0r_instance_t)inst, (double)time, (const uint32_t*)inframe1, 
-		  							(const uint32_t*)inframe2, (const uint32_t*)inframe3, (uint32_t*)outframe);
-		  	env->ReleaseIntArrayElements(inArray1, inframe1, 0);
-		  	env->ReleaseIntArrayElements(inArray2, inframe2, 0);
-		  	env->ReleaseIntArrayElements(inArray3, inframe3, 0);
-		  	env->ReleaseIntArrayElements(outArray, outframe, 0);
-		}
-	else
+		if (*(void**) (&handle->f0r_update2) == NULL)
 		{
 			ThrowFrei0rException(env, "Binding problem in calling update2(): f0r_update2() is not binded.");
 			return;
 		}
+		
+		jint *inframe1 = NULL;
+		jint *inframe2 = NULL;
+		jint *inframe3 = NULL;
+		jint *outframe = NULL;
+		
+		switch (handle->pluginInfo.plugin_type) {
+		case F0R_PLUGIN_TYPE_MIXER3:
+			inframe3 = env->GetIntArrayElements(inArray3, 0);
+		case F0R_PLUGIN_TYPE_MIXER2:
+			inframe2 = env->GetIntArrayElements(inArray2, 0);
+		case F0R_PLUGIN_TYPE_FILTER:
+			inframe1 = env->GetIntArrayElements(inArray1, 0);
+		}
+		outframe = env->GetIntArrayElements(outArray, 0);
+		
+		handle->f0r_update2((f0r_instance_t)inst, (double)time, (const uint32_t*)inframe1, 
+		  							(const uint32_t*)inframe2, (const uint32_t*)inframe3, (uint32_t*)outframe);
+		switch (handle->pluginInfo.plugin_type) {
+		case F0R_PLUGIN_TYPE_MIXER3:
+			env->ReleaseIntArrayElements(inArray3, inframe3, 0);
+		case F0R_PLUGIN_TYPE_MIXER2:
+			env->ReleaseIntArrayElements(inArray2, inframe2, 0);
+		case F0R_PLUGIN_TYPE_FILTER:
+			env->ReleaseIntArrayElements(inArray1, inframe1, 0);
+		}
+		env->ReleaseIntArrayElements(outArray, outframe, 0);
 	}
 	else
   		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);	

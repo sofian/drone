@@ -29,6 +29,7 @@ import ptolemy.data.ImageToken;
 import ptolemy.data.IntToken;
 import ptolemy.data.ScalarToken;
 import ptolemy.data.StringToken;
+import ptolemy.data.Token;
 import ptolemy.data.expr.FileParameter;
 import ptolemy.data.expr.Parameter;
 import ptolemy.data.type.BaseType;
@@ -258,28 +259,54 @@ public class Frei0rActor extends TypedAtomicActor {
 		try {
 
 			// Process image.
-			BufferedImage bufferedImageIn = null;
-			boolean hasInput = false;
-
-			if (input1.getWidth() > 0 && input1.hasToken(0)) {
-				Image imageIn = ((ImageToken)input1.get(0)).asAWTImage();
-				if (imageIn == null)
-					hasInput = false;
-				else {
-					hasInput = true;
-					bufferedImageIn = ImageConvert.toBufferedImage(imageIn, BufferedImage.TYPE_INT_ARGB);
-				}
+			BufferedImage bufferedImageIn1 = null;
+			BufferedImage bufferedImageIn2 = null;
+			BufferedImage bufferedImageIn3 = null;
+			
+			boolean hasInput = true;
+			
+			switch (_frei0r.getPluginType()) {
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
+				if (input3.getWidth() > 0 && input3.hasToken(0)) {
+					bufferedImageIn3 = _getInputImageFromToken(input3.get(0));
+					if (bufferedImageIn3 == null)
+						hasInput = false;
+				} else
+					hasInput = false; 
+			case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
+				if (input2.getWidth() > 0 && input2.hasToken(0)) {
+					bufferedImageIn2 = _getInputImageFromToken(input2.get(0));
+					if (bufferedImageIn2 == null)
+						hasInput = false;
+					else if (bufferedImageIn3 != null && 
+							    (bufferedImageIn3.getWidth() != bufferedImageIn2.getWidth() ||
+								 bufferedImageIn3.getHeight() != bufferedImageIn2.getHeight())) {
+						throw new IllegalActionException(this, "Image inputs have incompatible dimensions.");
+					}
+				} else
+					hasInput = false; 
+			case Frei0r.F0R_PLUGIN_TYPE_FILTER:
+				if (input1.getWidth() > 0 && input1.hasToken(0)) {
+					bufferedImageIn1 = _getInputImageFromToken(input1.get(0));
+					if (bufferedImageIn1 == null)
+						hasInput = false;
+					else if (bufferedImageIn2 != null && 
+						    (bufferedImageIn2.getWidth() != bufferedImageIn1.getWidth() ||
+							 bufferedImageIn2.getHeight() != bufferedImageIn1.getHeight())) {
+						throw new IllegalActionException(this, "Image inputs have incompatible dimensions.");
+					}
+				} else
+					hasInput = false; 
 			}
-
+			
 			// If there is no image input, do nothing.
 			// NOTICE: Even sources thus need to have an input, the which acts as a trigger.
 			if (hasInput) {
-				
 				// Create instance or resize it.
 				if (_frei0rInstance == null ||
-						_frei0rInstance.getWidth() != bufferedImageIn.getWidth() ||
-						_frei0rInstance.getHeight() != bufferedImageIn.getHeight()) {
-					_frei0rInstance = _frei0r.createInstance(bufferedImageIn.getWidth(), bufferedImageIn.getHeight());
+						_frei0rInstance.getWidth() != bufferedImageIn1.getWidth() ||
+						_frei0rInstance.getHeight() != bufferedImageIn1.getHeight()) {
+					_frei0rInstance = _frei0r.createInstance(bufferedImageIn1.getWidth(), bufferedImageIn1.getHeight());
 				}
 
 				// Process params.
@@ -353,38 +380,30 @@ public class Frei0rActor extends TypedAtomicActor {
 										BufferedImage.TYPE_INT_ARGB);
 
 				if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
-						_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-
-					BufferedImage bufferedImageIn2 = null;
-					BufferedImage bufferedImageIn3 = null;
-					if (input2.getWidth() > 0 && input2.hasToken(0)) {
-						Image imageIn = ((ImageToken)input2.get(0)).asAWTImage();
-						bufferedImageIn2 = ImageConvert.toBufferedImage(imageIn);
-					} else {
-						bufferedImageIn2 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-								BufferedImage.TYPE_INT_ARGB);
-					}
-
-					if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3 &&
-							input3.getWidth() > 0 && input3.hasToken(0)) {
-						Image imageIn = ((ImageToken)input3.get(0)).asAWTImage();
-						bufferedImageIn3 = ImageConvert.toBufferedImage(imageIn);
-					} else {
-						bufferedImageIn3 = new BufferedImage(_frei0rInstance.getWidth(), _frei0rInstance.getHeight(), 
-								BufferedImage.TYPE_INT_ARGB);
-					}
-					_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn,
+				    _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+					_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn1,
 							bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
 				} else {
-					_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn, bufferedImageOut);
+					_frei0rInstance.update(getDirector().getModelTime().getDoubleValue(), bufferedImageIn1, bufferedImageOut);
 				}
-
 				output.send(0, new AWTImageToken(bufferedImageOut));
 			}
 
 		} catch (Frei0rException e) {
 			throw new IllegalActionException(this, e, "Processing of image failed.");
 		}
+	}
+
+	private BufferedImage _getInputImageFromToken(Token token) throws IllegalActionException {
+		if (token instanceof ImageToken) {
+			Image imageIn = ((ImageToken)token).asAWTImage();
+			if (imageIn == null)
+				return null;
+			else
+				return ImageConvert.toBufferedImage(imageIn, BufferedImage.TYPE_INT_ARGB);
+		} else
+			throw new IllegalActionException(this, "Input has wrong token type " + token.getClass().toString() + 
+													"(should be ImageToken).");
 	}
 
 	private Frei0r _frei0r = null;
