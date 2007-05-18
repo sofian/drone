@@ -83,6 +83,6 @@ public abstract class TrackerMultiMarker extends Tracker {
 	
 
 	static {
-		System.loadLibrary("TrackerMultiMarker");
+		System.loadLibrary("drone_artkp_kernel_TrackerMultiMarker");
 	}
 }
