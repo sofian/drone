@@ -186,7 +186,7 @@ public class Frei0r {
 	// // JNI section ////
 
 	static {
-		System.loadLibrary("Frei0rJNI");
+		System.loadLibrary("drone_frei0r_jni_Frei0r");
 	}
 
 	// Protected methods.

@@ -34,6 +34,6 @@ public class TrackerMultiMarkerImpl extends TrackerMultiMarker {
 	protected static native long _createTrackerHandle(int width, int height) throws ARTKPException;
 
 	static {
-		System.loadLibrary("TrackerMultiMarkerImpl");
+		System.loadLibrary("drone_artkp_kernel_TrackerMultiMarkerImpl");
 	}
 }

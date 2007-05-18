@@ -6,8 +6,8 @@ CONFIG += release
 
 TEMPLATE = lib
 INCLUDEPATH += /System/Library/Frameworks/JavaVM.framework/Headers ../contrib/Frei0r/spec
-TARGET = Frei0rJNI
-QMAKE_POST_LINK = mv libFrei0rJNI* lib/
+TARGET = drone_frei0r_jni_Frei0r
+QMAKE_POST_LINK = mv libdrone_frei0r_jni_Frei0r*.so* lib/
 
 # Input
 HEADERS += drone_frei0r_jni_Frei0r.h

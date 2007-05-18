@@ -30,6 +30,9 @@
 		<exec dir="jni" executable="${make}">
 			<arg value="clean"/>
 		</exec>
+   		<delete includeEmptyDirs="true">
+        	<fileset dir="${native.dir}" includes="**/libdrone_frei0r_jni_*.so*"/>
+        </delete>
 		<delete file="${distdir}/${project.name}.jar"/>
 	</target>
 
@@ -53,10 +56,10 @@
 		<exec dir="jni" executable="${qmake}" />
 		<exec dir="jni" executable="${make}" />
 		<copy todir="${build.dir}/jni">
-			<fileset dir="jni/lib" />
+			<fileset dir="jni/lib" includes="**/*.so*"/>
 		</copy>
 		<copy todir="${native.dir}">
-			<fileset dir="jni/lib" includes="**/*.so"/>
+			<fileset dir="jni/lib" includes="**/*.so*"/>
 		</copy>
 	</target>
 

@@ -1,29 +1,32 @@
-build_path=./lib/
+BUILD_PATH=./lib/
+NAME_TRACKER=drone_artkp_kernel_Tracker
+NAME_TRACKER_MULTI_MARKER=drone_artkp_kernel_TrackerMultiMarker
+NAME_TRACKER_MULTI_MARKER_IMPL=drone_artkp_kernel_TrackerMultiMarkerImpl
 
 all: 
-	${MAKE} $(build_path)libTracker.so
-	${MAKE} $(build_path)libTrackerMultiMarker.so
-	${MAKE} $(build_path)libTrackerMultiMarkerImpl.so
+	${MAKE} $(BUILD_PATH)lib$(NAME_TRACKER).so
+	${MAKE} $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER).so
+	${MAKE} $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER_IMPL).so
 
-drone_artkp_kernel_Tracker.o: drone_artkp_kernel_Tracker.cpp
-	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o drone_artkp_kernel_Tracker.o drone_artkp_kernel_Tracker.cpp
+$(NAME_TRACKER).o: $(NAME_TRACKER).cpp
+	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o $(NAME_TRACKER).o $(NAME_TRACKER).cpp
 
-$(build_path)libTracker.so: drone_artkp_kernel_Tracker.o
-	g++ -shared -Wl,-soname,libTracker.so -o $(build_path)libTracker.so drone_artkp_kernel_Tracker.o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
+$(BUILD_PATH)lib$(NAME_TRACKER).so: $(NAME_TRACKER).o
+	g++ -shared -Wl,-soname,lib$(NAME_TRACKER).so -o $(BUILD_PATH)lib$(NAME_TRACKER).so $(NAME_TRACKER).o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
 
-drone_artkp_kernel_TrackerMultiMarker.o: drone_artkp_kernel_TrackerMultiMarker.cpp
-	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o drone_artkp_kernel_TrackerMultiMarker.o drone_artkp_kernel_TrackerMultiMarker.cpp
+$(NAME_TRACKER_MULTI_MARKER).o: $(NAME_TRACKER_MULTI_MARKER).cpp
+	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o $(NAME_TRACKER_MULTI_MARKER).o $(NAME_TRACKER_MULTI_MARKER).cpp
 
-$(build_path)libTrackerMultiMarker.so: drone_artkp_kernel_TrackerMultiMarker.o
-	g++ -shared -Wl,-soname,libTrackerMultiMarker.so -o $(build_path)libTrackerMultiMarker.so drone_artkp_kernel_TrackerMultiMarker.o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
+$(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER).so: $(NAME_TRACKER_MULTI_MARKER).o
+	g++ -shared -Wl,-soname,lib$(NAME_TRACKER_MULTI_MARKER).so -o $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER).so $(NAME_TRACKER_MULTI_MARKER).o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
 
-drone_artkp_kernel_TrackerMultiMarkerImpl.o: drone_artkp_kernel_TrackerMultiMarkerImpl.cpp
-	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o drone_artkp_kernel_TrackerMultiMarkerImpl.o drone_artkp_kernel_TrackerMultiMarkerImpl.cpp
+$(NAME_TRACKER_MULTI_MARKER_IMPL).o: $(NAME_TRACKER_MULTI_MARKER_IMPL).cpp
+	g++ -mtune=pentium4 -march=pentium4 -msse2 -msse -O2 -fPIC -I$(ARTKP)/include/ -c -o $(NAME_TRACKER_MULTI_MARKER_IMPL).o $(NAME_TRACKER_MULTI_MARKER_IMPL).cpp
 
-$(build_path)libTrackerMultiMarkerImpl.so: drone_artkp_kernel_TrackerMultiMarkerImpl.o
-	g++ -shared -Wl,-soname,libTrackerMultiMarkerImpl.so -o $(build_path)libTrackerMultiMarkerImpl.so drone_artkp_kernel_TrackerMultiMarkerImpl.o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
+$(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER_IMPL).so: $(NAME_TRACKER_MULTI_MARKER_IMPL).o
+	g++ -shared -Wl,-soname,lib$(NAME_TRACKER_MULTI_MARKER_IMPL).so -o $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER_IMPL).so $(NAME_TRACKER_MULTI_MARKER_IMPL).o -static -L$(ARTKP)/lib/ -lc -lARToolKitPlus
 
-clean: 
-	rm drone_artkp_kernel_Tracker.o $(build_path)libTracker.so
-	rm drone_artkp_kernel_TrackerMultiMarker.o $(build_path)libTrackerMultiMarker.so
-	rm drone_artkp_kernel_TrackerMultiMarkerImpl.o $(build_path)libTrackerMultiMarkerImpl.so
+clean:
+	rm $(NAME_TRACKER).o $(BUILD_PATH)lib$(NAME_TRACKER).so
+	rm $(NAME_TRACKER_MULTI_MARKER).o $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER).so
+	rm $(NAME_TRACKER_MULTI_MARKER_IMPL).o $(BUILD_PATH)lib$(NAME_TRACKER_MULTI_MARKER_IMPL).so

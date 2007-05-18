@@ -30,6 +30,9 @@
 		<exec dir="jni" executable="${make}">
 			<arg value="clean"/>
 		</exec>
+		<delete includeEmptyDirs="true">
+    		<fileset dir="${native.dir}" includes="**/libdrone_artkp_kernel_*.so*"/>
+	    </delete>
 		<delete file="${distdir}/${project.name}.jar"/>
 		<delete file="${dist.dir}/${project.name}-src.jar"/>
 	</target>

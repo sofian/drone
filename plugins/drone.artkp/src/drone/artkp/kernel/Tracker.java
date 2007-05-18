@@ -280,6 +280,6 @@ public abstract class Tracker {
 	//public native ARFloat executeMultiMarkerPoseEstimator(ARMarkerInfo *marker_info, int marker_num, ARMultiMarkerInfoT *config) ;
 
 	static {
-		System.loadLibrary("Tracker");
+		System.loadLibrary("drone_artkp_kernel_Tracker");
 	}
 }
