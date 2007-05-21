@@ -122,13 +122,27 @@ public class Frei0rActor extends TypedAtomicActor {
 				+ "style=\"fill:white\"/>\n" + "</svg>\n");
 	}
 
+
+	public void initialize() throws IllegalActionException {
+		try {
+			if (_frei0r != null)
+				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
+						((IntToken)defaultHeight.getToken()).intValue());
+		} catch (Frei0rException e) {
+			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
+		}
+	}
+	
 	public void attributeChanged(Attribute attribute)
 	throws IllegalActionException {
 
 		if (attribute == frei0rLibraryName) {
 			try {
-				if (_frei0r == null) {
+				if (_frei0r == null || _currentLibraryName != frei0rLibraryName.asURL()) {
 
+					// This ensures that we don't reload for nothing
+					_currentLibraryName = frei0rLibraryName.asURL();
+					
 					// Create bridge.
 					_frei0r = new Frei0r(frei0rLibraryName.asURL().getFile());
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
@@ -408,6 +422,7 @@ public class Frei0rActor extends TypedAtomicActor {
 
 	private Frei0r _frei0r = null;
 	private Frei0r.Instance _frei0rInstance;
+	private URL _currentLibraryName = null;
 
 	public TypedIOPort output;
 
