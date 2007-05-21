@@ -18,6 +18,7 @@
 package drone.frei0r.test;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
@@ -142,7 +143,26 @@ public class Frei0rTest extends TestCase {
 	}
 
 	public void testCreateInstance() throws Frei0rException {
+		frei0r.createInstance(0, 0);
 		frei0r.createInstance(100, 100);
+		frei0r.createInstance(1000, 1000);
+		try {
+			frei0r.createInstance(-1, 100);
+			fail("Expected Frei0rException.");
+		} catch (Frei0rException e) {}
+		try {
+			frei0r.createInstance(100, -1);
+			fail("Expected Frei0rException.");
+		} catch (Frei0rException e) {}
+		File dir = new File(FREI0R_DIRECTORY);
+		String[] files = dir.list();
+		for (int i=0; i<files.length; i++) {
+			if (files[i].endsWith(".so")) {
+				frei0r = new Frei0r(files[i]);
+				for (int j=0; j<10; j++)
+					frei0r.createInstance(1000, 1000);
+			}				
+		}
 	}
 
 	public void testUpdateInstance() throws Frei0rException {

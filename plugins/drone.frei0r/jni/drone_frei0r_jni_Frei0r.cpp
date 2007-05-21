@@ -8,7 +8,7 @@
 //! Clamp x at lower = l and upper = u.
 #define CLAMP(x,l,u) ( x < l ? l : ( x > u ? u : x ) )
 
-//#define __DEBUG
+#define __DEBUG
 
 const char* FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE = 
 	"Trying to call a function with an uninitialized handle, please call _openLibrary(String).";
@@ -458,7 +458,15 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r_destruct
   {
 	Frei0rHandle* handle = GetHandle(env, obj);
 	if (handle)
-	  	handle->f0r_destruct((f0r_instance_t)inst);
+	{
+#ifdef __DEBUG
+		fprintf(stderr, "Calling destruct with inst %p\n", (void*)inst);
+#endif
+		if (inst)
+		  	handle->f0r_destruct((f0r_instance_t)inst);
+		else
+  			ThrowFrei0rException(env, "Instance is NULL.");
+	}
 	else
   		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
   }

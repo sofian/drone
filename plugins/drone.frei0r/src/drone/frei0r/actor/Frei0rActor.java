@@ -124,13 +124,13 @@ public class Frei0rActor extends TypedAtomicActor {
 
 
 	public void initialize() throws IllegalActionException {
-		try {
-			if (_frei0r != null)
-				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-						((IntToken)defaultHeight.getToken()).intValue());
-		} catch (Frei0rException e) {
-			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
-		}
+//		try {
+//			if (_frei0r != null)
+//				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
+//														 ((IntToken)defaultHeight.getToken()).intValue());
+//		} catch (Frei0rException e) {
+//			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
+//		}
 	}
 	
 	public void attributeChanged(Attribute attribute)
@@ -146,7 +146,7 @@ public class Frei0rActor extends TypedAtomicActor {
 					// Create bridge.
 					_frei0r = new Frei0r(frei0rLibraryName.asURL().getFile());
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-							((IntToken)defaultHeight.getToken()).intValue());
+															 ((IntToken)defaultHeight.getToken()).intValue());
 
 					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
 							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {

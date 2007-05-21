@@ -196,18 +196,18 @@ public class Frei0r {
 	 * @param libName the full path to the dynamic library
 	 * @return a handle to the library
 	 */
-	protected native void _openLibrary(String libName) throws Frei0rException;
+	protected native synchronized void _openLibrary(String libName) throws Frei0rException;
 
-	protected native void _closeLibrary();
+	protected native synchronized void _closeLibrary();
 
 	// TODO: these methods should be protected
-	public native int init() throws Frei0rException;
+	public native synchronized int init() throws Frei0rException;
 
-	public native void deinit() throws Frei0rException;
+	public native synchronized void deinit() throws Frei0rException;
 
-	public native long construct(int width, int height) throws Frei0rException;
+	public native synchronized long construct(int width, int height) throws Frei0rException;
 
-	public native void destruct(long instance) throws Frei0rException;
+	public native synchronized void destruct(long instance) throws Frei0rException;
 
 	public native void update(long instance, double time, int[] inframe, int[] outframe) throws Frei0rException;
 
@@ -234,13 +234,16 @@ public class Frei0r {
 			_width = width;
 			_height = height;
 			_instanceHandle = parent.construct(width, height);
+			if (_instanceHandle == 0)
+				throw new Frei0rException("Construction of instance failed.");
 			_parent = parent;
 			_size = _width * _height;
 		}
 
-		protected void finalize() throws Frei0rException {
+		protected synchronized void finalize() throws Frei0rException {
 			if (_instanceHandle != 0)
 				_parent.destruct(_instanceHandle);
+			_instanceHandle = 0;
 		}
 
 		public int getWidth() { return _width; }
@@ -383,7 +386,7 @@ public class Frei0r {
 			_parent.setParamValue(_instanceHandle, param, paramIndex);
 		}
 
-		private long _instanceHandle;
+		private long _instanceHandle = 0;
 		private Frei0r _parent;
 		private int _width, _height, _size;
 	}
@@ -429,6 +432,6 @@ public class Frei0r {
 	 * Used by native code exclusively. Handle to the dynamic library.
 	 */
 	@SuppressWarnings("unused")
-	private long _handle;
+	private long _handle = 0;
 
 }
