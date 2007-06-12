@@ -54,7 +54,6 @@ import javax.media.Buffer;
 
 import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
-import drone.jmf.data.JMFImageToken;
 import drone.util.ImageConvert;
 
 

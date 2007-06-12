@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+<plugin id="drone.jogl" version="0.3.0">
+	<requires>
+		<import plugin-id="drone.core"/>
+	</requires>
+
+	<runtime>
+		<library id="jogl" path="build/" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="data" path="data/" type="resources"/>
+	</runtime>
+	
+	<extension plugin-id="drone.core" point-id="entity-library" id="jogl">
+		<parameter id="file" value="jmf.xml"/>
+		<parameter id="label" value="JOGL processing actors"/>
+		<parameter id="description" value="JOGL processing actors"/>
+	</extension>
+	
+</plugin>

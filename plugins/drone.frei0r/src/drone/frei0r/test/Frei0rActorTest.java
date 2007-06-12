@@ -1,14 +1,11 @@
 package drone.frei0r.test;
 
-import ptolemy.actor.Director;
 import ptolemy.actor.Manager;
 import ptolemy.actor.TypedCompositeActor;
 import ptolemy.domains.sdf.kernel.SDFDirector;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 import drone.frei0r.actor.Frei0rActor;
-import drone.jmf.actor.ImageDisplay;
-import drone.jmf.actor.VideoCamera;
 
 import junit.framework.TestCase;
 
