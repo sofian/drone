@@ -7,10 +7,12 @@ INCLUDEPATH += ../contrib/Frei0r/spec
 
 QMAKE_POST_LINK = mv lib$$TARGET* lib/
 
-macx {
-  INCLUDEPATH += /System/Library/Frameworks/JavaVM.framework/Headers
-}
-
+# Mac OS X specific
+INCLUDEPATH += /System/Library/Frameworks/JavaVM.framework/Headers
+QMAKE_LFLAGS += /System/Library/Frameworks/JavaVM.framework
+CONFIG += lib_bundle
+LIBS += -framework JavaVM
+ 
 # Input
 HEADERS += $$TARGET.h
 SOURCES += $$TARGET.cpp
