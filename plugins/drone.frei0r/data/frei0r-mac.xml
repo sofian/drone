@@ -6,50 +6,155 @@
     <?moml
       <group>
         <doc>Frei0r processing actors</doc>
+			
+			<entity name="Frei0r_3dflippo" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/3dflippo.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_addition" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/addition.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_alphaatop" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/alphaatop.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_alphain" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/alphain.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_alphaout" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/alphaout.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_alphaover" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/alphaover.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_alphaxor" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/alphaxor.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_blend" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/blend.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_brightness" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/brightness.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_burn" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/burn.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_bw0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/bw0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_color_only" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/color_only.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_contrast0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/contrast0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_darken" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/darken.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_delay0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/delay0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_difference" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/difference.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_distort0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/distort0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_divide" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/divide.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_dodge" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/dodge.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_equaliz0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/equaliz0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_flippo" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/flippo.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_gamma" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/gamma.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_grain_extract" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/grain_extract.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_grain_merge" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/grain_merge.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_hardlight" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/hardlight.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_hue" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/hue.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_invert0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/invert0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_ising0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/ising0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_lighten" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/lighten.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_lissajous0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/lissajous0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_multiply" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/multiply.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_nois0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/nois0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_nosync0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/nosync0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_onecol0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/onecol0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_overlay" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/overlay.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_pixeliz0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/pixeliz0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_saturat0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/saturat0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_saturation" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/saturation.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_scanline0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/scanline0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_screen" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/screen.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_sobel" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/sobel.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_softlight" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/softlight.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_squareblur" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/squareblur.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_subtract" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/subtract.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_tehroxx0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/tehroxx0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_threshold0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/threshold0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_twolay0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/twolay0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_value" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/value.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
+			<entity name="Frei0r_xfade0r" class="drone.frei0r.actor.Frei0rActor">
+			  <property name="frei0rLibraryName" value="/usr/local/lib/frei0r-1/xfade0r.dylib" class="ptolemy.data.expr.FileParameter" />
+			</entity>
 
-		<entity name="Frei0r_sobel" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/sobel.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_nois0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/nois0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_invert0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/invert0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_bw0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/bw0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-		
-		<entity name="Frei0r_difference" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/difference.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_tehroxx0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/tehroxx0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-		
-		<entity name="Frei0r_ising0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/ising0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-		
-		<entity name="Frei0r_saturat0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/saturat0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-		
-		<entity name="Frei0r_contrast0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/contrast0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_brightness" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/brightness.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
-
-		<entity name="Frei0r_pixeliz0r" class="drone.frei0r.actor.Frei0rActor">
-			<property name="frei0rLibraryName" value="$CLASSPATH/plugins/drone.frei0r/contrib/Frei0r/plugins/pixeliz0r.dylib" class="ptolemy.data.expr.FileParameter" />
-		</entity>
       </group>
     ?>
   </configure>
