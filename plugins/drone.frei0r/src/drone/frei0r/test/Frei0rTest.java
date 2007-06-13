@@ -20,20 +20,21 @@ package drone.frei0r.test;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.net.URL;
 
 import junit.framework.TestCase;
-import drone.frei0r.jni.Frei0r;
-import drone.frei0r.Frei0rException;
 import ptolemy.kernel.util.NameDuplicationException;
+import drone.frei0r.Frei0rException;
+import drone.frei0r.jni.Frei0r;
 
 public class Frei0rTest extends TestCase {
 
 	Frei0r frei0r;
 
 	public final String FREI0R_DIRECTORY = "/usr/local/lib/frei0r-1";
-	public final String TEST_LIBRARY = "brightness.so";
-	public final String TEST_WRONG_LIBRARY = "wrongLibraryName.so";
+	public final String TEST_LIBRARY = "brightness";
+	public final String TEST_WRONG_LIBRARY = "wrongLibraryName";
 
 	public String TEST_LIBRARY_NAME = "Brightness";
 	public String TEST_LIBRARY_AUTHOR = "Jean-Sebastien Senecal";
@@ -53,8 +54,20 @@ public class Frei0rTest extends TestCase {
 		return url.getPath();
 	}
 
+	public static String getLibraryExtension() throws Exception {
+		String os = System.getProperty("os.name");
+		if (os.equals("Mac OS X"))
+			return "dylib";
+		else if (os.equals("Linux"))
+			return "so";
+		else if (os.equals("Windows"))
+			return "dll";
+		else
+			throw new Exception("Unrecognized OS: " + os);
+	}
+	
 	public void setUp() throws Exception {
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY);
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY + "." + getLibraryExtension());
 		frei0r.init();
 	}
 
@@ -76,11 +89,31 @@ public class Frei0rTest extends TestCase {
 		fail("This call should have generated a Frei0rException.");
 	}
 
-	public void testLoadLibrary() throws NameDuplicationException, Frei0rException, FileNotFoundException
+	public void testLoadLibrary() throws Exception
 	{
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY);
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/" + TEST_LIBRARY + "." + getLibraryExtension());
 	}
-
+	
+	public void testLoadLibrariesHeavy() throws Exception
+	{
+		File dir = new File(FREI0R_DIRECTORY);
+		String[] files = dir.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				try {
+					return (name.endsWith("." + Frei0rTest.getLibraryExtension()));
+				} catch (Exception e) {
+					return false;
+				}
+		    }
+		});
+		if (files != null) {
+			// Load all of them 5 times
+			for (int k=0; k<5; k++)
+				for (int i=0; i<files.length; i++)
+					new Frei0r(FREI0R_DIRECTORY + "/" + files[i]);
+		}
+	}
+	
 	/*****************************************
 	 * Public methods tests 
 	 *****************************************/ 
@@ -172,8 +205,8 @@ public class Frei0rTest extends TestCase {
 		instance.update(0, inframe, outframe);
 	}
 
-	public void testUpdateCheckImage() throws Frei0rException {
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/invert0r.so");
+	public void testUpdateCheckImage() throws Exception {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/invert0r." + getLibraryExtension());
 		Frei0r.Instance instance = frei0r.createInstance(100, 100);
 		int[] inframe = new int[100*100];
 		// Init with dummy data.
@@ -190,8 +223,8 @@ public class Frei0rTest extends TestCase {
 		}
 	}
 
-	public void testUpdateCheckImageMixer2() throws Frei0rException {
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/blend.so");
+	public void testUpdateCheckImageMixer2() throws Exception {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/blend." + getLibraryExtension());
 		Frei0r.Instance instance = frei0r.createInstance(100, 100);
 		int[] inframe1 = new int[100*100];
 		int[] inframe2 = new int[100*100];
@@ -218,8 +251,8 @@ public class Frei0rTest extends TestCase {
 		}
 	}
 
-	public void testParamBounds() throws Frei0rException {
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/squareblur.so");
+	public void testParamBounds() throws Exception {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/squareblur." + getLibraryExtension());
 		Frei0r.Instance instance = frei0r.createInstance(100, 100);
 		int[] inframe = new int[100*100];
 		int[] outframe = new int[100*100];
@@ -232,8 +265,8 @@ public class Frei0rTest extends TestCase {
 		instance.update(0, inframe, outframe);
 	}
 
-	public void testSendWrongInputsMixer2() throws Frei0rException {
-		frei0r = new Frei0r(FREI0R_DIRECTORY + "/hue.so");
+	public void testSendWrongInputsMixer2() throws Exception {
+		frei0r = new Frei0r(FREI0R_DIRECTORY + "/hue." + getLibraryExtension());
 		assertEquals(Frei0r.F0R_PLUGIN_TYPE_MIXER2, frei0r.getPluginType());
 		Frei0r.Instance instance = frei0r.createInstance(100, 100);
 		BufferedImage in1 = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
