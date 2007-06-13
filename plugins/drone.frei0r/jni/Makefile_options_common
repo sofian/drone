@@ -1,0 +1,2 @@
+CXX=g++
+INCLUDES += -I../contrib/Frei0r/spec

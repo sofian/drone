@@ -582,7 +582,7 @@ JNIEXPORT jint JNICALL Java_drone_frei0r_jni_Frei0r_getParamType
 	else
 	{
   		ThrowFrei0rException(env, FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE);
-  		return NULL;
+  		return (-1);
 	}
   	
   }
