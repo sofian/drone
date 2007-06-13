@@ -1,3 +1,0 @@
-INCLUDES += -I/System/Library/Frameworks/JavaVM.framework/Headers
-CXXFLAGS += -framework JavaVM -bundle
-EXT := jnilib
