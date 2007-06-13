@@ -1,4 +1,14 @@
 <?xml version="1.0" ?>
+
+<!-- 
+  In order for this script to work, you must create a userplugins.xml file that contains
+  the list of the user-specific plugins you want to compile. You can first copy it from
+  userplugins.xml.default and edit it.
+-->
+<!DOCTYPE project [
+       <!ENTITY userplugins SYSTEM "userplugins.xml">
+]>
+
 <project name="plugins" default="main">
 	<property name="distdir" location="../dist"/>
 	
@@ -6,10 +16,8 @@
 		<attribute name="target"/>
 	   	<sequential>
 	    	<subant target="@{target}">
-	        	<fileset dir="drone.frei0r" includes="**/build.xml"/>
 	        	<fileset dir="drone.jmf" includes="**/build.xml"/>
-		        <fileset dir="drone.artkp" includes="**/build.xml"/>
-		        <fileset dir="drone.jogl" includes="**/build.xml"/>
+	        	&userplugins; <!-- import user plugins -->
 	        </subant>
 	     </sequential>
 	</macrodef>

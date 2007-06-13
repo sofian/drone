@@ -1,0 +1,3 @@
+<fileset dir="drone.frei0r" includes="**/build.xml"/>
+<fileset dir="drone.artkp" includes="**/build.xml"/>
+<fileset dir="drone.jogl" includes="**/build.xml"/>
