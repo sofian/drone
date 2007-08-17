@@ -31,7 +31,7 @@
 			<arg value="clean"/>
 		</exec>
 		<delete includeEmptyDirs="true">
-    		<fileset dir="${native.dir}" includes="**/libdrone_artkp_kernel_*.so*"/>
+    		<fileset dir="${native.dir}" includes="**/libdrone_artkp_kernel_*"/>
 	    </delete>
 		<delete file="${distdir}/${project.name}.jar"/>
 		<delete file="${dist.dir}/${project.name}-src.jar"/>
@@ -39,6 +39,7 @@
 
 	<target name="test">
 		<junit>
+			<sysproperty key="java.library.path" path="${java.library.path}:${native.dir}" />
 			<classpath refid="test.path"/>
 			<formatter type="brief" usefile="false" />
 		    <batchtest fork="true">
@@ -56,7 +57,7 @@
 			<fileset dir="jni/lib" />
 		</copy>
 		<copy todir="${native.dir}">
-			<fileset dir="jni/lib" includes="**/*.so"/>
+			<fileset dir="jni/lib" includes="**/libdrone_artkp_kernel*"/>
 		</copy>
 	</target>
 	
