@@ -32,19 +32,19 @@ public class Frei0rTest extends TestCase {
 
 	Frei0r frei0r;
 
-	public final String FREI0R_DIRECTORY = "/usr/local/lib/frei0r-1";
-	public final String TEST_LIBRARY = "brightness";
-	public final String TEST_WRONG_LIBRARY = "wrongLibraryName";
+	public static final String FREI0R_DIRECTORY = "/usr/local/lib/frei0r-1";
+	public static final String TEST_LIBRARY = "brightness";
+	public static final String TEST_WRONG_LIBRARY = "wrongLibraryName";
 
-	public String TEST_LIBRARY_NAME = "Brightness";
-	public String TEST_LIBRARY_AUTHOR = "Jean-Sebastien Senecal";
-	public int TEST_LIBRARY_PLUGIN_TYPE = Frei0r.F0R_PLUGIN_TYPE_FILTER;
-	public int TEST_LIBRARY_COLOR_MODEL = Frei0r.F0R_COLOR_MODEL_RGBA8888;
-	public int TEST_LIBRARY_FREI0R_VERSION = Frei0r.FREI0R_MAJOR_VERSION;
-	public int TEST_LIBRARY_MAJOR_VERSION = 0; 
-	public int TEST_LIBRARY_MINOR_VERSION = 2; 
-	public int TEST_LIBRARY_NUM_PARAMS =  1; 
-	public String TEST_LIBRARY_EXPLANATION = "Adjusts the brightness of a source image";
+	public static final String TEST_LIBRARY_NAME = "Brightness";
+	public static final String TEST_LIBRARY_AUTHOR = "Jean-Sebastien Senecal";
+	public static final int TEST_LIBRARY_PLUGIN_TYPE = Frei0r.F0R_PLUGIN_TYPE_FILTER;
+	public static final int TEST_LIBRARY_COLOR_MODEL = Frei0r.F0R_COLOR_MODEL_RGBA8888;
+	public static final int TEST_LIBRARY_FREI0R_VERSION = Frei0r.FREI0R_MAJOR_VERSION;
+	public static final int TEST_LIBRARY_MAJOR_VERSION = 0; 
+	public static final int TEST_LIBRARY_MINOR_VERSION = 2; 
+	public static final int TEST_LIBRARY_NUM_PARAMS =  1; 
+	public static final String TEST_LIBRARY_EXPLANATION = "Adjusts the brightness of a source image";
 
 	public String getAbsolutePath(String libraryName) throws FileNotFoundException {
 		ClassLoader cl = TestCase.class.getClassLoader();
@@ -96,21 +96,22 @@ public class Frei0rTest extends TestCase {
 	
 	public void testLoadLibrariesHeavy() throws Exception
 	{
-		File dir = new File(FREI0R_DIRECTORY);
-		String[] files = dir.list(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				try {
-					return (name.endsWith("." + Frei0rTest.getLibraryExtension()));
-				} catch (Exception e) {
-					return false;
-				}
-		    }
-		});
+		System.out.println("YEEE");
+		String[] files = _getAllLibraries();
+		System.out.println("YEEE");
 		if (files != null) {
 			// Load all of them 5 times
 			for (int k=0; k<5; k++)
-				for (int i=0; i<files.length; i++)
-					new Frei0r(FREI0R_DIRECTORY + "/" + files[i]);
+				for (int i=0; i<files.length; i++) {
+					System.out.println("Loading " + files[i]);
+					Frei0r testFrei0r = new Frei0r(FREI0R_DIRECTORY + "/" + files[i]);
+					System.out.println("Calling init");
+					testFrei0r.init();
+					System.out.println("New instance");
+					testFrei0r.createInstance(100, 100);
+					System.out.println("Calling deinit");
+					testFrei0r.deinit();
+				}
 		}
 	}
 	
@@ -328,6 +329,20 @@ public class Frei0rTest extends TestCase {
 		} catch (Exception e) {}
 		// this is normal
 		instance.update2(0, inframe1, inframe2, null, outframe);
+	}
+	
+	private static String[] _getAllLibraries() {
+		File dir = new File(FREI0R_DIRECTORY);
+		String[] files = dir.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				try {
+					return (name.endsWith("." + Frei0rTest.getLibraryExtension()));
+				} catch (Exception e) {
+					return false;
+				}
+		    }
+		});
+		return files;
 	}
 
 }
