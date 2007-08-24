@@ -1,6 +1,14 @@
 <?xml version="1.0" ?>
 <project>
 
+  <!-- General properties -->
+	<condition property="os.shortname" value="Darwin">
+	  <os name="Mac OS X" />
+	</condition>
+	<condition property="os.shortname" value="Linux">
+	  <os name="Linux" />
+	</condition>
+
 	<!-- Local directories -->
 	<property name="src.dir"      value="src"/>
 	<property name="build.dir"    value="build"/>
@@ -8,8 +16,8 @@
 	<!-- Common directories -->
 	<property name="dist.dir" 	  location="../../dist"/>
 	<property name="lib.dir"      location="../../lib"/>
-	<property name="native.dir"   location="${lib.dir}/native/${os.arch}"/>
-	
+	<property name="native.dir"   location="${lib.dir}/native/${os.shortname}/${os.arch}"/>
+
 	<!-- JUnit directory -->
 	<property name="junit.dir"    location="/usr/share/ant/lib/junit.jar"/>
 	<property name="ant-junit.dir" location="/usr/share/ant/lib/ant-junit.jar"/>
