@@ -22,10 +22,10 @@
 
 #include <algorithm>
 
-class alphaover : public frei0r::mixer2
+class alphaatop : public frei0r::mixer2
 {
 public:
-  alphaover(unsigned int width, unsigned int height)
+  alphaatop(unsigned int width, unsigned int height)
   {
   }
 
@@ -64,8 +64,8 @@ public:
 };
 
 
-frei0r::construct<alphaover> plugin("alphaover",
-                                    "the alpha OVER operation",
+frei0r::construct<alphaatop> plugin("alphaatop",
+                                    "the alpha ATOP operation",
                                     "Jean-Sebastien Senecal",
                                     0,1,
                                     F0R_COLOR_MODEL_RGBA8888);

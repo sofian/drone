@@ -22,10 +22,10 @@
 
 #include <algorithm>
 
-class alphaover : public frei0r::mixer2
+class alphain : public frei0r::mixer2
 {
 public:
-  alphaover(unsigned int width, unsigned int height)
+  alphain(unsigned int width, unsigned int height)
   {
   }
 
@@ -62,9 +62,9 @@ public:
 };
 
 
-frei0r::construct<alphaover> plugin("alphaover",
-                                    "the alpha OVER operation",
-                                    "Jean-Sebastien Senecal",
-                                    0,1,
-                                    F0R_COLOR_MODEL_RGBA8888);
+frei0r::construct<alphain> plugin("alphain",
+                                  "the alpha IN operation",
+                                  "Jean-Sebastien Senecal",
+                                  0,1,
+                                  F0R_COLOR_MODEL_RGBA8888);
 
