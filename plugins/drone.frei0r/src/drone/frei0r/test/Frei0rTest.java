@@ -96,20 +96,14 @@ public class Frei0rTest extends TestCase {
 	
 	public void testLoadLibrariesHeavy() throws Exception
 	{
-		System.out.println("YEEE");
 		String[] files = _getAllLibraries();
-		System.out.println("YEEE");
 		if (files != null) {
 			// Load all of them 5 times
 			for (int k=0; k<5; k++)
 				for (int i=0; i<files.length; i++) {
-					System.out.println("Loading " + files[i]);
 					Frei0r testFrei0r = new Frei0r(FREI0R_DIRECTORY + "/" + files[i]);
-					System.out.println("Calling init");
 					testFrei0r.init();
-					System.out.println("New instance");
 					testFrei0r.createInstance(100, 100);
-					System.out.println("Calling deinit");
 					testFrei0r.deinit();
 				}
 		}
@@ -188,15 +182,6 @@ public class Frei0rTest extends TestCase {
 			frei0r.createInstance(100, -1);
 			fail("Expected Frei0rException.");
 		} catch (Frei0rException e) {}
-		File dir = new File(FREI0R_DIRECTORY);
-		String[] files = dir.list();
-		for (int i=0; i<files.length; i++) {
-			if (files[i].endsWith(".so")) {
-				frei0r = new Frei0r(files[i]);
-				for (int j=0; j<10; j++)
-					frei0r.createInstance(1000, 1000);
-			}				
-		}
 	}
 
 	public void testUpdateInstance() throws Frei0rException {
