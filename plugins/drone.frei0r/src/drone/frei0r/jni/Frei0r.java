@@ -24,6 +24,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Vector;
 
 import drone.frei0r.Frei0rException;
 import drone.util.ImageConvert;
@@ -140,16 +142,35 @@ public class Frei0r {
 		}
 		if (_handle == 0)
 			throw new Frei0rException("Handle not set.");
+		_instances = new Vector<Instance>();
 	}
-
-	protected void finalize() throws Frei0rException {
-		deinit();
-		if (_handle != 0)
-			_closeLibrary();
+	
+	protected synchronized void finalize() throws Frei0rException {
+		dispose();
 	}
 
 	public Instance createInstance(int width, int height) throws Frei0rException {
-		return new Instance(this, width, height);
+		Instance inst = new Instance(this, width, height);
+		_instances.add(inst);
+		return inst;
+	}
+	
+	public synchronized void dispose() throws Frei0rException {
+		try {
+			deinit();
+		}
+		finally {
+			if (_handle != 0) {
+				// Cleanup instances.
+				Iterator<Instance> it = _instances.iterator();
+				while (it.hasNext())
+					it.next().destruct();
+				_instances.clear();
+				// Close handle.
+				_closeLibrary();
+			} else if (!_instances.isEmpty())
+				throw new Frei0rException("Frei0r handle cleared but child instances still exist. This should not happen. Verify the code.");
+		}
 	}
 
 	// Public methods.
@@ -231,20 +252,32 @@ public class Frei0r {
 		protected Instance(Frei0r parent, int width, int height) throws Frei0rException {
 			if (width < 0 || height < 0)
 				throw new Frei0rException("Wrong dimensions (negative value): " + width + "x" + height);
+			if (parent == null)
+				throw new NullPointerException("Specified Frei0r parent is null.");
+			
 			_width = width;
 			_height = height;
-			_instanceHandle = parent.construct(width, height);
-			if (_instanceHandle == 0)
-				throw new Frei0rException("Construction of instance failed.");
-			_parent = parent;
 			_size = _width * _height;
+			_parent = parent;
+			
+			construct();
 		}
 
-		protected synchronized void finalize() throws Frei0rException {
-			if (_instanceHandle != 0)
+		protected synchronized void destruct() throws Frei0rException {
+			if (isActive()) {
 				_parent.destruct(_instanceHandle);
-			_instanceHandle = 0;
+				_instanceHandle = 0;
+			}
 		}
+		
+		public void construct() throws Frei0rException {
+			destruct(); // make sure memory is cleaned up
+			_instanceHandle = _parent.construct(_width, _height);
+			if (_instanceHandle == 0)
+				throw new Frei0rException("Construction of instance failed.");
+		}
+		
+		public boolean isActive() { return (_instanceHandle != 0); }
 
 		public int getWidth() { return _width; }
 
@@ -255,6 +288,9 @@ public class Frei0r {
 		public Frei0r getParent() { return _parent; }
 
 		public void update(double time, BufferedImage in, BufferedImage out) throws Frei0rException {
+			// Check if active.
+			_verifyActive();
+			
 			int[] inframe = null;
 			
 			// Sanity check and extract data buffers.
@@ -274,6 +310,9 @@ public class Frei0r {
 		}
 
 		public void update(double time, int[] inframe, int[] outframe) throws Frei0rException {
+			// Check if active.
+			_verifyActive();
+
 			// Sanity check.
 			if (_parent.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
 				_verifyFrame(inframe);
@@ -286,6 +325,9 @@ public class Frei0r {
 
 		public void update2(double time, BufferedImage in1, BufferedImage in2,
 								BufferedImage in3, BufferedImage out) throws Frei0rException {
+			// Check if active.
+			_verifyActive();
+
 			int[] inframe1 = null;
 			int[] inframe2 = null;
 			int[] inframe3 = null;
@@ -312,6 +354,9 @@ public class Frei0r {
 		}
 
 		public void update2(double time, int[] inframe1, int[] inframe2, int[] inframe3, int[] outframe) throws Frei0rException {
+			// Check if active.
+			_verifyActive();
+
 			// Sanity check.
 			switch (_parent.getPluginType()) {
 			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
@@ -351,6 +396,11 @@ public class Frei0r {
 			}
 		}
 		
+		private void _verifyActive() throws Frei0rException {
+			if (!isActive())
+				throw new Frei0rException("Instance not active anymore, destruct() was called at some point. To activate call construct() again.");
+		}
+		
 		private int[] _inputImageToFrame(BufferedImage img) throws Frei0rException {
 			_verifyImage(img);
 			// Make sure the image has the right format.
@@ -379,15 +429,19 @@ public class Frei0r {
 		}
 		
 		public Object getParamValue(int paramIndex) throws Frei0rException {
+			if (!isActive())
+				throw new Frei0rException("Instance not active anymore, destruct() was called at some point. To activate call construct() again.");
 			return _parent.getParamValue(_instanceHandle, paramIndex);
 		}
 		
 		public void setParamValue(Object param, int paramIndex) throws Frei0rException {
+			if (!isActive())
+				throw new Frei0rException("Instance not active anymore, destruct() was called at some point. To activate call construct() again.");
 			_parent.setParamValue(_instanceHandle, param, paramIndex);
 		}
 
 		private long _instanceHandle = 0;
-		private Frei0r _parent;
+		private Frei0r _parent = null;
 		private int _width, _height, _size;
 	}
 
@@ -433,5 +487,7 @@ public class Frei0r {
 	 */
 	@SuppressWarnings("unused")
 	private long _handle = 0;
+	
+	private Vector<Instance> _instances;
 
 }
