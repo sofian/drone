@@ -123,17 +123,16 @@ public class Frei0rActor extends TypedAtomicActor {
 
 
 	public void initialize() throws IllegalActionException {
-//		try {
-//			if (_frei0r != null)
-//				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-//														 ((IntToken)defaultHeight.getToken()).intValue());
-//		} catch (Frei0rException e) {
-//			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
-//		}
+		try {
+			if (_frei0r != null)
+				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
+														 ((IntToken)defaultHeight.getToken()).intValue());
+		} catch (Frei0rException e) {
+			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
+		}
 	}
 	
-	public void attributeChanged(Attribute attribute)
-	throws IllegalActionException {
+	public void attributeChanged(Attribute attribute) throws IllegalActionException {
 
 		if (attribute == frei0rLibraryName) {
 			try {
