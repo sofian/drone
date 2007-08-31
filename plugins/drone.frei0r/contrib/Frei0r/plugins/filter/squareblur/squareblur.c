@@ -188,9 +188,13 @@ void f0r_destruct(f0r_instance_t instance)
 {
   squareblur_instance_t* inst = 
     (squareblur_instance_t*)instance;
-  free(inst->acc);
-  free(inst->mem);
-  free(instance);
+  if (instance) {
+    if (inst->acc)
+      free(inst->acc);
+    if (inst->mem)
+      free(inst->mem);
+    free(instance);
+  }
 }
 
 void f0r_set_param_value(f0r_instance_t instance, 
