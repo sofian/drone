@@ -16,6 +16,7 @@
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
+		<copy file="data/frei0r_${os.name}.xml" tofile="data/frei0r.xml" />
 		<antcall target="compile.default" />
 		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}"/>
 	</target>
