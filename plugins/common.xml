@@ -8,7 +8,7 @@
 	<condition property="os.shortname" value="Linux">
 	  <os name="Linux" />
 	</condition>
-
+	
 	<!-- Local directories -->
 	<property name="src.dir"      value="src"/>
 	<property name="build.dir"    value="build"/>
@@ -47,11 +47,13 @@
 	<target name="compile.default">
 		<javac srcdir="${src.dir}" destdir="${build.dir}" 
 			debug="${debug}" debuglevel="${debug.level}" 
-			classpathref="base.path"/>
+			classpathref="base.path" />
 		<copy todir="build/data">
 			<fileset dir="data" />
 		</copy>
+		<!-- Not used for now 
 		<copy todir="${build.dir}" file="plugin.xml" />
+		-->
 	</target>
 	
 	<target name="clean.default">
