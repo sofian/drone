@@ -1,0 +1,13 @@
+#!/bin/bash
+CLASSPATH="$CLASSPATH:."
+for file in `ls dist/*.jar` 
+do
+  CLASSPATH="$CLASSPATH:$file"
+done
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`pwd`/lib/native/`uname -s`/`arch`"
+
+echo "java -classpath $CLASSPATH -Djava.library.path=$LD_LIBRARY_PATH ptolemy.vergil.VergilApplication"
+
+java -classpath $CLASSPATH -Djava.library.path=$LD_LIBRARY_PATH ptolemy.vergil.VergilApplication
+
