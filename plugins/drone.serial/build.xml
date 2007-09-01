@@ -46,6 +46,7 @@
 	
 	<target name="rxtx">
 	  <copy file="contrib/rxtx/RXTXcomm.jar" todir="${lib.dir}" />
+      <!-- This is kind of brutal (and actually WRONG) but I could not find a way to switch on the OS. -->
 	  <copy file="contrib/rxtx/librxtxSerial.jnilib" todir="${native.dir}" />
 	  <copy file="contrib/rxtx/librxtxSerial.so" todir="${native.dir}" />
 	  <copy file="contrib/rxtx/rxtxSerial.dll" todir="${native.dir}" />
