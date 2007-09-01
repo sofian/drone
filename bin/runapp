@@ -1,0 +1,30 @@
+#!/bin/bash
+CLASSPATH="$CLASSPATH:."
+for file in `ls dist/*.jar` 
+do
+  CLASSPATH="$CLASSPATH:$file"
+done
+for file in `ls lib/*.jar` 
+do
+  CLASSPATH="$CLASSPATH:$file"
+done
+
+arch=`uname -m`
+if [ $arch == "i486" ]; then
+  arch="i386"
+fi
+
+if [ $arch == "i586" ]; then
+  arch="i386"
+fi
+
+if [ $arch == "i686" ]; then
+  arch="i386"
+fi
+
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`pwd`/lib/native/`uname -s`/$arch"
+
+export CLASSPATH
+export LD_LIBRARY_PATH
+
+java $@
