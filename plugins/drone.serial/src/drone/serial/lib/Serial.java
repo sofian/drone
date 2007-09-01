@@ -68,39 +68,24 @@ public class Serial implements SerialPortEventListener {
 	static int ddatabits = 8;
 	static float dstopbits = 1;
 
-//
-//	public void setProperties(Properties props) {
-//		dname =
-//			props.getProperty("serial.port", dname);
-//		drate =
-//			Integer.parseInt(props.getProperty("serial.rate", "9600"));
-//		dparity =
-//			props.getProperty("serial.parity", "N").charAt(0);
-//		ddatabits =
-//			Integer.parseInt(props.getProperty("serial.databits", "8"));
-//		dstopbits =
-//			new Float(props.getProperty("serial.stopbits", "1")).floatValue();
-//	}
-
-
-	public Serial() {
+	public Serial() throws Exception {
 		this(dname, drate, dparity, ddatabits, dstopbits);
 	}
 
-	public Serial(int irate) {
+	public Serial(int irate) throws Exception {
 		this(dname, irate, dparity, ddatabits, dstopbits);
 	}
 
-	public Serial(String iname, int irate) {
+	public Serial(String iname, int irate) throws Exception {
 		this(iname, irate, dparity, ddatabits, dstopbits);
 	}
 
-	public Serial(String iname) {
+	public Serial(String iname) throws Exception {
 		this(iname, drate, dparity, ddatabits, dstopbits);
 	}
 
 	public Serial(String iname, int irate,
-					char iparity, int idatabits, float istopbits) {
+					char iparity, int idatabits, float istopbits) throws Exception {
 		//if (port != null) port.close();
 		//parent.attach(this);
 
@@ -116,43 +101,20 @@ public class Serial implements SerialPortEventListener {
 		if (istopbits == 1.5f) stopbits = SerialPort.STOPBITS_1_5;
 		if (istopbits == 2) stopbits = SerialPort.STOPBITS_2;
 
-		try {
-			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-			while (portList.hasMoreElements()) {
-				CommPortIdentifier portId =
-					(CommPortIdentifier) portList.nextElement();
-
-				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-					if (portId.getName().equals(iname)) {
-						port = (SerialPort)portId.open("serial madness", 2000);
-						input = port.getInputStream();
-						output = port.getOutputStream();
-						port.setSerialPortParams(rate, databits, stopbits, parity);
-						port.addEventListener(this);
-						port.notifyOnDataAvailable(true);
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			errorMessage("<init>", e);
-			//exception = e;
-			//e.printStackTrace();
-			port = null;
-			input = null;
-			output = null;
+		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(iname);
+		if (portId == null)
+			throw new NoSuchPortException();
+		
+		if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+			port = (SerialPort)portId.open("serial madness", 2000);
+			input = port.getInputStream();
+			output = port.getOutputStream();
+			port.setSerialPortParams(rate, databits, stopbits, parity);
+			port.addEventListener(this);
+			port.notifyOnDataAvailable(true);
+		} else {
+			throw new Exception("Specified port exists but is not a serial port.");
 		}
-
-//		// reflection to check whether host applet has a call for
-//		// public void serialEvent(processing.serial.Serial)
-//		// which would be called each time an event comes in
-//		try {
-//			serialEventMethod =
-//				parent.getClass().getMethod("serialEvent",
-//						new Class[] { Serial.class });
-//		} catch (Exception e) {
-//			// no such method, or an error.. which is fine, just ignore
-//		}
 	}
 
 

@@ -4,7 +4,7 @@ import drone.serial.lib.Serial;
 
 public class SerialDemo {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Serial mySerial = new Serial("/dev/ttyUSB0", 9600);
 		mySerial.write('A');
 		char read;
