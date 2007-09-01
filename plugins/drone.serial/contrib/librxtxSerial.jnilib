@@ -1,0 +1,315 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+"http://www.w3.org/TR/REC-html40/loose.dtd">
+<!-- ViewCVS - http://viewcvs.sourceforge.net/
+by Greg Stein - mailto:gstein@lyra.org -->
+<!-- processing-styling september 2005 by florianjenett.de -->
+<html>
+<head>
+<title>Source &gt;&gt; Develop Processing &gt;&gt; [Development] Log of /trunk/processing/serial/library/librxtxSerial.jnilib</title>
+<meta name="generator" content="ViewCVS 1.0-dev">
+<link rel="stylesheet" href="/source/index.cgi/*docroot*/styles.css" type="text/css">
+<link rel="stylesheet" href="http://dev.processing.org/processing_beta.css">
+</head>
+<body bgcolor="#FFFFFF" text="#333333" link="#CC6600" vlink="#CC6600" alink="#CC6600" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<!--
+dev.processing header
+-->
+<table width="750" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+<tr>
+<td width="550" colspan="2"><img src="http://dev.processing.org/images/processing_dev.gif" width="500" height="50"></td>
+<td width="180" align="right" valign="top" bgcolor="#FFFFFF"> <img src="http://dev.processing.org/images/1pix.gif" width="180" height="8"></td>
+<td width="20">&nbsp;</td>
+</tr>
+</table>
+<!--
+dev.processing menu
+-->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="55" height="25" bgcolor="#DDDDCD" valign="top">&nbsp;</td>
+<td width="675" valign="middle" bgcolor="#DDDDCD">
+<a href="http://dev.processing.org/">Cover</a> <font color="#999999">&#92;</font>
+<a href="http://dev.processing.org/build/">Build</a> <font color="#999999">&#92;</font>
+<a href="http://dev.processing.org/source/"><font color="#666666">Source</font></a> <font color="#999999">&#92;</font>
+<a href="http://dev.processing.org/bugs/search.cgi">Bugs</a> <font color="#999999">&#92;</font>
+<a href="http://dev.processing.org/reference/">Reference</a> <font color="#999999">&#92;</font>
+<a href="http://dev.processing.org/libraries/">Libraries</a>
+</td>
+<td width="20" bgcolor="#DDDDCD" valign="top">&nbsp;</td>
+</tr>
+</table>
+<!--
+subnavigation
+-->
+<div class="vc_navheader">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td align="left">
+<a target="_blank" href="/source/index.cgi/*docroot*/help_log.html">ViewCVS Help</a> <font color="#999999">&#92;</font>
+
+<a href="/source/index.cgi/?rev=2165">
+
+[Development]</a>
+<font color="#999999">&#92;</font>
+
+<a href="/source/index.cgi/trunk/?rev=2165">
+
+trunk</a>
+<font color="#999999">&#92;</font>
+
+<a href="/source/index.cgi/trunk/processing/?rev=2165">
+
+processing</a>
+<font color="#999999">&#92;</font>
+
+<a href="/source/index.cgi/trunk/processing/serial/?rev=2165">
+
+serial</a>
+<font color="#999999">&#92;</font>
+
+<a href="/source/index.cgi/trunk/processing/serial/library/?rev=2165">
+
+library</a>
+<font color="#999999">&#92;</font>
+
+
+
+librxtxSerial.jnilib
+
+
+</td>
+<td align="right">
+
+&nbsp;
+
+</td>
+</tr>
+</table>
+</div>
+<!--
+content - will be closed in footer.ezt
+-->
+<div class="vc_content">
+<!--
+page title
+-->
+<h4>Log of /trunk/processing/serial/library/librxtxSerial.jnilib</h4>
+
+<a href="/source/index.cgi/trunk/processing/serial/library/"><img src="/source/index.cgi/*docroot*/images/back_small.png" width=16 height=16 border=0> Parent Directory</a>
+
+
+
+<hr noshade>
+<p>No default branch<br>
+Bookmark a link to HEAD:
+(<a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?view=markup">view</a>)
+(<a href="/source/index.cgi/*checkout*/trunk/processing/serial/library/librxtxSerial.jnilib">download</a>)
+
+
+</p>
+
+
+
+ 
+
+
+
+<hr size=1 noshade>
+
+
+
+
+<a name="rev2165"></a>
+
+
+Revision <a href="/source/index.cgi?rev=2165&amp;view=rev"><b>2165</b></a>
+ -
+(<a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?rev=2165&amp;view=markup">view</a>)
+(<a href="/source/index.cgi/*checkout*/trunk/processing/serial/library/librxtxSerial.jnilib?rev=2165">download</a>)
+
+
+
+
+
+- <a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?rev=2165&amp;r1=2165&amp;view=log">[select for diffs]</a>
+
+
+
+
+<br>
+
+Modified
+
+<i>Tue Mar 28 15:16:53 2006 UTC</i> (17 months ago) by <i>fry</i>
+
+
+
+
+
+
+
+
+<br>File length: 326432 byte(s)</b>
+
+
+
+
+
+
+<br>Diff to <a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?rev=2165&amp;r1=1238&amp;r2=2165">previous 1238</a>
+
+
+
+
+
+
+
+<pre class="vc_log">incorporating version 2.1_7 of rxtx, also a universal binary
+</pre>
+
+<hr size=1 noshade>
+
+
+
+
+<a name="rev1238"></a>
+
+
+Revision <a href="/source/index.cgi?rev=1238&amp;view=rev"><b>1238</b></a>
+ -
+(<a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?rev=1238&amp;view=markup">view</a>)
+(<a href="/source/index.cgi/*checkout*/trunk/processing/serial/library/librxtxSerial.jnilib?rev=1238">download</a>)
+
+
+
+
+
+- <a href="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib?rev=2165&amp;r1=1238&amp;view=log">[select for diffs]</a>
+
+
+
+
+<br>
+
+Added
+
+<i>Mon Apr  4 17:26:43 2005 UTC</i> (2 years, 4 months ago) by <i>benfry</i>
+
+
+
+
+
+
+<br>File length: 44600 byte(s)</b>
+
+
+
+
+
+
+
+
+
+
+<pre class="vc_log">moving the libraries
+</pre>
+
+ 
+
+
+
+<a name="diff"></a>
+<hr noshade>
+This form allows you to request diffs between any two revisions of
+a file. You may select a symbolic revision name using the selection
+box or you may type in a numeric name using the type-in text box.
+<p>
+<form method="get" action="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib" name="diff_select">
+
+<table border="0" cellpadding="2" cellspacing="0">
+<tr>
+<td>&nbsp;</td>
+<td>
+Diffs between
+
+<input type="text" size="12" name="r1" value="1238">
+
+and
+
+<input type="text" size="12" name="r2" value="1238">
+
+</td>
+</tr>
+<tr>
+<td><input type="checkbox" name="makepatch" id="makepatch" value="1"></td>
+<td><label for="makepatch">Generate output suitable for use with a patch
+program</label></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+Type of Diff should be a
+<select name="diff_format" onchange="submit()">
+<option value="h" selected>Colored Diff</option>
+<option value="l" >Long Colored Diff</option>
+<option value="u" >Unidiff</option>
+<option value="c" >Context Diff</option>
+<option value="s" >Side by Side</option>
+</select>
+<input type="submit" value=" Get Diffs ">
+</td>
+</tr>
+</table>
+</form>
+
+
+
+
+<hr noshade>
+<a name=logsort></a>
+<form method=get action="/source/index.cgi/trunk/processing/serial/library/librxtxSerial.jnilib">
+<input type="hidden" name="view" value="log" />
+Sort log by:
+<select name="logsort" onchange="submit()">
+<option value="cvs" >Not sorted</option>
+<option value="date" selected>Commit date</option>
+<option value="rev" >Revision</option>
+</select>
+<input type=submit value=" Sort ">
+</form>
+
+<!--
+close vc_content div from header.ezt
+-->
+</div>
+
+<!-- address></address -->
+<br />
+<br />
+<br />
+<br />
+<!--
+dev.processing footer
+-->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="55" height="25" bgcolor="#DDDDCD" valign="top">&nbsp;</td>
+<td width="675" valign="middle" bgcolor="#DDDDCD">Processing is an open project
+initiated by <a href="http://benfry.com">Ben Fry</a> and <a href="http://reas.com">Casey
+Reas</a></td>
+<td width="20" bgcolor="#DDDDCD" valign="top">&nbsp;</td>
+</tr>
+<tr>
+<td width="55" height="25" bgcolor="#CCCCBE">&nbsp;</td>
+<td width="675" valign="middle" bgcolor="#CCCCBE"><a href="http://processing.org/copyright.html">&copy;
+Info</a> &#92; Source browsing: <a href="http://viewcvs.sourceforge.net/">ViewCVS 1.0-dev</a> &#92; Site hosted by <a href="">Media Temple!</a></td>
+<td width="20" bgcolor="#CCCCBE">&nbsp;</td>
+</tr>
+</table>
+</body>
+</html>
+

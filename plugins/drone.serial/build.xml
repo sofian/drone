@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<project name="drone-frei0r" default="main">
+	
+	<import file="../common.xml"/>
+
+	<property name="short.name"   value="serial"/>
+	<property name="long.name"    value="Serial"/>
+	<property name="project.name" value="drone-${short.name}"/>
+	<property name="package.name" value="drone.${short.name}"/>
+	<property name="test.dir"     value="drone/${short.name}/test"/>
+	
+	<property name="make" value="make" />
+	<property name="scons" value="scons" />
+	
+	<target name="main" depends="rxtx">
+		<echo>
+			Building ${long.name} plugin.
+		</echo>
+		<antcall target="compile.default" />
+		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}"/>
+	</target>
+	
+	<target name="clean">
+		<echo>
+			Cleaning ${long.name} plugin.
+		</echo>
+		<antcall target="clean.default"/>
+		<delete file="${distdir}/${project.name}.jar"/>
+	</target>
+
+	<target name="test">
+		<echo>
+			Testing ${long.name} plugin.
+		</echo>
+		<junit>
+			<sysproperty key="java.library.path" path="${java.library.path}:${native.dir}" />
+			<classpath refid="test.path"/>
+			<formatter type="brief" usefile="false" />
+		    <batchtest fork="true">
+				<!-- Yes I know this totally looks strange but please don't touch: -->
+				<!-- it seems to be the only way to make it work in Ant -->
+		    	<fileset dir="${build.dir}" includes="**/${test.dir}/*Test.class" />
+		    </batchtest>
+		</junit>
+	</target>
+	
+	<target name="rxtx">
+	  <copy file="contrib/rxtx/RXTXcomm.jar" todir="${lib.dir}" />
+	  <copy file="contrib/rxtx/librxtxSerial.jnilib" todir="${native.dir}" />
+	  <copy file="contrib/rxtx/librxtxSerial.so" todir="${native.dir}" />
+	  <copy file="contrib/rxtx/rxtxSerial.dll" todir="${native.dir}" />
+	</target>
+
+</project>
