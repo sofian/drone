@@ -64,7 +64,7 @@
 	</target>
 
 	<target name="frei0r">
-		<exec dir="contrib/Frei0r/plugins" executable="${scons}" />
+		<exec dir="contrib/frei0r/plugins" executable="${scons}" />
 		<copy todir="${build.dir}/contrib">
 			<fileset dir="contrib" />
 		</copy>
