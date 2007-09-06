@@ -300,13 +300,14 @@ public class Frei0r {
 			_verifyImage(out);
 			
 			// Output frame buffer.
-			int[] outframe = new int[_size];
+			if (_outframe == null || _outframe.length < _size)
+				_outframe = new int[_size];
 
 			// Update frames.
-			update(time, inframe, outframe);
+			update(time, inframe, _outframe);
 			
 			// Set output frame.
-			_outputImageSetFrame(out, outframe);
+			_outputImageSetFrame(out, _outframe);
 		}
 
 		public void update(double time, int[] inframe, int[] outframe) throws Frei0rException {
@@ -344,13 +345,14 @@ public class Frei0r {
 			_verifyImage(out);
 
 			// Output frame buffer.
-			int[] outframe = new int[_size];
+			if (_outframe == null || _outframe.length < _size)
+				_outframe = new int[_size];
 
 			// Update frames.
-			update2(time, inframe1, inframe2, inframe3, outframe);
+			update2(time, inframe1, inframe2, inframe3, _outframe);
 
 			// Set output frame.
-			_outputImageSetFrame(out, outframe);
+			_outputImageSetFrame(out, _outframe);
 		}
 
 		public void update2(double time, int[] inframe1, int[] inframe2, int[] inframe3, int[] outframe) throws Frei0rException {
@@ -443,6 +445,7 @@ public class Frei0r {
 		private long _instanceHandle = 0;
 		private Frei0r _parent = null;
 		private int _width, _height, _size;
+		private int[] _outframe;
 	}
 
 	public static class Color {
