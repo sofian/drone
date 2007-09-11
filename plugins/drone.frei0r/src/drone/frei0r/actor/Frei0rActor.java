@@ -50,8 +50,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.media.Buffer;
-
 import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
 import drone.util.ImageConvert;
