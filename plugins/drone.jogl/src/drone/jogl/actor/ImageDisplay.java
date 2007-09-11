@@ -18,6 +18,7 @@
  */
 package drone.jogl.actor;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.nio.Buffer;
@@ -89,6 +90,10 @@ public class ImageDisplay extends Sink implements GLEventListener {
 		displayOnTexture = new Parameter(this, "displayOnTexture");
 		displayOnTexture.setTypeEquals(BaseType.BOOLEAN);
 		displayOnTexture.setExpression("true");
+		
+		fullscreen = new Parameter(this, "fullscreen");
+		fullscreen.setTypeEquals(BaseType.BOOLEAN);
+		fullscreen.setExpression("true");
 		
 		_frame = null;
 	}
@@ -290,6 +295,11 @@ public class ImageDisplay extends Sink implements GLEventListener {
 				_frame = new JFrame();
 				
 				_frame.setVisible(true);
+				
+				if (((BooleanToken)fullscreen.getToken()).booleanValue()) {
+					_frame.setUndecorated(true);
+					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(_frame);
+				}
 			} catch (Exception ex) {
 				throw new InternalErrorException(ex);
 			}
@@ -324,6 +334,7 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	//protected Container _container;
 	
 	public Parameter displayOnTexture;
+	public Parameter fullscreen;
 	
 	private boolean _displayOnTexture;
 	
