@@ -27,9 +27,10 @@ import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 
-public class Serial implements SerialPortEventListener {
+import ptolemy.kernel.Port;
+import sun.reflect.generics.tree.Tree;
 
-	Method serialEventMethod;
+public class Serial implements SerialPortEventListener {
 
 	// properties can be passed in for default values
 	// otherwise defaults to 9600 N81
@@ -37,186 +38,137 @@ public class Serial implements SerialPortEventListener {
 	// these could be made static, which might be a solution
 	// for the classloading problem.. because if code ran again,
 	// the static class would have an object that could be closed
+	
+	public static final int BUFFER_SIZE = 32768;
 
-	public SerialPort port;
+	private SerialPort _port;
 
-	public int rate;
-	public int parity;
-	public int databits;
-	public int stopbits;
+	private String _portName;
 
 	// read buffer and streams
+	private InputStream _input;
+	private OutputStream _output;
 
-	public InputStream input;
-	public OutputStream output;
-
-	byte buffer[] = new byte[32768];
-	int bufferIndex;
-	int bufferLast;
-
-	//boolean bufferUntil = false;
-	int bufferSize = 1;  // how big before reset or event firing
-	boolean bufferUntil;
-	int bufferUntilByte;
-
+	private byte _buffer[] = new byte[BUFFER_SIZE];
+	private int _bufferIndex;
+	private int _bufferLast;
 
 	// defaults
 
-	static String dname = "COM1";
-	static int drate = 9600;
-	static char dparity = 'N';
-	static int ddatabits = 8;
-	static float dstopbits = 1;
+	public static final String DEFAULT_PORT_NAME = "COM1";
+	public static final int DEFAULT_RATE = 9600;
+	public static final int DEFAULT_PARITY = SerialPort.PARITY_NONE;
+	public static final int DEFAULT_DATABITS = SerialPort.DATABITS_8;
+	public static final int DEFAULT_STOPBITS = SerialPort.STOPBITS_1;
 
-	public Serial() throws Exception {
-		this(dname, drate, dparity, ddatabits, dstopbits);
+	private static Map<String, Serial> _serials = new TreeMap<String, Serial>();
+	
+	protected Serial(String portName) throws Exception {
+		if (_serials.containsKey(portName))
+			throw new Exception("Serial port " + portName + " has already been set");
+		_portName = portName;
+		init();
+	}
+	
+	public static Serial getSerial(String portName) throws Exception {
+		if (_serials.containsKey(portName))
+			return _serials.get(portName);
+		else {
+			Serial serial = new Serial(portName);
+			_serials.put(portName, serial);
+			return serial;
+		}
 	}
 
-	public Serial(int irate) throws Exception {
-		this(dname, irate, dparity, ddatabits, dstopbits);
-	}
-
-	public Serial(String iname, int irate) throws Exception {
-		this(iname, irate, dparity, ddatabits, dstopbits);
-	}
-
-	public Serial(String iname) throws Exception {
-		this(iname, drate, dparity, ddatabits, dstopbits);
-	}
-
-	public Serial(String iname, int irate,
-					char iparity, int idatabits, float istopbits) throws Exception {
-		//if (port != null) port.close();
-		//parent.attach(this);
-
-		this.rate = irate;
-
-		parity = SerialPort.PARITY_NONE;
-		if (iparity == 'E') parity = SerialPort.PARITY_EVEN;
-		if (iparity == 'O') parity = SerialPort.PARITY_ODD;
-
-		this.databits = idatabits;
-
-		stopbits = SerialPort.STOPBITS_1;
-		if (istopbits == 1.5f) stopbits = SerialPort.STOPBITS_1_5;
-		if (istopbits == 2) stopbits = SerialPort.STOPBITS_2;
-
-		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(iname);
+	public void init() throws Exception {
+		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(_portName);
 		if (portId == null)
 			throw new NoSuchPortException();
-		
+
 		if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-			port = (SerialPort)portId.open("serial madness", 2000);
-			input = port.getInputStream();
-			output = port.getOutputStream();
-			port.setSerialPortParams(rate, databits, stopbits, parity);
-			port.addEventListener(this);
-			port.notifyOnDataAvailable(true);
+			_port = (SerialPort)portId.open("dummy", 2000);
+			_input = _port.getInputStream();
+			_output = _port.getOutputStream();
+			_port.setSerialPortParams(DEFAULT_RATE, DEFAULT_DATABITS, DEFAULT_STOPBITS, DEFAULT_PARITY);
+			_port.addEventListener(this);
+			_port.notifyOnDataAvailable(true);
 		} else {
 			throw new Exception("Specified port exists but is not a serial port.");
 		}
 	}
 
-
-	/**
-	 * Stop talking to serial and shut things down.
-	 * <P>
-	 * Basically just a user-accessible version of dispose().
-	 * For now, it just calls dispose(), but dispose shouldn't
-	 * be called from applets, because in some libraries,
-	 * dispose() blows shit up if it's called by a user who
-	 * doesn't know what they're doing.
-	 */
-	public void stop() {
-		dispose();
-	}
-
-
 	/**
 	 * Used by PApplet to shut things down.
+	 * @throws IOException 
 	 */
-	public void dispose() {
-		try {
-			// do io streams need to be closed first?
-			if (input != null) input.close();
-			if (output != null) output.close();
+	public void dispose() throws IOException {
+		// do io streams need to be closed first?
+		if (_input != null) _input.close();
+		if (_output != null) _output.close();
+		_input = null;
+		_output = null;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		input = null;
-		output = null;
-
-		try {
-			if (port != null) port.close();  // close the port
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		port = null;
+		if (_port != null) _port.close();  // close the port
+		_port = null;
 	}
 
-
+	public void setSerialPortParams(int baudrate,
+									int dataBits,
+									int stopBits,
+									int parity) throws UnsupportedCommOperationException {
+		if (_port != null)
+			_port.setSerialPortParams(baudrate, dataBits, stopBits, parity);
+	}
+	
 	/**
 	 * Set the DTR line. Addition from Tom Hulbert.
+	 * @throws Exception 
 	 */
-	public void setDTR(boolean state) {
-		port.setDTR(state);
+	public void setDTR(boolean state) throws Exception {
+		if (_port == null)
+			init();
+		_port.setDTR(state);
 	}
-
 
 	synchronized public void serialEvent(SerialPortEvent serialEvent) {
 		if (serialEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
 			try {
-				while (input.available() > 0) {
-					synchronized (buffer) {
-						if (bufferLast == buffer.length) {
-							byte temp[] = new byte[bufferLast << 1];
-							System.arraycopy(buffer, 0, temp, 0, bufferLast);
-							buffer = temp;
+				while (_input.available() > 0) {
+					synchronized (_buffer) {
+						if (_bufferLast == _buffer.length) {
+							byte temp[] = new byte[_bufferLast << 1];
+							System.arraycopy(_buffer, 0, temp, 0, _bufferLast);
+							_buffer = temp;
 						}
-						buffer[bufferLast++] = (byte) input.read();
-//						if (serialEventMethod != null) {
-//							if ((bufferUntil && (buffer[bufferLast-1] == bufferUntilByte)) ||
-//									((bufferLast - bufferIndex) >= bufferSize)) {
-//								try {
-//									serialEventMethod.invoke(parent, new Object[] { this });
-//								} catch (Exception e) {
-//									String msg = "error, disabling serialEvent() for " + port;
-//									System.err.println(msg);
-//									e.printStackTrace();
-//									serialEventMethod = null;
-//								}
-//							}
-//						}
+						_buffer[_bufferLast++] = (byte) _input.read();
 					}
 				}
 
-			} catch (IOException e) {
-				errorMessage("serialEvent", e);
+			} catch (Exception e) {
+				throw new Error("Error while processing serial event: " + e);
 			}
 		}
 	}
 
 
-	/**
-	 * Set number of bytes to buffer before calling serialEvent()
-	 * in the host applet.
-	 */
-	public void buffer(int count) {
-		bufferUntil = false;
-		bufferSize = count;
-	}
-
-
-	/**
-	 * Set a specific byte to buffer until before calling
-	 * serialEvent() in the host applet.
-	 */
-	public void bufferUntil(int what) {
-		bufferUntil = true;
-		bufferUntilByte = what;
-	}
+//	/**
+//	 * Set number of bytes to buffer before calling serialEvent()
+//	 * in the host applet.
+//	 */
+//	public void buffer(int count) {
+//		bufferUntil = false;
+//		bufferSize = count;
+//	}
+//
+//
+//	/**
+//	 * Set a specific byte to buffer until before calling
+//	 * serialEvent() in the host applet.
+//	 */
+//	public void bufferUntil(int what) {
+//		bufferUntil = true;
+//		bufferUntilByte = what;
+//	}
 
 
 	/**
@@ -224,7 +176,7 @@ public class Serial implements SerialPortEventListener {
 	 * and are waiting to be dealt with by the user.
 	 */
 	public int available() {
-		return (bufferLast - bufferIndex);
+		return (_bufferLast - _bufferIndex);
 	}
 
 
@@ -232,8 +184,8 @@ public class Serial implements SerialPortEventListener {
 	 * Ignore all the bytes read so far and empty the buffer.
 	 */
 	public void clear() {
-		bufferLast = 0;
-		bufferIndex = 0;
+		_bufferLast = 0;
+		_bufferIndex = 0;
 	}
 
 
@@ -244,13 +196,13 @@ public class Serial implements SerialPortEventListener {
 	 * first check available() to see if things are ready to avoid this)
 	 */
 	public int read() {
-		if (bufferIndex == bufferLast) return -1;
+		if (_bufferIndex == _bufferLast) return -1;
 
-		synchronized (buffer) {
-			int outgoing = buffer[bufferIndex++] & 0xff;
-			if (bufferIndex == bufferLast) {  // rewind
-				bufferIndex = 0;
-				bufferLast = 0;
+		synchronized (_buffer) {
+			int outgoing = _buffer[_bufferIndex++] & 0xff;
+			if (_bufferIndex == _bufferLast) {  // rewind
+				_bufferIndex = 0;
+				_bufferLast = 0;
 			}
 			return outgoing;
 		}
@@ -263,11 +215,11 @@ public class Serial implements SerialPortEventListener {
 	 * recent value sent over the port.
 	 */
 	public int last() {
-		if (bufferIndex == bufferLast) return -1;
-		synchronized (buffer) {
-			int outgoing = buffer[bufferLast-1];
-			bufferIndex = 0;
-			bufferLast = 0;
+		if (_bufferIndex == _bufferLast) return -1;
+		synchronized (_buffer) {
+			int outgoing = _buffer[_bufferLast-1];
+			_bufferIndex = 0;
+			_bufferLast = 0;
 			return outgoing;
 		}
 	}
@@ -278,7 +230,7 @@ public class Serial implements SerialPortEventListener {
 	 * Returns -1, or 0xffff, if nothing is there.
 	 */
 	public char readChar() {
-		if (bufferIndex == bufferLast) return (char)(-1);
+		if (_bufferIndex == _bufferLast) return (char)(-1);
 		return (char) read();
 	}
 
@@ -287,7 +239,7 @@ public class Serial implements SerialPortEventListener {
 	 * Just like last() and readChar().
 	 */
 	public char lastChar() {
-		if (bufferIndex == bufferLast) return (char)(-1);
+		if (_bufferIndex == _bufferLast) return (char)(-1);
 		return (char) last();
 	}
 
@@ -299,15 +251,15 @@ public class Serial implements SerialPortEventListener {
 	 * readBytes(byte b[]) (see below).
 	 */
 	public byte[] readBytes() {
-		if (bufferIndex == bufferLast) return null;
+		if (_bufferIndex == _bufferLast) return null;
 
-		synchronized (buffer) {
-			int length = bufferLast - bufferIndex;
+		synchronized (_buffer) {
+			int length = _bufferLast - _bufferIndex;
 			byte outgoing[] = new byte[length];
-			System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+			System.arraycopy(_buffer, _bufferIndex, outgoing, 0, length);
 
-			bufferIndex = 0;  // rewind
-			bufferLast = 0;
+			_bufferIndex = 0;  // rewind
+			_bufferLast = 0;
 			return outgoing;
 		}
 	}
@@ -323,17 +275,17 @@ public class Serial implements SerialPortEventListener {
 	 * that will fit are read.
 	 */
 	public int readBytes(byte outgoing[]) {
-		if (bufferIndex == bufferLast) return 0;
+		if (_bufferIndex == _bufferLast) return 0;
 
-		synchronized (buffer) {
-			int length = bufferLast - bufferIndex;
+		synchronized (_buffer) {
+			int length = _bufferLast - _bufferIndex;
 			if (length > outgoing.length) length = outgoing.length;
-			System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+			System.arraycopy(_buffer, _bufferIndex, outgoing, 0, length);
 
-			bufferIndex += length;
-			if (bufferIndex == bufferLast) {
-				bufferIndex = 0;  // rewind
-				bufferLast = 0;
+			_bufferIndex += length;
+			if (_bufferIndex == _bufferLast) {
+				_bufferIndex = 0;  // rewind
+				_bufferLast = 0;
 			}
 			return length;
 		}
@@ -346,25 +298,25 @@ public class Serial implements SerialPortEventListener {
 	 * the serial buffer, then 'null' is returned.
 	 */
 	public byte[] readBytesUntil(int interesting) {
-		if (bufferIndex == bufferLast) return null;
+		if (_bufferIndex == _bufferLast) return null;
 		byte what = (byte)interesting;
 
-		synchronized (buffer) {
+		synchronized (_buffer) {
 			int found = -1;
-			for (int k = bufferIndex; k < bufferLast; k++) {
-				if (buffer[k] == what) {
+			for (int k = _bufferIndex; k < _bufferLast; k++) {
+				if (_buffer[k] == what) {
 					found = k;
 					break;
 				}
 			}
 			if (found == -1) return null;
 
-			int length = found - bufferIndex + 1;
+			int length = found - _bufferIndex + 1;
 			byte outgoing[] = new byte[length];
-			System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+			System.arraycopy(_buffer, _bufferIndex, outgoing, 0, length);
 
-			bufferIndex = 0;  // rewind
-			bufferLast = 0;
+			_bufferIndex = 0;  // rewind
+			_bufferLast = 0;
 			return outgoing;
 		}
 	}
@@ -381,20 +333,20 @@ public class Serial implements SerialPortEventListener {
 	 * If 'interesting' byte is not in the buffer, then 0 is returned.
 	 */
 	public int readBytesUntil(int interesting, byte outgoing[]) {
-		if (bufferIndex == bufferLast) return 0;
+		if (_bufferIndex == _bufferLast) return 0;
 		byte what = (byte)interesting;
 
-		synchronized (buffer) {
+		synchronized (_buffer) {
 			int found = -1;
-			for (int k = bufferIndex; k < bufferLast; k++) {
-				if (buffer[k] == what) {
+			for (int k = _bufferIndex; k < _bufferLast; k++) {
+				if (_buffer[k] == what) {
 					found = k;
 					break;
 				}
 			}
 			if (found == -1) return 0;
 
-			int length = found - bufferIndex + 1;
+			int length = found - _bufferIndex + 1;
 			if (length > outgoing.length) {
 				System.err.println("readBytesUntil() byte buffer is" +
 						" too small for the " + length +
@@ -402,12 +354,12 @@ public class Serial implements SerialPortEventListener {
 				return -1;
 			}
 			//byte outgoing[] = new byte[length];
-			System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+			System.arraycopy(_buffer, _bufferIndex, outgoing, 0, length);
 
-			bufferIndex += length;
-			if (bufferIndex == bufferLast) {
-				bufferIndex = 0;  // rewind
-				bufferLast = 0;
+			_bufferIndex += length;
+			if (_bufferIndex == _bufferLast) {
+				_bufferIndex = 0;  // rewind
+				_bufferLast = 0;
 			}
 			return length;
 		}
@@ -423,7 +375,7 @@ public class Serial implements SerialPortEventListener {
 	 * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
 	 */
 	public String readString() {
-		if (bufferIndex == bufferLast) return null;
+		if (_bufferIndex == _bufferLast) return null;
 		return new String(readBytes());
 	}
 
@@ -446,27 +398,17 @@ public class Serial implements SerialPortEventListener {
 
 	/**
 	 * This will handle both ints, bytes and chars transparently.
+	 * @throws IOException 
 	 */
-	public void write(int what) {  // will also cover char
-		try {
-			output.write(what & 0xff);  // for good measure do the &
-			output.flush();   // hmm, not sure if a good idea
-
-		} catch (Exception e) { // null pointer or serial port dead
-			errorMessage("write", e);
-		}
+	public void write(int what) throws IOException {  // will also cover char
+		_output.write(what & 0xff);  // for good measure do the &
+		_output.flush();   // hmm, not sure if a good idea
 	}
 
 
-	public void write(byte bytes[]) {
-		try {
-			output.write(bytes);
-			output.flush();   // hmm, not sure if a good idea
-
-		} catch (Exception e) { // null pointer or serial port dead
-			//errorMessage("write", e);
-			e.printStackTrace();
-		}
+	public void write(byte bytes[]) throws IOException {
+		_output.write(bytes);
+		_output.flush();   // hmm, not sure if a good idea
 	}
 
 
@@ -481,8 +423,9 @@ public class Serial implements SerialPortEventListener {
 	 * If you want to move Unicode data, you can first convert the
 	 * String to a byte stream in the representation of your choice
 	 * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
+	 * @throws IOException 
 	 */
-	public void write(String what) {
+	public void write(String what) throws IOException {
 		write(what.getBytes());
 	}
 
@@ -491,17 +434,15 @@ public class Serial implements SerialPortEventListener {
 	 * If this just hangs and never completes on Windows,
 	 * it may be because the DLL doesn't have its exec bit set.
 	 * Why the hell that'd be the case, who knows.
+	 * @throws Exception 
 	 */
-	static public String[] list() {
+	static public String[] serialPortList() throws Exception {
 		Vector list = new Vector();
 		try {
-			//System.err.println("trying");
 			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-			//System.err.println("got port list");
 			while (portList.hasMoreElements()) {
 				CommPortIdentifier portId =
 					(CommPortIdentifier) portList.nextElement();
-				//System.out.println(portId);
 
 				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 					String name = portId.getName();
@@ -510,27 +451,21 @@ public class Serial implements SerialPortEventListener {
 			}
 
 		} catch (UnsatisfiedLinkError e) {
-			//System.err.println("1");
-			errorMessage("ports", e);
-
-		} catch (Exception e) {
-			//System.err.println("2");
-			errorMessage("ports", e);
+			throw new Exception("Unsatisfied link error.");
 		}
-		//System.err.println("move out");
 		String outgoing[] = new String[list.size()];
 		list.copyInto(outgoing);
 		return outgoing;
 	}
-
-
-	/**
-	 * General error reporting, all corraled here just in case
-	 * I think of something slightly more intelligent to do.
-	 */
-	static public void errorMessage(String where, Throwable e) {
-		e.printStackTrace();
-		throw new RuntimeException("Error inside Serial." + where + "()");
-	}
+//
+//	public void ownershipChange(int type) {
+//		System.out.println("Ownership changed to " + type);
+//		if (type == PORT_OWNERSHIP_REQUESTED)
+//			if (port != null) {
+//				System.out.println("Closing port");
+//				port.close();
+//				port = null;
+//			}
+//	}
 
 }
