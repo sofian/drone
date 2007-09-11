@@ -7,6 +7,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef drone_frei0r_jni_Frei0r_FREI0R_MAJOR_VERSION
+#define drone_frei0r_jni_Frei0r_FREI0R_MAJOR_VERSION 1L
+#undef drone_frei0r_jni_Frei0r_FREI0R_MINOR_VERSION
+#define drone_frei0r_jni_Frei0r_FREI0R_MINOR_VERSION 1L
 #undef drone_frei0r_jni_Frei0r_F0R_PLUGIN_TYPE_FILTER
 #define drone_frei0r_jni_Frei0r_F0R_PLUGIN_TYPE_FILTER 0L
 #undef drone_frei0r_jni_Frei0r_F0R_PLUGIN_TYPE_SOURCE
