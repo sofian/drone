@@ -1,5 +1,7 @@
 package drone.serial.test;
 
+import java.io.IOException;
+
 import drone.serial.lib.Serial;
 import junit.framework.TestCase;
 
@@ -10,7 +12,7 @@ public class SerialTest extends TestCase {
 	static int DEFAULT_RATE = 9600;
 	
 	public void setUp() throws Exception {
-		serial = new Serial(getPortName(), DEFAULT_RATE);
+		serial = Serial.getSerial(getPortName());
 	}
 
 	public static String getPortName() throws Exception {
@@ -25,11 +27,11 @@ public class SerialTest extends TestCase {
 			throw new Exception("Unrecognized OS: " + os);
 	}
 	
-	public void tearDown() {
-		serial.stop();
+	public void tearDown() throws IOException {
+		serial.dispose();
 	}
 	
-	public void testSerialEvent() {
+	public void testSerialEvent() throws IOException {
 		serial.write(10);
 		int read;
 		while ((read = serial.read()) == (char)(-1))
