@@ -35,8 +35,10 @@
       </property>
     </property>
  </entity>
+ <!--
 <entity name="XYPlotter" class="ptolemy.actor.lib.gui.XYPlotter"/>
 <entity name="XYScope" class="ptolemy.actor.lib.gui.XYScope"/>
+-->
       </group>
     ?>
   </configure>
