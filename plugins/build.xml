@@ -16,7 +16,6 @@
 		<attribute name="target"/>
 	   	<sequential>
 	    	<subant target="@{target}">
-	        	<fileset dir="drone.jmf" includes="**/build.xml"/>
 	        	&userplugins; <!-- import user plugins -->
 	        </subant>
 	     </sequential>
