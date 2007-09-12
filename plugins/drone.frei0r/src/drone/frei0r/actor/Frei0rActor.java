@@ -95,12 +95,6 @@ public class Frei0rActor extends TypedAtomicActor {
 		input1 = new TypedIOPort(this, "input1", true, false);
 		input1.setTypeEquals(BaseType.OBJECT);
 
-		input2 = new TypedIOPort(this, "input2", true, false);
-		input2.setTypeEquals(BaseType.OBJECT);
-
-		input3 = new TypedIOPort(this, "input3", true, false);
-		input3.setTypeEquals(BaseType.OBJECT);
-
 		output = new TypedIOPort(this, "output", false, true);
 		output.setTypeEquals(BaseType.OBJECT);
 
@@ -144,13 +138,31 @@ public class Frei0rActor extends TypedAtomicActor {
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
 															 ((IntToken)defaultHeight.getToken()).intValue());
 
-					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
+					// Create inputs 2 and 3 if necessary.
+					switch (_frei0r.getPluginType()) {
+					case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
+						if (input3 == null) {
+							input3 = new TypedIOPort(this, "input3", true, false);
+							input3.setTypeEquals(BaseType.OBJECT);
+						}
+					case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
+						if (input2 == null) {
+							input2 = new TypedIOPort(this, "input2", true, false);
+							input2.setTypeEquals(BaseType.OBJECT);
+						}
+					default:;
+					}
+					
+					// Remove them if unneeded.
+					if (input2 != null &&
+							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
 							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input2.setContainer(null);
+						_removePort(input2);
 					}
-
-					if (_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+					if (input3 != null && _frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 						input3.setContainer(null);
+						_removePort(input2);
 					}
 
 					if (params.size() == 0) {
