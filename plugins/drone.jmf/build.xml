@@ -11,7 +11,7 @@
 	
 	<property name="make" value="make" />
 
-	<target name="main">
+	<target name="main" depends="fmj">
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
@@ -27,6 +27,16 @@
 		<antcall target="clean.default"/>
 		<delete file="${distdir}/${project.name}.jar"/>
 		<delete file="${dist.dir}/${project.name}-src.jar"/>
+	</target>
+
+	<target name="fmj">
+		<echo>
+			Installing FMJ lib.
+		</echo>
+		<copy todir="${lib.dir}">
+			<fileset dir="contrib/fmj/lib" includes="*.jar" />
+		</copy>
+		<!-- TODO: Still have to copy native -->
 	</target>
 
 	<target name="test" depends="main">
