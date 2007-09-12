@@ -189,8 +189,7 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		super.initialize();
 
 		try {
-//			_system = (QTCaptureSystem) (new QTCaptureSystemFactory()).createCaptureSystem();
-			_system = (new NativeCaptureSystemFactory()).createCaptureSystem();
+			_system = (new QTCaptureSystemFactory()).createCaptureSystem();
 			List devices = _system.getCaptureDeviceInfoList();
 			Iterator it = devices.iterator();
 			System.out.println("Available devices =======");
