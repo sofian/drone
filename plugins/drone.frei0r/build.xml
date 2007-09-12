@@ -12,11 +12,11 @@
 	<property name="make" value="make" />
 	<property name="scons" value="scons" />
 	
-	<target name="main" depends="jni, frei0r">
+	<target name="main" depends="jni">
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
-		<copy file="data/frei0r_${os.name}.xml" tofile="data/frei0r.xml" />
+		<copy file="data/frei0r_${os.shortname}.xml" tofile="data/frei0r.xml" />
 		<antcall target="compile.default" />
 		<jar destfile="${dist.dir}/${project.name}.jar" basedir="${build.dir}"/>
 	</target>
