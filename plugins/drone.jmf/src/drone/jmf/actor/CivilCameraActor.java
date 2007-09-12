@@ -68,6 +68,7 @@ import com.lti.civil.CaptureObserver;
 import com.lti.civil.CaptureStream;
 import com.lti.civil.CaptureSystem;
 import com.lti.civil.Image;
+import com.lti.civil.impl.jni.NativeCaptureSystemFactory;
 import com.lti.civil.impl.qtjava.QTCaptureStream;
 import com.lti.civil.impl.qtjava.QTCaptureSystem;
 import com.lti.civil.impl.qtjava.QTCaptureSystemFactory;
@@ -188,14 +189,15 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		super.initialize();
 
 		try {
-			_system = (QTCaptureSystem) (new QTCaptureSystemFactory()).createCaptureSystem();
+//			_system = (QTCaptureSystem) (new QTCaptureSystemFactory()).createCaptureSystem();
+			_system = (new NativeCaptureSystemFactory()).createCaptureSystem();
 			List devices = _system.getCaptureDeviceInfoList();
 			Iterator it = devices.iterator();
 			System.out.println("Available devices =======");
 			while (it.hasNext())
 				System.out.println(((CaptureDeviceInfo)it.next()).getDeviceID());
 			int deviceIndex = ((IntToken)deviceNumber.getToken()).intValue();
-			_stream = (QTCaptureStream)_system.openCaptureDeviceStream(
+			_stream = _system.openCaptureDeviceStream(
 					((CaptureDeviceInfo)devices.get(deviceIndex)).getDeviceID());
 			_stream.setObserver(this);
 
