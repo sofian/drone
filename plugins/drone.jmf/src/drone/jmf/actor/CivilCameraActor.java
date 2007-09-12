@@ -89,6 +89,9 @@ import ptolemy.kernel.util.StringAttribute;
 
 import javax.media.Buffer;
 ////VideoCamera
+import javax.media.format.VideoFormat;
+
+import net.sf.fmj.media.protocol.civil.DataSource;
 
 /**
  An actor that produces a sequence of frames from a video camera.
@@ -172,7 +175,7 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	public void fire() throws IllegalActionException {
 		super.fire();
 		if (_bufferNew != null) {
-			output.send(0, new BufferedImageToken(_bufferNew));
+			output.send(0, new JMFImageToken(_bufferNew));
 		}
 	}
 
@@ -199,7 +202,9 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 			_stream.start();
 			System.out.println("Called start on stream");
 
-			_playerOpen = true;
+			synchronized (_waitSync) {
+				_playerOpen = true;
+			}
 
 			System.out.println("Player started");
 		} catch (CaptureException e) {
@@ -213,8 +218,8 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		if (_stream != null) {
 			try {
 				_stream.stop();
-			_stream.dispose();
-			_system.dispose();
+				_stream.dispose();
+				_system.dispose();
 			} catch (CaptureException e) {
 				throw new IllegalActionException(this, e, "Problem during wrapup.");
 			}
@@ -250,7 +255,7 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	////                         private variables                 ////
 
 	/** The java.awt.Image that we are producing/ */
-	private BufferedImage _bufferNew;
+	private Buffer _bufferNew;
 
 	// Boolean that keeps track of whether the player is open or not.
 	private boolean _playerOpen = false;
@@ -266,30 +271,18 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	}
 
 	public void onNewImage(CaptureStream stream, Image image) {
-		int size = image.getHeight() * image.getWidth();
-		int bytesPerPixel = (image.getFormat() == Image.RGB24 ? 3 : 4);
-		if (_bufferNew == null || 
-				_bufferNew.getWidth() != image.getWidth() || 
-				_bufferNew.getHeight() != image.getHeight()) {
-			_bufferNew = new BufferedImage(image.getWidth(), image.getHeight(),
-							image.getFormat() == Image.RGB24 ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB);
-		}
-		if (image.getFormat() == Image.RGB24)
-			System.out.println("RGB24");
-		else
-			System.out.println("RGB32");
-		byte[] data = image.getBytes();
-		int k = 0;
-		for (int i=0; i<_bufferNew.getHeight(); i++)
-			for (int j=0; j<_bufferNew.getWidth(); j++)
-			{
-				int pixel = data[k++];
-				pixel |= (int)(data[k++] << 8);
-				pixel |= (int)(data[k++] << 16);
-				if (image.getFormat() == Image.RGB32)
-					pixel |= (int)(data[k++] << 24);
-				_bufferNew.setRGB(j, i, pixel);
+		VideoFormat format = DataSource.convertCivilFormat(image.getFormat(), image.getWidth(), image.getHeight());
+		synchronized (_waitSync) {
+			if (_playerOpen) {
+				if (_bufferNew == null)
+					_bufferNew = new Buffer();
+				_bufferNew.setData(image.getBytes());
+				_bufferNew.setOffset(0);
+				_bufferNew.setTimeStamp(System.currentTimeMillis() * 1000000);
+				_bufferNew.setLength(image.getBytes().length);
+				_bufferNew.setFormat(format);
 			}
+		}
 	}
 
 }
