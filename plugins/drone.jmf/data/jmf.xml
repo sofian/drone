@@ -48,6 +48,9 @@
 	      </property>
 	      </property>   -->
 	</entity>
+	
+	<entity name="CivilCameraActor" class="drone.jmf.actor.CivilCameraActor" />
+	
 
 	<entity name="VideoPlayer" class="drone.jmf.actor.VideoPlayer">
 	</entity>
