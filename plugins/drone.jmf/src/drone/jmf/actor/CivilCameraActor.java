@@ -128,8 +128,6 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		// In case there is audio track.
 		// Don't derive from source in this case.
 		output.setTypeEquals(BaseType.OBJECT);
-		
-		_bufferNew = new Buffer();
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -177,9 +175,9 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	 */
 	public void fire() throws IllegalActionException {
 		super.fire();
-		if (_bufferNew != null) {
-			output.send(0, new JMFImageToken(_bufferNew));
-		}
+		Buffer buffer = _imageToBuffer(_imageNew);
+		if (buffer != null)
+			output.send(0, new JMFImageToken(buffer));
 	}
 
 	/** Open the file at the URL, and set the width of the output.
@@ -258,8 +256,8 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	////                         private variables                 ////
 
 	/** The java.awt.Image that we are producing/ */
-	private Buffer _bufferNew;
-
+	private Image _imageNew;
+	
 	// Boolean that keeps track of whether the player is open or not.
 	private boolean _playerOpen = false;
 
@@ -273,17 +271,27 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		throw new Error("Error caught with stream: " + e.getMessage());
 	}
 
-	public void onNewImage(CaptureStream stream, Image image) {
+	private Buffer _imageToBuffer(Image image) {
+		if (image == null)
+			return null;
+		
+		Buffer buffer = new Buffer();
+		
 		VideoFormat format = DataSource.convertCivilFormat(image.getFormat(), image.getWidth(), image.getHeight());
 		synchronized (_waitSync) {
 			if (_playerOpen) {
-				_bufferNew.setData(image.getBytes());
-				_bufferNew.setOffset(0);
-				_bufferNew.setTimeStamp(System.currentTimeMillis() * 1000000);
-				_bufferNew.setLength(image.getBytes().length);
-				_bufferNew.setFormat(format);
+				buffer.setData(image.getBytes());
+				buffer.setOffset(0);
+				buffer.setTimeStamp(System.currentTimeMillis() * 1000000);
+				buffer.setLength(image.getBytes().length);
+				buffer.setFormat(format);
 			}
 		}
+		return buffer;
+	}
+	
+	public void onNewImage(CaptureStream stream, Image image) {
+		_imageNew = image;
 	}
 
 }
