@@ -128,6 +128,8 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		// In case there is audio track.
 		// Don't derive from source in this case.
 		output.setTypeEquals(BaseType.OBJECT);
+		
+		_bufferNew = new Buffer();
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -275,8 +277,6 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		VideoFormat format = DataSource.convertCivilFormat(image.getFormat(), image.getWidth(), image.getHeight());
 		synchronized (_waitSync) {
 			if (_playerOpen) {
-				if (_bufferNew == null)
-					_bufferNew = new Buffer();
 				_bufferNew.setData(image.getBytes());
 				_bufferNew.setOffset(0);
 				_bufferNew.setTimeStamp(System.currentTimeMillis() * 1000000);
