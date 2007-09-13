@@ -18,6 +18,8 @@
  */
 package drone.jogl.actor;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -38,6 +40,7 @@ import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
 import drone.jogl.data.TextureToken;
+import drone.jogl.demo.ScreenResSelector;
 import drone.jogl.util.JOGLUtils;
 
 import ptolemy.actor.lib.Sink;
@@ -93,7 +96,14 @@ public class ImageDisplay extends Sink implements GLEventListener {
 		
 		fullscreen = new Parameter(this, "fullscreen");
 		fullscreen.setTypeEquals(BaseType.BOOLEAN);
-		fullscreen.setExpression("true");
+		fullscreen.setExpression("false");
+		
+		doubleBuffered = new Parameter(this, "doubleBuffered");
+		doubleBuffered.setTypeEquals(BaseType.BOOLEAN);
+		doubleBuffered.setExpression("true");
+
+		_displayOnTexture = true;
+		_fullscreen = false;
 		
 		_frame = null;
 	}
@@ -132,7 +142,16 @@ public class ImageDisplay extends Sink implements GLEventListener {
             throws IllegalActionException {
     	if (attribute == displayOnTexture) {
     		_displayOnTexture = ((BooleanToken)displayOnTexture.getToken()).booleanValue();
-    	}
+    	} else if (attribute == fullscreen) {
+    		_fullscreen = ((BooleanToken)fullscreen.getToken()).booleanValue();
+    		if (_fullscreen) {
+				if (!GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported())
+					throw new IllegalActionException(this, "Fullscreen not supported on default screen device.");
+    		}
+    	} else if (attribute == doubleBuffered) {
+    		_doubleBuffered = ((BooleanToken)doubleBuffered.getToken()).booleanValue();
+    	} else
+    		super.attributeChanged(attribute);
     }
 
     /** Initialize this actor.
@@ -183,25 +202,34 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	
 	synchronized public void init(GLAutoDrawable drawable) {
 	    GL gl = drawable.getGL();
-	    gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	    gl.glShadeModel(GL.GL_FLAT);
-	    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+	    if (_displayOnTexture) {
+	        gl.glClearColor(0, 0, 0, 0);
+	        gl.glEnable(GL.GL_DEPTH_TEST);
+	    } else {
+		    gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		    gl.glShadeModel(GL.GL_FLAT);
+		    gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+	    }
 	}
 	
 	public void display(GLAutoDrawable drawable) {
 	    GL gl = drawable.getGL();
 	    if (_displayOnTexture) {
 	    	if (_textureData != null) {
-	    		if (_texture == null)
-	    			_texture = TextureIO.newTexture(_textureData);
-	    		else
-	    			_texture.updateImage(_textureData);
+//	    		if (_texture == null)
+//	    			_texture = TextureIO.newTexture(_textureData);
+//	    		else
+//	    			_texture.updateImage(_textureData);
+    			_texture = TextureIO.newTexture(_textureData);
 	    		JOGLUtils.drawSquareTexture(gl, _texture);
+	    		if (_doubleBuffered)
+	    			drawable.swapBuffers();
 	    	}
 	    } else {
 	    	JOGLUtils.drawPixelsFromBuffer(gl, _imageBuffer, _imageWidth, _imageHeight);
+	    	if (_doubleBuffered)
+	    		drawable.swapBuffers();
 	    }
-	    drawable.swapBuffers();
 	}
 	
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -221,6 +249,9 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	 *  @param in The token to display
 	 */
 	protected void _display(Token in) {
+		if (_canvas == null)
+			return;
+		
 	    if (_displayOnTexture) {
 	    	
 	    	if (in instanceof ImageToken) {
@@ -274,11 +305,14 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	}
 	
 	private void _resizeCanvas(int newWidth, int newHeight) {
-		if (_imageWidth != newWidth || _imageHeight != newHeight) {
+		if (_canvas != null && _frame != null &&
+				(_imageWidth != newWidth || _imageHeight != newHeight)) {
 			_imageWidth = newWidth;
 			_imageHeight = newHeight;
-			_canvas.setSize(_imageWidth, _imageHeight);
-			_frame.pack();
+			if (!_fullscreen) {
+				_canvas.setSize(_imageWidth, _imageHeight);
+				_frame.pack();
+			}
 		}
 	}
 	
@@ -294,34 +328,40 @@ public class ImageDisplay extends Sink implements GLEventListener {
 			try {
 				_frame = new JFrame();
 				
-				_frame.setVisible(true);
-				
-				if (((BooleanToken)fullscreen.getToken()).booleanValue()) {
+				GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice(); 
+				if (_fullscreen) {
+					_frame.setVisible(false);
 					_frame.setUndecorated(true);
-					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(_frame);
+					
+					gd.setFullScreenWindow(_frame);
+					DisplayMode mode = gd.getDisplayMode();
+					System.out.println("Fullscreen enabled at " + mode.getWidth() + "x" + mode.getHeight());
+					_frame.setSize(mode.getWidth(), mode.getHeight());
+				} else {
+					_frame.setVisible(true);
 				}
 			} catch (Exception ex) {
 				throw new InternalErrorException(ex);
-			}
-		} else {
-			if (_frame != null) {
-				// Do not use show() as it overrides manual placement.
-				_frame.toFront();
 			}
 		}
 		
 	    /*
 	     * display mode (single buffer and RGBA)
 	     */
-	    GLCapabilities caps = new GLCapabilities();
-	    caps.setDoubleBuffered(false);
-		_canvas = new GLCanvas(caps);
+		// Single buffer mode
+		if (_doubleBuffered) {
+			GLCapabilities caps = new GLCapabilities();
+			caps.setDoubleBuffered(true);
+			_canvas = new GLCanvas(caps);
+		} else
+			_canvas = new GLCanvas();
 	    _canvas.addGLEventListener(this);
 	    _canvas.setVisible(true);
 	    
 		if (_frame != null) {
-			_frame.add(_canvas);
-		    _frame.setSize(300, 300);
+			_frame.getContentPane().add(_canvas);
+			if (!_fullscreen)
+			    _frame.setSize(300, 300);
 			_frame.setVisible(true);
 			_frame.toFront();
 		}
@@ -335,9 +375,11 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	
 	public Parameter displayOnTexture;
 	public Parameter fullscreen;
+	public Parameter doubleBuffered;
 	
 	private boolean _displayOnTexture;
 	
+	private boolean _doubleBuffered;
 	/** The frame, if one is used. */
 	protected JFrame _frame;
 	
@@ -354,4 +396,5 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	
 	private GLU _glu;
 	
+	private boolean _fullscreen;
 }

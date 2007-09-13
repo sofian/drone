@@ -145,7 +145,9 @@ public class JOGLUtils {
     }
     
     public static void drawSquareTexture(GL gl, Texture texture) {
-		gl.glClearDepth( 1.0 );
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+//		gl.glClearDepth( 1.0 );
 //		gl.glClear(GL.GL_COLOR_BUFFER_BIT /*| GL.GL_DEPTH_BUFFER_BIT*/ ); // clear the screen
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
@@ -173,7 +175,7 @@ public class JOGLUtils {
 			texture.disable();
 		}
 		
-		gl.glDisable(GL.GL_LIGHTING);
-		gl.glDisable(GL.GL_DEPTH_TEST);				
+//		gl.glDisable(GL.GL_LIGHTING);
+//		gl.glDisable(GL.GL_DEPTH_TEST);				
     }
 }
