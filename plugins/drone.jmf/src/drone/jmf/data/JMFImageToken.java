@@ -61,8 +61,14 @@ public class JMFImageToken extends ImageToken {
      *  video format of the Buffer changes.
      */
     public Image asAWTImage() {
+    	if (_value == null)
+    		return null;
+    	
         if ((_bufferToImage == null) || (_videoFormat != _value.getFormat())) {
             _videoFormat = (VideoFormat) _value.getFormat();
+            if (_videoFormat == null)
+            	return null;
+            
             _bufferToImage = new BufferToImage(_videoFormat);
         }
 
