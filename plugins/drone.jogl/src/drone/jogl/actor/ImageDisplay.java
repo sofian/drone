@@ -216,11 +216,10 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	    GL gl = drawable.getGL();
 	    if (_displayOnTexture) {
 	    	if (_textureData != null) {
-//	    		if (_texture == null)
-//	    			_texture = TextureIO.newTexture(_textureData);
-//	    		else
-//	    			_texture.updateImage(_textureData);
-    			_texture = TextureIO.newTexture(_textureData);
+	    		if (_texture == null)
+	    			_texture = TextureIO.newTexture(_textureData);
+	    		else
+	    			_texture.updateImage(_textureData);
 	    		JOGLUtils.drawSquareTexture(gl, _texture);
 	    		if (_doubleBuffered)
 	    			drawable.swapBuffers();
