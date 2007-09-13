@@ -11,7 +11,7 @@
 	
 	<property name="make" value="make" />
 
-	<target name="main">
+	<target name="main" depends="jogl">
 		<echo>
 			Building ${long.name} plugin.
 		</echo>
@@ -20,6 +20,18 @@
 		<jar destfile="${dist.dir}/${project.name}-src.jar" basedir="${src.dir}"/>
 	</target>
 	
+	<target name="jogl">
+		<echo>
+			Copying JOGL files.
+		</echo>
+		<copy todir="${lib.dir}">
+			<fileset dir="contrib/jogl/" includes="*.jar" />
+		</copy>
+		<copy todir="${native.dir}">
+			<fileset dir="contrib/jogl/native/${os.shortname}" includes="*.*" />
+		</copy>
+	</target>
+
 	<target name="clean">
 		<echo>
 			Cleaning ${long.name} plugin.

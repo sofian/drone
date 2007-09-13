@@ -40,7 +40,6 @@ import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
 import drone.jogl.data.TextureToken;
-import drone.jogl.demo.ScreenResSelector;
 import drone.jogl.util.JOGLUtils;
 
 import ptolemy.actor.lib.Sink;
