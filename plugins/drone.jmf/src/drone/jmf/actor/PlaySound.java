@@ -23,7 +23,9 @@
 package drone.jmf.actor;
 
 import java.io.IOException;
+import java.net.URL;
 
+import javax.media.CannotRealizeException;
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
@@ -31,8 +33,14 @@ import javax.media.EndOfMediaEvent;
 import javax.media.GainControl;
 import javax.media.Manager;
 import javax.media.MediaException;
+import javax.media.MediaLocator;
+import javax.media.NoPlayerException;
 import javax.media.Player;
+import javax.media.RealizeCompleteEvent;
 import javax.media.Time;
+import javax.media.TimeBase;
+
+import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
@@ -48,8 +56,8 @@ import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-//////////////////////////////////////////////////////////////////////////
-//// PlaySound
+
+////PlaySound
 
 /**
  This actor plays audio from a file or URL when it fires.
@@ -66,222 +74,281 @@ import ptolemy.kernel.util.NameDuplicationException;
  @Pt.AcceptedRating Red (cxh)
  */
 public class PlaySound extends TypedAtomicActor implements ControllerListener {
-    /** Construct an actor with the given container and name.
-     *  @param container The container.
-     *  @param name The name of this actor.
-     *  @exception IllegalActionException If the actor cannot be contained
-     *   by the proposed container.
-     *  @exception NameDuplicationException If the container already has an
-     *   actor with this name.
-     */
-    public PlaySound(CompositeEntity container, String name)
-            throws IllegalActionException, NameDuplicationException {
-        super(container, name);
+	/** Construct an actor with the given container and name.
+	 *  @param container The container.
+	 *  @param name The name of this actor.
+	 *  @exception IllegalActionException If the actor cannot be contained
+	 *   by the proposed container.
+	 *  @exception NameDuplicationException If the container already has an
+	 *   actor with this name.
+	 */
+	public PlaySound(CompositeEntity container, String name)
+	throws IllegalActionException, NameDuplicationException {
+		super(container, name);
 
-        fileNameOrURL = new FileParameter(this, "fileNameOrURL");
+		onOff = new TypedIOPort(this, "onOff", true, false);
+		onOff.setTypeEquals(BaseType.BOOLEAN);
 
-        synchronizedPlay = new Parameter(this, "synchronizedPlay");
-        synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
-        synchronizedPlay.setToken(BooleanToken.TRUE);
+		gain = new TypedIOPort(this, "gain", true, false);
+		gain.setTypeEquals(BaseType.DOUBLE);
 
-        onOff = new TypedIOPort(this, "onOff", true, false);
-        onOff.setTypeEquals(BaseType.BOOLEAN);
+		fileNameOrURL = new FileParameter(this, "fileNameOrURL");
 
-        percentGain = new IntRangeParameter(this, "percentGain");
+		synchronizedPlay = new Parameter(this, "synchronizedPlay");
+		synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
+		synchronizedPlay.setToken(BooleanToken.TRUE);
 
-        // Set the default value to full scale.
-        percentGain.setToken(new IntToken(100));
-        
-        period = new Parameter(this, "period");
-        period.setTypeEquals(BaseType.DOUBLE);
-        period.setExpression("1.0");
-        
-        phase = new Parameter(this, "phase");
-        phase.setTypeEquals(BaseType.DOUBLE);
-        phase.setExpression("0.0");
-    }
+		loop = new Parameter(this, "loop");
+		loop.setTypeEquals(BaseType.BOOLEAN);
+		loop.setToken(BooleanToken.TRUE);
+		
+		defaultPercentGain = new IntRangeParameter(this, "percentGain");
+		defaultPercentGain.setToken(new IntToken(100)); // Set the default value to full scale.
+	}
 
-    ///////////////////////////////////////////////////////////////////
-    ////                     parameters and ports                  ////
+	///////////////////////////////////////////////////////////////////
+	////                     parameters and ports                  ////
 
-    /** The file name or URL to read. */
-    public FileParameter fileNameOrURL;
+	/** The file name or URL to read. */
+	public FileParameter fileNameOrURL;
 
-    /** The input port, which has type boolean.  A true input
-     *  causes the sound to be played, and false input causes it
-     *  to be stopped.
-     */
-    public TypedIOPort onOff;
+	/** The input port, which has type boolean.  A true input
+	 *  causes the sound to be played, and false input causes it
+	 *  to be stopped.
+	 */
+	public TypedIOPort onOff;
 
-    /** The gain (in percent).  This has as its value a record of the form
-     *  {min = m, max = M, current = c}, where min <= c <= max.
-     */
-    public IntRangeParameter percentGain;
+	public TypedIOPort gain;
 
-    /** Indicator to play to the end before returning from fire().
-     *  This is a boolean, and defaults to true.
-     */
-    public Parameter synchronizedPlay;
+	/** The gain (in percent).  This has as its value a record of the form
+	 *  {min = m, max = M, current = c}, where min <= c <= max.
+	 */
+	public IntRangeParameter defaultPercentGain;
 
-    public Parameter period;
-    
-    public Parameter phase;
+	/** Indicator to play to the end before returning from fire().
+	 *  This is a boolean, and defaults to true.
+	 */
+	public Parameter synchronizedPlay;
 
-    ///////////////////////////////////////////////////////////////////
-    ////                         public methods                    ////
+	public Parameter loop;
+	
+	///////////////////////////////////////////////////////////////////
+	////                         public methods                    ////
 
-    public void initialize() throws IllegalActionException {
-    	_lastTime = -1.0;
-    	super.initialize();
-    }
-    
-    /** If the attribute is <i>fileNameOrURL</i>, then create a new
-     *  player.
-     *  @param attribute The attribute that changed.
-     *  @exception IllegalActionException If the file cannot be opened
-     *   or if the base class throws it.
-     */
-    public void attributeChanged(Attribute attribute)
-            throws IllegalActionException {
-        if (attribute == fileNameOrURL) {
-            try {
-                if ((fileNameOrURL != null) && (fileNameOrURL.asURL() != null)) {
-                    if (_player != null) {
-                        _player.removeControllerListener(this);
-                    }
+	public void initialize() throws IllegalActionException {
+		_isOn = true;
+		super.initialize();
+	}
 
-                    _player = Manager.createRealizedPlayer(fileNameOrURL
-                            .asURL());
-                    _player.addControllerListener(this);
+	/** If the attribute is <i>fileNameOrURL</i>, then create a new
+	 *  player.
+	 *  @param attribute The attribute that changed.
+	 *  @exception IllegalActionException If the file cannot be opened
+	 *   or if the base class throws it.
+	 */
+	public void attributeChanged(Attribute attribute) throws IllegalActionException {
+		if (attribute == fileNameOrURL) {
+			try {
+				if ((fileNameOrURL != null) && (fileNameOrURL.asURL() != null)) {
 
-                    // Initiate as much preprocessing as possible.
-                    _player.prefetch();
-                    _gainControl = _player.getGainControl();
+					_createNewPlayer(fileNameOrURL.asURL());
+					_gainControl = null;
+				}
+			} catch (IOException ex) {
+				throw new IllegalActionException(this, ex,
+						"Cannot open file/url: " + fileNameOrURL.asURL().toString());
+			} catch (MediaException ex) {
+				throw new IllegalActionException(this, ex,
+				"Exception thrown by media framework");
+			}
+		} else if (attribute == synchronizedPlay) {
+			_synchronizedPlay = ((BooleanToken) synchronizedPlay.getToken()).booleanValue();
+			// Call this whether we have synchronized play or not, since
+			// we may now have synchronized play but not have had it before.
+			// TODO: check if it has changed and don't call _stopPlayer() unless necessary.
+			_stopPlayer();
+		} else if (attribute == loop) {
+			_isLooping = ((BooleanToken) loop.getToken()).booleanValue();
+		} else {
+			super.attributeChanged(attribute);
+		}
+	}
 
-                    if (percentGain != null) {
-                        _gainControl.setLevel(0.01f * percentGain
-                                .getCurrentValue());
-                    }
-                }
-            } catch (IOException ex) {
-                throw new IllegalActionException(this, "Cannot open file: "
-                        + ex.toString());
-            } catch (MediaException ex) {
-                throw new IllegalActionException(this, ex,
-                        "Exception thrown by media framework");
-            }
-        } else if ((attribute == percentGain) && (_gainControl != null)) {
-            _gainControl.setLevel(0.01f * percentGain.getCurrentValue());
-        } else if (attribute == synchronizedPlay) {
-        	_synchronizedPlay = 
-        		((BooleanToken) synchronizedPlay.getToken()).booleanValue();
-            // Call this whether we have synchronized play or not, since
-            // we may now have synchronized play but not have had it before.
-        	if (_player != null)
-                _player.stop();
-        } else {
-            super.attributeChanged(attribute);
-        }
-    }
+	/** Play the audio file. This needs to be called only once every time.
+	 *  @exception IllegalActionException If there's no director.
+	 */
+	public boolean postfire() throws IllegalActionException {
 
-    /** React to notification of a change in controller status.
-     *  event The event.
-     */
-    public synchronized void controllerUpdate(ControllerEvent event) {
-        if (event instanceof EndOfMediaEvent) {
-            // Specify that play should start at the beginning of the audio.
-            _playSound = false;
-            _player.setMediaTime(_startTime);
-            _player.stop();
-        }
-        notifyAll();
-    }
+		// Change on/off if specified in input.
+		if (onOff.getWidth() > 0 && onOff.hasToken(0)) {
+			_isOn = ((BooleanToken)onOff.get(0)).booleanValue();
+		}
+		
+		// Set gain.
+		if (gain.getWidth() > 0 && gain.hasToken(0)) {
+			float gainLevel = (float) ((DoubleToken)gain.get(0)).doubleValue();
+			if (_gainControl != null)
+				_gainControl.setLevel(gainLevel);
+		}
 
-    /** Play the audio file.
-     *  @exception IllegalActionException If there's no director.
-     */
-    public void fire() throws IllegalActionException {
-        super.fire();
+		// If there is no player, then no sound file has been specified: just return.
+		if (_player == null) {
+			return true;
+		}
 
-        // Consume the inputs.
-        // Default if there is no input is to play the sound.
-        _playSound = true; // big motherfucking hack
+		if (!_isOn) {
+//			if (_player.getState() == Controller.Started)
+				_stopPlayer();
+		} else {
+//			if (_player.getState() != Controller.Started)
+				_startPlayer();
 
-//        if ((onOff.getWidth() > 0) && onOff.hasToken(0)) {
-//        	System.out.println("New input token.");
-//            _playSound = ((BooleanToken) onOff.get(0)).booleanValue();
-//            System.out.println("playsound = " + _playSound);
-//        }
-        
-        boolean canPlay = false;
-        double currentTime = getDirector().getModelTime().getDoubleValue();
-        
-        if ((_lastTime < 0.0 && currentTime >= ((DoubleToken)phase.getToken()).doubleValue()) ||
-        	(_lastTime >= 0.0 && currentTime - _lastTime > ((DoubleToken)period.getToken()).doubleValue())) {
-        		canPlay = true;
-        		_lastTime = currentTime;
-        	}
+			// If synchronizedPlay is true, then wait for the play to complete.
+			if (_synchronizedPlay) {
+				synchronized (this) {
+					while ((_player.getState() == Controller.Started)
+							&& !_stopRequested) {
+						try {
+							wait();
+						} catch (InterruptedException ex) {
+							System.out.println("interrupted");
+							break;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
-        // If there is no player, then no sound file has been specified: just return.
-        if (_player == null) {
-            return;
-        }
-        
-        if (_playSound && canPlay && _player.getState() != Controller.Started) {
-        	_player.stop();
-        	_playSound = false;
-            _player.setMediaTime(_startTime);
-            _player.start();
+	/** Override the base class to stop the currently playing audio.
+	 */
+	public void stopFire() {
+		super.stopFire();
+	}
 
-            // If synchronizedPlay is true, then wait for the play to complete.
-            if (_synchronizedPlay) {
-                synchronized (this) {
-                    while ((_player.getState() == Controller.Started)
-                            && !_stopRequested) {
-                        try {
-                            wait();
-                        } catch (InterruptedException ex) {
-                        	System.out.println("interrupted");
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+	/** 
+	 * Close the media processor and deallocate all resources.
+	 */
+	public void wrapup() {
+		_stopPlayer();
+		_closePlayer();
+		_deallocatePlayer();
+	}
 
-    /** Override the base class to stop the currently playing audio.
-     */
-    public void stopFire() {
-        super.stopFire();
-    }
+	/** React to notification of a change in controller status.
+	 *  event The event.
+	 */
+	public synchronized void controllerUpdate(ControllerEvent event) {
+		if (event instanceof EndOfMediaEvent) {
+			// Specify that play should start at the beginning of the audio.
+			if (_player != null) {
+				_player.setMediaTime(_startTime); // restart
+				
+				// Stop if not looping.
+				if (!_isLooping) {
+					_stopPlayer();
+					_isOn = false;
+				}
+			}
+		} else if (event instanceof RealizeCompleteEvent) {
+			_gainControl = _player.getGainControl();
+			try {
+				_gainControl.setLevel(0.01f * defaultPercentGain.getCurrentValue());
+			} catch (IllegalActionException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Event received: " + event.getClass().getName());
+		notifyAll();
+	}
 
-    public void finalize() {
-    	if (_player != null)
-    		_player.stop();
-    }
-    
-    /** Close the media processor.
-     */
-    public void wrapup() {
-    }
+	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException {
+		System.out.println("Create new player");
+		
+		// Set media location.
+		MediaLocator source = new MediaLocator(url);
+		if (_player != null) {
+			_player.removeControllerListener(this);
+			_player.stop();
+			_player.close();
+			_player.deallocate();
+		}
+		
+		// Create the player.
+		_player = javax.media.Manager.createPlayer(source);
 
-    ///////////////////////////////////////////////////////////////////
-    ////                         private variables                 ////
+		// Initialize.
+		_player.addControllerListener(this);
+		_player.realize();
+		_player.prefetch();
+	}
 
-    
-    /** The gain control associated with the player. */
-    private GainControl _gainControl;
+	/** 
+	 * Stops the player.
+	 */
+	protected void _stopPlayer() {
+		if (_player != null)
+			_player.stop();
+	}
 
-    /** The player. */
-    private Player _player;
+	/** 
+	 * Starts the player.
+	 */
+	protected void _startPlayer() {
+		if (_player != null) {
+			_player.start();
 
-    private boolean _synchronizedPlay = false;
-    
-    /** Start time for an audio clip. */
-    private static Time _startTime = new Time(0.0);
-    
-    private double _lastTime;
-    
-    boolean _playSound = false;
+			// copied from EJMF StandardStartControl
+//			final int state = _player.getState();
+//
+//			if (state == Controller.Started) 
+//			return;
+//
+//			while (state < Controller.Prefetched) {
+//			StateWaiter w = new StateWaiter(_player);
+//			w.blockingPrefetch();
+//			}
+//
+//			final TimeBase tb = _player.getTimeBase();
+//			_player.syncStart(tb.getTime());
+		}
+	}
+
+	/**
+	 * Deallocate resources and close the player.
+	 */
+	protected void _closePlayer() {
+		if (_player != null)
+			_player.close();
+	}
+
+	/**
+	 * Deallocate all resources used by the player.
+	 */
+	protected void _deallocatePlayer() {
+		if (_player != null) {
+			_player.deallocate();
+			_player = null;
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////
+	////                         private variables                 ////
+
+
+	/** The gain control associated with the player. */
+	private GainControl _gainControl = null;
+
+	/** The player. */
+	private Player _player = null;
+
+	private boolean _synchronizedPlay = false;
+
+	/** Start time for an audio clip. */
+	private static Time _startTime = new Time(0.0);
+
+	boolean _isOn = true;
+	
+	boolean _isLooping = true;
 }

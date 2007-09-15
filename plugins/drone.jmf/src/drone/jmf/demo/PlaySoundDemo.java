@@ -17,7 +17,7 @@ import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
 import net.sf.fmj.ui.application.CaptureDeviceBrowser;
 import net.sf.fmj.ui.application.ContainerPlayerStatusListener;
 
-public class AudioPlayerDemo implements ControllerListener {
+public class PlaySoundDemo implements ControllerListener {
 	
 	private Player player;
 	
@@ -26,7 +26,7 @@ public class AudioPlayerDemo implements ControllerListener {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		AudioPlayerDemo demo = new AudioPlayerDemo();
+		PlaySoundDemo demo = new PlaySoundDemo();
 		demo.setMediaLocation(args[0]);
 		demo.start();
 	}
@@ -43,6 +43,22 @@ public class AudioPlayerDemo implements ControllerListener {
 	private void createNewPlayer(MediaLocator source) throws NoPlayerException, IOException {
 		player = javax.media.Manager.createPlayer(source);
 		player.realize();
+
+		// copied from EJMF StandardStartControl
+	    final int state = player.getState();
+
+	    if (state == Controller.Started) 
+	    	return;
+
+	    if (state < Controller.Prefetched) {
+			StateWaiter w = new StateWaiter(player);
+			w.blockingPrefetch();
+	    }
+
+	    final TimeBase tb = player.getTimeBase();
+	    player.syncStart(tb.getTime());
+	    
+	    player.getGainControl();
 	}
 	
 	/**
