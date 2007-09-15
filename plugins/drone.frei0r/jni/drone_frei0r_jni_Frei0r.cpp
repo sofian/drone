@@ -8,7 +8,7 @@
 //! Clamp x at lower = l and upper = u.
 #define CLAMP(x,l,u) ( x < l ? l : ( x > u ? u : x ) )
 
-#define __DEBUG
+//#define __DEBUG
 
 const char* FREI0R_EXCEPTION_MESSAGE_UNINITIALIZED_HANDLE = 
 	"Trying to call a function with an uninitialized handle, please call _openLibrary(String).";
