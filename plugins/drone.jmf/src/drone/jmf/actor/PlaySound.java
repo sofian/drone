@@ -137,6 +137,16 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
 	public void initialize() throws IllegalActionException {
 		_isOn = true;
+		try {
+			_createNewPlayer(_audioFileURL);
+			_gainControl = null;
+		} catch (IOException ex) {
+			throw new IllegalActionException(this, ex,
+					"Cannot open file/url: " + fileNameOrURL.asURL().toString());
+		} catch (MediaException ex) {
+			throw new IllegalActionException(this, ex,
+					"Exception thrown by media framework");
+		}		
 		super.initialize();
 	}
 
@@ -148,25 +158,16 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	 */
 	public void attributeChanged(Attribute attribute) throws IllegalActionException {
 		if (attribute == fileNameOrURL) {
-			try {
-				if ((fileNameOrURL != null) && (fileNameOrURL.asURL() != null)) {
-
-					_createNewPlayer(fileNameOrURL.asURL());
-					_gainControl = null;
-				}
-			} catch (IOException ex) {
-				throw new IllegalActionException(this, ex,
-						"Cannot open file/url: " + fileNameOrURL.asURL().toString());
-			} catch (MediaException ex) {
-				throw new IllegalActionException(this, ex,
-				"Exception thrown by media framework");
+			if ((fileNameOrURL != null) && (fileNameOrURL.asURL() != null)) {
+				_audioFileURL = fileNameOrURL.asURL();
 			}
 		} else if (attribute == synchronizedPlay) {
-			_synchronizedPlay = ((BooleanToken) synchronizedPlay.getToken()).booleanValue();
+			boolean newSynchronizedPlay = ((BooleanToken) synchronizedPlay.getToken()).booleanValue();
 			// Call this whether we have synchronized play or not, since
 			// we may now have synchronized play but not have had it before.
-			// TODO: check if it has changed and don't call _stopPlayer() unless necessary.
-			_stopPlayer();
+			if (_synchronizedPlay != newSynchronizedPlay)
+				_stopPlayer();
+			_synchronizedPlay = newSynchronizedPlay;
 		} else if (attribute == loop) {
 			_isLooping = ((BooleanToken) loop.getToken()).booleanValue();
 		} else {
@@ -197,10 +198,10 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		}
 
 		if (!_isOn) {
-//			if (_player.getState() == Controller.Started)
+			if (_player.getState() == Controller.Started)
 				_stopPlayer();
 		} else {
-//			if (_player.getState() != Controller.Started)
+			if (_player.getState() != Controller.Started)
 				_startPlayer();
 
 			// If synchronizedPlay is true, then wait for the play to complete.
@@ -348,7 +349,9 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	/** Start time for an audio clip. */
 	private static Time _startTime = new Time(0.0);
 
-	boolean _isOn = true;
+	private boolean _isOn = true;
 	
-	boolean _isLooping = true;
+	private boolean _isLooping = true;
+	
+	private URL _audioFileURL = null;
 }
