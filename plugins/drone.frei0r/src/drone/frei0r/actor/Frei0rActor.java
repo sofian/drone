@@ -32,6 +32,7 @@ import ptolemy.data.StringToken;
 import ptolemy.data.Token;
 import ptolemy.data.expr.FileParameter;
 import ptolemy.data.expr.Parameter;
+import ptolemy.data.expr.StringParameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.Attribute;
@@ -53,6 +54,7 @@ import java.util.Vector;
 import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
 import drone.util.ImageConvert;
+import drone.util.OSUtils;
 
 
 
@@ -89,7 +91,7 @@ public class Frei0rActor extends TypedAtomicActor {
 	throws NameDuplicationException, IllegalActionException {
 		super(container, name);
 
-		frei0rLibraryName = new FileParameter(this, "frei0rLibraryName");
+		frei0rLibraryName = new StringParameter(this, "frei0rLibraryName");
 		frei0rLibraryName.setVisibility(Settable.NOT_EDITABLE);
 
 		input1 = new TypedIOPort(this, "input1", true, false);
@@ -128,13 +130,23 @@ public class Frei0rActor extends TypedAtomicActor {
 
 		if (attribute == frei0rLibraryName) {
 			try {
-				if (_frei0r == null || _currentLibraryName != frei0rLibraryName.asURL()) {
+				String newLibraryName = ((StringToken)frei0rLibraryName.getToken()).stringValue();
+				if (_frei0r == null || !_currentLibraryName.equals(newLibraryName)) {
 
+					String newLibraryFileName = newLibraryName + "." + OSUtils.getNativeLibraryExtension();
+					String frei0rDirName = "frei0r-" + Frei0r.FREI0R_MAJOR_VERSION;
+					_createFrei0r("/usr/lib/" + frei0rDirName + "/" + newLibraryFileName);
+					_createFrei0r("/usr/local/lib/" + frei0rDirName + "/" + newLibraryFileName);
+					_createFrei0r("$HOME/." + frei0rDirName + "/" + newLibraryFileName);
+					_createFrei0r(newLibraryName); // try the old method, with complete path specified
+					if (_frei0r == null)
+						throw new IllegalActionException(this, "Specified frei0r library '" + newLibraryName + 
+								"' could not be found or loaded");
+					
 					// This ensures that we don't reload for nothing
-					_currentLibraryName = frei0rLibraryName.asURL();
+					_currentLibraryName = newLibraryName;
 					
 					// Create bridge.
-					_frei0r = new Frei0r(frei0rLibraryName.asURL().getFile());
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
 															 ((IntToken)defaultHeight.getToken()).intValue());
 
@@ -256,7 +268,7 @@ public class Frei0rActor extends TypedAtomicActor {
 	 * The frei0r dynamic library(.so, .jnilib, .dll) that the actor will
 	 * expose.
 	 */
-	public FileParameter frei0rLibraryName;
+	public StringParameter frei0rLibraryName;
 
 	// /////////////////////////////////////////////////////////////////
 	// // public methods ////
@@ -427,10 +439,19 @@ public class Frei0rActor extends TypedAtomicActor {
 			throw new IllegalActionException(this, "Input has wrong token type " + token.getClass().toString() + 
 													"(should be ImageToken).");
 	}
+	
+	protected void _createFrei0r(String libraryName) {
+		if (_frei0r != null)
+			return;
+		try {
+			_frei0r = new Frei0r(libraryName);
+		} catch (Frei0rException e) {
+		}
+	}
 
 	private Frei0r _frei0r = null;
 	private Frei0r.Instance _frei0rInstance;
-	private URL _currentLibraryName = null;
+	private String _currentLibraryName = null;
 
 	public TypedIOPort output;
 
