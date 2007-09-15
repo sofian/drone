@@ -14,7 +14,8 @@ public class CheckSerialPortDemo {
 		Enumeration ports = CommPortIdentifier.getPortIdentifiers();
 		while(ports.hasMoreElements())
 		{
-			System.out.println((CommPortIdentifier) ports.nextElement());
+			CommPortIdentifier id = (CommPortIdentifier) ports.nextElement();
+			System.out.println(id.getName());
 		}
 
 	}
