@@ -35,6 +35,7 @@ import ptolemy.data.expr.Parameter;
 import ptolemy.data.expr.StringParameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
+import ptolemy.kernel.Port;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.InternalErrorException;
@@ -49,6 +50,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import drone.frei0r.Frei0rException;
@@ -115,24 +117,28 @@ public class Frei0rActor extends TypedAtomicActor {
 				+ "style=\"fill:white\"/>\n" + "</svg>\n");
 	}
 
-
 	public void initialize() throws IllegalActionException {
 		try {
+
 			if (_frei0r != null)
 				_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-														 ((IntToken)defaultHeight.getToken()).intValue());
+						((IntToken)defaultHeight.getToken()).intValue());
+
 		} catch (Frei0rException e) {
 			throw new IllegalActionException(this, e, "Problem when creating instance while initializing the actor.");
+		} catch (Exception e) {
+			throw new IllegalActionException(this, e, "Problem during initialization.");
 		}
 	}
-	
+
 	public void attributeChanged(Attribute attribute) throws IllegalActionException {
 
 		if (attribute == frei0rLibraryName) {
+
 			try {
 				String newLibraryName = ((StringToken)frei0rLibraryName.getToken()).stringValue();
-				if (_frei0r == null || !_currentLibraryName.equals(newLibraryName)) {
-
+				
+				if (_frei0r == null || _currentLibraryName.equals(newLibraryName)) {
 					String newLibraryFileName = newLibraryName + "." + OSUtils.getNativeLibraryExtension();
 					String frei0rDirName = "frei0r-" + Frei0r.FREI0R_MAJOR_VERSION;
 					_createFrei0r("/usr/lib/" + frei0rDirName + "/" + newLibraryFileName);
@@ -141,14 +147,33 @@ public class Frei0rActor extends TypedAtomicActor {
 					_createFrei0r(newLibraryName); // try the old method, with complete path specified
 					if (_frei0r == null)
 						throw new IllegalActionException(this, "Specified frei0r library '" + newLibraryName + 
-								"' could not be found or loaded");
-					
+						"' could not be found or loaded");
+
 					// This ensures that we don't reload for nothing
 					_currentLibraryName = newLibraryName;
-					
+
 					// Create bridge.
 					_frei0rInstance = _frei0r.createInstance(((IntToken)defaultWidth.getToken()).intValue(), 
-															 ((IntToken)defaultHeight.getToken()).intValue());
+							((IntToken)defaultHeight.getToken()).intValue());					
+
+					// Reuse ports if they already exist.
+					if (getPort("input2") != null)
+						input2 = (TypedIOPort) getPort("input2");
+
+					if (getPort("input3") != null)
+						input3 = (TypedIOPort) getPort("input3");
+
+					// Remove them if unneeded.
+					if (input2 != null &&
+							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
+							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+						input2.setContainer(null);
+						_removePort(input2);
+					}
+					if (input3 != null && _frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+						input3.setContainer(null);
+						_removePort(input2);
+					}
 
 					// Create inputs 2 and 3 if necessary.
 					switch (_frei0r.getPluginType()) {
@@ -164,18 +189,21 @@ public class Frei0rActor extends TypedAtomicActor {
 						}
 					default:;
 					}
-					
-					// Remove them if unneeded.
-					if (input2 != null &&
-							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
-							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-						input2.setContainer(null);
-						_removePort(input2);
-					}
-					if (input3 != null && _frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-						input3.setContainer(null);
-						_removePort(input2);
-					}
+
+					// Reinitialize attributes for this actor.
+//					Iterator it = attributeList().iterator();
+//					while (it.hasNext()) {
+//					Attribute a = (Attribute) it.next();
+//					if (a instanceof PortParameter) {
+//					a.setContainer(null);
+//					Port p = ((PortParameter)a).getPort();
+//					p.setContainer(null);
+//					_removePort(p);
+//					_removeAttribute(a);
+//					params.remove(a);
+//					System.out.println("Remove attribute " + a.toString());
+//					}
+//					}
 
 					if (params.size() == 0) {
 						for (int i=0; i<_frei0r.nParams(); ++i) {
@@ -250,12 +278,13 @@ public class Frei0rActor extends TypedAtomicActor {
 								", please verify the frei0r plugin.");
 							}
 						}
-					}					
-				}
-
+					} 
+				} 
+			}  catch (NameDuplicationException e) {
+				throw new IllegalActionException(this, e, "Trying to use an already existing port parameter.");
 			} catch (Exception e) {
-				throw new IllegalActionException(this, e, "Cannot create link to frei0r library '" + frei0rLibraryName.getValueAsString() + "'.");
-			}
+				throw new IllegalActionException(this, e, "Problem at library name change.");
+			} 
 		} else {
 			super.attributeChanged(attribute);
 		}
@@ -289,16 +318,16 @@ public class Frei0rActor extends TypedAtomicActor {
 		for (int i=0; i<params.size(); i++) {
 			params.get(i).update();
 		}
-		
+
 		try {
 
 			// Process image.
 			BufferedImage bufferedImageIn1 = null;
 			BufferedImage bufferedImageIn2 = null;
 			BufferedImage bufferedImageIn3 = null;
-			
+
 			boolean hasInput = true;
-			
+
 			switch (_frei0r.getPluginType()) {
 			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
 				if (input3.getWidth() > 0 && input3.hasToken(0)) {
@@ -313,8 +342,8 @@ public class Frei0rActor extends TypedAtomicActor {
 					if (bufferedImageIn2 == null)
 						hasInput = false;
 					else if (bufferedImageIn3 != null && 
-							    (bufferedImageIn3.getWidth() != bufferedImageIn2.getWidth() ||
-								 bufferedImageIn3.getHeight() != bufferedImageIn2.getHeight())) {
+							(bufferedImageIn3.getWidth() != bufferedImageIn2.getWidth() ||
+									bufferedImageIn3.getHeight() != bufferedImageIn2.getHeight())) {
 						throw new IllegalActionException(this, "Image inputs have incompatible dimensions.");
 					}
 				} else
@@ -325,14 +354,14 @@ public class Frei0rActor extends TypedAtomicActor {
 					if (bufferedImageIn1 == null)
 						hasInput = false;
 					else if (bufferedImageIn2 != null && 
-						    (bufferedImageIn2.getWidth() != bufferedImageIn1.getWidth() ||
-							 bufferedImageIn2.getHeight() != bufferedImageIn1.getHeight())) {
+							(bufferedImageIn2.getWidth() != bufferedImageIn1.getWidth() ||
+									bufferedImageIn2.getHeight() != bufferedImageIn1.getHeight())) {
 						throw new IllegalActionException(this, "Image inputs have incompatible dimensions.");
 					}
 				} else
 					hasInput = false; 
 			}
-			
+
 			// If there is no image input, do nothing.
 			// NOTICE: Even sources thus need to have an input, the which acts as a trigger.
 			if (hasInput) {
@@ -354,12 +383,12 @@ public class Frei0rActor extends TypedAtomicActor {
 						paramPort = params.get(k++);
 						paramValue = new Boolean( ((BooleanToken)paramPort.getToken()).booleanValue() );
 						break;
-					// DOUBLE
+						// DOUBLE
 					case Frei0r.F0R_PARAM_DOUBLE:
 						paramPort = params.get(k++);
 						paramValue = new Double( ((ScalarToken)paramPort.getToken()).doubleValue() );
 						break;
-					// POSITION
+						// POSITION
 					case Frei0r.F0R_PARAM_POSITION:
 						Frei0r.Position positionValue = (Frei0r.Position)_frei0rInstance.getParamValue(i);
 						if (positionValue == null) {
@@ -374,7 +403,7 @@ public class Frei0rActor extends TypedAtomicActor {
 						// Assign.
 						paramValue = positionValue;
 						break;
-					// COLOR
+						// COLOR
 					case Frei0r.F0R_PARAM_COLOR:
 						Frei0r.Color colorValue = (Frei0r.Color)_frei0rInstance.getParamValue(i);
 						if (colorValue == null) {
@@ -392,29 +421,29 @@ public class Frei0rActor extends TypedAtomicActor {
 						// Assign.
 						paramValue = colorValue;
 						break;
-					// STRING
+						// STRING
 					case Frei0r.F0R_PARAM_STRING:
 						paramPort = params.get(k++);
 						paramValue = ((StringToken)paramPort.getToken()).stringValue();
 						break;
 					default:
 						throw new IllegalActionException("Wrong param type " + _frei0r.getParamType(i) +
-															", please verify the frei0r plugin.");
+						", please verify the frei0r plugin.");
 					}
 
 					// Set the value.
 					if (paramValue != null)
 						_frei0rInstance.setParamValue(paramValue, i);
 				}
-				
+
 				// Update.
 				BufferedImage bufferedImageOut = 
 					new BufferedImage(_frei0rInstance.getWidth(), 
-										_frei0rInstance.getHeight(),
-										BufferedImage.TYPE_INT_ARGB);
+							_frei0rInstance.getHeight(),
+							BufferedImage.TYPE_INT_ARGB);
 
 				if (_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER2 || 
-				    _frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
+						_frei0r.getPluginType() == Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
 					_frei0rInstance.update2(getDirector().getModelTime().getDoubleValue(), bufferedImageIn1,
 							bufferedImageIn2, bufferedImageIn3, bufferedImageOut);
 				} else {
@@ -437,9 +466,9 @@ public class Frei0rActor extends TypedAtomicActor {
 				return ImageConvert.toBufferedImage(imageIn, BufferedImage.TYPE_INT_ARGB);
 		} else
 			throw new IllegalActionException(this, "Input has wrong token type " + token.getClass().toString() + 
-													"(should be ImageToken).");
+			"(should be ImageToken).");
 	}
-	
+
 	protected void _createFrei0r(String libraryName) {
 		if (_frei0r != null)
 			return;
