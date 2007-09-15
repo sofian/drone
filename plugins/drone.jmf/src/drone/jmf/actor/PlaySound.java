@@ -96,7 +96,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
 		synchronizedPlay = new Parameter(this, "synchronizedPlay");
 		synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
-		synchronizedPlay.setToken(BooleanToken.TRUE);
+		synchronizedPlay.setToken(BooleanToken.FALSE);
 
 		loop = new Parameter(this, "loop");
 		loop.setTypeEquals(BaseType.BOOLEAN);
