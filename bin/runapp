@@ -27,4 +27,4 @@ LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`pwd`/lib/native/`uname -s`/$arch"
 export CLASSPATH
 export LD_LIBRARY_PATH
 
-java $@
+java -classpath $CLASSPATH -Djava.library.path=$LD_LIBRARY_PATH $@
