@@ -1,5 +1,5 @@
 /*
- Copyright (c) 1998-2005 The Regents of the University of California
+ Copyright (c) 1998-2006 The Regents of the University of California
  All rights reserved.
  Permission is hereby granted, without written agreement and without
  license or royalty fees, to use, copy, modify, and distribute this
@@ -33,7 +33,7 @@ import java.awt.event.MouseEvent;
  * are used by event-handling code to decide whether they are
  * interested in a particular event.
  *
- * @version        $Id: MouseFilter.java,v 1.22 2005/07/08 19:54:53 cxh Exp $
+ * @version        $Id: MouseFilter.java,v 1.25 2006/12/19 18:31:48 cxh Exp $
  * @author         John Reekie
  */
 public class MouseFilter {
@@ -57,9 +57,11 @@ public class MouseFilter {
     private int _buttonMask = InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK
             | InputEvent.BUTTON3_MASK;
 
-    /** The modifier mask.
+    /** The modifier mask.  The Macintosh requires META_MASK for selecting
+     *  relations and right clicking.
      */
-    private int _modifierMask = InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK;
+    private int _modifierMask = InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK
+            | InputEvent.META_MASK;
 
     // Do not or these masks in, they will conflict with right mousing
     // on transitions in modal models

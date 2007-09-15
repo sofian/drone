@@ -49,8 +49,9 @@ import ptolemy.util.MessageHandler;
 import ptolemy.vergil.basic.BasicGraphFrame;
 import ptolemy.vergil.basic.NamedObjController;
 import ptolemy.vergil.kernel.AttributeController;
+import ptolemy.vergil.kernel.ConfigureUnitsAction;
 import ptolemy.vergil.kernel.Link;
-import ptolemy.vergil.kernel.PortDialogFactory;
+import ptolemy.vergil.kernel.PortDialogAction;
 import ptolemy.vergil.kernel.RelationController;
 import ptolemy.vergil.toolbox.FigureAction;
 import ptolemy.vergil.toolbox.MenuItemFactory;
@@ -88,7 +89,7 @@ import diva.gui.toolbox.JContextMenu;
  the delete key on the keyboard.
 
  @author Steve Neuendorffer, Contributor: Edward A. Lee
- @version $Id: ActorEditorGraphController.java,v 1.59 2006/02/12 17:43:38 cxh Exp $
+ @version $Id: ActorEditorGraphController.java,v 1.62 2007/05/04 20:14:27 cxh Exp $
  @since Ptolemy II 2.0
  @Pt.ProposedRating Red (eal)
  @Pt.AcceptedRating Red (johnr)
@@ -154,8 +155,12 @@ public class ActorEditorGraphController extends ActorViewerGraphController {
     public void setConfiguration(Configuration configuration) {
         super.setConfiguration(configuration);
 
-        if (_portDialogFactory != null) {
-            _portDialogFactory.setConfiguration(configuration);
+        if (_portDialogAction != null) {
+            _portDialogAction.setConfiguration(configuration);
+        }
+
+        if (_configureUnitsAction != null) {
+             _configureUnitsAction.setConfiguration(configuration);
         }
 
         if (_listenToActorFactory != null) {
@@ -200,9 +205,13 @@ public class ActorEditorGraphController extends ActorViewerGraphController {
         GraphPane pane = getGraphPane();
 
         // Add a menu command to configure the ports.
-        _portDialogFactory = new PortDialogFactory();
-        _menuFactory.addMenuItemFactory(_portDialogFactory);
-        _portDialogFactory.setConfiguration(getConfiguration());
+        _portDialogAction = new PortDialogAction("Ports");
+        _portDialogAction.setConfiguration(getConfiguration());
+
+        _configureMenuFactory.addAction(_portDialogAction, "Customize");
+        _configureUnitsAction = new ConfigureUnitsAction("Units Constraints");
+        _configureMenuFactory.addAction(_configureUnitsAction, "Customize");
+        _configureUnitsAction.setConfiguration(getConfiguration());
 
         // Add a menu command to list to the actor.
         _listenToActorFactory = new ListenToActorFactory();
@@ -262,6 +271,8 @@ public class ActorEditorGraphController extends ActorViewerGraphController {
     ///////////////////////////////////////////////////////////////////
     ////                         private variables                 ////
 
+    private ConfigureUnitsAction _configureUnitsAction;
+
     /** The interactors that interactively creates edges. */
     private LinkCreator _linkCreator; // For control-click
 
@@ -274,94 +285,94 @@ public class ActorEditorGraphController extends ActorViewerGraphController {
     private Action _newInputPortAction = new NewPortAction(
             ExternalIOPortController._GENERIC_INPUT, "New input port",
             KeyEvent.VK_I, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_in.gif",
+                    { "/ptolemy/vergil/actor/img/single_in.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_in_o.gif",
+                    { "/ptolemy/vergil/actor/img/single_in_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_in_ov.gif",
+                    { "/ptolemy/vergil/actor/img/single_in_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_in_on.gif",
+                    { "/ptolemy/vergil/actor/img/single_in_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new output port. */
     private Action _newOutputPortAction = new NewPortAction(
             ExternalIOPortController._GENERIC_OUTPUT, "New output port",
             KeyEvent.VK_O, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_out.gif",
+                    { "/ptolemy/vergil/actor/img/single_out.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_out_o.gif",
+                    { "/ptolemy/vergil/actor/img/single_out_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_out_ov.gif",
+                    { "/ptolemy/vergil/actor/img/single_out_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_out_on.gif",
+                    { "/ptolemy/vergil/actor/img/single_out_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new input/output port. */
     private Action _newInoutPortAction = new NewPortAction(
             ExternalIOPortController._GENERIC_INOUT, "New input/output port",
             KeyEvent.VK_P, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_inout.gif",
+                    { "/ptolemy/vergil/actor/img/single_inout.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_inout_o.gif",
+                    { "/ptolemy/vergil/actor/img/single_inout_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_inout_ov.gif",
+                    { "/ptolemy/vergil/actor/img/single_inout_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/single_inout_on.gif",
+                    { "/ptolemy/vergil/actor/img/single_inout_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new input multiport. */
     private Action _newInputMultiportAction = new NewPortAction(
             ExternalIOPortController._GENERIC_INPUT_MULTIPORT,
             "New input multiport", KeyEvent.VK_N, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_in.gif",
+                    { "/ptolemy/vergil/actor/img/multi_in.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_in_o.gif",
+                    { "/ptolemy/vergil/actor/img/multi_in_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_in_ov.gif",
+                    { "/ptolemy/vergil/actor/img/multi_in_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_in_on.gif",
+                    { "/ptolemy/vergil/actor/img/multi_in_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new output multiport. */
     private Action _newOutputMultiportAction = new NewPortAction(
             ExternalIOPortController._GENERIC_OUTPUT_MULTIPORT,
             "New output multiport", KeyEvent.VK_U, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_out.gif",
+                    { "/ptolemy/vergil/actor/img/multi_out.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_out_o.gif",
+                    { "/ptolemy/vergil/actor/img/multi_out_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_out_ov.gif",
+                    { "/ptolemy/vergil/actor/img/multi_out_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_out_on.gif",
+                    { "/ptolemy/vergil/actor/img/multi_out_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new inout multiport. */
     private Action _newInoutMultiportAction = new NewPortAction(
             ExternalIOPortController._GENERIC_INOUT_MULTIPORT,
             "New input/output multiport", KeyEvent.VK_T, new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_inout.gif",
+                    { "/ptolemy/vergil/actor/img/multi_inout.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_inout_o.gif",
+                    { "/ptolemy/vergil/actor/img/multi_inout_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_inout_ov.gif",
+                    { "/ptolemy/vergil/actor/img/multi_inout_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/multi_inout_on.gif",
+                    { "/ptolemy/vergil/actor/img/multi_inout_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** Action for creating a new relation. */
     private Action _newRelationAction = new NewRelationAction(
             new String[][] {
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/relation.gif",
+                    { "/ptolemy/vergil/actor/img/relation.gif",
                             GUIUtilities.LARGE_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/relation_o.gif",
+                    { "/ptolemy/vergil/actor/img/relation_o.gif",
                             GUIUtilities.ROLLOVER_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/relation_ov.gif",
+                    { "/ptolemy/vergil/actor/img/relation_ov.gif",
                             GUIUtilities.ROLLOVER_SELECTED_ICON },
-                    { "/pt2-gui/src/ptolemy/vergil/actor/img/relation_on.gif",
+                    { "/ptolemy/vergil/actor/img/relation_on.gif",
                             GUIUtilities.SELECTED_ICON } });
 
     /** The port dialog factory. */
-    private PortDialogFactory _portDialogFactory;
+    private PortDialogAction _portDialogAction;
 
     /** The interactor for creating new relations. */
     private RelationCreator _relationCreator;
@@ -514,7 +525,7 @@ public class ActorEditorGraphController extends ActorViewerGraphController {
                 putValue(diva.gui.GUIUtilities.LARGE_ICON, icon);
             }
             putValue("tooltip", "Control-click to create a new relation");
-            putValue(diva.gui.GUIUtilities.MNEMONIC_KEY, new Integer(
+            putValue(diva.gui.GUIUtilities.MNEMONIC_KEY, Integer.valueOf(
                     KeyEvent.VK_R));
         }
 

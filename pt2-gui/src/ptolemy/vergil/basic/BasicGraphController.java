@@ -82,7 +82,7 @@ import diva.gui.toolbox.MenuCreator;
  to add commands to the menu or toolbar of the frame it is controlling.
 
  @author Steve Neuendorffer and Edward A. Lee
- @version $Id: BasicGraphController.java,v 1.63 2006/09/21 04:17:15 cxh Exp $
+ @version $Id: BasicGraphController.java,v 1.66 2007/02/26 19:18:43 cxh Exp $
  @since Ptolemy II 2.0
  @Pt.ProposedRating Red (eal)
  @Pt.AcceptedRating Red (johnr)
@@ -268,66 +268,73 @@ public abstract class BasicGraphController extends AbstractGraphController
                 public void run() {
                     Locatable location = (Locatable) settable;
                     Figure figure = getFigure(location);
-                    Point2D origin = figure.getOrigin();
-                    double originalUpperLeftX = origin.getX();
-                    double originalUpperLeftY = origin.getY();
+                    if (figure != null) {
+                        Point2D origin = figure.getOrigin();
 
-                    // NOTE: the following call may trigger an evaluation,
-                    // which results in another recursive call to this method.
-                    // Thus, we ignore the inside call and detect it with a
-                    // private variable.
-                    double[] newLocation;
+                        double originalUpperLeftX = origin.getX();
+                        double originalUpperLeftY = origin.getY();
 
-                    try {
-                        _inValueChanged = true;
-                        newLocation = location.getLocation();
-                    } finally {
-                        _inValueChanged = false;
-                    }
+                        // NOTE: the following call may trigger an evaluation,
+                        // which results in another recursive call to this method.
+                        // Thus, we ignore the inside call and detect it with a
+                        // private variable.
+                        double[] newLocation;
 
-                    double translationX = newLocation[0] - originalUpperLeftX;
-                    double translationY = newLocation[1] - originalUpperLeftY;
+                        try {
+                            _inValueChanged = true;
+                            newLocation = location.getLocation();
+                        } finally {
+                            _inValueChanged = false;
+                        }
 
-                    if ((translationX != 0.0) || (translationY != 0.0)) {
-                        // The translate method supposedly handles the required
-                        // repaint.
-                        figure.translate(translationX, translationY);
+                        double translationX = newLocation[0]
+                                - originalUpperLeftX;
+                        double translationY = newLocation[1]
+                                - originalUpperLeftY;
 
-                        // Reroute edges linked to this figure.
-                        GraphModel model = getGraphModel();
-                        Object userObject = figure.getUserObject();
+                        if ((translationX != 0.0) || (translationY != 0.0)) {
+                            // The translate method supposedly handles the required
+                            // repaint.
+                            figure.translate(translationX, translationY);
 
-                        if (userObject != null) {
-                            Iterator inEdges = model.inEdges(userObject);
+                            // Reroute edges linked to this figure.
+                            GraphModel model = getGraphModel();
+                            Object userObject = figure.getUserObject();
 
-                            while (inEdges.hasNext()) {
-                                Figure connector = getFigure(inEdges.next());
+                            if (userObject != null) {
+                                Iterator inEdges = model.inEdges(userObject);
 
-                                if (connector instanceof Connector) {
-                                    ((Connector) connector).reroute();
-                                }
-                            }
-
-                            Iterator outEdges = model.outEdges(userObject);
-
-                            while (outEdges.hasNext()) {
-                                Figure connector = getFigure(outEdges.next());
-
-                                if (connector instanceof Connector) {
-                                    ((Connector) connector).reroute();
-                                }
-                            }
-
-                            if (model.isComposite(userObject)) {
-                                Iterator edges = GraphUtilities
-                                        .partiallyContainedEdges(userObject,
-                                                model);
-
-                                while (edges.hasNext()) {
-                                    Figure connector = getFigure(edges.next());
+                                while (inEdges.hasNext()) {
+                                    Figure connector = getFigure(inEdges.next());
 
                                     if (connector instanceof Connector) {
                                         ((Connector) connector).reroute();
+                                    }
+                                }
+
+                                Iterator outEdges = model.outEdges(userObject);
+
+                                while (outEdges.hasNext()) {
+                                    Figure connector = getFigure(outEdges
+                                            .next());
+
+                                    if (connector instanceof Connector) {
+                                        ((Connector) connector).reroute();
+                                    }
+                                }
+
+                                if (model.isComposite(userObject)) {
+                                    Iterator edges = GraphUtilities
+                                            .partiallyContainedEdges(
+                                                    userObject, model);
+
+                                    while (edges.hasNext()) {
+                                        Figure connector = getFigure(edges
+                                                .next());
+
+                                        if (connector instanceof Connector) {
+                                            ((Connector) connector).reroute();
+                                        }
                                     }
                                 }
                             }
@@ -418,6 +425,9 @@ public abstract class BasicGraphController extends AbstractGraphController
     /** The configure action. */
     protected static ConfigureAction _configureAction = new ConfigureAction(
             "Configure");
+
+    /** The submenu for configure actions. */
+    protected static MenuActionFactory _configureMenuFactory;
 
     /** The interactor for creating context sensitive menus on the
      *  graph itself.
@@ -566,7 +576,8 @@ public abstract class BasicGraphController extends AbstractGraphController
          */
         public SchematicContextMenuFactory(GraphController controller) {
             super(controller);
-            addMenuItemFactory(new MenuActionFactory(_configureAction));
+            _configureMenuFactory = new MenuActionFactory(_configureAction);
+            addMenuItemFactory(_configureMenuFactory);
         }
 
         protected NamedObj _getObjectFromFigure(Figure source) {
