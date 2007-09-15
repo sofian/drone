@@ -25,7 +25,6 @@ package drone.jmf.actor;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.media.CannotRealizeException;
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
@@ -36,9 +35,7 @@ import javax.media.MediaException;
 import javax.media.MediaLocator;
 import javax.media.NoPlayerException;
 import javax.media.Player;
-import javax.media.RealizeCompleteEvent;
 import javax.media.Time;
-import javax.media.TimeBase;
 
 import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
 
@@ -93,7 +90,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		gain.setTypeEquals(BaseType.DOUBLE);
 
 		fileNameOrURL = new FileParameter(this, "fileNameOrURL");
-
+		
 		synchronizedPlay = new Parameter(this, "synchronizedPlay");
 		synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
 		synchronizedPlay.setToken(BooleanToken.FALSE);
@@ -244,7 +241,8 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		if (event instanceof EndOfMediaEvent) {
 			// Specify that play should start at the beginning of the audio.
 			if (_player != null) {
-				_player.setMediaTime(_startTime); // restart
+				// Rewind.
+				_player.setMediaTime(_startTime);
 				
 				// Stop if not looping.
 				if (!_isLooping) {
@@ -252,19 +250,11 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 					_isOn = false;
 				}
 			}
-		} else if (event instanceof RealizeCompleteEvent) {
-			_gainControl = _player.getGainControl();
-			try {
-				_gainControl.setLevel(0.01f * defaultPercentGain.getCurrentValue());
-			} catch (IllegalActionException e) {
-				e.printStackTrace();
-			}
 		}
-		System.out.println("Event received: " + event.getClass().getName());
 		notifyAll();
 	}
 
-	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException {
+	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException, IllegalActionException {
 		System.out.println("Create new player");
 		
 		// Set media location.
@@ -277,12 +267,24 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		}
 		
 		// Create the player.
-		_player = javax.media.Manager.createPlayer(source);
+		_player = Manager.createPlayer(source);
 
 		// Initialize.
 		_player.addControllerListener(this);
+		
+		StateWaiter stateWaiter = new StateWaiter(_player);
+
+		// Realize.
 		_player.realize();
+		stateWaiter.blockingRealize();
+		
+		// Set gain control.
+		_gainControl = _player.getGainControl();
+		_gainControl.setLevel(0.01f * defaultPercentGain.getCurrentValue());
+		
+		// Prefetch.
 		_player.prefetch();
+		stateWaiter.blockingPrefetch();
 	}
 
 	/** 
@@ -299,20 +301,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	protected void _startPlayer() {
 		if (_player != null) {
 			_player.start();
-
-			// copied from EJMF StandardStartControl
-//			final int state = _player.getState();
-//
-//			if (state == Controller.Started) 
-//			return;
-//
-//			while (state < Controller.Prefetched) {
-//			StateWaiter w = new StateWaiter(_player);
-//			w.blockingPrefetch();
-//			}
-//
-//			final TimeBase tb = _player.getTimeBase();
-//			_player.syncStart(tb.getTime());
 		}
 	}
 
