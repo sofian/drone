@@ -22,7 +22,10 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.nio.Buffer;
 
 import javax.media.opengl.GL;
@@ -73,7 +76,7 @@ import ptolemy.kernel.util.Workspace;
  @Pt.AcceptedRating Red
  */
 @SuppressWarnings("serial")
-public class ImageDisplay extends Sink implements GLEventListener {
+public class ImageDisplay extends Sink implements GLEventListener, KeyListener {
 	
 	/** Construct an actor with the given container and name.
 	 *  @param container The container.
@@ -161,6 +164,12 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	public void initialize() throws IllegalActionException {
 		super.initialize();
 		
+		// Initialize variables.
+		_imageWidth = 320;
+		_imageHeight = 240;
+		
+	    _glu = new GLU();
+	    
 		// This has to be done in the Swing event thread.
 		Runnable doDisplay = new Runnable() {
 			public void run() {
@@ -169,8 +178,6 @@ public class ImageDisplay extends Sink implements GLEventListener {
 		};
 		
 		SwingUtilities.invokeLater(doDisplay);
-
-	    _glu = new GLU();
 	}
 	
 	
@@ -321,32 +328,7 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	 *  container. This must be called in the Swing event thread.
 	 */
 	private void _createOrShowWindow() {
-		if (_frame == null) {
-			// No current container for the pane.
-			try {
-				_frame = new JFrame();
-				
-				GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice(); 
-				if (_fullscreen) {
-					_frame.setVisible(false);
-					_frame.setUndecorated(true);
-					
-					gd.setFullScreenWindow(_frame);
-					DisplayMode mode = gd.getDisplayMode();
-					System.out.println("Fullscreen enabled at " + mode.getWidth() + "x" + mode.getHeight());
-					_frame.setSize(mode.getWidth(), mode.getHeight());
-				} else {
-					_frame.setVisible(true);
-				}
-			} catch (Exception ex) {
-				throw new InternalErrorException(ex);
-			}
-		}
-		
-	    /*
-	     * display mode (single buffer and RGBA)
-	     */
-		// Single buffer mode
+	    // Create canvas and display mode.
 		if (_doubleBuffered) {
 			GLCapabilities caps = new GLCapabilities();
 			caps.setDoubleBuffered(true);
@@ -356,15 +338,45 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	    _canvas.addGLEventListener(this);
 	    _canvas.setVisible(true);
 	    
-		if (_frame != null) {
-			_frame.getContentPane().add(_canvas);
-			if (!_fullscreen)
-			    _frame.setSize(300, 300);
-			_frame.setVisible(true);
-			_frame.toFront();
-		}
+	    // Create frame if not exists.
+	    if (_frame == null)
+	    {
+	    	_frame = new JFrame();
+	    	_frame.getContentPane().add(_canvas);
+	    	_frame.addKeyListener(this);
+	    }	    
+
+		// Initialize screen (fullscreen/windowed).
+		_initScreen();
 	}
 
+	/**
+	 * Performs screen initialization (allows switches between fullscreen and windowed styles).
+	 * From http://forum.java.sun.com/thread.jspa?threadID=235247&messageID=2701575
+	 */
+	private void _initScreen() {
+		try {
+			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice(); 
+			if (_fullscreen) {
+				_frame.dispose();
+				_frame.setUndecorated(true);
+				_frame.setResizable(false);
+				gd.setFullScreenWindow(_frame);
+				_frame.setVisible(true);
+				_frame.toFront();
+			} else {
+				_frame.dispose();
+				_frame.setUndecorated(false);
+				_frame.setSize(_imageWidth, _imageHeight);
+				gd.setFullScreenWindow(null);
+				_frame.setVisible(true);
+				_frame.toFront();
+			}
+		} catch (Exception ex) {
+			throw new InternalErrorException(ex);
+		}
+	}
+	
 	///////////////////////////////////////////////////////////////////
 	////                         protected variables               ////
 	
@@ -376,23 +388,41 @@ public class ImageDisplay extends Sink implements GLEventListener {
 	public Parameter doubleBuffered;
 	
 	private boolean _displayOnTexture;
-	
+	private boolean _fullscreen;
 	private boolean _doubleBuffered;
-	/** The frame, if one is used. */
-	protected JFrame _frame;
 	
+	protected JFrame _frame;
 	protected GLCanvas _canvas;
 	
 	protected Texture _texture = null;
-	
 	protected TextureData _textureData = null;
 	
 	private Buffer _imageBuffer = null;
 	
-	private int _imageWidth = 0;
-	private int _imageHeight = 0;
+	private int _imageWidth;
+	private int _imageHeight;
 	
 	private GLU _glu;
+
+	/**
+	 * The enter key allows to switch from fullscreen <-> windowed. Escape key allows
+	 * to get out of fullscreen.
+	 */ 
+	public void keyPressed(KeyEvent event) {
+		// TODO: There seems to be a focus problem. If you click on the window when it's in
+		// fullcreen mode the key events aren't sent anymore.
+		if (event.getKeyCode() == KeyEvent.VK_ENTER ||
+				_fullscreen && event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			_fullscreen = !_fullscreen;
+			_initScreen();
+		}
+	}
+
+	public void keyReleased(KeyEvent event) {
+		
+	}
+
+	public void keyTyped(KeyEvent event) {
+	}
 	
-	private boolean _fullscreen;
 }
