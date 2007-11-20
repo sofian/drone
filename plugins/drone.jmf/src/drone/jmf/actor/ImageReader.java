@@ -29,14 +29,10 @@
 package drone.jmf.actor;
 
 import java.awt.Image;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 import ptolemy.actor.lib.Source;
 import ptolemy.data.AWTImageToken;
@@ -140,13 +136,6 @@ public class ImageReader extends Source {
         }
 
         try {
-            // Read from a file
-            _image = ImageIO.read(new File(_url.getFile()));
-        
-            // Read from an input stream
-            _image = ImageIO.read(new BufferedInputStream(new FileInputStream(_url.getPath())));
-        
-            // Read from a URL
             _image = ImageIO.read(_url);
         } catch (IOException e) {
         	throw new IllegalActionException(this, e, "Cannot open file.");
