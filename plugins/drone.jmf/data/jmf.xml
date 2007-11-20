@@ -7,17 +7,13 @@
       <group>
         <doc>JMF processing actors</doc>
 
-	<entity name="AudioPlayer" class="drone.jmf.actor.AudioPlayer">
-	</entity>
+	<entity name="AudioPlayer" class="drone.jmf.actor.AudioPlayer" />
 
-	<entity name="ColorFinder" class="drone.jmf.actor.ColorFinder">
-	</entity>
+	<entity name="ColorFinder" class="drone.jmf.actor.ColorFinder" />
 
-	<entity name="ImageToJMF" class="drone.jmf.actor.ImageToJMF">
-	</entity>
+	<entity name="ImageToJMF" class="drone.jmf.actor.ImageToJMF" />
 
-	<entity name="MovieReader" class="drone.jmf.actor.MovieReader">
-	</entity>	
+	<entity name="MovieReader" class="drone.jmf.actor.MovieReader" />
 
 	<entity name="MovieWriter" class="drone.jmf.actor.MovieWriter">
 <!--	<property name="fileType" value>
@@ -32,11 +28,9 @@
 	      </property>  -->
 	</entity>	
 
-	<entity name="PlaySound" class="drone.jmf.actor.PlaySound">
-	</entity>	
+	<entity name="PlaySound" class="drone.jmf.actor.PlaySound" />
 	
-	<entity name="StreamLoader" class="drone.jmf.actor.StreamLoader">
-	</entity>
+	<entity name="StreamLoader" class="drone.jmf.actor.StreamLoader" />
 
 	<entity name="VideoCamera" class="drone.jmf.actor.VideoCamera">
 <!--	<property name="formatName">
@@ -50,13 +44,19 @@
 	</entity>
 	
 	<entity name="CivilCameraActor" class="drone.jmf.actor.CivilCameraActor" />
+
+	<entity name="VideoPlayer" class="drone.jmf.actor.VideoPlayer" />
+
+	<entity name="ImageDisplay" class="drone.jmf.actor.ImageDisplay" />
+
+	<entity name="ImageReader" class="drone.jmf.actor.ImageReader" />
+
+<!--	<entity name="ImageRotate" class="drone.jmf.actor.ImageRotate" />
 	
+	<entity name="ImageToString" class="drone.jmf.actor.ImageToString" />
 
-	<entity name="VideoPlayer" class="drone.jmf.actor.VideoPlayer">
-	</entity>
-
-	<entity name="ImageDisplay" class="drone.jmf.actor.ImageDisplay">
-	</entity>
+	<entity name="URLToImage" class="drone.jmf.actor.URLToImage" /> -->
+	
       </group>
     ?>
   </configure>
