@@ -291,11 +291,12 @@ public class Frei0r {
 			// Check if active.
 			_verifyActive();
 			
-			int[] inframe = null;
+			if (_inframe == null || _inframe.length < _size)
+				_inframe = new int[_size];
 			
 			// Sanity check and extract data buffers.
 			if (_parent.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_SOURCE) {
-				inframe = _inputImageToFrame(in);
+				_inputImageToFrame(_inframe,in);
 			}
 			_verifyImage(out);
 			
@@ -304,7 +305,7 @@ public class Frei0r {
 				_outframe = new int[_size];
 
 			// Update frames.
-			update(time, inframe, _outframe);
+			update(time, _inframe, _outframe);
 			
 			// Set output frame.
 			_outputImageSetFrame(out, _outframe);
@@ -329,18 +330,20 @@ public class Frei0r {
 			// Check if active.
 			_verifyActive();
 
-			int[] inframe1 = null;
-			int[] inframe2 = null;
-			int[] inframe3 = null;
-			
 			// Sanity check and extract data buffers.
 			switch (_parent.getPluginType()) {
 			case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
-				inframe3 = _inputImageToFrame(in3);
+				if (_inframe3 == null || _inframe3.length < _size)
+					_inframe3 = new int[_size];
+				_inputImageToFrame(_inframe3, in3);
 			case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
-				inframe2 = _inputImageToFrame(in2);
+				if (_inframe2 == null || _inframe2.length < _size)
+					_inframe2 = new int[_size];
+				_inputImageToFrame(_inframe2, in3);
 			case Frei0r.F0R_PLUGIN_TYPE_FILTER:
-				inframe1 = _inputImageToFrame(in1);
+				if (_inframe == null || _inframe.length < _size)
+					_inframe = new int[_size];
+				_inputImageToFrame(_inframe, in3);
 			}
 			_verifyImage(out);
 
@@ -349,7 +352,7 @@ public class Frei0r {
 				_outframe = new int[_size];
 
 			// Update frames.
-			update2(time, inframe1, inframe2, inframe3, _outframe);
+			update2(time, _inframe, _inframe2, _inframe3, _outframe);
 
 			// Set output frame.
 			_outputImageSetFrame(out, _outframe);
@@ -403,7 +406,7 @@ public class Frei0r {
 				throw new Frei0rException("Instance not active anymore, destruct() was called at some point. To activate call construct() again.");
 		}
 		
-		private int[] _inputImageToFrame(BufferedImage img) throws Frei0rException {
+		private void _inputImageToFrame(int[] frame, BufferedImage img) throws Frei0rException {
 			_verifyImage(img);
 			// Make sure the image has the right format.
 			img = ImageConvert.convertType(img, BufferedImage.TYPE_INT_ARGB);
@@ -413,11 +416,10 @@ public class Frei0r {
 				throw new Frei0rException("Data buffer of input image has wrong type.");
 			}
 			// Convert input to ABGR if needed.
-			int[] data = ((DataBufferInt)buffer).getData();
+			System.arraycopy(((DataBufferInt)buffer).getData(), 0, frame, 0, _size);
 			if (_parent.getColorModel() == F0R_COLOR_MODEL_RGBA8888) {
-				ImageConvert.convertARGBtoABGR(data);
+				ImageConvert.convertARGBtoABGR(frame);
 			}
-			return data;
 		}
 		
 		private void _outputImageSetFrame(BufferedImage img, int[] frame) throws Frei0rException {
@@ -446,6 +448,7 @@ public class Frei0r {
 		private Frei0r _parent = null;
 		private int _width, _height, _size;
 		private int[] _outframe;
+		private int[] _inframe, _inframe2, _inframe3;
 	}
 
 	public static class Color {
