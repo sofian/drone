@@ -156,10 +156,10 @@ public class ImageConvert {
 	}
 
 	/**
-	 * Converts a BufferedImage to a BufferedImage with an alpha channel. If the given image already
-	 * has an alpha channel, just returns it.
+	 * Converts a BufferedImage to the specified type.
 	 * @param src the source image
-	 * @return an image with an alpha channel (opaque by default)
+	 * @param type the BufferedImage type
+	 * @return a BufferedImage with the right type
 	 */
 	public static BufferedImage convertType(BufferedImage src, int type) {
 		if (src.getType() == type)
@@ -173,7 +173,7 @@ public class ImageConvert {
 		g2.dispose();
 		return image;
 	}
-
+	
 	/**
 	 * Convert pixels from java default ARGB int format to byte array in ABGR format.
 	 * @param pixels the pixels to convert
