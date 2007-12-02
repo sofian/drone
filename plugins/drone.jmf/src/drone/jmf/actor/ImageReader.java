@@ -29,10 +29,14 @@
 package drone.jmf.actor;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+
+import drone.util.Constants;
+import drone.util.ImageConvert;
 
 import ptolemy.actor.lib.Source;
 import ptolemy.data.AWTImageToken;
@@ -105,9 +109,26 @@ public class ImageReader extends Source {
     public void attributeChanged(Attribute attribute)
             throws IllegalActionException {
         if (attribute == fileOrURL) {
-            // Would it be worth checking to see if the URL exists and
-            // is readable?
             _url = fileOrURL.asURL();
+
+            if (_url == null) {
+                throw new IllegalActionException("Source URL was null");
+            }
+
+            // Read the image.
+            try {
+                _image = ImageIO.read(_url);
+            } catch (IOException e) {
+            	throw new IllegalActionException(this, e, "Cannot open file.");
+            }
+
+            if ((_image.getWidth(null) == -1) && (_image.getHeight(null) == -1)) {
+                throw new IllegalActionException(this,
+                        "Image size is -1 x -1.  Failed to open file.");
+            }
+            
+            // Make sure the image is in the default type.
+            _image = ImageConvert.toBufferedImage(_image, Constants.DEFAULT_IMAGE_TYPE);
         }
 
         super.attributeChanged(attribute);
@@ -127,27 +148,6 @@ public class ImageReader extends Source {
         attributeChanged(fileOrURL);
     }
 
-    /** Read in an image.
-     *  @exception IllegalActionException If an IO error occurs.
-     */
-    public boolean prefire() throws IllegalActionException {
-        if (_url == null) {
-            throw new IllegalActionException("Source URL was null");
-        }
-
-        try {
-            _image = ImageIO.read(_url);
-        } catch (IOException e) {
-        	throw new IllegalActionException(this, e, "Cannot open file.");
-        }
-
-        if ((_image.getWidth(null) == -1) && (_image.getHeight(null) == -1)) {
-            throw new IllegalActionException(this,
-                    "Image size is -1 x -1.  Failed to open file.");
-        }
-
-        return super.prefire();
-    }
 
     ///////////////////////////////////////////////////////////////////
     ////                         private members                   ////
