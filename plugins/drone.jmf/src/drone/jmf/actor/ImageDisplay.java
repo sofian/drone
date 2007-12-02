@@ -21,14 +21,17 @@ package drone.jmf.actor;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import ptolemy.actor.lib.Sink;
+import ptolemy.data.BooleanToken;
 import ptolemy.data.ImageToken;
 import ptolemy.data.Token;
+import ptolemy.data.expr.Parameter;
 import ptolemy.data.type.BaseType;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
@@ -70,6 +73,11 @@ public class ImageDisplay extends Sink {
         // FIXME: This is required to be an ImageToken, but
         // we don't see to have that class.
         input.setTypeEquals(BaseType.OBJECT);
+        
+		fullscreen = new Parameter(this, "fullscreen");
+		fullscreen.setTypeEquals(BaseType.BOOLEAN);
+		fullscreen.setExpression("false");
+		
         _frame = null;
     }
 
@@ -91,6 +99,8 @@ public class ImageDisplay extends Sink {
         newObject._frame = null;
         return newObject;
     }
+    
+	public Parameter fullscreen;
 
 //    /** Get the background.
 //     *  @return The background color.
@@ -232,8 +242,14 @@ public class ImageDisplay extends Sink {
                     // size of the internal component.
 //                    Component[] components = _frame.getContentPane()
 //                        .getComponents();
-                    
-                    _frame.setVisible(true);
+    				
+    				if (((BooleanToken)fullscreen.getToken()).booleanValue()) {
+    					_frame.setVisible(false);
+    					_frame.setUndecorated(true);
+    					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(_frame);
+    				} else {
+    					_frame.setVisible(true);
+    				}
                 } catch (Exception ex) {
                     throw new InternalErrorException(ex);
                 }
