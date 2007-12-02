@@ -4,6 +4,6 @@
 <entity name="Drone" class="ptolemy.moml.EntityLibrary">
   <input source="plugins/drone.frei0r/data/frei0r.xml"/>
   <input source="plugins/drone.jmf/data/jmf.xml"/>
-  <input source="plugins/drone.artkp/data/artkp.xml"/>
+  <input source="plugins/drone.jogl/data/jogl.xml"/>
 </entity>
 
