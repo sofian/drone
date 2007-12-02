@@ -74,7 +74,6 @@ import com.lti.civil.impl.qtjava.QTCaptureSystem;
 import com.lti.civil.impl.qtjava.QTCaptureSystemFactory;
 import com.lti.civil.webcam.StoreMostRecent_CaptureObserver;
 
-import drone.jmf.data.BufferedImageToken;
 import drone.jmf.data.JMFImageToken;
 
 import ptolemy.actor.lib.Source;
