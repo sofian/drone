@@ -276,7 +276,7 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		
 		Buffer buffer = new Buffer();
 		
-		VideoFormat format = DataSource.convertCivilFormat(image.getFormat(), image.getWidth(), image.getHeight());
+		VideoFormat format = DataSource.convertCivilFormat(image.getFormat());
 		synchronized (_waitSync) {
 			if (_playerOpen) {
 				buffer.setData(image.getBytes());
