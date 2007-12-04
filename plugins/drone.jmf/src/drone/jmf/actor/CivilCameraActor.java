@@ -142,32 +142,6 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 	///////////////////////////////////////////////////////////////////
 	////                         public methods                    ////
 
-//	/** The controller listener.  This method controls the
-//	*  initializing of the player.  It also senses when the
-//	*  file is done playing, in which case it closes the
-//	*  player.
-//	*  @param event The controller event.
-//	*/
-//	public void controllerUpdate(ControllerEvent event) {
-//	if (event instanceof ConfigureCompleteEvent
-//	|| event instanceof RealizeCompleteEvent
-//	|| event instanceof PrefetchCompleteEvent
-//	|| event instanceof StartEvent
-//	|| event instanceof StopEvent) {
-//	synchronized (_waitSync) {
-//	_stateTransitionEvent = event;
-//	_stateTransitionOK = true;
-//	_waitSync.notifyAll();
-//	}
-//	} else if (event instanceof ControllerClosedEvent) {
-//	_stateTransitionEvent = event;
-//	_player.close();
-//	_playerOpen = false;
-//	}
-//	// TODO: verify if there are other events to catch
-//	}
-
-
 	/** Capture a frame and send a java.awt.Image object
 	 *  to the output port.
 	 *  @exception IllegalActionException If there's no director.
@@ -226,50 +200,19 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		}
 	}
 
-//	///////////////////////////////////////////////////////////////////
-//	////                         protected methods                 ////
-
-//	/** Block until the processor has transitioned to the given state.
-//	*  Return false if the transition failed.
-//	*  @param state The state for which we are waiting.
-//	*  @return True if the state transition is ok, otherwise return false.
-//	*/
-//	protected boolean _waitForState(int state) {
-//	synchronized (_waitSync) {
-//	try {
-//	while ((_player.getState() != state) && _stateTransitionOK) {
-//	_waitSync.wait();
-//	}
-//	} catch (Exception e) {
-//	}
-//	}
-
-//	return _stateTransitionOK;
-//	}
-
-//	protected void createDataSource() {
-
-//	}
-
-	///////////////////////////////////////////////////////////////////
-	////                         private variables                 ////
-
-	/** The java.awt.Image that we are producing/ */
-	private Image _imageNew;
-	
-	// Boolean that keeps track of whether the player is open or not.
-	private boolean _playerOpen = false;
-
-	private Object _waitSync = new Object();
-
-	private CaptureSystem _system;
-	private CaptureStream _stream;
-	private StoreMostRecent_CaptureObserver _observer;
-
 	public void onError(CaptureStream stream, CaptureException e) {
 		throw new Error("Error caught with stream: " + e.getMessage());
 	}
 
+	public void onNewImage(CaptureStream stream, Image image) {
+		_imageNew = image;
+	}
+	
+	/**
+	 * Returns a JMF buffer constructed from a com.lti.civil.Image.
+	 * @param image the com.lti.civil.Image object
+	 * @return a JMF buffer containing the image's data or empty if the camera's player is not set
+	 */
 	private Buffer _imageToBuffer(Image image) {
 		if (image == null)
 			return null;
@@ -289,8 +232,19 @@ public class CivilCameraActor extends Source implements CaptureObserver {
 		return buffer;
 	}
 	
-	public void onNewImage(CaptureStream stream, Image image) {
-		_imageNew = image;
-	}
+	///////////////////////////////////////////////////////////////////
+	////                         private variables                 ////
+
+	/** The java.awt.Image that we are producing/ */
+	private Image _imageNew;
+	
+	// Boolean that keeps track of whether the player is open or not.
+	private boolean _playerOpen = false;
+
+	private Object _waitSync = new Object();
+
+	private CaptureSystem _system;
+	private CaptureStream _stream;
+	private StoreMostRecent_CaptureObserver _observer;
 
 }

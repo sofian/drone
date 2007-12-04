@@ -1,2 +1,2 @@
 #!/bin/bash
-`dirname $0`/runapp -Xmx756m ptolemy.vergil.VergilApplication $@
+`dirname $0`/runapp -verbose:gc -Xmx756m ptolemy.vergil.VergilApplication $@

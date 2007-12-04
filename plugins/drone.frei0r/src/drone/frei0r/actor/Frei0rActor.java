@@ -1,6 +1,6 @@
 /* An actor that provides a bridge to the Frei0r video effect API.
  * 
- * Copyright (c) 2006 Jean-Sebastien Senecal (js@drone.ws)
+ * Copyright (c) 2006 -2007 Mathieu Guindon (mathieu@drone.ws), Jean-Sebastien Senecal (js@drone.ws)
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +57,6 @@ import drone.frei0r.Frei0rException;
 import drone.frei0r.jni.Frei0r;
 import drone.util.ImageConvert;
 import drone.util.OSUtils;
-
-
-
-//Frei0rActor
 
 /**
  * Provides a bridge for Frei0r, minimalistic plugin API for video effects.
