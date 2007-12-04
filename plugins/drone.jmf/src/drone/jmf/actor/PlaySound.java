@@ -25,6 +25,7 @@ package drone.jmf.actor;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.media.CannotRealizeException;
 import javax.media.Controller;
 import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
@@ -36,6 +37,7 @@ import javax.media.MediaLocator;
 import javax.media.NoPlayerException;
 import javax.media.Player;
 import javax.media.Time;
+import javax.media.TransitionEvent;
 
 import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
 
@@ -90,7 +92,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		gain.setTypeEquals(BaseType.DOUBLE);
 
 		fileNameOrURL = new FileParameter(this, "fileNameOrURL");
-		
+
 		synchronizedPlay = new Parameter(this, "synchronizedPlay");
 		synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
 		synchronizedPlay.setToken(BooleanToken.FALSE);
@@ -98,7 +100,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		loop = new Parameter(this, "loop");
 		loop.setTypeEquals(BaseType.BOOLEAN);
 		loop.setToken(BooleanToken.TRUE);
-		
+
 		defaultPercentGain = new IntRangeParameter(this, "percentGain");
 		defaultPercentGain.setToken(new IntToken(100)); // Set the default value to full scale.
 	}
@@ -128,7 +130,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	public Parameter synchronizedPlay;
 
 	public Parameter loop;
-	
+
 	///////////////////////////////////////////////////////////////////
 	////                         public methods                    ////
 
@@ -136,13 +138,12 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		_isOn = true;
 		try {
 			_createNewPlayer(_audioFileURL);
-			_gainControl = null;
 		} catch (IOException ex) {
 			throw new IllegalActionException(this, ex,
 					"Cannot open file/url: " + fileNameOrURL.asURL().toString());
 		} catch (MediaException ex) {
 			throw new IllegalActionException(this, ex,
-					"Exception thrown by media framework");
+			"Exception thrown by media framework");
 		}		
 		super.initialize();
 	}
@@ -162,8 +163,8 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 			boolean newSynchronizedPlay = ((BooleanToken) synchronizedPlay.getToken()).booleanValue();
 			// Call this whether we have synchronized play or not, since
 			// we may now have synchronized play but not have had it before.
-			if (_synchronizedPlay != newSynchronizedPlay)
-				_stopPlayer();
+			if (_synchronizedPlay != newSynchronizedPlay && _player != null)
+				_player.stop();
 			_synchronizedPlay = newSynchronizedPlay;
 		} else if (attribute == loop) {
 			_isLooping = ((BooleanToken) loop.getToken()).booleanValue();
@@ -181,41 +182,40 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		if (onOff.getWidth() > 0 && onOff.hasToken(0)) {
 			_isOn = ((BooleanToken)onOff.get(0)).booleanValue();
 		}
-		
-		// Set gain.
-		if (gain.getWidth() > 0 && gain.hasToken(0)) {
-			float gainLevel = (float) ((DoubleToken)gain.get(0)).doubleValue();
-			if (_gainControl != null)
-				_gainControl.setLevel(gainLevel);
-		}
 
-		// If there is no player, then no sound file has been specified: just return.
-		if (_player == null) {
-			return true;
-		}
+		if (_player != null) {
 
-		if (!_isOn) {
-			if (_player.getState() == Controller.Started)
-				_stopPlayer();
-		} else {
-			if (_player.getState() != Controller.Started)
-				_startPlayer();
+			// Set gain.
+			if (gain.getWidth() > 0 && gain.hasToken(0)) {
+				float gainLevel = (float) ((DoubleToken)gain.get(0)).doubleValue();
+				_gainControl.setLevel(Math.min(Math.max(gainLevel,0), 1));
+			}
 
-			// If synchronizedPlay is true, then wait for the play to complete.
-			if (_synchronizedPlay) {
-				synchronized (this) {
-					while ((_player.getState() == Controller.Started)
-							&& !_stopRequested) {
-						try {
-							wait();
-						} catch (InterruptedException ex) {
-							System.out.println("interrupted");
-							break;
+			if (!_isOn) {
+				if (_player.getState() == Controller.Started)
+					_player.stop();
+			} else {
+				if (_player.getState() != Controller.Started)
+					_player.start();
+
+
+				// If synchronizedPlay is true, then wait for the play to complete.
+				if (_synchronizedPlay) {
+					synchronized (this) {
+						while ((_player.getState() == Controller.Started)
+								&& !_stopRequested) {
+							try {
+								wait();
+							} catch (InterruptedException ex) {
+								System.out.println("interrupted");
+								break;
+							}
 						}
 					}
 				}
 			}
 		}
+		
 		return true;
 	}
 
@@ -229,9 +229,16 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	 * Close the media processor and deallocate all resources.
 	 */
 	public void wrapup() {
-		_stopPlayer();
-		_closePlayer();
-		_deallocatePlayer();
+		_terminatePlayer();
+	}
+
+	protected void _terminatePlayer()  {
+		if (_player != null) {
+			_player.stop();
+			_player.close();
+			_player.deallocate();
+			_player = null;
+		}
 	}
 
 	/** React to notification of a change in controller status.
@@ -243,10 +250,10 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 			if (_player != null) {
 				// Rewind.
 				_player.setMediaTime(_startTime);
-				
+
 				// Stop if not looping.
 				if (!_isLooping) {
-					_stopPlayer();
+					_player.stop();
 					_isOn = false;
 				}
 			}
@@ -254,72 +261,25 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		notifyAll();
 	}
 
-	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException, IllegalActionException {
+	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException, IllegalActionException, CannotRealizeException {
 		System.out.println("Create new player");
-		
+
 		// Set media location.
 		MediaLocator source = new MediaLocator(url);
 		if (_player != null) {
 			_player.removeControllerListener(this);
-			_player.stop();
-			_player.close();
-			_player.deallocate();
+			_terminatePlayer();
 		}
-		
+
 		// Create the player.
-		_player = Manager.createPlayer(source);
+		_player = Manager.createRealizedPlayer(source);
 
 		// Initialize.
 		_player.addControllerListener(this);
-		
-		StateWaiter stateWaiter = new StateWaiter(_player);
 
-		// Realize.
-		_player.realize();
-		stateWaiter.blockingRealize();
-		
 		// Set gain control.
 		_gainControl = _player.getGainControl();
 		_gainControl.setLevel(0.01f * defaultPercentGain.getCurrentValue());
-		
-		// Prefetch.
-		_player.prefetch();
-		stateWaiter.blockingPrefetch();
-	}
-
-	/** 
-	 * Stops the player.
-	 */
-	protected void _stopPlayer() {
-		if (_player != null)
-			_player.stop();
-	}
-
-	/** 
-	 * Starts the player.
-	 */
-	protected void _startPlayer() {
-		if (_player != null) {
-			_player.start();
-		}
-	}
-
-	/**
-	 * Deallocate resources and close the player.
-	 */
-	protected void _closePlayer() {
-		if (_player != null)
-			_player.close();
-	}
-
-	/**
-	 * Deallocate all resources used by the player.
-	 */
-	protected void _deallocatePlayer() {
-		if (_player != null) {
-			_player.deallocate();
-			_player = null;
-		}
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -338,8 +298,8 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	private static Time _startTime = new Time(0.0);
 
 	private boolean _isOn = true;
-	
+
 	private boolean _isLooping = true;
-	
+
 	private URL _audioFileURL = null;
 }
