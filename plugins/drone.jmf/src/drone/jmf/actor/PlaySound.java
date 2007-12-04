@@ -1,10 +1,7 @@
 /* An actor that plays a sound from a file or URL.
  * 
- * Copyright (C) 2006 Jean-Sebastien Senecal (js@drone.ws)
+ * Copyright (C) 2006-2007 Jean-Sebastien Senecal (js@drone.ws)
  * Copyright (c) 2003-2006 The Regents of the University of California.
- * 
- * This file is a Frei0r plugin.
- * The code is a modified version of code from the Gimp.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +34,10 @@ import javax.media.MediaLocator;
 import javax.media.NoPlayerException;
 import javax.media.Player;
 import javax.media.Time;
-import javax.media.TransitionEvent;
-
-import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
 
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
+import ptolemy.actor.parameters.DoubleRangeParameter;
 import ptolemy.actor.parameters.IntRangeParameter;
 import ptolemy.data.BooleanToken;
 import ptolemy.data.DoubleToken;
@@ -55,8 +50,7 @@ import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
-
-////PlaySound
+import drone.util.MathUtils;
 
 /**
  This actor plays audio from a file or URL when it fires.
@@ -73,6 +67,7 @@ import ptolemy.kernel.util.NameDuplicationException;
  @Pt.AcceptedRating Red (cxh)
  */
 public class PlaySound extends TypedAtomicActor implements ControllerListener {
+
 	/** Construct an actor with the given container and name.
 	 *  @param container The container.
 	 *  @param name The name of this actor.
@@ -101,8 +96,8 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		loop.setTypeEquals(BaseType.BOOLEAN);
 		loop.setToken(BooleanToken.TRUE);
 
-		defaultPercentGain = new IntRangeParameter(this, "percentGain");
-		defaultPercentGain.setToken(new IntToken(100)); // Set the default value to full scale.
+		defaultGain = new DoubleRangeParameter(this, "defaultGain");
+		defaultGain.setToken(new DoubleToken(1.0)); // Set the default value to full scale.
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -117,12 +112,14 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	 */
 	public TypedIOPort onOff;
 
-	public TypedIOPort gain;
-
-	/** The gain (in percent).  This has as its value a record of the form
+	/** The gain (as a value between 0 and 1).  This has as its value a record of the form
 	 *  {min = m, max = M, current = c}, where min <= c <= max.
 	 */
-	public IntRangeParameter defaultPercentGain;
+	public TypedIOPort gain;
+
+	/** The default gain.
+	 */
+	public DoubleRangeParameter defaultGain;
 
 	/** Indicator to play to the end before returning from fire().
 	 *  This is a boolean, and defaults to true.
@@ -188,7 +185,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 			// Set gain.
 			if (gain.getWidth() > 0 && gain.hasToken(0)) {
 				float gainLevel = (float) ((DoubleToken)gain.get(0)).doubleValue();
-				_gainControl.setLevel(Math.min(Math.max(gainLevel,0), 1));
+				_gainControl.setLevel(MathUtils.clamp(gainLevel, 0.0f, 1.0f));
 			}
 
 			if (!_isOn) {
@@ -262,7 +259,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	}
 
 	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException, IllegalActionException, CannotRealizeException {
-		System.out.println("Create new player");
 
 		// Set media location.
 		MediaLocator source = new MediaLocator(url);
@@ -279,7 +275,7 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
 		// Set gain control.
 		_gainControl = _player.getGainControl();
-		_gainControl.setLevel(0.01f * defaultPercentGain.getCurrentValue());
+		_gainControl.setLevel((float) MathUtils.clamp(((DoubleToken)defaultGain.getToken()).doubleValue(), 0.0, 1.0));
 	}
 
 	///////////////////////////////////////////////////////////////////
