@@ -86,6 +86,7 @@ public class ImageReader extends Source {
         output.setTypeEquals(BaseType.OBJECT);
 
         fileOrURL = new FileParameter(this, "fileOrURL");
+        fileOrURL.setExpression("$CLASSPATH/plugins/drone.jmf/data/dos.jpg");
     }
 
     ///////////////////////////////////////////////////////////////////

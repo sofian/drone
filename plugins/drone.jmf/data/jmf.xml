@@ -30,8 +30,6 @@
 
 	<entity name="PlaySound" class="drone.jmf.actor.PlaySound" />
 	
-	<entity name="StreamLoader" class="drone.jmf.actor.StreamLoader" />
-
 	<entity name="VideoCamera" class="drone.jmf.actor.VideoCamera">
 <!--	<property name="formatName">
 	  <property name="style" class="ptolemy.actor.gui.style.ChoiceStyle">
@@ -45,18 +43,10 @@
 	
 	<entity name="CivilCameraActor" class="drone.jmf.actor.CivilCameraActor" />
 
-	<entity name="VideoPlayer" class="drone.jmf.actor.VideoPlayer" />
-
 	<entity name="ImageDisplay" class="drone.jmf.actor.ImageDisplay" />
 
 	<entity name="ImageReader" class="drone.jmf.actor.ImageReader" />
 
-<!--	<entity name="ImageRotate" class="drone.jmf.actor.ImageRotate" />
-	
-	<entity name="ImageToString" class="drone.jmf.actor.ImageToString" />
-
-	<entity name="URLToImage" class="drone.jmf.actor.URLToImage" /> -->
-	
       </group>
     ?>
   </configure>

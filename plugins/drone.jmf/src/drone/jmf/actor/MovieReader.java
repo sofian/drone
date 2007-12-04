@@ -364,8 +364,6 @@ public class MovieReader extends Source implements ControllerListener {
             		} else {
             			mediaTime = new Time(mediaTimeDouble);
             		}
-            		// FIXME: if mediaTimeDouble < 0 there is a much more efficient way to
-            		// do this by skipping a number of frames
             		_framePositioningControl.seek(_framePositioningControl.mapTimeToFrame(mediaTime));
             	}
         		_frame = _frameGrabbingControl.grabFrame();
