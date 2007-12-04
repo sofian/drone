@@ -339,11 +339,11 @@ public class Frei0r {
 			case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
 				if (_inframe2 == null || _inframe2.length < _size)
 					_inframe2 = new int[_size];
-				_inputImageToFrame(_inframe2, in3);
+				_inputImageToFrame(_inframe2, in2);
 			case Frei0r.F0R_PLUGIN_TYPE_FILTER:
 				if (_inframe == null || _inframe.length < _size)
 					_inframe = new int[_size];
-				_inputImageToFrame(_inframe, in3);
+				_inputImageToFrame(_inframe, in1);
 			}
 			_verifyImage(out);
 
