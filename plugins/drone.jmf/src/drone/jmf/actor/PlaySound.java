@@ -38,10 +38,8 @@ import javax.media.Time;
 import ptolemy.actor.TypedAtomicActor;
 import ptolemy.actor.TypedIOPort;
 import ptolemy.actor.parameters.DoubleRangeParameter;
-import ptolemy.actor.parameters.IntRangeParameter;
 import ptolemy.data.BooleanToken;
 import ptolemy.data.DoubleToken;
-import ptolemy.data.IntToken;
 import ptolemy.data.expr.FileParameter;
 import ptolemy.data.expr.Parameter;
 import ptolemy.data.type.BaseType;
@@ -68,7 +66,8 @@ import drone.util.MathUtils;
  */
 public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
-	/** Construct an actor with the given container and name.
+	/**
+	 *  Construct an actor with the given container and name.
 	 *  @param container The container.
 	 *  @param name The name of this actor.
 	 *  @exception IllegalActionException If the actor cannot be contained
@@ -103,29 +102,38 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	///////////////////////////////////////////////////////////////////
 	////                     parameters and ports                  ////
 
-	/** The file name or URL to read. */
+	/** 
+	 * The file name or URL to read. 
+	 */
 	public FileParameter fileNameOrURL;
 
-	/** The input port, which has type boolean.  A true input
+	/** 
+	 * The input port, which has type boolean.  A true input
 	 *  causes the sound to be played, and false input causes it
 	 *  to be stopped.
 	 */
 	public TypedIOPort onOff;
 
-	/** The gain (as a value between 0 and 1).  This has as its value a record of the form
+	/** 
+	 * The gain (as a value between 0 and 1).  This has as its value a record of the form
 	 *  {min = m, max = M, current = c}, where min <= c <= max.
 	 */
 	public TypedIOPort gain;
 
-	/** The default gain.
+	/** 
+	 * The default gain.
 	 */
 	public DoubleRangeParameter defaultGain;
 
-	/** Indicator to play to the end before returning from fire().
-	 *  This is a boolean, and defaults to true.
+	/** 
+	 * Indicator to play to the end before returning from fire().
+	 * This is a boolean, and defaults to true.
 	 */
 	public Parameter synchronizedPlay;
 
+	/**
+	 * Boolean parameter telling wether the player should play the file in loop or not.
+	 */
 	public Parameter loop;
 
 	///////////////////////////////////////////////////////////////////
@@ -229,15 +237,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		_terminatePlayer();
 	}
 
-	protected void _terminatePlayer()  {
-		if (_player != null) {
-			_player.stop();
-			_player.close();
-			_player.deallocate();
-			_player = null;
-		}
-	}
-
 	/** React to notification of a change in controller status.
 	 *  event The event.
 	 */
@@ -258,6 +257,14 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		notifyAll();
 	}
 
+	/**
+	 * Creates the new player and realizes it.
+	 * @param url the URL pointing to the media file to play
+	 * @throws NoPlayerException
+	 * @throws IOException
+	 * @throws IllegalActionException
+	 * @throws CannotRealizeException
+	 */
 	protected void _createNewPlayer(URL url) throws NoPlayerException, IOException, IllegalActionException, CannotRealizeException {
 
 		// Set media location.
@@ -276,6 +283,18 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 		// Set gain control.
 		_gainControl = _player.getGainControl();
 		_gainControl.setLevel((float) MathUtils.clamp(((DoubleToken)defaultGain.getToken()).doubleValue(), 0.0, 1.0));
+	}
+
+	/**
+	 * Terminates the player and sets it to null.
+	 */
+	protected void _terminatePlayer()  {
+		if (_player != null) {
+			_player.stop();
+			_player.close();
+			_player.deallocate();
+			_player = null;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////
