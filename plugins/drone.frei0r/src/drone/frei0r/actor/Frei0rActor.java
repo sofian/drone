@@ -144,7 +144,7 @@ public class Frei0rActor extends TypedAtomicActor {
 					if (_frei0r == null)
 						throw new IllegalActionException(this, "Specified frei0r library '" + newLibraryName + 
 						"' could not be found or loaded");
-
+					
 					// This ensures that we don't reload for nothing
 					_currentLibraryName = newLibraryName;
 
@@ -160,15 +160,20 @@ public class Frei0rActor extends TypedAtomicActor {
 						input3 = (TypedIOPort) getPort("input3");
 
 					// Remove them if unneeded.
-					if (input2 != null &&
-							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER2 &&
-							_frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-						input2.setContainer(null);
-						_removePort(input2);
-					}
-					if (input3 != null && _frei0r.getPluginType() != Frei0r.F0R_PLUGIN_TYPE_MIXER3) {
-						input3.setContainer(null);
-						_removePort(input2);
+					switch (_frei0r.getPluginType()) {
+					case Frei0r.F0R_PLUGIN_TYPE_SOURCE:
+					case Frei0r.F0R_PLUGIN_TYPE_FILTER:
+						if (input2 != null) {
+							input2.setContainer(null);
+							_removePort(input2);
+						}
+					case Frei0r.F0R_PLUGIN_TYPE_MIXER2:
+						if (input3 != null) {
+							input3.setContainer(null);
+							_removePort(input3);
+						}
+					case Frei0r.F0R_PLUGIN_TYPE_MIXER3:
+					default:;
 					}
 
 					// Create inputs 2 and 3 if necessary.
@@ -183,6 +188,8 @@ public class Frei0rActor extends TypedAtomicActor {
 							input2 = new TypedIOPort(this, "input2", true, false);
 							input2.setTypeEquals(BaseType.OBJECT);
 						}
+					case Frei0r.F0R_PLUGIN_TYPE_SOURCE:
+					case Frei0r.F0R_PLUGIN_TYPE_FILTER:
 					default:;
 					}
 
