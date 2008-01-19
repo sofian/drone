@@ -134,7 +134,7 @@ public class Frei0rActor extends TypedAtomicActor {
 			try {
 				String newLibraryName = ((StringToken)frei0rLibraryName.getToken()).stringValue();
 				
-				if (_frei0r == null || _currentLibraryName.equals(newLibraryName)) {
+				if (_frei0r == null || !_currentLibraryName.equals(newLibraryName)) {
 					String newLibraryFileName = newLibraryName + "." + OSUtils.getNativeLibraryExtension();
 					String frei0rDirName = "frei0r-" + Frei0r.FREI0R_MAJOR_VERSION;
 					_createFrei0r("/usr/lib/" + frei0rDirName + "/" + newLibraryFileName);
