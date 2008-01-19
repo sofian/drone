@@ -1,123 +1,60 @@
+/*
+ * Copyright (c) 2006 Jean-Sebastien Senecal (js@drone.ws)
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 package drone.jmf.demo;
 
-import java.io.IOException;
+import ptolemy.actor.TypedCompositeActor;
+import ptolemy.kernel.util.IllegalActionException;
+import ptolemy.kernel.util.NameDuplicationException;
+import ptolemy.domains.sdf.kernel.SDFDirector;
+import drone.jmf.actor.PlaySound;
 
-import javax.media.Controller;
-import javax.media.ControllerEvent;
-import javax.media.ControllerListener;
-import javax.media.MediaLocator;
-import javax.media.NoDataSourceException;
-import javax.media.NoPlayerException;
-import javax.media.Player;
-import javax.media.Time;
-import javax.media.TimeBase;
+//import ptolemy.kernel.util.Workspace;
+//import ptolemy.domains.de.kernel.DEDirector;
+//import ptolemy.domains.dt.kernel.DTDirector;
+//import ptolemy.domains.ct.kernel.CTDirector;
+import ptolemy.actor.Manager;
+//import ptolemy.actor.lib.StringConst;
+//import ptolemy.actor.lib.Writer;
 
-import net.sf.fmj.ejmf.toolkit.util.SourcedTimer;
-import net.sf.fmj.ejmf.toolkit.util.StateWaiter;
-import net.sf.fmj.ui.application.CaptureDeviceBrowser;
-import net.sf.fmj.ui.application.ContainerPlayerStatusListener;
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.awt.image.*;
 
-public class PlaySoundDemo implements ControllerListener {
-	
-	private Player player;
-	
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
-	public static void main(String[] args) throws Exception {
-		PlaySoundDemo demo = new PlaySoundDemo();
-		demo.setMediaLocation(args[0]);
-		demo.start();
-	}
-	
-	/**
-	 * 
-	 */
-	public void stop() {
-		if (player != null) {
-			player.stop();
-		}
-	}
-	
-	private void createNewPlayer(MediaLocator source) throws NoPlayerException, IOException {
-		player = javax.media.Manager.createPlayer(source);
-		player.realize();
+public class PlaySoundDemo {
 
-		// copied from EJMF StandardStartControl
-	    final int state = player.getState();
-
-	    if (state == Controller.Started) 
-	    	return;
-
-	    if (state < Controller.Prefetched) {
-			StateWaiter w = new StateWaiter(player);
-			w.blockingPrefetch();
-	    }
-
-	    final TimeBase tb = player.getTimeBase();
-	    player.syncStart(tb.getTime());
-	    
-	    player.getGainControl();
-	}
-	
-	/**
-	 * 
-	 */
-	public void start() {
-		if (player != null) {
-			player.start();
-		}
-	}
-
-	/**
-	 * Deallocate all resources used by the player.
-	 */
-	public void deallocate() {
-		if (player != null) {
-			player.deallocate();
-			player = null;
-		}
-	}
-
-	/**
-	 * Deallocate resources and close the player.
-	 */
-	public void close() {
-		if (player != null) {
-			player.close();
-		}
-	}
-
-	/**
-	 * Set the current media time of the content.
-	 */
-	public void setMediaTime(Time time) {
-		if (player != null) {
-			player.setMediaTime(time);
-		}
-	}
-
-	public void setMediaLocation(String mediaLocation) throws Exception {
+	public static void main(String[] args) throws NameDuplicationException, IllegalActionException {
 		
-		try
-		{
-			MediaLocator locator = new MediaLocator(mediaLocation);
-			stop();
-			if (player != null) {
-				player.close();
-				player.deallocate();
-				player = null;
-			}
-			createNewPlayer(locator);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-		
+			TypedCompositeActor top = new TypedCompositeActor();
+			
+			// Create the director.
+			SDFDirector director = new SDFDirector(top, "director");
+			String period = Double.toString(1.0 / 100.0);
+			director.period.setExpression(period);
+			director.synchronizeToRealTime.setExpression("true");
+			//director.iterations.setExpression("100");
+			Manager manager = new Manager("manager");
+			top.setManager(manager);
+			top.setDirector(director);
+			
+			// Create two actors.
+			PlaySound player = new PlaySound(top, "player");
+			player.fileNameOrURL.setExpression(args[0]);
+			
+			top.getManager().startRun();
 	}
-
-	public void controllerUpdate(ControllerEvent event) {
-	}
-	
 }
