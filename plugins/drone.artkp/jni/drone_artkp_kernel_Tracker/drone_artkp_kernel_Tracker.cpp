@@ -4,7 +4,7 @@
 #include <dlfcn.h>
 #include "ARToolKitPlus/Tracker.h"
 #include "drone_artkp_kernel_Tracker.h"
-#include "common.h"
+#include "../common.h"
 
 MyLogger logger;
 
@@ -95,8 +95,9 @@ JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_loadCameraFile
   }
 
   const char* c_nCamParamFile = env->GetStringUTFChars(nCamParamFile, 0);
-  tracker->loadCameraFile(c_nCamParamFile, (float)nNearClip, (float)nFarClip);
+  bool loaded = tracker->loadCameraFile(c_nCamParamFile, (float)nNearClip, (float)nFarClip);
   env->ReleaseStringUTFChars(nCamParamFile, c_nCamParamFile);
+  return (jboolean)loaded;
 }
 
 /*
@@ -222,7 +223,7 @@ JNIEXPORT jboolean JNICALL Java_drone_artkp_kernel_Tracker_setPoseEstimator
 	return false;
   }
 
-  tracker->setPoseEstimator((ARToolKitPlus::POSE_ESTIMATOR)nMethod);
+  return (jboolean)tracker->setPoseEstimator((ARToolKitPlus::POSE_ESTIMATOR)nMethod);
 }
 
 /*

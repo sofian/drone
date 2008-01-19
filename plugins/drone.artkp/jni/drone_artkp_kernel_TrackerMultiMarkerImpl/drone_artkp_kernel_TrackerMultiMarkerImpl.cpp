@@ -6,7 +6,7 @@
 #include "ARToolKitPlus/TrackerMultiMarker.h"
 #include "ARToolKitPlus/TrackerMultiMarkerImpl.h"
 #include "drone_artkp_kernel_TrackerMultiMarkerImpl.h"
-#include "common.h"
+#include "../common.h"
 
 /*
  * Class:     drone_artkp_kernel_TrackerMultiMarkerImpl

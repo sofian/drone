@@ -3,7 +3,7 @@
 #include <string.h>
 #include <dlfcn.h>
 #include <algorithm>
-#include "common.h"
+#include "../common.h"
 #include "ARToolKitPlus/TrackerMultiMarker.h"
 #include "drone_artkp_kernel_TrackerMultiMarker.h"
 
