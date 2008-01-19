@@ -5,7 +5,7 @@ JNILIB := lib$(TARGET).$(EXT)
 
 all:
 	@echo ">> Trying to compile" $(TARGET) "for" $(OS) " <<"
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(JNILIB) $(SOURCES)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(JNILIB) $(SOURCES) $(LIBRARIES)
 	@mv $(JNILIB) lib/
 	@echo ">> done <<"
 
