@@ -1,5 +1,8 @@
+<!-- Core plugins -->
 <fileset dir="drone.frei0r" includes="**/build.xml"/>
 <fileset dir="drone.jmf" includes="**/build.xml"/>
-<fileset dir="drone.artkp" includes="**/build.xml"/>
 <fileset dir="drone.serial" includes="**/build.xml"/>
 <fileset dir="drone.jogl" includes="**/build.xml"/>
+
+<!-- Optional plugins -->
+<!-- <fileset dir="drone.artkp" includes="**/build.xml"/> -->
