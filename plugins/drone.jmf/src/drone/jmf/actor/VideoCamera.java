@@ -212,7 +212,10 @@ public class VideoCamera extends Source implements ControllerListener {
     public void fire() throws IllegalActionException {
         super.fire();
         if (_bufferNew != null) {
-        	output.send(0, new JMFImageToken(_bufferNew));
+        	// If trigger is connected, then it must send a token to activate output.
+        	if (trigger.getWidth() <= 0 || trigger.hasToken(0)) {
+        		output.send(0, new JMFImageToken(_bufferNew));
+        	}
         }
     }
 
