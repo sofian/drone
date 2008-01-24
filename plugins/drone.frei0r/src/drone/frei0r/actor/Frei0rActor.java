@@ -95,6 +95,15 @@ public class Frei0rActor extends TypedAtomicActor {
 		input1 = new TypedIOPort(this, "input1", true, false);
 		input1.setTypeEquals(BaseType.OBJECT);
 
+		// NOTE: All inputs are created during construction because
+		// this seems to prevent a lot of trouble.
+		// PLEASE LEAVE IT LIKE THIS.
+		input2 = new TypedIOPort(this, "input2", true, false);
+		input2.setTypeEquals(BaseType.OBJECT);
+
+		input3 = new TypedIOPort(this, "input3", true, false);
+		input3.setTypeEquals(BaseType.OBJECT);
+
 		output = new TypedIOPort(this, "output", false, true);
 		output.setTypeEquals(BaseType.OBJECT);
 
