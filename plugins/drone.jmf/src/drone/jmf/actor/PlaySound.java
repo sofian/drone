@@ -87,10 +87,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
 		fileNameOrURL = new FileParameter(this, "fileNameOrURL");
 
-		synchronizedPlay = new Parameter(this, "synchronizedPlay");
-		synchronizedPlay.setTypeEquals(BaseType.BOOLEAN);
-		synchronizedPlay.setToken(BooleanToken.FALSE);
-
 		loop = new Parameter(this, "loop");
 		loop.setTypeEquals(BaseType.BOOLEAN);
 		loop.setToken(BooleanToken.TRUE);
@@ -125,12 +121,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 	 */
 	public DoubleRangeParameter defaultGain;
 
-	/** 
-	 * Indicator to play to the end before returning from fire().
-	 * This is a boolean, and defaults to true.
-	 */
-	public Parameter synchronizedPlay;
-
 	/**
 	 * Boolean parameter telling wether the player should play the file in loop or not.
 	 */
@@ -164,13 +154,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 			if ((fileNameOrURL != null) && (fileNameOrURL.asURL() != null)) {
 				_audioFileURL = fileNameOrURL.asURL();
 			}
-		} else if (attribute == synchronizedPlay) {
-			boolean newSynchronizedPlay = ((BooleanToken) synchronizedPlay.getToken()).booleanValue();
-			// Call this whether we have synchronized play or not, since
-			// we may now have synchronized play but not have had it before.
-			if (_synchronizedPlay != newSynchronizedPlay && _player != null)
-				_player.stop();
-			_synchronizedPlay = newSynchronizedPlay;
 		} else if (attribute == loop) {
 			_isLooping = ((BooleanToken) loop.getToken()).booleanValue();
 		} else {
@@ -203,21 +186,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 				if (_player.getState() != Controller.Started)
 					_player.start();
 
-
-				// If synchronizedPlay is true, then wait for the play to complete.
-				if (_synchronizedPlay) {
-					synchronized (this) {
-						while ((_player.getState() == Controller.Started)
-								&& !_stopRequested) {
-							try {
-								wait();
-							} catch (InterruptedException ex) {
-								System.out.println("interrupted");
-								break;
-							}
-						}
-					}
-				}
 			}
 		}
 		
@@ -273,7 +241,11 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 			_player.removeControllerListener(this);
 			_terminatePlayer();
 		}
-
+		
+		if (source == null) {
+			throw new IllegalActionException("Cannot create a source out of given URL '" + url.toString() + "'");
+		}
+		
 		// Create the player.
 		_player = Manager.createRealizedPlayer(source);
 
@@ -306,8 +278,6 @@ public class PlaySound extends TypedAtomicActor implements ControllerListener {
 
 	/** The player. */
 	private Player _player = null;
-
-	private boolean _synchronizedPlay = false;
 
 	/** Start time for an audio clip. */
 	private static Time _startTime = new Time(0.0);
