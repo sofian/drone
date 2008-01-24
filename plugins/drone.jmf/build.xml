@@ -36,6 +36,9 @@
 		<copy todir="${lib.dir}">
 			<fileset dir="contrib/fmj/lib" includes="*.jar" />
 		</copy>
+		<copy todir="${native.dir}">
+			<fileset dir="contrib/fmj/lib/native/${os.shortname}/${os.arch}" includes="*.*" />
+		</copy>
 		<!-- TODO: Still have to copy native -->
 	</target>
 
