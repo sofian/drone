@@ -20,6 +20,10 @@ package drone.artkp.util;
 
 import javax.media.opengl.GL;
 
+import com.sun.opengl.util.texture.Texture;
+
+import drone.jogl.util.JOGLUtils;
+
 public class ARTKPUtils {
 
 	public static double ZOOM = 1.0;
@@ -80,6 +84,26 @@ public class ARTKPUtils {
 	    	gl.glStencilFunc (GL.GL_EQUAL, flag, flag);
 	    	gl.glStencilOp (GL.GL_KEEP, GL.GL_KEEP, GL.GL_KEEP);
 	    }
+	}
+	
+	public static void argDispImage(GL gl, Texture tex, int xWin, int yWin,
+								int widthWin, int heightWin,
+								int widthCam, int heightCam) {
+		int widthMini = (int) ((double)widthCam * ZOOM / (double)GMINI);
+		int heightMini = (int) ((double)heightCam * ZOOM / (double)GMINI);
+		
+		// This code was adapted from ARToolkit's argDrawCamera3d() function in file gsub.c.
+	    if( xWin == 0 && yWin == 0 ) { 
+	        gl.glScissor(0, heightWin - (int) (ZOOM * heightCam),
+	        			  (int) (ZOOM * widthCam), (int) (ZOOM * heightCam));
+	    }
+	    else {
+	        gl.glScissor((xWin-1)*widthMini, heightWin-heightCam-yWin*heightMini,
+	        			  widthMini, heightMini);
+	    }
+	    gl.glEnable( GL.GL_SCISSOR_TEST );
+	    JOGLUtils.drawSquareTexture(gl, tex);
+	    gl.glDisable( GL.GL_SCISSOR_TEST );
 	}
 
 }
