@@ -1,0 +1,6 @@
+In order for Java MIDI to work under Mac OS X you need to install the Mandolane libraries:
+http://www.mandolane.co.uk/
+
+Note: This library is NOT free software. It is a shareware that will display a dialog box 
+every time you run your application unless you buy the software. If you find a better solution
+please write to info@drone.ws.
