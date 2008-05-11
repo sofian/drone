@@ -1,0 +1,6 @@
+INCLUDES += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+CXXFLAGS += -shared -static -lc
+EXT := so
+
+CXXFLAGS += -Wall -O2 -ffast-math -fno-strict-aliasing
+
