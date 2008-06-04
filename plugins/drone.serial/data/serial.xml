@@ -10,9 +10,10 @@
 <!--			<entity name="SerialComm" class="drone.serial.actor.SerialComm">
 			</entity>
 
+-->
 			<entity name="SerialReader" class="drone.serial.actor.SerialReader">
 			</entity>
--->
+
 			<entity name="SerialWriter" class="drone.serial.actor.SerialWriter">
 			</entity>
 

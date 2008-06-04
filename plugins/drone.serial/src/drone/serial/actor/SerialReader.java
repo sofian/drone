@@ -6,7 +6,7 @@ import drone.serial.lib.Serial;
 import ptolemy.actor.lib.Sink;
 import ptolemy.actor.lib.Source;
 import ptolemy.data.BooleanToken;
-import ptolemy.data.ScalarToken;
+import ptolemy.data.IntToken;
 import ptolemy.data.StringToken;
 import ptolemy.data.Token;
 import ptolemy.data.expr.Parameter;
@@ -17,9 +17,9 @@ import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
 
 @SuppressWarnings("serial")
-public class SerialWriter extends Sink {
+public class SerialReader extends Source {
 
-	public SerialWriter(CompositeEntity container, String name)
+	public SerialReader(CompositeEntity container, String name)
 			throws NameDuplicationException, IllegalActionException {
 		super(container, name);
 		
@@ -42,7 +42,8 @@ public class SerialWriter extends Sink {
 		stringMode.setTypeEquals(BaseType.BOOLEAN);
 		stringMode.setExpression("true");
 		
-		input.setTypeEquals(BaseType.GENERAL);
+		output.setTypeEquals(BaseType.GENERAL); // allows for string and int
+
 	}
 	
 	public void initialize() throws IllegalActionException {
@@ -56,18 +57,12 @@ public class SerialWriter extends Sink {
 	
 	public void fire() throws IllegalActionException {
 		super.fire();
-		if (input.getWidth() > 0 && input.hasToken(0)) {
-			try {
-				if (((BooleanToken)stringMode.getToken()).booleanValue()) {
-					StringToken s = StringToken.convert(input.get(0));
-					String str = s.stringValue().trim() + '\n';
-					_serial.write(str);
-				} else {
-					_serial.write(((ScalarToken)input.get(0)).byteValue());
-				}
-			} catch (IOException e) {
-				throw new IllegalActionException(this, e, "Error while writing");
-			}
+		if (((BooleanToken)stringMode.getToken()).booleanValue()) {
+			output.send(0, new StringToken(_serial.readStringUntil('\n')));
+		} else {
+			int val = _serial.read();
+			if (val != -1)
+				output.send(0, new IntToken(val));
 		}
 	}
 	
