@@ -1,6 +1,9 @@
 package drone.serial.actor;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 import drone.serial.lib.Serial;
 import ptolemy.actor.lib.Sink;
@@ -54,6 +57,16 @@ public class SerialWriter extends Sink {
 		}
 	}
 	
+	private byte[] getBytes (char[] chars) {
+		Charset cs = Charset.forName ("UTF-8");
+		CharBuffer cb = CharBuffer.allocate (chars.length);
+		cb.put (chars);
+        cb.flip ();
+		ByteBuffer bb = cs.encode (cb);
+		
+		return bb.array();
+    }
+	
 	public void fire() throws IllegalActionException {
 		super.fire();
 		if (input.getWidth() > 0 && input.hasToken(0)) {
@@ -63,7 +76,13 @@ public class SerialWriter extends Sink {
 					String str = s.stringValue().trim() + '\n';
 					_serial.write(str);
 				} else {
-					_serial.write(((ScalarToken)input.get(0)).byteValue());
+					Token token = input.get(0);
+					if (token instanceof ScalarToken)
+						_serial.write(((ScalarToken)token).intValue());
+					else if (token instanceof StringToken)
+						_serial.write( getBytes( ((StringToken)token).stringValue().toCharArray() ));
+					else
+						throw new IllegalActionException(this, "Wrong token type " + token.getClass().toString());
 				}
 			} catch (IOException e) {
 				throw new IllegalActionException(this, e, "Error while writing");
