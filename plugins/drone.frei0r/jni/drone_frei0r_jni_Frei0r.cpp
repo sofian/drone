@@ -268,7 +268,8 @@ JNIEXPORT void JNICALL Java_drone_frei0r_jni_Frei0r__1openLibrary
 #ifdef __DEBUG
   	fprintf(stderr, "Opening library handle...\n");
 #endif
-  	void* handle = dlopen(str, RTLD_LAZY);
+	// IMPORTANT: Not using RTLD_LOCAL causes a namespace conflict with the frei0r.hpp file.
+  	void* handle = dlopen(str, RTLD_LAZY | RTLD_LOCAL);
   	env->ReleaseStringUTFChars(libName, str);
 #ifdef __DEBUG
   	fprintf(stderr, "done: %p.\n", handle);
