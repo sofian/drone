@@ -1,0 +1,11 @@
+
+# /
+/temp
+
+# /lib/
+/lib/jmf.jar
+
+# /plugins/drone.frei0r/jni/
+/plugins/drone.frei0r/jni/libFrei0rJNI.jnilib
+/plugins/drone.frei0r/jni/drone_frei0r_jni_Frei0r.h.bkcp
+/plugins/drone.frei0r/jni/Makefile
