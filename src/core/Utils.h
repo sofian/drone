@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <cstring>
 
 #include "ColorSpace.h"
 #include "error.h"

@@ -107,13 +107,15 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   //free previously allocated structures
   freeResources();
 
-  if (avformat_open_input(&_formatContext, filename.c_str(), NULL,  NULL)<0)
+  av_register_all();
+
+  if (avformat_open_input(&_formatContext, filename.c_str(), NULL,  NULL) < 0)
   {
     std::cout << "fail to open movie!" << std::endl;
     return false;
   }
 
-  if (avformat_find_stream_info(_formatContext,NULL)<0)
+  if (avformat_find_stream_info(_formatContext, NULL) < 0)
   {
     std::cout << "fail to find stream info!" << std::endl;
     return false;
