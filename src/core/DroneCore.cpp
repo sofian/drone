@@ -12,7 +12,7 @@
 #include "GearMaker.h"
 #include "MetaGearMaker.h"
 
-#include "Math.h"
+#include "DroneMath.h"
 #include "Utils.h"
 
 void DroneCore::init()

@@ -54,7 +54,7 @@ T REPEAT_CLAMP2(T t,T low,T high)
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
-#include "Math.h"
+#include "DroneMath.h"
 #include "agg_basics.h"
 #include "agg_rendering_buffer.h"
 #include "agg_rasterizer_scanline_aa.h"

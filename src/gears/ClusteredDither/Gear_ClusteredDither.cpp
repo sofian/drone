@@ -19,7 +19,7 @@
 
 #include "Gear_ClusteredDither.h"
 #include "Engine.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include <math.h> // XXX debug
 #include <iostream>
 

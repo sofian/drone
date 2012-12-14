@@ -23,7 +23,7 @@
 #include "GearGui.h"
 
 
-#include <qcanvas.h>
+#include <q3canvas.h>
 #include <vector>
 
 class Gear_Slider;
@@ -38,7 +38,7 @@ public:
   static const QColor SLIDER_COLOR;
   static const QColor SLIDER_BOX_COLOR;
 
-  GearGui_Slider(Gear_Slider *gear, QCanvas *canvas);
+  GearGui_Slider(Gear_Slider *gear, Q3Canvas *canvas);
 
   bool mouseEvent(const QPoint& p, Qt::ButtonState button);
   void moveSlider(int sliderPos);

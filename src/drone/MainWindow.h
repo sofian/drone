@@ -20,28 +20,31 @@
 #ifndef MAINWINDOW_INCLUDED
 #define MAINWINDOW_INCLUDED
 
-#include <qmainwindow.h>
-#include <qtoolbar.h>
+#include <q3mainwindow.h>
+#include <q3toolbar.h>
 #include <qtoolbutton.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qmenubar.h>
 #include <qsplitter.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QTimerEvent>
 #include <list>
 
 #include "Engine.h"
 #include "Project.h"
 
-#include "GuileBindings.h"
+//#include "GuileBindings.h"
 
 class SchemaGui;
 class MetaGearEditor;
 class MetaGear;
 
-class MainWindow : public QMainWindow
+class MainWindow : public Q3MainWindow
 {
   Q_OBJECT
 
-  friend class GuileBindings;
+  //friend class GuileBindings;
   
 public:
 
@@ -76,19 +79,19 @@ protected:
 
 private:
 
-  static const unsigned int MainWindow::MAX_RECENT_SCHEMAS;
+  static const unsigned int MAX_RECENT_SCHEMAS;
   static const std::string SCHEMA_EXTENSION;
 
   void addToRecentSchema(std::string filename);
   
 
   Engine* _engine;
-  QFrame* _frame;
+  Q3Frame* _frame;
   SchemaGui* _mainSchemaGui;
   
   MetaGearEditor *_metaGearEditor;
   
-  QToolBar *_toolBar;
+  Q3ToolBar *_toolBar;
   QToolButton *_playPause;
   QToolButton *_zoomIn;
   QToolButton *_zoomOut;
@@ -96,9 +99,9 @@ private:
   
   int _menuSaveItemId;
   int _menuPrefsItemId;
-  QPopupMenu *_fileMenu;
-  QPopupMenu *_toolsMenu;
-  QPopupMenu *_viewMenu;
+  Q3PopupMenu *_fileMenu;
+  Q3PopupMenu *_toolsMenu;
+  Q3PopupMenu *_viewMenu;
 
   Project* _project;
   

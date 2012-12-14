@@ -10,16 +10,16 @@
 #ifndef GEARLISTVIEW_INCLUDED
 #define GEARLISTVIEW_INCLUDED
 
-#include <qlistview.h>
+#include <q3listview.h>
 
-class GearListView : public QListView
+class GearListView : public Q3ListView
 {
 public:
   GearListView(QWidget *parent);
   
   void create();    
 protected:
-  QDragObject *dragObject();
+  Q3DragObject *dragObject();
 };
 
 #endif

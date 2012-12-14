@@ -21,11 +21,13 @@
 #define GEARPROPERTIESDIALOG_INCLUDED
 
 #include <qdialog.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 #include <vector>
 
 class QPushButton;
 class Gear;
-class QVBoxLayout;
+class Q3VBoxLayout;
 class PropertyControl;
 class Property;
 class Engine;
@@ -48,7 +50,7 @@ private:
   Gear* _gear;
   Engine* _engine;
 
-  QVBoxLayout* _verticalLayout;
+  Q3VBoxLayout* _verticalLayout;
   std::vector<PropertyControl*> _propertyControls;
   QPushButton *_okButton;
 

@@ -48,7 +48,7 @@ public:
   float getVerticalValue(){return _VALUE_V_OUT->type()->value();};
 
 protected:
-  GearGui* createGearGui(QCanvas *canvas);//we want a slider so we overload
+  GearGui* createGearGui(Q3Canvas *canvas);//we want a slider so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);

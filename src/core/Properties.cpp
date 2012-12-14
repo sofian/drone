@@ -115,7 +115,7 @@ void Properties::getAll(std::vector<Property*> *properties)
 
 void Properties::save(QDomDocument &doc, QDomElement &parent)
 {               
-  QDomElement propertiesElem = doc.createElement(XML_TAGNAME);
+  QDomElement propertiesElem = doc.createElement(XML_TAGNAME.c_str());
   parent.appendChild(propertiesElem);
 
   QDomAttr propertieAttr;
@@ -170,7 +170,7 @@ void Properties::load(QDomElement &parentElem)
     for(;exists; index++)
     {
       std::ostringstream oss;
-      oss<<name<<index;      
+      oss<<name.toStdString()<<index;      
       QString value = propertiesElem.attribute(oss.str().c_str());
       
       if(value==QString::null)

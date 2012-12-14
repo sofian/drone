@@ -20,7 +20,7 @@
 #ifndef GEARGUI_TV_INCLUDED
 #define GEARGUI_TV_INCLUDED
 
-#include <qcanvas.h>
+#include <q3canvas.h>
 #include <vector>
 #include <qimage.h>
 
@@ -33,7 +33,7 @@ class GearGui_TV : public GearGui
 {
 public:
 
-  GearGui_TV(Gear_TV *gear, QCanvas *canvas);
+  GearGui_TV(Gear_TV *gear, Q3Canvas *canvas);
 
 
 protected:

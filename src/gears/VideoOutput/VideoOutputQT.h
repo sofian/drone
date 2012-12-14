@@ -1,3 +1,6 @@
+//Added by qt3to4:
+#include <QPaintEvent>
+#include <QPixmap>
 /* VideoOutputShm.h
  * Copyright (C) 2004 Mathieu Guindon
  * This file is part of Drone.
@@ -24,18 +27,18 @@ class Canvas;
 
 #include "VideoOutput.h"
 
-#include <qmainwindow.h>
+#include <q3mainwindow.h>
 #include <qimage.h>
 #include <qapplication.h>
 
-class RenderingWindow : public QMainWindow
+class RenderingWindow : public Q3MainWindow
 {
 public:
 	RenderingWindow() : 
-		QMainWindow(qApp->mainWidget(), 0, Qt::WType_Dialog | Qt::WStyle_StaysOnTop), 
+		Q3MainWindow(qApp->mainWidget(), 0, Qt::WType_Dialog | Qt::WStyle_StaysOnTop), 
 		_frameSizeX(0), _frameSizeY(0), _frameSize(0)
 	{
-		_pixMap.setOptimization(QPixmap::BestOptim);
+//		_pixMap.setOptimization(QPixmap::BestOptim);
 	}
 	
 	void updateVideoFrame(const VideoRGBAType &image);

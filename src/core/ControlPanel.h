@@ -2,8 +2,10 @@
 #define CONTROLPANEL_INCLUDED
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 #include <list>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qlayout.h>
 #include <qlabel.h>
 
@@ -29,8 +31,8 @@ private:
 
   MetaGear *_parentMetaGear;
 
-  QFrame *_mainFrame;  
-  QGridLayout *_mainLayout;
+  Q3Frame *_mainFrame;  
+  Q3GridLayout *_mainLayout;
   QLabel *_labelName;
 };
 

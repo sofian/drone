@@ -35,7 +35,7 @@ public:
   void runVideo();
 
 protected:
-  GearGui *createGearGui(QCanvas *canvas);
+  GearGui *createGearGui(Q3Canvas *canvas);
   Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
 
 private:

@@ -20,8 +20,11 @@
 #include "MainWindow.h"
 
 #include <iostream>
-#include <qfiledialog.h>
+#include <q3filedialog.h>
 #include <qapplication.h>
+//Added by qt3to4:
+#include <QTimerEvent>
+#include <Q3PopupMenu>
 #include <sstream>
 
 #include "Play.xpm"
@@ -50,7 +53,7 @@ extern QSettings globalSettings;
 
 
 MainWindow::MainWindow() : 
-QMainWindow(), 
+Q3MainWindow(), 
 _engine(NULL), 
 _frame(NULL), 
 _mainSchemaGui(NULL), 
@@ -65,7 +68,7 @@ _menuShowSmallGearsId(false)
   
   setCentralWidget(_metaGearEditor);
 
-  _toolBar = new QToolBar(this);
+  _toolBar = new Q3ToolBar(this);
   addToolBar(_toolBar);        
   _playPause = new QToolButton(_toolBar);    		
   _playPause->setToggleButton(true);
@@ -84,9 +87,9 @@ _menuShowSmallGearsId(false)
   QObject::connect(_zoomOut, SIGNAL(toggled(bool)), _metaGearEditor->schemaEditor(), SLOT(slotZoomIn()));
 	*/
 
-  QIconSet playPauseIcon;
-  playPauseIcon.setPixmap(Play_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::Off);
-  playPauseIcon.setPixmap(Pause_xpm, QIconSet::Automatic, QIconSet::Normal, QIconSet::On);
+  QIcon playPauseIcon;
+  playPauseIcon.setPixmap(Play_xpm, QIcon::Automatic, QIcon::Normal, QIcon::Off);
+  playPauseIcon.setPixmap(Pause_xpm, QIcon::Automatic, QIcon::Normal, QIcon::On);
   _playPause->setIconSet(playPauseIcon);   
 
   QObject::connect(_playPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
@@ -96,27 +99,27 @@ _menuShowSmallGearsId(false)
 	
 	
   //menu    
-  _fileMenu = new QPopupMenu(this);
-  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), CTRL+Key_N);
-  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()), CTRL+Key_O);
+  _fileMenu = new Q3PopupMenu(this);
+  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
+  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()), Qt::CTRL+Qt::Key_O);
   
   //we need to keep this id to enable/disable the save item
-  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()), CTRL+Key_S);    
+  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()), Qt::CTRL+Qt::Key_S);    
   _fileMenu->setItemEnabled(_menuSaveItemId, false);  
   
   _fileMenu->insertItem("Save as", this, SLOT(slotMenuSaveAs()));    
   _fileMenu->insertSeparator();
-  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), CTRL+Key_Q);    
+  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), Qt::CTRL+Qt::Key_Q);    
   _fileMenu->insertSeparator();
   
-  _toolsMenu = new QPopupMenu(this);
+  _toolsMenu = new Q3PopupMenu(this);
   _menuPrefsItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
 
-  _viewMenu = new QPopupMenu(this);
+  _viewMenu = new Q3PopupMenu(this);
 	_viewMenu->setCheckable(true);
-  _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), CTRL+Key_M);
-  _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), CTRL+Key_I);
+  _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), Qt::CTRL+Qt::Key_M);
+  _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), Qt::CTRL+Qt::Key_I);
 
 	
   //for the most recent schema files that will be appended
@@ -140,7 +143,7 @@ _menuShowSmallGearsId(false)
   {
     QString filename = globalSettings.readEntry(*it);
     _fileMenu->insertItem(filename, i);
-    _recentSchemas.push_back(filename);    
+    _recentSchemas.push_back(filename.toStdString());    
   }
   globalSettings.endGroup();
 }
@@ -190,9 +193,9 @@ void MainWindow::slotMenuNew()
 
 void MainWindow::slotMenuLoad()
 {  
-  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
+  QString filename = Q3FileDialog::getOpenFileName(_lastLoadPath, ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
                                                   this, "Load", "Load");
-  load(filename);
+  load(filename.toStdString());
 }
 
 void MainWindow::load(std::string filename)
@@ -207,7 +210,7 @@ void MainWindow::load(std::string filename)
   _fileMenu->setItemEnabled(_menuSaveItemId, true);
   
   //save the last load path
-  _lastLoadPath=_project->projectName();
+  _lastLoadPath=_project->projectName().c_str();
   globalSettings.writeEntry("/drone/Schema/LastLoadPath", _lastLoadPath);
 
   //add to recent schema
@@ -222,8 +225,8 @@ void MainWindow::slotMenuSave()
 
 void MainWindow::slotMenuSaveAs()
 {
-  std::string filename = QFileDialog::getSaveFileName(_project->projectName(), "*" + SCHEMA_EXTENSION + ";;" + "*.*", 
-                                                      this, "Save as", "Save as");
+  std::string filename = Q3FileDialog::getSaveFileName(_project->projectName().c_str(), ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
+                                                      this, "Save as", "Save as").toStdString();
   
   if (!filename.empty())
   {
@@ -236,7 +239,7 @@ void MainWindow::slotMenuSaveAs()
     _fileMenu->setItemEnabled(_menuSaveItemId, true);
 
     //save the last save path
-    _lastSavePath=filename;
+    _lastSavePath=filename.c_str();
     globalSettings.writeEntry("/drone/Schema/LastSavePath", _lastSavePath);
 
     //add to recent schema
@@ -259,7 +262,7 @@ void MainWindow::addToRecentSchema(std::string filename)
     _fileMenu->removeItem(j);  
     std::ostringstream oss;
     oss << "/drone/Schema/Recent Files/" << j;
-    globalSettings.removeEntry(oss.str());
+    globalSettings.removeEntry(oss.str().c_str());
   }
 
   //remove from the list if already in
@@ -277,10 +280,10 @@ void MainWindow::addToRecentSchema(std::string filename)
   int i=0;
   for (std::list<std::string>::iterator it=_recentSchemas.begin(); it!=_recentSchemas.end();++it, ++i)
   {
-    _fileMenu->insertItem(*it, i);
+    _fileMenu->insertItem(it->c_str(), i);
     std::ostringstream oss;
     oss << "/drone/Schema/Recent Files/" << i;
-    globalSettings.writeEntry(oss.str(), *it);
+    globalSettings.writeEntry(oss.str().c_str(), it->c_str());
   }
 }
 
@@ -290,7 +293,7 @@ void MainWindow::slotMenuItemSelected(int id)
   if (id < 0 || id > (int)MAX_RECENT_SCHEMAS)
     return;
   
-  load(_fileMenu->text(id));
+  load(_fileMenu->text(id).toStdString());
 }
 
 void MainWindow::slotMenuQuit()

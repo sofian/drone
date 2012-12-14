@@ -20,7 +20,7 @@
 #include <cmath>
 
 #include "Gear_BeatDetector.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "Engine.h"
 
 #include "GearMaker.h"

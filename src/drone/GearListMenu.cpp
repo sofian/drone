@@ -1,10 +1,12 @@
 #include "GearListMenu.h"
 #include "GearMaker.h"
 #include "GearClassification.h"
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 
 GearListMenu::GearListMenu(QWidget *parent) : 
-  QPopupMenu(parent)
+  Q3PopupMenu(parent)
 {
   //transform the activated(int) signal into a gearSelected(QString) signal via slotMenuItemSelected
   QObject::connect(this, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));   
@@ -35,7 +37,7 @@ void GearListMenu::create()
      }
 
      //insert the gear name in the correct menu
-     menu->insertItem((*it)->name);
+     menu->insertItem((*it)->name.c_str());
   }
 }
 

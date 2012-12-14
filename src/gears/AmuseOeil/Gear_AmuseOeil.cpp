@@ -19,14 +19,14 @@
 
 #include "Gear_AmuseOeil.h"
 #include "Engine.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "AggWrapper.h"
 #include "ColorSpace.h"
 
 #include <iostream>
 
 #include "GearMaker.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)

@@ -20,7 +20,7 @@
 #include "Gear_PushButton.h"
 #include "GearMaker.h"
 #include "GearGui_PushButton.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "MidiEngine.h"
 #include "Engine.h"
 
@@ -188,7 +188,7 @@ void Gear_PushButton::runVideo()
     setState(OFF);
 }
 
-GearGui *Gear_PushButton::createGearGui(QCanvas *canvas)
+GearGui *Gear_PushButton::createGearGui(Q3Canvas *canvas)
 {                
   return new GearGui_PushButton(this, canvas);
 }

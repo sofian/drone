@@ -22,6 +22,8 @@
 
 #include <qgl.h>
 #include <qdialog.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 #include "VideoOutput.h"
 #include "TextureGl.h"
 

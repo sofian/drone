@@ -30,8 +30,15 @@ react properly
 #define SCHEMAEDITOR_INCLUDED
 
 #include <qrect.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <QWheelEvent>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMouseEvent>
+#include <QContextMenuEvent>
+#include <QKeyEvent>
 #include <string>
 #include <vector>
 
@@ -48,7 +55,7 @@ class PanelScrollView;
 /**
  * SchemaEditor maintain synchronization between Schema and SchemaGui
  */ 
-class SchemaEditor : public QCanvasView
+class SchemaEditor : public Q3CanvasView
 {
   Q_OBJECT
 
@@ -115,7 +122,7 @@ protected:
   void selectGearsInRectangle(QRect rect);
   QRect getBoundingBoxOfAllSelectedGears();
   // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
-  Gear* SchemaEditor::getTopLeftSelectedGear();
+  Gear* getTopLeftSelectedGear();
   void moveSelectedGearsBy(int x, int y);
   void toggleGearSelection(GearGui* gear);
 
@@ -142,22 +149,22 @@ private:
   ConnectionItem* _activeConnection;
   
   //popupmenus  
-  QPopupMenu *_contextMenu; 
+  Q3PopupMenu *_contextMenu; 
   GearListMenu *_gearListMenu; 
   MetaGearListMenu *_metaGearListMenu; 
   
   // position of right click in Canvas coordinates
   QPoint _contextMenuPos;  
-  QPopupMenu *_gearContextMenu;
-  QPopupMenu *_metaGearContextMenu;
-  QPopupMenu *_plugContextMenu;
+  Q3PopupMenu *_gearContextMenu;
+  Q3PopupMenu *_metaGearContextMenu;
+  Q3PopupMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
 
   PanelScrollView *_panelScrollView;
 
 
-  QCanvasRectangle *_selectBox;
+  Q3CanvasRectangle *_selectBox;
 };
 
 #endif

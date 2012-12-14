@@ -45,7 +45,7 @@ protected:
   void internalSave(QDomDocument &doc, QDomElement &gearElem);
   void internalLoad(QDomElement &gearElem);
 
-  GearGui* createGearGui(QCanvas *canvas);//we want a listbox so we overload
+  GearGui* createGearGui(Q3Canvas *canvas);//we want a listbox so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug *);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug *);

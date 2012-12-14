@@ -48,7 +48,7 @@ public:
   float getValue(){return _VALUE_OUT->type()->value();}
 
 protected:
-  GearGui* createGearGui(QCanvas *canvas);//we want a PushButton so we overload
+  GearGui* createGearGui(Q3Canvas *canvas);//we want a PushButton so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);

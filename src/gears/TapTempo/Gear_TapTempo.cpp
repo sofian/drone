@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Math.h"
+#include "DroneMath.h"
 #include "Gear_TapTempo.h"
 #include "Engine.h"
 

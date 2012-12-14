@@ -8,12 +8,12 @@
 
 
 PanelScrollView::PanelScrollView(QWidget *parent) :
-  QScrollView(parent)
+  Q3ScrollView(parent)
 {  
   setMinimumWidth(350);  
   //resizeContents(400, 400);  
   
-  _mainVBox = new QVBox(viewport());
+  _mainVBox = new Q3VBox(viewport());
   _mainVBox->setMinimumWidth(350);   
   _mainVBox->setMinimumHeight(800);
   addChild(_mainVBox);                

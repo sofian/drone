@@ -19,6 +19,9 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <Q3HBoxLayout>
 
 #include "Engine.h"
 #include "GearPropertiesDialog.h"
@@ -36,7 +39,7 @@ GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *
   _engine(engine)
 {
   setCaption("Properties");
-  _verticalLayout = new QVBoxLayout(this, 12, 12, "layout");
+  _verticalLayout = new Q3VBoxLayout(this, 12, 12, "layout");
 
   std::vector<Property*> properties;
   _gear->settings().getAll(&properties);
@@ -47,7 +50,7 @@ GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *
     addControl((*it));
 
   //ok cancels
-  QHBoxLayout *hLayout = new QHBoxLayout(2);
+  Q3HBoxLayout *hLayout = new Q3HBoxLayout(2);
   _okButton = new QPushButton("Ok", this);
   hLayout->addWidget(_okButton);
   QObject::connect(_okButton, SIGNAL(clicked()), this, SLOT(slotOK()));                

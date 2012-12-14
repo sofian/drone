@@ -10,14 +10,14 @@
 #ifndef PLUGPROPERTIESTABLEITEM_INCLUDED
 #define PLUGPROPERTIESTABLEITEM_INCLUDED
 
-#include <qtable.h>
+#include <q3table.h>
 
 class AbstractPlug;
 
-class PlugPropertiesTableItem : public QTableItem
+class PlugPropertiesTableItem : public Q3TableItem
 {
 public:  
-  PlugPropertiesTableItem(AbstractPlug *plug, QTable *table, EditType et, const QString &text);
+  PlugPropertiesTableItem(AbstractPlug *plug, Q3Table *table, EditType et, const QString &text);
   virtual ~PlugPropertiesTableItem();
 
 protected:

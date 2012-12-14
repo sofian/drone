@@ -8,7 +8,7 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
 #include "XMLHelper.h"
 
 const std::string Schema::XML_TAGNAME = "Schema";
@@ -368,8 +368,8 @@ MetaGear* Schema::newMetaGear()
 
 MetaGear* Schema::addMetaGear(std::string filename)
 {
-  QFileInfo fileInfo(filename);
-  std::string name = fileInfo.baseName();
+  QFileInfo fileInfo(filename.c_str());
+  std::string name = fileInfo.baseName().toStdString();
 
   MetaGear *metaGear = new MetaGear(this, name, getUniqueGearName(name));
 
@@ -559,7 +559,7 @@ bool Schema::connect(Schema::Connection &connection)
 
 bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 {
-  QDomElement rootElem = doc.createElement(XML_TAGNAME);
+  QDomElement rootElem = doc.createElement(XML_TAGNAME.c_str());
   parent.appendChild(rootElem);
 
   //save all gears

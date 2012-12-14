@@ -28,3 +28,5 @@ macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoOutput
 
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

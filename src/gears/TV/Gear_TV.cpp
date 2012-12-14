@@ -55,7 +55,7 @@ void Gear_TV::runVideo()
 {    
 }
 
-GearGui *Gear_TV::createGearGui(QCanvas *canvas)
+GearGui *Gear_TV::createGearGui(Q3Canvas *canvas)
 {    
   return new GearGui_TV(this, canvas);
 }

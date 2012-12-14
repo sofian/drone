@@ -40,7 +40,7 @@ public:
     addSubType(_typeWidth);
     addSubType(_typeHeight);
     resize(width, height);
-    fill(fillValue);
+    Array2D<T>::fill(fillValue);
   }
 
   virtual void resize(size_type size)

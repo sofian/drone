@@ -24,7 +24,7 @@
 #include "Engine.h"
 
 #include "GearMaker.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)

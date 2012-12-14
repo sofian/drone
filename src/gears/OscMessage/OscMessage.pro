@@ -5,7 +5,6 @@ SOURCES+=Gear_OscMessage.cpp
 HEADERS+=Gear_OscMessage.h
 INCLUDEPATH+=../../core/ ../../core/types ../../../lib/liblo
 
-macx:QMAKE_CXXFLAGS += -Wno-long-double
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore

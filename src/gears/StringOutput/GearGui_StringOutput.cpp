@@ -29,7 +29,7 @@
 
 const int GearGui_StringOutput::UPDATE_RATE_MS = 83;
 
-GearGui_StringOutput::GearGui_StringOutput(Gear_StringOutput *gear, QCanvas *canvas) : 
+GearGui_StringOutput::GearGui_StringOutput(Gear_StringOutput *gear, Q3Canvas *canvas) : 
 GearGui(gear, canvas, GearGui::BOXNAME_COLOR, GearGui::DEFAULT_SIZEX, 0, UPDATE_RATE_MS)
 {            
 }

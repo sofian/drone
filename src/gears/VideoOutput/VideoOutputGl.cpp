@@ -31,6 +31,10 @@
 
 #include <qapplication.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3HBoxLayout>
+#include <QPaintEvent>
 
 DroneQGLWidget::DroneQGLWidget(QWidget* parent, VideoOutput* videoOutput) : QGLWidget(parent, "video out"),
 _currentImage(NULL),
@@ -175,7 +179,7 @@ bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)
     
   _window = new DroneGLWindow(qApp->mainWidget()); 
   _droneQGLWidget = new DroneQGLWidget(_window, this);  
-  QBoxLayout *l = new QHBoxLayout(_window);
+  Q3BoxLayout *l = new Q3HBoxLayout(_window);
   l->addWidget(_droneQGLWidget);  
   _window->setModal(false);
   _window->show();
@@ -192,6 +196,7 @@ bool VideoOutputGl::toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int 
 		_window->showFullScreen(); 		
 	else
 		_window->showNormal();	
+        return true;
 }
 
 void VideoOutputGl::onResize(int sizeX, int sizeY)

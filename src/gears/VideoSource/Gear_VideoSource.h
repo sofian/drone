@@ -28,8 +28,12 @@
 #include "StringType.h"
 #include "EnumType.h"
 
-#include "avcodec.h"
-#include "avformat.h"
+extern "C" {
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h" 
+}
+
 
 class Gear_VideoSource : public Gear
 {
@@ -77,6 +81,7 @@ private:
   AVPacket _packet;
   AVFrame *_frame;
   AVFrame *_frameRGBA;
+  struct SwsContext *_sws_ctx;
   uint8_t *_buffer;
   int _videoStreamIndex;
   int64_t _firstFrameTime;

@@ -16,7 +16,7 @@
 class PlugPropertiesTableItemValue : public PlugPropertiesTableItem
 {
 public:  
-  PlugPropertiesTableItemValue(AbstractPlug *plug, QTable *table, EditType et);
+  PlugPropertiesTableItemValue(AbstractPlug *plug, Q3Table *table, EditType et);
   virtual ~PlugPropertiesTableItemValue();
 
   QWidget *createEditor() const;

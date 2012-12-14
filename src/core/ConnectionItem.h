@@ -21,14 +21,14 @@
 #define CONNECTIONITEM_INCLUDED
 
 
-#include <qcanvas.h>
+#include <q3canvas.h>
 class PlugBox;
 class Engine;
 
 class QDomDocument;
 class QDomElement;
 
-class ConnectionItem : public QCanvasLine
+class ConnectionItem : public Q3CanvasLine
 {
 public:
   static const int CANVAS_RTTI_CONNECTION;
@@ -37,7 +37,7 @@ public:
     DISCONNECTED, CONNECTING, CONNECTED
   };
 
-  ConnectionItem(QCanvas *canvas);
+  ConnectionItem(Q3Canvas *canvas);
   virtual ~ConnectionItem();
 
   int rtti () const {return CANVAS_RTTI_CONNECTION;};

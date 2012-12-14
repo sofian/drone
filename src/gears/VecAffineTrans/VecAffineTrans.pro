@@ -1,12 +1,12 @@
 include (../config.pro)
 
 TEMPLATE=lib
-SOURCES+=Gear_VecAffineTrans.cpp \
-  ../../../lib/agg23/svg/agg_svg_parser.cpp \
-  ../../../lib/agg23/svg/agg_svg_path_renderer.cpp \
-  ../../../lib/agg23/svg/agg_svg_path_tokenizer.cpp
+#SOURCES+=Gear_VecAffineTrans.cpp \
+#  ../../../lib/agg23/svg/agg_svg_parser.cpp \
+#  ../../../lib/agg23/svg/agg_svg_path_renderer.cpp \
+#  ../../../lib/agg23/svg/agg_svg_path_tokenizer.cpp
 
-HEADERS+=Gear_VecAffineTrans.h
+#HEADERS+=Gear_VecAffineTrans.h
 INCLUDEPATH+=../../core/ ../../core/types ../../../lib/agg23/include ../../../lib/agg23/svg
 
 #linux
@@ -18,3 +18,5 @@ macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VecAffineTrans
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

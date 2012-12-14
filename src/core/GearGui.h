@@ -21,8 +21,11 @@
 #define GEARGUI_INCLUDED
 
 #include <vector>
-#include <qcanvas.h>
+#include <q3canvas.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <QTimerEvent>
+#include <QKeyEvent>
 
 
 class Gear;
@@ -31,7 +34,7 @@ class Engine;
 class QDomElement;
 class QDomDocument;
 
-class GearGui : public QObject, public QCanvasRectangle
+class GearGui : public QObject, public Q3CanvasRectangle
 {
 Q_OBJECT	
 public:
@@ -58,7 +61,7 @@ public:
 	
   virtual int rtti() const;
 
-  GearGui(Gear *pgear, QCanvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
+  GearGui(Gear *pgear, Q3Canvas *canvas, QColor color=BOXNAME_COLOR, int sizeX=DEFAULT_SIZEX, int sizeY=0, int updateRate=-1);
   virtual ~GearGui();
 
   int renderingStartX();
@@ -88,7 +91,7 @@ public:
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
   void setTitle(std::string title){_title=title;}
  
-  void setSelected(bool state){_selected=state;QCanvasRectangle::setSelected(state);}
+  void setSelected(bool state){_selected=state;Q3CanvasRectangle::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
   bool isSelected() const {return _selected;}
 

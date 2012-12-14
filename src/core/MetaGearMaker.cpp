@@ -81,19 +81,21 @@ void MetaGearMaker::parseSubDirs(QDir dir)
   dir.setNameFilter("*.meta");
   dir.setMatchAllDirs(true);
   
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
+  const QFileInfoList files = dir.entryInfoList();
+  QListIterator<QFileInfo> it(files);
+  QFileInfo fileInfo;
+  const char* error;
+
   
-  while ((fileInfo = it.current()) != 0 )
-  {    
-    if (fileInfo->isDir() && (fileInfo->fileName()!=".") && (fileInfo->fileName()!=".."))    
-      parseSubDirs(QDir(fileInfo->filePath()));
+  while (it.hasNext())   
+  {  
+    fileInfo = it.next(); 
+    if (fileInfo.isDir() && (fileInfo.fileName()!=".") && (fileInfo.fileName()!=".."))    
+      parseSubDirs(QDir(fileInfo.filePath()));
     
-    if (fileInfo->isFile())
-     _registry->push_back(new QFileInfo(*fileInfo));
+    if (fileInfo.isFile())
+     _registry->push_back(new QFileInfo(fileInfo));
     
-    ++it;
   }
 }
 

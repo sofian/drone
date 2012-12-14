@@ -20,12 +20,14 @@
 #include "PropertyControlString.h"
 #include <qlineedit.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
 
 
 PropertyControlString::PropertyControlString(QWidget *parent, Property *property) :
 PropertyControl(parent, property)
 {
-  _hLayout = new QHBoxLayout(this, 2);    
+  _hLayout = new Q3HBoxLayout(this, 2);    
   _hLayout->addWidget(new QLabel(property->name().c_str(), this, ""));
   _lineEdit = new QLineEdit(this);
   _hLayout->addWidget(_lineEdit);

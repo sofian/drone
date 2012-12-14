@@ -1,14 +1,17 @@
 #include "MediaPoolDialog.h"
 #include "MediaPoolItem.h"
 #include "MediaMovie.h"
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <Q3VBoxLayout>
 
 
 MediaPoolDialog::MediaPoolDialog(QWidget *parent) :
   QDialog(parent)
 {
   setCaption("Media Pool");
-  _verticalLayout = new QVBoxLayout(this, 3);
-  _horizontalLayout = new QHBoxLayout(_verticalLayout);
+  _verticalLayout = new Q3VBoxLayout(this, 3);
+  _horizontalLayout = new Q3HBoxLayout(_verticalLayout);
   
   _mediaPoolIconView = new MediaPoolIconView(this);
   _importButton = new QPushButton("Import", this);

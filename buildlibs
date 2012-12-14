@@ -2,7 +2,7 @@
 
 #building external libs
 cd lib/ffmpeg
-./configure --extra-cflags=-fno-common --disable-ffserver --disable-ffplay
+./configure --enable-libx264 --enable-gpl --extra-cflags=-fno-common --disable-ffserver --disable-ffplay
 make
 cd ../../
 

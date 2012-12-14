@@ -16,7 +16,7 @@
 class PlugPropertiesTableItemString : public PlugPropertiesTableItem
 {
 public:  
-  PlugPropertiesTableItemString(AbstractPlug *plug, QTable *table, EditType et);
+  PlugPropertiesTableItemString(AbstractPlug *plug, Q3Table *table, EditType et);
   virtual ~PlugPropertiesTableItemString();
 
   QWidget *createEditor() const;

@@ -4,6 +4,9 @@
 #include <qdialog.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <Q3HBoxLayout>
 
 #include "MediaPoolIconView.h"
 
@@ -14,8 +17,8 @@ public:
   ~MediaPoolDialog();
   
 private:
-  QVBoxLayout *_verticalLayout;
-  QHBoxLayout *_horizontalLayout;
+  Q3VBoxLayout *_verticalLayout;
+  Q3HBoxLayout *_horizontalLayout;
   MediaPoolIconView *_mediaPoolIconView;  
   QPushButton *_importButton;
   QPushButton *_movieButton;

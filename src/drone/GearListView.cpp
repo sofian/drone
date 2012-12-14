@@ -9,18 +9,20 @@
 #include "GearListView.h"
 #include "GearMaker.h"
 #include "GearClassification.h"
-#include <qdragobject.h>
+#include <q3dragobject.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include "draggear.xpm"
 
 
 GearListView::GearListView(QWidget *parent) :
-  QListView(parent)
+  Q3ListView(parent)
 {
     addColumn("Gears");
     setAcceptDrops(true);
     setRootIsDecorated(true);
-    setResizeMode(QListView::AllColumns);
-    setColumnWidthMode(0, QListView::Manual);
+    setResizeMode(Q3ListView::AllColumns);
+    setColumnWidthMode(0, Q3ListView::Manual);
     setMinimumWidth(200);
     setMinimumHeight(450);
     setTreeStepSize(10);
@@ -39,8 +41,8 @@ void GearListView::create()
   
   for (std::vector<const GearInfo*>::iterator it = gearsInfo.begin(); it != gearsInfo.end(); ++it)
   {
-    QListViewItem *parentItem=NULL;
-    QListViewItem *rootItem=NULL;
+    Q3ListViewItem *parentItem=NULL;
+    Q3ListViewItem *rootItem=NULL;
     
     if ((*it)->classification)
     {     
@@ -48,11 +50,11 @@ void GearListView::create()
             
       //search or create the root for this gear
       parentItem=firstChild();
-      while(parentItem!=NULL && parentItem->text(0) != path[0])
+      while(parentItem!=NULL && parentItem->text(0) != path[0].c_str())
         parentItem=parentItem->nextSibling();
       
       if (parentItem==NULL)
-        parentItem = new QListViewItem(this, path[0]);
+        parentItem = new Q3ListViewItem(this, path[0].c_str());
 
       parentItem->setOpen(true);
       //search or create subItems path for this gear
@@ -61,23 +63,23 @@ void GearListView::create()
         rootItem=parentItem;
         parentItem=parentItem->firstChild();
 
-        while(parentItem!=NULL && parentItem->text(0) != *it2)
+        while(parentItem!=NULL && parentItem->text(0) != it2->c_str())
           parentItem=parentItem->nextSibling();
         
         if (parentItem==NULL)
-            parentItem = new QListViewItem(rootItem, *it2);
+            parentItem = new Q3ListViewItem(rootItem, it2->c_str());
       }
     }
     
     //insert the gear name in the correct node
-    QListViewItem *gearItem = new QListViewItem(parentItem, (*it)->name);
+    Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, (*it)->name.c_str());
     gearItem->setDragEnabled(true);
   }
 }
 
-QDragObject *GearListView::dragObject()
+Q3DragObject *GearListView::dragObject()
 {
-  QDragObject *d = new QTextDrag(currentItem()->text(0), this);
+  Q3DragObject *d = new Q3TextDrag(currentItem()->text(0), this);
   d->setPixmap(QPixmap(draggear));
   return d;  
 }

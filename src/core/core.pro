@@ -61,7 +61,7 @@ GearGui.h \
 GearConverter.h \
 GearMaker.h \
 ISchemaEventListener.h \
-Math.h \
+DroneMath.h \
 Media.h \
 MediaPool.h \
 MediaMovie.h \
@@ -144,3 +144,5 @@ SOURCES += AggWrapper.cpp types/VectorialType.cpp
 
 }
   
+#The following line was inserted by qt3to4
+QT += xml  qt3support 

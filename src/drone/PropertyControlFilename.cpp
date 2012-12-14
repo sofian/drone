@@ -21,14 +21,16 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qfiledialog.h>
+#include <q3filedialog.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
 
 #include <iostream>
 
 PropertyControlFilename::PropertyControlFilename(QWidget *parent, Property *property, bool multiple) :
 PropertyControl(parent, property), _multiple(multiple)
 {
-  _hLayout = new QHBoxLayout(this, 3);
+  _hLayout = new Q3HBoxLayout(this, 3);
 
   _hLayout->addWidget(new QLabel(property->name().c_str(), this, ""));
   _lineEdit = new QLineEdit(this);
@@ -56,7 +58,7 @@ void PropertyControlFilename::slotBrowseClicked()
 {   
   if(_multiple) 
   {    
-    QStringList filenames = QFileDialog::getOpenFileNames("*.*", "./", this, "Load", "Load");
+    QStringList filenames = Q3FileDialog::getOpenFileNames("*.*", "./", this, "Load", "Load");
     _values.clear();
     for ( QStringList::Iterator it = filenames.begin(); it != filenames.end(); ++it ) 
         _values.push_back((*it).ascii());
@@ -64,7 +66,7 @@ void PropertyControlFilename::slotBrowseClicked()
   }
   else
   {
-     QString filename= QFileDialog::getOpenFileName("./", "*.*", this, "Load", "Load");
+     QString filename= Q3FileDialog::getOpenFileName("./", "*.*", this, "Load", "Load");
      _lineEdit->setText(filename);
   }
   

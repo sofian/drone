@@ -19,12 +19,12 @@
 
 #include "Gear_VideoOffset.h"
 #include "Engine.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 #include <iostream>
 
 #include "GearMaker.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 
 extern "C" {

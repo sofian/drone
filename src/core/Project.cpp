@@ -37,7 +37,7 @@ bool Project::saveAs(std::string filename)
   //save to file  
        
   QFile file(filename.c_str());
-  if (file.open(IO_WriteOnly))
+  if (file.open(QIODevice::WriteOnly))
   {
     QTextStream stream(&file);
     doc.save(stream,4);
@@ -60,7 +60,7 @@ bool Project::load(std::string filename)
 
   QFile file(filename.c_str());
 
-  if (!file.open(IO_ReadOnly))
+  if (!file.open(QIODevice::ReadOnly))
   {
     std::cout << "Fail to open file " << filename << std::endl;
     return false;

@@ -31,8 +31,8 @@ namespace agg
         //std::cerr<<"3pokpokpokpok"<<std::endl;
         if(r < m_radius)
         { 
-            *x += (double)((((int)x)^0x5a5a5a5a)%magn - magn>>1)*r;
-            *y += (double)((((int)y)^0xa5a5a5a5)%magn - magn>>1)*r;
+            *x += (double)((((long)x)^0x5a5a5a5a5a5a5a5a)%magn - magn>>1)*r;
+            *y += (double)((((long)y)^0xa5a5a5a55a5a5a5a)%magn - magn>>1)*r;
             return;
         }
  

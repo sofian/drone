@@ -21,6 +21,8 @@
 #define PROPERTYCONTROLSTRING_INCLUDED
 
 #include "PropertyControl.h"
+//Added by qt3to4:
+#include <Q3HBoxLayout>
 
 class QLineEdit;
 
@@ -36,7 +38,7 @@ public:
 
 private:
 
-  QHBoxLayout *_hLayout;
+  Q3HBoxLayout *_hLayout;
   QLineEdit *_lineEdit;
 
 };

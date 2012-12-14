@@ -1,4 +1,4 @@
-/* Math.h
+/* DroneMath.h
  * Copyright (C) 2004--2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Math.h"
+#include "DroneMath.h"
 
 float sinLut[FASTMATH_TABLESIZE];
 float cosLut[FASTMATH_TABLESIZE];

@@ -52,7 +52,7 @@ GearFrei0r::GearFrei0r(Schema *schema, std::string uniqueName, std::string frei0
   //...
 
   const char* error = dlerror();
-  std::cerr << (int)error << std::endl;
+  std::cerr << (long)error << std::endl;
   ASSERT_ERROR_MESSAGE(!error, "fail to find f0r_init");
 
   //now call init

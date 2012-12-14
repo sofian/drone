@@ -8,12 +8,15 @@
 
 #include <qsplitter.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <Q3BoxLayout>
 
 MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engine) :
   QWidget(parent),
   _metaGear(metaGear)
 {  
-  QBoxLayout *layout = new QVBoxLayout(this, 1);
+  Q3BoxLayout *layout = new Q3VBoxLayout(this, 1);
 
   _schemaGui = new SchemaGui(_metaGear->getInternalSchema(), engine);
 
@@ -31,8 +34,8 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   _panelScrollView->addControlPanel(metaGear);
 */
 
-  _horizontalSplitter = new QSplitter(QSplitter::Horizontal, this);
-  _verticalSplitter = new QSplitter(QSplitter::Vertical, _horizontalSplitter);
+  _horizontalSplitter = new QSplitter(Qt::Horizontal, this);
+  _verticalSplitter = new QSplitter(Qt::Vertical, _horizontalSplitter);
 
   
   //_panelScrollView = new PanelScrollView(_horizontalSplitter);

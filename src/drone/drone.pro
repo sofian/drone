@@ -15,7 +15,9 @@ DEPENDPATH += src
 INCLUDEPATH += ../core ../core/types ../contrib/frei0r/spec/
 
 #mac
-macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore -lguile
+
+macx:LIBS += -L../../drone.app/Contents/Frameworks -ldroneCore 
+#macx:LIBS += -lguile
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:TARGET = ../../drone.app/Contents/MacOS/drone
@@ -32,7 +34,7 @@ HEADERS += config.h \
 GearListMenu.h \
 GearListView.h \
 GearPropertiesDialog.h \
-GuileBindings.h \
+#GuileBindings.h \
 MediaPoolIconView.h \
 MediaPoolItem.h \
 MainWindow.h \
@@ -58,7 +60,7 @@ SOURCES += drone.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
 GearPropertiesDialog.cpp \
-GuileBindings.cpp \
+#GuileBindings.cpp \
 MainWindow.cpp \
 MediaPoolIconView.cpp \
 MediaPoolItem.cpp \
@@ -77,3 +79,5 @@ PlugPropertiesTableItemString.cpp \
 #PreferencesDialog.cpp \
 SchemaEditor.cpp
 
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

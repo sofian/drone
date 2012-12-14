@@ -23,6 +23,8 @@
 
 #include <qpainter.h>
 #include <qthread.h>
+//Added by qt3to4:
+#include <QPaintEvent>
 
 //maker strategy disabled on osx
 #ifndef Q_OS_MACX
@@ -57,8 +59,8 @@ void RenderingWindow::updateVideoFrame(const VideoRGBAType &image)
 	//convert the qimage to a pixmap that will be rendered more efficiently
 	_pixMap.convertFromImage(_videoFrame, 0);
 	
-	//asynchronously tell the widget to repaint hiself in a thread-safe way 
-	QThread::postEvent(this, new QPaintEvent( QRect(0, 0, _frameSizeX, _frameSizeY) ) );
+	//asynchronously tell the widget to repaint itself in a thread-safe way 
+	QCoreApplication::postEvent(this, new QPaintEvent( QRect(0, 0, _frameSizeX, _frameSizeY) ) );
 }
 
 void RenderingWindow::paintEvent(QPaintEvent *)

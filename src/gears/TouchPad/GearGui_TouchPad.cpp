@@ -32,7 +32,7 @@ const int GearGui_TouchPad::TOUCHPAD_LINE_OFFSETY = TOUCHPAD_SIZEY / 2;
 const QColor GearGui_TouchPad::TOUCHPAD_COLOR(249, 169, 7);
 const QColor GearGui_TouchPad::TOUCHPAD_BOX_COLOR(105, 122, 125);
 
-GearGui_TouchPad::GearGui_TouchPad(Gear_TouchPad *gear, QCanvas *canvas) : 
+GearGui_TouchPad::GearGui_TouchPad(Gear_TouchPad *gear, Q3Canvas *canvas) : 
   GearGui(gear, canvas, GearGui::BOXNAME_COLOR, TOUCHPAD_SIZEX, TOUCHPAD_SIZEY)    
 {
 }

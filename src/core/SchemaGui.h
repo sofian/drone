@@ -20,7 +20,7 @@
 #ifndef SCHEMAEGUI_INCLUDED
 #define SCHEMAEGUI_INCLUDED
 
-#include <qcanvas.h>
+#include <q3canvas.h>
 
 #include "Schema.h"
 
@@ -30,7 +30,7 @@ class Engine;
 class ConnectionItem;
 class QDomDocument;
              
-class SchemaGui : public QCanvas
+class SchemaGui : public Q3Canvas
 {
 public:
   SchemaGui(Schema *schema, Engine *engine);

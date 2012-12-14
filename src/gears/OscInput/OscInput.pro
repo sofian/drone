@@ -5,8 +5,6 @@ SOURCES+=Gear_OscInput.cpp
 HEADERS+=Gear_OscInput.h
 INCLUDEPATH+=../../core/ ../../core/types ../../../lib/liblo
 
-macx:QMAKE_CXXFLAGS += -Wno-long-double
-
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../../lib/liblo/src/.libs -llo
 unix:!macx:TARGET=../../../gears/Gear_OscInput

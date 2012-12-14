@@ -20,7 +20,7 @@
 #ifndef METAGEARLISTMENU_INCLUDED
 #define METAGEARLISTMENU_INCLUDED
 
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qfileinfo.h>
 #include <string>
 #include <vector>
@@ -33,7 +33,7 @@ class ConnectionItem;
 class Engine;
 class Schema;
 
-class MetaGearListMenu : public QPopupMenu
+class MetaGearListMenu : public Q3PopupMenu
 {
   Q_OBJECT
 public:

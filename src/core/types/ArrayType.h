@@ -35,7 +35,7 @@ public:
   {
     addSubType(_typeSize);
     resize(size);
-    fill(fillValue);
+    Array<T>::fill(fillValue);
   }
 
   virtual ~ArrayType() {}

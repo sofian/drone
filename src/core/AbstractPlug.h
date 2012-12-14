@@ -94,9 +94,9 @@ protected:
   AbstractType *_abstractDefaultType;
   AbstractPlug* _forwardPlug;
 	
+  Gear *_parent;
   //! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
   bool _mandatory;
-  Gear *_parent;
   bool _sleeping;
 	
 private:

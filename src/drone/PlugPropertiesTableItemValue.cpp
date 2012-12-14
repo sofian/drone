@@ -2,7 +2,7 @@
 #include "AbstractPlug.h"
 #include "ValueType.h"
 
-PlugPropertiesTableItemValue::PlugPropertiesTableItemValue(AbstractPlug *plug, QTable * table, EditType et) :
+PlugPropertiesTableItemValue::PlugPropertiesTableItemValue(AbstractPlug *plug, Q3Table * table, EditType et) :
   PlugPropertiesTableItem(plug, table, et, QString::number(static_cast<ValueType*>(plug->abstractDefaultType())->value())),
   _lineEdit(NULL)
 {
@@ -31,7 +31,7 @@ void PlugPropertiesTableItemValue::setContentFromEditor(QWidget *w)
   if (w->inherits("QLineEdit"))
     setText(((QLineEdit*)w)->text());
   else
-    QTableItem::setContentFromEditor(w);
+    Q3TableItem::setContentFromEditor(w);
 }
 
 void PlugPropertiesTableItemValue::setText(const QString &s)
@@ -43,7 +43,7 @@ void PlugPropertiesTableItemValue::setText(const QString &s)
   if (_lineEdit)
     _lineEdit->setText(s);
   
-  QTableItem::setText(s);
+  Q3TableItem::setText(s);
 }
 
 

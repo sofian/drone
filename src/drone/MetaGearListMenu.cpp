@@ -1,8 +1,10 @@
 #include "MetaGearListMenu.h"
 #include "MetaGearMaker.h"
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 MetaGearListMenu::MetaGearListMenu(QWidget *parent, MetaGearListMenu* parentMetaGearListMenu) : 
-  QPopupMenu(parent),
+  Q3PopupMenu(parent),
   _parentMetaGearListMenu(parentMetaGearListMenu)
 {
   if (parentMetaGearListMenu==NULL)
@@ -44,7 +46,7 @@ void MetaGearListMenu::create()
 
      for (QStringList::Iterator it2=subPaths.begin(); it2!=subPaths.end(); ++it2) 
      {
-       menu = menu->addSubMenu(*it2);       
+       menu = menu->addSubMenu(it2->toStdString());       
      }
 
      //insert the gear name in the correct menu

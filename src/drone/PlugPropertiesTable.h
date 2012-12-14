@@ -7,14 +7,14 @@
  *
  */
 
-#include <qtable.h>
+#include <q3table.h>
 
 
 class Gear;
 class GearGui;
 class AbstractPlug;
 
-class PlugPropertiesTable : public QTable
+class PlugPropertiesTable : public Q3Table
 {
 	Q_OBJECT
 public:

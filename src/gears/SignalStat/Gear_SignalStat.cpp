@@ -18,7 +18,7 @@
  */
 
 #include "Gear_SignalStat.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 #include "GearMaker.h"
 

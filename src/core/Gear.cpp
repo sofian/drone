@@ -186,7 +186,7 @@ void Gear::getDependencies(std::vector<Gear*> &dependencies) const
   }
 }
 
-GearGui* Gear::createGearGui(QCanvas *canvas)
+GearGui* Gear::createGearGui(Q3Canvas *canvas)
 {
   return new GearGui(this, canvas);    
 }
@@ -194,7 +194,7 @@ GearGui* Gear::createGearGui(QCanvas *canvas)
 
 void Gear::save(QDomDocument &doc, QDomElement &parent)
 {               
-  QDomElement gearElem = doc.createElement(XML_TAGNAME);
+  QDomElement gearElem = doc.createElement(QString(XML_TAGNAME.c_str()));
   parent.appendChild(gearElem);
 
   QDomAttr gearType = doc.createAttribute("Type");

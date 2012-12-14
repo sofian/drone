@@ -34,16 +34,26 @@
 #include "PanelScrollView.h"
 #include "ControlPanel.h"
 
-#include <qdragobject.h>
-#include <qmainwindow.h>
-#include <qfiledialog.h>
+#include <q3dragobject.h>
+#include <q3mainwindow.h>
+#include <q3filedialog.h>
 
 #include <qcursor.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QContextMenuEvent>
+#include <QTextStream>
+#include <QKeyEvent>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <Q3PopupMenu>
+#include <QMouseEvent>
+#include <Q3VBoxLayout>
+#include <QWheelEvent>
 
 #include <iostream>
 #include <qpainter.h>
-#include <qwmatrix.h>
+#include <qmatrix.h>
 
 #include <qdom.h>
 
@@ -51,7 +61,7 @@ const std::string SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 0.1;
 
 SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
-  QCanvasView(schemaGui, parent, NAME.c_str(),0),
+  Q3CanvasView(schemaGui, parent, NAME.c_str(),0),
   _engine(engine),
   _schemaGui(schemaGui),
   _state(IDLE),
@@ -66,7 +76,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   viewport()->setMouseTracking(TRUE);
   setAcceptDrops(TRUE); 
     
-  _contextMenu = new QPopupMenu(this);
+  _contextMenu = new Q3PopupMenu(this);
   _gearListMenu = new GearListMenu(this);    
   _gearListMenu->create();
   
@@ -81,7 +91,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 
   _contextMenu->insertItem("New MetaGear", this, SLOT(slotNewMetaGear()));
     
-  _gearContextMenu = new QPopupMenu(this);
+  _gearContextMenu = new Q3PopupMenu(this);
   _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
 	_gearContextMenu->insertItem("ZoomIn", this, SLOT(zoomIn()));  
@@ -89,11 +99,11 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 
   _gearContextMenu->insertItem("About");    
   
-  _metaGearContextMenu = new QPopupMenu(this);
-  _metaGearContextMenu->insertItem("delete", this, SLOT(slotGearDelete()),Key_Delete);
-  _metaGearContextMenu->insertItem("Select All", this, SLOT(slotGearSelectAll()),CTRL + Key_A);
-  _metaGearContextMenu->insertItem("Copy", this, SLOT(slotGearCopy()),CTRL + Key_C);
-  _metaGearContextMenu->insertItem("Paste", this, SLOT(slotGearPaste()),CTRL + Key_V);
+  _metaGearContextMenu = new Q3PopupMenu(this);
+  _metaGearContextMenu->insertItem("delete", this, SLOT(slotGearDelete()),Qt::Key_Delete);
+  _metaGearContextMenu->insertItem("Select All", this, SLOT(slotGearSelectAll()),Qt::CTRL + Qt::Key_A);
+  _metaGearContextMenu->insertItem("Copy", this, SLOT(slotGearCopy()),Qt::CTRL + Qt::Key_C);
+  _metaGearContextMenu->insertItem("Paste", this, SLOT(slotGearPaste()),Qt::CTRL + Qt::Key_V);
   _metaGearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));  
   _metaGearContextMenu->insertItem("About");    
   _metaGearContextMenu->insertSeparator();
@@ -101,7 +111,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
 
 
   // plug context menu initialization
-  _plugContextMenu = new QPopupMenu(this);
+  _plugContextMenu = new Q3PopupMenu(this);
   _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
   _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
 
@@ -114,9 +124,9 @@ SchemaEditor::~SchemaEditor()
 
 void SchemaEditor::keyPressEvent(QKeyEvent *e)
 {     
-  QCanvasItemList l=canvas()->allItems();
+  Q3CanvasItemList l=canvas()->allItems();
 
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
       if(((GearGui*)(*it))->keyEvent(e))
@@ -127,9 +137,9 @@ void SchemaEditor::keyPressEvent(QKeyEvent *e)
 
 void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
 {     
-  QCanvasItemList l=canvas()->allItems();
+  Q3CanvasItemList l=canvas()->allItems();
 
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
       if(((GearGui*)(*it))->keyEvent(e))
@@ -162,7 +172,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     if (gearGui->titleBarHitted(p))
     {
       // select only the clicked gear
-      if(mouseEvent->state()&Qt::ControlButton || mouseEvent->state()&Qt::ShiftButton)
+      if(mouseEvent->state()&Qt::ControlModifier || mouseEvent->state()&Qt::ShiftModifier)
         toggleGearSelection(gearGui);
       else if(!gearGui->isSelected())
         selectOneGear(gearGui);
@@ -232,7 +242,7 @@ void SchemaEditor::zoom(float factor)
   viewportToContents(oldcenterx, oldcentery, x, y);
   inverseWorldMatrix().map(x, y, &x, &y);
 	
-  QWMatrix wm;
+  QMatrix wm;
   wm.scale(_zoom, _zoom);
   setWorldMatrix(wm);
 
@@ -300,7 +310,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case DRAGGING_SELECT_BOX:
     //delete _selectBox;
     if(!_selectBox)
-      _selectBox = new QCanvasRectangle(QRect(_selectBoxStartPos, p),_schemaGui);
+      _selectBox = new Q3CanvasRectangle(QRect(_selectBoxStartPos, p),_schemaGui);
     else 
       _selectBox->setSize(p.x()-_selectBoxStartPos.x(),p.y()-_selectBoxStartPos.y());
     _selectBox->setSelected(!_selectBox->isSelected());
@@ -379,7 +389,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
     if (gearGui!=NULL && (gearGui->gear()->kind() == Gear::METAGEAR))
     {
       QDialog metaGearEditorDialog(this);  
-      QVBoxLayout layout(&metaGearEditorDialog, 1);
+      Q3VBoxLayout layout(&metaGearEditorDialog, 1);
       metaGearEditorDialog.setCaption(gearGui->gear()->name().c_str());
       metaGearEditorDialog.resize(640,480);
       MetaGearEditor metaGearEditor(&metaGearEditorDialog, (MetaGear*)gearGui->gear(), _engine);
@@ -442,7 +452,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
   }
 
 
-  QCanvasView::contextMenuEvent(contextMenuEvent);
+  Q3CanvasView::contextMenuEvent(contextMenuEvent);
 }
 
 void SchemaEditor::slotMenuGearSelected(QString name)
@@ -513,8 +523,8 @@ void SchemaEditor::slotSaveMetaGear()
     suggestedFilename=MetaGearMaker::METAGEAR_PATH + "/" + metaGear->name();
   
 
-  std::string filename = QFileDialog::getSaveFileName(suggestedFilename, "*" + MetaGear::EXTENSION + ";;" + "*.*", 
-                                                      this, "Save as", "Save as");
+  std::string filename = Q3FileDialog::getSaveFileName(suggestedFilename.c_str(), ("*" + MetaGear::EXTENSION + ";;" + "*.*").c_str(), 
+                                                      this, "Save as", "Save as").toStdString();
   
   if (!filename.empty())
   {
@@ -525,8 +535,8 @@ void SchemaEditor::slotSaveMetaGear()
     metaGear->save(filename);    
     
     //rename the metagear to the new saved name
-    QFileInfo fileInfo(filename);
-    _schemaGui->renameGear(_contextGear, fileInfo.baseName());
+    QFileInfo fileInfo(filename.c_str());
+    _schemaGui->renameGear(_contextGear, fileInfo.baseName().toStdString());
     
   }
 
@@ -656,7 +666,7 @@ void SchemaEditor::slotGearCopy()
 
   //save to file  
   QString str;
-  QTextStream stream(str,IO_WriteOnly);
+  QTextStream stream(&str,QIODevice::WriteOnly);
   doc.save(stream,4);
   _engine->setClipboardText(str.latin1());
   std::cerr<<_engine->getClipboardText()<<std::endl;
@@ -668,7 +678,7 @@ void SchemaEditor::slotGearPaste()
   unselectAllGears();
   QDomDocument doc("Clipboard");
 
-  QString str(_engine->getClipboardText());
+  QString str(_engine->getClipboardText().c_str());
 
   QString errMsg;
   int errLine;
@@ -717,17 +727,17 @@ void SchemaEditor::slotGearSelectAll()
 
 void SchemaEditor::dragEnterEvent(QDragEnterEvent* event)
 {
-  event->accept(QTextDrag::canDecode(event));
+  event->accept(Q3TextDrag::canDecode(event));
 }
 
 void SchemaEditor::dropEvent(QDropEvent* event)
 {
   QString text;
   
-  if ( QTextDrag::decode(event, text) )
+  if ( Q3TextDrag::decode(event, text) )
   {
     event->accept(true);
-    addGear(text, event->pos().x(), event->pos().y());
+    addGear(text.toStdString(), event->pos().x(), event->pos().y());
   }
 }
 

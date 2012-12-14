@@ -32,7 +32,7 @@ const int GearGui_ListBox::SLIDER_LINE_OFFSETY = SLIDER_SIZEY / 2;
 const QColor GearGui_ListBox::SLIDER_COLOR(249, 169, 7);
 const QColor GearGui_ListBox::SLIDER_BOX_COLOR(105, 122, 125);
 
-GearGui_ListBox::GearGui_ListBox(Gear_ListBox *gear, QCanvas *canvas) : 
+GearGui_ListBox::GearGui_ListBox(Gear_ListBox *gear, Q3Canvas *canvas) : 
 GearGui(gear, canvas, GearGui::BOXNAME_COLOR, SLIDER_SIZEX, SLIDER_SIZEY)    
 {        
 }

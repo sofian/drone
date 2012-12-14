@@ -32,7 +32,7 @@ const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
 
 
 SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
-  QCanvas(DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
+  Q3Canvas(DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
   _engine(engine)
 {
   
@@ -165,13 +165,13 @@ void SchemaGui::removeGear(GearGui* gearGui)
 
 void SchemaGui::clear()
 {
-  QCanvasItemList l=allItems();
+  Q3CanvasItemList l=allItems();
   std::vector<GearGui*> gearGuis;
 
   //first fill a vector with only gearGuis
   //we have to make it this way because we cannot
   //iterate on QCanvasItemList while removing them at the sametime
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
       gearGuis.push_back((GearGui*)(*it));
       
@@ -198,9 +198,9 @@ bool SchemaGui::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 
 GearGui* SchemaGui::testForGearCollision(const QPoint &p)
 {     
-  QCanvasItemList l=collisions(p);
+  Q3CanvasItemList l=collisions(p);
 
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
     {
@@ -212,9 +212,9 @@ GearGui* SchemaGui::testForGearCollision(const QPoint &p)
 
 ConnectionItem* SchemaGui::testForConnectionCollision(const QPoint &p)
 {        
-  QCanvasItemList l=collisions(p);
+  Q3CanvasItemList l=collisions(p);
 
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
       return(ConnectionItem*) (*it);
@@ -224,8 +224,8 @@ ConnectionItem* SchemaGui::testForConnectionCollision(const QPoint &p)
 
 void SchemaGui::unHilightAllConnections()
 {        
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  Q3CanvasItemList l=allItems();
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
     {
@@ -236,8 +236,8 @@ void SchemaGui::unHilightAllConnections()
 
 void SchemaGui::unHilightAllPlugBoxes()
 {        
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  Q3CanvasItemList l=allItems();
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
     {
@@ -313,8 +313,8 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
 std::vector<GearGui*> SchemaGui::getAllGears()
 {
   std::vector<GearGui*> vec;
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  Q3CanvasItemList l=allItems();
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
       vec.push_back((GearGui*)(*it));
   return vec;
@@ -323,8 +323,8 @@ std::vector<GearGui*> SchemaGui::getAllGears()
 std::vector<GearGui*> SchemaGui::getSelectedGears()
 {
   std::vector<GearGui*> vec;
-  QCanvasItemList l=allItems();
-  for (QCanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  Q3CanvasItemList l=allItems();
+  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR
          && ((GearGui*)(*it))->isSelected())    
       vec.push_back((GearGui*)(*it));

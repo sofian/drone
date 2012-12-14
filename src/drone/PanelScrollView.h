@@ -1,14 +1,14 @@
 #ifndef PANELSCROLLVIEW_INCLUDED
 #define PANELSCROLLVIEW_INCLUDED
 
-#include <qscrollview.h>
+#include <q3scrollview.h>
 #include <list>
-#include <qvbox.h>
+#include <q3vbox.h>
 
 class ControlPanel;
 class MetaGear;
 
-class PanelScrollView : public QScrollView
+class PanelScrollView : public Q3ScrollView
 {
 public:  
   PanelScrollView(QWidget *parent);
@@ -18,7 +18,7 @@ public:
     
 private:
   std::list<ControlPanel*> _controlPanels;
-  QVBox* _mainVBox;
+  Q3VBox* _mainVBox;
 };
 
 #endif

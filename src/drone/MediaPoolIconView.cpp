@@ -1,12 +1,14 @@
 #include "MediaPoolIconView.h"
 #include "MediaPoolItem.h"
 #include "backgroundMovie.xpm"
+//Added by qt3to4:
+#include <QPixmap>
 
  
 MediaPoolIconView::MediaPoolIconView(QWidget *parent) : 
-  QIconView(parent)
+  Q3IconView(parent)
 {   
-  setResizeMode(QIconView::Adjust);
+  setResizeMode(Q3IconView::Adjust);
   setMinimumWidth(460);
   setMinimumHeight(370);
   setSpacing(15);

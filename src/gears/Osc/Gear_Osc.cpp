@@ -20,7 +20,7 @@
 #include "Gear_Osc.h"
 #include "Engine.h"
 #include "GearMaker.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "Engine.h"
 
 extern "C" {

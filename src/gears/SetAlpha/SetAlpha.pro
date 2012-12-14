@@ -13,3 +13,5 @@ unix:!macx:TARGET=../../../gears/Gear_SetAlpha
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_SetAlpha
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

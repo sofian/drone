@@ -19,7 +19,7 @@
 
 
 PlugPropertiesTable::PlugPropertiesTable(QWidget *parent) :
-QTable(parent),
+Q3Table(parent),
 _gear(NULL)
 {
 
@@ -32,7 +32,7 @@ _gear(NULL)
 
   setNumCols(2);
   setNumRows(0);
-  QHeader *header = horizontalHeader();
+  Q3Header *header = horizontalHeader();
   header->setLabel( 0, QObject::tr("Property"), 90);
   header->setLabel( 1, QObject::tr("Value"), 90);            
   setColumnStretchable(1,true);
@@ -84,14 +84,14 @@ void PlugPropertiesTable::insertPlug(AbstractPlug *plug, int row)
 
   if (plug->abstractType()->typeName() == ValueType::TYPENAME)
   {
-    PlugPropertiesTableItemValue *valueItem = new PlugPropertiesTableItemValue(plug, this, QTableItem::WhenCurrent);
-    setText(row,0,plug->name());
+    PlugPropertiesTableItemValue *valueItem = new PlugPropertiesTableItemValue(plug, this, Q3TableItem::WhenCurrent);
+    setText(row,0,plug->name().c_str());
     setItem(row,1,valueItem);
   } 
   else if (plug->abstractType()->typeName() == StringType::TYPENAME)
   {
-    PlugPropertiesTableItemString *stringItem = new PlugPropertiesTableItemString(plug, this, QTableItem::WhenCurrent);
-    setText(row,0,plug->name());
+    PlugPropertiesTableItemString *stringItem = new PlugPropertiesTableItemString(plug, this, Q3TableItem::WhenCurrent);
+    setText(row,0,plug->name().c_str());
     setItem(row,1,stringItem);  
   }
 }

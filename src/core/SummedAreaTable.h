@@ -21,7 +21,7 @@
 #define SUMMEDAREATABLE_INCLUDED
 
 #include "Array2D.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "Utils.h"
 #include "ColorSpace.h"
 

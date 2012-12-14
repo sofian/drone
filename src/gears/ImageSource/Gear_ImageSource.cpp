@@ -24,7 +24,7 @@
 #include "Engine.h"
 
 #include "GearMaker.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 const std::string Gear_ImageSource::SETTING_FILENAME = "Filename";
 

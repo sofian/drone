@@ -38,7 +38,7 @@
 // #include "gimp-composite-generic.h"
 
 #include "CompositeGeneric.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "Utils.h"
 
 // XXX bigbig hack

@@ -1,14 +1,14 @@
 #ifndef MEDIAPOOLITEM_INCLUDED
 #define MEDIAPOOLITEM_INCLUDED
 
-#include <qiconview.h>
+#include <q3iconview.h>
 
 class Media;
 
-class MediaPoolItem : public QIconViewItem
+class MediaPoolItem : public Q3IconViewItem
 {
 public:
-  MediaPoolItem(QIconView *parent, Media *media);
+  MediaPoolItem(Q3IconView *parent, Media *media);
   ~MediaPoolItem();
 
 private:

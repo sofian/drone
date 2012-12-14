@@ -2,8 +2,8 @@
 
 #include "Media.h"
   
-MediaPoolItem::MediaPoolItem(QIconView *parent, Media *media) :
-  QIconViewItem(parent),
+MediaPoolItem::MediaPoolItem(Q3IconView *parent, Media *media) :
+  Q3IconViewItem(parent),
   _media(media)
 {
   setPixmap(*(media->thumbNail()));

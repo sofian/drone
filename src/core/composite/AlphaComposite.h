@@ -20,7 +20,7 @@
 #ifndef ALPHACOMPOSITE_INCLUDED
 #define ALPHACOMPOSITE_INCLUDED
 
-#include "Math.h"
+#include "DroneMath.h"
 #include "ColorSpace.h"
 
 // XXX penser à la possibilité de mettre des RGBA

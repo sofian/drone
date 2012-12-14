@@ -28,8 +28,8 @@
 const int ConnectionItem::CANVAS_RTTI_CONNECTION = 2001;//space odissey
 
 
-ConnectionItem::ConnectionItem(QCanvas *canvas) : 
-  QCanvasLine(canvas), 
+ConnectionItem::ConnectionItem(Q3Canvas *canvas) : 
+  Q3CanvasLine(canvas), 
   _state(DISCONNECTED),
   _hiLighted(false),
   _destPointX(0),
@@ -59,7 +59,7 @@ void ConnectionItem::drawShape(QPainter &painter)
   setPoints(sourceX, sourceY, destX, destY);
   //std::cout << sourceX << ":" << sourceY << ":" << destX << ":" << destY << std::endl;
   
-  QCanvasLine::drawShape(painter);
+  Q3CanvasLine::drawShape(painter);
   
 }
 

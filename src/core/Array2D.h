@@ -30,7 +30,7 @@
  * The main advantage of using a <code>Array2D</code> over an <code>Array</code>
  * is that it offers a nice interface for accessing data in a "by-row" fashion.
  *
- * @author Jean-Sébastien Senécal, Mathieu Guindon
+ * @author Jean-Sï¿½bastien Senï¿½cal, Mathieu Guindon
  * @version %I% %G%
  */
 template <class T>
@@ -60,7 +60,7 @@ public:
   Array2D(const Array2D<T>& copy)
   {
     resize(copy.width(), copy.height());
-    std::copy(begin(), end(), copy.begin());
+    std::copy(std::vector<T>::begin(), std::vector<T>::end(), copy.begin());
   }
 
   /**
@@ -69,7 +69,7 @@ public:
   Array2D(const Array<T>& copy)
   {
     resize(copy.size());
-    std::copy(begin(), end(), copy.begin());
+    std::copy(Array2D<T>::begin(), Array2D<T>::end(), copy.begin());
   }
   
   /**

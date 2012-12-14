@@ -96,7 +96,7 @@ void GearMaker::getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gear
   
   for (std::map<std::string, GearMaker::GearPluginDefinition*>::iterator it=_registry->begin(); it != _registry->end(); ++it)
   {
-	if(QString(it->second->gearInfo().name).lower().find(QString(filter.c_str()).lower()) != -1)
+	if(QString(it->second->gearInfo().name.c_str()).lower().find(QString(filter.c_str()).lower()) != -1)
     	  gearsInfo.push_back(&(it->second->gearInfo()));
   }
 }
@@ -129,20 +129,24 @@ void GearMaker::parseGears()
   dir.setNameFilter("*.so*");
 #endif  
   
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
+
+
+  const QFileInfoList files = dir.entryInfoList();
+  QListIterator<QFileInfo> it(files);
+  QFileInfo fileInfo;
   const char* error;
 
-  while ((fileInfo = it.current()) != 0 )
-  {
-    std::cout << fileInfo->fileName() << std::endl;
+  
+    while (it.hasNext())   
+{  
+    fileInfo = it.next(); 
+    std::cout << fileInfo.fileName().toStdString() << std::endl;
     
     //reset error
     dlerror();
     
     //open file
-    void *handle = dlopen(fileInfo->filePath(), RTLD_LAZY);
+    void *handle = dlopen(fileInfo.filePath(), RTLD_LAZY);
     
     if (!(error = dlerror()))    
     {          
@@ -172,17 +176,16 @@ void GearMaker::parseGears()
       }
       else // might be a frei0r plugin
       {
-        warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
+        warningmsg("fail to load gear %s!", fileInfo.fileName().ascii());
         std::cout << error << std::endl;      
       }
     }
     else
     {
-      warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
+      warningmsg("fail to load gear %s!", fileInfo.fileName().ascii());
       std::cout << error << std::endl;      
     }
 
-    ++it;//next file
   }
 
   parseFrei0rPlugins();
@@ -215,25 +218,27 @@ void GearMaker::parseFrei0rPlugins()
   dir.setNameFilter("*.so*");
 #endif  
   
-  const QFileInfoList *files = dir.entryInfoList();
-  QFileInfoListIterator it(*files);
-  QFileInfo *fileInfo;
+  const QFileInfoList files = dir.entryInfoList();
+  QListIterator<QFileInfo> it(files);
+  QFileInfo fileInfo;
   const char* error;
 
-  while ((fileInfo = it.current()) != 0 )
-  {
-    std::cout << fileInfo->fileName() << std::endl;
+  
+  while (it.hasNext())   
+{  
+    fileInfo = it.next(); 
+    std::cout << fileInfo.fileName().toStdString() << std::endl;
     
     //reset error
     dlerror();
     
     //open file
-    dlopen(fileInfo->filePath(), RTLD_LAZY);
+    dlopen(fileInfo.filePath(), RTLD_LAZY);
     
     if (!(error = dlerror()))
     {
       // get gear info
-      GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo->filePath());
+      GearInfo gearInfo = GearFrei0r::getGearInfo(fileInfo.filePath().toStdString());
 
       // build plugin definition
       GearPluginDefinition *gearPluginDefinition = new GearPluginDefinition(gearInfo,
@@ -244,10 +249,9 @@ void GearMaker::parseFrei0rPlugins()
     }
     else
     {
-      warningmsg("fail to load gear %s!", fileInfo->fileName().ascii());
+      warningmsg("fail to load gear %s!", fileInfo.fileName().ascii());
       std::cout << error << std::endl;      
     }
     
-    ++it;//next file
   }
 }

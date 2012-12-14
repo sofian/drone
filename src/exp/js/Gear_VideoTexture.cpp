@@ -21,7 +21,7 @@
 #include <algorithm>
 #include "Gear_VideoTexture.h"
 #include "Engine.h"
-#include "Math.h"
+#include "DroneMath.h"
 #include "log_add.h"
 
 #include "GearMaker.h"

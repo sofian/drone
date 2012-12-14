@@ -34,7 +34,7 @@ const int GearGui_TV::TV_SIZEY = 125;
 const int GearGui_TV::UPDATE_RATE_MS = 83;
 const QColor GearGui_TV::NO_SIGNAL_COLOR(2, 128, 255);
 
-GearGui_TV::GearGui_TV(Gear_TV *gear, QCanvas *canvas) : 
+GearGui_TV::GearGui_TV(Gear_TV *gear, Q3Canvas *canvas) : 
 GearGui(gear, canvas, GearGui::BOXNAME_COLOR, TV_SIZEX, TV_SIZEY, UPDATE_RATE_MS),
 _currentSizeX(0),
 _currentSizeY(0)
@@ -83,7 +83,7 @@ void GearGui_TV::drawShape(QPainter &painter)
       }
     
     if(_currentSizeX && _currentSizeY)
-      painter.drawImage(x, y, _videoFrame.scale(sizeX, sizeY));
+      painter.drawImage(x, y, _videoFrame.scaled(sizeX, sizeY));
     else noImage=true;
   }
   else noImage=true;

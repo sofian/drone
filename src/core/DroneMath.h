@@ -1,4 +1,4 @@
-/* Math.h
+/* DroneMath.h
  * Copyright (C) 2004--2005 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
@@ -20,8 +20,8 @@
 #ifndef MATH_INCLUDED
 #define MATH_INCLUDED
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <algorithm>
 #include <limits.h>
 #include <float.h>
@@ -74,7 +74,7 @@ T MAX(T x, T y)
 // Begin LIBGIMP
 
 // LIBGIMP - The GIMP Library
-// Copyright (c) 2004 Jean-Sébastien Senécal : changed macros to template functions
+// Copyright (c) 2004 Jean-Sï¿½bastien Senï¿½cal : changed macros to template functions
 // Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
 
 //! Clamp x at lower = l and upper = u.

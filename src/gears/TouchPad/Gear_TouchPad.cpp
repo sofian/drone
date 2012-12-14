@@ -20,7 +20,7 @@
 #include "Gear_TouchPad.h"
 #include "GearMaker.h"
 #include "GearGui_TouchPad.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 #include "Engine.h"
 
@@ -173,7 +173,7 @@ void Gear_TouchPad::runAudio()
 {
 }
 
-GearGui *Gear_TouchPad::createGearGui(QCanvas *canvas)
+GearGui *Gear_TouchPad::createGearGui(Q3Canvas *canvas)
 {                
   return new GearGui_TouchPad(this, canvas);
 }

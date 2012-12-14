@@ -23,7 +23,9 @@
 #include "GearGui.h"
 
 
-#include <qcanvas.h>
+#include <q3canvas.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 #include <vector>
 
 class Gear_PushButton;
@@ -37,7 +39,7 @@ public:
   static const QColor PUSHBUTTON_BOX_COLOR;
   static const QColor PUSHBUTTON_BOX_COLORON;
 
-  GearGui_PushButton(Gear_PushButton *gear, QCanvas *canvas);
+  GearGui_PushButton(Gear_PushButton *gear, Q3Canvas *canvas);
 
   bool mouseEvent(const QPoint& p, Qt::ButtonState button);
   bool keyEvent(QKeyEvent *e);

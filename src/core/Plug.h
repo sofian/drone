@@ -105,11 +105,11 @@ public:
   {
     // for other plug
     AbstractPlug * deepestOtherPlug = 0;
-    for (deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug());
+    for (deepestOtherPlug = plug; deepestOtherPlug->forwardPlug() != 0; deepestOtherPlug = deepestOtherPlug->forwardPlug()) ;
 
     //for this plug
     AbstractPlug * deepestPlug = 0;
-    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug()) ;
 
     dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(deepestOtherPlug->abstractType());
   }
@@ -117,7 +117,7 @@ public:
   virtual void onDisconnection(AbstractPlug *)
   {
     AbstractPlug * deepestPlug = 0;
-    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug());
+    for (deepestPlug = this; deepestPlug->forwardPlug() != 0; deepestPlug = deepestPlug->forwardPlug()) ;
 
     dynamic_cast<PlugIn<T>*>(deepestPlug)->setType(_abstractDefaultType);
 

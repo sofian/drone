@@ -1,4 +1,6 @@
 #include "MediaMovie.h"
+//Added by qt3to4:
+#include <QPixmap>
 
 /* XPM */
 static const char * testpix_xpm[] = {

@@ -21,7 +21,7 @@
 #include "GearMaker.h"
 #include "GearGui_Slider.h"
 #include "ControlSlider.h"
-#include "Math.h"
+#include "DroneMath.h"
 	
 #include "MidiEngine.h"
 
@@ -170,7 +170,7 @@ void Gear_Slider::runAudio()
   }
 }
 
-GearGui *Gear_Slider::createGearGui(QCanvas *canvas)
+GearGui *Gear_Slider::createGearGui(Q3Canvas *canvas)
 {                
   return new GearGui_Slider(this, canvas);
 }

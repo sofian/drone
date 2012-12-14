@@ -13,3 +13,5 @@ unix:!macx:TARGET=../../../gears/Gear_SelectFrame
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L../../../lib/ -L../../../lib/ffmpeg/libavcodec -L../../../lib/ffmpeg/libavformat -lavformat -lavcodec -lz
 macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_SelectFrame
 macx:QMAKE_LFLAGS+=-read_only_relocs suppress
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

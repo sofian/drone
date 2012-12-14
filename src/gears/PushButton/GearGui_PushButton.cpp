@@ -21,6 +21,8 @@
 #include "Gear_PushButton.h"    
 
 #include <qpainter.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 #include <iostream>
 #include <sstream>
 
@@ -31,7 +33,7 @@ const QColor GearGui_PushButton::PUSHBUTTON_COLOR(249, 169, 7);
 const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
 const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
-GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, QCanvas *canvas) : 
+GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, Q3Canvas *canvas) : 
 GearGui(gear, canvas, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
 {        
 }

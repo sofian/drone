@@ -20,7 +20,7 @@
 #include "Gear_ListBox.h"
 #include "GearMaker.h"
 #include "GearGui_ListBox.h"
-#include "Math.h"
+#include "DroneMath.h"
 
 #include "Engine.h"
 
@@ -144,7 +144,7 @@ void Gear_ListBox::runAudio()
 
 }
 
-GearGui *Gear_ListBox::createGearGui(QCanvas *canvas)
+GearGui *Gear_ListBox::createGearGui(Q3Canvas *canvas)
 {                
   return new GearGui_ListBox(this, canvas);
 }

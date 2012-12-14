@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>
-#include <linux/types.h>
+//#include <linux/types.h>
 
 #include <string>
 #include <iostream>

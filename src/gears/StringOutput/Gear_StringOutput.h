@@ -37,7 +37,7 @@ public:
 	std::string getString();
 
 protected:
-	GearGui *createGearGui(QCanvas *canvas);
+	GearGui *createGearGui(Q3Canvas *canvas);
 	
 private:
 

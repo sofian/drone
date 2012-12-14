@@ -5,6 +5,8 @@
 
 #include <qlayout.h>
 #include <qslider.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 class ControlSlider : public Control
 {
@@ -19,7 +21,7 @@ public slots:
   void slotValueChanged(int value);
 
 private:
-  QVBoxLayout *_mainLayout;
+  Q3VBoxLayout *_mainLayout;
   QSlider *_slider;
 };
 

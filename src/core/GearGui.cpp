@@ -28,6 +28,8 @@
 
 #include <qpainter.h>
 #include <qdom.h>
+//Added by qt3to4:
+#include <QTimerEvent>
 
 
 const int GearGui::CANVAS_RTTI_GEAR = 2000;
@@ -54,9 +56,9 @@ const QFont GearGui::NAME_FONT("Verdana", 12, QFont::Bold);
 const QFont GearGui::NAME_FONT("Verdana", 9, QFont::Bold);
 #endif
 
-GearGui::GearGui(Gear *pgear, QCanvas *canvas, QColor color, int sizeX, int sizeY, int updateRate) :
+GearGui::GearGui(Gear *pgear, Q3Canvas *canvas, QColor color, int sizeX, int sizeY, int updateRate) :
 QObject(),
-QCanvasRectangle(canvas),
+Q3CanvasRectangle(canvas),
 _gear(pgear),
 _selected(false),
 _sizeX(sizeX),

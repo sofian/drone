@@ -45,6 +45,7 @@ GrayScale \
 HalfToning \
 #EmptyImage \
 #ImageSource \
+#ImageSequence \
 Invert \
 InvertAlpha \
 PackList \
@@ -67,7 +68,9 @@ RandomValue \
 Tempo \
 ValueClamp \
 VideoDelay \
+#VideoInput \
 VideoRecord \
+VideoSource \
 VideoOffset \
 #VideoReplaceAreas \
 VideoSwitch \

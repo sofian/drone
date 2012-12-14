@@ -5,6 +5,8 @@
 #include "ControlPanel.h"
 
 #include <qfileinfo.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 const QColor MetaGear::METAGEAR_COLOR(115,8,8);
 const std::string MetaGear::TYPE="MetaGear";
@@ -26,7 +28,7 @@ MetaGear::~MetaGear()
   //_schema->removeSchemaEventListener(this);
 }
 
-GearGui* MetaGear::createGearGui(QCanvas *canvas)
+GearGui* MetaGear::createGearGui(Q3Canvas *canvas)
 {
   //we just want to specify a specific color metagears
   return new GearGui(this, canvas, METAGEAR_COLOR);
@@ -111,7 +113,7 @@ void MetaGear::save(std::string filename)
   Gear::save(doc, metaGearElem);
 
   QFile file(filename.c_str());
-  if (file.open(IO_WriteOnly))
+  if (file.open(QIODevice::WriteOnly))
   {
     QTextStream stream(&file);
     doc.save(stream,4);
@@ -132,7 +134,7 @@ bool MetaGear::load(std::string filename)
 
   QFile file(filename.c_str());
 
-  if (!file.open(IO_ReadOnly))
+  if (!file.open(QIODevice::ReadOnly))
   {
     std::cout << "Fail to open file " << filename << std::endl;
     return false;
