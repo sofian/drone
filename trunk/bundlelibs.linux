@@ -1,3 +1,0 @@
-#!/bin/bash 
-
-cp lib/liblo/src/.libs/liblo.so lib/
