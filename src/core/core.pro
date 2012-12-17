@@ -12,11 +12,11 @@ TEMPLATE = lib
 INCLUDEPATH += . types ../contrib/frei0r/spec composite
 
 #mac
-macx:INCLUDEPATH += /Developer/Headers/FlatCarbon
-macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
-macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
+macx:INCLUDEPATH += $$QMAKE_MAC_SDK/System/Library/Frameworks/CoreFoundation.framework/Headers
+#macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+#macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS += -lz
-macx:LIBS += -framework OpenGL -framework CoreAudio -framework CoreMidi
+macx:LIBS += -framework OpenGL -framework CoreAudio -framework CoreMidi -framework CoreFoundation
 macx:QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
 macx:TARGET = ../../drone.app/Contents/Frameworks/droneCore
 macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
