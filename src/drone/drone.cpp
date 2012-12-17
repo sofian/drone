@@ -56,8 +56,6 @@ int main(int argc, char** argv)
   {
     if(argc==2)
       mainWindow.load(argv[1]);
-    else 
-      error("Usage : drone [schema.drn]");
   }
 
 
