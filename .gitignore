@@ -1,14 +1,29 @@
-# Libraries
+# C++ objects and libs
 *.so
 *.so.?
 *.so.?.?
 *.so.?.?.?
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
 
 # Make
-Makefile
 debug/
 release/
 
-# QT generated files
+# QT 
+*.pro.user
+*.pro.user.*
 moc_*.cpp
+qrc_*.cpp
+Makefile
+*-build-*
+
+# Executable
 /drone
