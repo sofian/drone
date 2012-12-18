@@ -1,0 +1,14 @@
+# Libraries
+*.so
+*.so.?
+*.so.?.?
+*.so.?.?.?
+
+# Make
+Makefile
+debug/
+release/
+
+# QT generated files
+moc_*.cpp
+/drone
