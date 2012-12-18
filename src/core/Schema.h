@@ -1,7 +1,7 @@
 #ifndef SCHEMA_INCLUDED
 #define SCHEMA_INCLUDED
 
-#include <qdom.h>
+#include <Qt/qdom.h>
 #include <map>
 #include <list>
 #include <vector>
