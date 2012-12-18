@@ -146,7 +146,7 @@ int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_
 		} else if (types[i]==LO_STRING)
 		{
 			StringType *stringt = new StringType();
-			stringt->setValue(argv[i]->s);
+			stringt->setValue(&argv[i]->s);
 			list.push_back(stringt);			
 		}	
 	}	
