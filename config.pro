@@ -6,6 +6,8 @@ CONFIG = qt warn_on thread debug
 message(Gears : Builing Makefile with the following config flags : $$CONFIG)
 
 
+macx:QMAKE_CXXFLAGS += -fpermissive  
+
 # Debug settings
 debug {
   OBJECTS_DIR = debug
