@@ -396,17 +396,17 @@ extern float FASTMATH_LOOKUP;
 
 inline float fastsin(float a)
 {
-  return sinLut[ (int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE-1 ];
+  return sinLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
 }
 
 inline float fastcos(float a)
 {
-  return cosLut[ (int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE-1 ];
+  return cosLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
 }
 
 inline float fastsqrt(float a)
 {
-  return sqrtLut[ (int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE-1 ];
+  return sqrtLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
 }
 
 inline unsigned int ceilingPowerOfTwo(unsigned int x)
