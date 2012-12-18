@@ -86,6 +86,7 @@ OscMessage \
 OscInput \
 OscOutput \
 OscFilter \
+OscExtract
 }
 
 
