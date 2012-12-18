@@ -69,28 +69,33 @@ Gear_UnpackList::~Gear_UnpackList()
 
 void Gear_UnpackList::runVideo()
 {
-  if (_LIST_IN->type()->size()<=0)
+  //std::cout << name() << "::: size:: " << _LIST_IN->type()->size() << std::endl;
+  if (_LIST_IN->type()->size()<1)
   {    
-    _LIST_OUT->sleeping(true);
+    _LIST_OUT->sleeping(true); // TODO: the sleeping mechanism just doesn't work
     return;
   }
 
   _LIST_OUT->sleeping(false);
   
-  ListType *listType = _LIST_OUT->type();  
-  listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
-  AbstractType *type = listType->back();
+  ListType *listType = _LIST_OUT->type();
+  AbstractType *type = _LIST_IN->type()->front();
+  listType->resize(_LIST_IN->type()->size() - 1);
+  std::copy(_LIST_IN->type()->begin()+1, _LIST_IN->type()->end(), listType->begin());
+
+  //std::cout << "got something " << type->typeName() << std::endl;
+  //for (ListType::const_iterator it = _LIST_IN->type()->begin(); it != _LIST_IN->type()->end(); ++it)
+  //listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
   
   if ((_STR_OUT->connected()) && type->typeName() == StringType::TYPENAME)
   {
-    listType->pop_back();
     _STR_OUT->type()->setValue(((StringType*)type)->value());
     return;
   }
     
   if ((_VAL_OUT->connected()) && type->typeName() == ValueType::TYPENAME)
   {
-    listType->pop_back();
+    //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
     _VAL_OUT->type()->setValue(((ValueType*)type)->value());
     return;
   }
