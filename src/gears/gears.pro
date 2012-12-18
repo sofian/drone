@@ -50,10 +50,6 @@ Invert \
 InvertAlpha \
 PackList \
 UnpackList \
-#OscMessage \
-#OscInput \
-#OscOutput \
-#OscFilter \
 Saturation \
 SelectFrame \
 SetAlpha \
@@ -82,6 +78,14 @@ VecAffineTrans
 }
 
 #linux specific gears
-#unix:!macx:SUBDIRS += VideoInput AudioInput
-unix:!macx:SUBDIRS += VideoInput
+unix:!macx {
+#SUBDIRS += VideoInput AudioInput
+SUBDIRS += VideoInput \
+#AudioInput \
+OscMessage \
+OscInput \
+OscOutput \
+OscFilter \
+}
+
 
