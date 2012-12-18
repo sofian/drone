@@ -59,7 +59,6 @@ private:
 	lo_server_thread _loServerThread;
 	pthread_mutex_t *_mutex;
 	std::vector<OscMessageType> _messages;
-
 };
 
 #endif 
