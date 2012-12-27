@@ -38,6 +38,7 @@ ControlPanel.h \
 Control.h \
 DroneCore.h \
 Engine.h \
+FrameBufferObject.h \
 Gear.h \
 GearControl.h \
 GearFrei0r.h \
@@ -100,6 +101,7 @@ ControlPanel.cpp \
 Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
+FrameBufferObject.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
@@ -141,4 +143,4 @@ SOURCES += AggWrapper.cpp types/VectorialType.cpp
 }
   
 #The following line was inserted by qt3to4
-QT += xml  qt3support 
+QT += xml opengl qt3support 

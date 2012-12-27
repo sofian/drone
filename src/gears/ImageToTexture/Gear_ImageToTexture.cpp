@@ -66,6 +66,6 @@ void Gear_ImageToTexture::runVideo()
   VideoRGBAType *image = _VIDEO_IN->type();
   TextureType *texture = _TEXTURE_OUT->type();
   
-  texture->createFromVideoRGBA(*image);
+  texture->updateWithVideoRGBA(*image);
 }
 

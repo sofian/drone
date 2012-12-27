@@ -96,7 +96,7 @@ Property* Properties::add(Property::eType type, std::string name)
 }
 
 
-Property* Properties::get(std::string name)
+Property* Properties::get(const std::string& name)
 {
   if (_properties.find(name) == _properties.end())
     return NULL;

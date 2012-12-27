@@ -34,7 +34,7 @@
 class TextureType : public AbstractType
 {
 public:
-  TextureType(unsigned int defaultValue=0);
+  TextureType();
   
   virtual ~TextureType();
 
@@ -44,7 +44,8 @@ public:
   void setTextureName(unsigned int value) { _textureName = value; }
   unsigned int textureName() const { return _textureName; }
   
-  unsigned int createFromVideoRGBA(const VideoRGBAType &image, bool forceRecreate=false);
+  unsigned int createWithSize(int textureSizeX, int textureSizeY, bool forceCreation = false);
+  unsigned int updateWithVideoRGBA(const VideoRGBAType &image);
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
   
@@ -52,8 +53,6 @@ private:
 	unsigned int _textureName;
   unsigned int _textureSizeX;
   unsigned int _textureSizeY;
-  unsigned int _oldWidth;
-  unsigned int _oldHeight;
   
 };
 

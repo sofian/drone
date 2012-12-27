@@ -57,6 +57,7 @@ UnpackList \
 Saturation \
 #SelectFrame \
 SetAlpha \
+ShaderTest \
 SignalStat \
 SmearGrid \
 Sobel \

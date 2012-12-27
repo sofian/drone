@@ -68,9 +68,7 @@ const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) : 
   Gear(schema, "VideoOutput", uniqueName),
   _droneQGLWidget(NULL),
-  _window(NULL),
-  _frameSizeX(0),
-  _frameSizeY(0)
+  _window(NULL)
 {
 
   addPlug(_VIDEO_IN = new PlugIn<TextureType>(this, "IN", true));
@@ -79,14 +77,12 @@ Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) :
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
   _settings.add(Property::INT, SETTING_XPOS)->valueInt(DEFAULT_XPOS);
   _settings.add(Property::INT, SETTING_YPOS)->valueInt(DEFAULT_YPOS);
-
   _settings.add(Property::BOOL, SETTING_FULLSCREEN)->valueBool(DEFAULT_FULLSCREEN);
-
 }
 
 Gear_VideoOutput::~Gear_VideoOutput()
 {
-  //todo mg: delete qglwiget too
+  delete _droneQGLWidget;
   _window->deleteLater();
 }
 
@@ -108,6 +104,10 @@ void Gear_VideoOutput::internalInit()
     delete _window;
   
   _window = new DroneGLWindow(qApp->mainWidget());
+ 
+  if (_droneQGLWidget)
+    delete _droneQGLWidget;
+  
   _droneQGLWidget = new DroneQGLWidget(_window, this);
   Q3BoxLayout *l = new Q3HBoxLayout(_window);
   l->addWidget(_droneQGLWidget);
@@ -133,19 +133,14 @@ void Gear_VideoOutput::runVideo()
   if (_VIDEO_IN->type()->textureName() == 0)
     return;
 
-  if (_frameSizeX!=_VIDEO_IN->type()->textureSizeX() || _VIDEO_IN->type()->textureSizeX())
-  {
-    _frameSizeX = _VIDEO_IN->type()->textureSizeX();
-    _frameSizeY = _VIDEO_IN->type()->textureSizeY();
-  }
-  
   _droneQGLWidget->setCurrentTexture(_VIDEO_IN->type());
   
   //asynchronously tell the widget to repaint himself in a thread-safe way
-  QApplication::postEvent(_droneQGLWidget, new QPaintEvent( QRect(0, 0, _frameSizeX, _frameSizeY) ) );
+  QApplication::postEvent(_droneQGLWidget,
+                          new QPaintEvent( QRect(0, 0, _VIDEO_IN->type()->textureSizeX(), _VIDEO_IN->type()->textureSizeY()) ) );
 }
 
-bool Gear_VideoOutput::isFullscreen() const
+bool Gear_VideoOutput::isFullscreen()
 {
   return _settings.get(SETTING_FULLSCREEN)->valueBool();
 }

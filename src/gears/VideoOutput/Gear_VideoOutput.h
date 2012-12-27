@@ -39,7 +39,7 @@ public:
 
   PlugIn<TextureType>* VIDEO_IN(){return _VIDEO_IN;};
   
-  bool isFullscreen() const;
+  bool isFullscreen();
 
 protected:
   void internalInit();  
@@ -65,8 +65,6 @@ private:
   PlugIn<TextureType> *_VIDEO_IN;
   DroneQGLWidget *_droneQGLWidget;
   DroneGLWindow *_window;
-  unsigned int _frameSizeX;
-  unsigned int _frameSizeY;
 };
 
 #endif
