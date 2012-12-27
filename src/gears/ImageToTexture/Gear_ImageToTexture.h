@@ -1,5 +1,5 @@
-/* AreaType.cpp
- * Copyright (C) 2005 Jean-Sebastien Senecal
+/* Gear_ImageToTexture.h
+ * Copyright (C) 2012 Mathieu Guindon
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "AreaType.h"
+#ifndef GEAR_EDGE_INCLUDED
+#define GEAR_EDGE_INCLUDED
 
-const std::string AreaType::TYPENAME = "Area";
+
+#include "Gear.h"
+#include "VideoRGBAType.h"
+ #include "TextureType.h"
+
+
+class Gear_ImageToTexture : public Gear
+{
+public:
+
+  Gear_ImageToTexture(Schema *schema, std::string uniqueName);
+  virtual ~Gear_ImageToTexture();
+
+  void runVideo();
+  virtual bool ready();
+private:
+
+  PlugIn<VideoRGBAType> *_VIDEO_IN;
+  PlugOut<TextureType> *_TEXTURE_OUT;
+};
+
+#endif

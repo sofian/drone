@@ -34,7 +34,6 @@
 class AreaType : public AbstractType
 {
 public:
-  static const std::string TYPENAME;
   
   /**
    * Default constructor

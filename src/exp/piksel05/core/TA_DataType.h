@@ -26,9 +26,7 @@
 
 class TA_DataType : public AbstractType, public TA_CityGraph
 {
-public:
-  static const std::string TYPENAME;
-  
+public:  
   TA_DataType()
     : AbstractType(),
       TA_CityGraph()
@@ -37,10 +35,10 @@ public:
   
   virtual ~TA_DataType() {}
   
-  virtual std::string typeName() const { return TYPENAME; }
+  virtual std::string typeName() const { return "TA_Data"; }
   virtual QColor color() const { return QColor(204, 87, 71); }
   
-  void loadData(const std::string& filename);
+  void loadData(const std::string& filename) { }
   
 };
 

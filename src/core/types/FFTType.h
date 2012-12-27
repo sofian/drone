@@ -40,7 +40,7 @@ public:
     fftw_free(_fftOut);
   }
 
-  std::string name() const { return "FFTType";}
+  virtual std::string typeName() const { return "FFTType";}
   QColor color() const { return QColor(9,169,7);}
 
   double power(int bin) const

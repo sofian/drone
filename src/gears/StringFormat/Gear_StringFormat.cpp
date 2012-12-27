@@ -64,14 +64,14 @@ void Gear_StringFormat::runVideo()
   for (ListType::const_iterator it = listType->begin(); it != listType->end(); ++it)
   {
     int pos1, pos2;
-    if ((*it)->typeName() == StringType::TYPENAME)
+    if ((*it)->typeName() == StringType().typeName())
     {
       pos1 = format.find('%');
       pos2 = format.find('s', pos1);
       StringType *type = (StringType*)*it;
       sprintf(_buffer, format.c_str(), type->value().c_str());
     }
-    else if ((*it)->typeName() == ValueType::TYPENAME)
+    else if ((*it)->typeName() == ValueType().typeName())
     {
       pos1 = format.find('%');
       pos2 = format.find('d', pos1);

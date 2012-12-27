@@ -21,10 +21,12 @@
 #define GEAR_VIDEOOUTPUT_INCLUDED
 
 #include "Gear.h"
-#include "VideoRGBAType.h"
+#include "TextureType.h"
 
 
-class VideoOutput;
+
+class DroneQGLWidget;
+class DroneGLWindow;
 
 class Gear_VideoOutput : public Gear  
 {
@@ -35,7 +37,9 @@ public:
 
   void runVideo();
 
-  PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
+  PlugIn<TextureType>* VIDEO_IN(){return _VIDEO_IN;};
+  
+  bool isFullscreen() const;
 
 protected:
   void internalInit();  
@@ -58,13 +62,11 @@ private:
 	
   static const bool DEFAULT_FULLSCREEN; 
 
-  PlugIn<VideoRGBAType> *_VIDEO_IN;
-
-  VideoOutput *_videoOutput;
-  std::vector<std::string> _allOutputs;
-
-  const VideoRGBAType *_image; 
-
+  PlugIn<TextureType> *_VIDEO_IN;
+  DroneQGLWidget *_droneQGLWidget;
+  DroneGLWindow *_window;
+  unsigned int _frameSizeX;
+  unsigned int _frameSizeY;
 };
 
 #endif

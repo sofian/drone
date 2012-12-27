@@ -81,14 +81,14 @@ void Gear_UnpackList::runVideo()
   listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
   AbstractType *type = listType->back();
   
-  if ((_STR_OUT->connected()) && type->typeName() == StringType::TYPENAME)
+  if ((_STR_OUT->connected()) && type->typeName() == StringType().typeName())
   {
     listType->pop_back();
     _STR_OUT->type()->setValue(((StringType*)type)->value());
     return;
   }
     
-  if ((_VAL_OUT->connected()) && type->typeName() == ValueType::TYPENAME)
+  if ((_VAL_OUT->connected()) && type->typeName() == ValueType().typeName())
   {
     listType->pop_back();
     _VAL_OUT->type()->setValue(((ValueType*)type)->value());

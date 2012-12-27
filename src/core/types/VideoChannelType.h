@@ -26,8 +26,6 @@
 class VideoChannelType : public Array2DType<unsigned char>
 {
 public:
-  static const std::string TYPENAME;
-  
   VideoChannelType(int width = 0,
                    int height = 0,
                    unsigned char fillValue = 0)

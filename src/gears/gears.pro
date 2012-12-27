@@ -8,7 +8,6 @@ VideoOutput \
 #AudioPushButton \
 AlphaMix \
 Blur \
-VideoSource \
 Slider \
 KDTree\ 
 VideoMix \
@@ -34,6 +33,7 @@ FlatSignal \
 FillAlpha \
 ListBox \
 ImageCapture \
+ImageToTexture \
 PushButton \
 Rescale \
 TouchPad \
@@ -55,7 +55,7 @@ UnpackList \
 #OscOutput \
 #OscFilter \
 Saturation \
-SelectFrame \
+#SelectFrame \
 SetAlpha \
 SignalStat \
 SmearGrid \

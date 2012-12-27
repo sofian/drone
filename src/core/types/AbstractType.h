@@ -29,10 +29,9 @@ class AbstractType
 {
 public:
   AbstractType(){}
-  
-		
-	
   virtual ~AbstractType() {}
+  
+  virtual std::string typeName() const {return "AbstractType";}
 
   virtual QColor color() const { return QColor(0,0,0);}
 
@@ -44,8 +43,7 @@ public:
     return &subType;
   }
 	
-  virtual std::string typeName() const {return "AbstractType";}
-  bool typeOf(AbstractType &other) const
+  bool isTypeOf(AbstractType &other) const
   {
       return other.typeName() == typeName();
   }
