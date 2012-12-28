@@ -49,11 +49,13 @@ extern "C" {
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 /* This function will be called by the pad-added signal */
-void pad_added_handler (GstElement *src, GstPad *new_pad, GstElement* data[2]) {
+void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstPadHandlerData* data) {
   GstPadLinkReturn ret;
   GstCaps *new_pad_caps = NULL;
   GstStructure *new_pad_struct = NULL;
   const gchar *new_pad_type = NULL;
+
+  bool isAudio = false;
 
   g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (new_pad), GST_ELEMENT_NAME (src));
 
@@ -65,10 +67,17 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, GstElement* data[2]) {
   new_pad_type = gst_structure_get_name (new_pad_struct);
   g_print("Structure is %s\n", gst_structure_to_string(new_pad_struct));
 //  GST_LOG ("structure is %" GST_PTR_FORMAT, new_pad_struct);
-  if (g_str_has_prefix (new_pad_type, "audio/x-raw"))
-    sink_pad = gst_element_get_static_pad (data[0], "sink");
-  else if (g_str_has_prefix (new_pad_type, "video/x-raw-yuv"))
-    sink_pad = gst_element_get_static_pad (data[1], "sink");
+  if (g_str_has_prefix (new_pad_type, "audio/x-raw")
+      )
+  {
+    sink_pad = gst_element_get_static_pad (data->audioToConnect, "sink");
+    isAudio = true;
+  }
+  else if (g_str_has_prefix (new_pad_type, "video/x-raw"))
+  {
+    sink_pad = gst_element_get_static_pad (data->videoToConnect, "sink");
+    isAudio = false;
+  }
   else {
     g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", new_pad_type);
     goto exit;
@@ -84,9 +93,13 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, GstElement* data[2]) {
   ret = gst_pad_link (new_pad, sink_pad);
   if (GST_PAD_LINK_FAILED (ret)) {
     g_print ("  Type is '%s' but link failed.\n", new_pad_type);
-    exit(-1);
+    goto exit;
   } else {
     g_print ("  Link succeeded (type '%s').\n", new_pad_type);
+    if (isAudio)
+      data->audioIsConnected = true;
+    else
+      data->videoIsConnected = true;
   }
 
 exit:
@@ -99,56 +112,55 @@ exit:
     gst_object_unref (sink_pad);
 }
 
-/* The appsink has received a buffer */
-void videoBufferCallback (GstElement *sink, VideoRGBAType *data) {
-  GstBuffer *buffer;
-
-  /* Retrieve the buffer */
-  g_signal_emit_by_name (sink, "pull-buffer", &buffer);
-
-  if (buffer) {
-    g_print( "> \n");
-    register unsigned char *out = (unsigned char*) data->data();
-    register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
-    register int size  = WIDTH*HEIGHT;
-    for (register int i=0;i<size;i++)
-    {
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = 255;
-    }
-
-    gst_buffer_unref (buffer);
-    g_print( "<\n");
+void videoCopy(unsigned char* out, const unsigned char* in) {
+  int size  = WIDTH*HEIGHT;
+  for (int i=0;i<size;i++)
+  {
+    *out++ = *in++;
+    *out++ = *in++;
+    *out++ = *in++;
+    *out++ = 255;
   }
 }
 
 /* The appsink has received a buffer */
-// TODO: make this shit work
-void audioBufferCallback (GstElement *sink, SignalType *data) {
-/*  GstBuffer *buffer;
+void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
+  GstBuffer *buffer;
 
+  /* Retrieve the buffer */
   g_signal_emit_by_name (sink, "pull-buffer", &buffer);
-
   if (buffer) {
-    register char *out = (char*)data->data();
-    register char *in  = (char*)buffer->data;
-    for (register int i=0;i<size;i++)
-    {
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = 255;
-    }
-
+    std::cout << "v";
+    videoCopy((unsigned char*)video->data(), GST_BUFFER_DATA(buffer));
     gst_buffer_unref (buffer);
-  }*/
+  }
+}
+
+void newAudioBufferCallback (GstElement *sink, SignalType* audio) {
+  std::cout << ".";
+}
+
+void newBufferCallback(GstElement *sink, bool *newBuffer) {
+  std::cout << "New buffer" <<std::endl;
+  *newBuffer = true;
 }
 
 Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
 Gear(schema, "VideoSource", uniqueName),
 _currentMovie(""),
+_bus(NULL),
+_pipeline(NULL),
+_source(NULL),
+_audioQueue(NULL),
+_audioConvert(NULL),
+_audioResample(NULL),
+_videoQueue(NULL),
+_videoConvert(NULL),
+_videoColorSpace(NULL),
+_audioSink(NULL),
+_videoSink(NULL),
+_audioHasNewBuffer(false),
+_videoHasNewBuffer(false),
 _movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
@@ -203,6 +215,9 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   //free previously allocated structures
   freeResources();
 
+  _audioHasNewBuffer = false;
+  _videoHasNewBuffer = false;
+
   //_firstFrameTime=_formatContext->start_time;
 
   _movieReady=true;
@@ -217,21 +232,27 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   /* Create the elements */
   _source =          gst_element_factory_make ("uridecodebin", "source");
+
+  _audioQueue =      gst_element_factory_make ("queue", "aqueue");
   _audioConvert =    gst_element_factory_make ("audioconvert", "aconvert");
   _audioResample =   gst_element_factory_make ("audioresample", "aresample");
+  _audioSink =       gst_element_factory_make ("appsink", "asink");
+
+  _videoQueue =      gst_element_factory_make ("queue", "vqueue");
   _videoConvert =    gst_element_factory_make ("autovideoconvert", "vconvert");
   _videoColorSpace = gst_element_factory_make ("ffmpegcolorspace", "vcolorspace");
-  _audioSink =       gst_element_factory_make ("appsink", "asink");
   _videoSink =       gst_element_factory_make ("appsink", "vsink");
-  _audioVideoPadData[0] = _audioConvert;
-  _audioVideoPadData[1] = _videoConvert;
+
+  _padHandlerData.audioToConnect = _audioQueue;
+  _padHandlerData.videoToConnect = _videoQueue;
+  _padHandlerData.audioIsConnected = _padHandlerData.videoIsConnected = false;
 
   /* Create the empty pipeline */
   _pipeline = gst_pipeline_new ("test-pipeline");
 
   if (!_pipeline || !_source ||
-      !_audioConvert || !_audioResample || !_audioSink ||
-      !_videoConvert || !_videoColorSpace || !_videoSink) {
+      !_audioQueue || !_audioConvert || !_audioResample || !_audioSink ||
+      !_videoQueue || !_videoConvert ||  !_videoColorSpace || !_videoSink) {
     g_printerr ("Not all elements could be created.\n");
     return -1;
   }
@@ -239,17 +260,20 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   /* Build the pipeline. Note that we are NOT linking the source at this
    * point. We will do it later. */
   gst_bin_add_many (GST_BIN (_pipeline), _source,
-                    _audioConvert, _audioResample, _audioSink,
-                    _videoConvert, _videoColorSpace, _videoSink, NULL);
+                    _audioQueue, _audioConvert, _audioResample, _audioSink,
+                    _videoQueue, _videoConvert, _videoColorSpace, _videoSink, NULL);
 
-  if (!gst_element_link (_audioConvert, _audioResample) ||
+  if (!gst_element_link (_audioQueue, _audioConvert) ||
+      !gst_element_link (_audioConvert, _audioResample) ||
       !gst_element_link (_audioResample, _audioSink)) {
     g_printerr ("Audio elements could not be linked.\n");
     gst_object_unref (_pipeline);
     return -1;
   }
 
-  if (!gst_element_link (_videoConvert, _videoColorSpace) ||
+  if (!gst_element_link (_videoQueue, _videoConvert) ||
+      !gst_element_link (_videoConvert, _videoColorSpace) ||
+//      !gst_element_link (_videoQueue, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
     gst_object_unref (_pipeline);
@@ -258,10 +282,12 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   /* Set the URI to play */
   //g_object_set (_source, "uri", "file:///home/tats/Documents/workspace/drone-0.3/GOPR1063-h264.mp4", NULL);
+  //g_object_set (_source, "uri", "file:///home/tats/Videos/GoPro-CubaJuin2012/GOPR1063-h264.mp4", NULL);
+  //g_object_set (_source, "uri", "file:///home/tats/Videos/GoPro-CubaJuin2012/GOPR1063-h264.mp4", NULL);
   g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
 
   /* Connect to the pad-added signal */
-  g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), _audioVideoPadData);
+  g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), &_padHandlerData);
 
   /* Configure audio appsink */
   gchar *audio_caps_text;
@@ -270,7 +296,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
   audio_caps = gst_caps_from_string (audio_caps_text);
   g_object_set (_audioSink, "emit-signals", TRUE, "caps", audio_caps, NULL);
-  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (audioBufferCallback), _AUDIO_OUT->type());
+  //g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newBufferCallback), &_audioHasNewBuffer);
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newAudioBufferCallback), _AUDIO_OUT->type());
   gst_caps_unref (audio_caps);
   g_free (audio_caps_text);
 
@@ -278,7 +305,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   video_caps_text = g_strdup_printf (VIDEO_CAPS, WIDTH, HEIGHT);
   video_caps = gst_caps_from_string (video_caps_text);
   g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
-  //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (videoBufferCallback), _VIDEO_OUT->type());
+  g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newBufferCallback), &_videoHasNewBuffer);
+  //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
   gst_caps_unref (video_caps);
   g_free (video_caps_text);
 
@@ -294,67 +322,88 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _bus = gst_element_get_bus (_pipeline);
 
   _terminate = false;
+
 	return true;
 }
 
-void Gear_VideoSource::runVideo()
-{
+
+void Gear_VideoSource::runVideo() {
+  std::cout << "Run" << std::endl;
 //  int frameFinished=0;
 
-	if (_currentMovie != _MOVIE_IN->type()->value())
-	{
-		_currentMovie=_MOVIE_IN->type()->value();
-		if (!loadMovie(_currentMovie))
-			return;
-	}
+  if (_currentMovie != _MOVIE_IN->type()->value()) {
+    _currentMovie = _MOVIE_IN->type()->value();
+    if (!loadMovie(_currentMovie))
+      return;
+  }
 
-	if (!_movieReady)
-		return;
+  if (!_movieReady)
+    return;
 
-	if (_terminate) {
-	  _FINISH_OUT->type()->setValue(1.0f);
-	  return;
-	}
+  if (!_padHandlerData.isConnected())
+    return;
 
-	// TODO: resize according to caps
+  if (_terminate) {
+    _FINISH_OUT->type()->setValue(1.0f);
+    return;
+  }
+
+  // TODO: resize according to caps
   _VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
 
   // TODO: make this work
-  if ((int)_RESET_IN->type()->value() == 1)
-  {
+  if ((int) _RESET_IN->type()->value() == 1) {
     std::cout << "Seeking not implemented" << std::endl;
 //    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
   }
-    
+
   //loop until we get a videoframe
   //if we reach end, return to the beginning
 
   // TODO: make this work (EOS)
-  if (false/*gst_app_sink_is_eos(_videoSink)*/)
-  {
+  if (false/*gst_app_sink_is_eos(_videoSink)*/) {
     _FINISH_OUT->type()->setValue(1.0f);
-  }
-  else
-  {
+  } else {
     _FINISH_OUT->type()->setValue(0.0f);
 
-    GstMessage *msg = gst_bus_timed_pop_filtered (_bus, GST_CLOCK_TIME_NONE,
-                                                   (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+    //GstMessage *msg = gst_bus_timed_pop_filtered(
+//                        _bus, GST_CLOCK_TIME_NONE,
+//                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
+    GstMessage *msg = gst_bus_timed_pop_filtered(
+                        _bus, 0,
+                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
-    GstBuffer* buffer;
-    g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
-
-    register unsigned char *out = (unsigned char*) _VIDEO_OUT->type()->data();
-    register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
-    register int size  = WIDTH*HEIGHT;
-    for (register int i=0;i<size;i++)
-    {
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = *in++;
-      *out++ = 255;
+    if (_videoHasNewBuffer) {
+      std::cout << "Supposedly has video buff" << std::endl;
+      newVideoBufferCallback(_videoSink, _VIDEO_OUT->type());
+      //      GstBuffer* buffer;
+      //      g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
+      //
+      //      if (buffer) {
+      //        std::cout << "Has buffer\n" << std::endl;
+      //        _videoHasNewBuffer = false;
     }
+//    if (_videoHasNewBuffer) {
+//      GstBuffer* buffer;
+//      g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
+//
+//      if (buffer) {
+//        std::cout << "Has buffer\n" << std::endl;
+//        _videoHasNewBuffer = false;
+///*
+//        register unsigned char *out = (unsigned char*) _VIDEO_OUT->type()->data();
+//        register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
+//        register int size  = WIDTH*HEIGHT;
+//        for (register int i=0;i<size;i++)
+//        {
+//          *out++ = *in++;
+//          *out++ = *in++;
+//          *out++ = *in++;
+//          *out++ = 255;
+//        }
+//        */
+//      }
 
     /* Parse message */
     if (msg != NULL) {
@@ -362,38 +411,41 @@ void Gear_VideoSource::runVideo()
       gchar *debug_info;
 
       switch (GST_MESSAGE_TYPE (msg)) {
-        case GST_MESSAGE_ERROR:
-          gst_message_parse_error (msg, &err, &debug_info);
-          g_printerr ("Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
-          g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
-          g_clear_error (&err);
-          g_free (debug_info);
-          _terminate = true;
-          _FINISH_OUT->type()->setValue(1.0f);
-//          terminate = TRUE;
-          break;
-        case GST_MESSAGE_EOS:
-          g_print ("End-Of-Stream reached.\n");
-          _terminate = TRUE;
-          _FINISH_OUT->type()->setValue(1.0f);
-          break;
-        case GST_MESSAGE_STATE_CHANGED:
-          /* We are only interested in state-changed messages from the pipeline */
-          if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
-            GstState old_state, new_state, pending_state;
-            gst_message_parse_state_changed (msg, &old_state, &new_state, &pending_state);
-            g_print ("Pipeline state changed from %s to %s:\n",
-                gst_element_state_get_name (old_state), gst_element_state_get_name (new_state));
-          }
-          break;
-        default:
-          /* We should not reach here */
-          g_printerr ("Unexpected message received.\n");
-          break;
+      case GST_MESSAGE_ERROR:
+        gst_message_parse_error(msg, &err, &debug_info);
+        g_printerr("Error received from element %s: %s\n",
+            GST_OBJECT_NAME (msg->src), err->message);
+        g_printerr("Debugging information: %s\n",
+            debug_info ? debug_info : "none");
+        g_clear_error(&err);
+        g_free(debug_info);
+        _terminate = true;
+        _FINISH_OUT->type()->setValue(1.0f);
+        //          terminate = TRUE;
+        break;
+      case GST_MESSAGE_EOS:
+        g_print("End-Of-Stream reached.\n");
+        _terminate = TRUE;
+        _FINISH_OUT->type()->setValue(1.0f);
+        break;
+      case GST_MESSAGE_STATE_CHANGED:
+        /* We are only interested in state-changed messages from the pipeline */
+        if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+          GstState old_state, new_state, pending_state;
+          gst_message_parse_state_changed(msg, &old_state, &new_state,
+              &pending_state);
+          g_print("Pipeline state changed from %s to %s:\n",
+              gst_element_state_get_name(old_state),
+              gst_element_state_get_name(new_state));
+        }
+        break;
+      default:
+        /* We should not reach here */
+        g_printerr("Unexpected message received.\n");
+        break;
       }
-      gst_message_unref (msg);
+      gst_message_unref(msg);
     }
-
   }
 }
 

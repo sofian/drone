@@ -53,6 +53,23 @@ public:
 protected:
   bool loadMovie(std::string filename);
 
+public:
+  struct GstPadHandlerData {
+    GstElement* audioToConnect;
+    GstElement* videoToConnect;
+    bool audioIsConnected;
+    bool videoIsConnected;
+
+    GstPadHandlerData() :
+      audioToConnect(NULL), videoToConnect(NULL),
+      audioIsConnected(false), videoIsConnected(false)
+    {}
+
+    bool isConnected() const {
+      return (audioIsConnected && videoIsConnected);
+    }
+  };
+
 private:
 
   void freeResources();
@@ -68,25 +85,31 @@ private:
   //locals
   std::string _currentMovie;  
 
-  float *_audioBuffer;
+  //float *_audioBuffer;
   //RGBA *_outData;  
-  long _previousFramePos;
+  //long _previousFramePos;
 	
   // gstreamer
   GstBus *_bus;
   GstElement *_pipeline;
   GstElement *_source;
+  GstElement *_audioQueue;
   GstElement *_audioConvert;
   GstElement *_audioResample;
+  GstElement *_videoQueue;
   GstElement *_videoConvert;
   GstElement *_videoColorSpace;
   GstElement *_audioSink;
   GstElement *_videoSink;
-  GstElement* _audioVideoPadData[2];
+
+  GstPadHandlerData _padHandlerData;
+
+  bool _audioHasNewBuffer;
+  bool _videoHasNewBuffer;
 
 //  uint8_t *_buffer;
   //int _videoStreamIndex;
-  int64_t _firstFrameTime;
+  //int64_t _firstFrameTime;
   bool _terminate;
   bool _movieReady;
 };
