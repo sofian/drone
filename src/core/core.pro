@@ -24,8 +24,7 @@ macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 #linux
 unix:!macx:LIBS += -L/usr/X11R6/lib -lGL -lasound -lpthread
 unix:!macx:TARGET = ../../lib/droneCore
-unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
-
+unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__ -DGL_GLEXT_PROTOTYPES
 
 HEADERS += config.h \
 error.h \
@@ -124,8 +123,8 @@ SchemaGui.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
 Timing.cpp \
-Types/VideoRGBAType.cpp \
-Types/TextureType.cpp \
+types/VideoRGBAType.cpp \
+types/TextureType.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
