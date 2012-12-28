@@ -29,11 +29,9 @@
 #include "EnumType.h"
 
 extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
+  #include <gst/gst.h>
+  #include <gst/app/gstappsink.h>
 }
-
 
 class Gear_VideoSource : public Gear
 {
@@ -69,22 +67,27 @@ private:
 
   //locals
   std::string _currentMovie;  
+
   float *_audioBuffer;
   //RGBA *_outData;  
   long _previousFramePos;
 	
+  // gstreamer
+  GstBus *_bus;
+  GstElement *_pipeline;
+  GstElement *_source;
+  GstElement *_audioConvert;
+  GstElement *_audioResample;
+  GstElement *_videoConvert;
+  GstElement *_videoColorSpace;
+  GstElement *_audioSink;
+  GstElement *_videoSink;
+  GstElement* _audioVideoPadData[2];
 
-  //ffmpeg
-  AVFormatContext *_formatContext;  
-  AVCodecContext *_codecContext;
-  AVCodec *_codec;
-  AVPacket _packet;
-  AVFrame *_frame;
-  AVFrame *_frameRGBA;
-  struct SwsContext *_sws_ctx;
-  uint8_t *_buffer;
-  int _videoStreamIndex;
+//  uint8_t *_buffer;
+  //int _videoStreamIndex;
   int64_t _firstFrameTime;
+  bool _terminate;
   bool _movieReady;
 };
 

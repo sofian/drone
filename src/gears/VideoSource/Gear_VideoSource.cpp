@@ -25,6 +25,13 @@
 
 #include "GearMaker.h"
 
+#define SAMPLE_RATE 44100 /* Samples per second we are sending */
+#define AUDIO_CAPS "audio/x-raw-float,channels=2,rate=%d,width=32,endianness=BYTE_ORDER"
+
+#define WIDTH 720
+#define HEIGHT 480
+#define VIDEO_CAPS "video/x-raw-rgb,width=%d,height=%d"
+
 extern "C" {           
   Gear* makeGear(Schema *schema, std::string uniqueName)
   {
@@ -41,16 +48,107 @@ extern "C" {
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
+/* This function will be called by the pad-added signal */
+void pad_added_handler (GstElement *src, GstPad *new_pad, GstElement* data[2]) {
+  GstPadLinkReturn ret;
+  GstCaps *new_pad_caps = NULL;
+  GstStructure *new_pad_struct = NULL;
+  const gchar *new_pad_type = NULL;
+
+  g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (new_pad), GST_ELEMENT_NAME (src));
+
+  GstPad *sink_pad = 0;
+
+  /* Check the new pad's type */
+  new_pad_caps = gst_pad_get_caps (new_pad);
+  new_pad_struct = gst_caps_get_structure (new_pad_caps, 0);
+  new_pad_type = gst_structure_get_name (new_pad_struct);
+  g_print("Structure is %s\n", gst_structure_to_string(new_pad_struct));
+//  GST_LOG ("structure is %" GST_PTR_FORMAT, new_pad_struct);
+  if (g_str_has_prefix (new_pad_type, "audio/x-raw"))
+    sink_pad = gst_element_get_static_pad (data[0], "sink");
+  else if (g_str_has_prefix (new_pad_type, "video/x-raw-yuv"))
+    sink_pad = gst_element_get_static_pad (data[1], "sink");
+  else {
+    g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", new_pad_type);
+    goto exit;
+  }
+
+  /* If our converter is already linked, we have nothing to do here */
+  if (gst_pad_is_linked (sink_pad)) {
+    g_print ("  We are already linked. Ignoring.\n");
+    goto exit;
+  }
+
+  /* Attempt the link */
+  ret = gst_pad_link (new_pad, sink_pad);
+  if (GST_PAD_LINK_FAILED (ret)) {
+    g_print ("  Type is '%s' but link failed.\n", new_pad_type);
+    exit(-1);
+  } else {
+    g_print ("  Link succeeded (type '%s').\n", new_pad_type);
+  }
+
+exit:
+  /* Unreference the new pad's caps, if we got them */
+  if (new_pad_caps != NULL)
+    gst_caps_unref (new_pad_caps);
+
+  /* Unreference the sink pad */
+  if (sink_pad != NULL)
+    gst_object_unref (sink_pad);
+}
+
+/* The appsink has received a buffer */
+void videoBufferCallback (GstElement *sink, VideoRGBAType *data) {
+  GstBuffer *buffer;
+
+  /* Retrieve the buffer */
+  g_signal_emit_by_name (sink, "pull-buffer", &buffer);
+
+  if (buffer) {
+    g_print( "> \n");
+    register unsigned char *out = (unsigned char*) data->data();
+    register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
+    register int size  = WIDTH*HEIGHT;
+    for (register int i=0;i<size;i++)
+    {
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = 255;
+    }
+
+    gst_buffer_unref (buffer);
+    g_print( "<\n");
+  }
+}
+
+/* The appsink has received a buffer */
+// TODO: make this shit work
+void audioBufferCallback (GstElement *sink, SignalType *data) {
+/*  GstBuffer *buffer;
+
+  g_signal_emit_by_name (sink, "pull-buffer", &buffer);
+
+  if (buffer) {
+    register char *out = (char*)data->data();
+    register char *in  = (char*)buffer->data;
+    for (register int i=0;i<size;i++)
+    {
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = 255;
+    }
+
+    gst_buffer_unref (buffer);
+  }*/
+}
+
 Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
 Gear(schema, "VideoSource", uniqueName),
 _currentMovie(""),
-_formatContext(NULL),
-_codecContext(NULL),
-_codec(NULL),
-_frame(NULL),
-_frameRGBA(NULL),
-_sws_ctx(NULL),
-_buffer(NULL),
 _movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
@@ -68,7 +166,7 @@ _movieReady(false)
 
   //_settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
-  av_register_all();
+//  av_register_all();
 	_VIDEO_OUT->sleeping(true);
 	_AUDIO_OUT->sleeping(true);
 }
@@ -80,20 +178,18 @@ Gear_VideoSource::~Gear_VideoSource()
 
 void Gear_VideoSource::freeResources()
 {
-  if (_buffer)  
-    delete [] _buffer;
+//  if (_buffer)
+//    delete [] _buffer;
   
-  if (_frameRGBA)  
-    av_free(_frameRGBA);
-  
-  if (_frame)  
-    av_free(_frame);
-  
-  if (_codecContext)
-    avcodec_close(_codecContext);
-  
-  if (_formatContext)
-    avformat_close_input(&_formatContext);
+  /* Free resources */
+  if (_bus)
+    gst_object_unref (_bus);
+
+  if (_pipeline)
+  {
+    gst_element_set_state (_pipeline, GST_STATE_NULL);
+    gst_object_unref (_pipeline);
+  }
 
   _movieReady=false;
 	_VIDEO_OUT->sleeping(true);
@@ -107,112 +203,103 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   //free previously allocated structures
   freeResources();
 
-  av_register_all();
-
-  if (avformat_open_input(&_formatContext, filename.c_str(), NULL,  NULL) < 0)
-  {
-    std::cout << "fail to open movie!" << std::endl;
-    return false;
-  }
-
-  if (avformat_find_stream_info(_formatContext, NULL) < 0)
-  {
-    std::cout << "fail to find stream info!" << std::endl;
-    return false;
-  }
-
-  av_dump_format(_formatContext, 0, filename.c_str(), 0);
-
-  _videoStreamIndex=-1;
-  for (int i=0; i<_formatContext->nb_streams; i++)
-    if (_formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
-    {
-      _videoStreamIndex=i;
-      break;
-    }
-
-  if (_videoStreamIndex<0)
-  {
-    std::cout << "no video stream!" << std::endl;
-    return false;
-  }
-
-  _codecContext=(_formatContext->streams[_videoStreamIndex]->codec);       
-  _codec = avcodec_find_decoder(_codecContext->codec_id);
-  if (!_codec)
-  {
-    std::cout << "no appropriate codec found!" << std::endl;
-    return false;
-  }
-
-  std::cout << "using codec : " << _codec->name << std::endl;
-  if (avcodec_open2(_codecContext, _codec,NULL ) < 0)
-  {
-    std::cout << "fail to open codec!" << std::endl;
-    return false;       
-  }
-
-  // Hack to correct wrong frame rates that seem to be generated by some 
-  // codecs
-//  if (_codecContext->time_baseframe_rate>1000 && _codecContext->frame_rate_base==1)
- //   _codecContext->frame_rate_base=1000;
-
-  // Allocate video frame
-  _frame=avcodec_alloc_frame();
-  if (_frame==NULL)
-  {
-    std::cout << "fail to allocate frame!" << std::endl;
-    return false;
-  }
-
-  // Allocate rgba frame
-  _frameRGBA=avcodec_alloc_frame();
-  if (_frameRGBA==NULL)
-  {
-    std::cout << "fail to allocate frame!" << std::endl;
-    return false;
-  }
-
-  // Determine required buffer size and allocate buffer
-  int numBytes=avpicture_get_size(PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
-  _buffer=new uint8_t[numBytes];
-
-  // new since libavcodec5.?  -> we must use libswscale instead of img_convert
-  if(_sws_ctx!=NULL)
-    sws_freeContext(_sws_ctx);
-    _sws_ctx =
-    sws_getCachedContext
-    (_sws_ctx,
-        _codecContext->width,
-        _codecContext->height,
-        _codecContext->pix_fmt,
-        _codecContext->width,
-        _codecContext->height,
-        PIX_FMT_RGB24,
-        SWS_BILINEAR,
-        NULL,
-        NULL,
-        NULL
-    );
-  
-  
-  
-  
-  
-  // Assign appropriate parts of buffer to image planes in _frameRGBA
-  avpicture_fill((AVPicture *)_frameRGBA, _buffer, PIX_FMT_RGB24, _codecContext->width, _codecContext->height);
-
-  _firstFrameTime=_formatContext->start_time;
+  //_firstFrameTime=_formatContext->start_time;
 
   _movieReady=true;
 	_VIDEO_OUT->sleeping(false);
 	
+  GstStateChangeReturn ret;
+  gchar *video_caps_text;
+  GstCaps *video_caps;
+
+  /* Initialize GStreamer */
+  gst_init (NULL, NULL);
+
+  /* Create the elements */
+  _source =          gst_element_factory_make ("uridecodebin", "source");
+  _audioConvert =    gst_element_factory_make ("audioconvert", "aconvert");
+  _audioResample =   gst_element_factory_make ("audioresample", "aresample");
+  _videoConvert =    gst_element_factory_make ("autovideoconvert", "vconvert");
+  _videoColorSpace = gst_element_factory_make ("ffmpegcolorspace", "vcolorspace");
+  _audioSink =       gst_element_factory_make ("appsink", "asink");
+  _videoSink =       gst_element_factory_make ("appsink", "vsink");
+  _audioVideoPadData[0] = _audioConvert;
+  _audioVideoPadData[1] = _videoConvert;
+
+  /* Create the empty pipeline */
+  _pipeline = gst_pipeline_new ("test-pipeline");
+
+  if (!_pipeline || !_source ||
+      !_audioConvert || !_audioResample || !_audioSink ||
+      !_videoConvert || !_videoColorSpace || !_videoSink) {
+    g_printerr ("Not all elements could be created.\n");
+    return -1;
+  }
+
+  /* Build the pipeline. Note that we are NOT linking the source at this
+   * point. We will do it later. */
+  gst_bin_add_many (GST_BIN (_pipeline), _source,
+                    _audioConvert, _audioResample, _audioSink,
+                    _videoConvert, _videoColorSpace, _videoSink, NULL);
+
+  if (!gst_element_link (_audioConvert, _audioResample) ||
+      !gst_element_link (_audioResample, _audioSink)) {
+    g_printerr ("Audio elements could not be linked.\n");
+    gst_object_unref (_pipeline);
+    return -1;
+  }
+
+  if (!gst_element_link (_videoConvert, _videoColorSpace) ||
+      !gst_element_link (_videoColorSpace, _videoSink)) {
+    g_printerr ("Video elements could not be linked.\n");
+    gst_object_unref (_pipeline);
+    return -1;
+  }
+
+  /* Set the URI to play */
+  //g_object_set (_source, "uri", "file:///home/tats/Documents/workspace/drone-0.3/GOPR1063-h264.mp4", NULL);
+  g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
+
+  /* Connect to the pad-added signal */
+  g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), _audioVideoPadData);
+
+  /* Configure audio appsink */
+  gchar *audio_caps_text;
+  GstCaps *audio_caps;
+
+  audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
+  audio_caps = gst_caps_from_string (audio_caps_text);
+  g_object_set (_audioSink, "emit-signals", TRUE, "caps", audio_caps, NULL);
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (audioBufferCallback), _AUDIO_OUT->type());
+  gst_caps_unref (audio_caps);
+  g_free (audio_caps_text);
+
+  /* Configure video appsink */
+  video_caps_text = g_strdup_printf (VIDEO_CAPS, WIDTH, HEIGHT);
+  video_caps = gst_caps_from_string (video_caps_text);
+  g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
+  //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (videoBufferCallback), _VIDEO_OUT->type());
+  gst_caps_unref (video_caps);
+  g_free (video_caps_text);
+
+  /* Start playing */
+  ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
+  if (ret == GST_STATE_CHANGE_FAILURE) {
+    g_printerr ("Unable to set the pipeline to the playing state.\n");
+    gst_object_unref (_pipeline);
+    return -1;
+  }
+
+  /* Listen to the bus */
+  _bus = gst_element_get_bus (_pipeline);
+
+  _terminate = false;
 	return true;
 }
 
 void Gear_VideoSource::runVideo()
 {
-  int frameFinished=0;
+//  int frameFinished=0;
 
 	if (_currentMovie != _MOVIE_IN->type()->value())
 	{
@@ -224,66 +311,90 @@ void Gear_VideoSource::runVideo()
 	if (!_movieReady)
 		return;
 
-  _VIDEO_OUT->type()->resize(_codecContext->width, _codecContext->height);
+	if (_terminate) {
+	  _FINISH_OUT->type()->setValue(1.0f);
+	  return;
+	}
 
+	// TODO: resize according to caps
+  _VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
+
+  // TODO: make this work
   if ((int)_RESET_IN->type()->value() == 1)
   {
-    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
+    std::cout << "Seeking not implemented" << std::endl;
+//    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
   }
     
-
   //loop until we get a videoframe
   //if we reach end, return to the beginning
-  if (av_read_frame(_formatContext, &_packet)<0)
-	{
-    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD); 
-		_FINISH_OUT->type()->setValue(1.0f);
-	}
-	else
-		_FINISH_OUT->type()->setValue(0.0f);
-	
-  while (_packet.stream_index!=_videoStreamIndex)
-  {    
-    av_free_packet(&_packet);
-    if (av_read_frame(_formatContext, &_packet)<0)
-      av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
-  }
-  
-  // Decode video frame
-  do
-  {    
-    avcodec_decode_video2(_codecContext, _frame, &frameFinished, &_packet);
-  } while (!frameFinished);
 
-  // Convert the image from its native format to RGBA
-  
-  sws_scale
-        (
-            _sws_ctx,
-            (uint8_t const * const *)_frame->data,
-            _frame->linesize,
-            0,
-            _codecContext->height,
-            _frameRGBA->data,
-            _frameRGBA->linesize
-        );
-
-  
-  //img_convert((AVPicture *)_frameRGBA, PIX_FMT_RGB24, (AVPicture*)_frame, _codecContext->pix_fmt, _codecContext->width, _codecContext->height);
-
-  register char *out=(char*)_VIDEO_OUT->type()->data();
-  register char *in=(char*)_frameRGBA->data[0];  
-  register int size=_codecContext->width*_codecContext->height;
-  for (register int i=0;i<size;i++)
+  // TODO: make this work (EOS)
+  if (false/*gst_app_sink_is_eos(_videoSink)*/)
   {
-    *out++=*in++;
-    *out++=*in++;
-    *out++=*in++;
-    *out++=255;
+    _FINISH_OUT->type()->setValue(1.0f);
   }
+  else
+  {
+    _FINISH_OUT->type()->setValue(0.0f);
 
-  // Free the packet that was allocated by av_read_frame
-  av_free_packet(&_packet);
+    GstMessage *msg = gst_bus_timed_pop_filtered (_bus, GST_CLOCK_TIME_NONE,
+                                                   (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+
+
+    GstBuffer* buffer;
+    g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
+
+    register unsigned char *out = (unsigned char*) _VIDEO_OUT->type()->data();
+    register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
+    register int size  = WIDTH*HEIGHT;
+    for (register int i=0;i<size;i++)
+    {
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = *in++;
+      *out++ = 255;
+    }
+
+    /* Parse message */
+    if (msg != NULL) {
+      GError *err;
+      gchar *debug_info;
+
+      switch (GST_MESSAGE_TYPE (msg)) {
+        case GST_MESSAGE_ERROR:
+          gst_message_parse_error (msg, &err, &debug_info);
+          g_printerr ("Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
+          g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
+          g_clear_error (&err);
+          g_free (debug_info);
+          _terminate = true;
+          _FINISH_OUT->type()->setValue(1.0f);
+//          terminate = TRUE;
+          break;
+        case GST_MESSAGE_EOS:
+          g_print ("End-Of-Stream reached.\n");
+          _terminate = TRUE;
+          _FINISH_OUT->type()->setValue(1.0f);
+          break;
+        case GST_MESSAGE_STATE_CHANGED:
+          /* We are only interested in state-changed messages from the pipeline */
+          if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+            GstState old_state, new_state, pending_state;
+            gst_message_parse_state_changed (msg, &old_state, &new_state, &pending_state);
+            g_print ("Pipeline state changed from %s to %s:\n",
+                gst_element_state_get_name (old_state), gst_element_state_get_name (new_state));
+          }
+          break;
+        default:
+          /* We should not reach here */
+          g_printerr ("Unexpected message received.\n");
+          break;
+      }
+      gst_message_unref (msg);
+    }
+
+  }
 }
 
 

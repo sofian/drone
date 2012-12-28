@@ -11,10 +11,15 @@ QMAKE_CXXFLAGS+=-D__STDC_CONSTANT_MACROS
 
 
 unix:!macx {
+#	system("/opt/gstreamer-sdk/bin/gst-sdk-shell")
+	
 	CONFIG+=link_pkgconfig
-	PKGCONFIG+=libavformat libavcodec libswscale libavutil sdl
+#	PKGCONFIG+=libavformat libavcodec libswscale libavutil sdl
+
+	PKGCONFIG += gstreamer-0.10
 
 	LIBS+=-L../../../lib/ -ldroneCore
+
 	# -lavformat -lavcodec -ldl -lva -lXfixes -lXext -lX11 -ljack -lasound -lx264 -lvpx -lvorbisenc -lvorbis -ltheoraenc -ltheoradec -logg -lrtmp -lgnutls -lopencore-amrwb -lopencore-amrnb -lmp3lame -lfdk-aac -lfaac -lz -lrt -lswscale -lavutil -lm -lSDL
 	TARGET=../../../gears/Gear_VideoSource
 }
