@@ -67,18 +67,18 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstP
   new_pad_type = gst_structure_get_name (new_pad_struct);
   g_print("Structure is %s\n", gst_structure_to_string(new_pad_struct));
 //  GST_LOG ("structure is %" GST_PTR_FORMAT, new_pad_struct);
-  if (g_str_has_prefix (new_pad_type, "audio/x-raw")
-      )
+  if (g_str_has_prefix (new_pad_type, "audio/x-raw-float"))
   {
     sink_pad = gst_element_get_static_pad (data->audioToConnect, "sink");
     isAudio = true;
   }
-  else if (g_str_has_prefix (new_pad_type, "video/x-raw"))
+  else if (g_str_has_prefix (new_pad_type, "video/x-raw-rgb"))
   {
     sink_pad = gst_element_get_static_pad (data->videoToConnect, "sink");
     isAudio = false;
   }
-  else {
+  else
+  {
     g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", new_pad_type);
     goto exit;
   }
@@ -248,7 +248,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _padHandlerData.audioIsConnected = _padHandlerData.videoIsConnected = false;
 
   /* Create the empty pipeline */
-  _pipeline = gst_pipeline_new ("test-pipeline");
+  _pipeline = gst_pipeline_new ("video-source-pipeline");
 
   if (!_pipeline || !_source ||
       !_audioQueue || !_audioConvert || !_audioResample || !_audioSink ||
@@ -299,6 +299,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     }
   }
 
+//  g_object_set (_source, "uri", uri, "use-buffering", false, NULL);
   g_object_set (_source, "uri", uri, NULL);
 
   //g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
@@ -346,6 +347,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
 void Gear_VideoSource::runVideo() {
 //  int frameFinished=0;
+//  std::cout << "RUN" << std::endl;
 
   if (_currentMovie != _MOVIE_IN->type()->value()) {
     _currentMovie = _MOVIE_IN->type()->value();
@@ -393,6 +395,7 @@ void Gear_VideoSource::runVideo() {
     if (_videoHasNewBuffer) {
       std::cout << "Supposedly has video buff" << std::endl;
       newVideoBufferCallback(_videoSink, _VIDEO_OUT->type());
+      _videoHasNewBuffer = false;
       //      GstBuffer* buffer;
       //      g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
       //
