@@ -268,7 +268,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       !gst_element_link (_audioResample, _audioSink)) {
     g_printerr ("Audio elements could not be linked.\n");
     gst_object_unref (_pipeline);
-    return -1;
+    return false;
   }
 
   if (!gst_element_link (_videoQueue, _videoConvert) ||
@@ -277,14 +277,31 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
     gst_object_unref (_pipeline);
-    return -1;
+    return false;
   }
 
   /* Set the URI to play */
   //g_object_set (_source, "uri", "file:///home/tats/Documents/workspace/drone-0.3/GOPR1063-h264.mp4", NULL);
   //g_object_set (_source, "uri", "file:///home/tats/Videos/GoPro-CubaJuin2012/GOPR1063-h264.mp4", NULL);
-  //g_object_set (_source, "uri", "file:///home/tats/Videos/GoPro-CubaJuin2012/GOPR1063-h264.mp4", NULL);
-  g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
+
+  // Process URI.
+  gchar* uri = (gchar*) filename.c_str();
+  if (!gst_uri_is_valid(uri))
+  {
+    // Try to convert filename to URI.
+    GError* error = NULL;
+    uri = gst_filename_to_uri(filename.c_str(), &error);
+    if (error) {
+      std::cout << "Filename to URI error: " << error->message << std::endl;
+      g_error_free(error);
+      gst_object_unref (uri);
+      return false;
+    }
+  }
+
+  g_object_set (_source, "uri", uri, NULL);
+
+  //g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
 
   /* Connect to the pad-added signal */
   g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), &_padHandlerData);
@@ -328,7 +345,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
 
 void Gear_VideoSource::runVideo() {
-  std::cout << "Run" << std::endl;
 //  int frameFinished=0;
 
   if (_currentMovie != _MOVIE_IN->type()->value()) {
