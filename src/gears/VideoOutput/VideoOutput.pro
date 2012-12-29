@@ -4,6 +4,8 @@ TEMPLATE=lib
 
 CONFIG+=thread opengl
 
+INCLUDEPATH+=../../core/ ../../core/types
+
 #common
 SOURCES+=Gear_VideoOutput.cpp DroneQGLWidget.cpp
 HEADERS+=Gear_VideoOutput.h DroneQGLWidget.h DroneGLWindow.h
@@ -12,7 +14,6 @@ HEADERS+=Gear_VideoOutput.h DroneQGLWidget.h DroneGLWindow.h
 unix:!macx:LIBS+= -L../../../lib/ -ldroneCore -lGL
 unix:!macx:TARGET=../../../gears/Gear_VideoOutput
 
-macx:INCLUDEPATH+=../../core/ ../../core/types
 macx:INCLUDEPATH+= /Developer/Headers/FlatCarbon
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
