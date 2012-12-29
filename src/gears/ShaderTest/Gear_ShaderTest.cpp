@@ -61,7 +61,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ShaderTest::Gear_ShaderTest(Schema *schema, std::string uniqueName) : Gear(schema, "ShaderTest", uniqueName)
+Gear_ShaderTest::Gear_ShaderTest(Schema *schema, std::string uniqueName) : Gear(schema, "ShaderTest", uniqueName), _fbo(NULL)
 {
   addPlug(_TEXTURE_IN = new PlugIn<TextureType>(this, "TexIN", true));
   addPlug(_TEXTURE_OUT = new PlugOut<TextureType>(this, "TexOUT", true));
@@ -69,13 +69,23 @@ Gear_ShaderTest::Gear_ShaderTest(Schema *schema, std::string uniqueName) : Gear(
 
 Gear_ShaderTest::~Gear_ShaderTest()
 {
-
+  if (_fbo)
+  {
+    delete _fbo;
+    _fbo = NULL;
+  }
 }
 
 void Gear_ShaderTest::internalInit()
 {
   initializeShaderProgram();
-  _fbo.create();
+  enumarateActiveUniforms();
+  
+  if (_fbo)
+  {
+    delete _fbo;
+    _fbo = NULL;
+  }
 }
 
 bool Gear_ShaderTest::ready()
@@ -89,16 +99,25 @@ void Gear_ShaderTest::runVideo()
   TextureType *outputTexture = _TEXTURE_OUT->type();
 
   enableGLStates();
-  
-  outputTexture->createWithSize(inputTexture->textureSizeX(), inputTexture->textureSizeY());
-  
-  _fbo.attachTexture(outputTexture->textureName());
-  _fbo.bind();
 
-  if (!_fbo.isReady())
+  //create the fbo if not already done
+  //recreate the fbo if input size changed
+  if (_fbo==NULL)
   {
-    std::cerr << "fbo not ready!" << std::endl;
+    _fbo = new QGLFramebufferObject(inputTexture->textureSizeX(), inputTexture->textureSizeY());
   }
+  else if (_fbo->size().width() != inputTexture->textureSizeX() || _fbo->size().height() != inputTexture->textureSizeY())
+  {
+    delete _fbo;
+    _fbo = new QGLFramebufferObject(inputTexture->textureSizeX(), inputTexture->textureSizeY());
+  }
+  
+  //set the fbo texture name and size to the output texture
+  outputTexture->setTextureName(_fbo->texture());
+  outputTexture->setTextureSizeX(inputTexture->textureSizeX());
+  outputTexture->setTextureSizeY(inputTexture->textureSizeY());
+  
+  _fbo->bind();
   
   glViewport(0, 0, inputTexture->textureSizeX(), inputTexture->textureSizeY());
   
@@ -114,10 +133,9 @@ void Gear_ShaderTest::runVideo()
   _shaderProgram.setAttributeArray(_vertexAttr, afVertices, 3);
   _shaderProgram.setAttributeArray(_texCoordAttr, afTexCoord, 2);
 
-  
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   
-  _fbo.unBind();
+  _fbo->release();
 }
 
 void Gear_ShaderTest::enableGLStates()
@@ -130,7 +148,6 @@ void Gear_ShaderTest::enableGLStates()
 
 void Gear_ShaderTest::initializeShaderProgram()
 {
-  QGLShader *vshader1 = new QGLShader(QGLShader::Vertex, this);
   const char *vsrc1 =
   "attribute vec3 vertex;\n"
   "attribute vec2 texCoord;\n"
@@ -140,9 +157,7 @@ void Gear_ShaderTest::initializeShaderProgram()
   "    texc = texCoord;\n"
   "    gl_Position = vec4(vertex.x, vertex.y, vertex.z, 1.0);\n"
   "}\n";
-  vshader1->compileSourceCode(vsrc1);
-  
-  QGLShader *fshader1 = new QGLShader(QGLShader::Fragment, this);
+
   const char *fsrc1 =
   "varying vec2 texc;\n"
   "uniform sampler2D tex;\n"
@@ -163,15 +178,68 @@ void Gear_ShaderTest::initializeShaderProgram()
   "sum += texture2D(tex, vec2(texc.x + 4.0*blurSize, texc.y)) * 0.05;\n"
   "gl_FragColor = sum;}\n";
   
-  fshader1->compileSourceCode(fsrc1);
-  
-  _shaderProgram.addShader(vshader1);
-  _shaderProgram.addShader(fshader1);
-  //todo mg: delete vshader and fshader
+  _shaderProgram.addShaderFromSourceCode(QGLShader::Vertex, vsrc1);
+  _shaderProgram.addShaderFromSourceCode(QGLShader::Fragment, fsrc1);
   _shaderProgram.link();
   
   _vertexAttr = _shaderProgram.attributeLocation("vertex");
   _texCoordAttr = _shaderProgram.attributeLocation("texCoord");
   _textureUniform = _shaderProgram.uniformLocation("tex");
   
+}
+
+void Gear_ShaderTest::enumarateActiveUniforms()
+{
+  GLint maxUniformLen;
+  GLint numUniforms;
+  char *uniformName;
+  GLint index;
+  
+  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORMS, &numUniforms);
+  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformLen);
+  
+  uniformName = malloc(sizeof(char) * maxUniformLen);
+  
+  std::cout << "--== Enumerating uniforms for program " << _shaderProgram.programId() << " ==--" << std::endl;
+  
+  for(index = 0; index < numUniforms; index++)
+  {
+    GLint size;
+    GLenum type;
+    GLint location;
+    
+    // Get the Uniform Info
+    glGetActiveUniform(_shaderProgram.programId(), index, maxUniformLen, NULL, &size, &type, uniformName);
+    std::cout << "Uniform name: " << uniformName << std::endl;
+    
+    // Get the uniform location
+    location = glGetUniformLocation(_shaderProgram.programId(), uniformName);
+    std::cout << "Uniform location: " << location << std::endl;
+    
+    std::cout << "Uniform type: ";
+    switch(type)
+    {
+      case GL_FLOAT:
+        std::cout << "GL_FLOAT" << std::endl;
+        break;
+      case GL_FLOAT_VEC2:
+        std::cout << "GL_FLOAT_VEC2" << std::endl;
+        break;
+      case GL_FLOAT_VEC3:
+        std::cout << "GL_FLOAT_VEC3" << std::endl;
+        break;
+      case GL_FLOAT_VEC4:
+        std::cout << "GL_FLOAT_VEC4" << std::endl;
+        break;
+      case GL_INT:
+        std::cout << "GL_INT" << std::endl;
+        break;
+      case GL_SAMPLER_2D:
+        std::cout << "GL_SAMPLER_2D" << std::endl;
+        break;
+      default:
+        std::cout << "Unsupported type" << std::endl;
+        break;
+    }
+  }
 }
