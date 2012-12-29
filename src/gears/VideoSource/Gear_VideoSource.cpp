@@ -28,9 +28,10 @@
 #define SAMPLE_RATE 44100 /* Samples per second we are sending */
 #define AUDIO_CAPS "audio/x-raw-float,channels=2,rate=%d,width=32,endianness=BYTE_ORDER"
 
-#define WIDTH 720
-#define HEIGHT 480
-#define VIDEO_CAPS "video/x-raw-rgb,width=%d,height=%d"
+#define WIDTH 320
+#define HEIGHT 240
+#define VIDEO_CAPS "video/x-raw-rgb"
+//#define VIDEO_CAPS "video/x-raw-rgb,width=%d,height=%d"
 
 extern "C" {           
   Gear* makeGear(Schema *schema, std::string uniqueName)
@@ -67,12 +68,14 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstP
   new_pad_type = gst_structure_get_name (new_pad_struct);
   g_print("Structure is %s\n", gst_structure_to_string(new_pad_struct));
 //  GST_LOG ("structure is %" GST_PTR_FORMAT, new_pad_struct);
-  if (g_str_has_prefix (new_pad_type, "audio/x-raw-float"))
+  if (g_str_has_prefix (new_pad_type, "audio/x-raw"))
+//  if (g_str_has_prefix (new_pad_type, "audio/x-raw-float"))
   {
     sink_pad = gst_element_get_static_pad (data->audioToConnect, "sink");
     isAudio = true;
   }
-  else if (g_str_has_prefix (new_pad_type, "video/x-raw-rgb"))
+  //else if (g_str_has_prefix (new_pad_type, "video/x-raw-rgb"))
+  else if (g_str_has_prefix (new_pad_type, "video/x-raw"))
   {
     sink_pad = gst_element_get_static_pad (data->videoToConnect, "sink");
     isAudio = false;
@@ -97,9 +100,34 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstP
   } else {
     g_print ("  Link succeeded (type '%s').\n", new_pad_type);
     if (isAudio)
+    {
       data->audioIsConnected = true;
+    }
     else
+    {
+      int bpp = -1, depth = -1;
+      gst_structure_get_int(new_pad_struct, "bpp",  &bpp);
+      gst_structure_get_int(new_pad_struct, "depth", &depth);
+      std::cout << "bpp " << bpp << " depth " << depth << std::endl;
+
+      if (!gst_structure_get_int(new_pad_struct, "width",  &data->videoWidth) ||
+          !gst_structure_get_int(new_pad_struct, "height", &data->videoHeight))
+      {
+        std::cout << "Width/height information not available" << std::endl;
+        data->videoWidth = 720;
+        data->videoHeight = 480;
+//.        goto exit;
+      }
+
+      gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);//, data->videoWidth, data->videoHeight);
+      GstCaps *video_caps = gst_caps_from_string (video_caps_text);
+
+      g_object_set (data->videoSink, "caps", video_caps, NULL);
+      gst_caps_unref (video_caps);
+      g_free (video_caps_text);
+
       data->videoIsConnected = true;
+    }
   }
 
 exit:
@@ -112,15 +140,8 @@ exit:
     gst_object_unref (sink_pad);
 }
 
-void videoCopy(unsigned char* out, const unsigned char* in) {
-  int size  = WIDTH*HEIGHT;
-  for (int i=0;i<size;i++)
-  {
-    *out++ = *in++;
-    *out++ = *in++;
-    *out++ = *in++;
-    *out++ = 255;
-  }
+void videoCopy(unsigned char* out, const unsigned char* in, size_t size) {
+  rgb2rgba((RGBA*)out, (const RGB*)in, size);
 }
 
 /* The appsink has received a buffer */
@@ -129,9 +150,32 @@ void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
 
   /* Retrieve the buffer */
   g_signal_emit_by_name (sink, "pull-buffer", &buffer);
+
   if (buffer) {
-    std::cout << "v";
-    videoCopy((unsigned char*)video->data(), GST_BUFFER_DATA(buffer));
+
+    GstCaps* caps = GST_BUFFER_CAPS(buffer);
+    GstStructure *caps_struct = gst_caps_get_structure (caps, 0);
+
+    int width  = 0;
+    int height = 0;
+    int bpp    = 24;
+    int depth  = 24;
+    if (!gst_structure_get_int(caps_struct, "width",  &width)  ||
+        !gst_structure_get_int(caps_struct, "height", &height))
+    {
+      std::cout << "Width/height information not available" << std::endl;
+      gst_buffer_unref (buffer);
+      exit(-1);
+    }
+
+    gst_structure_get_int(caps_struct, "bpp",  &bpp);
+    gst_structure_get_int(caps_struct, "depth", &depth);
+
+    video->resize(width, height);
+
+    convert24to32((unsigned char*)video->data(),GST_BUFFER_DATA(buffer), width*height);
+    //rgb2rgba(video->data(), (const RGB*)GST_BUFFER_DATA(buffer), width*height);
+
     gst_buffer_unref (buffer);
   }
 }
@@ -141,7 +185,6 @@ void newAudioBufferCallback (GstElement *sink, SignalType* audio) {
 }
 
 void newBufferCallback(GstElement *sink, bool *newBuffer) {
-  std::cout << "New buffer" <<std::endl;
   *newBuffer = true;
 }
 
@@ -224,8 +267,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 	_VIDEO_OUT->sleeping(false);
 	
   GstStateChangeReturn ret;
-  gchar *video_caps_text;
-  GstCaps *video_caps;
 
   /* Initialize GStreamer */
   gst_init (NULL, NULL);
@@ -239,12 +280,15 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _audioSink =       gst_element_factory_make ("appsink", "asink");
 
   _videoQueue =      gst_element_factory_make ("queue", "vqueue");
-  _videoConvert =    gst_element_factory_make ("autovideoconvert", "vconvert");
+  //_videoConvert =    gst_element_factory_make ("autovideoconvert", "vconvert");
   _videoColorSpace = gst_element_factory_make ("ffmpegcolorspace", "vcolorspace");
   _videoSink =       gst_element_factory_make ("appsink", "vsink");
 
-  _padHandlerData.audioToConnect = _audioQueue;
-  _padHandlerData.videoToConnect = _videoQueue;
+//  _padHandlerData.audioToConnect = _audioConvert;
+//  _padHandlerData.videoToConnect = _videoColorSpace;
+  _padHandlerData.audioToConnect   = _audioQueue;
+  _padHandlerData.videoToConnect   = _videoQueue;
+  _padHandlerData.videoSink        = _videoSink;
   _padHandlerData.audioIsConnected = _padHandlerData.videoIsConnected = false;
 
   /* Create the empty pipeline */
@@ -252,7 +296,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   if (!_pipeline || !_source ||
       !_audioQueue || !_audioConvert || !_audioResample || !_audioSink ||
-      !_videoQueue || !_videoConvert ||  !_videoColorSpace || !_videoSink) {
+      !_videoQueue || /*!_videoConvert || */ !_videoColorSpace || !_videoSink) {
     g_printerr ("Not all elements could be created.\n");
     return -1;
   }
@@ -261,7 +305,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
    * point. We will do it later. */
   gst_bin_add_many (GST_BIN (_pipeline), _source,
                     _audioQueue, _audioConvert, _audioResample, _audioSink,
-                    _videoQueue, _videoConvert, _videoColorSpace, _videoSink, NULL);
+                    _videoQueue, /*_videoConvert, */_videoColorSpace, _videoSink, NULL);
 
   if (!gst_element_link (_audioQueue, _audioConvert) ||
       !gst_element_link (_audioConvert, _audioResample) ||
@@ -271,9 +315,9 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     return false;
   }
 
-  if (!gst_element_link (_videoQueue, _videoConvert) ||
-      !gst_element_link (_videoConvert, _videoColorSpace) ||
-//      !gst_element_link (_videoQueue, _videoColorSpace) ||
+  if (/*!gst_element_link (_videoQueue, _videoConvert) ||
+      !gst_element_link (_videoConvert, _videoColorSpace) ||*/
+      !gst_element_link (_videoQueue, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
     gst_object_unref (_pipeline);
@@ -320,13 +364,10 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_free (audio_caps_text);
 
   /* Configure video appsink */
-  video_caps_text = g_strdup_printf (VIDEO_CAPS, WIDTH, HEIGHT);
-  video_caps = gst_caps_from_string (video_caps_text);
-  g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
+  g_object_set (_videoSink, "emit-signals", TRUE, NULL);
+  //g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newBufferCallback), &_videoHasNewBuffer);
   //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
-  gst_caps_unref (video_caps);
-  g_free (video_caps_text);
 
   /* Start playing */
   ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
@@ -361,13 +402,15 @@ void Gear_VideoSource::runVideo() {
   if (!_padHandlerData.isConnected())
     return;
 
-  if (_terminate) {
+    if (_terminate) {
     _FINISH_OUT->type()->setValue(1.0f);
     return;
   }
 
   // TODO: resize according to caps
-  _VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
+  //_VIDEO_OUT->type()->resize(_padHandlerData.videoWidth, _padHandlerData.videoHeight);
+
+//_VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
 
   // TODO: make this work
   if ((int) _RESET_IN->type()->value() == 1) {

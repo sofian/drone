@@ -27,6 +27,7 @@
 #include "SignalType.h"
 #include "StringType.h"
 #include "EnumType.h"
+#include "Utils.h"
 
 extern "C" {
   #include <gst/gst.h>
@@ -57,12 +58,16 @@ public:
   struct GstPadHandlerData {
     GstElement* audioToConnect;
     GstElement* videoToConnect;
+    GstElement* videoSink;
     bool audioIsConnected;
     bool videoIsConnected;
+    int videoWidth;
+    int videoHeight;
 
     GstPadHandlerData() :
-      audioToConnect(NULL), videoToConnect(NULL),
-      audioIsConnected(false), videoIsConnected(false)
+      audioToConnect(NULL), videoToConnect(NULL), videoSink(NULL),
+      audioIsConnected(false), videoIsConnected(false),
+      videoWidth(0), videoHeight(0)
     {}
 
     bool isConnected() const {
