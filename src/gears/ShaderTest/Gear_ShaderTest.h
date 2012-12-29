@@ -1,5 +1,5 @@
-/* VideoOutput.h
- * Copyright (C) 2004 Mathieu Guindon
+/* Gear_ShaderTest.h
+ * Copyright (C) 2012 Mathieu Guindon
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,31 +17,44 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef VIDEOOUTPUT_INCLUDED
-#define VIDEOOUTPUT_INCLUDED
+#ifndef GEAR_SHADER_TEST_INCLUDED
+#define GEAR_SHADER_TEST_INCLUDED
 
-#include "ColorSpace.h"
-#include "VideoRGBAType.h"
 
-class VideoOutput
+#include "Gear.h"
+#include "TextureType.h"
+
+#include <QtOpenGL>
+
+class Gear_ShaderTest : public Gear
 {
 public:
-  VideoOutput() : _xRes(0), _yRes(0), _fullscreen(false) {}
-  virtual ~VideoOutput(){}
 
-  virtual bool init(int xRes, int yRes, bool fullscreen)=0;    
-  virtual void render(const VideoRGBAType &image)=0;
-  virtual bool toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos){return true;}
+  Gear_ShaderTest(Schema *schema, std::string uniqueName);
+  virtual ~Gear_ShaderTest();
 
-	bool fullscreen(){return _fullscreen;}
+  virtual void runVideo();
+  virtual bool ready();
 
+  
 protected:
-  int _xRes, _yRes;
-  int _bpp;
-  bool _fullscreen;
+  virtual void internalInit();
 
+private:
+  void initializeShaderProgram();
+  void enumarateActiveUniforms();
+  void enableGLStates();
+
+  PlugIn<TextureType> *_TEXTURE_IN;
+  PlugOut<TextureType> *_TEXTURE_OUT;
+  
+  QGLShaderProgram _shaderProgram;
+  int _vertexAttr;
+  int _texCoordAttr;
+  int _textureUniform;
+//  FrameBufferObject _fbo;
+  QGLFramebufferObject *_fbo;
+  
 };
 
-
 #endif
-

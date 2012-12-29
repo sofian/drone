@@ -8,7 +8,6 @@ VideoOutput \
 #AudioPushButton \
 AlphaMix \
 Blur \
-VideoSource \
 Slider \
 KDTree\ 
 VideoMix \
@@ -34,6 +33,7 @@ FlatSignal \
 FillAlpha \
 ListBox \
 ImageCapture \
+ImageToTexture \
 PushButton \
 Rescale \
 TouchPad \
@@ -51,8 +51,9 @@ InvertAlpha \
 PackList \
 UnpackList \
 Saturation \
-SelectFrame \
+#SelectFrame \
 SetAlpha \
+ShaderTest \
 SignalStat \
 SmearGrid \
 Sobel \

@@ -18,18 +18,21 @@
  */
 
 #include "Gear_VideoOutput.h"
+#include "DroneQGLWidget.h"
+#include "DroneGLWindow.h"
 
 #include "GearMaker.h"
 #include "Engine.h"
-#include "VideoOutput.h"
 
-#if defined(Q_OS_MACX)
-#include "VideoOutputGl.h"
-#else
-#include "VideoOutputMaker.h"
-#endif
 
 #include <iostream>
+
+#include <qapplication.h>
+#include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3HBoxLayout>
+#include <QPaintEvent>
 
 extern "C" {
 Gear* makeGear(Schema *schema, std::string uniqueName)
@@ -63,99 +66,81 @@ const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
 Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) : 
-Gear(schema, "VideoOutput", uniqueName),
-_videoOutput(NULL)
+  Gear(schema, "VideoOutput", uniqueName),
+  _droneQGLWidget(NULL),
+  _window(NULL)
 {
-  //populate available video output list in order of preference
-  //the init will try them in order, until he find one that fit
-#ifndef Q_OS_MACX
-  //_allOutputs.push_back("Xv");
-  _allOutputs.push_back("Gl");
-  _allOutputs.push_back("Shm");
-  _allOutputs.push_back("QT");
-#endif  
-  //
 
-  addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "IN", true));
+  addPlug(_VIDEO_IN = new PlugIn<TextureType>(this, "IN", true));
 
   _settings.add(Property::INT, SETTING_XRES)->valueInt(DEFAULT_XRES);
   _settings.add(Property::INT, SETTING_YRES)->valueInt(DEFAULT_YRES);
   _settings.add(Property::INT, SETTING_XPOS)->valueInt(DEFAULT_XPOS);
   _settings.add(Property::INT, SETTING_YPOS)->valueInt(DEFAULT_YPOS);
-
   _settings.add(Property::BOOL, SETTING_FULLSCREEN)->valueBool(DEFAULT_FULLSCREEN);
-
 }
 
 Gear_VideoOutput::~Gear_VideoOutput()
-{    
-  delete _videoOutput;
+{
+  delete _droneQGLWidget;
+  _window->deleteLater();
 }
 
 void Gear_VideoOutput::onUpdateSettings()
 {	
-  _videoOutput->toggleFullscreen(_settings.get(SETTING_FULLSCREEN)->valueBool(), 1024, 768, _settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
+	_window->move(_settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
+  
+	if (_settings.get(SETTING_FULLSCREEN)->valueBool())
+		_window->showFullScreen();
+	else
+		_window->showNormal();
 }
 
 void Gear_VideoOutput::internalInit()
 { 
-//osx version dont use the VideoOutputMaker strategy and directly use the GL Output
-#if defined(Q_OS_MACX)
-	_videoOutput = new VideoOutputGl();
-	if (!_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(), false))
-	{
-		std::cout << "fail to init GL videoOutput" << std::endl;
-		delete _videoOutput;
-		_videoOutput=NULL;
-	}
-#else
-  std::cout << "selecting best video output for your hardware..." << std::endl; 
-  for (std::vector<std::string>::iterator it=_allOutputs.begin();it!=_allOutputs.end();++it)
-  {
-    std::cout << "trying " << (*it) << "..." << std::endl;
-    if ((_videoOutput = VideoOutputMaker::makeVideoOutput(*it))!=NULL)
-    {
-      if (_videoOutput->init(_settings.get(SETTING_XRES)->valueInt(), _settings.get(SETTING_YRES)->valueInt(), false))
-      {
-        std::cout << (*it) << " is perfect for you!" << std::endl;
-        return;
-      } else
-      {
-        std::cout << (*it) << " is not what you need" << std::endl;
-        delete _videoOutput;
-        _videoOutput=NULL;
-      }
-    } else
-      std::cout << (*it) << " not available" << std::endl;
-
-  }
-
-  std::cout << "sac a papier! fail to find a video output!!!" << std::endl;
-#endif
+  std::cout << "--==|| GL output initialization ||==--" << std::endl;
+  
+  if (_window)
+    delete _window;
+  
+  _window = new DroneGLWindow(qApp->mainWidget());
+ 
+  if (_droneQGLWidget)
+    delete _droneQGLWidget;
+  
+  _droneQGLWidget = new DroneQGLWidget(_window, this);
+  Q3BoxLayout *l = new Q3HBoxLayout(_window);
+  l->addWidget(_droneQGLWidget);
+  _window->setModal(false);
+  _window->show();
 }
 
 void Gear_VideoOutput::internalPrePlay()
 {
-  _videoOutput->toggleFullscreen(_settings.get(SETTING_FULLSCREEN)->valueBool(), 1024, 768, _settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
+	_window->move(_settings.get(SETTING_XPOS)->valueInt(), _settings.get(SETTING_YPOS)->valueInt());
+  
+	if (_settings.get(SETTING_FULLSCREEN)->valueBool())
+		_window->showFullScreen();
+	else
+		_window->showNormal();
 }
 
 void Gear_VideoOutput::runVideo()
 {
-  if (!_VIDEO_IN->connected() || _videoOutput==NULL)
+  if (!_VIDEO_IN->connected())
     return;
 
-  if (_videoOutput==NULL)
+  if (_VIDEO_IN->type()->textureName() == 0)
     return;
 
-  _image = _VIDEO_IN->type();
-  if (_image->isNull())
-    return;
-
-  _videoOutput->render(*_image);
+  _droneQGLWidget->setCurrentTexture(_VIDEO_IN->type());
+  
+  //asynchronously tell the widget to repaint himself in a thread-safe way
+  QApplication::postEvent(_droneQGLWidget,
+                          new QPaintEvent( QRect(0, 0, _VIDEO_IN->type()->textureSizeX(), _VIDEO_IN->type()->textureSizeY()) ) );
 }
 
-
-
-
-
-
+bool Gear_VideoOutput::isFullscreen()
+{
+  return _settings.get(SETTING_FULLSCREEN)->valueBool();
+}

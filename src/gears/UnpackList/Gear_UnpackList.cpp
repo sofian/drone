@@ -87,13 +87,13 @@ void Gear_UnpackList::runVideo()
   //for (ListType::const_iterator it = _LIST_IN->type()->begin(); it != _LIST_IN->type()->end(); ++it)
   //listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
   
-  if ((_STR_OUT->connected()) && type->typeName() == StringType::TYPENAME)
+  if ((_STR_OUT->connected()) && type->typeName() == StringType().typeName())
   {
     _STR_OUT->type()->setValue(((StringType*)type)->value());
     return;
   }
     
-  if ((_VAL_OUT->connected()) && type->typeName() == ValueType::TYPENAME)
+  if ((_VAL_OUT->connected()) && type->typeName() == ValueType().typeName())
   {
     //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
     _VAL_OUT->type()->setValue(((ValueType*)type)->value());

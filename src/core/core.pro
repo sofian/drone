@@ -57,6 +57,7 @@ types/VideoChannelType.h \
 types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
 types/EnumType.h \
+types/TextureType.h \
 GearClassification.h \
 GearGui.h \
 GearConverter.h \
@@ -81,7 +82,6 @@ Schema.h \
 SchemaGui.h \
 SignalInfo.h \
 StringUtils.h \
-TextureGl.h \
 ThreadUtil.h \
 Timing.h \
 Typedefs.h \
@@ -103,12 +103,6 @@ Engine.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
-types/AreaType.cpp \
-types/EnumType.cpp \
-types/VideoChannelType.cpp \
-types/VideoRGBAType.cpp \
-types/ValueType.cpp \
-types/StringType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
 Math.cpp \
@@ -127,8 +121,9 @@ Schema.cpp \
 SchemaGui.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
-TextureGl.cpp \
 Timing.cpp \
+Types/VideoRGBAType.cpp \
+Types/TextureType.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
@@ -146,4 +141,4 @@ SOURCES += AggWrapper.cpp types/VectorialType.cpp
 }
   
 #The following line was inserted by qt3to4
-QT += xml  qt3support 
+QT += xml opengl qt3support 

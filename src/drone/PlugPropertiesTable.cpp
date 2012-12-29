@@ -82,13 +82,13 @@ void PlugPropertiesTable::insertPlug(AbstractPlug *plug, int row)
   if(!plug)
     return;
 
-  if (plug->abstractType()->typeName() == ValueType::TYPENAME)
+  if (plug->abstractType()->typeName() == ValueType().typeName())
   {
     PlugPropertiesTableItemValue *valueItem = new PlugPropertiesTableItemValue(plug, this, Q3TableItem::WhenCurrent);
     setText(row,0,plug->name().c_str());
     setItem(row,1,valueItem);
   } 
-  else if (plug->abstractType()->typeName() == StringType::TYPENAME)
+  else if (plug->abstractType()->typeName() == StringType().typeName())
   {
     PlugPropertiesTableItemString *stringItem = new PlugPropertiesTableItemString(plug, this, Q3TableItem::WhenCurrent);
     setText(row,0,plug->name().c_str());

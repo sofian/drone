@@ -67,9 +67,9 @@ void Gear_OscOutput::runVideo()
 
   for(ListType::iterator it=args.begin();it!=args.end();++it)
   {
-    if ((*it)->typeName() == StringType::TYPENAME)
+    if ((*it)->typeName() == StringType().typeName())
     	lo_message_add_string(msg, ((StringType*)(*it))->value().c_str());
-    else if ((*it)->typeName() == ValueType::TYPENAME)
+    else if ((*it)->typeName() == ValueType().typeName())
     	lo_message_add_float(msg, ((ValueType*)(*it))->value());
   }
 

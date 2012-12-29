@@ -78,7 +78,7 @@ public:
 
   Property* add(Property::eType type, std::string name);
 
-  Property* get(std::string name);
+  Property* get(const std::string& name);
 
   void getAll(std::vector<Property*> *properties);
 

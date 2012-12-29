@@ -84,8 +84,6 @@ void MetaGearMaker::parseSubDirs(QDir dir)
   const QFileInfoList files = dir.entryInfoList();
   QListIterator<QFileInfo> it(files);
   QFileInfo fileInfo;
-  const char* error;
-
   
   while (it.hasNext())   
   {  
