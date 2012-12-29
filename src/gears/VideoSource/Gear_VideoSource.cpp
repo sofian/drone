@@ -50,7 +50,7 @@ extern "C" {
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 /* This function will be called by the pad-added signal */
-void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstPadHandlerData* data) {
+void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *new_pad, Gear_VideoSource::GstPadHandlerData* data) {
   GstPadLinkReturn ret;
   GstCaps *new_pad_caps = NULL;
   GstStructure *new_pad_struct = NULL;
@@ -140,21 +140,19 @@ exit:
     gst_object_unref (sink_pad);
 }
 
-void videoCopy(unsigned char* out, const unsigned char* in, size_t size) {
-  rgb2rgba((RGBA*)out, (const RGB*)in, size);
-}
-
 /* The appsink has received a buffer */
-void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
+void Gear_VideoSource::_gstVideoPull()
+{
   GstBuffer *buffer;
 
   /* Retrieve the buffer */
-  g_signal_emit_by_name (sink, "pull-buffer", &buffer);
+  g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
 
   if (buffer) {
 
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
     GstStructure *caps_struct = gst_caps_get_structure (caps, 0);
+    VideoRGBAType* video = _VIDEO_OUT->type();
 
     int width  = video->width();
     int height = video->height();
@@ -163,8 +161,8 @@ void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
 
     gst_structure_get_int(caps_struct, "width",  &width);
     gst_structure_get_int(caps_struct, "height", &height);
-    gst_structure_get_int(caps_struct, "bpp",  &bpp);
-    gst_structure_get_int(caps_struct, "depth", &depth);
+    gst_structure_get_int(caps_struct, "bpp",    &bpp);
+    gst_structure_get_int(caps_struct, "depth",  &depth);
 
     video->resize(width, height);
 
@@ -190,11 +188,8 @@ void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
   }
 }
 
-void newAudioBufferCallback (GstElement *sink, SignalType* audio) {
-  std::cout << ".";
-}
-
-void newBufferCallback(GstElement *sink, bool *newBuffer) {
+void Gear_VideoSource::gstNewBufferCallback(GstElement*, bool *newBuffer)
+{
   *newBuffer = true;
 }
 
@@ -231,7 +226,6 @@ _movieReady(false)
 
   //_settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    
 
-//  av_register_all();
 	_VIDEO_OUT->sleeping(true);
 	_AUDIO_OUT->sleeping(true);
 }
@@ -350,13 +344,13 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_object_set (_source, "uri", uri, NULL);
 
   // Connect to the pad-added signal
-  g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), &_padHandlerData);
+  g_signal_connect (_source, "pad-added", G_CALLBACK (Gear_VideoSource::gstPadAddedCallback), &_padHandlerData);
 
   // Configure audio appsink.
   gchar* audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
   GstCaps* audio_caps = gst_caps_from_string (audio_caps_text);
   g_object_set (_audioSink, "emit-signals", TRUE, "caps", audio_caps, NULL);
-  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newBufferCallback), &_audioHasNewBuffer);
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
   //g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newAudioBufferCallback), _AUDIO_OUT->type());
   gst_caps_unref (audio_caps);
   g_free (audio_caps_text);
@@ -366,7 +360,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   GstCaps *video_caps = gst_caps_from_string (video_caps_text);
   //g_object_set (_videoSink, "emit-signals", TRUE, NULL);
   g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
-  g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newBufferCallback), &_videoHasNewBuffer);
+  g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
   //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
   gst_caps_unref (video_caps);
   g_free (video_caps_text);
@@ -401,18 +395,10 @@ void Gear_VideoSource::runVideo() {
   if (!_padHandlerData.isConnected())
     return;
 
-    if (_terminate) {
+  if (_terminate) {
     _FINISH_OUT->type()->setValue(1.0f);
     return;
   }
-
-  // TODO: resize according to caps
-//  if (_padHandlerData.videoWidth != 0 && _padHandlerData.videoHeight != 0) {
-//    _VIDEO_OUT->type()->resize(_padHandlerData.videoWidth, _padHandlerData.videoHeight);
-//    _padHandlerData.videoWidth = _padHandlerData.videoHeight = 0;
-//  }
-
-//_VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
 
   // TODO: make this work
   if ((int) _RESET_IN->type()->value() == 1) {
@@ -429,47 +415,16 @@ void Gear_VideoSource::runVideo() {
   } else {
     _FINISH_OUT->type()->setValue(0.0f);
 
-    //GstMessage *msg = gst_bus_timed_pop_filtered(
-//                        _bus, GST_CLOCK_TIME_NONE,
-//                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-
     GstMessage *msg = gst_bus_timed_pop_filtered(
                         _bus, 0,
                         (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
     if (_videoHasNewBuffer) {
-
-      newVideoBufferCallback(_videoSink, _VIDEO_OUT->type());
+      _gstVideoPull();
       _videoHasNewBuffer = false;
-      //      GstBuffer* buffer;
-      //      g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
-      //
-      //      if (buffer) {
-      //        std::cout << "Has buffer\n" << std::endl;
-      //        _videoHasNewBuffer = false;
     }
-//    if (_videoHasNewBuffer) {
-//      GstBuffer* buffer;
-//      g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
-//
-//      if (buffer) {
-//        std::cout << "Has buffer\n" << std::endl;
-//        _videoHasNewBuffer = false;
-///*
-//        register unsigned char *out = (unsigned char*) _VIDEO_OUT->type()->data();
-//        register unsigned char *in  = (unsigned char*) GST_BUFFER_DATA(buffer);
-//        register int size  = WIDTH*HEIGHT;
-//        for (register int i=0;i<size;i++)
-//        {
-//          *out++ = *in++;
-//          *out++ = *in++;
-//          *out++ = *in++;
-//          *out++ = 255;
-//        }
-//        */
-//      }
 
-    /* Parse message */
+    // Parse message.
     if (msg != NULL) {
       GError *err;
       gchar *debug_info;

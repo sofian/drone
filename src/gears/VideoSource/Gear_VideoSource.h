@@ -50,10 +50,15 @@ public:
   virtual ~Gear_VideoSource();
 
   void runVideo();
+  //void runAudio();
 
 protected:
   bool loadMovie(std::string filename);
   void freeResources();
+
+private:
+  void _gstVideoPull();
+  //void gstAudioPull();
 
 public:
   // GStreamer callbacks.
@@ -74,6 +79,13 @@ public:
       return (audioIsConnected && videoIsConnected);
     }
   };
+
+  // GStreamer callback that simply sets the #newBuffer# flag to point to TRUE.
+  static void gstNewBufferCallback(GstElement *sink, bool *newBuffer);
+
+  // GStreamer callback that plugs the audio/video pads into the proper elements when they
+  // are made available by the source.
+  static void gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear_VideoSource::GstPadHandlerData* data);
 
 private:
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
