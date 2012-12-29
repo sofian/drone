@@ -1,5 +1,9 @@
 /* Gear_VideoSource.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2012 Jean-Sebastien Senecal
+ *           (C) 2004 Mathieu Guindon, Julien Keable
+ *
+ *           Based on code from the GStreamer Tutorials http://docs.gstreamer.com/display/GstSDK/Tutorials
+ *
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,14 +29,6 @@
 
 #include "GearMaker.h"
 
-#define SAMPLE_RATE 44100 /* Samples per second we are sending */
-#define AUDIO_CAPS "audio/x-raw-float,channels=2,rate=%d,width=32,endianness=BYTE_ORDER"
-
-#define WIDTH 320
-#define HEIGHT 240
-#define VIDEO_CAPS "video/x-raw-rgb"
-//#define VIDEO_CAPS "video/x-raw-rgb,width=%d,height=%d"
-
 extern "C" {           
   Gear* makeGear(Schema *schema, std::string uniqueName)
   {
@@ -54,7 +50,7 @@ void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear
   bool isAudio = false;
   GstPad *sinkPad = NULL;
 
-  /* Check the new pad's type */
+  // Check the new pad's type.
   GstCaps *newPadCaps   = gst_pad_get_caps (newPad);
   GstStructure *newPadStruct = gst_caps_get_structure (newPadCaps, 0);
   const gchar *newPadType   = gst_structure_get_name (newPadStruct);
@@ -75,13 +71,13 @@ void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear
     goto exit;
   }
 
-  /* If our converter is already linked, we have nothing to do here */
+  // If our converter is already linked, we have nothing to do here.
   if (gst_pad_is_linked (sinkPad)) {
     g_print ("  We are already linked. Ignoring.\n");
     goto exit;
   }
 
-  /* Attempt the link */
+  // Attempt the link
   if (GST_PAD_LINK_FAILED (gst_pad_link (newPad, sinkPad))) {
     g_print ("  Type is '%s' but link failed.\n", newPadType);
     goto exit;
@@ -98,21 +94,20 @@ void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear
   }
 
 exit:
-  /* Unreference the new pad's caps, if we got them */
+  // Unreference the new pad's caps, if we got them.
   if (newPadCaps != NULL)
     gst_caps_unref (newPadCaps);
 
-  /* Unreference the sink pad */
+  // Unreference the sink pad.
   if (sinkPad != NULL)
     gst_object_unref (sinkPad);
 }
 
-/* The appsink has received a buffer */
 void Gear_VideoSource::_gstVideoPull()
 {
   GstBuffer *buffer;
 
-  /* Retrieve the buffer */
+  // Retrieve the buffer.
   g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
 
   if (buffer) {
@@ -217,10 +212,7 @@ Gear_VideoSource::~Gear_VideoSource()
 
 void Gear_VideoSource::freeResources()
 {
-//  if (_buffer)
-//    delete [] _buffer;
-  
-  /* Free resources */
+  // Free resources.
   if (_bus)
     gst_object_unref (_bus);
 
@@ -230,13 +222,18 @@ void Gear_VideoSource::freeResources()
     gst_object_unref (_pipeline);
   }
 
+  // Init.
   _movieReady=false;
 	_VIDEO_OUT->sleeping(true);
+
+	// Unsynch.
 	unSynch();
 }
 
 void Gear_VideoSource::resetMovie()
 {
+  // TODO: Check if we can still seek when we reach EOS. It seems like it's then impossible and we
+  // have to reload but it seems weird so we should check.
   if (!_eos() && _seekEnabled)
   {
     gst_element_seek_simple (_pipeline, GST_FORMAT_TIME,
@@ -245,14 +242,14 @@ void Gear_VideoSource::resetMovie()
   else
   {
     // Just reload movie.
-    std::cout << "Just reload movie" << std::endl;
+    std::cout << "Reloading the movie" << std::endl;
     _currentMovie = "";
   }
 }
 
 bool Gear_VideoSource::loadMovie(std::string filename)
 {
-  std::cout << "opening movie : " << filename << std::endl;
+  std::cout << "Opening movie : " << filename << std::endl;
 
   //free previously allocated structures
   freeResources();
@@ -267,10 +264,10 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 	
   GstStateChangeReturn ret;
 
-  /* Initialize GStreamer */
+  // Initialize GStreamer.
   gst_init (NULL, NULL);
 
-  /* Create the elements */
+  // Create the elements.
   _source =          gst_element_factory_make ("uridecodebin", "source");
 
   _audioQueue =      gst_element_factory_make ("queue", "aqueue");
@@ -279,7 +276,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _audioSink =       gst_element_factory_make ("appsink", "asink");
 
   _videoQueue =      gst_element_factory_make ("queue", "vqueue");
-  //_videoConvert =    gst_element_factory_make ("autovideoconvert", "vconvert");
   _videoColorSpace = gst_element_factory_make ("ffmpegcolorspace", "vcolorspace");
   _videoSink =       gst_element_factory_make ("appsink", "vsink");
 
@@ -342,23 +338,18 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_signal_connect (_source, "pad-added", G_CALLBACK (Gear_VideoSource::gstPadAddedCallback), &_padHandlerData);
 
   // Configure audio appsink.
-  gchar* audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
-  GstCaps* audio_caps = gst_caps_from_string (audio_caps_text);
-  g_object_set (_audioSink, "emit-signals", TRUE, "caps", audio_caps, NULL);
+  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,channels=2,rate=%d,endianness=BYTE_ORDER", Engine::signalInfo().sampleRate());
+  GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
+  g_object_set (_audioSink, "emit-signals", TRUE, "caps", audioCaps, NULL);
   g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
-  //g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newAudioBufferCallback), _AUDIO_OUT->type());
-  gst_caps_unref (audio_caps);
-  g_free (audio_caps_text);
+  gst_caps_unref (audioCaps);
+  g_free (audioCapsText);
 
   // Configure video appsink.
-  gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);
-  GstCaps *video_caps = gst_caps_from_string (video_caps_text);
-  //g_object_set (_videoSink, "emit-signals", TRUE, NULL);
-  g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
+  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb");
+  g_object_set (_videoSink, "emit-signals", TRUE, "caps", videoCaps, NULL);
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
-  //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
-  gst_caps_unref (video_caps);
-  g_free (video_caps_text);
+  gst_caps_unref (videoCaps);
 
   // Start playing.
   ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
@@ -443,7 +434,7 @@ void Gear_VideoSource::runVideo() {
         _FINISH_OUT->type()->setValue(1.0f);
         break;
       case GST_MESSAGE_STATE_CHANGED:
-        /* We are only interested in state-changed messages from the pipeline */
+        // We are only interested in state-changed messages from the pipeline.
         if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
           GstState old_state, new_state, pending_state;
           gst_message_parse_state_changed(msg, &old_state, &new_state,
@@ -479,7 +470,7 @@ void Gear_VideoSource::runVideo() {
         }
         break;
       default:
-        /* We should not reach here */
+        // We should not reach here.
         g_printerr("Unexpected message received.\n");
         break;
       }
