@@ -14,6 +14,8 @@ unix:!macx {
 #	PKGCONFIG+=libavformat libavcodec libswscale libavutil sdl
 	PKGCONFIG += gstreamer-0.10
 
+	QMAKE_LFLAGS_RPATH+=-Wl,-rpath=/opt/gstreamer-sdk/lib
+
 	LIBS+=-L../../../lib/ -ldroneCore
 
 	TARGET=../../../gears/Gear_VideoSource
