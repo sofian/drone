@@ -37,14 +37,15 @@ extern "C" {
 class Gear_VideoSource : public Gear
 {
 public:
+  /*
   enum ePlaybackMode
   {
     NORMAL,
     LOOP,
     N_PLAYBACK_MODE
-  };
+  };*/
   
-  static const std::string SETTING_FILENAME;
+  //static const std::string SETTING_FILENAME;
 
   Gear_VideoSource(Schema *schema, std::string uniqueName);
   virtual ~Gear_VideoSource();
@@ -55,9 +56,11 @@ public:
 protected:
   bool loadMovie(std::string filename);
   void freeResources();
+  void resetMovie();
 
 private:
   void _gstVideoPull();
+  bool _eos() const;
   //void gstAudioPull();
 
 public:
@@ -117,6 +120,8 @@ private:
   GstElement *_videoSink;
 
   GstPadHandlerData _padHandlerData;
+
+  bool _seekEnabled;
 
   bool _audioHasNewBuffer;
   bool _videoHasNewBuffer;

@@ -47,7 +47,7 @@ extern "C" {
   }
 }
 
-const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
+//const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear_VideoSource::GstPadHandlerData* data) {
   g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (newPad), GST_ELEMENT_NAME (src));
@@ -155,6 +155,18 @@ void Gear_VideoSource::_gstVideoPull()
   }
 }
 
+bool Gear_VideoSource::_eos() const
+{
+  if (_movieReady) {
+    gboolean eos;
+    g_object_get (G_OBJECT (_videoSink), "eos", &eos, NULL);
+    return (bool)eos;
+  }
+  else
+    return false;
+}
+
+
 void Gear_VideoSource::gstNewBufferCallback(GstElement*, bool *newBuffer)
 {
   *newBuffer = true;
@@ -174,6 +186,7 @@ _videoConvert(NULL),
 _videoColorSpace(NULL),
 _audioSink(NULL),
 _videoSink(NULL),
+_seekEnabled(false),
 _audioHasNewBuffer(false),
 _videoHasNewBuffer(false),
 _movieReady(false)
@@ -220,6 +233,21 @@ void Gear_VideoSource::freeResources()
   _movieReady=false;
 	_VIDEO_OUT->sleeping(true);
 	unSynch();
+}
+
+void Gear_VideoSource::resetMovie()
+{
+  if (!_eos() && _seekEnabled)
+  {
+    gst_element_seek_simple (_pipeline, GST_FORMAT_TIME,
+                             (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
+  }
+  else
+  {
+    // Just reload movie.
+    std::cout << "Just reload movie" << std::endl;
+    _currentMovie = "";
+  }
 }
 
 bool Gear_VideoSource::loadMovie(std::string filename)
@@ -344,12 +372,24 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _bus = gst_element_get_bus (_pipeline);
 
   _terminate = false;
+  _seekEnabled = false;
 
 	return true;
 }
 
 
 void Gear_VideoSource::runVideo() {
+
+  if (_eos()) {
+    _FINISH_OUT->type()->setValue(1.0f);
+  }
+  else
+    _FINISH_OUT->type()->setValue(0.0f);
+
+  if ((int) _RESET_IN->type()->value() == 1) {
+    resetMovie();
+  }
+
   if (_currentMovie != _MOVIE_IN->type()->value()) {
     _currentMovie = _MOVIE_IN->type()->value();
     if (!loadMovie(_currentMovie))
@@ -367,19 +407,7 @@ void Gear_VideoSource::runVideo() {
     return;
   }
 
-  // TODO: make this work
-  if ((int) _RESET_IN->type()->value() == 1) {
-    std::cout << "Seeking not implemented" << std::endl;
-//    av_seek_frame(_formatContext, -1, _formatContext->start_time, AVSEEK_FLAG_BACKWARD);
-  }
-
-  //loop until we get a videoframe
-  //if we reach end, return to the beginning
-
-  // TODO: make this work (EOS)
-  if (false/*gst_app_sink_is_eos(_videoSink)*/) {
-    _FINISH_OUT->type()->setValue(1.0f);
-  } else {
+  {
     _FINISH_OUT->type()->setValue(0.0f);
 
     GstMessage *msg = gst_bus_timed_pop_filtered(
@@ -423,6 +451,31 @@ void Gear_VideoSource::runVideo() {
           g_print("Pipeline state changed from %s to %s:\n",
               gst_element_state_get_name(old_state),
               gst_element_state_get_name(new_state));
+
+          if (new_state == GST_STATE_PLAYING) {
+            // Check if seeking is allowed.
+            gint64 start, end;
+            GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);
+            if (gst_element_query (_pipeline, query))
+            {
+              gst_query_parse_seeking (query, NULL, (gboolean*)&_seekEnabled, &start, &end);
+              if (_seekEnabled)
+              {
+                g_print ("Seeking is ENABLED from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT "\n",
+                         GST_TIME_ARGS (start), GST_TIME_ARGS (end));
+              }
+              else
+              {
+                g_print ("Seeking is DISABLED for this stream.\n");
+              }
+            }
+            else
+            {
+              g_printerr ("Seeking query failed.");
+            }
+
+            gst_query_unref (query);
+          }
         }
         break;
       default:
