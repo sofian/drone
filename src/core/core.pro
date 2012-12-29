@@ -122,8 +122,8 @@ SchemaGui.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
 Timing.cpp \
-Types/VideoRGBAType.cpp \
-Types/TextureType.cpp \
+types/VideoRGBAType.cpp \
+types/TextureType.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
