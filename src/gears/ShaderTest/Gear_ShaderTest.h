@@ -21,10 +21,10 @@
 #define GEAR_SHADER_TEST_INCLUDED
 
 
+#include <QtOpenGL>
+
 #include "Gear.h"
 #include "TextureType.h"
-
-#include <QtOpenGL>
 
 class Gear_ShaderTest : public Gear
 {
@@ -42,7 +42,7 @@ protected:
 
 private:
   void initializeShaderProgram();
-  void enumarateActiveUniforms();
+  //void enumarateActiveUniforms();
   void enableGLStates();
 
   PlugIn<TextureType> *_TEXTURE_IN;

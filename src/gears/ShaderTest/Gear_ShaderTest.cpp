@@ -20,6 +20,8 @@
 #include "Gear_ShaderTest.h"                       
 #include "Engine.h"
 
+#define GL_GLEXT_PROTOTYPES
+
 #if defined(Q_OS_MACX)
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -79,7 +81,7 @@ Gear_ShaderTest::~Gear_ShaderTest()
 void Gear_ShaderTest::internalInit()
 {
   initializeShaderProgram();
-  enumarateActiveUniforms();
+  //enumarateActiveUniforms();
   
   if (_fbo)
   {
@@ -188,58 +190,58 @@ void Gear_ShaderTest::initializeShaderProgram()
   
 }
 
-void Gear_ShaderTest::enumarateActiveUniforms()
-{
-  GLint maxUniformLen;
-  GLint numUniforms;
-  char *uniformName;
-  GLint index;
-  
-  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORMS, &numUniforms);
-  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformLen);
-  
-  uniformName = malloc(sizeof(char) * maxUniformLen);
-  
-  std::cout << "--== Enumerating uniforms for program " << _shaderProgram.programId() << " ==--" << std::endl;
-  
-  for(index = 0; index < numUniforms; index++)
-  {
-    GLint size;
-    GLenum type;
-    GLint location;
-    
-    // Get the Uniform Info
-    glGetActiveUniform(_shaderProgram.programId(), index, maxUniformLen, NULL, &size, &type, uniformName);
-    std::cout << "Uniform name: " << uniformName << std::endl;
-    
-    // Get the uniform location
-    location = glGetUniformLocation(_shaderProgram.programId(), uniformName);
-    std::cout << "Uniform location: " << location << std::endl;
-    
-    std::cout << "Uniform type: ";
-    switch(type)
-    {
-      case GL_FLOAT:
-        std::cout << "GL_FLOAT" << std::endl;
-        break;
-      case GL_FLOAT_VEC2:
-        std::cout << "GL_FLOAT_VEC2" << std::endl;
-        break;
-      case GL_FLOAT_VEC3:
-        std::cout << "GL_FLOAT_VEC3" << std::endl;
-        break;
-      case GL_FLOAT_VEC4:
-        std::cout << "GL_FLOAT_VEC4" << std::endl;
-        break;
-      case GL_INT:
-        std::cout << "GL_INT" << std::endl;
-        break;
-      case GL_SAMPLER_2D:
-        std::cout << "GL_SAMPLER_2D" << std::endl;
-        break;
-      default:
-        std::cout << "Unsupported type" << std::endl;
-        break;
-    }
-  }
-}
+//void Gear_ShaderTest::enumarateActiveUniforms()
+//{
+//  GLint maxUniformLen;
+//  GLint numUniforms;
+//  char *uniformName;
+//  GLint index;
+//
+//  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORMS, &numUniforms);
+//  glGetProgramiv(_shaderProgram.programId(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformLen);
+//
+//  uniformName = malloc(sizeof(char) * maxUniformLen);
+//
+//  std::cout << "--== Enumerating uniforms for program " << _shaderProgram.programId() << " ==--" << std::endl;
+//
+//  for(index = 0; index < numUniforms; index++)
+//  {
+//    GLint size;
+//    GLenum type;
+//    GLint location;
+//
+//    // Get the Uniform Info
+//    glGetActiveUniform(_shaderProgram.programId(), index, maxUniformLen, NULL, &size, &type, uniformName);
+//    std::cout << "Uniform name: " << uniformName << std::endl;
+//
+//    // Get the uniform location
+//    location = glGetUniformLocation(_shaderProgram.programId(), uniformName);
+//    std::cout << "Uniform location: " << location << std::endl;
+//
+//    std::cout << "Uniform type: ";
+//    switch(type)
+//    {
+//      case GL_FLOAT:
+//        std::cout << "GL_FLOAT" << std::endl;
+//        break;
+//      case GL_FLOAT_VEC2:
+//        std::cout << "GL_FLOAT_VEC2" << std::endl;
+//        break;
+//      case GL_FLOAT_VEC3:
+//        std::cout << "GL_FLOAT_VEC3" << std::endl;
+//        break;
+//      case GL_FLOAT_VEC4:
+//        std::cout << "GL_FLOAT_VEC4" << std::endl;
+//        break;
+//      case GL_INT:
+//        std::cout << "GL_INT" << std::endl;
+//        break;
+//      case GL_SAMPLER_2D:
+//        std::cout << "GL_SAMPLER_2D" << std::endl;
+//        break;
+//      default:
+//        std::cout << "Unsupported type" << std::endl;
+//        break;
+//    }
+//  }
+//}

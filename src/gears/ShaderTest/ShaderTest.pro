@@ -6,7 +6,7 @@ HEADERS+=Gear_ShaderTest.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
-unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
+unix:!macx:LIBS+=-L../../../lib/ -ldroneCore 
 unix:!macx:TARGET=../../../gears/Gear_ShaderTest
 
 #osx
