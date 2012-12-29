@@ -105,19 +105,19 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstP
     }
     else
     {
-      int bpp = -1, depth = -1;
-      gst_structure_get_int(new_pad_struct, "bpp",  &bpp);
-      gst_structure_get_int(new_pad_struct, "depth", &depth);
-      std::cout << "bpp " << bpp << " depth " << depth << std::endl;
-
-      if (!gst_structure_get_int(new_pad_struct, "width",  &data->videoWidth) ||
-          !gst_structure_get_int(new_pad_struct, "height", &data->videoHeight))
-      {
-        std::cout << "Width/height information not available" << std::endl;
-        data->videoWidth = 720;
-        data->videoHeight = 480;
-//.        goto exit;
-      }
+//      int bpp = -1, depth = -1;
+//      gst_structure_get_int(new_pad_struct, "bpp",  &bpp);
+//      gst_structure_get_int(new_pad_struct, "depth", &depth);
+//      std::cout << "bpp " << bpp << " depth " << depth << std::endl;
+//
+//      if (!gst_structure_get_int(new_pad_struct, "width",  &data->videoWidth) ||
+//          !gst_structure_get_int(new_pad_struct, "height", &data->videoHeight))
+//      {
+//        std::cout << "Width/height information not available" << std::endl;
+////        data->videoWidth = 720;
+////        data->videoHeight = 480;
+////.        goto exit;
+//      }
 
       gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);//, data->videoWidth, data->videoHeight);
       GstCaps *video_caps = gst_caps_from_string (video_caps_text);
@@ -156,24 +156,34 @@ void newVideoBufferCallback (GstElement *sink, VideoRGBAType* video) {
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
     GstStructure *caps_struct = gst_caps_get_structure (caps, 0);
 
-    int width  = 0;
-    int height = 0;
+    int width  = video->width();
+    int height = video->height();
     int bpp    = 24;
     int depth  = 24;
-    if (!gst_structure_get_int(caps_struct, "width",  &width)  ||
-        !gst_structure_get_int(caps_struct, "height", &height))
-    {
-      std::cout << "Width/height information not available" << std::endl;
-      gst_buffer_unref (buffer);
-      exit(-1);
-    }
 
+    gst_structure_get_int(caps_struct, "width",  &width);
+    gst_structure_get_int(caps_struct, "height", &height);
     gst_structure_get_int(caps_struct, "bpp",  &bpp);
     gst_structure_get_int(caps_struct, "depth", &depth);
 
     video->resize(width, height);
 
-    convert24to32((unsigned char*)video->data(),GST_BUFFER_DATA(buffer), width*height);
+    convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
+// Make sure the buffer width / height are right.
+//    int nPixelsInBuffer = GST_BUFFER_SIZE(buffer) / (bpp / 8);
+//    int nPixels = width * height;
+//    if (nPixelsInBuffer != nPixels) {
+//      std::cout << "Improper number of pixels : " << nPixelsInBuffer << " != " << nPixels << std::endl;
+//      std::cout << GST_BUFFER_OFFSET(buffer) << " " << GST_BUFFER_OFFSET_END(buffer) <<
+//          " " << (GST_BUFFER_OFFSET_END(buffer) - GST_BUFFER_OFFSET(buffer)) << " " << std::endl;
+//      width += (nPixelsInBuffer - nPixels) / height;
+//    }
+//
+//    std::cout << gst_structure_to_string(caps_struct) << std::endl;
+//    std::cout << width << "x" << height << "=" << width*height << "(" << width*height*4 << "," << width*height*3 << ")" << std::endl;
+//    std::cout << "bpp: " << bpp << " depth: " << depth << std::endl;
+//    std::cout << "Buffer size: " << GST_BUFFER_SIZE(buffer) << std::endl;
+
     //rgb2rgba(video->data(), (const RGB*)GST_BUFFER_DATA(buffer), width*height);
 
     gst_buffer_unref (buffer);
@@ -286,6 +296,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
 //  _padHandlerData.audioToConnect = _audioConvert;
 //  _padHandlerData.videoToConnect = _videoColorSpace;
+
+  // Prepare handler data.
   _padHandlerData.audioToConnect   = _audioQueue;
   _padHandlerData.videoToConnect   = _videoQueue;
   _padHandlerData.videoSink        = _videoSink;
@@ -324,10 +336,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     return false;
   }
 
-  /* Set the URI to play */
-  //g_object_set (_source, "uri", "file:///home/tats/Documents/workspace/drone-0.3/GOPR1063-h264.mp4", NULL);
-  //g_object_set (_source, "uri", "file:///home/tats/Videos/GoPro-CubaJuin2012/GOPR1063-h264.mp4", NULL);
-
   // Process URI.
   gchar* uri = (gchar*) filename.c_str();
   if (!gst_uri_is_valid(uri))
@@ -343,15 +351,15 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     }
   }
 
-//  g_object_set (_source, "uri", uri, "use-buffering", false, NULL);
+  // Set URI to play.
   g_object_set (_source, "uri", uri, NULL);
 
   //g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
 
-  /* Connect to the pad-added signal */
+  // Connect to the pad-added signal
   g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), &_padHandlerData);
 
-  /* Configure audio appsink */
+  // Configure audio appsink
   gchar *audio_caps_text;
   GstCaps *audio_caps;
 
@@ -369,7 +377,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newBufferCallback), &_videoHasNewBuffer);
   //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
 
-  /* Start playing */
+  // Start playing.
   ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
     g_printerr ("Unable to set the pipeline to the playing state.\n");
@@ -377,7 +385,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     return -1;
   }
 
-  /* Listen to the bus */
+  // Listen to the bus.
   _bus = gst_element_get_bus (_pipeline);
 
   _terminate = false;
@@ -408,7 +416,10 @@ void Gear_VideoSource::runVideo() {
   }
 
   // TODO: resize according to caps
-  //_VIDEO_OUT->type()->resize(_padHandlerData.videoWidth, _padHandlerData.videoHeight);
+//  if (_padHandlerData.videoWidth != 0 && _padHandlerData.videoHeight != 0) {
+//    _VIDEO_OUT->type()->resize(_padHandlerData.videoWidth, _padHandlerData.videoHeight);
+//    _padHandlerData.videoWidth = _padHandlerData.videoHeight = 0;
+//  }
 
 //_VIDEO_OUT->type()->resize(WIDTH, HEIGHT);
 
@@ -436,7 +447,7 @@ void Gear_VideoSource::runVideo() {
                         (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
     if (_videoHasNewBuffer) {
-      std::cout << "Supposedly has video buff" << std::endl;
+
       newVideoBufferCallback(_videoSink, _VIDEO_OUT->type());
       _videoHasNewBuffer = false;
       //      GstBuffer* buffer;

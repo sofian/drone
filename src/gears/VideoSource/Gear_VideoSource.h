@@ -55,19 +55,21 @@ protected:
   bool loadMovie(std::string filename);
 
 public:
+  // GStreamer callbacks.
+
   struct GstPadHandlerData {
     GstElement* audioToConnect;
     GstElement* videoToConnect;
     GstElement* videoSink;
     bool audioIsConnected;
     bool videoIsConnected;
-    int videoWidth;
-    int videoHeight;
+//    int videoWidth;
+//    int videoHeight;
 
     GstPadHandlerData() :
       audioToConnect(NULL), videoToConnect(NULL), videoSink(NULL),
-      audioIsConnected(false), videoIsConnected(false),
-      videoWidth(0), videoHeight(0)
+      audioIsConnected(false), videoIsConnected(false)
+//      videoWidth(0), videoHeight(0)
     {}
 
     bool isConnected() const {
