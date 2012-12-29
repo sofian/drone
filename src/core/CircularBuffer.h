@@ -34,11 +34,11 @@
 // CIRCBUF_FOREND;
 
 
-#define CIRCBUF_FORBEGIN(Type,obj,from,to)           \
+#define CIRCBUF_FORBEGIN(Type,obj,from,to)               \
     {                                                    \
       bool finished=false;                               \
-      Type *cbptr, *ptrlim, *cb_pa1,                \
-                   *cb_pa2, *cb_pb1, *cb_pb2;               \
+      Type *cbptr, *ptrlim, *cb_pa1,                     \
+                   *cb_pa2, *cb_pb1, *cb_pb2;            \
       obj->getBounds(from, to,                           \
                      cb_pa1, cb_pa2,                     \
                      cb_pb1, cb_pb2);                    \
@@ -46,8 +46,8 @@
       {
 
 
-#define CIRCBUF_FOREND                          \
-        if(cbptr > ptrlim)                               \
+#define CIRCBUF_FOREND                                   \
+        if(cbptr > ptrlim) {                             \
           if(ptrlim == cb_pa2)                           \
             if(cb_pb1 > cb_pb2)                          \
               finished=true;                             \
@@ -57,6 +57,7 @@
               ptrlim = cb_pb2;                           \
             }                                            \
           else finished=true;                            \
+        }                                                \
       }                                                  \
     }
 
@@ -112,7 +113,6 @@ public:
         CIRCBUF_FORBEGIN(T,this,-_bufSize+1,0)
           *(nptr++)= *(cbptr++);
         CIRCBUF_FOREND
-          
       }
       
       _bufSize=newsize;
