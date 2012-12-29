@@ -119,12 +119,12 @@ void pad_added_handler (GstElement *src, GstPad *new_pad, Gear_VideoSource::GstP
 ////.        goto exit;
 //      }
 
-      gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);//, data->videoWidth, data->videoHeight);
-      GstCaps *video_caps = gst_caps_from_string (video_caps_text);
-
-      g_object_set (data->videoSink, "caps", video_caps, NULL);
-      gst_caps_unref (video_caps);
-      g_free (video_caps_text);
+//      gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);//, data->videoWidth, data->videoHeight);
+//      GstCaps *video_caps = gst_caps_from_string (video_caps_text);
+//
+//      g_object_set (data->videoSink, "caps", video_caps, NULL);
+//      gst_caps_unref (video_caps);
+//      g_free (video_caps_text);
 
       data->videoIsConnected = true;
     }
@@ -294,30 +294,27 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _videoColorSpace = gst_element_factory_make ("ffmpegcolorspace", "vcolorspace");
   _videoSink =       gst_element_factory_make ("appsink", "vsink");
 
-//  _padHandlerData.audioToConnect = _audioConvert;
-//  _padHandlerData.videoToConnect = _videoColorSpace;
-
   // Prepare handler data.
   _padHandlerData.audioToConnect   = _audioQueue;
   _padHandlerData.videoToConnect   = _videoQueue;
   _padHandlerData.videoSink        = _videoSink;
   _padHandlerData.audioIsConnected = _padHandlerData.videoIsConnected = false;
 
-  /* Create the empty pipeline */
-  _pipeline = gst_pipeline_new ("video-source-pipeline");
+  // Create the empty pipeline.
+  _pipeline = gst_pipeline_new ( "video-source-pipeline" );
 
   if (!_pipeline || !_source ||
       !_audioQueue || !_audioConvert || !_audioResample || !_audioSink ||
-      !_videoQueue || /*!_videoConvert || */ !_videoColorSpace || !_videoSink) {
+      !_videoQueue || !_videoColorSpace || !_videoSink) {
     g_printerr ("Not all elements could be created.\n");
     return -1;
   }
 
-  /* Build the pipeline. Note that we are NOT linking the source at this
-   * point. We will do it later. */
+  // Build the pipeline. Note that we are NOT linking the source at this
+  // point. We will do it later.
   gst_bin_add_many (GST_BIN (_pipeline), _source,
                     _audioQueue, _audioConvert, _audioResample, _audioSink,
-                    _videoQueue, /*_videoConvert, */_videoColorSpace, _videoSink, NULL);
+                    _videoQueue, _videoColorSpace, _videoSink, NULL);
 
   if (!gst_element_link (_audioQueue, _audioConvert) ||
       !gst_element_link (_audioConvert, _audioResample) ||
@@ -327,9 +324,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     return false;
   }
 
-  if (/*!gst_element_link (_videoQueue, _videoConvert) ||
-      !gst_element_link (_videoConvert, _videoColorSpace) ||*/
-      !gst_element_link (_videoQueue, _videoColorSpace) ||
+  if (!gst_element_link (_videoQueue, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
     gst_object_unref (_pipeline);
@@ -351,38 +346,37 @@ bool Gear_VideoSource::loadMovie(std::string filename)
     }
   }
 
-  // Set URI to play.
+  // Set URI to be played.
   g_object_set (_source, "uri", uri, NULL);
-
-  //g_object_set (_source, "uri", "http://docs.gstreamer.com/media/sintel_trailer-480p.webm", NULL);
 
   // Connect to the pad-added signal
   g_signal_connect (_source, "pad-added", G_CALLBACK (pad_added_handler), &_padHandlerData);
 
-  // Configure audio appsink
-  gchar *audio_caps_text;
-  GstCaps *audio_caps;
-
-  audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
-  audio_caps = gst_caps_from_string (audio_caps_text);
+  // Configure audio appsink.
+  gchar* audio_caps_text = g_strdup_printf (AUDIO_CAPS, SAMPLE_RATE);
+  GstCaps* audio_caps = gst_caps_from_string (audio_caps_text);
   g_object_set (_audioSink, "emit-signals", TRUE, "caps", audio_caps, NULL);
-  //g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newBufferCallback), &_audioHasNewBuffer);
-  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newAudioBufferCallback), _AUDIO_OUT->type());
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newBufferCallback), &_audioHasNewBuffer);
+  //g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (newAudioBufferCallback), _AUDIO_OUT->type());
   gst_caps_unref (audio_caps);
   g_free (audio_caps_text);
 
-  /* Configure video appsink */
-  g_object_set (_videoSink, "emit-signals", TRUE, NULL);
-  //g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
+  // Configure video appsink.
+  gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);
+  GstCaps *video_caps = gst_caps_from_string (video_caps_text);
+  //g_object_set (_videoSink, "emit-signals", TRUE, NULL);
+  g_object_set (_videoSink, "emit-signals", TRUE, "caps", video_caps, NULL);
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newBufferCallback), &_videoHasNewBuffer);
   //g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (newVideoBufferCallback), _VIDEO_OUT->type());
+  gst_caps_unref (video_caps);
+  g_free (video_caps_text);
 
   // Start playing.
   ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
-    g_printerr ("Unable to set the pipeline to the playing state.\n");
+    std::cout << "Unable to set the pipeline to the playing state." << std::endl;
     gst_object_unref (_pipeline);
-    return -1;
+    return false;
   }
 
   // Listen to the bus.
@@ -395,9 +389,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
 
 void Gear_VideoSource::runVideo() {
-//  int frameFinished=0;
-//  std::cout << "RUN" << std::endl;
-
   if (_currentMovie != _MOVIE_IN->type()->value()) {
     _currentMovie = _MOVIE_IN->type()->value();
     if (!loadMovie(_currentMovie))

@@ -53,6 +53,7 @@ public:
 
 protected:
   bool loadMovie(std::string filename);
+  void freeResources();
 
 public:
   // GStreamer callbacks.
@@ -63,13 +64,10 @@ public:
     GstElement* videoSink;
     bool audioIsConnected;
     bool videoIsConnected;
-//    int videoWidth;
-//    int videoHeight;
 
     GstPadHandlerData() :
       audioToConnect(NULL), videoToConnect(NULL), videoSink(NULL),
       audioIsConnected(false), videoIsConnected(false)
-//      videoWidth(0), videoHeight(0)
     {}
 
     bool isConnected() const {
@@ -78,9 +76,6 @@ public:
   };
 
 private:
-
-  void freeResources();
-
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugOut<SignalType> *_AUDIO_OUT;
 	PlugOut<ValueType> *_FINISH_OUT;
