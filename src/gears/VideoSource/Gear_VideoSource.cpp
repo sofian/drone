@@ -49,95 +49,62 @@ extern "C" {
 
 const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-/* This function will be called by the pad-added signal */
-void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *new_pad, Gear_VideoSource::GstPadHandlerData* data) {
-  GstPadLinkReturn ret;
-  GstCaps *new_pad_caps = NULL;
-  GstStructure *new_pad_struct = NULL;
-  const gchar *new_pad_type = NULL;
-
+void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear_VideoSource::GstPadHandlerData* data) {
+  g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (newPad), GST_ELEMENT_NAME (src));
   bool isAudio = false;
-
-  g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (new_pad), GST_ELEMENT_NAME (src));
-
-  GstPad *sink_pad = 0;
+  GstPad *sinkPad = NULL;
 
   /* Check the new pad's type */
-  new_pad_caps = gst_pad_get_caps (new_pad);
-  new_pad_struct = gst_caps_get_structure (new_pad_caps, 0);
-  new_pad_type = gst_structure_get_name (new_pad_struct);
-  g_print("Structure is %s\n", gst_structure_to_string(new_pad_struct));
-//  GST_LOG ("structure is %" GST_PTR_FORMAT, new_pad_struct);
-  if (g_str_has_prefix (new_pad_type, "audio/x-raw"))
-//  if (g_str_has_prefix (new_pad_type, "audio/x-raw-float"))
+  GstCaps *newPadCaps   = gst_pad_get_caps (newPad);
+  GstStructure *newPadStruct = gst_caps_get_structure (newPadCaps, 0);
+  const gchar *newPadType   = gst_structure_get_name (newPadStruct);
+  g_print("Structure is %s\n", gst_structure_to_string(newPadStruct));
+  if (g_str_has_prefix (newPadType, "audio/x-raw"))
   {
-    sink_pad = gst_element_get_static_pad (data->audioToConnect, "sink");
+    sinkPad = gst_element_get_static_pad (data->audioToConnect, "sink");
     isAudio = true;
   }
-  //else if (g_str_has_prefix (new_pad_type, "video/x-raw-rgb"))
-  else if (g_str_has_prefix (new_pad_type, "video/x-raw"))
+  else if (g_str_has_prefix (newPadType, "video/x-raw"))
   {
-    sink_pad = gst_element_get_static_pad (data->videoToConnect, "sink");
+    sinkPad = gst_element_get_static_pad (data->videoToConnect, "sink");
     isAudio = false;
   }
   else
   {
-    g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", new_pad_type);
+    g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", newPadType);
     goto exit;
   }
 
   /* If our converter is already linked, we have nothing to do here */
-  if (gst_pad_is_linked (sink_pad)) {
+  if (gst_pad_is_linked (sinkPad)) {
     g_print ("  We are already linked. Ignoring.\n");
     goto exit;
   }
 
   /* Attempt the link */
-  ret = gst_pad_link (new_pad, sink_pad);
-  if (GST_PAD_LINK_FAILED (ret)) {
-    g_print ("  Type is '%s' but link failed.\n", new_pad_type);
+  if (GST_PAD_LINK_FAILED (gst_pad_link (newPad, sinkPad))) {
+    g_print ("  Type is '%s' but link failed.\n", newPadType);
     goto exit;
   } else {
-    g_print ("  Link succeeded (type '%s').\n", new_pad_type);
+    g_print ("  Link succeeded (type '%s').\n", newPadType);
     if (isAudio)
     {
       data->audioIsConnected = true;
     }
     else
     {
-//      int bpp = -1, depth = -1;
-//      gst_structure_get_int(new_pad_struct, "bpp",  &bpp);
-//      gst_structure_get_int(new_pad_struct, "depth", &depth);
-//      std::cout << "bpp " << bpp << " depth " << depth << std::endl;
-//
-//      if (!gst_structure_get_int(new_pad_struct, "width",  &data->videoWidth) ||
-//          !gst_structure_get_int(new_pad_struct, "height", &data->videoHeight))
-//      {
-//        std::cout << "Width/height information not available" << std::endl;
-////        data->videoWidth = 720;
-////        data->videoHeight = 480;
-////.        goto exit;
-//      }
-
-//      gchar *video_caps_text = g_strdup_printf (VIDEO_CAPS);//, data->videoWidth, data->videoHeight);
-//      GstCaps *video_caps = gst_caps_from_string (video_caps_text);
-//
-//      g_object_set (data->videoSink, "caps", video_caps, NULL);
-//      gst_caps_unref (video_caps);
-//      g_free (video_caps_text);
-
       data->videoIsConnected = true;
     }
   }
 
 exit:
   /* Unreference the new pad's caps, if we got them */
-  if (new_pad_caps != NULL)
-    gst_caps_unref (new_pad_caps);
+  if (newPadCaps != NULL)
+    gst_caps_unref (newPadCaps);
 
   /* Unreference the sink pad */
-  if (sink_pad != NULL)
-    gst_object_unref (sink_pad);
+  if (sinkPad != NULL)
+    gst_object_unref (sinkPad);
 }
 
 /* The appsink has received a buffer */
