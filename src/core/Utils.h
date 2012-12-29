@@ -83,17 +83,21 @@ inline void extractChannel(unsigned char *dst, const RGBA *src, size_t size, int
 }
 
 //! Fast converts 24-bits color to 32 bits (alpha is set to specified alpha value).
+// Based on: http://stackoverflow.com/questions/7069090/convert-rgb-to-rgba-in-c
 inline void convert24to32(unsigned char *dst, const unsigned char *src, size_t size, unsigned char alpha=0xff) {
   if (size==0) return;
   uint32_t alphaMask = ((uint32_t)alpha) << 24;
+  // Copy by 4 byte blocks.
   for (size_t i=size; --i; dst+=4, src+=3)
   {
     *(uint32_t*)(void*)dst = (*(const uint32_t*)(const void*)src) | alphaMask;
   }
-  memcpy(dst, src, 3);
+  // Copy remaining bytes.
+  *dst++ = *src++;
+  *dst++ = *src++;
+  *dst++ = *src++;
 }
 
-// http://stackoverflow.com/questions/7069090/convert-rgb-to-rgba-in-c
 inline void rgb2rgba(RGBA *dst, const RGB *src, size_t size, unsigned char alpha=0xff) {
   convert24to32((unsigned char*)dst, (const unsigned char*)src, size, alpha);
 }
