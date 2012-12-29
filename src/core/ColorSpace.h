@@ -117,6 +117,64 @@ const RGBAfloat BLACK_RGBAfloat = RGBAfloat( 0, 0, 0, 255 );
 const RGBAfloat WHITE_RGBAfloat = RGBAfloat( 255, 255, 255, 255 );
 const RGBA CLEAR_RGBAfloat = RGBA( 0, 0, 0, 0 );
 
+// RGB
+struct RGB
+{
+  RGB() :
+    r(0),
+    g(0),
+    b(0)
+  {
+  }
+
+  RGB(unsigned char rr, unsigned char gg, unsigned char bb) :
+    r(rr),
+    g(gg),
+    b(bb)
+  {
+  }
+
+  unsigned char r, g, b;
+};
+
+struct RGBint
+{
+  RGBint() :
+    r(0),
+    g(0),
+    b(0)
+  {
+  }
+
+  RGBint(int rr, int gg, int bb) :
+    r(rr),
+    g(gg),
+    b(bb)
+  {
+  }
+
+  int r, g, b;
+};
+
+struct RGBfloat
+{
+  RGBfloat() :
+    r(0),
+    g(0),
+    b(0)
+  {
+  }
+
+  RGBfloat(float rr, float gg, float bb) :
+    r(rr),
+    g(gg),
+    b(bb)
+  {
+  }
+
+  float r, g, b;
+};
+
 // HSVA
 
  struct HSVA
