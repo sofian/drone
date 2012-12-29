@@ -17,16 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEAR_EDGE_INCLUDED
-#define GEAR_EDGE_INCLUDED
+#ifndef GEAR_SHADER_TEST_INCLUDED
+#define GEAR_SHADER_TEST_INCLUDED
 
 
 #include "Gear.h"
 #include "TextureType.h"
-#include "FrameBufferObject.h"
 
-#include <qgl.h>
-#include <QtOpenGL/qglshaderprogram.h>
+#include <QtOpenGL>
 
 class Gear_ShaderTest : public Gear
 {
@@ -44,6 +42,7 @@ protected:
 
 private:
   void initializeShaderProgram();
+  void enumarateActiveUniforms();
   void enableGLStates();
 
   PlugIn<TextureType> *_TEXTURE_IN;
@@ -53,7 +52,8 @@ private:
   int _vertexAttr;
   int _texCoordAttr;
   int _textureUniform;
-  FrameBufferObject _fbo;
+//  FrameBufferObject _fbo;
+  QGLFramebufferObject *_fbo;
   
 };
 

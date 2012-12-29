@@ -26,7 +26,7 @@ TextureType::~TextureType()
 
 unsigned int TextureType::createWithSize(int textureSizeX, int textureSizeY, bool forceCreation)
 {
-  if (forceCreation)
+  if (forceCreation || _textureSizeX != textureSizeX || _textureSizeY != textureSizeY)
   {
     if (_textureName != -1)
       glDeleteTextures(1, (GLuint*)&_textureName);

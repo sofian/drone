@@ -37,7 +37,6 @@ ControlPanel.h \
 Control.h \
 DroneCore.h \
 Engine.h \
-FrameBufferObject.h \
 Gear.h \
 GearControl.h \
 GearFrei0r.h \
@@ -100,7 +99,6 @@ ControlPanel.cpp \
 Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
-FrameBufferObject.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \

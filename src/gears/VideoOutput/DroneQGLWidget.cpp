@@ -59,7 +59,6 @@ DroneQGLWidget::~DroneQGLWidget()
 
 void DroneQGLWidget::initializeShaderProgram()
 {
-  QGLShader *vshader1 = new QGLShader(QGLShader::Vertex, this);
   const char *vsrc1 =
   "attribute vec3 vertex;\n"
   "attribute vec2 texCoord;\n"
@@ -69,9 +68,7 @@ void DroneQGLWidget::initializeShaderProgram()
   "    texc = texCoord;\n"
   "    gl_Position = vec4(vertex.x, vertex.y, vertex.z, 1.0);\n"
   "}\n";
-  vshader1->compileSourceCode(vsrc1);
   
-  QGLShader *fshader1 = new QGLShader(QGLShader::Fragment, this);
   const char *fsrc1 =
   "varying vec2 texc;\n"
   "uniform sampler2D tex;\n"
@@ -79,10 +76,9 @@ void DroneQGLWidget::initializeShaderProgram()
   "{\n"
   "    gl_FragColor = texture2D(tex, texc);\n"
   "}\n";
-  fshader1->compileSourceCode(fsrc1);
   
-  _shaderProgram.addShader(vshader1);
-  _shaderProgram.addShader(fshader1);
+  _shaderProgram.addShaderFromSourceCode(QGLShader::Vertex, vsrc1);
+  _shaderProgram.addShaderFromSourceCode(QGLShader::Fragment, fsrc1);
   _shaderProgram.link();
   
   _vertexAttr = _shaderProgram.attributeLocation("vertex");

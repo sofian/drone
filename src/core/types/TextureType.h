@@ -48,6 +48,9 @@ public:
   unsigned int updateWithVideoRGBA(const VideoRGBAType &image);
   unsigned int textureSizeX() const {return _textureSizeX;}
   unsigned int textureSizeY() const {return _textureSizeY;}
+
+  void setTextureSizeX(unsigned int value) {_textureSizeX = value;}
+  void setTextureSizeY(unsigned int value) {_textureSizeY = value;}
   
 private:
 	unsigned int _textureName;
