@@ -65,7 +65,7 @@ RandomValue \
 Tempo \
 ValueClamp \
 VideoDelay \
-#VideoInput \
+VideoInput \
 VideoRecord \
 VideoSource \
 VideoOffset \
@@ -81,7 +81,7 @@ VecAffineTrans
 #linux specific gears
 unix:!macx {
 #SUBDIRS += VideoInput AudioInput
-SUBDIRS += VideoInput \
+SUBDIRS += \
 #AudioInput \
 OscMessage \
 OscInput \
