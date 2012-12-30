@@ -119,7 +119,7 @@ bool Gear_VideoSource::_videoPull()
   else
   {
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
-    GstStructure *caps_struct = gst_caps_get_structure (caps, 0);
+    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
     VideoRGBAType* video = _VIDEO_OUT->type();
 
     int width  = video->width();
@@ -127,10 +127,10 @@ bool Gear_VideoSource::_videoPull()
     int bpp    = 24;
     int depth  = 24;
 
-    gst_structure_get_int(caps_struct, "width",  &width);
-    gst_structure_get_int(caps_struct, "height", &height);
-    gst_structure_get_int(caps_struct, "bpp",    &bpp);
-    gst_structure_get_int(caps_struct, "depth",  &depth);
+    gst_structure_get_int(capsStruct, "width",  &width);
+    gst_structure_get_int(capsStruct, "height", &height);
+    gst_structure_get_int(capsStruct, "bpp",    &bpp);
+    gst_structure_get_int(capsStruct, "depth",  &depth);
 
     video->resize(width, height);
 
