@@ -46,13 +46,13 @@ Gear_AlphaMix::Gear_AlphaMix(Schema *schema, std::string uniqueName) : Gear(sche
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", true));
 
-  EnumType *mixFunc = new EnumType(N_ALPHAMIX_TYPES, OVER);
-  mixFunc->setLabel(OVER,"Over");
-  mixFunc->setLabel(IN,"In");
-  mixFunc->setLabel(OUT,"Out");
-  mixFunc->setLabel(ATOP,"Atop");
-  mixFunc->setLabel(XOR,"Xor");
-  addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", mixFunc));
+  EnumType *mixFunc = new EnumType((int)N_ALPHAMIX_TYPES, (int)OVER);
+  mixFunc->setLabel((int)OVER,"Over");
+  mixFunc->setLabel((int)IN,"In");
+  mixFunc->setLabel((int)OUT,"Out");
+  mixFunc->setLabel((int)ATOP,"Atop");
+  mixFunc->setLabel((int)XOR,"Xor");
+  addPlug(_MIXFUNC_IN = new PlugIn<EnumType>(this, "MixFunc", false, mixFunc));
 
   _imageA = new VideoRGBAType();
   _imageB = new VideoRGBAType();
