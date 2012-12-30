@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 
 Gear_ClusteredDither::Gear_ClusteredDither(Schema *schema, std::string uniqueName)
-: Gear(schema, "ClusteredDither", uniqueName), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
+: Gear(schema, "ClusteredDither", uniqueName), _sizeX(0), _sizeY(0), _clusterSize(0),_clusterWidth(0), _threshold(0), _order(0), _spotType(ROUND)
 {
   // Video I/O
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
@@ -75,7 +75,7 @@ void Gear_ClusteredDither::internalInit()
 {
   _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, 512);
   _spotType = (eSpotType)CLAMP((int)_SPOT_TYPE_IN->type()->value(), (int)SQUARE, (int)LINE);
-  _width = _clusterSize * 3;
+  _clusterWidth = _clusterSize * 3;
   _sizeX = _sizeY = 0;
   _angle[0] = DEG2RAD(CLAMP((int)_ANGLE_RED_IN->type()->value(), 0, 360));
   _angle[1] = DEG2RAD(CLAMP((int)_ANGLE_GREEN_IN->type()->value(), 0, 360));
@@ -105,9 +105,6 @@ void Gear_ClusteredDither::runVideo()
   _data = _image->data();    
   _outData = _outImage->data();
   
-  unsigned char *iterData = (unsigned char*)_data;
-  unsigned char *iterOutData = (unsigned char*)_outData;
-
   int prevSizeX = _sizeX;
   int prevSizeY = _sizeY;
   _sizeX = _image->width();
@@ -119,7 +116,7 @@ void Gear_ClusteredDither::runVideo()
   _clusterSize = CLAMP((int)_CLUSTER_SIZE_IN->type()->value(), 2, MAX((int)_image->height(),4));
   bool clusterChanged = (prevClusterSize != _clusterSize);
   if (clusterChanged)
-    _width = _clusterSize * 3;
+    _clusterWidth = _clusterSize * 3;
   
   // XXX computeThreshold deux fois!!!
   // Set spot type.
@@ -166,8 +163,8 @@ void Gear_ClusteredDither::runVideo()
     NOTICE("...done");
   }
   
-  iterData = (unsigned char*) _data;
-  iterOutData = (unsigned char*) _outData;
+  unsigned char *iterData    = (unsigned char*)_data;
+  unsigned char *iterOutData = (unsigned char*)_outData;
 
   Array2DType<std::pair<int, int> >::iterator
     rIt = _rChannel[0].begin(),
@@ -178,9 +175,11 @@ void Gear_ClusteredDither::runVideo()
   {
     for (int x=0; x<_sizeX; ++x, ++rIt, ++gIt, ++bIt)
     {
+      // Assign RGB values.
       *iterOutData++ = getValue(*iterData++, rIt->first, rIt->second);
       *iterOutData++ = getValue(*iterData++, gIt->first, gIt->second);
       *iterOutData++ = getValue(*iterData++, bIt->first, bIt->second);
+      // Skip alpha.
       iterOutData++;
       iterData++;
     }
@@ -190,21 +189,21 @@ void Gear_ClusteredDither::runVideo()
 
 void Gear_ClusteredDither::updateThreshold()
 {
-  int width2 = _width*_width;
+  int width2 = _clusterWidth*_clusterWidth;
 
   _threshold = (unsigned char*)realloc(_threshold, width2*sizeof(unsigned char));
-  _order = (Order*)realloc(_order, width2*sizeof(Order));
+  _order     = (Order*)realloc(_order, width2*sizeof(Order));
 
   Order *iterOrder = _order;
 
   // inside cell
   int i=0;
-  for (int yCell=0; yCell<_width; ++yCell)
+  for (int yCell=0; yCell<_clusterWidth; ++yCell)
   {
-    float sy = 2*(float)yCell / (_width-1) - 1;
-    for (int xCell=0; xCell<_width; ++xCell)
+    float sy = 2*(float)yCell / (_clusterWidth-1) - 1;
+    for (int xCell=0; xCell<_clusterWidth; ++xCell)
     {
-      float sx = 2*(float)xCell / (_width-1) - 1;
+      float sx = 2*(float)xCell / (_clusterWidth-1) - 1;
       float val = spot(sx, sy);
 
       *iterOrder++ = std::make_pair(i++,val);
@@ -223,7 +222,7 @@ void Gear_ClusteredDither::updateThreshold()
   int val = 0;
   iterOrder = _order;
   for (i=0; i < width2; i++, val += 0xff)
-    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas là...
+    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas la...
 }
 
 void Gear_ClusteredDither::updatePolarCoordinates()
@@ -231,9 +230,9 @@ void Gear_ClusteredDither::updatePolarCoordinates()
   _r.resize(_sizeX, _sizeY);
   _theta.resize(_sizeX, _sizeY);
   int maxSizeX  = _sizeX / 2;
-  int maxSizeY = _sizeY / 2;
-  int minSizeX  = - (maxSizeX + _sizeX%2);
-  int minSizeY = - (maxSizeY + _sizeY%2);
+  int maxSizeY  = _sizeY / 2;
+  int minSizeX  = - (maxSizeX + (_sizeX%2));
+  int minSizeY  = - (maxSizeY + (_sizeY%2));
   
   Array2DType<double>::iterator rIt = _r.begin(), thetaIt = _theta.begin();
 
@@ -275,11 +274,11 @@ void Gear_ClusteredDither::updateAngle(int channel)
        * since that would cause reflection about the
        * x- and y-axes.  Relies on integer division
        * rounding towards zero. */
-      rx -= ((rx - isNeg(rx)*(_width-1)) / _width) * _width;
-      ry -= ((ry - isNeg(ry)*(_width-1)) / _width) * _width;
+      rx -= ((rx - isNeg(rx)*(_clusterWidth-1)) / _clusterWidth) * _clusterWidth;
+      ry -= ((ry - isNeg(ry)*(_clusterWidth-1)) / _clusterWidth) * _clusterWidth;
 
-      ASSERT_WARNING(rx >= 0 && rx <= _width-1);
-      ASSERT_WARNING(ry >= 0 && ry <= _width-1);
+      ASSERT_WARNING(rx >= 0 && rx <= _clusterWidth-1);
+      ASSERT_WARNING(ry >= 0 && ry <= _clusterWidth-1);
       
       rChannelIt->first = rx;
       rChannelIt->second = ry;
