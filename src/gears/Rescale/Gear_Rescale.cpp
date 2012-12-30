@@ -58,6 +58,13 @@ void Gear_Rescale::runVideo()
 {
   _image = _VIDEO_IN->type();
   _outImage = _VIDEO_OUT->type();
+  if (_image->isNull()) {
+    _VIDEO_OUT->sleeping(true);
+    return;
+  }
+  else
+    _VIDEO_OUT->sleeping(false);
+
   _newWidth = (int) MAX((int)_WIDTH_IN->type()->value(), 1);
   _newHeight = (int) MAX((int)_HEIGHT_IN->type()->value(), 1);
   _outImage->resize(_newWidth, _newHeight);
