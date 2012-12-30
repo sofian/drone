@@ -52,8 +52,8 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
 
   // Outputs.
   // at least one of them need to be connected. determined at runtime
-  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, false, "ImgOUT"));
-  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, false, "Segm"));
+  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", false));
+  addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Segm", false));
   
   std::vector<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
@@ -177,7 +177,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, mid, y1);
         if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
-          lower = mid+1; // look right //*** attention risque d'erreur : vérifier
+          lower = mid+1; // look right //*** attention risque d'erreur : vï¿½rifier
         else
           upper = mid;  // look left
       }
@@ -205,7 +205,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, x1, mid);
         if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
-          lower = mid+1; // look up //*** attention risque d'erreur : vérifier
+          lower = mid+1; // look up //*** attention risque d'erreur : vï¿½rifier
         else
           upper = mid;  // look down
       }
