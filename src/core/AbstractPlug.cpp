@@ -37,7 +37,7 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, Abstrac
   _exposed(false)
 {
   //une plug a besoin d'un parent
-  assert(parent!=NULL);
+  ASSERT_ERROR(parent!=NULL);
 
   forwardPlug(0);
 }
