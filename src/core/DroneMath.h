@@ -388,7 +388,8 @@ inline float fastAngle(float x, float y)
 // the source of Fluxus and is distributed under the GPL.
 // (c) 2005 David Griffiths <dave@pawfal.org>
 
-const int FASTMATH_TABLESIZE = 2048;
+#define FASTMATH_TABLESIZE 2048
+#define FASTMATH_TABLE_MASK 2047 // == FASTMATH_TABLESIZE - 1
 extern float sinLut[FASTMATH_TABLESIZE];
 extern float cosLut[FASTMATH_TABLESIZE];
 extern float sqrtLut[FASTMATH_TABLESIZE];
@@ -396,17 +397,17 @@ extern float FASTMATH_LOOKUP;
 
 inline float fastsin(float a)
 {
-  return sinLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
+  return sinLut[ (int)rint(a*FASTMATH_LOOKUP) & FASTMATH_TABLE_MASK ];
 }
 
 inline float fastcos(float a)
 {
-  return cosLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
+  return cosLut[ (int)rint(a*FASTMATH_LOOKUP) & FASTMATH_TABLE_MASK ];
 }
 
 inline float fastsqrt(float a)
 {
-  return sqrtLut[ ((int)rint(a*FASTMATH_LOOKUP)&FASTMATH_TABLESIZE)-1 ];
+  return sqrtLut[ (int)rint(a*FASTMATH_LOOKUP) & FASTMATH_TABLE_MASK ];
 }
 
 inline unsigned int ceilingPowerOfTwo(unsigned int x)
