@@ -169,6 +169,20 @@ bool Gear_VideoSource::_eos() const
     return false;
 }
 
+void Gear_VideoSource::_postLoadOrResetMovie()
+{
+  _audioHasNewBuffer = false;
+  _videoHasNewBuffer = false;
+
+  _terminate = false;
+  _seekEnabled = false;
+
+  _movieReady=true;
+
+  // Stop sleeping the video output.
+  _VIDEO_OUT->sleeping(false);
+}
+
 
 void Gear_VideoSource::gstNewBufferCallback(GstElement*, bool *newBuffer)
 {
@@ -246,6 +260,7 @@ void Gear_VideoSource::resetMovie()
   {
     gst_element_seek_simple (_pipeline, GST_FORMAT_TIME,
                              (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
+    _postLoadOrResetMovie();
   }
   else
   {
@@ -262,14 +277,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   //free previously allocated structures
   freeResources();
 
-  _audioHasNewBuffer = false;
-  _videoHasNewBuffer = false;
-
   //_firstFrameTime=_formatContext->start_time;
 
-  _movieReady=true;
-	_VIDEO_OUT->sleeping(false);
-	
   GstStateChangeReturn ret;
 
   // Initialize GStreamer.
@@ -373,8 +382,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   // Listen to the bus.
   _bus = gst_element_get_bus (_pipeline);
 
-  _terminate = false;
-  _seekEnabled = false;
+  // Reset some variables.
+  _postLoadOrResetMovie();
 
 	return true;
 }
@@ -384,6 +393,7 @@ void Gear_VideoSource::runVideo() {
 
   if (_eos()) {
     _FINISH_OUT->type()->setValue(1.0f);
+    _VIDEO_OUT->sleeping(true);
   }
   else
     _FINISH_OUT->type()->setValue(0.0f);
@@ -406,6 +416,7 @@ void Gear_VideoSource::runVideo() {
 
   if (_terminate) {
     _FINISH_OUT->type()->setValue(1.0f);
+    _VIDEO_OUT->sleeping(true);
     return;
   }
 
@@ -419,7 +430,10 @@ void Gear_VideoSource::runVideo() {
 
     // Pull video.
     if (!_videoPull())
+    {
       _FINISH_OUT->type()->setValue(1.0f);
+      _VIDEO_OUT->sleeping(true);
+    }
 
     _videoHasNewBuffer = false;
   }
@@ -444,20 +458,20 @@ void Gear_VideoSource::runVideo() {
       break;
     case GST_MESSAGE_EOS:
       g_print("End-Of-Stream reached.\n");
-      _terminate = TRUE;
+      _terminate = true;
       _FINISH_OUT->type()->setValue(1.0f);
       break;
     case GST_MESSAGE_STATE_CHANGED:
       // We are only interested in state-changed messages from the pipeline.
       if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
-        GstState old_state, new_state, pending_state;
-        gst_message_parse_state_changed(msg, &old_state, &new_state,
-            &pending_state);
+        GstState oldState, newState, pendingState;
+        gst_message_parse_state_changed(msg, &oldState, &newState,
+            &pendingState);
         g_print("Pipeline state changed from %s to %s:\n",
-            gst_element_state_get_name(old_state),
-            gst_element_state_get_name(new_state));
+            gst_element_state_get_name(oldState),
+            gst_element_state_get_name(newState));
 
-        if (new_state == GST_STATE_PLAYING) {
+        if (newState == GST_STATE_PLAYING) {
           // Check if seeking is allowed.
           gint64 start, end;
           GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);

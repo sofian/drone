@@ -61,6 +61,7 @@ protected:
 private:
   bool _videoPull();
   bool _eos() const;
+  void _postLoadOrResetMovie();
   //void gstAudioPull();
 
 public:
@@ -126,9 +127,6 @@ private:
   bool _audioHasNewBuffer;
   bool _videoHasNewBuffer;
 
-//  uint8_t *_buffer;
-  //int _videoStreamIndex;
-  //int64_t _firstFrameTime;
   bool _terminate;
   bool _movieReady;
 };
