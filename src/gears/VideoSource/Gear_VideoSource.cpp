@@ -103,15 +103,21 @@ exit:
     gst_object_unref (sinkPad);
 }
 
-void Gear_VideoSource::_gstVideoPull()
+bool Gear_VideoSource::_videoPull()
 {
   GstBuffer *buffer;
 
   // Retrieve the buffer.
   g_signal_emit_by_name (_videoSink, "pull-buffer", &buffer);
 
-  if (buffer) {
+  if (!buffer)
+  {
+    // Either means we are not playing or we have reached EOS.
+    return false;
+  }
 
+  else
+  {
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
     GstStructure *caps_struct = gst_caps_get_structure (caps, 0);
     VideoRGBAType* video = _VIDEO_OUT->type();
@@ -147,7 +153,9 @@ void Gear_VideoSource::_gstVideoPull()
     //rgb2rgba(video->data(), (const RGB*)GST_BUFFER_DATA(buffer), width*height);
 
     gst_buffer_unref (buffer);
+    return true;
   }
+
 }
 
 bool Gear_VideoSource::_eos() const
@@ -347,7 +355,10 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   // Configure video appsink.
   GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb");
-  g_object_set (_videoSink, "emit-signals", TRUE, "caps", videoCaps, NULL);
+  g_object_set (_videoSink, "emit-signals", TRUE,
+                            "caps", videoCaps,    // this sets video caps to "video/x-raw-rgb"
+                            "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
+                            "drop", true, NULL);  // ... other buffers are dropped
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
   gst_caps_unref (videoCaps);
 
@@ -398,84 +409,86 @@ void Gear_VideoSource::runVideo() {
     return;
   }
 
-  {
-    _FINISH_OUT->type()->setValue(0.0f);
+  _FINISH_OUT->type()->setValue(0.0f);
 
-    GstMessage *msg = gst_bus_timed_pop_filtered(
-                        _bus, 0,
-                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+  GstMessage *msg = gst_bus_timed_pop_filtered(
+                      _bus, 0,
+                      (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
-    if (_videoHasNewBuffer) {
-      _gstVideoPull();
-      _videoHasNewBuffer = false;
-    }
+  if (_videoHasNewBuffer) {
 
-    // Parse message.
-    if (msg != NULL) {
-      GError *err;
-      gchar *debug_info;
+    // Pull video.
+    if (!_videoPull())
+      _FINISH_OUT->type()->setValue(1.0f);
 
-      switch (GST_MESSAGE_TYPE (msg)) {
-      case GST_MESSAGE_ERROR:
-        gst_message_parse_error(msg, &err, &debug_info);
-        g_printerr("Error received from element %s: %s\n",
-            GST_OBJECT_NAME (msg->src), err->message);
-        g_printerr("Debugging information: %s\n",
-            debug_info ? debug_info : "none");
-        g_clear_error(&err);
-        g_free(debug_info);
-        _terminate = true;
-        _FINISH_OUT->type()->setValue(1.0f);
-        //          terminate = TRUE;
-        break;
-      case GST_MESSAGE_EOS:
-        g_print("End-Of-Stream reached.\n");
-        _terminate = TRUE;
-        _FINISH_OUT->type()->setValue(1.0f);
-        break;
-      case GST_MESSAGE_STATE_CHANGED:
-        // We are only interested in state-changed messages from the pipeline.
-        if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
-          GstState old_state, new_state, pending_state;
-          gst_message_parse_state_changed(msg, &old_state, &new_state,
-              &pending_state);
-          g_print("Pipeline state changed from %s to %s:\n",
-              gst_element_state_get_name(old_state),
-              gst_element_state_get_name(new_state));
+    _videoHasNewBuffer = false;
+  }
 
-          if (new_state == GST_STATE_PLAYING) {
-            // Check if seeking is allowed.
-            gint64 start, end;
-            GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);
-            if (gst_element_query (_pipeline, query))
+  // Parse message.
+  if (msg != NULL) {
+    GError *err;
+    gchar *debug_info;
+
+    switch (GST_MESSAGE_TYPE (msg)) {
+    case GST_MESSAGE_ERROR:
+      gst_message_parse_error(msg, &err, &debug_info);
+      g_printerr("Error received from element %s: %s\n",
+          GST_OBJECT_NAME (msg->src), err->message);
+      g_printerr("Debugging information: %s\n",
+          debug_info ? debug_info : "none");
+      g_clear_error(&err);
+      g_free(debug_info);
+      _terminate = true;
+      _FINISH_OUT->type()->setValue(1.0f);
+      //          terminate = TRUE;
+      break;
+    case GST_MESSAGE_EOS:
+      g_print("End-Of-Stream reached.\n");
+      _terminate = TRUE;
+      _FINISH_OUT->type()->setValue(1.0f);
+      break;
+    case GST_MESSAGE_STATE_CHANGED:
+      // We are only interested in state-changed messages from the pipeline.
+      if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+        GstState old_state, new_state, pending_state;
+        gst_message_parse_state_changed(msg, &old_state, &new_state,
+            &pending_state);
+        g_print("Pipeline state changed from %s to %s:\n",
+            gst_element_state_get_name(old_state),
+            gst_element_state_get_name(new_state));
+
+        if (new_state == GST_STATE_PLAYING) {
+          // Check if seeking is allowed.
+          gint64 start, end;
+          GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);
+          if (gst_element_query (_pipeline, query))
+          {
+            gst_query_parse_seeking (query, NULL, (gboolean*)&_seekEnabled, &start, &end);
+            if (_seekEnabled)
             {
-              gst_query_parse_seeking (query, NULL, (gboolean*)&_seekEnabled, &start, &end);
-              if (_seekEnabled)
-              {
-                g_print ("Seeking is ENABLED from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT "\n",
-                         GST_TIME_ARGS (start), GST_TIME_ARGS (end));
-              }
-              else
-              {
-                g_print ("Seeking is DISABLED for this stream.\n");
-              }
+              g_print ("Seeking is ENABLED from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT "\n",
+                       GST_TIME_ARGS (start), GST_TIME_ARGS (end));
             }
             else
             {
-              g_printerr ("Seeking query failed.");
+              g_print ("Seeking is DISABLED for this stream.\n");
             }
-
-            gst_query_unref (query);
           }
+          else
+          {
+            g_printerr ("Seeking query failed.");
+          }
+
+          gst_query_unref (query);
         }
-        break;
-      default:
-        // We should not reach here.
-        g_printerr("Unexpected message received.\n");
-        break;
       }
-      gst_message_unref(msg);
+      break;
+    default:
+      // We should not reach here.
+      g_printerr("Unexpected message received.\n");
+      break;
     }
+    gst_message_unref(msg);
   }
 }
 

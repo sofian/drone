@@ -59,7 +59,7 @@ protected:
   void resetMovie();
 
 private:
-  void _gstVideoPull();
+  bool _videoPull();
   bool _eos() const;
   //void gstAudioPull();
 
