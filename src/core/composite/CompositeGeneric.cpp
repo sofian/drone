@@ -76,8 +76,9 @@
  * masking is always cheaper than passing parameters over the stack.      */
 /* FIXME: Move to a global place */
 
+#ifndef HAS_ALPHA
 #define HAS_ALPHA(bytes) (~bytes & 1)
-
+#endif
 
 // static guchar add_lut[511];
 // static gint32 random_table[RANDOM_TABLE_SIZE];
