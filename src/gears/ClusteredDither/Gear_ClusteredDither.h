@@ -1,5 +1,5 @@
 /* Gear_ClusteredDither.h
- * Copyright (C) 2004 Jean-Sebastien Senecal
+ * Copyright (C) 2004, 2012 Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@
  * (see http://www.cl.cam.ac.uk/~and1000/newsprint/index.html). It simulates a dot
  * matrix printer.
  *
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sebastien Senecal
  * version %I% %G%
  */
 
@@ -101,7 +101,7 @@ private:
   unsigned char *_imageOut;
 
   int _clusterSize;
-  int _width; // clusterSize * 3
+  int _clusterWidth; // clusterSize * 3
 
   unsigned char *_threshold;
   Order *_order;
@@ -188,28 +188,28 @@ float Gear_ClusteredDither::spot(float x, float y)
 
 unsigned char Gear_ClusteredDither::getValue(unsigned char intensity, int rx, int ry)
 {
-  ASSERT_WARNING(rx >= 0 && rx <= _width-1);
-  ASSERT_WARNING(ry >= 0 && ry <= _width-1);
+  ASSERT_WARNING(rx >= 0 && rx <= _clusterWidth-1);
+  ASSERT_WARNING(ry >= 0 && ry <= _clusterWidth-1);
             
   int sum = 0;
 
   // Set coordinates for antialiasing.
 
   int ryLow = ry-1;
-  if (ryLow < 0) ryLow += _width;
+  if (ryLow < 0) ryLow += _clusterWidth;
   
   int ryHigh = ry+1;
-  if (ryHigh >= _width) ryHigh -= _width;
+  if (ryHigh >= _clusterWidth) ryHigh -= _clusterWidth;
 
   int rxLow = rx-1;
-  if (rxLow < 0) rxLow += _width;
+  if (rxLow < 0) rxLow += _clusterWidth;
 
   int rxHigh = rx+1;
-  if (rxHigh >= _width) rxHigh -= _width;
+  if (rxHigh >= _clusterWidth) rxHigh -= _clusterWidth;
 
-  ryLow *=_width;
-  ry*=_width;
-  ryHigh*=_width;
+  ryLow *=_clusterWidth;
+  ry*=_clusterWidth;
+  ryHigh*=_clusterWidth;
 
   // This obscure code is based on an unrolling of the antialiasing loop. The
   // numbers (255, 510, 1010) are taken from the Bartlett matrix.
