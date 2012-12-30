@@ -160,7 +160,7 @@ bool Gear_VideoSource::_videoPull()
 
 bool Gear_VideoSource::_eos() const
 {
-  if (_movieReady) {
+  if (_movieReady && _videoSink) {
     gboolean eos;
     g_object_get (G_OBJECT (_videoSink), "eos", &eos, NULL);
     return (bool)eos;
