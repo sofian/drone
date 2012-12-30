@@ -49,6 +49,8 @@ inline unsigned char fastrgb2gray(unsigned char r, unsigned char g, unsigned cha
 //! Vector version. Sets #dst# to the grayscale of #src#.
 inline void grayscaleRGBA(RGBA *dst, const RGBA *src, size_t size)
 {
+  ASSERT_ERROR(dst != NULL);
+  ASSERT_ERROR(src != NULL);
   unsigned int gray;
   unsigned int *it = (unsigned int *)dst;
   while (size--)
@@ -62,6 +64,8 @@ inline void grayscaleRGBA(RGBA *dst, const RGBA *src, size_t size)
 //! Puts in #dst# the grayscale values of #src#.
 inline void grayscaleChannel(unsigned char *dst, const RGBA *src, size_t size)
 {
+  ASSERT_ERROR(dst != NULL);
+  ASSERT_ERROR(src != NULL);
   while (size--)
   {
     *dst++ = rgb2gray(src->r, src->g, src->b);
@@ -72,6 +76,8 @@ inline void grayscaleChannel(unsigned char *dst, const RGBA *src, size_t size)
 //! Puts the #channelIdx#-th channel of #src# (i.e. one of the IDX_RGBA_{R,G,B,A} constants) in #dst#.
 inline void extractChannel(unsigned char *dst, const RGBA *src, size_t size, int channelIdx)
 {
+  ASSERT_ERROR(dst != NULL);
+  ASSERT_ERROR(src != NULL);
   ASSERT_ERROR(0 <= channelIdx && channelIdx < SIZE_RGBA);
   unsigned char *it = (unsigned char*)(src) + channelIdx; // offset
   while (size--)
@@ -86,6 +92,9 @@ inline void extractChannel(unsigned char *dst, const RGBA *src, size_t size, int
 inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeight, int srcWidth, int srcHeight)
 {
   NOTICE("%d %d %d %d", dstWidth, dstHeight, srcWidth, srcHeight);
+  ASSERT_ERROR(dst != NULL);
+  ASSERT_ERROR(src != NULL);
+  ASSERT_ERROR(dstWidth >= 0 && dstHeight >= 0 && srcWidth >= 0 && srcHeight >= 0)
   if (dstWidth == srcWidth && dstHeight == srcHeight)
   {
     // Same dimensions, just copy the data.
