@@ -131,8 +131,7 @@ public:
 
   AbstractPlug *clone(Gear* parent)
   {
-    PlugIn<T>* clonePlug = new PlugIn<T>(parent, name(), _mandatory);
-    return clonePlug;
+    return new PlugIn<T>(parent, name(), _mandatory);
   }
 
 
