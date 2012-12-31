@@ -40,15 +40,10 @@ public:
   {
   }
 
-  T* type() { return static_cast<T*>(_abstractType);}
-
-  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
-  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
-
-  const T* type() const { return static_cast<const T*>(_abstractType);}
-  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
-  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
-
+  // Types returned by PlugOut are read-write (non-const).
+  T* type() const { return static_cast<T*>(_abstractType);}
+  T* defaultType() const { return static_cast<T*>(_abstractDefaultType);}
+  T* hintType() const { return static_cast<T*>(_abstractDefaultType);}
 
   virtual bool ready() const
   {
@@ -129,10 +124,8 @@ public:
 
   void init() {}
 
-  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
-  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
-
-  T* type() const { return static_cast<T*>(_abstractType);}
+  // Types returned by PlugIn are read-only (const).
+  const T* type() const { return static_cast<T*>(_abstractType);}
   const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
   const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
