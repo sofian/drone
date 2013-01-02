@@ -97,7 +97,7 @@ bool Gear_ShaderTest::ready()
 
 void Gear_ShaderTest::runVideo()
 {
-  TextureType *inputTexture = _TEXTURE_IN->type();
+  const TextureType *inputTexture = _TEXTURE_IN->type();
   TextureType *outputTexture = _TEXTURE_OUT->type();
 
   enableGLStates();

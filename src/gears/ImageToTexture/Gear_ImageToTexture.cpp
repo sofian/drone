@@ -63,7 +63,7 @@ void Gear_ImageToTexture::runVideo()
   if (_VIDEO_IN->type()->isNull())
     return;
   
-  VideoRGBAType *image = _VIDEO_IN->type();
+  const VideoRGBAType *image = _VIDEO_IN->type();
   TextureType *texture = _TEXTURE_OUT->type();
   
   texture->updateWithVideoRGBA(*image);

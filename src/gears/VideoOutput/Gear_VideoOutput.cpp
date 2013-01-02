@@ -133,7 +133,9 @@ void Gear_VideoOutput::runVideo()
   if (_VIDEO_IN->type()->textureName() == 0)
     return;
 
-  _droneQGLWidget->setCurrentTexture(_VIDEO_IN->type());
+  _textureCopy = *(_VIDEO_IN->type());
+
+  _droneQGLWidget->setCurrentTexture(&_textureCopy);
   
   //asynchronously tell the widget to repaint himself in a thread-safe way
   QApplication::postEvent(_droneQGLWidget,

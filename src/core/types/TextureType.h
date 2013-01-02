@@ -38,8 +38,7 @@ public:
   
   virtual ~TextureType();
 
-  virtual std::string typeName() const { return "Texture"; }
-  virtual QColor color() const { return QColor(255, 255, 64); }
+  TYPE_BASE_METHODS(TextureType, (255, 255, 64))
   
   void setTextureName(unsigned int value) { _textureName = value; }
   unsigned int textureName() const { return _textureName; }

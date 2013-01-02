@@ -27,7 +27,7 @@
 class PaletteRGBAType : public ArrayType<RGBA>
 {
 public:
-  // XXX normalement il devrait peut-être pas y avoir deux fois la même couleur...
+  // XXX normalement il devrait peut-ï¿½tre pas y avoir deux fois la mï¿½me couleur...
   // XXX fonction de mapping ?
   PaletteRGBAType(int size = 0, RGBA fillValue = BLACK_RGBA)
     : ArrayType<RGBA>(size, fillValue)
@@ -35,8 +35,7 @@ public:
 
   virtual ~PaletteRGBAType(){}
 
-  virtual std::string typeName() const{ return "PaletteRGBAType";}
-  QColor color() const { return QColor(50,124,50);}
+  TYPE_BASE_METHODS(PaletteRGBAType, (50, 124, 50))
 };
 
 #endif 

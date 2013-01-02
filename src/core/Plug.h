@@ -125,9 +125,12 @@ public:
   void init() {}
 
   // Types returned by PlugIn are read-only (const).
-  const T* type() const { return static_cast<T*>(_abstractType);}
-  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
-  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
+  const T* type() const { return static_cast<const T*>(_abstractType);}
+  T* defaultType() const { return static_cast<T*>(_abstractDefaultType);}
+  T* hintType() const { return static_cast<T*>(_abstractDefaultType);}
+
+  //! Returns a clone of the type.
+  T* cloneType() const { return _abstractType->clone(); }
 
   AbstractPlug *clone(Gear* parent)
   {

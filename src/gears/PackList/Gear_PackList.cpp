@@ -38,46 +38,45 @@ GearInfo getGearInfo()
 }
 }
 
+#include "Array2DType.h"
 Gear_PackList::Gear_PackList(Schema *schema, std::string uniqueName) : 
   Gear(schema, "PackList", uniqueName)
 {
 
-  addPlug(_STR1 = new PlugIn<AbstractType>(this, "Str1", true));
+  addPlug(_ELEM_IN = new PlugIn<AbstractType>(this, "Elem", true));
   addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", false));
   addPlug(_LIST_OUT = new PlugOut<ListType>(this, "ListO", true));
 }
 
 Gear_PackList::~Gear_PackList()
 {
-
+  clearList();
 }
 
 void Gear_PackList::runVideo()
 {
   ListType *listType = _LIST_OUT->type();
   
-  if (_LIST_IN->connected())
-    listType->assign(_LIST_IN->type()->begin(), _LIST_IN->type()->end());
-  else 
-    clearList();  
+  // XXX Maybe there's a more efficient way than clearing/populating each time but this
+  // is safe memory-wise.
+  clearList();
 
-  listType->push_back(_STR1->type());
+  if (_LIST_IN->connected()) {
+    const ListType* inputList = _LIST_IN->type();
+    for(ListType::const_iterator it=inputList->begin(); it!=inputList->end(); ++it)
+      listType->push_back( (*it)->clone() );
+  }
 
+  listType->push_back(_ELEM_IN->cloneType());
 }
 
 
 void Gear_PackList::clearList()
 {
 	ListType *listType = _LIST_OUT->type();
-	
-/*	
 	for(ListType::iterator it=listType->begin(); it!=listType->end(); ++it)
-	{
 	  delete (*it);
-	}
-*/	
 	listType->clear();
-	
 }
 
 void Gear_PackList::internalPrePlay()

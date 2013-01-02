@@ -57,10 +57,11 @@ public:
   /**
    * Copy constructor.
    */
-  Array2D(const Array2D<T>& copy)
+  Array2D(const Array2D<T>& copy) : Array<T>(copy)
   {
     resize(copy.width(), copy.height());
-    std::copy(std::vector<T>::begin(), std::vector<T>::end(), copy.begin());
+    // Not necessary: this is accomplished by the call to Array<T>(copy)
+    //std::copy(std::vector<T>::begin(), std::vector<T>::end(), copy.begin());
   }
 
   /**

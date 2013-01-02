@@ -64,24 +64,32 @@ Gear_UnpackList::Gear_UnpackList(Schema *schema, std::string uniqueName) :
 
 Gear_UnpackList::~Gear_UnpackList()
 {
-
+  clearList();
 }
 
 void Gear_UnpackList::runVideo()
 {
   //std::cout << name() << "::: size:: " << _LIST_IN->type()->size() << std::endl;
-  if (_LIST_IN->type()->size()<1)
+  if (!_LIST_IN->connected() ||
+      _LIST_IN->type()->empty())
   {    
     _LIST_OUT->sleeping(true); // TODO: the sleeping mechanism just doesn't work
     return;
   }
 
   _LIST_OUT->sleeping(false);
-  
+
   ListType *listType = _LIST_OUT->type();
-  AbstractType *type = _LIST_IN->type()->front();
-  listType->resize(_LIST_IN->type()->size() - 1);
-  std::copy(_LIST_IN->type()->begin()+1, _LIST_IN->type()->end(), listType->begin());
+  const AbstractType *type = _LIST_IN->type()->front();
+
+  // XXX Maybe there's a more efficient way than clearing/populating each time but this
+  // is safe memory-wise.
+  clearList();
+
+  // Copy
+  const ListType* inputList = _LIST_IN->type();
+  for(ListType::const_iterator it=inputList->begin() + 1; it!=inputList->end(); ++it)
+    listType->push_back( (*it)->clone() );
 
   //std::cout << "got something " << type->typeName() << std::endl;
   //for (ListType::const_iterator it = _LIST_IN->type()->begin(); it != _LIST_IN->type()->end(); ++it)
@@ -89,26 +97,55 @@ void Gear_UnpackList::runVideo()
   
   if ((_STR_OUT->connected()) && type->typeName() == StringType().typeName())
   {
-    _STR_OUT->type()->setValue(((StringType*)type)->value());
+    //std::cout << "sending str out: " << ((StringType*)type)->value() << std::endl;
+    _STR_OUT->type()->copyFrom(*type);
     return;
   }
     
-  if ((_VAL_OUT->connected()) && type->typeName() == ValueType().typeName())
+  else if ((_VAL_OUT->connected()) && type->typeName() == ValueType().typeName())
   {
     //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
-    _VAL_OUT->type()->setValue(((ValueType*)type)->value());
+    _VAL_OUT->type()->copyFrom(*type);
     return;
   }
 
-    
+  else if ((_ENUM_OUT->connected()) && type->typeName() == EnumType().typeName())
+  {
+    //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
+    _ENUM_OUT->type()->copyFrom(*type);
+    return;
+  }
+
+  else if ((_CHANNEL_OUT->connected()) && type->typeName() == VideoChannelType().typeName())
+  {
+    //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
+    _CHANNEL_OUT->type()->copyFrom(*type);
+    return;
+  }
+
+
+  else if ((_VIDEO_OUT->connected()) && type->typeName() == VideoRGBAType().typeName())
+  {
+    //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
+    _VIDEO_OUT->type()->copyFrom(*type);
+    return;
+  }
+
+  else if ((_AREA_OUT->connected()) && type->typeName() == AreaType().typeName())
+  {
+    //std::cout << "sending val out: " << ((ValueType*)type)->value() << std::endl;
+    _AREA_OUT->type()->copyFrom(*type);
+    return;
+  }
 }
 
 
 void Gear_UnpackList::clearList()
 {
   ListType *listType = _LIST_OUT->type();
+  for(ListType::iterator it=listType->begin(); it!=listType->end(); ++it)
+    delete (*it);
   listType->clear();
-	
 }
 
 void Gear_UnpackList::internalPrePlay()

@@ -34,8 +34,7 @@ public:
   
   virtual ~EnumType() {}
   
-  virtual std::string typeName() const { return "EnumType"; }  
-  virtual QColor color() const { return QColor(238,19,19); }
+  TYPE_BASE_METHODS(EnumType, (238, 19, 19))
   
   void setValue(int value) {
     ASSERT_ERROR(empty() || (0 <= value && value < (int)size()));
@@ -48,7 +47,7 @@ public:
   
   void setLabel(int value, const std::string& label) { operator[](value) = label; }
   const std::string& label(int value) const { return operator[](value); }
-  
+
 private:
   int _value;
 };

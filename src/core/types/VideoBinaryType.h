@@ -38,8 +38,7 @@ public:
 
   virtual ~VideoBinaryType() {}
 
-  virtual std::string typeName() const {} { return "VideoBinaryType";}
-  QColor color() const { return QColor(255,255,255);}
+  TYPE_BASE_METHODS(VideoBinaryType, (127, 127, 127));
 };
 
 const bool VideoBinaryType::WHITE = false;

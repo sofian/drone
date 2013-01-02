@@ -40,6 +40,8 @@ public:
 
   virtual ~ArrayType() {}
 
+  TYPE_BASE_METHODS(ArrayType<T>)
+
   /**
    * Resizes the array to given new size.
    *

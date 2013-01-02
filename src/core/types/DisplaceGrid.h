@@ -40,8 +40,7 @@ public:
 
   virtual ~DisplaceGrid() {}
   
-  virtual std::string typeName() const { return "DisplaceGrid";}
-  QColor color() const { return QColor(240,255,14);}
+  TYPE_BASE_METHODS(DisplaceGrid, (240, 255, 14))
 };
 
 #endif //VIDEOTYPE_INCLUDED

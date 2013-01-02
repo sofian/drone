@@ -65,6 +65,7 @@ private:
   PlugIn<TextureType> *_VIDEO_IN;
   DroneQGLWidget *_droneQGLWidget;
   DroneGLWindow *_window;
+  TextureType _textureCopy;
 };
 
 #endif
