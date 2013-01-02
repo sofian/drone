@@ -30,16 +30,15 @@ public:
   StringType(std::string defaultValue="")
 	: AbstractType(),
 	_value(defaultValue)
-{}
+  {}
   
   virtual ~StringType() {}
   
-  virtual std::string typeName() const { return TYPENAME; }
-  virtual QColor color() const { return QColor(123, 173, 241); }
-  
+  TYPE_BASE_METHODS(StringType, (123, 173, 241))
+
   void setValue(std::string value) { _value = value; }
-	std::string value() const { return _value; }
-  
+  std::string value() const { return _value; }
+
 private:
 	std::string _value;
 };

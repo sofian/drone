@@ -47,7 +47,7 @@ struct Area
  * areas are represented as rectangles (sub-windows).
  *
  * @see Area
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sï¿½bastien Senï¿½cal
  * @version %I% %G%
  */
 class AreaArrayType : public ArrayType<Area>
@@ -66,8 +66,7 @@ public:
   //! Destructor.
   virtual ~AreaArrayType() {}
 
-  virtual std::string typeName() const { return "AreaArrayType"; }  
-  QColor color() const { return QColor(221,111,33); }
+  TYPE_BASE_METHODS(AreaArrayType, (221, 111, 33))
 };
 
 

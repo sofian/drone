@@ -144,18 +144,9 @@ void Gear_VideoOutput::runVideo()
   if (!_VIDEO_IN->connected() || _videoOutput==NULL)
     return;
 
-  if (_videoOutput==NULL)
-    return;
-
   _image = _VIDEO_IN->type();
   if (_image->isNull())
     return;
-
+  
   _videoOutput->render(*_image);
 }
-
-
-
-
-
-

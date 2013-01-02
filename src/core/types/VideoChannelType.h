@@ -37,8 +37,7 @@ public:
 
   virtual ~VideoChannelType() {}
 
-  virtual std::string typeName() const { return "VideoChannelType";}
-  QColor color() const { return QColor(63,63,63);}
+  TYPE_BASE_METHODS(VideoChannelType, (63, 63, 63))
 };
 
 #endif //VIDEOCHANNELTYPE_INCLUDED

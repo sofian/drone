@@ -47,8 +47,7 @@ public:
   //! Destructor.
   virtual ~AreaType() {}
 
-  virtual std::string typeName() const { return "AreaType"; }  
-  QColor color() const { return QColor(221,46,33); }
+  TYPE_BASE_METHODS(AreaType, (221,46,33))
 
   void setOrigin(int x0, int y0) { _x0 = x0; _y0 = y0; }
   void resize(size_t width, size_t height) { _width = width; _height = height; }

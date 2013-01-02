@@ -40,8 +40,7 @@ public:
     fftw_free(_fftOut);
   }
 
-  std::string name() const { return "FFTType";}
-  QColor color() const { return QColor(9,169,7);}
+  TYPE_BASE_METHODS(FFTType, (9, 169, 7))
 
   double power(int bin) const
   {
@@ -56,8 +55,6 @@ public:
 
   int spectrumSize() const {return _spectrumSize;}
   int fftSize() const {return _fftSize;}
-  
-  
   
 private:
   fftw_complex *_fftOut;

@@ -43,6 +43,8 @@ public:
     Array2D<T>::fill(fillValue);
   }
 
+  TYPE_BASE_METHODS(Array2DType<T>)
+
   virtual void resize(size_type size)
   {
     Array2D<T>::resize(size);

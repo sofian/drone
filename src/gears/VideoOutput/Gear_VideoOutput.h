@@ -63,8 +63,7 @@ private:
   VideoOutput *_videoOutput;
   std::vector<std::string> _allOutputs;
 
-  const VideoRGBAType *_image; 
-
+  const VideoRGBAType *_image;
 };
 
 #endif

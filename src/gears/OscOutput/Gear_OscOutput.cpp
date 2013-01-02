@@ -61,11 +61,10 @@ void Gear_OscOutput::runVideo()
   		
   lo_address t = lo_address_new(_IP->type()->value().c_str(), _PORT->type()->value().c_str());
   lo_message msg = lo_message_new();
-  OscMessageType* oscMessage = _OSC_IN->type();
-  ListType args = oscMessage->args();
+  const OscMessageType* oscMessage = _OSC_IN->type();
+  const ListType args = oscMessage->args();
 
-
-  for(ListType::iterator it=args.begin();it!=args.end();++it)
+  for(ListType::const_iterator it=args.begin();it!=args.end();++it)
   {
     if ((*it)->typeName() == StringType::TYPENAME)
     	lo_message_add_string(msg, ((StringType*)(*it))->value().c_str());

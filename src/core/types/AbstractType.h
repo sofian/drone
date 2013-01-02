@@ -25,16 +25,36 @@
 #include <string>
 #include <vector>
 
+// TYPE_BASE_METHODS(ClassName [, RGB) implementation
+//
+// Usage:
+// TYPE_BASE_METHODS(MyType, (red, green, blue))
+// TYPE_BASE_METHODS(MyType) // --> no color() definition, will use that of parent
+
+#define __TYPE_BASE_METHODS_1_ARGS(ClassName) \
+    virtual std::string typeName() const { return #ClassName; } \
+    virtual void copyFrom(const AbstractType& t) { (*this) = *(static_cast<const ClassName*>(&t)); } \
+    virtual AbstractType* clone() const { return new ClassName(*this); }
+
+
+#define __TYPE_BASE_METHODS_2_ARGS(ClassName, RGB) \
+  virtual QColor color() const { return QColor RGB;} \
+  __TYPE_BASE_METHODS_1_ARGS(ClassName)
+
+#define __TYPE_BASE_GET_MACRO(arg1, arg2, arg3, ...) arg3
+#define __TYPE_BASE_METHODS_CHOOSER(...) \
+  __TYPE_BASE_GET_MACRO(__VA_ARGS__, __TYPE_BASE_METHODS_2_ARGS, __TYPE_BASE_METHODS_1_ARGS)
+
+#define TYPE_BASE_METHODS(...) __TYPE_BASE_METHODS_CHOOSER(__VA_ARGS__)(__VA_ARGS__)
+
 class AbstractType
 {
 public:
   AbstractType(){}
   
-		
-	
   virtual ~AbstractType() {}
 
-  virtual QColor color() const { return QColor(0,0,0);}
+  TYPE_BASE_METHODS(AbstractType, (0, 0, 0))
 
   int nSubTypes() const { return _subTypes.size();}
   const AbstractType* getSubType(int i) const { return _subTypes[i]; }
@@ -44,12 +64,12 @@ public:
     return &subType;
   }
 	
-  virtual std::string typeName() const {return "AbstractType";}
   bool typeOf(AbstractType &other) const
   {
-      return other.typeName() == typeName();
+    return other.typeName() == typeName();
   }
-  
+
+
 protected:
   std::vector<const AbstractType*> _subTypes;
 	

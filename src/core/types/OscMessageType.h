@@ -38,14 +38,14 @@ public:
   {
   }
   
-  virtual std::string typeName() const { return "OscMessageType"; }
-  virtual QColor color() const { return QColor(149, 153, 162); }
-	
+
+  TYPE_BASE_METHODS(OscMessageType, (149, 153, 162))
+
 	void setPath(const StringType &path) {_path = path;}
 	void setArgs(const ListType &args) {_argList = args;}
 	
-	StringType path(){return _path;}
-	ListType args(){return _argList;}
+	StringType path() const {return _path;}
+	ListType args() const {return _argList;}
 	
 private:
   StringType _path;
