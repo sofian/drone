@@ -23,7 +23,7 @@
 #ifndef VIDEOOUTPUTOSX_INCLUDED
 #define VIDEOOUTPUTOSX_INCLUDED
 
-class Canvas;
+class scene;
 
 #include "VideoOutput.h"
 

@@ -54,7 +54,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <cstdlib>
 //#include <plearn/io/PStream.h>
 // #include "TMat.h"
 #include "error.h"

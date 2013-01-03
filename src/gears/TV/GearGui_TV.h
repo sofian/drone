@@ -20,7 +20,7 @@
 #ifndef GEARGUI_TV_INCLUDED
 #define GEARGUI_TV_INCLUDED
 
-#include <q3canvas.h>
+#include <QGraphicsScene.h>
 #include <vector>
 #include <qimage.h>
 
@@ -33,13 +33,13 @@ class GearGui_TV : public GearGui
 {
 public:
 
-  GearGui_TV(Gear_TV *gear, Q3Canvas *canvas);
+  GearGui_TV(Gear_TV *gear, QGraphicsScene *scene);
 
 
 protected:
   QImage _videoFrame;    
 
-  void drawShape(QPainter &painter);
+  void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 
 

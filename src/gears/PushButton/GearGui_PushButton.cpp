@@ -33,19 +33,20 @@ const QColor GearGui_PushButton::PUSHBUTTON_COLOR(249, 169, 7);
 const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
 const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
-GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, Q3Canvas *canvas) : 
-GearGui(gear, canvas, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
+GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, QGraphicsScene *scene) : 
+GearGui(gear, scene, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
 {        
 }
 
-void GearGui_PushButton::drawShape(QPainter &painter)
-{    
+void GearGui_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(widget);
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << ((Gear_PushButton*)_gear)->getValue();
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::paint(painter,option,widget);    
 
   int PushButtonStartX, PushButtonStartY, sizeX, sizeY;
   getDrawableArea(&PushButtonStartX, &PushButtonStartY, &sizeX , &sizeY);
@@ -70,14 +71,14 @@ void GearGui_PushButton::drawShape(QPainter &painter)
 
 
   //box                      
-  painter.setPen(border1);
-  painter.setBrush(box);
-  painter.drawRect(PushButtonStartX, PushButtonStartY, sizeX, sizeY);
+  painter->setPen(border1);
+  painter->setBrush(box);
+  painter->drawRect(PushButtonStartX, PushButtonStartY, sizeX, sizeY);
 
   //3d
-  painter.setPen(border2);
-  painter.drawRect(PushButtonStartX, PushButtonStartY + sizeY - 1, sizeX, 1);
-  painter.drawRect(PushButtonStartX + sizeX - 1, PushButtonStartY, 1, sizeY);
+  painter->setPen(border2);
+  painter->drawRect(PushButtonStartX, PushButtonStartY + sizeY - 1, sizeX, 1);
+  painter->drawRect(PushButtonStartX + sizeX - 1, PushButtonStartY, 1, sizeY);
 
 }
 
@@ -109,7 +110,7 @@ if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
     }
   }
   update();
-  canvas()->update();
+  scene()->update();   
   return ret;
 }
 

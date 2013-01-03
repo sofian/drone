@@ -21,23 +21,24 @@
 #define CONNECTIONITEM_INCLUDED
 
 
-#include <q3canvas.h>
+#include <QGraphicsLineItem>
 class PlugBox;
 class Engine;
 
 class QDomDocument;
 class QDomElement;
 
-class ConnectionItem : public Q3CanvasLine
+class ConnectionItem : public QGraphicsLineItem
 {
 public:
+  enum { Type = UserType + 2 };
   static const int CANVAS_RTTI_CONNECTION;
   enum eState
   {
     DISCONNECTED, CONNECTING, CONNECTED
   };
 
-  ConnectionItem(Q3Canvas *canvas);
+  ConnectionItem();
   virtual ~ConnectionItem();
 
   int rtti () const {return CANVAS_RTTI_CONNECTION;};
@@ -45,7 +46,7 @@ public:
   void setSourcePlugBox(PlugBox *plugBox);
   void setDestPlugBox(PlugBox *plugBox);
 
-  void setConnectionLineEndPoint(QPoint const &p);
+  void setConnectionLineEndPoint(QPointF const &p);
 
   PlugBox* sourcePlugBox();
   PlugBox* destPlugBox();
@@ -56,18 +57,20 @@ public:
 
   void hiLight(bool hi);
 
+  int type() const{return Type;}
+
 protected:
 
 //    void updateAreaPoints();
-  void drawShape(QPainter &painter);
+  void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-  void getOrigin(int *x, int *y);
-  void getDest(int *x, int *y);
+  QPointF getOrigin();
+  QPointF getDest();
 
   eState _state;
 
   bool _hiLighted;
-  int _destPointX,_destPointY;
+  QPointF _destPoint;
 
   PlugBox* _sourcePlugBox;
   PlugBox* _destPlugBox;

@@ -23,7 +23,7 @@
 #include <qpainter.h>
 #include <string>
 #include <vector>
-
+#include <QGraphicsEllipseItem>
 #include "AbstractPlug.h"
 
 class GearGui;
@@ -37,15 +37,18 @@ public:
     NORMAL, HILIGHTED
   };
 
-  static const int PLUGBOX_SIZE;
+  static const int PLUGBOX_RADIUS;
 
   PlugBox(AbstractPlug *plug, GearGui *gearItem);
   virtual ~PlugBox();
 
   QColor color();
-  void draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected);
-  bool hitted(int x, int y);
+  void draw(QPainter *painter);
+  void drawSelected(QPainter *painter);
+  void setPos(QPointF pos){_pos=pos;}
+  bool hit(QPointF pos);
   void hilight(bool hiLight);
+  static qreal plugNameWidth(std::string name);
 
   bool connect(PlugBox *plugBox);  
   bool canConnectWith(PlugBox *plugBox);    
@@ -54,14 +57,11 @@ public:
 
   AbstractPlug *plug(){return _plug;};
 
-  std::string test(){return "test";};
 
-
-  int connectionHandleX();
-  int connectionHandleY();
-
-  int x(){return _x;};
-  int y(){return _y;};
+  QPointF connectionHandlePos();
+ 
+  QPointF  pos(){return _pos;};
+  QPointF  scenePos();
 
   //stubs
   eInOut inOut(){return _plug->inOut();}
@@ -74,7 +74,7 @@ private:
 
   AbstractPlug *_plug;   
   GearGui *_gearGui;  
-  int _x, _y;    
+  QPointF _pos;    
   eStatus _status;
   int _hilightScaling;
   QColor _extrudedRoundBoxColor;

@@ -28,10 +28,10 @@ MetaGear::~MetaGear()
   //_schema->removeSchemaEventListener(this);
 }
 
-GearGui* MetaGear::createGearGui(Q3Canvas *canvas)
+GearGui* MetaGear::createGearGui(QGraphicsScene *scene)
 {
   //we just want to specify a specific color metagears
-  return new GearGui(this, canvas, METAGEAR_COLOR);
+  return new GearGui(this, scene, METAGEAR_COLOR);
 }
 
 void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
@@ -99,7 +99,7 @@ void MetaGear::createPlugs()
     }
   }
 
-  getGearGui()->refresh();
+  getGearGui()->rebuildLayout();
 
 }
 

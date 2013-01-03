@@ -38,7 +38,7 @@
 class GearGui;
 class QDomDocument;
 class QDomElement;
-class Q3Canvas;
+class QGraphicsScene;
 class Schema;
 
 struct GearInfo
@@ -101,7 +101,7 @@ public:
   Properties& settings(){return _settings;};
 
   bool ready(){return _ready;}
-void evaluateReady();
+  void evaluateReady();
   void unSynch();
   
   //todo make bool
@@ -133,7 +133,7 @@ protected:
   virtual void internalPostPlay(){}    
   
   //! overload to create your own GearGui
-  virtual GearGui* createGearGui(Q3Canvas *canvas);
+  virtual GearGui* createGearGui(QGraphicsScene *scene);
   
   virtual void onUpdateSettings(){};
   virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug

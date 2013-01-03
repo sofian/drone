@@ -69,7 +69,7 @@ Gear_AudioPushButton::~Gear_AudioPushButton()
 void Gear_AudioPushButton::onUpdateSettings()
 {
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 }
 
 void Gear_AudioPushButton::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
@@ -119,7 +119,7 @@ void Gear_AudioPushButton::runAudio()
     setState(OFF);
 }
 
-GearGui *Gear_AudioPushButton::createGearGui(QCanvas *canvas)
+GearGui *Gear_AudioPushButton::createGearGui(QGraphicsScene *scene)
 {                
-  return new GearGui_AudioPushButton(this, canvas);
+  return new GearGui_AudioPushButton(this, scene);
 }

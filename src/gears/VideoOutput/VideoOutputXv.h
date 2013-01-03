@@ -29,7 +29,7 @@ extern "C"{
 #include <X11/extensions/Xvlib.h>
 }
 
-class Canvas;
+class scene;
 
 class VideoOutputXv : public VideoOutputX11Base
 {

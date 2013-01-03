@@ -67,8 +67,8 @@ void Gear_ColorQuantizer::runVideo()
 {
   // init
 
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
+  _image = _VIDEO_IN->scene();
+  _outImage = _VIDEO_OUT->scene();
   _outImage->allocate(_image->width(), _image->height());
   int size = _image->width() * _image->height();
   if (_mapping)

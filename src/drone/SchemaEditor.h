@@ -41,7 +41,7 @@ react properly
 #include <QKeyEvent>
 #include <string>
 #include <vector>
-
+#include <QGraphicsView>
 #include "SchemaGui.h"
 
 class GearGui;
@@ -55,16 +55,11 @@ class PanelScrollView;
 /**
  * SchemaEditor maintain synchronization between Schema and SchemaGui
  */ 
-class SchemaEditor : public Q3CanvasView
+class SchemaEditor : public QGraphicsView
 {
   Q_OBJECT
 
 public:
-
-  enum eStatus
-  {
-    IDLE, MOVING_GEAR, CONNECTING, DRAGGING_SELECT_BOX
-  };
 
   SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
   ~SchemaEditor();
@@ -114,13 +109,18 @@ protected:
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
   void dropEvent(QDropEvent* event);
   void dragEnterEvent(QDragEnterEvent* event);
+  void dragMoveEvent ( QDragMoveEvent * event );
+  
+  void drawBackground ( QPainter * painter, const QRectF & rect );
 
+  void setupMatrix();
+  
   void deleteSelectedGears();
   void unselectAllGears();
   void selectAllGears();
   void selectOneGear(GearGui* gear);
   void selectGearsInRectangle(QRect rect);
-  QRect getBoundingBoxOfAllSelectedGears();
+  QRectF getBoundingBoxOfAllSelectedGears();
   // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
   Gear* getTopLeftSelectedGear();
   void moveSelectedGearsBy(int x, int y);
@@ -140,14 +140,11 @@ private:
 
   Engine *_engine;
   SchemaGui *_schemaGui;
-  eStatus _state;
   GearGui *_movingGear;
-  QPoint _movingGearStartPos;
-  QPoint _selectBoxStartPos;
-  double _zoom;
+  QPointF _movingGearStartPos;
+  QPointF _selectBoxStartPos;
+  double _scale;
 
-  ConnectionItem* _activeConnection;
-  
   //popupmenus  
   Q3PopupMenu *_contextMenu; 
   GearListMenu *_gearListMenu; 
@@ -164,7 +161,7 @@ private:
   PanelScrollView *_panelScrollView;
 
 
-  Q3CanvasRectangle *_selectBox;
+  QGraphicsRectItem *_selectBox;
 };
 
 #endif

@@ -32,19 +32,20 @@ const int GearGui_TouchPad::TOUCHPAD_LINE_OFFSETY = TOUCHPAD_SIZEY / 2;
 const QColor GearGui_TouchPad::TOUCHPAD_COLOR(249, 169, 7);
 const QColor GearGui_TouchPad::TOUCHPAD_BOX_COLOR(105, 122, 125);
 
-GearGui_TouchPad::GearGui_TouchPad(Gear_TouchPad *gear, Q3Canvas *canvas) : 
-  GearGui(gear, canvas, GearGui::BOXNAME_COLOR, TOUCHPAD_SIZEX, TOUCHPAD_SIZEY)    
+GearGui_TouchPad::GearGui_TouchPad(Gear_TouchPad *gear, QGraphicsScene *scene) : 
+  GearGui(gear, scene, GearGui::BOXNAME_COLOR, TOUCHPAD_SIZEX, TOUCHPAD_SIZEY)    
 {
 }
 
-void GearGui_TouchPad::drawShape(QPainter &painter)
-{    
+void GearGui_TouchPad::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(widget); 
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << "(" << ((Gear_TouchPad*)_gear)->getHorizontalValue() << "," << ((Gear_TouchPad*)_gear)->getVerticalValue() << ")";
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::paint(painter,option,widget);    
 
   int sliderStartX, sliderStartY, sizeX, sizeY;
   getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
@@ -70,24 +71,24 @@ void GearGui_TouchPad::drawShape(QPainter &painter)
   int ySliderPos = (int) ((float)(yScreenRatio * (float)sizeY));
   
   //box                      
-  painter.setPen(Qt::black);
-  painter.setBrush(TOUCHPAD_BOX_COLOR);
-  painter.drawRect(sliderStartX, sliderStartY, sizeX, sizeY);
-  //  painter.drawRect(sliderStartX, sliderStartY + TOUCHPAD_LINE_OFFSETY, sizeX, 1);
+  painter->setPen(Qt::black);
+  painter->setBrush(TOUCHPAD_BOX_COLOR);
+  painter->drawRect(sliderStartX, sliderStartY, sizeX, sizeY);
+  //  painter->drawRect(sliderStartX, sliderStartY + TOUCHPAD_LINE_OFFSETY, sizeX, 1);
 
   //3d
-  painter.setPen(Qt::white);
-  painter.drawRect(sliderStartX, sliderStartY + sizeY - 1, sizeX, 1);
-  painter.drawRect(sliderStartX + sizeX - 1, sliderStartY, 1, sizeY);
+  painter->setPen(Qt::white);
+  painter->drawRect(sliderStartX, sliderStartY + sizeY - 1, sizeX, 1);
+  painter->drawRect(sliderStartX + sizeX - 1, sliderStartY, 1, sizeY);
 
   //slider
-  painter.setPen(Qt::black);
-  //  painter.setBrush(TOUCHPAD_COLOR);
-  painter.drawLine(sliderStartX + xSliderPos - TOUCHPAD_THICKNESS, sliderStartY + ySliderPos,
+  painter->setPen(Qt::black);
+  //  painter->setBrush(TOUCHPAD_COLOR);
+  painter->drawLine(sliderStartX + xSliderPos - TOUCHPAD_THICKNESS, sliderStartY + ySliderPos,
                    sliderStartX + xSliderPos + TOUCHPAD_THICKNESS, sliderStartY + ySliderPos);
-  painter.drawLine(sliderStartX + xSliderPos, sliderStartY + ySliderPos - TOUCHPAD_THICKNESS,
+  painter->drawLine(sliderStartX + xSliderPos, sliderStartY + ySliderPos - TOUCHPAD_THICKNESS,
                    sliderStartX + xSliderPos, sliderStartY + ySliderPos + TOUCHPAD_THICKNESS);
-  ///  painter.drawEllipse(sliderStartX + xSliderPos, sliderStartY + ySliderPos, TOUCHPAD_THICKNESS, TOUCHPAD_THICKNESS);
+  ///  painter->drawEllipse(sliderStartX + xSliderPos, sliderStartY + ySliderPos, TOUCHPAD_THICKNESS, TOUCHPAD_THICKNESS);
 
 }
 
@@ -135,7 +136,7 @@ void GearGui_TouchPad::moveTouchPad(int xSliderPos, int ySliderPos)
   ((Gear_TouchPad*)_gear)->setVerticalValue(yValue);
 
   update();
-  canvas()->update();
+  scene()->update();   
 }
 
 

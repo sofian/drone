@@ -93,7 +93,7 @@ void Gear_Slider::onUpdateSettings()
   setValue(getValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 
   //tell the control slider to update his range and value
   //getControl()->onUpdate();
@@ -170,9 +170,9 @@ void Gear_Slider::runAudio()
   }
 }
 
-GearGui *Gear_Slider::createGearGui(Q3Canvas *canvas)
+GearGui *Gear_Slider::createGearGui(QGraphicsScene *scene)
 {                
-  return new GearGui_Slider(this, canvas);
+  return new GearGui_Slider(this, scene);
 }
 
 Control* Gear_Slider::internalCreateControl(ControlPanel* parent)

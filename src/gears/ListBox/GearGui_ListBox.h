@@ -23,7 +23,7 @@
 #include "GearGui.h"
 
 
-#include <q3canvas.h>
+#include <QGraphicsScene.h>
 #include <vector>
 
 class Gear_ListBox;
@@ -38,7 +38,7 @@ public:
   static const QColor SLIDER_COLOR;
   static const QColor SLIDER_BOX_COLOR;
 
-  GearGui_ListBox(Gear_ListBox *gear, Q3Canvas *canvas);
+  GearGui_ListBox(Gear_ListBox *gear, QGraphicsScene *scene);
 
   bool mouseEvent(const QPoint& p, Qt::ButtonState button);
   void moveListBox(int sliderPos);
@@ -46,7 +46,7 @@ public:
 protected:
 
 
-  void drawShape(QPainter &painter);
+  void paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 
 };

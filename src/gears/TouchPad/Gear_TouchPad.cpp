@@ -91,7 +91,7 @@ void Gear_TouchPad::onUpdateHorizontal()
   setHorizontalValue(getHorizontalValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 
   _acceptHorizontalHint = false;
 }
@@ -110,7 +110,7 @@ void Gear_TouchPad::onUpdateVertical()
   setVerticalValue(getVerticalValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 
   _acceptVerticalHint = false;
 }
@@ -173,9 +173,9 @@ void Gear_TouchPad::runAudio()
 {
 }
 
-GearGui *Gear_TouchPad::createGearGui(Q3Canvas *canvas)
+GearGui *Gear_TouchPad::createGearGui(QGraphicsScene *scene)
 {                
-  return new GearGui_TouchPad(this, canvas);
+  return new GearGui_TouchPad(this, scene);
 }
 
 void Gear_TouchPad::save(QDomDocument &doc, QDomElement &gearElem)

@@ -25,15 +25,17 @@
 #include <iostream>
 #include <algorithm>
 #include <assert.h>
+#include <QGraphicsScene>
+#include "GearGui.h"
 
-const int PlugBox::PLUGBOX_SIZE = 10;
-const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_SIZE - 2;
-const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_SIZE / 2;
+const int PlugBox::PLUGBOX_RADIUS = 8;
+const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_RADIUS - 2;
+const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_RADIUS / 2;
 
 #if defined(Q_OS_MACX)
-const QFont PlugBox::SHORTNAME_FONT(QFont("Sans Serif", 9, QFont::Normal));
+const QFont PlugBox::SHORTNAME_FONT(QFont("Roboto", 9, QFont::Normal));
 #else
-const QFont PlugBox::SHORTNAME_FONT(QFont("Sans Serif", 9, QFont::Normal));
+const QFont PlugBox::SHORTNAME_FONT(QFont("Roboto", 9, QFont::Normal));
 #endif
 
 const int PlugBox::PLUGBOX_EXTRUDE = 4;
@@ -41,14 +43,12 @@ const int PlugBox::MAX_HILIGHTSCALING = 1;
 const int PlugBox::PLUG_NAME_NB_CHARS = 6;
 const int PlugBox::ROUNDING_FACTOR=150;
 
-
 const QColor PlugBox::EXPOSED_COLOR(196,8,8);
 
 PlugBox::PlugBox(AbstractPlug *plug, GearGui* gearGui) : 
 _plug(plug), 
 _gearGui(gearGui),     
-_x(0), 
-_y(0), 
+_pos(QPointF()), 
 _status(NORMAL), 
 _hilightScaling(0)
 {
@@ -59,68 +59,91 @@ PlugBox::~PlugBox()
   disconnectAll();
 }
 
+qreal PlugBox::plugNameWidth(std::string name)
+{
+  QFontMetrics fm(SHORTNAME_FONT);
+  qreal val= fm.width(name.c_str()) + PLUGBOX_RADIUS + 3;
+  return val;
+}
+
+// returns the color associated with this plug's type 
 QColor PlugBox::color()
 {
   return _plug->abstractType()->color();
 }
 
-void PlugBox::draw(int x, int y, int gearSizeX, QPainter &painter, bool parentGearselected)
+// Draws a bigger yellow colored circle to make the selection emboss on plugs
+void PlugBox::drawSelected(QPainter *painter)
 {    
-  int halfGearSizeX = gearSizeX / 2;    
-  _x = x;
-  _y = y;
+  painter->setBrush(GearGui::SELECT_OUTLINE_TOP);
+  if (_plug->inOut() == IN)    
+    painter->drawPie(_pos.x() - 5, _pos.y() - 6, 20, 20, 1440, 2880);
+    painter->drawPie(_pos.x() - 7, _pos.y() - 6, 20, 20, 1440, -2880);
+}   
 
-  painter.setPen(Qt::NoPen);
-
+// Draws the actual plug with corresponding label
+void PlugBox::draw(QPainter *painter)
+{ 
+  int halfGearSizeX = _gearGui->sizeX() / 2;    
+  painter->setPen(QPen(Qt::black,1));
+  QColor cay=_gearGui->colorAtY(_pos.y());
   //set color of the round box according to exposition
   if (_plug->exposed())
     _extrudedRoundBoxColor = EXPOSED_COLOR;
   else
-    if (parentGearselected)
-      _extrudedRoundBoxColor = GearGui::SELECTED_BOX_COLOR;
-    else
-      _extrudedRoundBoxColor = GearGui::BOX_COLOR;
     
+      _extrudedRoundBoxColor = cay;
+//    
   //the round box around the plug
   if (_plug->inOut() == IN)    
   {
-    painter.setBrush(_extrudedRoundBoxColor);
-    painter.drawPie(_x - 4, _y - 1, 12, 12, 1440, 2880);
+    painter->setBrush(_extrudedRoundBoxColor);
+    painter->drawPie(_pos.x() - 3, _pos.y() - 4, 16, 16, 1960, 1840);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(cay);
+    painter->drawRect(QRectF(_pos.x()+0.5, _pos.y()-4, 2.5, 15.5));
+    
   }
   else
   {
-    painter.setBrush(GearGui::SHADOW_COLOR); 
-    painter.drawPie(_x + 2 + GearGui::SHADOW_OFFSET, _y - 1 + GearGui::SHADOW_OFFSET, 12, 12, 1440, -2880);
-    
-    painter.setBrush(_extrudedRoundBoxColor);
-    painter.drawPie(_x + 2, _y - 1, 12, 12, 1440, -2880);
+    painter->setBrush(_extrudedRoundBoxColor);
+    painter->drawPie(_pos.x() - 5, _pos.y() - 4, 16, 16, 920, -1840);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(cay);
+    painter->drawRect(QRectF(_pos.x()+5, _pos.y()-4, 2.5, 15.5));
   }
    
       
-  painter.setPen(Qt::black);
-  painter.setBrush(color());
+  painter->setPen(Qt::black);
+  painter->setBrush(color());
   
   //the plugbox
-  painter.drawEllipse(_x - _hilightScaling, _y - _hilightScaling, PLUGBOX_SIZE + _hilightScaling*2, PLUGBOX_SIZE + _hilightScaling*2);
+  painter->drawEllipse(_pos.x() - _hilightScaling, _pos.y() - _hilightScaling, PLUGBOX_RADIUS + _hilightScaling*2, PLUGBOX_RADIUS + _hilightScaling*2);
   
-  painter.setFont(SHORTNAME_FONT);  
+  painter->setFont(SHORTNAME_FONT);  
   
   if (_status==HILIGHTED)
-    painter.setPen(Qt::blue);
+    painter->setPen(Qt::blue);
   else
-    painter.setPen(Qt::black);
+    painter->setPen(Qt::white);
 
-  //align text left or right if In or Out
-  if (_plug->inOut() == IN)
-    painter.drawText(_x + PLUGBOX_SIZE + 3, _y - 5, halfGearSizeX, PLUGBOX_SIZE + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
-  else
-    painter.drawText(_x - halfGearSizeX, _y - 5, halfGearSizeX - 3, PLUGBOX_SIZE + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+  // if gear's layoutmode is normal, then display plugnames
+  if (_gearGui->getLayoutMode() == GearGui::normal)
+  {
 
+    //align text left or right if In or Out
+    if (_plug->inOut() == IN)
+      painter->drawText(_pos.x() + PLUGBOX_RADIUS + 3, _pos.y() - 4, halfGearSizeX, PLUGBOX_RADIUS + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+    else
+      painter->drawText(_pos.x() - halfGearSizeX, _pos.y() - 4, halfGearSizeX - 3, PLUGBOX_RADIUS + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+  }
 }
 
-bool PlugBox::hitted(int x, int y)
+bool PlugBox::hit(QPointF pos)
 {
-  return((x > _x) && (x < _x+PLUGBOX_SIZE) && (y > _y) && (y < _y+PLUGBOX_SIZE));
+  std::cerr<<pos.x()<<":"<<pos.y()<<"/"<<_pos.x()<<":"<<_pos.y()<<std::endl;
+
+  return((pos.x() > _pos.x()) && (pos.x() < _pos.x()+PLUGBOX_RADIUS) && (pos.y() > _pos.y()) && (pos.y() < _pos.y()+PLUGBOX_RADIUS));
 }
 
 void PlugBox::hilight(bool hiLight)
@@ -174,10 +197,11 @@ bool PlugBox::connect(PlugBox *plugBox)
     return false;
 
   //create a connection item to represent this connection in the schemaGui
-  ConnectionItem *connectionItem = new ConnectionItem(_gearGui->canvas());
+  ConnectionItem *connectionItem = new ConnectionItem();
   connectionItem->setSourcePlugBox(this);
   connectionItem->setDestPlugBox(plugBox);
   connectionItem->show();
+  _gearGui->scene()->addItem(connectionItem);
 
   //give the new connection item to both plugBox
   _connectionItems.push_back(connectionItem);
@@ -185,6 +209,11 @@ bool PlugBox::connect(PlugBox *plugBox)
 
   return true;
 }
+
+QPointF PlugBox::scenePos()
+{
+  return _gearGui->mapToScene(_pos);
+};
 
 void PlugBox::disconnect(PlugBox *plugBox)
 {  
@@ -229,20 +258,14 @@ void PlugBox::disconnectAll()
   }
 }
 
-int PlugBox::connectionHandleX()
+QPointF PlugBox::connectionHandlePos()
 {
+  QPointF pos(scenePos());
   if (_plug->inOut() == IN)
   {
-    return x() + 2;
+    return QPointF(pos.x() + 2, pos.y() + CONNECTION_HANDLE_OFFSETY);
   } else
   {
-    return x() + CONNECTION_HANDLE_OFFSETX;
+    return QPointF(pos.x() + CONNECTION_HANDLE_OFFSETX, pos.y() + CONNECTION_HANDLE_OFFSETY);
   }
 }
-
-int PlugBox::connectionHandleY()
-{
-  return y() + CONNECTION_HANDLE_OFFSETY;
-}
-
-

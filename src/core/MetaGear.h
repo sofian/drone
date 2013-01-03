@@ -38,7 +38,7 @@ protected:
   void internalSave(QDomDocument &doc, QDomElement &parent);
   void internalLoad(QDomElement &parent);
   
-  GearGui* createGearGui(Q3Canvas *canvas);
+  GearGui* createGearGui(QGraphicsScene *scene);
   	
   Schema *_schema;
   

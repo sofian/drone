@@ -29,8 +29,7 @@
 
 extern "C" {
 
-#include <libv4l1-videodev.h>
-//#include <linux/videodev.h>
+#include <linux/videodev.h>
 #define HAVE_STDINT_H
 //#include <liblavrec.h>
 #undef HAVE_STDINT_H
@@ -80,7 +79,7 @@ private:
   struct video_window _vidWin;
   struct video_picture _vidPic;
   struct video_clip _vidClips[32];
-  //struct video_capture _vidCapture;
+  struct video_capture _vidCapture;  
   struct video_channel _vidChannel;
 
   //mmap

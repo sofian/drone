@@ -73,7 +73,7 @@ void Gear_ListBox::onUpdateSettings()
   setValue(getValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 
   // XXX temporary hack to save labels, to be removed ultimately
   char str[1000];
@@ -144,9 +144,9 @@ void Gear_ListBox::runAudio()
 
 }
 
-GearGui *Gear_ListBox::createGearGui(Q3Canvas *canvas)
+GearGui *Gear_ListBox::createGearGui(QGraphicsScene *scene)
 {                
-  return new GearGui_ListBox(this, canvas);
+  return new GearGui_ListBox(this, scene);
 }
 
 void Gear_ListBox::internalSave(QDomDocument &doc, QDomElement &gearElem)

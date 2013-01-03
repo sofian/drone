@@ -34,16 +34,18 @@ const int GearGui_TV::TV_SIZEY = 125;
 const int GearGui_TV::UPDATE_RATE_MS = 83;
 const QColor GearGui_TV::NO_SIGNAL_COLOR(2, 128, 255);
 
-GearGui_TV::GearGui_TV(Gear_TV *gear, Q3Canvas *canvas) : 
-GearGui(gear, canvas, GearGui::BOXNAME_COLOR, TV_SIZEX, TV_SIZEY, UPDATE_RATE_MS),
+GearGui_TV::GearGui_TV(Gear_TV *gear, QGraphicsScene *scene) : 
+GearGui(gear, scene, GearGui::BOXNAME_COLOR, TV_SIZEX, TV_SIZEY, UPDATE_RATE_MS),
 _currentSizeX(0),
 _currentSizeY(0)
 {            
 }
 
-void GearGui_TV::drawShape(QPainter &painter)
+void GearGui_TV::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  GearGui::drawShape(painter);
+    Q_UNUSED(widget);
+
+  GearGui::paint(painter,option,widget);
 
   const Array2DType<RGBA> *image;
   const RGBA *data;
@@ -53,9 +55,9 @@ void GearGui_TV::drawShape(QPainter &painter)
   getDrawableArea(&x, &y, &sizeX, &sizeY);
 
   //3d
-  painter.setPen(Qt::white);
-  painter.drawRect(x, y + sizeY + 1, sizeX, 1);
-  painter.drawRect(x + sizeX + 1, y, 1, sizeY);
+  painter->setPen(Qt::white);
+  painter->drawRect(x, y + sizeY + 1, sizeX, 1);
+  painter->drawRect(x + sizeX + 1, y, 1, sizeY);
 
   if (((Gear_TV*)_gear)->VIDEO_IN()->connected())
   {
@@ -83,16 +85,16 @@ void GearGui_TV::drawShape(QPainter &painter)
       }
     
     if(_currentSizeX && _currentSizeY)
-      painter.drawImage(x, y, _videoFrame.scaled(sizeX, sizeY));
+      painter->drawImage(x, y, _videoFrame.scaled(sizeX, sizeY));
     else noImage=true;
   }
   else noImage=true;
 
   if(noImage)
   {
-    painter.setPen(Qt::black);
-    painter.setBrush(NO_SIGNAL_COLOR);
-    painter.drawRect(x, y, sizeX, sizeY);
+    painter->setPen(Qt::black);
+    painter->setBrush(NO_SIGNAL_COLOR);
+    painter->drawRect(x, y, sizeX, sizeY);
   }
 
 }

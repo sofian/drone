@@ -80,7 +80,7 @@ Gear_PushButton::~Gear_PushButton()
 void Gear_PushButton::onUpdateSettings()
 {
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  getGearGui()->rebuildLayout();
 }
 
 void Gear_PushButton::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
@@ -188,7 +188,7 @@ void Gear_PushButton::runVideo()
     setState(OFF);
 }
 
-GearGui *Gear_PushButton::createGearGui(Q3Canvas *canvas)
+GearGui *Gear_PushButton::createGearGui(QGraphicsScene *scene)
 {                
-  return new GearGui_PushButton(this, canvas);
+  return new GearGui_PushButton(this, scene);
 }

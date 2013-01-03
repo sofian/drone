@@ -1,12 +1,9 @@
-#CONFIG = qt warn_on thread debug agg
-CONFIG = qt warn_on thread debug
+CONFIG = qt warn_on thread debug agg
 
 #QT += qt3support
 
 message(Gears : Builing Makefile with the following config flags : $$CONFIG)
 
-
-macx:QMAKE_CXXFLAGS += -fpermissive  
 
 # Debug settings
 debug {

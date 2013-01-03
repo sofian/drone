@@ -32,20 +32,21 @@ const int GearGui_ListBox::SLIDER_LINE_OFFSETY = SLIDER_SIZEY / 2;
 const QColor GearGui_ListBox::SLIDER_COLOR(249, 169, 7);
 const QColor GearGui_ListBox::SLIDER_BOX_COLOR(105, 122, 125);
 
-GearGui_ListBox::GearGui_ListBox(Gear_ListBox *gear, Q3Canvas *canvas) : 
-GearGui(gear, canvas, GearGui::BOXNAME_COLOR, SLIDER_SIZEX, SLIDER_SIZEY)    
+GearGui_ListBox::GearGui_ListBox(Gear_ListBox *gear, QGraphicsScene *scene) : 
+GearGui(gear, scene, GearGui::BOXNAME_COLOR, SLIDER_SIZEX, SLIDER_SIZEY)    
 {        
 }
 
-void GearGui_ListBox::drawShape(QPainter &painter)
-{    
+void GearGui_ListBox::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(widget);    
   //make the title bar show the value
   std::ostringstream sstream;
   std::string str = ((Gear_ListBox*)_gear)->getLabel();
   sstream << str;//((Gear_ListBox*)_gear)->getLabel();
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::paint(painter,option,widget);    
 
   int sliderStartX, sliderStartY, sizeX, sizeY;
   getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
@@ -60,20 +61,20 @@ void GearGui_ListBox::drawShape(QPainter &painter)
   int sliderPos = (int) ((float)(screenRatio * (float)(sizeX-SLIDER_THICKNESS)));
 
   //box                      
-  painter.setPen(Qt::black);
-  painter.setBrush(SLIDER_BOX_COLOR);
-  painter.drawRect(sliderStartX, sliderStartY, sizeX, sizeY);
-  painter.drawRect(sliderStartX, sliderStartY + SLIDER_LINE_OFFSETY, sizeX, 1);
+  painter->setPen(Qt::black);
+  painter->setBrush(SLIDER_BOX_COLOR);
+  painter->drawRect(sliderStartX, sliderStartY, sizeX, sizeY);
+  painter->drawRect(sliderStartX, sliderStartY + SLIDER_LINE_OFFSETY, sizeX, 1);
 
   //3d
-  painter.setPen(Qt::white);
-  painter.drawRect(sliderStartX, sliderStartY + sizeY - 1, sizeX, 1);
-  painter.drawRect(sliderStartX + sizeX - 1, sliderStartY, 1, sizeY);
+  painter->setPen(Qt::white);
+  painter->drawRect(sliderStartX, sliderStartY + sizeY - 1, sizeX, 1);
+  painter->drawRect(sliderStartX + sizeX - 1, sliderStartY, 1, sizeY);
 
   //slider
-  painter.setPen(Qt::black);
-  painter.setBrush(SLIDER_COLOR);
-  painter.drawRoundRect(sliderStartX + sliderPos, sliderStartY, SLIDER_THICKNESS, sizeY, 85);
+  painter->setPen(Qt::black);
+  painter->setBrush(SLIDER_COLOR);
+  painter->drawRoundRect(sliderStartX + sliderPos, sliderStartY, SLIDER_THICKNESS, sizeY, 85);
 
 }
 
@@ -110,7 +111,7 @@ void GearGui_ListBox::moveListBox(int sliderPos)
   ((Gear_ListBox*)_gear)->setValue(value);
 
   update();
-  canvas()->update();
+  scene()->update();   
 }
 
 

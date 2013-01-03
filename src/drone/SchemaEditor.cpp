@@ -37,6 +37,7 @@
 #include <q3dragobject.h>
 #include <q3mainwindow.h>
 #include <q3filedialog.h>
+#include <iostream>
 
 #include <qcursor.h>
 #include <qlayout.h>
@@ -50,32 +51,54 @@
 #include <QMouseEvent>
 #include <Q3VBoxLayout>
 #include <QWheelEvent>
-
+#include <QVarLengthArray>
+#include <QGLWidget>
 #include <iostream>
 #include <qpainter.h>
 #include <qmatrix.h>
+#include <qmath.h>
 
 #include <qdom.h>
 
 const std::string SchemaEditor::NAME = "SchemaEditor";
-const double SchemaEditor::ZOOM_FACTOR = 0.1;
+const double SchemaEditor::ZOOM_FACTOR = 0.25;
 
 SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
-  Q3CanvasView(schemaGui, parent, NAME.c_str(),0),
+  QGraphicsView(schemaGui, parent),
   _engine(engine),
   _schemaGui(schemaGui),
-  _state(IDLE),
-  _zoom(1),
-  _activeConnection(0),
+  //_state(IDLE),
+  _scale(1),
   _contextMenuPos(0,0),
   _contextGear(NULL),
   _panelScrollView(panelScrollView),
   _selectBox(NULL)
 
 {
+
+  setDragMode(QGraphicsView::RubberBandDrag);
+  setRenderHint(QPainter::Antialiasing, true);
+
+
+
+
+  setFrameStyle(Sunken | StyledPanel);
+  setOptimizationFlags(QGraphicsView::DontSavePainterState | QGraphicsView::IndirectPainting);
+  setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+  setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+  
+  // render with OpenGL
+  if(1)
+    setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+
+  resetTransform();
+
+
+  setAcceptDrops(TRUE);
+
+  
+/*  
   viewport()->setMouseTracking(TRUE);
-  setAcceptDrops(TRUE); 
-    
   _contextMenu = new Q3PopupMenu(this);
   _gearListMenu = new GearListMenu(this);    
   _gearListMenu->create();
@@ -115,7 +138,22 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
   _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
 
+ */
 }
+
+
+void SchemaEditor::setupMatrix()
+{
+    qreal scale = qPow(qreal(2), _scale);
+
+    QMatrix matrix;
+    matrix.scale(_scale, _scale);
+    //matrix.rotate(rotateSlider->value());
+
+    setMatrix(matrix);
+    //setResetButtonEnabled();
+}
+
 
 SchemaEditor::~SchemaEditor()
 {
@@ -123,33 +161,36 @@ SchemaEditor::~SchemaEditor()
 }
 
 void SchemaEditor::keyPressEvent(QKeyEvent *e)
-{     
-  Q3CanvasItemList l=canvas()->allItems();
+{  
+  /*
+  QGraphicSceneItemList l=canvas()->allItems();
 
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (QGraphicSceneItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
       if(((GearGui*)(*it))->keyEvent(e))
         e->accept();
-  }
+  }*/
   std::cerr<<"Keypress:"<<e->ascii()<<std::endl;
 }
 
 void SchemaEditor::keyReleaseEvent(QKeyEvent *e)
-{     
-  Q3CanvasItemList l=canvas()->allItems();
+{    
+  /*
+  QGraphicSceneItemList l=canvas()->allItems();
 
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
+  for (QGraphicSceneItemList::Iterator it=l.begin(); it!=l.end(); ++it)
   {
     if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
       if(((GearGui*)(*it))->keyEvent(e))
         e->accept();
-  }
+  }*/
 }
-
+  
 
 void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 {
+  /*
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox;
@@ -169,7 +210,7 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
 		//signal
 		emit gearSelected(gearGui);
 
-    if (gearGui->titleBarHitted(p))
+    if (gearGui->titleBarHit(p))
     {
       // select only the clicked gear
       if(mouseEvent->state()&Qt::ControlModifier || mouseEvent->state()&Qt::ShiftModifier)
@@ -182,14 +223,14 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     if (mouseEvent->button() == Qt::LeftButton)
     {      
       //plug collision to start connections ?
-      if ( ((selectedPlugBox = gearGui->plugHitted(p)) != NULL))
+      if ( ((selectedPlugBox = gearGui->plugHit(p)) != NULL))
       {        
         _state=CONNECTING;
         _activeConnection = new ConnectionItem(canvas());
         _activeConnection->setSourcePlugBox(selectedPlugBox);
         _activeConnection->show();        
 
-      } else if (gearGui->titleBarHitted(p))
+      } else if (gearGui->titleBarHit(p))
       {
         // start moving it (but only if it has not been unselected, in
         // which case it is weird to move remaining gears.. (well, in my opinion JK)
@@ -209,51 +250,48 @@ void SchemaEditor::contentsMousePressEvent(QMouseEvent* mouseEvent)
     _state = DRAGGING_SELECT_BOX;
     _selectBoxStartPos = p;
   }
-
+*/
 }
 
 void SchemaEditor::contentsWheelEvent(QWheelEvent * wheelEvent)
 {
+  std::cerr<<wheelEvent->delta()<<std::endl;
   if (wheelEvent->delta() > 0)
     zoom(ZOOM_FACTOR);
   else
     zoom(-ZOOM_FACTOR);
+  
 }
 
 void SchemaEditor::zoomIn()
 {
-  zoom(ZOOM_FACTOR);
+  _scale=qMin(_scale+ZOOM_FACTOR,3.0);
+  std::cerr<<_scale<<std::endl;
+  setupMatrix();
+  update();
+  //scale(ZOOM_FACTOR,ZOOM_FACTOR);
+  
 }
 
 void SchemaEditor::zoomOut()
 {
-  zoom(-ZOOM_FACTOR);
+  std::cerr<<_scale<<std::endl;
+  
+  _scale=qMax(_scale-ZOOM_FACTOR,0.25);
+  setupMatrix();
+  update();     
+  //scale(-ZOOM_FACTOR,-ZOOM_FACTOR);
+  
 }
 
 void SchemaEditor::zoom(float factor)
 {
-  _zoom+=factor;
-  if (_zoom < 0.2f)
-    _zoom = 0.2f;
-
-  int oldcenterx = visibleWidth()/2;
-  int oldcentery = visibleHeight()/2;
-  int x, y;
-  viewportToContents(oldcenterx, oldcentery, x, y);
-  inverseWorldMatrix().map(x, y, &x, &y);
-	
-  QMatrix wm;
-  wm.scale(_zoom, _zoom);
-  setWorldMatrix(wm);
-
-  
-  //worldMatrix().map(x, y, &x, &y);
-  //setContentsPos(x-oldcenterx, y-oldcentery);
 
 }
 
 void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
 {
+  /*
   GearGui *gearGui;
   ConnectionItem *connectionItem;
   PlugBox *selectedPlugBox;
@@ -294,7 +332,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
 
     if (gearGui!=NULL)
     {
-      if ( ((selectedPlugBox = gearGui->plugHitted(p)) != 0))
+      if ( ((selectedPlugBox = gearGui->plugHit(p)) != 0))
       {      
         if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
             gearGui->performPlugHighligthing(selectedPlugBox);
@@ -310,7 +348,7 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
   case DRAGGING_SELECT_BOX:
     //delete _selectBox;
     if(!_selectBox)
-      _selectBox = new Q3CanvasRectangle(QRect(_selectBoxStartPos, p),_schemaGui);
+      _selectBox = new QGraphicSceneRectangle(QRect(_selectBoxStartPos, p),_schemaGui);
     else 
       _selectBox->setSize(p.x()-_selectBoxStartPos.x(),p.y()-_selectBoxStartPos.y());
     _selectBox->setSelected(!_selectBox->isSelected());
@@ -321,10 +359,12 @@ void SchemaEditor::contentsMouseMoveEvent(QMouseEvent *mouseEvent)
     break;
 
   }
+   */
 }
 
 void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
 {
+  /*
   QPoint p = inverseWorldMatrix().map(mouseEvent->pos());
   GearGui *gearGui = _schemaGui->testForGearCollision(p);
   PlugBox *selectedPlugBox=NULL;
@@ -345,7 +385,7 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
   
     if (gearGui!=NULL)
     {
-      if ( ((selectedPlugBox = gearGui->plugHitted(p)) != 0))             
+      if ( ((selectedPlugBox = gearGui->plugHit(p)) != 0))             
         if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
           _schemaGui->connect(_activeConnection->sourcePlugBox(), selectedPlugBox);
     }
@@ -353,7 +393,7 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
     //delete our temporary connectionItem
     delete _activeConnection;
     
-    canvas()->update();
+    scene()->update();   
     
     _state=IDLE;
     break;
@@ -365,10 +405,12 @@ void SchemaEditor::contentsMouseReleaseEvent(QMouseEvent *mouseEvent)
     break;
 
   }
+   */
 }
 
 void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
 {    
+  /*
   ConnectionItem *connectionItem;
   GearGui *gearGui;
 
@@ -400,7 +442,7 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
       ((MetaGear*)(gearGui->gear()))->createPlugs();
     }
 
-    if (gearGui!=NULL && gearGui->titleBarHitted(p))
+    if (gearGui!=NULL && gearGui->titleBarHit(p))
         selectOneGear(gearGui);
     
     break;
@@ -409,10 +451,12 @@ void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
   default:
     break;
   }
+   */
 }
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
-{    
+{   
+  /*
   QPoint p = inverseWorldMatrix().map(contextMenuEvent->pos());
   PlugBox *selectedPlugBox;
 
@@ -421,7 +465,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
   if (gearGui!=NULL)
   {
     _contextGear = gearGui;
-    if(((selectedPlugBox = gearGui->plugHitted(p)) != 0))
+    if(((selectedPlugBox = gearGui->plugHit(p)) != 0))
     {
       if(selectedPlugBox->plug()->exposed())
       {
@@ -452,9 +496,23 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
   }
 
 
-  Q3CanvasView::contextMenuEvent(contextMenuEvent);
+  QGraphicSceneView::contextMenuEvent(contextMenuEvent);
+   */
 }
 
+  void SchemaEditor::drawBackground ( QPainter * painter, const QRectF & rect )
+  {
+    painter->fillRect(rect,QColor(50,50,50));
+    QVarLengthArray<QLineF, 36> lines;
+        for (int i = 0; i <= 20; i ++) {
+            lines.append(QLineF(i*100+0.5,0,i*100+0.5,10000));
+            lines.append(QLineF(0,i*100+0.5,10000,i*100+0.5));
+        }
+    painter->setPen(QPen(QColor(70,70,70),0.5));
+    painter->drawLines(lines.data(), lines.size());
+  }
+
+  
 void SchemaEditor::slotMenuGearSelected(QString name)
 {        
   addGear(name.ascii(), _contextMenuPos.x(), _contextMenuPos.y());    
@@ -542,9 +600,13 @@ void SchemaEditor::slotSaveMetaGear()
 
 }
 
+
 void SchemaEditor::addGear(std::string name, int posX, int posY)
 {
-  _schemaGui->addGear(name, posX, posY);    
+  std::cout<<posX<<' '<<posY<<std::endl;
+  QPointF loc = mapToScene(posX,posY);
+  std::cout<<loc.x()<<' '<<loc.y()<<std::endl;
+  _schemaGui->addGear(name, loc.x(), loc.y());    
 }
 
 void SchemaEditor::addMetaGear(std::string filename, int posX, int posY)
@@ -591,9 +653,9 @@ void SchemaEditor::selectGearsInRectangle(QRect rect)
   _schemaGui->update();
 }
 
-QRect SchemaEditor::getBoundingBoxOfAllSelectedGears()
+QRectF SchemaEditor::getBoundingBoxOfAllSelectedGears()
 {
-  QRect bbox;
+  QRectF bbox;
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
   for(unsigned int i=0;i<allGears.size();++i)
     if(bbox.isValid())
@@ -623,10 +685,12 @@ void SchemaEditor::selectOneGear(GearGui* gear)
 
 void SchemaEditor::moveSelectedGearsBy(int x, int y)
 {
+  /*
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
   for(unsigned int i=0;i<allGears.size();++i)
     _schemaGui->moveGearBy( allGears[i],x,y);
   _schemaGui->update();
+   * */
 }
 
 void SchemaEditor::toggleGearSelection(GearGui* gear)
@@ -712,8 +776,8 @@ void SchemaEditor::slotGearPaste()
   _schemaGui->getSchema()->load(schemaElem, true);
   _schemaGui->rebuildSchema();
 
-  _state = MOVING_GEAR; 
-  QRect rect = getBoundingBoxOfAllSelectedGears();
+//  _state = MOVING_GEAR; 
+  QRectF rect = getBoundingBoxOfAllSelectedGears();
   _movingGearStartPos = rect.center();
   
 }
@@ -726,6 +790,11 @@ void SchemaEditor::slotGearSelectAll()
 
 
 void SchemaEditor::dragEnterEvent(QDragEnterEvent* event)
+{
+  event->accept(Q3TextDrag::canDecode(event));
+}
+
+void SchemaEditor::dragMoveEvent ( QDragMoveEvent * event ) 
 {
   event->accept(Q3TextDrag::canDecode(event));
 }

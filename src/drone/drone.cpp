@@ -37,7 +37,8 @@ int main(int argc, char** argv)
 {
   QApplication qtApp(argc, argv);
   QApplication::setGlobalMouseTracking(TRUE);
-      
+  
+//  qtApp->setStyleSheet('');
   QSplashScreen splash(splash_xpm);
   splash.show();
   DroneCore::init();
@@ -56,6 +57,8 @@ int main(int argc, char** argv)
   {
     if(argc==2)
       mainWindow.load(argv[1]);
+    else 
+      error("Usage : drone [schema.drn]");
   }
 
 

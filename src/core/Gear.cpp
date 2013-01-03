@@ -186,9 +186,9 @@ void Gear::getDependencies(std::vector<Gear*> &dependencies) const
   }
 }
 
-GearGui* Gear::createGearGui(Q3Canvas *canvas)
+GearGui* Gear::createGearGui(QGraphicsScene *scene)
 {
-  return new GearGui(this, canvas);    
+  return new GearGui(this, scene);    
 }
 
 

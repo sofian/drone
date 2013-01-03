@@ -21,69 +21,88 @@
 #include "PlugBox.h"
 #include "Plug.h"
 #include "Gear.h"
+#include <QGraphicsScene>
 #include <qpainter.h>
 #include <qdom.h>
 #include <iostream>
+#include <QStyleOptionGraphicsItem>
 
 const int ConnectionItem::CANVAS_RTTI_CONNECTION = 2001;//space odissey
 
 
-ConnectionItem::ConnectionItem(Q3Canvas *canvas) : 
-  Q3CanvasLine(canvas), 
+ConnectionItem::ConnectionItem() : 
+  QGraphicsLineItem(), 
   _state(DISCONNECTED),
   _hiLighted(false),
-  _destPointX(0),
-  _destPointY(0),
+  _destPoint(QPointF()),
   _sourcePlugBox(NULL),
   _destPlugBox(NULL)
 
 {
-  setZ(255);    
+  setZValue(255);    
+  QVector<qreal> vec;
+  vec<<1<<1;
   _pen = new QPen(Qt::black, 2, Qt::SolidLine);
-  setPen(*_pen);        
-  setPoints(0,0,1,1);
+  
+  
+   QVector<qreal> dashes;
+ qreal space = 4;
+ dashes << 1 << space << 3 << space << 9 << space
+            << 27 << space << 9 << space;
+ _pen->setDashPattern(dashes);
+ setPen(*_pen);        
+  setLine(0,0,1,1);
+  setFlags(ItemIsSelectable);
 }
 
 ConnectionItem::~ConnectionItem()
-{        
+{
+  delete _pen;
 }
 
-void ConnectionItem::drawShape(QPainter &painter)
+void ConnectionItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  
-  int sourceX, sourceY, destX, destY;
+  Q_UNUSED(widget);
 
-  getOrigin(&sourceX, &sourceY);
-  getDest(&destX, &destY);
+  QPointF source, dest;
 
-  setPoints(sourceX, sourceY, destX, destY);
+  source = getOrigin();
+  dest = getDest();
+
+  setLine(QLineF(source, dest));
   //std::cout << sourceX << ":" << sourceY << ":" << destX << ":" << destY << std::endl;
+  //_pen->setBrush(QBrush(Qt::Dense2Pattern)); 
+  _pen->setStyle(isSelected() ? Qt::DotLine : Qt::SolidLine);
+  _pen->setWidth(isSelected() ? 4 : 3);
+  setPen(*_pen);
+
+//  std::cerr << (isSelected() ? std::string("sel"):std::string("notsel"))<<std::endl;
+
+  // use this hack to hide default line selection rectangle
+  QStyleOptionGraphicsItem *_o = const_cast<QStyleOptionGraphicsItem*>(option);
+  _o->state &= ~QStyle::State_Selected;
   
-  Q3CanvasLine::drawShape(painter);
+  QGraphicsLineItem::paint(painter,option,widget);
   
 }
 
-void ConnectionItem::getOrigin(int *x, int *y)
+QPointF ConnectionItem::getOrigin()
 {  
-  *x = _sourcePlugBox->connectionHandleX();
-  *y = _sourcePlugBox->connectionHandleY();
-
+  return _sourcePlugBox->connectionHandlePos();
 }
 
-void ConnectionItem::getDest(int *x, int *y)
+QPointF ConnectionItem::getDest()
 {
+  QPointF dest;
   if (_state == CONNECTING)
   {
-    *x = _destPointX;
-    *y = _destPointY;
+    return _destPoint;
   } else if (_state == CONNECTED)
   {
-    *x = _destPlugBox->connectionHandleX(); 
-    *y = _destPlugBox->connectionHandleY();
+    return _destPlugBox->connectionHandlePos(); 
   } else
   {
-    *x=0;
-    *y=0;
+    return QPointF();
   }
 }
 
@@ -106,14 +125,11 @@ void ConnectionItem::setSourcePlugBox(PlugBox *plugBox)
 {
   _state = CONNECTING;
   _sourcePlugBox = plugBox;
-  _destPointX = plugBox->x();
-  _destPointY = plugBox->y();    
+  _destPoint = plugBox->scenePos();
   _pen->setColor(_sourcePlugBox->color());
   setPen(*_pen);
 
-  int sourceX, sourceY;
-  getOrigin(&sourceX, &sourceY);
-  setPoints(sourceX, sourceY, _destPointX, _destPointY);
+  setLine(QLineF(getOrigin(),plugBox->scenePos()));
 }
 
 void ConnectionItem::setDestPlugBox(PlugBox *plugBox)
@@ -128,17 +144,12 @@ void ConnectionItem::setDestPlugBox(PlugBox *plugBox)
   _state = CONNECTED;
 }
 
-void ConnectionItem::setConnectionLineEndPoint(QPoint const &p)
+void ConnectionItem::setConnectionLineEndPoint(QPointF const &p)
 {
-  _destPointX = p.x();
-  _destPointY = p.y();
-  
-  int sourceX, sourceY;
-  getOrigin(&sourceX, &sourceY);
-  setPoints(sourceX, sourceY, _destPointX, _destPointY);
+  _destPoint = p;
+  setLine(QLineF(getOrigin(), _destPoint));
 
   update();
-  canvas()->update();     
 }
 
 void ConnectionItem::hiLight(bool hi)
@@ -149,18 +160,17 @@ void ConnectionItem::hiLight(bool hi)
 
   _hiLighted=hi;
 
-  if (hi)
-  {
-    _pen->setColor(Qt::white);
-    setPen(*_pen);
-  } else
-  {
-    _pen->setColor(_sourcePlugBox->color());
-    setPen(*_pen);
-  }
+//  if (hi)
+//  {
+//    _pen->setColor(Qt::white);
+//    setPen(*_pen);
+//  } else
+//  {
+//    _pen->setColor(_sourcePlugBox->color());
+//    setPen(*_pen);
+//  }
 
   update();
-  canvas()->update();
 }
 
 /* void ConnectionItem::createConnectionLineOnly(PlugBox *source, PlugBox *dest) */

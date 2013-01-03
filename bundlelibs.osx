@@ -1,11 +1,8 @@
 #!/bin/bash 
 
-if  [ ! -d drone.app ]
-then
-    mkdir drone.app
-    mkdir drone.app/Contents
-    mkdir drone.app/Contents/Frameworks
-fi
+mkdir drone.app
+mkdir drone.app/Contents
+mkdir drone.app/Contents/Frameworks
 
 cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
 

@@ -26,19 +26,25 @@
 #include "GearGui.h"
 #include "PlugBox.h"
 #include "ConnectionItem.h"
+#include <QGraphicsSceneMouseEvent>
 
 const int SchemaGui::DEFAULT_CANVAS_SIZE_X = 2048;
 const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
 
 
 SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
-  Q3Canvas(DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
-  _engine(engine)
+  QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
+  _engine(engine),
+  _activeConnection(NULL),
+  _connecting(false)
 {
   
   //todo various background for metagear and main schema
-  setBackgroundColor(QColor(107,124,153));
-  
+  //setBackgroundColor(QColor(107,124,153));
+  QRadialGradient gradient(0, 0, 10);
+  gradient.setSpread(QGradient::RepeatSpread);
+  //setBackgroundBrush(gradient);
+
   setSchema(schema);
 }
 
@@ -62,8 +68,8 @@ void SchemaGui::rebuildSchema()
   for (std::list<Gear*>::iterator it=gears.begin();it!=gears.end();++it)
   {
 		gearGui=(*it)->getGearGui();
-		gearGui->setCanvas(this);
-    gearGui->show();
+		addItem(gearGui);
+                gearGui->show();
   }
 	
   //add connectionItems
@@ -103,9 +109,9 @@ Gear* SchemaGui::addGear(std::string type, int x, int y)
     
   GearGui *gearGui = gear->getGearGui();    
 
-  gearGui->setCanvas(this);    
-  gearGui->move(x,y);    
-  gearGui->setZ(0);
+  addItem(gearGui);    
+  gearGui->setPos(x,y);    
+  gearGui->setZValue(0);
   gearGui->show();
   update();
 
@@ -120,10 +126,9 @@ MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
     return NULL;
   
   GearGui *gearGui = metaGear->getGearGui();    
-
-  gearGui->setCanvas(this);    
-  gearGui->move(x,y);    
-  gearGui->setZ(0);
+  addItem(gearGui);
+  gearGui->setPos(x,y);    
+  gearGui->setZValue(0);
   gearGui->show();
   update();
 
@@ -143,9 +148,9 @@ MetaGear* SchemaGui::newMetaGear(int x, int y)
   MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
 
-  gearGui->setCanvas(this);    
-  gearGui->move(x,y);    
-  gearGui->setZ(0);
+  addItem(gearGui);
+  gearGui->setZValue(0);
+  gearGui->setPos(x,y);
   gearGui->show();
   update();
 
@@ -165,16 +170,17 @@ void SchemaGui::removeGear(GearGui* gearGui)
 
 void SchemaGui::clear()
 {
-  Q3CanvasItemList l=allItems();
+  QList<QGraphicsItem *> l=items();
   std::vector<GearGui*> gearGuis;
 
   //first fill a vector with only gearGuis
   //we have to make it this way because we cannot
-  //iterate on QCanvasItemList while removing them at the sametime
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
-      gearGuis.push_back((GearGui*)(*it));
-      
+  //iterate on QGraphicsItem while removing them at the sametime
+  foreach(QGraphicsItem * it,l) { 
+    if ( qgraphicsitem_cast<GearGui*>(it))    
+      gearGuis.push_back((GearGui*)(it));
+  }
+  
   //now remove gearGuis
   for (std::vector<GearGui*>::iterator it=gearGuis.begin();it!=gearGuis.end();++it)  
     removeGear((*it));
@@ -196,61 +202,110 @@ bool SchemaGui::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   return _schema->save(doc, parent,onlySelected);
 }
 
-GearGui* SchemaGui::testForGearCollision(const QPoint &p)
-{     
-  Q3CanvasItemList l=collisions(p);
-
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
-    {
-      return(GearGui*)(*it);
-    }
-  }
-  return NULL;
-}
-
-ConnectionItem* SchemaGui::testForConnectionCollision(const QPoint &p)
-{        
-  Q3CanvasItemList l=collisions(p);
-
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
-      return(ConnectionItem*) (*it);
-  }
-  return NULL;
-}
-
-void SchemaGui::unHilightAllConnections()
-{        
-  Q3CanvasItemList l=allItems();
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == ConnectionItem::CANVAS_RTTI_CONNECTION)
-    {
-      ((ConnectionItem*)(*it))->hiLight(false);
-    }
-  }    
-}
-
-void SchemaGui::unHilightAllPlugBoxes()
-{        
-  Q3CanvasItemList l=allItems();
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-  {
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)
-    {
-      ((GearGui*)(*it))->unHilightAllPlugBoxes();
-    }
-  }    
-}
-
-
-void SchemaGui::moveGearBy(GearGui *gearGui, int x, int y)
+void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-  gearGui->moveBy(x, y); 
-  update();    
+  QList<QGraphicsItem *> list(items(event->scenePos()));
+  QPointF pos;
+  PlugBox* selectedPlugBox;
+  QGraphicsItem* el;
+  foreach(el,list)
+  {
+    if(qgraphicsitem_cast<GearGui*>(el))
+    {
+      pos = (static_cast<GearGui*>(el))->mapFromScene(event->scenePos());
+      selectedPlugBox = (static_cast<GearGui*>(el))->plugHit(pos);
+      if (selectedPlugBox)
+      {
+        _connecting = true;
+        _activeConnection = new ConnectionItem();
+
+        _activeConnection->setSourcePlugBox(selectedPlugBox);
+        addItem(_activeConnection);
+        event->accept();
+        return;
+      }
+    }
+  }
+  QGraphicsScene::mousePressEvent(event);
+}
+
+
+void SchemaGui::mouseMoveEvent( QGraphicsSceneMouseEvent * event)
+{
+  
+  if(_connecting)
+  {
+    _activeConnection->setConnectionLineEndPoint(event->scenePos());
+
+//    gearGui = _schemaGui->testForGearCollision(p);   
+//
+//    if (gearGui!=NULL)
+//    {
+//      if ( ((selectedPlugBox = gearGui->plugHit(p)) != 0))
+//      {      
+//        if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
+//            gearGui->performPlugHighligthing(selectedPlugBox);
+//        else
+//            gearGui->unHilightAllPlugBoxes();
+//      }
+//      else
+//        gearGui->unHilightAllPlugBoxes();
+//    }
+
+  }
+  QGraphicsScene::mouseMoveEvent( event);
+}
+
+void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
+{
+        std::cerr<<"mousedbl"<<std::endl;
+
+    QList<QGraphicsItem *> list(items(event->scenePos()));
+    ConnectionItem* ci;
+    QGraphicsItem* el;
+    foreach(el, list)
+    {
+            std::cerr<<"found item"<<std::endl;
+
+      if (ci=qgraphicsitem_cast<ConnectionItem*>(el))
+      {
+              std::cerr<<"disconnect"<<std::endl;
+
+        disconnect(ci->sourcePlugBox(), ci->destPlugBox()); 
+        return;
+      }
+    }
+
+}
+
+void SchemaGui::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
+  if (_connecting)
+  {
+    QList<QGraphicsItem *> list(items(event->scenePos()));
+    QPointF pos;
+    PlugBox* destPlug;
+    QGraphicsItem* el;
+
+    foreach(el, list)
+    {
+      if (qgraphicsitem_cast<GearGui*>(el))
+      {
+        pos = (static_cast<GearGui*>(el))->mapFromScene(event->scenePos());
+        destPlug = (static_cast<GearGui*>(el))->plugHit(pos);
+        if (destPlug)
+        {
+          _connecting = false;
+          connect(_activeConnection->sourcePlugBox(), destPlug);
+          delete _activeConnection;
+          return;
+        }
+      }
+    }
+    delete _activeConnection;
+    _connecting=false;
+  }
+  QGraphicsScene::mouseReleaseEvent( event);
 }
 
 bool SchemaGui::connect(PlugBox *plugA, PlugBox *plugB)
@@ -290,11 +345,11 @@ void SchemaGui::disconnect(PlugBox *plugA, PlugBox *plugB)
   //disconnect plugbox
   plugA->disconnect(plugB);
   
-  //update the canvas
-  update();
-  
   //tell the schema to disconnect plugs
   _schema->disconnect(plugA->plug(), plugB->plug());  
+
+  //update the canvas
+  update();
 }
 
 void SchemaGui::disconnectAll(PlugBox *plugBox)
@@ -313,20 +368,19 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
 std::vector<GearGui*> SchemaGui::getAllGears()
 {
   std::vector<GearGui*> vec;
-  Q3CanvasItemList l=allItems();
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR)    
-      vec.push_back((GearGui*)(*it));
+  QList<QGraphicsItem*> l=items();
+  foreach(QGraphicsItem* it,l)
+    if ( qgraphicsitem_cast<GearGui*>(it))    
+      vec.push_back((GearGui*)(it));
   return vec;
 }
 
 std::vector<GearGui*> SchemaGui::getSelectedGears()
 {
   std::vector<GearGui*> vec;
-  Q3CanvasItemList l=allItems();
-  for (Q3CanvasItemList::Iterator it=l.begin(); it!=l.end(); ++it)
-    if ( (*it)->rtti() == GearGui::CANVAS_RTTI_GEAR
-         && ((GearGui*)(*it))->isSelected())    
-      vec.push_back((GearGui*)(*it));
+  QList<QGraphicsItem*> l=selectedItems();
+  foreach(QGraphicsItem * it,l)
+    if ( qgraphicsitem_cast<GearGui*>(it))    
+      vec.push_back((GearGui*)(it));
   return vec;
 }

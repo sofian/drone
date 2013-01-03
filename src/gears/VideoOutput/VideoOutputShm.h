@@ -25,7 +25,7 @@
 namespace X11
 {
 
-class Canvas;
+class scene;
 
 class VideoOutputShm : public VideoOutputX11Base
 {

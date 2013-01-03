@@ -20,7 +20,7 @@
 #ifndef SCHEMAEGUI_INCLUDED
 #define SCHEMAEGUI_INCLUDED
 
-#include <q3canvas.h>
+#include <QGraphicsScene.h>
 
 #include "Schema.h"
 
@@ -30,7 +30,7 @@ class Engine;
 class ConnectionItem;
 class QDomDocument;
              
-class SchemaGui : public Q3Canvas
+class SchemaGui : public QGraphicsScene
 {
 public:
   SchemaGui(Schema *schema, Engine *engine);
@@ -51,24 +51,39 @@ public:
   bool load(QDomElement& parent);
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
 
+
+  
+  /*
   void moveGearBy(GearGui *gearItem, int x, int y);
-  GearGui* testForGearCollision(const QPoint &p);
-  ConnectionItem* testForConnectionCollision(const QPoint &p);
+  GearGui* testForGearCollision(const QPointF &p);
+  ConnectionItem* testForConnectionCollision(const QPointF &p);
   void unHilightAllConnections();
   void unHilightAllPlugBoxes();
-
+*/
+  
   std::vector<GearGui*> getAllGears();
   std::vector<GearGui*> getSelectedGears();
 
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
-  
+
+protected:
+
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
+  void mousePressEvent(QGraphicsSceneMouseEvent * event);
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
+
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;
   
   void setSchema(Schema *schema);
 
+  ConnectionItem* _activeConnection;
+  bool _connecting;
+
+  
   Schema *_schema;
   Engine *_engine;
 };

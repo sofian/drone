@@ -17,6 +17,7 @@ AffineTransform \
 ApplyDisplaceGrid \
 AreaClip \
 AreaCreate \
+#AmuseOeil \
 AreaScale \
 AreaTranslate \
 AreaVideoSelect \
@@ -82,6 +83,5 @@ VecAffineTrans
 }
 
 #linux specific gears
-#unix:!macx:SUBDIRS += VideoInput AudioInput
-unix:!macx:SUBDIRS += VideoInput
+unix:!macx:SUBDIRS += VideoInput AudioInput
 

@@ -75,8 +75,8 @@ std::string Gear_StringOutput::getString()
 }
 
 
-GearGui *Gear_StringOutput::createGearGui(Q3Canvas *canvas)
+GearGui *Gear_StringOutput::createGearGui(QGraphicsScene *scene)
 {    
-  return new GearGui_StringOutput(this, canvas);
+  return new GearGui_StringOutput(this, scene);
 }
 

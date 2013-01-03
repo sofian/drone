@@ -44,7 +44,7 @@ public:
   float getValue(){return _VALUE_OUT->type()->value();}
 
 protected:
-  GearGui* createGearGui(QCanvas *canvas);//we want a AudioPushButton so we overload
+  GearGui* createGearGui(QGraphicsScene *scene);//we want a AudioPushButton so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
