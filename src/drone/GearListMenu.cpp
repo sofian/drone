@@ -2,11 +2,11 @@
 #include "GearMaker.h"
 #include "GearClassification.h"
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <qmenu>
 
 
 GearListMenu::GearListMenu(QWidget *parent) : 
-  Q3PopupMenu(parent)
+  QMenu(parent)
 {
   //transform the activated(int) signal into a gearSelected(QString) signal via slotMenuItemSelected
   QObject::connect(this, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));   
@@ -37,7 +37,7 @@ void GearListMenu::create()
      }
 
      //insert the gear name in the correct menu
-     menu->insertItem((*it)->name.c_str());
+     menu->addAction(new QAction((*it)->name.c_str(),this));
   }
 }
 
@@ -58,7 +58,7 @@ GearListMenu *GearListMenu::addSubMenu(std::string name)
   if (it == _subMenus.end())
   {
     //create it
-    GearListMenu *subMenu = new GearListMenu((QWidget*)parent());
+    GearListMenu *subMenu = new GearListMenu(this);
     
     //foward of gear selection signal to parent menu
     QObject::connect(subMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotGearSelected(QString)));   
@@ -67,8 +67,9 @@ GearListMenu *GearListMenu::addSubMenu(std::string name)
     _subMenus[name] = subMenu;
 
     //insert in the menu
-    insertItem(name.c_str(), subMenu);
-
+    QAction* subMenuAction = addMenu(subMenu);
+    subMenuAction->setText(name.c_str());
+            
     //return the newly created subMenu
     return subMenu;
   }

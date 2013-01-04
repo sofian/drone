@@ -100,7 +100,7 @@ void SchemaGui::rebuildSchema()
 
 }
 
-Gear* SchemaGui::addGear(std::string type, int x, int y)
+Gear* SchemaGui::addGear(std::string type, QPointF pos)
 {            
   Gear *gear = _schema->addGear(type);    
 
@@ -110,7 +110,7 @@ Gear* SchemaGui::addGear(std::string type, int x, int y)
   GearGui *gearGui = gear->getGearGui();    
 
   addItem(gearGui);    
-  gearGui->setPos(x,y);    
+  gearGui->setPos(pos);    
   gearGui->setZValue(0);
   gearGui->show();
   update();
@@ -118,7 +118,7 @@ Gear* SchemaGui::addGear(std::string type, int x, int y)
   return gear;
 }
 
-MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
+MetaGear *SchemaGui::addMetaGear(std::string filename, QPointF pos)
 {    
   MetaGear *metaGear = _schema->addMetaGear(filename);    
 
@@ -127,7 +127,7 @@ MetaGear *SchemaGui::addMetaGear(std::string filename, int x, int y)
   
   GearGui *gearGui = metaGear->getGearGui();    
   addItem(gearGui);
-  gearGui->setPos(x,y);    
+  gearGui->setPos(pos);    
   gearGui->setZValue(0);
   gearGui->show();
   update();
@@ -143,14 +143,14 @@ void SchemaGui::renameGear(GearGui *gearGui, std::string newName)
   _schema->renameGear(gearGui->gear(), newName);
 }
 
-MetaGear* SchemaGui::newMetaGear(int x, int y)
+MetaGear* SchemaGui::newMetaGear(QPointF pos)
 {    
   MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
 
   addItem(gearGui);
   gearGui->setZValue(0);
-  gearGui->setPos(x,y);
+  gearGui->setPos(pos);
   gearGui->show();
   update();
 

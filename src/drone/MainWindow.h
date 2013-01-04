@@ -20,14 +20,15 @@
 #ifndef MAINWINDOW_INCLUDED
 #define MAINWINDOW_INCLUDED
 
-#include <q3mainwindow.h>
-#include <q3toolbar.h>
-#include <qtoolbutton.h>
-#include <q3popupmenu.h>
+#include <qmainwindow.h>
+#include <qtoolbar>
+#include <qtoolbutton>
+#include <qaction>
+#include <qmenu.h>
 #include <qmenubar.h>
 #include <qsplitter.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QTimerEvent>
 #include <list>
 
@@ -40,7 +41,7 @@ class SchemaGui;
 class MetaGearEditor;
 class MetaGear;
 
-class MainWindow : public Q3MainWindow
+class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
@@ -89,22 +90,27 @@ private:
   
 
   Engine* _engine;
-  Q3Frame* _frame;
+  QFrame* _frame;
   SchemaGui* _mainSchemaGui;
   
   MetaGearEditor *_metaGearEditor;
   
-  Q3ToolBar *_toolBar;
-  QToolButton *_playPause;
-  QToolButton *_zoomIn;
-  QToolButton *_zoomOut;
+  QToolBar *_toolBar;
+  
+  // toolbar buttons
+  //QToolButton* _tbPlayPause;
+  
+  // QActions
+  QAction *_actPlayPause;
+  QAction *_actZoomIn;
+  QAction *_actZoomOut;
 
   
   int _menuSaveItemId;
   int _menuPrefsItemId;
-  Q3PopupMenu *_fileMenu;
-  Q3PopupMenu *_toolsMenu;
-  Q3PopupMenu *_viewMenu;
+  QMenu *_fileMenu;
+  QMenu *_toolsMenu;
+  QMenu *_viewMenu;
 
   Project* _project;
   

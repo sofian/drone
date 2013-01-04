@@ -37,9 +37,9 @@ public:
   ~SchemaGui();
 
   //Gear* addGear(std::string type, std::string name, int x, int y);
-  Gear* addGear(std::string type, int x, int y);
-  MetaGear* addMetaGear(std::string filename, int x, int y);  
-  MetaGear* newMetaGear(int x, int y);  
+  Gear* addGear(std::string type, QPointF pos);
+  MetaGear* addMetaGear(std::string filename, QPointF pos);  
+  MetaGear* newMetaGear(QPointF pos);  
   void renameGear(GearGui *gearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     

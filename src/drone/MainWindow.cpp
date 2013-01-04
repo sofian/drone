@@ -20,7 +20,7 @@
 #include "MainWindow.h"
 
 #include <iostream>
-#include <q3filedialog.h>
+#include <qfiledialog.h>
 #include <qapplication.h>
 //Added by qt3to4:
 #include <QTimerEvent>
@@ -44,6 +44,7 @@
 #include <qfontdatabase>
 #include <qmessagebox>
 #include <qfile>
+#include <qtoolbutton>
 
 
 //#include "PreferencesDialog.h"
@@ -57,7 +58,7 @@ extern QSettings globalSettings;
 
 
 MainWindow::MainWindow() : 
-Q3MainWindow(), 
+QMainWindow(), 
 _engine(NULL), 
 _frame(NULL), 
 _mainSchemaGui(NULL), 
@@ -72,36 +73,41 @@ _menuShowSmallGearsId(false)
   
   setCentralWidget(_metaGearEditor);
 
-  _toolBar = new Q3ToolBar(this);
-  addToolBar(_toolBar);        
-  _playPause = new QToolButton(_toolBar);    		
-  _playPause->setToggleButton(true);
-	
-	
-  _toolBar->addSeparator();
-  QToolButton *zoomOut = new QToolButton(_toolBar);    
-  zoomOut->setText("-");    
-  QToolButton *zoomIn = new QToolButton(_toolBar);    
-  zoomIn->setText("+");    
-	
-	/*
-  _zoomIn = new QToolButton(_toolBar);    
-	_zoomOut = new QToolButton(_toolBar);    
-  QObject::connect(_zoomIn, SIGNAL(toggled(bool)), _metaGearEditor->schemaEditor(), SLOT(slotZoomIn()));
-  QObject::connect(_zoomOut, SIGNAL(toggled(bool)), _metaGearEditor->schemaEditor(), SLOT(slotZoomIn()));
-	*/
+  _toolBar = new QToolBar(this);
+  addToolBar(_toolBar);
+
 
   QIcon playPauseIcon;
   playPauseIcon.setPixmap(Play_xpm, QIcon::Automatic, QIcon::Normal, QIcon::Off);
   playPauseIcon.setPixmap(Pause_xpm, QIcon::Automatic, QIcon::Normal, QIcon::On);
-  _playPause->setIconSet(playPauseIcon);   
-
-  QObject::connect(_playPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
   
-  QObject::connect(zoomIn, SIGNAL(pressed()), this, SLOT(slotZoomIn()));
-  QObject::connect(zoomOut, SIGNAL(pressed()), this, SLOT(slotZoomOut()));
+//  _tbPlayPause = new QToolButton(_toolBar);    		
+  _actPlayPause = new QAction("Play/Pause",this);
+  _actPlayPause->setIcon(playPauseIcon);
+  _actPlayPause->setCheckable(true);
+  _actZoomOut = new QAction("-",_toolBar);    
+  _actZoomIn = new QAction("+",_toolBar);    
+
+  // add actions to toolbar
+  _toolBar->addAction(_actPlayPause);
+  _toolBar->addSeparator();
+  _toolBar->addAction(_actZoomOut);
+  _toolBar->addAction(_actZoomIn);
+  
+  //_actPlayPause->setToggleButton(true);
+	
+
+
+ 	
+
+  QObject::connect(_actPlayPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
+  
+  QObject::connect(_actZoomIn, SIGNAL(triggered()), this, SLOT(slotZoomIn()));
+  QObject::connect(_actZoomOut, SIGNAL(triggered()), this, SLOT(slotZoomOut()));
 	
 	
+  /*
+  
   //menu    
   _fileMenu = new Q3PopupMenu(this);
   _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
@@ -134,7 +140,7 @@ _menuShowSmallGearsId(false)
   menuBar->insertItem("&File", _fileMenu);
   menuBar->insertItem("&Tools", _toolsMenu);
   menuBar->insertItem("&View", _viewMenu);
-
+*/
   //load settings
   _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
   _lastSavePath = globalSettings.readEntry("/drone/Schema/LastSavePath");
@@ -146,7 +152,7 @@ _menuShowSmallGearsId(false)
   for (QStringList::iterator it=recentSchemaKeys.begin(); it!=recentSchemaKeys.end(); ++it, ++i)
   {
     QString filename = globalSettings.readEntry(*it);
-    _fileMenu->insertItem(filename, i);
+    //_fileMenu->insertItem(filename, i);
     _recentSchemas.push_back(filename.toStdString());    
   }
   globalSettings.endGroup();
@@ -194,7 +200,7 @@ void MainWindow::slotPlay(bool play)
   
   if (play)
   {    
-    _playPause->setOn(true);   
+    _actPlayPause->setChecked(true);   
     #ifndef SINGLE_THREADED_PLAYBACK    
     _engine->startPlaying();
     #else
@@ -204,7 +210,7 @@ void MainWindow::slotPlay(bool play)
   } 
   else
   {
-    _playPause->setOn(false);
+    _actPlayPause->setChecked(false);
     #ifndef SINGLE_THREADED_PLAYBACK    
     _engine->stopPlaying();    
     #else
@@ -226,7 +232,7 @@ void MainWindow::slotMenuNew()
 
 void MainWindow::slotMenuLoad()
 {  
-  QString filename = Q3FileDialog::getOpenFileName(_lastLoadPath, ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
+  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
                                                   this, "Load", "Load");
   load(filename.toStdString());
 }
@@ -258,7 +264,7 @@ void MainWindow::slotMenuSave()
 
 void MainWindow::slotMenuSaveAs()
 {
-  std::string filename = Q3FileDialog::getSaveFileName(_project->projectName().c_str(), ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
+  std::string filename = QFileDialog::getSaveFileName(_project->projectName().c_str(), ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
                                                       this, "Save as", "Save as").toStdString();
   
   if (!filename.empty())

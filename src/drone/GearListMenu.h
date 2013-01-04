@@ -20,7 +20,7 @@
 #ifndef GEARLISTMENU_INCLUDED
 #define GEARLISTMENU_INCLUDED
 
-#include <q3popupmenu.h>
+#include <qmenu.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -32,7 +32,7 @@ class ConnectionItem;
 class Engine;
 class Schema;
 
-class GearListMenu : public Q3PopupMenu
+class GearListMenu : public QMenu
 {
   Q_OBJECT
 public:

@@ -5,21 +5,17 @@
 #include "MetaGear.h"
 
 #include <qslider.h>
-//Added by qt3to4:
-#include <Q3Frame>
-#include <Q3GridLayout>
-#include <QLabel>
 
 ControlPanel::ControlPanel(QWidget *panelContainerWidget, MetaGear *parentMetagear) :
   QWidget(panelContainerWidget, 0, Qt::WStyle_NormalBorder | Qt::WStyle_Title),
   _parentMetaGear(parentMetagear)
 {  
-  _mainFrame = new Q3Frame(this);   
+  _mainFrame = new QFrame(this);   
   _mainFrame->setMinimumWidth(320);
   _mainFrame->setMinimumHeight(200);  
   _mainFrame->setLineWidth(4);
-  _mainFrame->setFrameStyle(QFrame::StyledPanel | Q3Frame::Plain);    
-  _mainLayout = new Q3GridLayout(_mainFrame, 4, 4);
+  _mainFrame->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);    
+  _mainLayout = new QGridLayout(_mainFrame, 4, 4);
 
   _labelName = new QLabel(parentMetagear->name().c_str(), _mainFrame);
   _mainLayout->addWidget(_labelName, 0, 0);

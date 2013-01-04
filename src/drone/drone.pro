@@ -7,7 +7,7 @@ include (../../config.pro)
 
 RESOURCES = drone.qrc
 
-#message(Drone : Builing Makefile with the following config flags : $$CONFIG)
+message(Drone : Builing Makefile with the following config flags : $$CONFIG)
 
 
 unix:!macx:QMAKE_CXXFLAGS += -rdynamic

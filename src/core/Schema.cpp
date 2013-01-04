@@ -8,7 +8,6 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qfileinfo.h>
-#include <q3textstream.h>
 #include "XMLHelper.h"
 
 const std::string Schema::XML_TAGNAME = "Schema";

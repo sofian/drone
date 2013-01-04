@@ -30,7 +30,7 @@ react properly
 #define SCHEMAEDITOR_INCLUDED
 
 #include <qrect.h>
-#include <q3popupmenu.h>
+#include <qmenu>
 #include <qfileinfo.h>
 //Added by qt3to4:
 #include <QWheelEvent>
@@ -66,9 +66,9 @@ public:
 
   void zoom(float factor);
 
-  void addGear(std::string name, int posX, int posY);
-  void addMetaGear(std::string filename, int posX, int posY);
-  void addNewMetaGear(int posX, int posY);
+  void addGear(std::string name, QPoint pos);
+  void addMetaGear(std::string filename, QPoint pos);
+  void addNewMetaGear(QPoint pos);
   void removeGear(GearGui *gear);
 
 public slots:
@@ -98,14 +98,6 @@ signals:
 
 protected:
 
-  void keyPressEvent ( QKeyEvent * e );
-  void keyReleaseEvent ( QKeyEvent * e );
-
-  void contentsMousePressEvent(QMouseEvent *mouseEvent);
-  void contentsMouseMoveEvent(QMouseEvent *mouseEvent);       
-  void contentsMouseReleaseEvent(QMouseEvent *mouseEvent);
-  void contentsWheelEvent(QWheelEvent *wheelEvent);    
-  void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
   void dropEvent(QDropEvent* event);
   void dragEnterEvent(QDragEnterEvent* event);
@@ -116,16 +108,10 @@ protected:
   void setupMatrix();
   
   void deleteSelectedGears();
+  
   void unselectAllGears();
   void selectAllGears();
-  void selectOneGear(GearGui* gear);
-  void selectGearsInRectangle(QRect rect);
-  QRectF getBoundingBoxOfAllSelectedGears();
-  // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
-  Gear* getTopLeftSelectedGear();
-  void moveSelectedGearsBy(int x, int y);
-  void toggleGearSelection(GearGui* gear);
-
+ 
 private:
   
   void associateControlPanelWithMetaGear(MetaGear *metaGear);
@@ -146,20 +132,20 @@ private:
   double _scale;
 
   //popupmenus  
-  Q3PopupMenu *_contextMenu; 
+  QMenu *_contextMenu; 
   GearListMenu *_gearListMenu; 
   MetaGearListMenu *_metaGearListMenu; 
   
+  
   // position of right click in Canvas coordinates
   QPoint _contextMenuPos;  
-  Q3PopupMenu *_gearContextMenu;
-  Q3PopupMenu *_metaGearContextMenu;
-  Q3PopupMenu *_plugContextMenu;
+  QMenu *_gearContextMenu;
+  QMenu *_metaGearContextMenu;
+  QMenu *_plugContextMenu;
   GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
   PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
 
   PanelScrollView *_panelScrollView;
-
 
   QGraphicsRectItem *_selectBox;
 };
