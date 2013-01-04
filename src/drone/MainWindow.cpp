@@ -40,6 +40,10 @@
 #include "MediaMovie.h"
 #include "MediaPoolDialog.h"
 
+#include <qstringlist>
+#include <qfontdatabase>
+#include <qmessagebox>
+#include <qfile>
 
 
 //#include "PreferencesDialog.h"
@@ -151,6 +155,35 @@ _menuShowSmallGearsId(false)
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::initFonts()
+{
+  QStringList list;
+  list << "Roboto-Regular.ttf";
+  int fontID(-1);
+  bool fontWarningShown(false);
+  for (QStringList::const_iterator constIterator = list.constBegin(); constIterator != list.constEnd(); ++constIterator)
+  {
+    QFile res(":/resources/fonts/" + *constIterator);
+    if (res.open(QIODevice::ReadOnly) == false)
+    {
+      if (fontWarningShown == false)
+      {
+        QMessageBox::warning(0, "Application", (QString) "Impossible d'ouvrir la police " + QChar(0x00AB) + *constIterator + QChar(0x00BB) + ".");
+        fontWarningShown = true;
+      }
+    }
+    else
+    {
+      fontID = QFontDatabase::addApplicationFontFromData(res.readAll());
+      if (fontID == -1 && fontWarningShown == false)
+      {
+        QMessageBox::warning(0, "Application", (QString) "Impossible d'ajouter " + QChar(0x00AB) + *constIterator + QChar(0x00BB) + " à la banque de polices.");
+        fontWarningShown = true;
+      }
+    }
+  }
 }
 
 void MainWindow::slotPlay(bool play)

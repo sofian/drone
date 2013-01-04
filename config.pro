@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread debug agg
+CONFIG = qt warn_on thread debug agg resources
 
 #QT += qt3support
 

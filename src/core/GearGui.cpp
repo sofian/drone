@@ -69,11 +69,7 @@ const QColor GearGui::SELECT_OUTLINE_TOP(255, 225, 0);
 const QColor GearGui::SELECT_OUTLINE_BOTTOM(225, 155, 0);
 
 
-#if defined(Q_OS_MACX)
 const QFont GearGui::NAME_FONT("Roboto", 10, QFont::Normal);
-#else
-const QFont GearGui::NAME_FONT("Roboto", 9, QFont::Normal);
-#endif
 
 
 QRectF GearGui::boundingRect() const

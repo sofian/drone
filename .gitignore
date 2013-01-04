@@ -13,6 +13,10 @@
 *.dll
 *.dylib
 
+#emacs backups
+*~
+.*~ 
+
 # Make
 debug/
 release/
@@ -27,9 +31,13 @@ Makefile
 
 # Executable
 /drone
+/drone.app
 
 # Eclipse
 .project
 .cproject
 
+# Netbeans
 nbproject/
+
+.DS_Store

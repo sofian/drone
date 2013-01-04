@@ -74,6 +74,9 @@ public slots:
 
   void slotMenuItemSelected(int id);
 
+  // place me somewhere else when you have time.
+  // Not really the job of the main window
+  void initFonts();
 protected:
   void timerEvent(QTimerEvent*);
 

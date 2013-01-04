@@ -61,7 +61,8 @@ int main(int argc, char** argv)
       error("Usage : drone [schema.drn]");
   }
 
-
+  
+  
   qtApp.exec();
   DroneCore::release();
 }
