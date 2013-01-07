@@ -66,7 +66,7 @@ public:
   //stubs
   eInOut inOut(){return _plug->inOut();}
   bool connected(){return _plug->connected();}
-    
+  GearGui* getGearGui() const {return _gearGui;}  
 private:    
 
   void doHilight();

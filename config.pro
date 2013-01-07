@@ -4,6 +4,8 @@ CONFIG = qt warn_on thread debug agg resources
 
 message(Gears : Builing Makefile with the following config flags : $$CONFIG)
 
+macx:QMAKE_CXXFLAGS += -fpermissive  
+
 
 # Debug settings
 debug {

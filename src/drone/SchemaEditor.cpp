@@ -22,36 +22,27 @@
 #include "ConnectionItem.h"
 #include "PlugBox.h"
 #include "Engine.h"
-#include "GearMaker.h"
-#include "MetaGearMaker.h"
-#include "GearPropertiesDialog.h"
 #include "Gear.h"
 #include "MetaGear.h"
-#include "GearListMenu.h"
-#include "MetaGearListMenu.h"
 
 #include "MetaGearEditor.h"
 #include "PanelScrollView.h"
 #include "ControlPanel.h"
+#include "GearListMenu.h"
+#include "MetaGearListMenu.h"
+#include "GearPropertiesDialog.h"
+#include "GearMaker.h"
+#include "MetaGearMaker.h"
 
-#include <q3dragobject.h>
 #include <q3mainwindow.h>
 #include <q3filedialog.h>
 #include <iostream>
+#include <q3dragobject>
 
 #include <qcursor.h>
 #include <qlayout.h>
 //Added by qt3to4:
-#include <QContextMenuEvent>
-#include <QTextStream>
-#include <QKeyEvent>
-#include <QDragEnterEvent>
-#include <QDropEvent>
-#include <Q3PopupMenu>
-#include <QMouseEvent>
 #include <Q3VBoxLayout>
-#include <QWheelEvent>
-#include <QVarLengthArray>
 #include <QGLWidget>
 #include <iostream>
 #include <qpainter.h>
@@ -65,16 +56,16 @@ const double SchemaEditor::ZOOM_FACTOR = 1.4;
 
 SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
   QGraphicsView(schemaGui, parent),
+  _contextMenuPos(0,0),
+  _contextGear(NULL),
   _engine(engine),
   _schemaGui(schemaGui),
   _scale(1),
-  _contextMenuPos(0,0),
-  _contextGear(NULL),
-  _panelScrollView(panelScrollView),
-  _selectBox(NULL)
+  _panelScrollView(panelScrollView)
+  
 
 {
-
+  _schemaGui->setSchemaEditor(this);
   setDragMode(QGraphicsView::RubberBandDrag);
   setRenderHint(QPainter::Antialiasing, true);
 
@@ -90,7 +81,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   resetTransform();
   setAcceptDrops(TRUE);
   
-  _contextMenu = new QMenu(this);
+  _contextMenu = new QMenu();
   _gearListMenu = new GearListMenu(_contextMenu);    
   _gearListMenu->create();
   
@@ -107,149 +98,35 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   
   QObject::connect(_metaGearListMenu, SIGNAL(metaGearSelected(QFileInfo*)), this, SLOT(slotMenuMetaGearSelected(QFileInfo*)));
 
-  /*
   _contextMenu->addAction("New MetaGear", this, SLOT(slotNewMetaGear()));
 
   
-  _gearContextMenu = new Q3PopupMenu(this);
-  _gearContextMenu->insertItem("delete",  this, SLOT(slotGearDelete()));
-  _gearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));
-	_gearContextMenu->insertItem("ZoomIn", this, SLOT(zoomIn()));  
-	_gearContextMenu->insertItem("ZoomOut", this, SLOT(zoomOut()));  
+  _gearContextMenu = new QMenu();
+  _gearContextMenu->addAction("delete",  this, SLOT(slotGearDelete()));
+  _gearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));
+	_gearContextMenu->addAction("ZoomIn", this, SLOT(zoomIn()));  
+	_gearContextMenu->addAction("ZoomOut", this, SLOT(zoomOut()));  
 
-  _gearContextMenu->insertItem("About");    
+  _gearContextMenu->addAction("About");    
   
-  _metaGearContextMenu = new Q3PopupMenu(this);
-  _metaGearContextMenu->insertItem("delete", this, SLOT(slotGearDelete()),Qt::Key_Delete);
-  _metaGearContextMenu->insertItem("Select All", this, SLOT(slotGearSelectAll()),Qt::CTRL + Qt::Key_A);
-  _metaGearContextMenu->insertItem("Copy", this, SLOT(slotGearCopy()),Qt::CTRL + Qt::Key_C);
-  _metaGearContextMenu->insertItem("Paste", this, SLOT(slotGearPaste()),Qt::CTRL + Qt::Key_V);
-  _metaGearContextMenu->insertItem("Properties", this, SLOT(slotGearProperties()));  
-  _metaGearContextMenu->insertItem("About");    
-  _metaGearContextMenu->insertSeparator();
-  _metaGearContextMenu->insertItem("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
+  _metaGearContextMenu = new QMenu();
+  _metaGearContextMenu->addAction("delete", this, SLOT(slotGearDelete()),Qt::Key_Delete);
+  _metaGearContextMenu->addAction("Select All", this, SLOT(slotGearSelectAll()),Qt::CTRL + Qt::Key_A);
+  _metaGearContextMenu->addAction("Copy", this, SLOT(slotGearCopy()),Qt::CTRL + Qt::Key_C);
+  _metaGearContextMenu->addAction("Paste", this, SLOT(slotGearPaste()),Qt::CTRL + Qt::Key_V);
+  _metaGearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));  
+  _metaGearContextMenu->addAction("About");    
+  _metaGearContextMenu->addSeparator();
+  _metaGearContextMenu->addAction("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
 
 
   // plug context menu initialization
-  _plugContextMenu = new Q3PopupMenu(this);
-  _plugContextMenu->insertItem("expose", this, SLOT(slotPlugExpose()),0,EXPOSE);
-  _plugContextMenu->insertItem("unexpose", this, SLOT(slotPlugUnexpose()),0,UNEXPOSE);
-*/
- 
-}
-
-
-void SchemaEditor::setupMatrix()
-{
-    QMatrix matrix;
-    matrix.scale(_scale, _scale);
-    setMatrix(matrix);
-}
-
-
-SchemaEditor::~SchemaEditor()
-{
+  _plugContextMenu = new QMenu();
+  _exposePlugAction = _plugContextMenu->addAction("Expose", this, SLOT(slotPlugToggleExpose()));
 
 }
 
-void SchemaEditor::zoomIn()
-{
-  zoom(qMin(_scale*ZOOM_FACTOR,3.0));
-}
 
-void SchemaEditor::zoomOut()
-{
-  zoom(qMax(_scale/ZOOM_FACTOR,0.25));
-}
-
-void SchemaEditor::zoom(float factor)
-{
-  _scale=factor;
-  setupMatrix();
-  update();     
-}
-
-/* legacy code ....... for reference
-  
- * void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
-{    
-
- * //handle double-click on metagear
-    if (gearGui!=NULL && (gearGui->gear()->kind() == Gear::METAGEAR))
-    {
-      QDialog metaGearEditorDialog(this);  
-      Q3VBoxLayout layout(&metaGearEditorDialog, 1);
-      metaGearEditorDialog.setCaption(gearGui->gear()->name().c_str());
-      metaGearEditorDialog.resize(640,480);
-      MetaGearEditor metaGearEditor(&metaGearEditorDialog, (MetaGear*)gearGui->gear(), _engine);
-      layout.addWidget(&metaGearEditor);
-      metaGearEditorDialog.exec();
-      
-      //todo : temp...
-      ((MetaGear*)(gearGui->gear()))->createPlugs();
-}
-
- */
-
-void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
-{
-
-
-  /*
-  QPointF scenePos = mapToScene(contextMenuEvent->pos());
-    PlugBox *selectedPlugBox;
-    GearGui *gearGui = _schemaGui->testForGearCollision(p);
-
-    if (gearGui!=NULL)
-    {
-      _contextGear = gearGui;
-      if(((selectedPlugBox = gearGui->plugHit(p)) != 0))
-      {
-        if(selectedPlugBox->plug()->exposed())
-        {
-          _plugContextMenu->setItemVisible(EXPOSE, false);
-          _plugContextMenu->setItemVisible(UNEXPOSE, true);
-        } else
-        {
-          _plugContextMenu->setItemVisible(EXPOSE, true);
-          _plugContextMenu->setItemVisible(UNEXPOSE, false);
-        }
-        _contextPlug = selectedPlugBox;
-        _plugContextMenu->popup(QCursor::pos());
-      
-      } else
-      {
-        if (_contextGear->gear()->kind() == Gear::METAGEAR)
-        {
-          _metaGearContextMenu->popup(QCursor::pos());
-        }
-        else
-          _gearContextMenu->popup(QCursor::pos());
-      }
-    } else
-    {
-   * */
-  _contextGear = NULL;
-  _contextMenuPos = mapFromGlobal(QCursor::pos());
-  _contextMenu->popup(QCursor::pos());
-
-
-  QGraphicsView::contextMenuEvent(contextMenuEvent);
-}
-
-  void SchemaEditor::drawBackground ( QPainter * painter, const QRectF & rect )
-  {
-    painter->fillRect(rect,QColor(50,50,50));
-    QVarLengthArray<QLineF, 36> lines;
-        for (int i = 0; i <= 20; i ++) {
-            lines.append(QLineF(i*100+0.5,0,i*100+0.5,10000));
-            lines.append(QLineF(0,i*100+0.5,10000,i*100+0.5));
-        }
-    painter->setPen(QPen(QColor(70,70,70),0.5));
-    painter->drawLines(lines.data(), lines.size());
-  }
-
-  
 void SchemaEditor::slotMenuGearSelected(QString name)
 {        
   addGear(name.ascii(), _contextMenuPos);    
@@ -267,7 +144,7 @@ void SchemaEditor::slotGearProperties()
 
   GearPropertiesDialog *gearPropertiesDialog;
 
-  gearPropertiesDialog = new GearPropertiesDialog(this, _contextGear->gear(), _engine);
+  gearPropertiesDialog = new GearPropertiesDialog(NULL, _contextGear->gear(), _engine);
   gearPropertiesDialog->exec();
   delete gearPropertiesDialog;
 
@@ -284,22 +161,16 @@ void SchemaEditor::slotGearDelete()
 /**
  * React on Expose selection in the plug context menu
  */
-void SchemaEditor::slotPlugExpose()
+void SchemaEditor::slotPlugToggleExpose()
 {
-  _contextPlug->plug()->exposed(true);
+  _contextPlug->plug()->exposed(!_contextPlug->plug()->exposed());
+  _contextPlug->getGearGui()->update();
 } 
 
-/**
- * React on Unexpose selection in the plug context menu
- */
-void SchemaEditor::slotPlugUnexpose()
-{
-  _contextPlug->plug()->exposed(false);
-} 
 
 void SchemaEditor::slotNewMetaGear()
 {
-  addNewMetaGear(_contextMenuPos);
+  _schemaGui->newMetaGear(_contextMenuPos);
 }
 
 void SchemaEditor::slotSaveMetaGear()
@@ -319,7 +190,7 @@ void SchemaEditor::slotSaveMetaGear()
   
 
   std::string filename = Q3FileDialog::getSaveFileName(suggestedFilename.c_str(), ("*" + MetaGear::EXTENSION + ";;" + "*.*").c_str(), 
-                                                      this, "Save as", "Save as").toStdString();
+                                                      0, "Save as", "Save as").toStdString();
   
   if (!filename.empty())
   {
@@ -337,26 +208,6 @@ void SchemaEditor::slotSaveMetaGear()
 
 }
 
-// add a gear by name and view coordinates
-void SchemaEditor::addGear(std::string name, QPoint pos)
-{
-  // defer to QGraphicsScene, but first convert to scene Coord
-  _schemaGui->addGear(name, mapToScene(pos));    
-}
-
-void SchemaEditor::addMetaGear(std::string filename, QPoint pos)
-{  
-  MetaGear *metaGear = _schemaGui->addMetaGear(filename, mapToScene(pos));
-  associateControlPanelWithMetaGear(metaGear);
-}
-
-void SchemaEditor::addNewMetaGear(QPoint pos)
-{
-  MetaGear *metaGear = _schemaGui->newMetaGear(mapToScene(pos));
-  
-  associateControlPanelWithMetaGear(metaGear);
-}
-
 void SchemaEditor::deleteSelectedGears()
 {
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
@@ -369,7 +220,7 @@ void SchemaEditor::unselectAllGears()
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
   for(unsigned int i=0;i<allGears.size();++i)
     allGears[i]->setSelected(false);
-  _schemaGui->update();
+  update();
 }
 
 void SchemaEditor::selectAllGears()
@@ -377,15 +228,10 @@ void SchemaEditor::selectAllGears()
   std::vector<GearGui*> allGears = _schemaGui->getAllGears();
   for(unsigned int i=0;i<allGears.size();++i)
     allGears[i]->setSelected(true);
-  _schemaGui->update();
+  update();
 }
 
 
-void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
-{
-  //create and associate a control panel with this metagear
-  //_panelScrollView->addControlPanel(metaGear);    
-}
 
 void SchemaEditor::slotGearCopy()
 {
@@ -470,6 +316,116 @@ void SchemaEditor::slotGearSelectAll()
   selectAllGears();
 }
 
+void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
+{
+  QPointF scenePos(mapToScene(contextMenuEvent->pos()));
+  PlugBox* selectedPlugBox;
+  QList<QGraphicsItem*> items = scene()->items(scenePos);
+  QGraphicsItem* el;
+  GearGui* gearGui=NULL;
+  foreach(el, items)
+  {
+    if((gearGui=qgraphicsitem_cast<GearGui*>(el)))
+      break;
+  }
+  
+    if (gearGui!=NULL)
+    { 
+      _contextGear = gearGui;
+      if(((selectedPlugBox = gearGui->plugHit(scenePos)) != 0))
+      {
+        _exposePlugAction->setText(selectedPlugBox->plug()->exposed() ? "Unexpose":"Expose");
+        _contextPlug = selectedPlugBox;
+        _plugContextMenu->popup(QCursor::pos());
+      
+      } 
+      else
+      {
+        if (_contextGear->gear()->kind() == Gear::METAGEAR)
+        {
+          _metaGearContextMenu->popup(QCursor::pos());
+        }
+        else
+          _gearContextMenu->popup(QCursor::pos());
+      }
+      return;
+    }
+  _contextGear = NULL;
+  _contextMenuPos = contextMenuEvent->pos();
+  _contextMenu->popup(mapToGlobal(contextMenuEvent->pos()));
+
+}
+
+void SchemaEditor::setupMatrix()
+{
+    QMatrix matrix;
+    matrix.scale(_scale, _scale);
+    setMatrix(matrix);
+}
+
+
+SchemaEditor::~SchemaEditor()
+{
+
+}
+
+void SchemaEditor::zoomIn()
+{
+  zoom(qMin(_scale*ZOOM_FACTOR,3.0));
+}
+
+void SchemaEditor::zoomOut()
+{
+  zoom(qMax(_scale/ZOOM_FACTOR,0.25));
+}
+
+void SchemaEditor::zoom(float factor)
+{
+  _scale=factor;
+  setupMatrix();
+  update();     
+}
+
+/* legacy code ....... for reference
+  
+ * void SchemaEditor::contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent)
+{    
+
+ * //handle double-click on metagear
+    if (gearGui!=NULL && (gearGui->gear()->kind() == Gear::METAGEAR))
+    {
+      QDialog metaGearEditorDialog(this);  
+      Q3VBoxLayout layout(&metaGearEditorDialog, 1);
+      metaGearEditorDialog.setCaption(gearGui->gear()->name().c_str());
+      metaGearEditorDialog.resize(640,480);
+      MetaGearEditor metaGearEditor(&metaGearEditorDialog, (MetaGear*)gearGui->gear(), _engine);
+      layout.addWidget(&metaGearEditor);
+      metaGearEditorDialog.exec();
+      
+      //todo : temp...
+      ((MetaGear*)(gearGui->gear()))->createPlugs();
+}
+
+ */
+
+// add a gear by name and view coordinates
+void SchemaEditor::addGear(std::string name, QPoint pos)
+{
+  // defer to QGraphicsScene, but first convert to scene Coord
+  _schemaGui->addGear(name, mapToScene(pos));    
+}
+
+void SchemaEditor::addMetaGear(std::string filename, QPoint pos)
+{  
+  MetaGear *metaGear = _schemaGui->addMetaGear(filename, mapToScene(pos));
+  associateControlPanelWithMetaGear(metaGear);
+}
+
+void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
+{
+  //create and associate a control panel with this metagear
+  //_panelScrollView->addControlPanel(metaGear);    
+}
 
 void SchemaEditor::dragEnterEvent(QDragEnterEvent* event)
 {

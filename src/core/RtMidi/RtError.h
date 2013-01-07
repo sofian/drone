@@ -47,7 +47,7 @@ public:
   virtual ~RtError(void) {}
 
   //! Prints "thrown" error message to stdout.
-  virtual void printMessage(void) { std::cout << '\n' << message_ << "\n\n"; }
+  virtual void printMessage(void) { std::cout << "\n" << message_ << "\n\n"; }
 
   //! Returns the "thrown" error message type.
   virtual const Type& getType(void) { return type_; }

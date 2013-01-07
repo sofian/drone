@@ -6,10 +6,10 @@ cd lib/ffmpeg
 make
 cd ../../
 
-cd lib/liblo
-./configure --enable-shared
-make
-cd ../../
+#cd lib/liblo
+#./configure --enable-shared
+#make
+#cd ../../
 
 cd lib/agg23
 make

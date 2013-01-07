@@ -21,7 +21,8 @@
 #define SCHEMAEGUI_INCLUDED
 
 #include <QGraphicsScene.h>
-
+#include <QFileInfo>
+#include <QMenu>
 #include "Schema.h"
 
 class GearGui;
@@ -29,7 +30,10 @@ class PlugBox;
 class Engine;
 class ConnectionItem;
 class QDomDocument;
-             
+class GearListMenu;
+class MetaGearListMenu;
+class SchemaEditor;
+
 class SchemaGui : public QGraphicsScene
 {
 public:
@@ -43,6 +47,8 @@ public:
   void renameGear(GearGui *gearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     
+  void setSchemaEditor(SchemaEditor* se);
+  SchemaEditor* getSchemaEditor() const;
   bool connect(PlugBox *plugA, PlugBox *plugB);
   void disconnect(PlugBox *plugA, PlugBox *plugB);
   void disconnectAll(PlugBox *plugBox);
@@ -51,21 +57,14 @@ public:
   bool load(QDomElement& parent);
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
 
-
-  
-  /*
-  void moveGearBy(GearGui *gearItem, int x, int y);
-  GearGui* testForGearCollision(const QPointF &p);
-  ConnectionItem* testForConnectionCollision(const QPointF &p);
-  void unHilightAllConnections();
-  void unHilightAllPlugBoxes();
-*/
-  
   std::vector<GearGui*> getAllGears();
   std::vector<GearGui*> getSelectedGears();
 
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
+
+  
+public slots:
 
 protected:
 
@@ -74,6 +73,24 @@ protected:
   void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
   void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
 
+   
+  
+  void drawBackground ( QPainter * painter, const QRectF & rect );
+
+
+
+  
+  
+  enum ePlugContextItemId
+  {
+    EXPOSE, UNEXPOSE
+  };
+
+  //popupmenus  
+  
+  SchemaEditor* _schemaEditor;
+  
+  
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
   static const int DEFAULT_CANVAS_SIZE_Y;

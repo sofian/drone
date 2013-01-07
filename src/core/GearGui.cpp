@@ -126,7 +126,7 @@ _sizeY(100),
 _boxNameColor(color)
 {
   
-  setFlags(ItemIsSelectable | ItemIsMovable);
+  setFlags(ItemIsSelectable | ItemIsMovable );
   //not needed for now
   //setAcceptsHoverEvents(true);
   
@@ -362,11 +362,13 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
 
 }
 
+// test for plug collision in scene coordinates
 PlugBox* GearGui::plugHit(const QPointF &p)
 {
+  QPointF scenePos = mapFromScene(p);
   for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
   {
-    if ((*it)->hit(p))
+    if ((*it)->hit(scenePos))
       return(*it);
   }
 

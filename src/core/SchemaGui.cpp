@@ -27,16 +27,18 @@
 #include "PlugBox.h"
 #include "ConnectionItem.h"
 #include <QGraphicsSceneMouseEvent>
-
+#include <QVarLengthArray>
+#include <q3filedialog>
+#include <qtextstream>
 const int SchemaGui::DEFAULT_CANVAS_SIZE_X = 2048;
 const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
 
 
 SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
-  _engine(engine),
   _activeConnection(NULL),
-  _connecting(false)
+  _connecting(false),
+  _engine(engine)
 {
   
   //todo various background for metagear and main schema
@@ -50,6 +52,17 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
 
 SchemaGui::~SchemaGui()
 {
+}
+
+
+void SchemaGui::setSchemaEditor(SchemaEditor* se)
+{
+  _schemaEditor = se;
+}
+
+SchemaEditor* SchemaGui::getSchemaEditor() const
+{
+  return _schemaEditor;
 }
 
 void SchemaGui::setSchema(Schema *schema)
@@ -69,7 +82,7 @@ void SchemaGui::rebuildSchema()
   {
 		gearGui=(*it)->getGearGui();
 		addItem(gearGui);
-                gearGui->show();
+    gearGui->show();
   }
 	
   //add connectionItems
@@ -100,6 +113,21 @@ void SchemaGui::rebuildSchema()
 
 }
 
+
+
+  void SchemaGui::drawBackground ( QPainter * painter, const QRectF & rect )
+  {
+    painter->fillRect(rect,QColor(50,50,50));
+    QVarLengthArray<QLineF, 36> lines;
+        for (int i = 0; i <= 20; i ++) {
+            lines.append(QLineF(i*100+0.5,0,i*100+0.5,10000));
+            lines.append(QLineF(0,i*100+0.5,10000,i*100+0.5));
+        }
+    painter->setPen(QPen(QColor(70,70,70),0.5));
+    painter->drawLines(lines.data(), lines.size());
+  }
+
+  
 Gear* SchemaGui::addGear(std::string type, QPointF pos)
 {            
   Gear *gear = _schema->addGear(type);    
@@ -134,6 +162,7 @@ MetaGear *SchemaGui::addMetaGear(std::string filename, QPointF pos)
 
   return metaGear;
 }
+
 
 void SchemaGui::renameGear(GearGui *gearGui, std::string newName)
 {
@@ -237,7 +266,7 @@ void SchemaGui::mouseMoveEvent( QGraphicsSceneMouseEvent * event)
   {
     _activeConnection->setConnectionLineEndPoint(event->scenePos());
 
-//    gearGui = _schemaGui->testForGearCollision(p);   
+//    gearGui = testForGearCollision(p);   
 //
 //    if (gearGui!=NULL)
 //    {

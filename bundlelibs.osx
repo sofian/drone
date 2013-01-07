@@ -1,9 +1,12 @@
 #!/bin/bash 
 
-mkdir drone.app
-mkdir drone.app/Contents
-mkdir drone.app/Contents/Frameworks
+if  [ ! -d drone.app ]
+then
+    mkdir drone.app
+    mkdir drone.app/Contents
+    mkdir drone.app/Contents/Frameworks
+fi
 
-cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
+#cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
 
 install_name_tool -id @executable_path/../Frameworks/liblo.dylib drone.app/Contents/Frameworks/liblo.dylib
