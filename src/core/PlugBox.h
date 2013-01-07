@@ -87,6 +87,7 @@ private:
   static const int MAX_HILIGHTSCALING;
   static const int ROUNDING_FACTOR;
   static const int PLUGBOX_EXTRUDE;
+  static const int PLUGBOX_INBETWEEN_SPACE;
 	
   //fonts
   static const QFont SHORTNAME_FONT;

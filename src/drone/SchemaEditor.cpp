@@ -152,10 +152,16 @@ void SchemaEditor::slotGearProperties()
 
 }
 
+void SchemaEditor::keyPressEvent(QKeyEvent *e)
+{
+  if (e->key() == Qt::Key_Backspace || e->key() == Qt::Key_Delete)
+    deleteSelectedGears();
+}
+
+
 void SchemaEditor::slotGearDelete()
 {
   deleteSelectedGears();
-  _contextGear = NULL;
 }
 
 /**
@@ -165,6 +171,7 @@ void SchemaEditor::slotPlugToggleExpose()
 {
   _contextPlug->plug()->exposed(!_contextPlug->plug()->exposed());
   _contextPlug->getGearGui()->update();
+//  scene()->update();
 } 
 
 
@@ -213,6 +220,8 @@ void SchemaEditor::deleteSelectedGears()
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
   for(unsigned int i=0;i<allGears.size();++i)
     _schemaGui->removeGear(allGears[i]);
+  _contextGear = NULL;
+
 }
 
 void SchemaEditor::unselectAllGears()
@@ -332,7 +341,7 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
     if (gearGui!=NULL)
     { 
       _contextGear = gearGui;
-      if(((selectedPlugBox = gearGui->plugHit(scenePos)) != 0))
+      if(((selectedPlugBox = gearGui->plugHit(gearGui->mapFromScene(scenePos))) != 0))
       {
         _exposePlugAction->setText(selectedPlugBox->plug()->exposed() ? "Unexpose":"Expose");
         _contextPlug = selectedPlugBox;
@@ -348,11 +357,13 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
         else
           _gearContextMenu->popup(QCursor::pos());
       }
+      contextMenuEvent->accept();
       return;
     }
   _contextGear = NULL;
   _contextMenuPos = contextMenuEvent->pos();
   _contextMenu->popup(mapToGlobal(contextMenuEvent->pos()));
+  contextMenuEvent->accept();
 
 }
 

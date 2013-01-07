@@ -119,10 +119,10 @@ QGraphicsRectItem(),
 _gear(pgear),
 _selected(false),
 _layoutMode(normal),
-_controllerWidth(controllerWidth),
-_controllerHeight(controllerHeight),
 _sizeX(100),
 _sizeY(100),
+_controllerWidth(controllerWidth),
+_controllerHeight(controllerHeight),
 _boxNameColor(color)
 {
   
@@ -221,7 +221,7 @@ void GearGui::rebuildLayout()
     _sizeX += longestOutputPlugName;
   
   }
-  else _sizeX+=PlugBox::PLUGBOX_RADIUS*2+6;
+  else _sizeX+=PlugBox::PLUGBOX_RADIUS * 2 + 6;
   _sizeX+=_controllerWidth;
   _sizeX=qMax(_sizeX,name_width + 2*MARGIN_NAME);
   _sizeX+=MARGIN_SIDE*2;
@@ -362,13 +362,12 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
 
 }
 
-// test for plug collision in scene coordinates
+// test for plug collision in gear coordinates
 PlugBox* GearGui::plugHit(const QPointF &p)
 {
-  QPointF scenePos = mapFromScene(p);
   for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
   {
-    if ((*it)->hit(scenePos))
+    if ((*it)->hit(p))
       return(*it);
   }
 

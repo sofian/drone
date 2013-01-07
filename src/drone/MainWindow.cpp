@@ -106,13 +106,15 @@ _menuShowSmallGearsId(false)
   QObject::connect(_actZoomOut, SIGNAL(triggered()), this, SLOT(slotZoomOut()));
 	
 	
-  /*
   
   //menu    
   _fileMenu = new Q3PopupMenu(this);
   _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
   _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()), Qt::CTRL+Qt::Key_O);
   
+
+
+
   //we need to keep this id to enable/disable the save item
   _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()), Qt::CTRL+Qt::Key_S);    
   _fileMenu->setItemEnabled(_menuSaveItemId, false);  
@@ -121,7 +123,7 @@ _menuShowSmallGearsId(false)
   _fileMenu->insertSeparator();
   _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), Qt::CTRL+Qt::Key_Q);    
   _fileMenu->insertSeparator();
-  
+
   _toolsMenu = new Q3PopupMenu(this);
   _menuPrefsItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
   _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
@@ -140,7 +142,7 @@ _menuShowSmallGearsId(false)
   menuBar->insertItem("&File", _fileMenu);
   menuBar->insertItem("&Tools", _toolsMenu);
   menuBar->insertItem("&View", _viewMenu);
-*/
+
   //load settings
   _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
   _lastSavePath = globalSettings.readEntry("/drone/Schema/LastSavePath");

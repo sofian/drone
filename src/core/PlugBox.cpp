@@ -29,6 +29,7 @@
 #include "GearGui.h"
 
 const int PlugBox::PLUGBOX_RADIUS = 8;
+const int PlugBox::PLUGBOX_INBETWEEN_SPACE = 3;
 const int PlugBox::CONNECTION_HANDLE_OFFSETX = PLUGBOX_RADIUS - 2;
 const int PlugBox::CONNECTION_HANDLE_OFFSETY = PLUGBOX_RADIUS / 2;
 
@@ -62,7 +63,7 @@ PlugBox::~PlugBox()
 qreal PlugBox::plugNameWidth(std::string name)
 {
   QFontMetrics fm(SHORTNAME_FONT);
-  qreal val= fm.width(name.c_str()) + PLUGBOX_RADIUS + 3;
+  qreal val= fm.width(name.c_str()) + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE;
   return val;
 }
 
@@ -88,8 +89,11 @@ void PlugBox::draw(QPainter *painter)
   painter->setPen(QPen(Qt::black,1));
   QColor cay=_gearGui->colorAtY(_pos.y());
   //set color of the round box according to exposition
+  
   if (_plug->exposed())
+  {
     _extrudedRoundBoxColor = EXPOSED_COLOR;
+  }
   else
     
       _extrudedRoundBoxColor = cay;
@@ -133,17 +137,24 @@ void PlugBox::draw(QPainter *painter)
 
     //align text left or right if In or Out
     if (_plug->inOut() == IN)
-      painter->drawText(_pos.x() + PLUGBOX_RADIUS + 3, _pos.y() - 4, halfGearSizeX, PLUGBOX_RADIUS + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+      painter->drawText(_pos.x() + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE, _pos.y() - 4, halfGearSizeX, PLUGBOX_RADIUS + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
     else
-      painter->drawText(_pos.x() - halfGearSizeX, _pos.y() - 4, halfGearSizeX - 3, PLUGBOX_RADIUS + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+      painter->drawText(_pos.x() - halfGearSizeX, _pos.y() - 4, halfGearSizeX - PLUGBOX_INBETWEEN_SPACE, PLUGBOX_RADIUS + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
   }
 }
 
 bool PlugBox::hit(QPointF pos)
 {
-  std::cerr<<pos.x()<<":"<<pos.y()<<"/"<<_pos.x()<<":"<<_pos.y()<<std::endl;
+  int nameWidth=0, hackyYOffset=2;
+  // weird Y offset fine tuning.. why ?
+  pos.setY(pos.y() - 2);
+  if (_gearGui->getLayoutMode() == GearGui::normal)
+    nameWidth += PlugBox::plugNameWidth(_plug->name());
 
-  return((pos.x() > _pos.x()) && (pos.x() < _pos.x()+PLUGBOX_RADIUS) && (pos.y() > _pos.y()) && (pos.y() < _pos.y()+PLUGBOX_RADIUS));
+  if (_plug->inOut() == IN)
+    return ((pos.x() > _pos.x()) && (pos.x() < _pos.x() + PLUGBOX_RADIUS + nameWidth) && (pos.y() > _pos.y()) && (pos.y() < _pos.y() + PLUGBOX_RADIUS));
+  else 
+    return((pos.x() > _pos.x()-nameWidth) && (pos.x() < _pos.x() + PLUGBOX_RADIUS) && (pos.y() > _pos.y()) && (pos.y() < _pos.y()+PLUGBOX_RADIUS));
 }
 
 void PlugBox::hilight(bool hiLight)

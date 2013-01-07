@@ -235,20 +235,22 @@ void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
   QList<QGraphicsItem *> list(items(event->scenePos()));
   QPointF pos;
+  GearGui* gearGui;
   PlugBox* selectedPlugBox;
   QGraphicsItem* el;
   foreach(el,list)
   {
-    if(qgraphicsitem_cast<GearGui*>(el))
+    if((gearGui=qgraphicsitem_cast<GearGui*>(el)))
     {
-      pos = (static_cast<GearGui*>(el))->mapFromScene(event->scenePos());
-      selectedPlugBox = (static_cast<GearGui*>(el))->plugHit(pos);
+      pos = gearGui->mapFromScene(event->scenePos());
+      selectedPlugBox = gearGui->plugHit(pos);
       if (selectedPlugBox)
       {
         _connecting = true;
         _activeConnection = new ConnectionItem();
 
         _activeConnection->setSourcePlugBox(selectedPlugBox);
+        _activeConnection->setConnectionLineEndPoint(event->scenePos());
         addItem(_activeConnection);
         event->accept();
         return;

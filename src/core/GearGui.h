@@ -41,7 +41,9 @@ Q_OBJECT
 public:
 
   enum { Type = UserType + 1 };
-  
+  enum layoutMode {normal, noPlugNames, compact, ultracompact};
+
+
   static const int CANVAS_RTTI_GEAR;
   static const qreal DEFAULT_SIZEX;
   static const qreal TITLE_BAR_HEIGHT;
@@ -106,8 +108,6 @@ public:
   void setSelected(bool state){_selected=state;QGraphicsRectItem::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
   bool isSelected() const {return _selected;}
-
-  enum layoutMode {normal, noPlugNames, compact, ultracompact};
 
   void setLayoutMode(layoutMode mode);  
   layoutMode getLayoutMode() const {return _layoutMode;}

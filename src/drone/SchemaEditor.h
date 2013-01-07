@@ -103,6 +103,7 @@ signals:
 
 protected:
 
+  void keyPressEvent(QKeyEvent *keyEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
   void dragEnterEvent(QDragEnterEvent* event);
   void dragMoveEvent(QDragMoveEvent * event);
