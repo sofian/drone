@@ -67,11 +67,13 @@ private:
   bool _videoPull();
   bool _audioPull();
   bool _eos() const;
+//  void _finish();
 //  void _init();
 
   void _preRun();
   void _postRun();
   bool _setPlayState(bool play);
+  void _setReady(bool ready);
 
 public:
   // GStreamer callbacks.

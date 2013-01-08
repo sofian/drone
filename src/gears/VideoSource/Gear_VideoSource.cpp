@@ -210,7 +210,7 @@ bool Gear_VideoSource::_audioPull()
       gst_adapter_flush (_audioBufferAdapter, blockByteSize);
     //  std::cout << " flushing: " << blockByteSize;
     }
-    std::cout << gst_adapter_available(_audioBufferAdapter) << std::endl;
+    //std::cout << gst_adapter_available(_audioBufferAdapter) << std::endl;
 
     // NOTE: no need to unref the buffer here because the buffer was given away with the
     // call to gst_adapter_push()
@@ -221,7 +221,10 @@ bool Gear_VideoSource::_audioPull()
 }
 bool Gear_VideoSource::_eos() const
 {
-  if (_movieReady && _videoSink && _audioSink) {
+  if (_movieReady)
+  {
+    ASSERT_ERROR( _videoSink );
+    ASSERT_ERROR( _audioSink );
     gboolean videoEos;
     gboolean audioEos;
     g_object_get (G_OBJECT (_videoSink), "eos", &videoEos, NULL);
@@ -313,11 +316,7 @@ void Gear_VideoSource::unloadMovie()
   _terminate = false;
   _seekEnabled = false;
 
-  _movieReady=false;
-
-  // Stop sleeping the video output.
-  _VIDEO_OUT->sleeping(true);
-  _AUDIO_OUT->sleeping(true);
+  _setReady(false);
 
   // Unsynch.
   unSynch(); // XXX: I'm not sure why we are doing this...
@@ -361,8 +360,10 @@ void Gear_VideoSource::resetMovie()
   // have to reload but it seems weird so we should check.
   if (!_eos() && _seekEnabled)
   {
+    std::cout << "Seeking at position 0" << std::endl;
     gst_element_seek_simple (_pipeline, GST_FORMAT_TIME,
                              (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
+    _setReady(true);
   }
   else
   {
@@ -582,14 +583,13 @@ void Gear_VideoSource::_postRun()
         g_free(debug_info);
 
         _terminate = true;
-        _FINISH_OUT->type()->setValue(1.0f);
-        //          terminate = TRUE;
+//        _finish();
         break;
 
       case GST_MESSAGE_EOS:
         g_print("End-Of-Stream reached.\n");
-        _terminate = true;
-        _FINISH_OUT->type()->setValue(1.0f);
+//        _terminate = true;
+//        _finish();
         break;
 
       case GST_MESSAGE_STATE_CHANGED:
@@ -658,12 +658,17 @@ bool Gear_VideoSource::_setPlayState(bool play)
   }
   else
   {
-    _movieReady = play;
-    _VIDEO_OUT->sleeping(!play);
-    _AUDIO_OUT->sleeping(!play);
+    _setReady(play);
 
     return true;
   }
+}
+
+void Gear_VideoSource::_setReady(bool ready)
+{
+  _movieReady = ready;
+  _VIDEO_OUT->sleeping(!ready);
+  _AUDIO_OUT->sleeping(!ready);
 }
 
 void Gear_VideoSource::internalPrePlay()
