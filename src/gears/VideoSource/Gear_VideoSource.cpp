@@ -134,7 +134,9 @@ bool Gear_VideoSource::_videoPull()
 
     video->resize(width, height);
 
-    convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
+    memcpy(video->data(), GST_BUFFER_DATA(buffer), video->size() * sizeof(RGBA));
+
+//    convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
 // Make sure the buffer width / height are right.
 //    int nPixelsInBuffer = GST_BUFFER_SIZE(buffer) / (bpp / 8);
 //    int nPixels = width * height;
@@ -361,7 +363,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_free (audioCapsText);
 
   // Configure video appsink.
-  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb");
+  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb,format=RGBA,bpp=32,depth=32");
   g_object_set (_videoSink, "emit-signals", TRUE,
                             "caps", videoCaps,    // this sets video caps to "video/x-raw-rgb"
                             "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
