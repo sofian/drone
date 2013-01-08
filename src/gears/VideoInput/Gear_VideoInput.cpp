@@ -74,23 +74,7 @@ bool Gear_VideoInput::_videoPull()
 
     video->resize(width, height);
 
-    convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
-// Make sure the buffer width / height are right.
-//    int nPixelsInBuffer = GST_BUFFER_SIZE(buffer) / (bpp / 8);
-//    int nPixels = width * height;
-//    if (nPixelsInBuffer != nPixels) {
-//      std::cout << "Improper number of pixels : " << nPixelsInBuffer << " != " << nPixels << std::endl;
-//      std::cout << GST_BUFFER_OFFSET(buffer) << " " << GST_BUFFER_OFFSET_END(buffer) <<
-//          " " << (GST_BUFFER_OFFSET_END(buffer) - GST_BUFFER_OFFSET(buffer)) << " " << std::endl;
-//      width += (nPixelsInBuffer - nPixels) / height;
-//    }
-//
-//    std::cout << gst_structure_to_string(caps_struct) << std::endl;
-//    std::cout << width << "x" << height << "=" << width*height << "(" << width*height*4 << "," << width*height*3 << ")" << std::endl;
-//    std::cout << "bpp: " << bpp << " depth: " << depth << std::endl;
-//    std::cout << "Buffer size: " << GST_BUFFER_SIZE(buffer) << std::endl;
-
-    //rgb2rgba(video->data(), (const RGB*)GST_BUFFER_DATA(buffer), width*height);
+    memcpy(video->data(), GST_BUFFER_DATA(buffer), video->size() * sizeof(RGBA));
 
     gst_buffer_unref (buffer);
     return true;
@@ -181,7 +165,7 @@ bool Gear_VideoInput::initCamera()
   }
 
   // Configure video appsink.
-  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb");
+  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb,format=RGBA,bpp=32,depth=32");
   g_object_set (_videoSink, "emit-signals", TRUE,
                             "caps", videoCaps,    // this sets video caps to "video/x-raw-rgb"
                             "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
