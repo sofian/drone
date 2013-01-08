@@ -160,7 +160,8 @@ bool Gear_VideoInput::initCamera()
       !gst_element_link (_source, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
-    gst_object_unref (_pipeline);
+    freeResources();
+    //gst_object_unref (_pipeline);
     return false;
   }
 
@@ -177,7 +178,8 @@ bool Gear_VideoInput::initCamera()
   ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
     std::cout << "Unable to set the pipeline to the playing state." << std::endl;
-    gst_object_unref (_pipeline);
+    freeResources();
+    // gst_object_unref (_pipeline);
     return false;
   }
 
@@ -212,12 +214,16 @@ void Gear_VideoInput::freeResources()
 {
   // Free resources.
   if (_bus)
+  {
     gst_object_unref (_bus);
+    _bus = NULL;
+  }
 
   if (_pipeline)
   {
     gst_element_set_state (_pipeline, GST_STATE_NULL);
     gst_object_unref (_pipeline);
+    _pipeline = NULL;
   }
 
   // Init.
@@ -243,10 +249,6 @@ void Gear_VideoInput::runVideo() {
 
 //  _FINISH_OUT->type()->setValue(0.0f);
 
-  GstMessage *msg = gst_bus_timed_pop_filtered(
-                      _bus, 0,
-                      (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-
   if (_videoHasNewBuffer) {
 
     // Pull video.
@@ -257,45 +259,52 @@ void Gear_VideoInput::runVideo() {
     _videoHasNewBuffer = false;
   }
 
-  // Parse message.
-  if (msg != NULL) {
-    GError *err;
-    gchar *debug_info;
+  if (_bus != NULL)
+  {
+    GstMessage *msg = gst_bus_timed_pop_filtered(
+                        _bus, 0,
+                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
-    switch (GST_MESSAGE_TYPE (msg)) {
-    case GST_MESSAGE_ERROR:
-      gst_message_parse_error(msg, &err, &debug_info);
-      g_printerr("Error received from element %s: %s\n",
-          GST_OBJECT_NAME (msg->src), err->message);
-      g_printerr("Debugging information: %s\n",
-          debug_info ? debug_info : "none");
-      g_clear_error(&err);
-      g_free(debug_info);
-      _terminate = true;
-      //_FINISH_OUT->type()->setValue(1.0f);
-      break;
-    case GST_MESSAGE_EOS:
-      g_print("End-Of-Stream reached.\n");
-      _terminate = true;
-      //_FINISH_OUT->type()->setValue(1.0f);
-      break;
-    case GST_MESSAGE_STATE_CHANGED:
-      // We are only interested in state-changed messages from the pipeline.
-      if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
-        GstState oldState, newState, pendingState;
-        gst_message_parse_state_changed(msg, &oldState, &newState,
-            &pendingState);
-        g_print("Pipeline state changed from %s to %s:\n",
-            gst_element_state_get_name(oldState),
-            gst_element_state_get_name(newState));
+    // Parse message.
+    if (msg != NULL) {
+      GError *err;
+      gchar *debug_info;
+
+      switch (GST_MESSAGE_TYPE (msg)) {
+      case GST_MESSAGE_ERROR:
+        gst_message_parse_error(msg, &err, &debug_info);
+        g_printerr("Error received from element %s: %s\n",
+            GST_OBJECT_NAME (msg->src), err->message);
+        g_printerr("Debugging information: %s\n",
+            debug_info ? debug_info : "none");
+        g_clear_error(&err);
+        g_free(debug_info);
+        _terminate = true;
+        //_FINISH_OUT->type()->setValue(1.0f);
+        break;
+      case GST_MESSAGE_EOS:
+        g_print("End-Of-Stream reached.\n");
+        _terminate = true;
+        //_FINISH_OUT->type()->setValue(1.0f);
+        break;
+      case GST_MESSAGE_STATE_CHANGED:
+        // We are only interested in state-changed messages from the pipeline.
+        if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+          GstState oldState, newState, pendingState;
+          gst_message_parse_state_changed(msg, &oldState, &newState,
+              &pendingState);
+          g_print("Pipeline state changed from %s to %s:\n",
+              gst_element_state_get_name(oldState),
+              gst_element_state_get_name(newState));
+        }
+        break;
+      default:
+        // We should not reach here.
+        g_printerr("Unexpected message received.\n");
+        break;
       }
-      break;
-    default:
-      // We should not reach here.
-      g_printerr("Unexpected message received.\n");
-      break;
+      gst_message_unref(msg);
     }
-    gst_message_unref(msg);
   }
 }
 

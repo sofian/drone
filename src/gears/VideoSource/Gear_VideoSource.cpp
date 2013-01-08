@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//inspired from Using libavformat and libavcodec by Martin B�hme (boehme@inb.uni-luebeckREMOVETHIS.de) 
+//inspired from Using libavformat and libavcodec by Martin Boehme (boehme@inb.uni-luebeckREMOVETHIS.de)
 
 
 #include <iostream>
@@ -160,12 +160,50 @@ bool Gear_VideoSource::_videoPull()
 
 }
 
+bool Gear_VideoSource::_audioPull()
+{
+  GstBuffer *buffer;
+
+  // Retrieve the buffer.
+  g_signal_emit_by_name (_audioSink, "pull-buffer", &buffer);
+
+  if (!buffer)
+  {
+    // Either means we are not playing or we have reached EOS.
+    return false;
+  }
+
+  else
+  {
+    GstCaps* caps = GST_BUFFER_CAPS(buffer);
+    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
+    SignalType* audio = _AUDIO_OUT->type();
+
+    int blockSize  = Engine::signalInfo().blockSize();
+    int sampleRate = Engine::signalInfo().sampleRate();
+    int channels  = 1;
+
+    gst_structure_get_int(capsStruct, "rate",  &sampleRate);
+    gst_structure_get_int(capsStruct, "channels", &channels);
+
+    int size = GST_BUFFER_SIZE(buffer);
+    int asize = audio->size();
+
+
+
+    gst_buffer_unref (buffer);
+    return true;
+  }
+
+}
 bool Gear_VideoSource::_eos() const
 {
-  if (_movieReady && _videoSink) {
-    gboolean eos;
-    g_object_get (G_OBJECT (_videoSink), "eos", &eos, NULL);
-    return (bool)eos;
+  if (_movieReady && _videoSink && _audioSink) {
+    gboolean videoEos;
+    gboolean audioEos;
+    g_object_get (G_OBJECT (_videoSink), "eos", &videoEos, NULL);
+    g_object_get (G_OBJECT (_audioSink), "eos", &audioEos, NULL);
+    return (bool) (videoEos || audioEos);
   }
   else
     return false;
@@ -183,6 +221,7 @@ void Gear_VideoSource::_postLoadOrResetMovie()
 
   // Stop sleeping the video output.
   _VIDEO_OUT->sleeping(false);
+  _AUDIO_OUT->sleeping(false);
 }
 
 
@@ -238,17 +277,24 @@ void Gear_VideoSource::freeResources()
 {
   // Free resources.
   if (_bus)
+  {
     gst_object_unref (_bus);
+    _bus = NULL;
+//    ASSERT_ERROR (_bus == NULL);
+  }
 
   if (_pipeline)
   {
     gst_element_set_state (_pipeline, GST_STATE_NULL);
     gst_object_unref (_pipeline);
+    _pipeline = NULL;
+//    ASSERT_ERROR (_pipeline == NULL);
   }
 
   // Init.
   _movieReady=false;
 	_VIDEO_OUT->sleeping(true);
+  _AUDIO_OUT->sleeping(true);
 
 	// Unsynch.
 	unSynch();
@@ -322,14 +368,14 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       !gst_element_link (_audioConvert, _audioResample) ||
       !gst_element_link (_audioResample, _audioSink)) {
     g_printerr ("Audio elements could not be linked.\n");
-    gst_object_unref (_pipeline);
+    freeResources();
     return false;
   }
 
   if (!gst_element_link (_videoQueue, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
-    gst_object_unref (_pipeline);
+    freeResources();
     return false;
   }
 
@@ -344,6 +390,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       std::cout << "Filename to URI error: " << error->message << std::endl;
       g_error_free(error);
       gst_object_unref (uri);
+      freeResources();
       return false;
     }
   }
@@ -355,7 +402,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_signal_connect (_source, "pad-added", G_CALLBACK (Gear_VideoSource::gstPadAddedCallback), &_padHandlerData);
 
   // Configure audio appsink.
-  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,channels=2,rate=%d,endianness=BYTE_ORDER", Engine::signalInfo().sampleRate());
+  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,rate=%d,endianness=BYTE_ORDER", Engine::signalInfo().sampleRate());
   GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
   g_object_set (_audioSink, "emit-signals", TRUE, "caps", audioCaps, NULL);
   g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
@@ -375,7 +422,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   GstStateChangeReturn ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
     std::cout << "Unable to set the pipeline to the playing state." << std::endl;
-    gst_object_unref (_pipeline);
+    freeResources();
+    //gst_object_unref (_pipeline);
     return false;
   }
 
@@ -385,15 +433,57 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   // Reset some variables.
   _postLoadOrResetMovie();
 
+  std::cout << "Pipeline started." << std::endl;
+
 	return true;
 }
 
 
 void Gear_VideoSource::runVideo() {
 
+  _preRun();
+
+  if (_videoHasNewBuffer) {
+
+    // Pull video.
+    if (!_videoPull())
+    {
+      _FINISH_OUT->type()->setValue(1.0f);
+      _VIDEO_OUT->sleeping(true);
+    }
+
+    _videoHasNewBuffer = false;
+  }
+
+  _postRun();
+}
+
+
+void Gear_VideoSource::runAudio() {
+
+  //_preRun();
+
+  if (_audioHasNewBuffer) {
+
+    // Pull audio.
+    if (!_audioPull())
+    {
+      _FINISH_OUT->type()->setValue(1.0f);
+      _AUDIO_OUT->sleeping(true);
+    }
+
+    _audioHasNewBuffer = false;
+  }
+
+  //_postRun();
+}
+
+void Gear_VideoSource::_preRun()
+{
   if (_eos()) {
     _FINISH_OUT->type()->setValue(1.0f);
     _VIDEO_OUT->sleeping(true);
+    _AUDIO_OUT->sleeping(true);
   }
   else
     _FINISH_OUT->type()->setValue(0.0f);
@@ -417,94 +507,91 @@ void Gear_VideoSource::runVideo() {
   if (_terminate) {
     _FINISH_OUT->type()->setValue(1.0f);
     _VIDEO_OUT->sleeping(true);
+    _AUDIO_OUT->sleeping(true);
     return;
   }
 
   _FINISH_OUT->type()->setValue(0.0f);
+}
 
-  GstMessage *msg = gst_bus_timed_pop_filtered(
-                      _bus, 0,
-                      (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-
-  if (_videoHasNewBuffer) {
-
-    // Pull video.
-    if (!_videoPull())
-    {
-      _FINISH_OUT->type()->setValue(1.0f);
-      _VIDEO_OUT->sleeping(true);
-    }
-
-    _videoHasNewBuffer = false;
-  }
-
+void Gear_VideoSource::_postRun()
+{
   // Parse message.
-  if (msg != NULL) {
-    GError *err;
-    gchar *debug_info;
+  if (_bus != NULL)
+  {
+    GstMessage *msg = gst_bus_timed_pop_filtered(
+                        _bus, 0,
+                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
-    switch (GST_MESSAGE_TYPE (msg)) {
-    case GST_MESSAGE_ERROR:
-      gst_message_parse_error(msg, &err, &debug_info);
-      g_printerr("Error received from element %s: %s\n",
-          GST_OBJECT_NAME (msg->src), err->message);
-      g_printerr("Debugging information: %s\n",
-          debug_info ? debug_info : "none");
-      g_clear_error(&err);
-      g_free(debug_info);
-      _terminate = true;
-      _FINISH_OUT->type()->setValue(1.0f);
-      //          terminate = TRUE;
-      break;
-    case GST_MESSAGE_EOS:
-      g_print("End-Of-Stream reached.\n");
-      _terminate = true;
-      _FINISH_OUT->type()->setValue(1.0f);
-      break;
-    case GST_MESSAGE_STATE_CHANGED:
-      // We are only interested in state-changed messages from the pipeline.
-      if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
-        GstState oldState, newState, pendingState;
-        gst_message_parse_state_changed(msg, &oldState, &newState,
-            &pendingState);
-        g_print("Pipeline state changed from %s to %s:\n",
-            gst_element_state_get_name(oldState),
-            gst_element_state_get_name(newState));
+    if (msg != NULL) {
+      GError *err;
+      gchar *debug_info;
 
-        if (newState == GST_STATE_PLAYING) {
-          // Check if seeking is allowed.
-          gint64 start, end;
-          GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);
-          if (gst_element_query (_pipeline, query))
-          {
-            gst_query_parse_seeking (query, NULL, (gboolean*)&_seekEnabled, &start, &end);
-            if (_seekEnabled)
+      switch (GST_MESSAGE_TYPE (msg)) {
+      case GST_MESSAGE_ERROR:
+        gst_message_parse_error(msg, &err, &debug_info);
+        g_printerr("Error received from element %s: %s\n",
+            GST_OBJECT_NAME (msg->src), err->message);
+        g_printerr("Debugging information: %s\n",
+            debug_info ? debug_info : "none");
+        g_clear_error(&err);
+        g_free(debug_info);
+        _terminate = true;
+        _FINISH_OUT->type()->setValue(1.0f);
+        //          terminate = TRUE;
+        break;
+      case GST_MESSAGE_EOS:
+        g_print("End-Of-Stream reached.\n");
+        _terminate = true;
+        _FINISH_OUT->type()->setValue(1.0f);
+        break;
+      case GST_MESSAGE_STATE_CHANGED:
+        // We are only interested in state-changed messages from the pipeline.
+        if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+          GstState oldState, newState, pendingState;
+          gst_message_parse_state_changed(msg, &oldState, &newState,
+              &pendingState);
+          g_print("Pipeline state for movie %s changed from %s to %s:\n",
+              _currentMovie.c_str(),
+              gst_element_state_get_name(oldState),
+              gst_element_state_get_name(newState));
+
+          if (newState == GST_STATE_PLAYING) {
+            // Check if seeking is allowed.
+            gint64 start, end;
+            GstQuery *query = gst_query_new_seeking (GST_FORMAT_TIME);
+            if (gst_element_query (_pipeline, query))
             {
-              g_print ("Seeking is ENABLED from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT "\n",
-                       GST_TIME_ARGS (start), GST_TIME_ARGS (end));
+              gst_query_parse_seeking (query, NULL, (gboolean*)&_seekEnabled, &start, &end);
+              if (_seekEnabled)
+              {
+                g_print ("Seeking is ENABLED from %" GST_TIME_FORMAT " to %" GST_TIME_FORMAT "\n",
+                         GST_TIME_ARGS (start), GST_TIME_ARGS (end));
+              }
+              else
+              {
+                g_print ("Seeking is DISABLED for this stream.\n");
+              }
             }
             else
             {
-              g_print ("Seeking is DISABLED for this stream.\n");
+              g_printerr ("Seeking query failed.");
             }
-          }
-          else
-          {
-            g_printerr ("Seeking query failed.");
-          }
 
-          gst_query_unref (query);
+            gst_query_unref (query);
+          }
         }
+        break;
+      default:
+        // We should not reach here.
+        g_printerr("Unexpected message received.\n");
+        break;
       }
-      break;
-    default:
-      // We should not reach here.
-      g_printerr("Unexpected message received.\n");
-      break;
+      gst_message_unref(msg);
     }
-    gst_message_unref(msg);
   }
 }
+
 
 void Gear_VideoSource::_setPlayState(bool play)
 {

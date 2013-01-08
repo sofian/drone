@@ -51,7 +51,7 @@ public:
   virtual ~Gear_VideoSource();
 
   void runVideo();
-  //void runAudio();
+  void runAudio();
 
 protected:
   bool loadMovie(std::string filename);
@@ -63,9 +63,12 @@ protected:
 
 private:
   bool _videoPull();
+  bool _audioPull();
   bool _eos() const;
   void _postLoadOrResetMovie();
 
+  void _preRun();
+  void _postRun();
   void _setPlayState(bool play);
 
   //void gstAudioPull();
