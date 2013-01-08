@@ -279,8 +279,6 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   //_firstFrameTime=_formatContext->start_time;
 
-  GstStateChangeReturn ret;
-
   // Initialize GStreamer.
   gst_init (NULL, NULL);
 
@@ -372,7 +370,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   gst_caps_unref (videoCaps);
 
   // Start playing.
-  ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
+  GstStateChangeReturn ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
   if (ret == GST_STATE_CHANGE_FAILURE) {
     std::cout << "Unable to set the pipeline to the playing state." << std::endl;
     gst_object_unref (_pipeline);
@@ -505,6 +503,32 @@ void Gear_VideoSource::runVideo() {
     gst_message_unref(msg);
   }
 }
+
+void Gear_VideoSource::_setPlayState(bool play)
+{
+  // Start playing.
+  if (_bus == NULL)
+    return;
+
+  GstStateChangeReturn ret = gst_element_set_state (_pipeline, (play ? GST_STATE_PLAYING : GST_STATE_PAUSED));
+  if (ret == GST_STATE_CHANGE_FAILURE) {
+    std::cout << "Unable to set the pipeline to the playing state." << std::endl;
+    freeResources();
+  }
+}
+
+void Gear_VideoSource::internalPrePlay()
+{
+  // Start/resume playback.
+  _setPlayState(true);
+}
+
+void Gear_VideoSource::internalPostPlay()
+{
+  // Pause playback.
+  _setPlayState(false);
+}
+
 
 
 

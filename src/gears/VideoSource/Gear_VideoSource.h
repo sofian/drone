@@ -58,10 +58,16 @@ protected:
   void freeResources();
   void resetMovie();
 
+  virtual void internalPrePlay();
+  virtual void internalPostPlay();
+
 private:
   bool _videoPull();
   bool _eos() const;
   void _postLoadOrResetMovie();
+
+  void _setPlayState(bool play);
+
   //void gstAudioPull();
 
 public:
