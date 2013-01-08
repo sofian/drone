@@ -56,6 +56,7 @@ public:
 
 protected:
   bool loadMovie(std::string filename);
+  void unloadMovie();
   void freeResources();
   void resetMovie();
 
@@ -66,13 +67,11 @@ private:
   bool _videoPull();
   bool _audioPull();
   bool _eos() const;
-  void _postLoadOrResetMovie();
+//  void _init();
 
   void _preRun();
   void _postRun();
-  void _setPlayState(bool play);
-
-  //void gstAudioPull();
+  bool _setPlayState(bool play);
 
 public:
   // GStreamer callbacks.
@@ -112,10 +111,6 @@ private:
 
   //locals
   std::string _currentMovie;  
-
-  //float *_audioBuffer;
-  //RGBA *_outData;  
-  //long _previousFramePos;
 	
   // gstreamer
   GstBus *_bus;

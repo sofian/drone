@@ -232,20 +232,20 @@ bool Gear_VideoSource::_eos() const
     return false;
 }
 
-void Gear_VideoSource::_postLoadOrResetMovie()
-{
-  _audioHasNewBuffer = false;
-  _videoHasNewBuffer = false;
-
-  _terminate = false;
-  _seekEnabled = false;
-
-  _movieReady=true;
-
-  // Stop sleeping the video output.
-  _VIDEO_OUT->sleeping(false);
-  _AUDIO_OUT->sleeping(false);
-}
+//void Gear_VideoSource::_init()
+//{
+//  _audioHasNewBuffer = false;
+//  _videoHasNewBuffer = false;
+//
+//  _terminate = false;
+//  _seekEnabled = false;
+//
+//  _movieReady=true;
+//
+//  // Stop sleeping the video output.
+//  _VIDEO_OUT->sleeping(false);
+//  _AUDIO_OUT->sleeping(false);
+//}
 
 
 void Gear_VideoSource::gstNewBufferCallback(GstElement*, bool *newBuffer)
@@ -301,6 +301,28 @@ Gear_VideoSource::~Gear_VideoSource()
   gst_object_unref(_audioBufferAdapter);
 }
 
+void Gear_VideoSource::unloadMovie()
+{
+  // Free allocated resources.
+  freeResources();
+
+  // Reset flags.
+  _audioHasNewBuffer = false;
+  _videoHasNewBuffer = false;
+
+  _terminate = false;
+  _seekEnabled = false;
+
+  _movieReady=false;
+
+  // Stop sleeping the video output.
+  _VIDEO_OUT->sleeping(true);
+  _AUDIO_OUT->sleeping(true);
+
+  // Unsynch.
+  unSynch(); // XXX: I'm not sure why we are doing this...
+}
+
 void Gear_VideoSource::freeResources()
 {
   // Free resources.
@@ -308,7 +330,6 @@ void Gear_VideoSource::freeResources()
   {
     gst_object_unref (_bus);
     _bus = NULL;
-//    ASSERT_ERROR (_bus == NULL);
   }
 
   if (_pipeline)
@@ -316,21 +337,22 @@ void Gear_VideoSource::freeResources()
     gst_element_set_state (_pipeline, GST_STATE_NULL);
     gst_object_unref (_pipeline);
     _pipeline = NULL;
-//    ASSERT_ERROR (_pipeline == NULL);
   }
 
-  // Flush all buffers.
-  std::cout << "Clearing buffer adapter ...";
+  _source = NULL;
+  _audioQueue = NULL;
+  _audioConvert = NULL;
+  _audioResample = NULL;
+  _videoQueue = NULL;
+  _videoConvert = NULL;
+  _videoColorSpace = NULL;
+  _audioSink = NULL;
+  _videoSink = NULL;
+  _padHandlerData = GstPadHandlerData();
+
+  // Flush buffers in adapter.
   gst_adapter_clear(_audioBufferAdapter);
-  std::cout << "done." << std::endl;
 
-  // Init.
-  _movieReady=false;
-	_VIDEO_OUT->sleeping(true);
-  _AUDIO_OUT->sleeping(true);
-
-	// Unsynch.
-	unSynch();
 }
 
 void Gear_VideoSource::resetMovie()
@@ -341,7 +363,6 @@ void Gear_VideoSource::resetMovie()
   {
     gst_element_seek_simple (_pipeline, GST_FORMAT_TIME,
                              (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
-    _postLoadOrResetMovie();
   }
   else
   {
@@ -355,8 +376,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 {
   std::cout << "Opening movie : " << filename << std::endl;
 
-  //free previously allocated structures
-  freeResources();
+  // Free previously allocated structures
+  unloadMovie();
 
   //_firstFrameTime=_formatContext->start_time;
 
@@ -388,6 +409,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       !_audioQueue || !_audioConvert || !_audioResample || !_audioSink ||
       !_videoQueue || !_videoColorSpace || !_videoSink) {
     g_printerr ("Not all elements could be created.\n");
+    unloadMovie();
     return -1;
   }
 
@@ -401,14 +423,14 @@ bool Gear_VideoSource::loadMovie(std::string filename)
       !gst_element_link (_audioConvert, _audioResample) ||
       !gst_element_link (_audioResample, _audioSink)) {
     g_printerr ("Audio elements could not be linked.\n");
-    freeResources();
+    unloadMovie();
     return false;
   }
 
   if (!gst_element_link (_videoQueue, _videoColorSpace) ||
       !gst_element_link (_videoColorSpace, _videoSink)) {
     g_printerr ("Video elements could not be linked.\n");
-    freeResources();
+    unloadMovie();
     return false;
   }
 
@@ -454,23 +476,16 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
   gst_caps_unref (videoCaps);
 
-  // Start playing.
-  GstStateChangeReturn ret = gst_element_set_state (_pipeline, GST_STATE_PLAYING);
-  if (ret == GST_STATE_CHANGE_FAILURE) {
-    std::cout << "Unable to set the pipeline to the playing state." << std::endl;
-    freeResources();
-    //gst_object_unref (_pipeline);
-    return false;
-  }
-
   // Listen to the bus.
   _bus = gst_element_get_bus (_pipeline);
 
-  // Reset some variables.
-  _postLoadOrResetMovie();
+  // Start playing.
+  if (!_setPlayState(true))
+    return false;
 
   std::cout << "Pipeline started." << std::endl;
 
+  //_movieReady = true;
 	return true;
 }
 
@@ -564,6 +579,7 @@ void Gear_VideoSource::_postRun()
       gchar *debug_info;
 
       switch (GST_MESSAGE_TYPE (msg)) {
+
       case GST_MESSAGE_ERROR:
         gst_message_parse_error(msg, &err, &debug_info);
         g_printerr("Error received from element %s: %s\n",
@@ -572,15 +588,18 @@ void Gear_VideoSource::_postRun()
             debug_info ? debug_info : "none");
         g_clear_error(&err);
         g_free(debug_info);
+
         _terminate = true;
         _FINISH_OUT->type()->setValue(1.0f);
         //          terminate = TRUE;
         break;
+
       case GST_MESSAGE_EOS:
         g_print("End-Of-Stream reached.\n");
         _terminate = true;
         _FINISH_OUT->type()->setValue(1.0f);
         break;
+
       case GST_MESSAGE_STATE_CHANGED:
         // We are only interested in state-changed messages from the pipeline.
         if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
@@ -618,6 +637,7 @@ void Gear_VideoSource::_postRun()
           }
         }
         break;
+
       default:
         // We should not reach here.
         g_printerr("Unexpected message received.\n");
@@ -629,16 +649,25 @@ void Gear_VideoSource::_postRun()
 }
 
 
-void Gear_VideoSource::_setPlayState(bool play)
+bool Gear_VideoSource::_setPlayState(bool play)
 {
-  // Start playing.
   if (_bus == NULL)
-    return;
+    return false;
 
   GstStateChangeReturn ret = gst_element_set_state (_pipeline, (play ? GST_STATE_PLAYING : GST_STATE_PAUSED));
-  if (ret == GST_STATE_CHANGE_FAILURE) {
+  if (ret == GST_STATE_CHANGE_FAILURE)
+  {
     std::cout << "Unable to set the pipeline to the playing state." << std::endl;
-    freeResources();
+    unloadMovie();
+    return false;
+  }
+  else
+  {
+    _movieReady = play;
+    _VIDEO_OUT->sleeping(!play);
+    _AUDIO_OUT->sleeping(!play);
+
+    return true;
   }
 }
 
