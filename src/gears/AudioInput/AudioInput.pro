@@ -6,7 +6,7 @@ TEMPLATE=lib
 SOURCES+=Gear_AudioInput.cpp
 HEADERS+=Gear_AudioInput.h
 INCLUDEPATH+=../../core/ ../../core/types ../../../lib/portaudio/include
-QMAKE_RPATH = -Wl,-rpath,lib/portaudio,-rpath,
+QMAKE_LFLAGS_RPATH = -Wl,-rpath,lib/portaudio,-rpath,
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
