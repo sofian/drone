@@ -138,14 +138,6 @@ Gear_VideoInput::~Gear_VideoInput()
   freeResources();
 }
 
-void Gear_VideoInput::internalPrePlay()
-{
-  if (!initCamera())
-  {
-    std::cout << "Could not initialize capture device. Verify your video capture device by running gstreamer-properties." << std::endl;
-  }
-}
-
 bool Gear_VideoInput::initCamera()
 {
   std::cout << "Opening video capture device" << std::endl;
@@ -215,6 +207,16 @@ bool Gear_VideoInput::initCamera()
   _VIDEO_OUT->sleeping(false);
 
   _terminate = false;
+
+  return true;
+}
+
+void Gear_VideoInput::internalPrePlay()
+{
+  if (!initCamera())
+  {
+    std::cout << "Could not initialize capture device. Verify your video capture device by running gstreamer-properties." << std::endl;
+  }
 }
 
 void Gear_VideoInput::internalPostPlay()
