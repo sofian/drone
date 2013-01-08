@@ -531,17 +531,20 @@ void Gear_VideoSource::runAudio() {
 
 void Gear_VideoSource::_preRun()
 {
-  if (_eos()) {
+  // Check for end-of-stream or terminate.
+  if (_eos() || _terminate)
+  {
     _FINISH_OUT->type()->setValue(1.0f);
     _VIDEO_OUT->sleeping(true);
     _AUDIO_OUT->sleeping(true);
+
+    gst_adapter_clear(_audioBufferAdapter);
   }
   else
     _FINISH_OUT->type()->setValue(0.0f);
 
-  if ((int) _RESET_IN->type()->value() == 1) {
+  if (_RESET_IN->type()->boolValue())
     resetMovie();
-  }
 
   if (_currentMovie != _MOVIE_IN->type()->value()) {
     _currentMovie = _MOVIE_IN->type()->value();
@@ -549,20 +552,9 @@ void Gear_VideoSource::_preRun()
       return;
   }
 
-  if (!_movieReady)
+  if (!_movieReady ||
+      !_padHandlerData.isConnected())
     return;
-
-  if (!_padHandlerData.isConnected())
-    return;
-
-  if (_terminate) {
-    _FINISH_OUT->type()->setValue(1.0f);
-    _VIDEO_OUT->sleeping(true);
-    _AUDIO_OUT->sleeping(true);
-    return;
-  }
-
-  _FINISH_OUT->type()->setValue(0.0f);
 }
 
 void Gear_VideoSource::_postRun()
@@ -610,6 +602,9 @@ void Gear_VideoSource::_postRun()
               _currentMovie.c_str(),
               gst_element_state_get_name(oldState),
               gst_element_state_get_name(newState));
+
+          if (oldState == GST_STATE_PAUSED && newState == GST_STATE_READY)
+            gst_adapter_clear(_audioBufferAdapter);
 
           if (newState == GST_STATE_PLAYING) {
             // Check if seeking is allowed.
