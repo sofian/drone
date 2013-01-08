@@ -45,7 +45,7 @@ const std::string Gear_StringSource::SETTING_STRING = "Source";
 Gear_StringSource::Gear_StringSource(Schema *schema, std::string uniqueName) : 
   Gear(schema, "StringSource", uniqueName)
 {
-  addPlug(_STR_OUT = new PlugOut<StringType>(this, "str", false, new StringType("aaa")));
+  addPlug(_STR_OUT = new PlugOut<StringType>(this, "str", false, new StringType("")));
   _settings.add(Property::FILENAME, SETTING_STRING)->valueStr("");
 
   _currentString = "";
