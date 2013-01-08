@@ -34,8 +34,8 @@
 #define __TYPE_BASE_METHODS_1_ARGS(ClassName) \
     virtual std::string typeName() const { return #ClassName; } \
     virtual void copyFrom(const AbstractType& t) { (*this) = *(static_cast<const ClassName*>(&t)); } \
+    virtual bool isSuperClassOf(const AbstractType& t) const { return (dynamic_cast<const ClassName*>(&t)) != NULL; } \
     virtual AbstractType* clone() const { return new ClassName(*this); }
-
 
 #define __TYPE_BASE_METHODS_2_ARGS(ClassName, RGB) \
   virtual QColor color() const { return QColor RGB;} \
@@ -63,10 +63,19 @@ public:
     return &subType;
   }
 	
-  bool isTypeOf(AbstractType &other) const
-  {
+  virtual bool isSubClassOf(const AbstractType& t) const {
+    return t.isSuperClassOf(*this);
+  }
+
+  bool isClassOf(AbstractType &other) const {
     return other.typeName() == typeName();
   }
+
+  // DEPRECATED: Use: isClassOf()
+  /*bool isTypeOf(AbstractType &other) const
+  {
+    return other.typeName() == typeName();
+  }*/
 
 
 protected:
