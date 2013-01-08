@@ -134,9 +134,15 @@ bool Gear_VideoSource::_videoPull()
 
     video->resize(width, height);
 
-    memcpy(video->data(), GST_BUFFER_DATA(buffer), video->size() * sizeof(RGBA));
+//        std::cout << gst_structure_to_string(capsStruct) << std::endl;
+//        std::cout << width << "x" << height << "=" << width*height << "(" << width*height*4 << "," << width*height*3 << ")" << std::endl;
+//        std::cout << "bpp: " << bpp << " depth: " << depth << std::endl;
+//        std::cout << "Buffer size: " << GST_BUFFER_SIZE(buffer) << std::endl;
 
-//    convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
+    if (bpp == 32)
+      memcpy(video->data(), GST_BUFFER_DATA(buffer), video->size() * sizeof(RGBA));
+    else
+      convert24to32((unsigned char*)video->data(), GST_BUFFER_DATA(buffer), video->size());
 // Make sure the buffer width / height are right.
 //    int nPixelsInBuffer = GST_BUFFER_SIZE(buffer) / (bpp / 8);
 //    int nPixels = width * height;
@@ -165,6 +171,7 @@ bool Gear_VideoSource::_audioPull()
   GstBuffer *buffer;
 
   // Retrieve the buffer.
+  // TODO: we should pull ALL buffers and add them to the adapter
   g_signal_emit_by_name (_audioSink, "pull-buffer", &buffer);
 
   if (!buffer)
@@ -175,23 +182,39 @@ bool Gear_VideoSource::_audioPull()
 
   else
   {
+//    int blockSize  = 2;
+    int sampleRate = 1;
+    int channels  = 0;
+    int width = 0;
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
     GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
-    SignalType* audio = _AUDIO_OUT->type();
-
-    int blockSize  = Engine::signalInfo().blockSize();
-    int sampleRate = Engine::signalInfo().sampleRate();
-    int channels  = 1;
 
     gst_structure_get_int(capsStruct, "rate",  &sampleRate);
     gst_structure_get_int(capsStruct, "channels", &channels);
+    gst_structure_get_int(capsStruct, "width",  &width);
 
-    int size = GST_BUFFER_SIZE(buffer);
-    int asize = audio->size();
+//    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
 
+    SignalType *audio = _AUDIO_OUT->type();
+    unsigned int blockByteSize = Engine::signalInfo().blockSize() * sizeof(Signal_T);
+    ASSERT_ERROR( blockByteSize == audio->size()*sizeof(Signal_T) );
 
+    //std::cout << "bufsize: "<< GST_BUFFER_SIZE(buffer) <<
+    //             " / adaptersize: " << gst_adapter_available(_audioBufferAdapter) ;
+    // Add buffer to the adapter.0
+    gst_adapter_push(_audioBufferAdapter, buffer);
+   // std::cout << " .. after push = : "<< gst_adapter_available(_audioBufferAdapter);
 
-    gst_buffer_unref (buffer);
+    if (gst_adapter_available(_audioBufferAdapter) >= blockByteSize ) {
+      gst_adapter_copy(_audioBufferAdapter, (guint8*)audio->data(), 0, blockByteSize);
+      gst_adapter_flush (_audioBufferAdapter, blockByteSize);
+    //  std::cout << " flushing: " << blockByteSize;
+    }
+    std::cout << gst_adapter_available(_audioBufferAdapter) << std::endl;
+
+    // NOTE: no need to unref the buffer here because the buffer was given away with the
+    // call to gst_adapter_push()
+    //gst_buffer_unref (buffer);
     return true;
   }
 
@@ -244,6 +267,7 @@ _videoConvert(NULL),
 _videoColorSpace(NULL),
 _audioSink(NULL),
 _videoSink(NULL),
+_audioBufferAdapter(NULL),
 _seekEnabled(false),
 _audioHasNewBuffer(false),
 _videoHasNewBuffer(false),
@@ -266,11 +290,15 @@ _movieReady(false)
 
 	_VIDEO_OUT->sleeping(true);
 	_AUDIO_OUT->sleeping(true);
+
+  // Crease audio buffer handler.
+  _audioBufferAdapter = gst_adapter_new();
 }
 
 Gear_VideoSource::~Gear_VideoSource()
 {
   freeResources();
+  gst_object_unref(_audioBufferAdapter);
 }
 
 void Gear_VideoSource::freeResources()
@@ -290,6 +318,11 @@ void Gear_VideoSource::freeResources()
     _pipeline = NULL;
 //    ASSERT_ERROR (_pipeline == NULL);
   }
+
+  // Flush all buffers.
+  std::cout << "Clearing buffer adapter ...";
+  gst_adapter_clear(_audioBufferAdapter);
+  std::cout << "done." << std::endl;
 
   // Init.
   _movieReady=false;
@@ -402,14 +435,17 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_signal_connect (_source, "pad-added", G_CALLBACK (Gear_VideoSource::gstPadAddedCallback), &_padHandlerData);
 
   // Configure audio appsink.
-  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,rate=%d,endianness=BYTE_ORDER", Engine::signalInfo().sampleRate());
+  // TODO: change from mono to stereo
+  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,width=%d,signed=true,channels=1,rate=%d,endianness=BYTE_ORDER", (int)(sizeof(Signal_T)*8), Engine::signalInfo().sampleRate());
   GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
-  g_object_set (_audioSink, "emit-signals", TRUE, "caps", audioCaps, NULL);
+  g_object_set (_audioSink, "emit-signals", TRUE,
+                            "caps", audioCaps, NULL);
   g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
   gst_caps_unref (audioCaps);
   g_free (audioCapsText);
 
   // Configure video appsink.
+//  GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb");
   GstCaps *videoCaps = gst_caps_from_string ("video/x-raw-rgb,format=RGBA,bpp=32,depth=32");
   g_object_set (_videoSink, "emit-signals", TRUE,
                             "caps", videoCaps,    // this sets video caps to "video/x-raw-rgb"
@@ -461,7 +497,7 @@ void Gear_VideoSource::runVideo() {
 
 void Gear_VideoSource::runAudio() {
 
-  //_preRun();
+  _preRun();
 
   if (_audioHasNewBuffer) {
 
@@ -475,7 +511,7 @@ void Gear_VideoSource::runAudio() {
     _audioHasNewBuffer = false;
   }
 
-  //_postRun();
+  _postRun();
 }
 
 void Gear_VideoSource::_preRun()

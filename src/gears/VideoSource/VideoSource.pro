@@ -12,7 +12,7 @@ QMAKE_CXXFLAGS+=-D__STDC_CONSTANT_MACROS
 unix:!macx {
 	CONFIG+=link_pkgconfig
 #	PKGCONFIG+=libavformat libavcodec libswscale libavutil sdl
-	PKGCONFIG += gstreamer-0.10
+	PKGCONFIG += gstreamer-0.10 gstreamer-base-0.10
 
 	QMAKE_LFLAGS_RPATH+=-Wl,-rpath=/opt/gstreamer-sdk/lib
 

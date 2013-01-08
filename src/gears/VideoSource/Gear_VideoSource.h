@@ -32,6 +32,7 @@
 extern "C" {
   #include <gst/gst.h>
   #include <gst/app/gstappsink.h>
+  #include <gst/base/gstadapter.h>
 }
 
 class Gear_VideoSource : public Gear
@@ -128,6 +129,8 @@ private:
   GstElement *_videoColorSpace;
   GstElement *_audioSink;
   GstElement *_videoSink;
+
+  GstAdapter *_audioBufferAdapter;
 
   GstPadHandlerData _padHandlerData;
 
