@@ -25,7 +25,20 @@
 #include "ThreadUtil.h"
 
 
-Register_Gear(MAKERGear_AudioOutput, Gear_AudioOutput, "AudioOutput")
+extern "C" {
+Gear* makeGear(Schema *schema, std::string uniqueName)
+{
+  return new Gear_AudioOutput(schema, uniqueName);
+}
+
+GearInfo getGearInfo()
+{
+  GearInfo gearInfo;
+  gearInfo.name = "AudioOutput";
+  gearInfo.classification = GearClassifications::signal().IO().instance();
+  return gearInfo;
+}
+}
 
 const int Gear_AudioOutput::DEFAULT_FRAMES_PER_BUFFER=512;
 const int Gear_AudioOutput::DEFAULT_NB_BUFFERS=0;
