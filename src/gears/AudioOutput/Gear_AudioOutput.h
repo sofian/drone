@@ -22,9 +22,11 @@
 
 #include "Gear.h"
 #include "SignalType.h"
-#include <portaudio.h>
 
-
+extern "C" {
+  #include <gst/gst.h>
+  #include <gst/app/gstappsrc.h>
+}
 
 class PlugSignal;
 
@@ -40,10 +42,23 @@ public:
   Gear_AudioOutput(Schema *schema, std::string uniqueName);
   virtual ~Gear_AudioOutput();
 
-  void runAudio();    
+  void runAudio();
 
-  PlugIn<SignalType>* AUDIO_IN_LEFT(){return _AUDIO_IN_LEFT;};
-  PlugIn<SignalType>* AUDIO_IN_RIGHT(){return _AUDIO_IN_RIGHT;};
+public:
+//  struct GstFeedData {
+//    GstElement *audioSource;
+//    PlugIn<SignalType> *plug;
+//    GstFeedData() : audioSource(NULL), plug(NULL) {}
+//  };
+//
+//  static void gstStartFeedCallback(GstElement *source, guint size, GstFeedData *data);
+//  static void gstStopFeedCallback(GstElement *source, guint size, GstFeedData *data);
+
+  static void gstNeedsDataCallback(GstElement *source, guint size, Gear_AudioOutput *gear);
+  static void gstEnoughDataCallback(GstElement *source, guint size, Gear_AudioOutput *gear);
+  void needsData(bool needsIt) {
+    _needsData = needsIt;
+  }
 
 protected:
   void internalPrePlay();    
@@ -52,36 +67,30 @@ protected:
   
   void onUpdateSettings();
 
+  bool initOutput();
+  void freeResources();
+//  void init();
+
 private:
 
 //PLUGS
   PlugIn<SignalType> *_AUDIO_IN_LEFT;
   PlugIn<SignalType> *_AUDIO_IN_RIGHT;
-//
-
-
-
-//portaudio
 
   static const int DEFAULT_FRAMES_PER_BUFFER;
   static const int DEFAULT_NB_BUFFERS;
 
-  PortAudioStream *_stream;
+  // gstreamer
+  GstBus *_bus;
+  GstElement *_pipeline;
+  GstElement *_audioSource;
+  GstElement *_audioSink;
 
-  void initPortAudio();    
+  int _testIter;
 
-  int _ringBufferSize;
+//  GstFeedData _feedData;
 
-  SignalType _lBuffer;
-  SignalType _rBuffer;
-  int _lBufferIndex;
-
-  int _readIndex;
-
-  static int portAudioCallback(void *, void *output_buffer, unsigned long frames_per_buffer,
-                               PaTimestamp, void *user_data);
-
-  pthread_mutex_t *_mutex;
+  bool _needsData;
 };
 
 #endif
