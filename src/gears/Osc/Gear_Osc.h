@@ -43,6 +43,9 @@ private:
   
   // Outputs.
   PlugOut<ValueType> *_VALUE_OUT;
+  PlugOut<SignalType> *_SIGNAL_OUT;
+
+  static float _osc(float t, float amp, float freq, float phaseCorrection);
   float _currentTimeTimesTwicePi;
   float _oldFreq;
   float _phaseCorrection;
