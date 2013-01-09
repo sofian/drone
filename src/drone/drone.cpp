@@ -31,10 +31,18 @@
 #include "Utils.h"
 #include <qsettings.h>
 
+#if (!defined(SINGLE_THREADED_PLAYBACK) and defined(Q_WS_X11))
+  #include <X11/Xlib.h>
+#endif
+
 QSettings globalSettings;
 
 int main(int argc, char** argv)
 {
+
+#if (!defined(SINGLE_THREADED_PLAYBACK) and defined(Q_WS_X11))
+  XInitThreads();
+#endif
   QApplication qtApp(argc, argv);
   QApplication::setGlobalMouseTracking(TRUE);
       
