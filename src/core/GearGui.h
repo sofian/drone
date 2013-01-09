@@ -112,9 +112,6 @@ public:
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
   void setTitle(std::string title){_title=title;}
- 
-  void setSelected(bool state){_selected=state;QGraphicsRectItem::setSelected(state);}
-  void toggleSelection(){setSelected(!_selected);}
 
   void setLayoutMode(layoutMode mode);  
   layoutMode getLayoutMode() const {return _layoutMode;}

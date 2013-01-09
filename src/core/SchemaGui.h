@@ -65,6 +65,8 @@ public:
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
 
+  void setSelectionChangeBypass(bool v){_selectionChangeBypass=v;}
+  
 signals:
   void gearSelected(GearGui *gearGui);
   
@@ -78,11 +80,7 @@ protected:
   void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
   void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
 
-   
-  
   void drawBackground ( QPainter * painter, const QRectF & rect );
-
-  
   
   enum ePlugContextItemId
   {
@@ -90,9 +88,7 @@ protected:
   };
 
   //popupmenus  
-  
   SchemaEditor* _schemaEditor;
-  
   
 private:
   static const int DEFAULT_CANVAS_SIZE_X;
@@ -107,6 +103,7 @@ private:
   Schema *_schema;
   Engine *_engine;
   qreal _maxZValue;
+  bool _selectionChangeBypass;
 };
 
 #endif

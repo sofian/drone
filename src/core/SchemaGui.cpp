@@ -30,6 +30,7 @@
 #include <QVarLengthArray>
 #include <q3filedialog>
 #include <qtextstream>
+
 const int SchemaGui::DEFAULT_CANVAS_SIZE_X = 2048;
 const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
 
@@ -39,17 +40,10 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   _activeConnection(NULL),
   _connecting(false),
   _engine(engine),
-  _maxZValue(0)
+  _maxZValue(0),
+  _selectionChangeBypass(false)
 {
-  
-  //todo various background for metagear and main schema
-  //setBackgroundColor(QColor(107,124,153));
-  QRadialGradient gradient(0, 0, 10);
-  gradient.setSpread(QGradient::RepeatSpread);
-  //setBackgroundBrush(gradient);
   QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(selectionHasChanged()));
-
-
   setSchema(schema);
 }
 
@@ -241,16 +235,22 @@ void SchemaGui::selectionHasChanged()
   QGraphicsItem* el;
   GearGui* selectedGear=0;
   qreal zOffset;
-  _maxZValue++;
+  if(_selectionChangeBypass)
+    return;
+  if(list.count()==0)
+    _maxZValue++;
+
+
+  std::cerr<<"Selected elements: "<<list.count()<<std::endl;
   foreach(el,list)
   {
-    // create pseudo "layers" with chunks of Z values so that comments
+    // create pseudo "layers" with slices of Z values so that comments
     // are always below gears (TODO/UPCOMING) and connections always on top 
     if(qgraphicsitem_cast<ConnectionItem*>(el))
       zOffset=1000000;
+    else zOffset=0;
     selectedGear=qgraphicsitem_cast<GearGui*>(el);
     el->setZValue(_maxZValue+zOffset);
-    std::cerr<<"set z="<<_maxZValue<<std::endl;
   }
   if(selectedGear)
     emit gearSelected(selectedGear);

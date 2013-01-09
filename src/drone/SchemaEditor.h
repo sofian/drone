@@ -76,7 +76,6 @@ public:
   QMenu* getGearContextMenu() const {return _gearContextMenu;}
   QMenu* getMetaGearContextMenu() const {return _metaGearContextMenu;}
   QMenu* getPlugContextMenu() const {return _plugContextMenu;}
-
 public slots:
 
   //common slots  
@@ -111,7 +110,6 @@ protected:
   void setupMatrix();
   void deleteSelected();
   
-  void unselectAll();
   void selectAll();
 
 
@@ -143,6 +141,10 @@ private:
   Engine *_engine;
   SchemaGui *_schemaGui;
   double _scale;
+  qreal _maxZValue;
+  
+  // when true, ignore selectionChange signals
+  bool _selectionChangeBypass;
 
   PanelScrollView *_panelScrollView;
 };

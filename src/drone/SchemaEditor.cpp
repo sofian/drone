@@ -62,7 +62,9 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _engine(engine),
   _schemaGui(schemaGui),
   _scale(1),
-  _panelScrollView(panelScrollView)
+  _panelScrollView(panelScrollView),
+  _maxZValue(1),
+  _selectionChangeBypass(false)
   
 
 {
@@ -233,29 +235,6 @@ void SchemaEditor::deleteSelected()
 
 }
 
-void SchemaEditor::unselectAll()
-{
-  QList<QGraphicsItem*> all = _schemaGui->items();
-  QGraphicsItem* el;
-  GearGui* ggui;
-  foreach(el,all)
-  {
-    el->setSelected(false);
-  }
-  update();
-}
-
-void SchemaEditor::selectAll()
-{
-  QList<QGraphicsItem*> all = _schemaGui->items();
-  QGraphicsItem* el;
-  GearGui* ggui;
-  foreach(el,all)
-  {
-    el->setSelected(true);
-  }
-  update();
-}
 
 
 
@@ -293,7 +272,7 @@ void SchemaEditor::slotGearCopy()
 
 void SchemaEditor::slotGearPaste()
 {
-  unselectAll();
+  _schemaGui->clearSelection();
   QDomDocument doc("Clipboard");
 
   QString str(_engine->getClipboardText().c_str());
@@ -338,7 +317,19 @@ void SchemaEditor::slotGearPaste()
 
 void SchemaEditor::slotSelectAll()
 {
-  selectAll();
+  QList<QGraphicsItem*> all = _schemaGui->items();
+  QGraphicsItem* el;
+  GearGui* ggui;
+  _schemaGui->setSelectionChangeBypass(true);
+  foreach(el,all)
+  {
+    el->setSelected(true);
+  }
+  el->setSelected(false);
+  _schemaGui->setSelectionChangeBypass(false);
+// hack to emit signal because we can't manually
+  el->setSelected(true);
+  update();
 }
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
