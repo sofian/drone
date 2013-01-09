@@ -190,14 +190,15 @@ void Gear_AudioOutput::runAudio()
     /* Create a new empty buffer */
     const SignalType* audio = _AUDIO_IN_LEFT->type();
     unsigned int blockByteSize = audio->size() * sizeof (Signal_T);
-    unsigned int sampleRate = Engine::signalInfo().sampleRate();
+    //unsigned int sampleRate = Engine::signalInfo().sampleRate();
+    //unsigned int blockSize  = Engine::signalInfo().blockSize();
     buffer = gst_buffer_new_and_alloc ( blockByteSize );
 
     /* Set its timestamp and duration */
-    GST_BUFFER_TIMESTAMP (buffer) = gst_util_uint64_scale (_testIter * audio->size(), GST_SECOND, sampleRate);
-    GST_BUFFER_DURATION  (buffer) = gst_util_uint64_scale (audio->size(), GST_SECOND, sampleRate);
+//    GST_BUFFER_TIMESTAMP (buffer) = gst_util_uint64_scale (_testIter * blockSize, GST_SECOND, sampleRate);
+//    GST_BUFFER_DURATION  (buffer) = gst_util_uint64_scale (blockSize, GST_SECOND, sampleRate);
 
-    std::cout << GST_BUFFER_DURATION (buffer) << " / " << GST_BUFFER_TIMESTAMP (buffer) << " bs: " << blockByteSize << " sr: " << sampleRate << std::endl;
+    //std::cout << GST_BUFFER_DURATION (buffer) << " / " << GST_BUFFER_TIMESTAMP (buffer) << " bs: " << blockByteSize << " sr: " << sampleRate << std::endl;
     /* Generate some psychodelic waveforms */
     memcpy(GST_BUFFER_DATA(buffer), audio->data(), blockByteSize);
 
