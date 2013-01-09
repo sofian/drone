@@ -101,7 +101,6 @@ void Gear_VideoInput::gstNewBufferCallback(GstElement*, bool *newBuffer)
 
 Gear_VideoInput::Gear_VideoInput(Schema *schema, std::string uniqueName) : 
 Gear(schema, "VideoInput", uniqueName),
-_currentMovie(""),
 _bus(NULL),
 _pipeline(NULL),
 _source(NULL),

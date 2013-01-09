@@ -58,13 +58,6 @@ private:
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
 
   VideoRGBAType *_imageOut;
-
-  //locals
-  std::string _currentMovie;  
-
-  //float *_audioBuffer;
-  //RGBA *_outData;  
-  //long _previousFramePos;
 	
   // gstreamer
   GstBus *_bus;
