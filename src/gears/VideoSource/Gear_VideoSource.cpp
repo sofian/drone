@@ -196,7 +196,6 @@ bool Gear_VideoSource::_audioPull()
 //    gst_structure_get_int(capsStruct, "width",  &width);
 
 //    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
-
     SignalType *audio = _AUDIO_OUT->type();
     unsigned int blockByteSize = Engine::signalInfo().blockSize() * sizeof(Signal_T);
     ASSERT_ERROR( blockByteSize == audio->size()*sizeof(Signal_T) );
@@ -496,6 +495,9 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
 void Gear_VideoSource::runVideo() {
 
+  if (!_VIDEO_OUT->connected())
+    return;
+
   _preRun();
 
   if (_videoHasNewBuffer) {
@@ -515,6 +517,9 @@ void Gear_VideoSource::runVideo() {
 
 
 void Gear_VideoSource::runAudio() {
+
+  if (!_AUDIO_OUT->connected())
+    return;
 
   _preRun();
 
