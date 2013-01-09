@@ -182,6 +182,7 @@ bool Gear_VideoSource::_audioPull()
 
   else
   {
+    ASSERT_WARNING_MESSAGE( ! GST_BUFFER_IS_DISCONT(buffer), "Discontinuity detected in audio buffer." );
 //    int blockSize  = 2;
     int sampleRate = 1;
     int channels  = 0;
