@@ -459,7 +459,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 
   // Configure audio appsink.
   // TODO: change from mono to stereo
-  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,width=%d,signed=true,channels=1,rate=%d,endianness=BYTE_ORDER", (int)(sizeof(Signal_T)*8), Engine::signalInfo().sampleRate());
+  gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,channels=1,rate=%d,signed=(boolean)true,width=%d,depth=%d,endianness=BYTE_ORDER",
+                                          Engine::signalInfo().sampleRate(), (int)(sizeof(Signal_T)*8), (int)(sizeof(Signal_T)*8) );
   GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
   g_object_set (_audioSink, "emit-signals", TRUE,
                             "caps", audioCaps, NULL);
