@@ -52,7 +52,7 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   //add the edited metagear to the panelScrollView
   //_panelScrollView->addControlPanel(metaGear);
 	
-  QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
+  QObject::connect(_schemaEditor->scene(), SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
   
 }
 

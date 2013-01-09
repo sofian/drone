@@ -108,24 +108,25 @@ _menuShowSmallGearsId(false)
   
   //menu    
   _fileMenu = menuBar->addMenu("&File");
-  _actNew =  _fileMenu->addAction("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
-  _actLoad = _fileMenu->addAction("Load", this, SLOT(slotMenuLoad()), Qt::CTRL+Qt::Key_O);
-  _actSave = _fileMenu->addAction("Save", this, SLOT(slotMenuSave()), Qt::CTRL+Qt::Key_S);    
+  _actNew =  _fileMenu->addAction("New", this, SLOT(slotMenuNew()), QKeySequence::New);
+  _actLoad = _fileMenu->addAction("Open", this, SLOT(slotMenuLoad()), QKeySequence::Open);
+  _actSave = _fileMenu->addAction("Save", this, SLOT(slotMenuSave()), QKeySequence::Save);    
   _actSave->setDisabled(true);  
   
-  _actSaveAs=_fileMenu->addAction("Save as", this, SLOT(slotMenuSaveAs()));    
+  _actSaveAs=_fileMenu->addAction("Save as", this, SLOT(slotMenuSaveAs()), QKeySequence::SaveAs);    
   _fileMenu->addSeparator();
-  _actQuit = _fileMenu->addAction("Quit",  this, SLOT(slotMenuQuit()), Qt::CTRL+Qt::Key_Q);    
+  _actQuit = _fileMenu->addAction("Quit",  this, SLOT(slotMenuQuit()), QKeySequence::Quit);    
 
 
   
   _editMenu = menuBar->addMenu("&Edit");
-	_actSelectAll=_editMenu->addAction("Select all", schemaEditor, SLOT(slotSelectAll()), Qt::CTRL+Qt::Key_A);
-  _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(slotDeleteSelected()), Qt::CTRL+Qt::Key_Backspace);
-	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(slotGearCopy()), Qt::CTRL+Qt::Key_C);
-	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(slotGearPaste()), Qt::CTRL+Qt::Key_V);
-
-  
+	_actSelectAll=_editMenu->addAction("Select all", schemaEditor, SLOT(slotSelectAll()),  QKeySequence::SelectAll);
+  _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(slotDeleteSelected()), QKeySequence::Delete);
+	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(slotGearCopy()), QKeySequence::Copy);
+	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(slotGearPaste()), QKeySequence::Paste);
+	_actUndo =_editMenu->addAction("Undo", schemaEditor, SLOT(slotUndo()), QKeySequence::Undo);
+	_actRedo =_editMenu->addAction("Redo", schemaEditor, SLOT(slotRedo()), QKeySequence::Redo);
+ 
   _viewMenu = menuBar->addMenu("&View");
 	_viewMenu->setCheckable(true);
   

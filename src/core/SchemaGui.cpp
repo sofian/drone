@@ -47,7 +47,7 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QRadialGradient gradient(0, 0, 10);
   gradient.setSpread(QGradient::RepeatSpread);
   //setBackgroundBrush(gradient);
-  QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(raiseSelectionZValue()));
+  QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(selectionHasChanged()));
 
 
   setSchema(schema);
@@ -235,20 +235,25 @@ bool SchemaGui::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   return _schema->save(doc, parent,onlySelected);
 }
 
-void SchemaGui::raiseSelectionZValue()
+void SchemaGui::selectionHasChanged()
 {
   QList<QGraphicsItem *> list(selectedItems());
   QGraphicsItem* el;
+  GearGui* selectedGear=0;
   qreal zOffset;
   _maxZValue++;
   foreach(el,list)
   {
     // create pseudo "layers" with chunks of Z values so that comments
     // are always below gears (TODO/UPCOMING) and connections always on top 
-    if(qgraphicsitem_cast<ConnectionItem*>(el))zOffset=1000000;
+    if(qgraphicsitem_cast<ConnectionItem*>(el))
+      zOffset=1000000;
+    selectedGear=qgraphicsitem_cast<GearGui*>(el);
     el->setZValue(_maxZValue+zOffset);
     std::cerr<<"set z="<<_maxZValue<<std::endl;
   }
+  if(selectedGear)
+    emit gearSelected(selectedGear);
 }
 
 void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)

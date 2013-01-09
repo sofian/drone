@@ -65,9 +65,11 @@ public:
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
 
+signals:
+  void gearSelected(GearGui *gearGui);
   
 public slots:
-  void raiseSelectionZValue();
+  void selectionHasChanged();
 
 protected:
 

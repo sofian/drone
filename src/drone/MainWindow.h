@@ -123,6 +123,8 @@ public :
   QAction *_actDeleteSelected;
   QAction *_actCopy;
   QAction *_actPaste;
+  QAction *_actUndo;
+  QAction *_actRedo;
   
   
 protected:
