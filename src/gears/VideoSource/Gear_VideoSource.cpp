@@ -183,16 +183,17 @@ bool Gear_VideoSource::_audioPull()
   else
   {
     ASSERT_WARNING_MESSAGE( ! GST_BUFFER_IS_DISCONT(buffer), "Discontinuity detected in audio buffer." );
-//    int blockSize  = 2;
-    int sampleRate = 1;
-    int channels  = 0;
-    int width = 0;
-    GstCaps* caps = GST_BUFFER_CAPS(buffer);
-    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
 
-    gst_structure_get_int(capsStruct, "rate",  &sampleRate);
-    gst_structure_get_int(capsStruct, "channels", &channels);
-    gst_structure_get_int(capsStruct, "width",  &width);
+//    int blockSize  = 2;
+//    int sampleRate = 1;
+//    int channels  = 0;
+//    int width = 0;
+//    GstCaps* caps = GST_BUFFER_CAPS(buffer);
+//    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
+//
+//    gst_structure_get_int(capsStruct, "rate",  &sampleRate);
+//    gst_structure_get_int(capsStruct, "channels", &channels);
+//    gst_structure_get_int(capsStruct, "width",  &width);
 
 //    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
 
