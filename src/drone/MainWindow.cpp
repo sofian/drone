@@ -24,7 +24,8 @@
 #include <qapplication.h>
 //Added by qt3to4:
 #include <QTimerEvent>
-#include <Q3PopupMenu>
+#include <QMenuBar>
+#include <QMenu>
 #include <sstream>
 
 #include "Play.xpm"
@@ -33,6 +34,7 @@
 #include "error.h"
 
 #include "SchemaGui.h"
+#include "SchemaEditor.h"
 #include "MetaGear.h"
 #include "MetaGearEditor.h"
 
@@ -56,6 +58,17 @@ const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
 
 extern QSettings globalSettings;
 
+MainWindow *MainWindow::instance=0;
+
+MainWindow* MainWindow::getInstance()
+{
+  if (!instance)
+  {
+    instance = new MainWindow();
+  }
+  return instance;
+}
+
 
 MainWindow::MainWindow() : 
 QMainWindow(), 
@@ -68,6 +81,7 @@ _menuShowSmallGearsId(false)
   _engine = new Engine(0);    
   _metaGearEditor = new MetaGearEditor(this, _engine->mainMetaGear(), _engine);
   _mainSchemaGui = _metaGearEditor->schemaGui();
+  SchemaEditor* schemaEditor = _metaGearEditor->schemaEditor();
   
   _project = new Project(_mainSchemaGui);
   
@@ -85,8 +99,43 @@ _menuShowSmallGearsId(false)
   _actPlayPause = new QAction("Play/Pause",this);
   _actPlayPause->setIcon(playPauseIcon);
   _actPlayPause->setCheckable(true);
-  _actZoomOut = new QAction("-",_toolBar);    
-  _actZoomIn = new QAction("+",_toolBar);    
+
+  //_actPlayPause->setToggleButton(true);
+	
+  QObject::connect(_actPlayPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
+	
+	QMenuBar* menuBar = new QMenuBar(0);
+  
+  //menu    
+  _fileMenu = menuBar->addMenu("&File");
+  _actNew =  _fileMenu->addAction("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
+  _actLoad = _fileMenu->addAction("Load", this, SLOT(slotMenuLoad()), Qt::CTRL+Qt::Key_O);
+  _actSave = _fileMenu->addAction("Save", this, SLOT(slotMenuSave()), Qt::CTRL+Qt::Key_S);    
+  _actSave->setDisabled(true);  
+  
+  _actSaveAs=_fileMenu->addAction("Save as", this, SLOT(slotMenuSaveAs()));    
+  _fileMenu->addSeparator();
+  _actQuit = _fileMenu->addAction("Quit",  this, SLOT(slotMenuQuit()), Qt::CTRL+Qt::Key_Q);    
+
+
+  
+  _editMenu = menuBar->addMenu("&Edit");
+	_actSelectAll=_editMenu->addAction("Select all", schemaEditor, SLOT(slotSelectAll()), Qt::CTRL+Qt::Key_A);
+  _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(slotDeleteSelected()), Qt::CTRL+Qt::Key_Backspace);
+	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(slotGearCopy()), Qt::CTRL+Qt::Key_C);
+	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(slotGearPaste()), Qt::CTRL+Qt::Key_V);
+
+  
+  _viewMenu = menuBar->addMenu("&View");
+	_viewMenu->setCheckable(true);
+  
+  _actZoomIn = _viewMenu->addAction("Zoom in", schemaEditor, SLOT(slotZoomIn()), Qt::CTRL+Qt::Key_Plus);
+  _actZoomOut = _viewMenu->addAction("Zoom out", schemaEditor, SLOT(slotZoomOut()), Qt::CTRL+Qt::Key_Minus);
+
+
+  _toolsMenu = menuBar->addMenu("&Tools");
+  _actPreferences = _toolsMenu->addAction("Preferences", this, SLOT(slotMenuPreferences()));
+
 
   // add actions to toolbar
   _toolBar->addAction(_actPlayPause);
@@ -94,54 +143,22 @@ _menuShowSmallGearsId(false)
   _toolBar->addAction(_actZoomOut);
   _toolBar->addAction(_actZoomIn);
   
-  //_actPlayPause->setToggleButton(true);
-	
 
 
- 	
 
-  QObject::connect(_actPlayPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
+
+
+  //_toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
   
-  QObject::connect(_actZoomIn, SIGNAL(triggered()), this, SLOT(slotZoomIn()));
-  QObject::connect(_actZoomOut, SIGNAL(triggered()), this, SLOT(slotZoomOut()));
-	
-	
-  
-  //menu    
-  _fileMenu = new Q3PopupMenu(this);
-  _fileMenu->insertItem("New", this, SLOT(slotMenuNew()), Qt::CTRL+Qt::Key_N);
-  _fileMenu->insertItem("Load", this, SLOT(slotMenuLoad()), Qt::CTRL+Qt::Key_O);
-  
+  //_viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), Qt::CTRL+Qt::Key_M);
+  //_menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), Qt::CTRL+Qt::Key_I);
 
-
-
-  //we need to keep this id to enable/disable the save item
-  _menuSaveItemId = _fileMenu->insertItem("Save", this, SLOT(slotMenuSave()), Qt::CTRL+Qt::Key_S);    
-  _fileMenu->setItemEnabled(_menuSaveItemId, false);  
-  
-  _fileMenu->insertItem("Save as", this, SLOT(slotMenuSaveAs()));    
-  _fileMenu->insertSeparator();
-  _fileMenu->insertItem("Quit",  this, SLOT(slotMenuQuit()), Qt::CTRL+Qt::Key_Q);    
-  _fileMenu->insertSeparator();
-
-  _toolsMenu = new Q3PopupMenu(this);
-  _menuPrefsItemId = _toolsMenu->insertItem("Preferences", this, SLOT(slotMenuPreferences()));
-  _toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
-
-  _viewMenu = new Q3PopupMenu(this);
-	_viewMenu->setCheckable(true);
-  _viewMenu->insertItem("Media pool", this, SLOT(slotMenuViewMediaPool()), Qt::CTRL+Qt::Key_M);
-  _menuShowSmallGearsId = _viewMenu->insertItem("Small gears", this, SLOT(slotMenuViewSmallGears()), Qt::CTRL+Qt::Key_I);
-
-	
   //for the most recent schema files that will be appended
   QObject::connect(_fileMenu, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));
 
-  QMenuBar *menuBar = new QMenuBar(this);
-  menuBar->setSeparator(QMenuBar::InWindowsStyle);
-  menuBar->insertItem("&File", _fileMenu);
-  menuBar->insertItem("&Tools", _toolsMenu);
-  menuBar->insertItem("&View", _viewMenu);
+  //menuBar->insertItem("&File", _fileMenu);
+//  menuBar->insertItem("&Tools", _toolsMenu);
+  //menuBar->insertItem("&View", _viewMenu);
 
   //load settings
   _lastLoadPath = globalSettings.readEntry("/drone/Schema/LastLoadPath");
@@ -160,6 +177,12 @@ _menuShowSmallGearsId(false)
   globalSettings.endGroup();
 }
 
+
+void MainWindow::finalize()
+{
+  SchemaEditor* schemaEditor = _metaGearEditor->schemaEditor();
+  schemaEditor->buildContextMenus();
+}
 MainWindow::~MainWindow()
 {
 
@@ -229,7 +252,7 @@ void MainWindow::slotMenuNew()
 
   _project->newProject();
   //_schemaEditor->clearSchema();
-  _fileMenu->setItemEnabled(_menuSaveItemId, false);
+  _actSave->setDisabled(true);
 }
 
 void MainWindow::slotMenuLoad()
@@ -248,7 +271,7 @@ void MainWindow::load(std::string filename)
   slotPlay(false);
 
   _project->load(filename);
-  _fileMenu->setItemEnabled(_menuSaveItemId, true);
+  _actSave->setDisabled(false);
   
   //save the last load path
   _lastLoadPath=_project->projectName().c_str();
@@ -277,7 +300,7 @@ void MainWindow::slotMenuSaveAs()
     
     _project->saveAs(filename);
     
-    _fileMenu->setItemEnabled(_menuSaveItemId, true);
+    _actSave->setDisabled(false);
 
     //save the last save path
     _lastSavePath=filename.c_str();
@@ -362,12 +385,3 @@ void MainWindow::timerEvent(QTimerEvent*)
   _engine->playThread(_engine);
 }
 
-void MainWindow::slotZoomIn()
-{
-  _metaGearEditor->zoomInSchema();
-}
-
-void MainWindow::slotZoomOut()
-{
-  _metaGearEditor->zoomOutSchema();
-}

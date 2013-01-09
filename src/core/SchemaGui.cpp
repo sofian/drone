@@ -38,7 +38,8 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
   _activeConnection(NULL),
   _connecting(false),
-  _engine(engine)
+  _engine(engine),
+  _maxZValue(0)
 {
   
   //todo various background for metagear and main schema
@@ -46,6 +47,8 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QRadialGradient gradient(0, 0, 10);
   gradient.setSpread(QGradient::RepeatSpread);
   //setBackgroundBrush(gradient);
+  QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(raiseSelectionZValue()));
+
 
   setSchema(schema);
 }
@@ -76,7 +79,8 @@ void SchemaGui::rebuildSchema()
 {
   //add gearguis
   std::list<Gear*> gears = _schema->getGears();
-
+  
+  
   GearGui *gearGui=NULL;
   for (std::list<Gear*>::iterator it=gears.begin();it!=gears.end();++it)
   {
@@ -182,7 +186,7 @@ MetaGear* SchemaGui::newMetaGear(QPointF pos)
   gearGui->setPos(pos);
   gearGui->show();
   update();
-
+  
   return metaGear;
 }
 
@@ -231,6 +235,22 @@ bool SchemaGui::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   return _schema->save(doc, parent,onlySelected);
 }
 
+void SchemaGui::raiseSelectionZValue()
+{
+  QList<QGraphicsItem *> list(selectedItems());
+  QGraphicsItem* el;
+  qreal zOffset;
+  _maxZValue++;
+  foreach(el,list)
+  {
+    // create pseudo "layers" with chunks of Z values so that comments
+    // are always below gears (TODO/UPCOMING) and connections always on top 
+    if(qgraphicsitem_cast<ConnectionItem*>(el))zOffset=1000000;
+    el->setZValue(_maxZValue+zOffset);
+    std::cerr<<"set z="<<_maxZValue<<std::endl;
+  }
+}
+
 void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
   QList<QGraphicsItem *> list(items(event->scenePos()));
@@ -263,49 +283,31 @@ void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
 
 void SchemaGui::mouseMoveEvent( QGraphicsSceneMouseEvent * event)
 {
-  
   if(_connecting)
   {
     _activeConnection->setConnectionLineEndPoint(event->scenePos());
-
-//    gearGui = testForGearCollision(p);   
-//
-//    if (gearGui!=NULL)
-//    {
-//      if ( ((selectedPlugBox = gearGui->plugHit(p)) != 0))
-//      {      
-//        if (_activeConnection->sourcePlugBox()->canConnectWith(selectedPlugBox))
-//            gearGui->performPlugHighligthing(selectedPlugBox);
-//        else
-//            gearGui->unHilightAllPlugBoxes();
-//      }
-//      else
-//        gearGui->unHilightAllPlugBoxes();
-//    }
-
   }
   QGraphicsScene::mouseMoveEvent( event);
 }
 
 void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 {
-        std::cerr<<"mousedbl"<<std::endl;
+  QList<QGraphicsItem *> list(items(event->scenePos()));
+  ConnectionItem* ci;
+  QGraphicsItem* el;
 
-    QList<QGraphicsItem *> list(items(event->scenePos()));
-    ConnectionItem* ci;
-    QGraphicsItem* el;
-    foreach(el, list)
+  foreach(el, list)
+  {
+    std::cerr << "found item" << std::endl;
+
+    if (ci = qgraphicsitem_cast<ConnectionItem*>(el))
     {
-            std::cerr<<"found item"<<std::endl;
+      std::cerr << "disconnect" << std::endl;
 
-      if (ci=qgraphicsitem_cast<ConnectionItem*>(el))
-      {
-              std::cerr<<"disconnect"<<std::endl;
-
-        disconnect(ci->sourcePlugBox(), ci->destPlugBox()); 
-        return;
-      }
+      disconnect(ci->sourcePlugBox(), ci->destPlugBox());
+      return;
     }
+  }
 
 }
 

@@ -60,12 +60,3 @@ MetaGearEditor::~MetaGearEditor()
 {
 }
 
-void MetaGearEditor::zoomInSchema()
-{
-	_schemaEditor->zoomIn();
-}
-
-void MetaGearEditor::zoomOutSchema()
-{
-	_schemaEditor->zoomOut();
-}

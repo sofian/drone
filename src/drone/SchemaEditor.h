@@ -63,13 +63,14 @@ public:
 
   SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
   ~SchemaEditor();
+  void buildContextMenus();
 
   void zoom(float factor);
 
   void addGear(std::string name, QPoint pos);
   void addMetaGear(std::string filename, QPoint pos);
   void addNewMetaGear(QPoint pos);
-  
+
   void setContextGear(GearGui* gui){_contextGear = gui;}
   void setContextPlug(PlugBox* pb){_contextPlug = pb;}
   QMenu* getGearContextMenu() const {return _gearContextMenu;}
@@ -79,14 +80,14 @@ public:
 public slots:
 
   //common slots  
-  void zoomIn();
-  void zoomOut();
+  void slotZoomIn();
+  void slotZoomOut();
 
   void slotMenuGearSelected(QString name);
   void slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
   void slotGearProperties();
-  void slotGearDelete();
-  void slotGearSelectAll();
+  void slotDeleteSelected();
+  void slotSelectAll();
   void slotGearCopy();
   void slotGearPaste();
   void slotNewMetaGear();
@@ -110,10 +111,10 @@ protected:
   void dropEvent(QDropEvent* event);
 
   void setupMatrix();
-  void deleteSelectedGears();
+  void deleteSelected();
   
-  void unselectAllGears();
-  void selectAllGears();
+  void unselectAll();
+  void selectAll();
 
 
   QMenu *_contextMenu; 

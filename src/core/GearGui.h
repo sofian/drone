@@ -41,7 +41,15 @@ Q_OBJECT
 public:
 
   enum { Type = UserType + 1 };
-  enum layoutMode {normal, noPlugNames, compact, ultracompact};
+
+  // GearuGui Layout Modes : 
+  // - normal (drone standard)
+  // - noPlugNames (normal but without plug names)
+  // - compact (no more title bar nor plug names, title in the middle)
+  // - ultracompact (like compact without title in the middle)
+  enum layoutMode {
+    normal, noPlugNames, compact, ultracompact
+  };
 
 
   static const int CANVAS_RTTI_GEAR;
@@ -107,7 +115,6 @@ public:
  
   void setSelected(bool state){_selected=state;QGraphicsRectItem::setSelected(state);}
   void toggleSelection(){setSelected(!_selected);}
-  bool isSelected() const {return _selected;}
 
   void setLayoutMode(layoutMode mode);  
   layoutMode getLayoutMode() const {return _layoutMode;}

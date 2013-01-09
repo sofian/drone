@@ -145,7 +145,7 @@ void PlugBox::draw(QPainter *painter)
 
 bool PlugBox::hit(QPointF pos)
 {
-  int nameWidth=0, hackyYOffset=2;
+  int nameWidth=0;
   // weird Y offset fine tuning.. why ?
   pos.setY(pos.y() - 2);
   if (_gearGui->getLayoutMode() == GearGui::normal)

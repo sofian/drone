@@ -18,6 +18,7 @@
  */
 
 #include "SchemaEditor.h"
+#include "MainWindow.h"
 #include "GearGui.h"
 #include "ConnectionItem.h"
 #include "PlugBox.h"
@@ -75,17 +76,23 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
   
   // render with OpenGL
-  if(1)
+  if(0)
     setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 
   resetTransform();
   setAcceptDrops(TRUE);
-  
+}
+
+void SchemaEditor::buildContextMenus()
+{
   _contextMenu = new QMenu();
   _gearListMenu = new GearListMenu(_contextMenu);    
   _gearListMenu->create();
-  
-  QAction * sub = _contextMenu->addMenu(_gearListMenu);
+  MainWindow* mainWindow = MainWindow::getInstance();
+
+  QMenu* newGearMenu = _contextMenu->addMenu("Add gear");
+
+  QAction * sub = newGearMenu->addMenu(_gearListMenu);
   sub->setText("Gears");
   
   QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
@@ -93,27 +100,26 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _metaGearListMenu = new MetaGearListMenu(_contextMenu);    
   _metaGearListMenu->create();
   
-  QAction* mgSubAction = _contextMenu->addMenu(_metaGearListMenu);
+  QAction* mgSubAction = newGearMenu->addMenu(_metaGearListMenu);
   mgSubAction->setText("MetaGears");
   
   QObject::connect(_metaGearListMenu, SIGNAL(metaGearSelected(QFileInfo*)), this, SLOT(slotMenuMetaGearSelected(QFileInfo*)));
 
   _contextMenu->addAction("New MetaGear", this, SLOT(slotNewMetaGear()));
-
+  _contextMenu->addAction(mainWindow->_actZoomIn);  
+	_contextMenu->addAction(mainWindow->_actZoomOut);  
+  _contextMenu->addAction(mainWindow->_actSelectAll);
+  _contextMenu->addAction(mainWindow->_actDeleteSelected);
+  _contextMenu->addAction(mainWindow->_actCopy);
+  _contextMenu->addAction(mainWindow->_actPaste);
+	
   
   _gearContextMenu = new QMenu();
-  _gearContextMenu->addAction("delete",  this, SLOT(slotGearDelete()));
   _gearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));
-	_gearContextMenu->addAction("ZoomIn", this, SLOT(zoomIn()));  
-	_gearContextMenu->addAction("ZoomOut", this, SLOT(zoomOut()));  
 
   _gearContextMenu->addAction("About");    
   
   _metaGearContextMenu = new QMenu();
-  _metaGearContextMenu->addAction("delete", this, SLOT(slotGearDelete()),Qt::Key_Delete);
-  _metaGearContextMenu->addAction("Select All", this, SLOT(slotGearSelectAll()),Qt::CTRL + Qt::Key_A);
-  _metaGearContextMenu->addAction("Copy", this, SLOT(slotGearCopy()),Qt::CTRL + Qt::Key_C);
-  _metaGearContextMenu->addAction("Paste", this, SLOT(slotGearPaste()),Qt::CTRL + Qt::Key_V);
   _metaGearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));  
   _metaGearContextMenu->addAction("About");    
   _metaGearContextMenu->addSeparator();
@@ -125,6 +131,9 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _exposePlugAction = _plugContextMenu->addAction("Expose", this, SLOT(slotPlugToggleExpose()));
 
 }
+
+
+
 
 
 void SchemaEditor::slotMenuGearSelected(QString name)
@@ -155,13 +164,13 @@ void SchemaEditor::slotGearProperties()
 void SchemaEditor::keyPressEvent(QKeyEvent *e)
 {
   if (e->key() == Qt::Key_Backspace || e->key() == Qt::Key_Delete)
-    deleteSelectedGears();
+    deleteSelected();
 }
 
 
-void SchemaEditor::slotGearDelete()
+void SchemaEditor::slotDeleteSelected()
 {
-  deleteSelectedGears();
+  deleteSelected();
 }
 
 /**
@@ -215,7 +224,7 @@ void SchemaEditor::slotSaveMetaGear()
 
 }
 
-void SchemaEditor::deleteSelectedGears()
+void SchemaEditor::deleteSelected()
 {
   std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
   for(unsigned int i=0;i<allGears.size();++i)
@@ -224,19 +233,27 @@ void SchemaEditor::deleteSelectedGears()
 
 }
 
-void SchemaEditor::unselectAllGears()
+void SchemaEditor::unselectAll()
 {
-  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
-  for(unsigned int i=0;i<allGears.size();++i)
-    allGears[i]->setSelected(false);
+  QList<QGraphicsItem*> all = _schemaGui->items();
+  QGraphicsItem* el;
+  GearGui* ggui;
+  foreach(el,all)
+  {
+    el->setSelected(false);
+  }
   update();
 }
 
-void SchemaEditor::selectAllGears()
+void SchemaEditor::selectAll()
 {
-  std::vector<GearGui*> allGears = _schemaGui->getAllGears();
-  for(unsigned int i=0;i<allGears.size();++i)
-    allGears[i]->setSelected(true);
+  QList<QGraphicsItem*> all = _schemaGui->items();
+  QGraphicsItem* el;
+  GearGui* ggui;
+  foreach(el,all)
+  {
+    el->setSelected(true);
+  }
   update();
 }
 
@@ -276,7 +293,7 @@ void SchemaEditor::slotGearCopy()
 
 void SchemaEditor::slotGearPaste()
 {
-  unselectAllGears();
+  unselectAll();
   QDomDocument doc("Clipboard");
 
   QString str(_engine->getClipboardText().c_str());
@@ -309,7 +326,7 @@ void SchemaEditor::slotGearPaste()
     std::cout << "Bad drone project, main schema elem isNull" << std::endl;
     return;
   }
-  
+  std::cerr<<"pasted.."<<std::endl;
   _schemaGui->getSchema()->load(schemaElem, true);
   _schemaGui->rebuildSchema();
 
@@ -319,10 +336,9 @@ void SchemaEditor::slotGearPaste()
   
 }
 
-void SchemaEditor::slotGearSelectAll()
+void SchemaEditor::slotSelectAll()
 {
-  std::cerr<<"select all!!!"<<std::endl;
-  selectAllGears();
+  selectAll();
 }
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
@@ -380,12 +396,12 @@ SchemaEditor::~SchemaEditor()
 
 }
 
-void SchemaEditor::zoomIn()
+void SchemaEditor::slotZoomIn()
 {
   zoom(qMin(_scale*ZOOM_FACTOR,3.0));
 }
 
-void SchemaEditor::zoomOut()
+void SchemaEditor::slotZoomOut()
 {
   zoom(qMax(_scale/ZOOM_FACTOR,0.25));
 }

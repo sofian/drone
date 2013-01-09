@@ -117,7 +117,6 @@ GearGui::GearGui(Gear *pgear, QGraphicsScene *scene, QColor color, qreal control
 QObject(),
 QGraphicsRectItem(),
 _gear(pgear),
-_selected(false),
 _layoutMode(normal),
 _sizeX(100),
 _sizeY(100),
@@ -143,7 +142,6 @@ _boxNameColor(color)
   dropShadow->setOffset(SHADOW_OFFSET);
   dropShadow->setColor(QColor(0, 0, 0, 120));
   setGraphicsEffect(dropShadow);
-  setOpacity(0.97);
   QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(redraw()));
 }
 
@@ -294,6 +292,7 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
    bool selected = (option->state & QStyle::State_Selected);
    bool hover = (option->state & QStyle::State_MouseOver);
 
+//   setOpacity(gear()->ready()?0.97:0.6); 
    QColor fillColor(getCurrentColor());
 
     const qreal lod = option->levelOfDetailFromTransform(painter->worldTransform());
@@ -350,9 +349,9 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   painter->drawText(0,1, _sizeX, TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title.c_str());
   
 	//ready box
-  painter->setPen(Qt::black);
-  painter->setBrush(gear()->ready() ? GEAR_READY_COLOR : GEAR_NOT_READY_COLOR);
-  painter->drawRoundRect(_sizeX - 10, 2, 8, 8, 50, 50);
+  //painter->setPen(Qt::black);
+  //painter->setBrush(gear()->ready() ? GEAR_READY_COLOR : GEAR_NOT_READY_COLOR);
+  //painter->drawRoundRect(_sizeX - 10, 2, 8, 8, 50, 50);
 
   //plugboxes
   for (std::vector<PlugBox*>::iterator it = _inputPlugBoxes.begin(); it != _inputPlugBoxes.end(); ++it)

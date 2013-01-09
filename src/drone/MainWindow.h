@@ -52,14 +52,14 @@ public:
   //! loads the specified schema file
   void load(std::string filename);
   //void play(bool pl);
+  static MainWindow* getInstance();
 
   MainWindow();
   ~MainWindow();
-
+  void finalize();
+  
 public slots:
   void slotPlay(bool);
-	void slotZoomIn();
-	void slotZoomOut();
 
 
   void slotMenuNew();
@@ -78,7 +78,11 @@ public slots:
   // place me somewhere else when you have time.
   // Not really the job of the main window
   void initFonts();
-protected:
+  
+  
+ protected:
+
+  static MainWindow* instance;
   void timerEvent(QTimerEvent*);
 
 private:
@@ -100,18 +104,40 @@ private:
   // toolbar buttons
   //QToolButton* _tbPlayPause;
   
+  
+  
+  // ugly but we'll fix that when isolating CORE from GUI
+public :
   // QActions
   QAction *_actPlayPause;
   QAction *_actZoomIn;
   QAction *_actZoomOut;
-
+  QAction *_actNew;
+  QAction *_actLoad;
+  QAction *_actSave;
+  QAction *_actSaveAs;
+  QAction *_actQuit;
+  QAction *_actPreferences; 
   
-  int _menuSaveItemId;
-  int _menuPrefsItemId;
+  QAction *_actSelectAll;
+  QAction *_actDeleteSelected;
+  QAction *_actCopy;
+  QAction *_actPaste;
+  
+  
+protected:
+  
+  
   QMenu *_fileMenu;
+  QMenu *_editMenu;
   QMenu *_toolsMenu;
   QMenu *_viewMenu;
 
+  
+  
+  
+  
+  
   Project* _project;
   
   std::string _currentSchemaFilename;  

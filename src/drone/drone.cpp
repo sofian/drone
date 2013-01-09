@@ -43,20 +43,21 @@ int main(int argc, char** argv)
   splash.show();
   DroneCore::init();
   
-  MainWindow mainWindow;
-  mainWindow.adjustSize();
-  qtApp.setMainWidget(&mainWindow);
+  MainWindow* mainWindow=MainWindow::getInstance();
+  mainWindow->finalize();
+  mainWindow->adjustSize();
+  qtApp.setMainWidget(mainWindow);
 
 
   splash.hide();
-  mainWindow.show();
+  mainWindow->show();
   
 
 
   if(argc>1)
   {
     if(argc==2)
-      mainWindow.load(argv[1]);
+      mainWindow->load(argv[1]);
     else 
       error("Usage : drone [schema.drn]");
   }

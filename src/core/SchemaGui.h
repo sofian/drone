@@ -36,6 +36,8 @@ class SchemaEditor;
 
 class SchemaGui : public QGraphicsScene
 {
+  Q_OBJECT
+  
 public:
   SchemaGui(Schema *schema, Engine *engine);
   ~SchemaGui();
@@ -65,6 +67,7 @@ public:
 
   
 public slots:
+  void raiseSelectionZValue();
 
 protected:
 
@@ -76,8 +79,6 @@ protected:
    
   
   void drawBackground ( QPainter * painter, const QRectF & rect );
-
-
 
   
   
@@ -103,6 +104,7 @@ private:
   
   Schema *_schema;
   Engine *_engine;
+  qreal _maxZValue;
 };
 
 #endif
