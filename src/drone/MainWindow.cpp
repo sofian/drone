@@ -27,6 +27,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <sstream>
+#include "commands/CommandMoveItems.h"
 
 #include "Play.xpm"
 #include "Pause.xpm"
@@ -148,6 +149,8 @@ _menuShowSmallGearsId(false)
 
   _undoStack = new QUndoStack(this);
 
+  QObject::connect(_actUndo, SIGNAL(triggered()), _undoStack, SLOT(undo()));
+  QObject::connect(_actRedo, SIGNAL(triggered()), _undoStack, SLOT(redo()));
 
 
   //_toolsMenu->setItemEnabled(_menuPrefsItemId, false);    
@@ -183,12 +186,24 @@ _menuShowSmallGearsId(false)
 void MainWindow::finalize()
 {
   SchemaEditor* schemaEditor = _metaGearEditor->schemaEditor();
+  SchemaGui* schemaGui = schemaEditor->getSchemaGui();
   schemaEditor->buildContextMenus();
+  QObject::connect(schemaGui,SIGNAL(itemsMoved(QList<QString>&,QPointF)),this,SLOT(slotItemsMoved(QList<QString>&,QPointF)));
 }
 MainWindow::~MainWindow()
 {
 
 }
+
+void MainWindow::slotItemsMoved(QList<QString>&itemNames, QPointF dist)
+{
+  CommandMoveItems* c;
+  
+  c = new CommandMoveItems(itemNames,dist);
+  c->setText(QString("Moved %1 item").arg(itemNames.count())+QString(itemNames.count()>2?"s":""));
+  _undoStack->push(c);
+}
+
 
 void MainWindow::initFonts()
 {

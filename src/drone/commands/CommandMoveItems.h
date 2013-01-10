@@ -9,13 +9,22 @@
 #define	COMMANDMOVEITEMS_H
 
 #include <qundocommand>
+#include <qlist>
+#include <qstring>
+#include <qpointf>
 
 class CommandMoveItems: public QUndoCommand {
 public:
-  CommandMoveItems();
-  CommandMoveItems(const CommandMoveItems& orig);
+  CommandMoveItems(QList<QString> &itemList,QPointF delta);
   virtual ~CommandMoveItems();
-private:
+  
+  void undo();
+  void redo();
+
+protected:
+  QList<QString> _itemList;
+  QPointF _delta;
+  bool _skipFirstRedo;
 
 };
 

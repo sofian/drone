@@ -76,6 +76,7 @@ public:
   QMenu* getGearContextMenu() const {return _gearContextMenu;}
   QMenu* getMetaGearContextMenu() const {return _metaGearContextMenu;}
   QMenu* getPlugContextMenu() const {return _plugContextMenu;}
+  SchemaGui* getSchemaGui() const {return _schemaGui;}
 public slots:
 
   //common slots  

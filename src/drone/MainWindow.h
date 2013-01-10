@@ -58,8 +58,12 @@ public:
   ~MainWindow();
   void finalize();
   
+  void pushUndoCommand(QUndoCommand* c);
+  SchemaGui* getSchemaGui() const {return _mainSchemaGui;}
+
 public slots:
   void slotPlay(bool);
+  void slotItemsMoved(QList<QString> &itemNames, QPointF dist);
 
 
   void slotMenuNew();

@@ -25,6 +25,7 @@
 #include "MetaGear.h"
 #include "GearGui.h"
 #include "PlugBox.h"
+//#include "commands/CommandMoveItems.h"
 #include "ConnectionItem.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QVarLengthArray>
@@ -246,7 +247,7 @@ void SchemaGui::selectionHasChanged()
     _maxZValue++;
 
 
-  std::cerr<<"Selected elements: "<<list.count()<<std::endl;
+  //std::cerr<<"Selected elements: "<<list.count()<<std::endl;
   foreach(el,list)
   {
     // create pseudo "layers" with slices of Z values so that comments
@@ -290,11 +291,11 @@ void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
     }
 
     //  see : http://harmattan-dev.nokia.com/docs/library/html/qt4/tools-undoframework-diagramscene-cpp.html
-    // looks like we're starting an item(s) move, Yay! Let's capture some data to build the undo Command
+    // looks like we're starting an item(s) move, Yay! Let's capture some data to build the undo Command
     if (_moving==No && /*!event->modifiers() &&*/ event->button() == Qt::LeftButton && (el->flags() & QGraphicsItem::ItemIsMovable))
     {
       _moving = Pre;
-      std::cerr<<"About to move"<<std::endl;
+      //std::cerr<<"About to move"<<std::endl;
 
     }
   }
@@ -317,25 +318,24 @@ void SchemaGui::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     _moving = Yes;
     _movingItems.clear();
 
+    // mimick QGraphicsScene quirky behavior. Starting a move while Ctrl-clicking on
+    // an item will select it and move it AFTER we're out of this handler
     if (event->modifiers() & Qt::ControlModifier)
     {
       extra = itemAt(event->scenePos());
       gearGui = qgraphicsitem_cast<GearGui*>(extra);
-      std::cerr << "CTRL MOVE!" << gearGui << std::endl;
       if (gearGui && !gearGui->isSelected())
         selectedList << gearGui;
     }
     
     foreach(el, selectedList)
     {
-      // mimick QGraphicsScene quirky behavior. Starting a move while Ctrl-clicking on
-      // an item will select it and move it AFTER we're out of this handler
       gearGui = qgraphicsitem_cast<GearGui*>(el);
       if (gearGui)std::cerr << gearGui->gear()->name().c_str() << std::endl;
       if (gearGui && (el->flags() & QGraphicsItem::ItemIsMovable))
         _movingItems << gearGui->gear()->name().c_str();
     }
-    std::cerr << "mod"<<event->modifiers()<<" Looks like we're moving" << _movingItems.count()<<std::endl;
+    //std::cerr << "mod"<<event->modifiers()<<" Looks like we're moving" << _movingItems.count()<<std::endl;
     _movingStartPos = event->scenePos();
 
   }
@@ -394,7 +394,10 @@ void SchemaGui::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
   }
   else if(_moving==Yes)
   {
-    std::cerr<<"Moved "<<_movingItems.count()<<" items by "<<dist.x()<<","<<dist.y()<<std::endl;
+    //std::cerr<<"Moved "<<_movingItems.count()<<" items by "<<dist.x()<<","<<dist.y()<<std::endl;
+    //new CommandMoveItems(_movingItems,dist);
+    emit itemsMoved(_movingItems, dist);
+
     _moving=No;
   }
   // happens when we didn't move
@@ -480,4 +483,28 @@ std::vector<GearGui*> SchemaGui::getSelectedGears()
     if ( qgraphicsitem_cast<GearGui*>(it))    
       vec.push_back((GearGui*)(it));
   return vec;
+}
+
+// Warning : order is not preserved ! 
+QList<QGraphicsItem*> SchemaGui::getItemsByName(QList<QString>& list)
+{
+  QList<QGraphicsItem*> all(items()),selection;
+  GearGui* ggui;
+  
+  foreach(QGraphicsItem* el,all) 
+  {
+    // forced to do this since all elements don't have a common interface with name()
+    if((ggui=qgraphicsitem_cast<GearGui*>(el))
+            && list.contains(ggui->gear()->name().c_str()))
+      selection<<el;
+  }
+  return selection;
+}
+
+void SchemaGui::moveItemsBy(QList<QGraphicsItem*> list,QPointF delta)
+{
+  QGraphicsItem* el;
+  foreach(el,list)
+    el->moveBy(delta.x(),delta.y());
+  update();
 }

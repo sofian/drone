@@ -67,9 +67,13 @@ public:
   void rebuildSchema();
 
   void setSelectionChangeBypass(bool v){_selectionChangeBypass=v;}
+  QList<QGraphicsItem*> getItemsByName(QList<QString>& list);
+  
+  void moveItemsBy(QList<QGraphicsItem*> list,QPointF delta);
   
 signals:
-  void gearSelected(GearGui *gearGui);
+  void gearSelected(GearGui *gearGui);  
+  void itemsMoved(QList<QString> &itemNames, QPointF dist);
 
 public slots:
   void selectionHasChanged();
