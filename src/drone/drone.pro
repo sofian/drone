@@ -33,7 +33,8 @@ unix:!macx:LIBS += -L../../lib -ldroneCore -lguile
 unix:!macx:TARGET = ../../drone
 
 
-HEADERS += config.h \
+HEADERS += commands/CommandMoveItems.h \
+config.h \
 GearListMenu.h \
 GearListView.h \
 GearPropertiesDialog.h \
@@ -59,7 +60,8 @@ Play.xpm \
 Pause.xpm \
 splash.xpm
 
-SOURCES += drone.cpp \
+SOURCES += commands/CommandMoveItems.cpp \
+drone.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
 GearPropertiesDialog.cpp \

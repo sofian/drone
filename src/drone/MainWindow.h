@@ -31,7 +31,7 @@
 #include <QFrame>
 #include <QTimerEvent>
 #include <list>
-
+#include <qundostack>
 #include "Engine.h"
 #include "Project.h"
 
@@ -135,7 +135,7 @@ protected:
   QMenu *_toolsMenu;
   QMenu *_viewMenu;
 
-  
+  QUndoStack *_undoStack;
   
   
   

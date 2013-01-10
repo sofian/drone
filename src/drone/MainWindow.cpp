@@ -124,7 +124,8 @@ _menuShowSmallGearsId(false)
   _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(slotDeleteSelected()), QKeySequence::Delete);
 	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(slotGearCopy()), QKeySequence::Copy);
 	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(slotGearPaste()), QKeySequence::Paste);
-	_actUndo =_editMenu->addAction("Undo", schemaEditor, SLOT(slotUndo()), QKeySequence::Undo);
+	_editMenu->addSeparator();
+  _actUndo =_editMenu->addAction("Undo", schemaEditor, SLOT(slotUndo()), QKeySequence::Undo);
 	_actRedo =_editMenu->addAction("Redo", schemaEditor, SLOT(slotRedo()), QKeySequence::Redo);
  
   _viewMenu = menuBar->addMenu("&View");
@@ -145,7 +146,7 @@ _menuShowSmallGearsId(false)
   _toolBar->addAction(_actZoomIn);
   
 
-
+  _undoStack = new QUndoStack(this);
 
 
 

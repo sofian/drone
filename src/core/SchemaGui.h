@@ -39,6 +39,7 @@ class SchemaGui : public QGraphicsScene
   Q_OBJECT
   
 public:
+  enum MovingState {No,Pre,Yes};
   SchemaGui(Schema *schema, Engine *engine);
   ~SchemaGui();
 
@@ -69,7 +70,7 @@ public:
   
 signals:
   void gearSelected(GearGui *gearGui);
-  
+
 public slots:
   void selectionHasChanged();
 
@@ -103,7 +104,14 @@ private:
   Schema *_schema;
   Engine *_engine;
   qreal _maxZValue;
+
+  // when selecting all items, used to bypass all single selectionChange signals but one 
   bool _selectionChangeBypass;
+
+  // all this stuff is to manually save item move info for the undo stack
+  MovingState _moving;
+  QList<QString> _movingItems;
+  QPointF _movingStartPos;
 };
 
 #endif

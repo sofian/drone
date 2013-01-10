@@ -39,11 +39,16 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
   _activeConnection(NULL),
   _connecting(false),
+  _moving(No),
   _engine(engine),
   _maxZValue(0),
+  _movingItems(),
+  _movingStartPos(0,0),
   _selectionChangeBypass(false)
 {
   QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(selectionHasChanged()));
+  //QObject::connect(this, SIGNAL(itemMoved(DiagramItem*,QPntF)),
+  //           this, SLOT(itemMoved(DiagramItem*,QPointF)));
   setSchema(schema);
 }
 
@@ -259,13 +264,15 @@ void SchemaGui::selectionHasChanged()
 void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
   QList<QGraphicsItem *> list(items(event->scenePos()));
+  QList<QGraphicsItem *> selectedList(selectedItems());
   QPointF pos;
   GearGui* gearGui;
   PlugBox* selectedPlugBox;
-  QGraphicsItem* el;
-  foreach(el,list)
+  QGraphicsItem *el, *el2;
+
+  foreach(el, list)
   {
-    if((gearGui=qgraphicsitem_cast<GearGui*>(el)))
+    if ((gearGui = qgraphicsitem_cast<GearGui*>(el)))
     {
       pos = gearGui->mapFromScene(event->scenePos());
       selectedPlugBox = gearGui->plugHit(pos);
@@ -281,18 +288,59 @@ void SchemaGui::mousePressEvent(QGraphicsSceneMouseEvent * event)
         return;
       }
     }
+
+    //  see : http://harmattan-dev.nokia.com/docs/library/html/qt4/tools-undoframework-diagramscene-cpp.html
+    // looks like we're starting an item(s) move, Yay! Let's capture some data to build the undo Command
+    if (_moving==No && /*!event->modifiers() &&*/ event->button() == Qt::LeftButton && (el->flags() & QGraphicsItem::ItemIsMovable))
+    {
+      _moving = Pre;
+      std::cerr<<"About to move"<<std::endl;
+
+    }
   }
   QGraphicsScene::mousePressEvent(event);
+
 }
 
-
-void SchemaGui::mouseMoveEvent( QGraphicsSceneMouseEvent * event)
+void SchemaGui::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
-  if(_connecting)
+  QList<QGraphicsItem *> selectedList(selectedItems());
+  QGraphicsItem* extra;
+  GearGui* gearGui;
+  QGraphicsItem *el;
+  if (_connecting)
   {
     _activeConnection->setConnectionLineEndPoint(event->scenePos());
   }
-  QGraphicsScene::mouseMoveEvent( event);
+  if (_moving == Pre)
+  {
+    _moving = Yes;
+    _movingItems.clear();
+
+    if (event->modifiers() & Qt::ControlModifier)
+    {
+      extra = itemAt(event->scenePos());
+      gearGui = qgraphicsitem_cast<GearGui*>(extra);
+      std::cerr << "CTRL MOVE!" << gearGui << std::endl;
+      if (gearGui && !gearGui->isSelected())
+        selectedList << gearGui;
+    }
+    
+    foreach(el, selectedList)
+    {
+      // mimick QGraphicsScene quirky behavior. Starting a move while Ctrl-clicking on
+      // an item will select it and move it AFTER we're out of this handler
+      gearGui = qgraphicsitem_cast<GearGui*>(el);
+      if (gearGui)std::cerr << gearGui->gear()->name().c_str() << std::endl;
+      if (gearGui && (el->flags() & QGraphicsItem::ItemIsMovable))
+        _movingItems << gearGui->gear()->name().c_str();
+    }
+    std::cerr << "mod"<<event->modifiers()<<" Looks like we're moving" << _movingItems.count()<<std::endl;
+    _movingStartPos = event->scenePos();
+
+  }
+
+  QGraphicsScene::mouseMoveEvent(event);
 }
 
 void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
@@ -318,6 +366,7 @@ void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 
 void SchemaGui::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
+  QPointF dist(event->scenePos() - _movingStartPos);
   if (_connecting)
   {
     QList<QGraphicsItem *> list(items(event->scenePos()));
@@ -342,6 +391,16 @@ void SchemaGui::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
     }
     delete _activeConnection;
     _connecting=false;
+  }
+  else if(_moving==Yes)
+  {
+    std::cerr<<"Moved "<<_movingItems.count()<<" items by "<<dist.x()<<","<<dist.y()<<std::endl;
+    _moving=No;
+  }
+  // happens when we didn't move
+  else if(_moving==Pre)
+  {
+    _moving=No;
   }
   QGraphicsScene::mouseReleaseEvent( event);
 }
