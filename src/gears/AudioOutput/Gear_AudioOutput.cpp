@@ -206,6 +206,8 @@ void Gear_AudioOutput::runAudio()
 {	
   if (_needsData)
   {
+    _needsData = false;
+
     GstBuffer *buffer;
     GstFlowReturn ret;
 
