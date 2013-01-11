@@ -212,8 +212,8 @@ void Gear_AudioOutput::runAudio()
     /* Create a new empty buffer */
     const SignalType* audio = _AUDIO_IN_LEFT->type();
     unsigned int blockByteSize = audio->size() * sizeof (Signal_T);
-    //unsigned int sampleRate = Engine::signalInfo().sampleRate();
-    //unsigned int blockSize  = Engine::signalInfo().blockSize();
+//    unsigned int sampleRate = Engine::signalInfo().sampleRate();
+//    unsigned int blockSize  = Engine::signalInfo().blockSize();
     buffer = gst_buffer_new_and_alloc ( blockByteSize );
 
     /* Set its timestamp and duration */
@@ -223,6 +223,8 @@ void Gear_AudioOutput::runAudio()
     //std::cout << GST_BUFFER_DURATION (buffer) << " / " << GST_BUFFER_TIMESTAMP (buffer) << " bs: " << blockByteSize << " sr: " << sampleRate << std::endl;
     /* Generate some psychodelic waveforms */
     memcpy(GST_BUFFER_DATA(buffer), audio->data(), blockByteSize);
+
+    ASSERT_WARNING_MESSAGE( ! GST_BUFFER_IS_DISCONT(buffer), "Discontinuity detected in audio buffer." );
 
     /* Push the buffer into the appsrc */
     g_signal_emit_by_name (_audioSource, "push-buffer", buffer, &ret);
