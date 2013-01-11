@@ -83,7 +83,7 @@ void Gear_Osc::runAudio()
   
   if (_oldFreq!=freq)
   {
-    _phaseCorrection += (_oldFreq-freq)*_currentTimeTimesTwicePi;
+    _phaseCorrection += (_oldFreq-freq) * _currentOscTime * TWICE_PI;
     _oldFreq=freq;
   }
 
@@ -100,7 +100,7 @@ void Gear_Osc::runAudio()
     Signal_T* data = _SIGNAL_OUT->type()->data();
     unsigned int blockSize = Engine::signalInfo().blockSize();
     Time_T timePerSample = Engine::signalInfo().timePerSample();
-    for (int i=0; i<blockSize; i++, t+=timePerSample) {
+    for (unsigned int i=0; i<blockSize; i++, t+=timePerSample) {
       *data++ = CLAMP( _osc(t, amp, freq, _phaseCorrection), -1.0f, 1.0f);
     }
   }
