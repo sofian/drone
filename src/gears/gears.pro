@@ -23,6 +23,8 @@ AreaVideoReplace \
 #AreaArrayMask \
 #AreaArrayClip \
 #AreaArrayVideoSelect \
+AudioInput \
+AudioOutput \
 Brightness \
 ClusteredDither \
 ColorAdjust \
