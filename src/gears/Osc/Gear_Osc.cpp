@@ -40,7 +40,8 @@ GearInfo getGearInfo()
 
 Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
   Gear(schema, "Osc", uniqueName),
-  _phaseCorrection(0.0f)
+  _phaseCorrection(0.0f),
+  _currentOscTime(0.0f)
 {
   // Inputs.
   addPlug(_FREQ_IN = new PlugIn<ValueType>(this, "Freq", false, new ValueType(440.0f,0.0f,1000.0f)));
@@ -65,6 +66,7 @@ void Gear_Osc::internalInit()
 {
   _oldFreq = 440.0f;
   _phaseCorrection = 0.0f;
+  _currentOscTime = 0.0f;
 }
 
 float Gear_Osc::_osc(float t, float amp, float freq, float phaseCorrection)
@@ -77,7 +79,7 @@ void Gear_Osc::runAudio()
   float freq  = _FREQ_IN->type()->value();
   float amp   = _AMP_IN->type()->value();
 
-  _currentTimeTimesTwicePi = Engine::currentTime()*(float)(TWICE_PI);
+  _currentOscTime += Engine::signalInfo().timePerSample();
   
   if (_oldFreq!=freq)
   {
@@ -85,17 +87,21 @@ void Gear_Osc::runAudio()
     _oldFreq=freq;
   }
 
-  if (_VALUE_OUT->connected())
-    _VALUE_OUT->type()->setValue( _osc(Engine::currentTime(), amp, freq, _phaseCorrection) );
+  std::cout << "Current time : " << Engine::currentTime() << std::endl;
+//  if (_VALUE_OUT->connected())
+    _VALUE_OUT->type()->setValue(amp * fastcos(freq * _currentOscTime + _phaseCorrection));
+
+//    _VALUE_OUT->type()->setValue( _osc(Engine::currentTime(), amp, freq, _phaseCorrection) );
 
   if (_SIGNAL_OUT->connected())
   {
-    Time_T t = Engine::currentTime();
+//    Time_T t = Engine::currentTime();
+    Time_T t = _currentOscTime;
     Signal_T* data = _SIGNAL_OUT->type()->data();
     unsigned int blockSize = Engine::signalInfo().blockSize();
     Time_T timePerSample = Engine::signalInfo().timePerSample();
     for (int i=0; i<blockSize; i++, t+=timePerSample) {
-      data[i] = _osc(t, amp, freq, _phaseCorrection);
+      *data++ = CLAMP( _osc(t, amp, freq, _phaseCorrection), -1.0f, 1.0f);
     }
   }
 }

@@ -46,9 +46,12 @@ private:
   PlugOut<SignalType> *_SIGNAL_OUT;
 
   static float _osc(float t, float amp, float freq, float phaseCorrection);
-  float _currentTimeTimesTwicePi;
+
   float _oldFreq;
   float _phaseCorrection;
+
+  // TODO: it would be nice that a Gear can send us its current time ie. Gear::currentTime().
+  float _currentOscTime;
 
 };
 
