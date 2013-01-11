@@ -57,5 +57,9 @@ Gear_AffineTransform::~Gear_AffineTransform()
 void Gear_AffineTransform::runVideo()
 {
   _VALUE_OUT->type()->setValue(_VALUE_IN->type()->value() * _SCALE->type()->value() + _OFFSET->type()->value());
+}
 
+void Gear_AffineTransform::runAudio()
+{
+  runVideo();
 }

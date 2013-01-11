@@ -33,11 +33,11 @@ public:
   virtual ~Gear_AffineTransform();
 
   void runVideo();
+  void runAudio();
 
 private:
   PlugIn<ValueType> *_VALUE_IN,*_SCALE,*_OFFSET;
   PlugOut<ValueType> *_VALUE_OUT;
-
 };
 
 #endif 
