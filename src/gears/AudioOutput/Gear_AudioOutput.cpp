@@ -85,10 +85,6 @@ bool Gear_AudioOutput::initOutput()
   _audioSource = gst_element_factory_make ("appsrc", "asource");
   _audioSink =   gst_element_factory_make ("autoaudiosink", "asink");
 
-//  _feedData = GstFeedData();
-//  _feedData.audioSource = _audioSource;
-//  _feedData.plug        = _AUDIO_IN_LEFT;
-
   _needsData = false;
 
   // Create the empty pipeline.
@@ -104,7 +100,7 @@ bool Gear_AudioOutput::initOutput()
   gst_bin_add_many (GST_BIN (_pipeline), _audioSource, _audioSink, NULL);
 
   // Connect source to sink.
-  if (!gst_element_link (_audioSource, _audioSink)) {
+  if (!gst_element_link_many( _audioSource, _audioSink, NULL )) {
     g_printerr ("Video elements could not be linked.\n");
     freeResources();
     //gst_object_unref (_pipeline);
@@ -115,7 +111,11 @@ bool Gear_AudioOutput::initOutput()
   gchar* audioCapsText = g_strdup_printf ("audio/x-raw-float,channels=1,rate=%d,signed=(boolean)true,width=%d,depth=%d,endianness=BYTE_ORDER",
                                           Engine::signalInfo().sampleRate(), (int)(sizeof(Signal_T)*8), (int)(sizeof(Signal_T)*8) );
   GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
-  g_object_set (_audioSource, "caps", audioCaps, NULL);
+  g_object_set (_audioSource, "caps", audioCaps,
+                              "is-live", TRUE,
+                              "block", TRUE,
+                              "stream-type", GST_APP_STREAM_TYPE_STREAM,
+                              NULL);
   g_signal_connect (_audioSource, "need-data",   G_CALLBACK (Gear_AudioOutput::gstNeedsDataCallback), this);
   g_signal_connect (_audioSource, "enough-data", G_CALLBACK (Gear_AudioOutput::gstEnoughDataCallback), this);
   gst_caps_unref (audioCaps);
