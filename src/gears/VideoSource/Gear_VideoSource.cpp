@@ -654,7 +654,7 @@ void Gear_VideoSource::_postRun()
 
 bool Gear_VideoSource::_setPlayState(bool play)
 {
-  if (_bus == NULL)
+  if (_pipeline == NULL)
     return false;
 
   GstStateChangeReturn ret = gst_element_set_state (_pipeline, (play ? GST_STATE_PLAYING : GST_STATE_PAUSED));
