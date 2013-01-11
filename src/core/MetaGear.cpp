@@ -1,24 +1,18 @@
 #include "MetaGear.h"
-#include "GearGui.h"
-
+#include "GearInfo.h"
 #include "XMLHelper.h"
-#include "ControlPanel.h"
 
 #include <qfileinfo.h>
-//Added by qt3to4:
-#include <QTextStream>
 
 const QColor MetaGear::METAGEAR_COLOR(115,8,8);
-const std::string MetaGear::TYPE="MetaGear";
-const std::string MetaGear::EXTENSION=".meta";
+const QString MetaGear::TYPE="MetaGear";
+const QString MetaGear::EXTENSION=".meta";
 
-MetaGear::MetaGear(Schema *parentSchema, std::string vname, std::string uniqueName) :
-Gear(parentSchema, TYPE, uniqueName),
-_metaGearName(vname),
-_associatedControlPanel(0)
+MetaGear::MetaGear() :
+Gear(TYPE),
+_metaGearName(TYPE)
 {
-  _schema = new Schema(this);
-  _schema->addSchemaEventListener(this);
+  _schema = new Schema(*this);
 }
 
 MetaGear::~MetaGear()
@@ -28,15 +22,8 @@ MetaGear::~MetaGear()
   //_schema->removeSchemaEventListener(this);
 }
 
-GearGui* MetaGear::createGearGui(QGraphicsScene *scene)
-{
-  //we just want to specify a specific color metagears
-  return new GearGui(this, scene, METAGEAR_COLOR);
-}
-
 void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
 {
-  std::cerr<<"metagear savEW!!"<<std::endl;
   _schema->save(doc, parent);
 }
 
@@ -61,25 +48,20 @@ void MetaGear::internalLoad(QDomElement &parent)
 void MetaGear::createPlugs()
 {
   //clear plugs first, we will recreate them
-  std::list<AbstractPlug*>::iterator plugIt;
-  for(plugIt = _plugs.begin(); plugIt != _plugs.end(); ++plugIt)
-  {
-    delete(*plugIt);
-  }
-  _plugs.clear();
+  qDeleteAll(_plugs);
 
   //clear plug mapping
   _plugMapping.clear();
 
-  std::list<Gear*> gears = _schema->getGears();
+  QList<Gear*> gears = _schema->getGears();
 
-  std::list<AbstractPlug*> inputs;
-  std::list<AbstractPlug*> outputs;
+  QList<AbstractPlug*> inputs;
+  QList<AbstractPlug*> outputs;
 
-  for(std::list<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
+  for(QList<Gear*>::iterator gearIt=gears.begin();gearIt!=gears.end();++gearIt)
   {
     (*gearIt)->getInputs(inputs, true);
-    for(std::list<AbstractPlug*>::iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
+    for(QList<AbstractPlug*>::Iterator plugIt=inputs.begin(); plugIt!=inputs.end(); ++plugIt)
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
@@ -89,7 +71,7 @@ void MetaGear::createPlugs()
     }
 
     (*gearIt)->getOutputs(outputs, true);
-    for(std::list<AbstractPlug*>::iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
+    for(QList<AbstractPlug*>::Iterator plugIt=outputs.begin(); plugIt!=outputs.end(); ++plugIt)
     {
       AbstractPlug* clone = (*plugIt)->clone(this);
       clone->name((*plugIt)->fullName());
@@ -99,11 +81,9 @@ void MetaGear::createPlugs()
     }
   }
 
-  getGearGui()->rebuildLayout();
-
 }
 
-void MetaGear::save(std::string filename)
+void MetaGear::save(QString filename)
 {  
   QDomDocument doc("MetaGear");
     
@@ -112,7 +92,7 @@ void MetaGear::save(std::string filename)
     
   Gear::save(doc, metaGearElem);
 
-  QFile file(filename.c_str());
+  QFile file(filename);
   if (file.open(QIODevice::WriteOnly))
   {
     QTextStream stream(&file);
@@ -128,15 +108,15 @@ void MetaGear::save(std::string filename)
   _fullPath = filename;
 }
 
-bool MetaGear::load(std::string filename)
+bool MetaGear::load(QString filename)
 {
   QDomDocument doc("MetaGear");
 
-  QFile file(filename.c_str());
+  QFile file(filename);
 
   if (!file.open(QIODevice::ReadOnly))
   {
-    std::cout << "Fail to open file " << filename << std::endl;
+    qCritical() << "Fail to open file: " << filename;
     return false;
   }
 
@@ -145,17 +125,16 @@ bool MetaGear::load(std::string filename)
   int errColumn;
   if (!doc.setContent(&file, true, &errMsg, &errLine, &errColumn))
   {
-    std::cout << "parsing error in " << filename << std::endl;
-    std::cout << errMsg.ascii() << std::endl;
-    std::cout << "Line: " <<  errLine << std::endl;
-    std::cout << "Col: " <<  errColumn << std::endl;
+    qCritical() << "parsing error in " << filename;
+    qCritical() << errMsg;
+    qCritical() << "Line: " <<  errLine;
+    qCritical() << "Col: " <<  errColumn;
     file.close();
     return false;
   }
 
   file.close();
 
-  
   QDomNode metagearNode = doc.firstChild();
   QDomElement metagearElem = metagearNode.toElement();
   
@@ -172,26 +151,6 @@ bool MetaGear::load(std::string filename)
   Gear::load(metagearElem);
 
   return true;
-}
-
-void MetaGear::onGearAdded(Schema *schema, Gear *gear)
-{
-  //if this event is not for our schema (it's from a child schema), do nothing
-  if (schema!=_schema)
-    return;
-  
-  if (!_associatedControlPanel)
-    return;
-  
-  if (gear->kind() == Gear::CONTROL)  
-    _associatedControlPanel->addControl((GearControl*)gear);
-}
-
-void MetaGear::onGearRemoved(Schema *schema, Gear*)
-{
-  //if this event is not for our schema (it's from a child schema), do nothing
-  if (schema!=_schema)
-    return;
 }
 
 

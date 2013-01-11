@@ -40,7 +40,7 @@ class QDomDocument;
 class QDomElement;
 class MetaGear;
 
-class Engine : public ISchemaEventListener
+class Engine : public QObject
 {
 public:
 
@@ -77,11 +77,11 @@ public:
 
 
   //ISchemaEventListener Interface implementation
-  void onGearAdded(Schema *schema, Gear *gear);
-  void onGearRemoved(Schema *schema, Gear *gear);
+	void onGearAdded(Schema &schema, Gear &gear);
+  void onGearRemoved(Schema &schema, Gear &gear);
 
-  void setClipboardText(std::string txt){_clipboard=txt;}
-  std::string getClipboardText(){return _clipboard;}
+  void setClipboardText(QString txt){_clipboard=txt;}
+  QString getClipboardText(){return _clipboard;}
 
 protected:
 
@@ -105,7 +105,7 @@ private:
   
   //is sorted in processing order when _GraphSynched==true
   //only contain gears->ready()    
-  std::list<Gear*> _orderedGears;
+  QList<Gear*> _orderedGears;
 
   pthread_t _playThreadHandle;
 
@@ -113,7 +113,7 @@ private:
 
   bool _playing;
 
-  std::string _clipboard;
+  QString _clipboard;
 };
 
 #endif

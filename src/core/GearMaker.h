@@ -20,62 +20,50 @@
 #ifndef GEAR_MAKER_INCLUDED
 #define GEAR_MAKER_INCLUDED
 
-#include <map>
-#include <string>
+#include <QMap>
+
 #include <vector>
+#include <qdir.h>
 
 #include "Gear.h"
+#include "GearInfo.h"
 
 /**
  * note : parseGears have to be called to discover gears in path and populate the 
  * factory. In drone, this task is handled by calling DroneCore::init().
-*/ 
-class GearMaker  
+*/
+class GearMaker
 {
-public:
-  enum eGearPluginType {DRONE_PLUGIN, FREI0R_PLUGIN};
-  
-  class GearPluginDefinition
-  {
-  public:
-    GearPluginDefinition(GearInfo gearInfo,
-                         eGearPluginType pluginType,
-                         void *handle,
-                         Gear* (*pmakeGear)(Schema *schema, std::string uniqueName)) :
-      makeGear(pmakeGear),
-      _gearInfo(gearInfo),
-      _pluginType(pluginType),
-      _handle(handle)      
-    {
-    }
+public:									
+	static GearMaker* instance();
 
-    const GearInfo& gearInfo() const {return _gearInfo;}
-    eGearPluginType pluginType() const {return _pluginType;}
-    const void* handle() const {return _handle;}
-    
-    //ptrfunc
-    Gear* (*makeGear)(Schema *schema, std::string uniqueName);
+  Gear* makeGear(QString fullName);
+	Gear* makeGear(QString type, QString name);
 
-  private:
-    GearInfo _gearInfo;
-    eGearPluginType _pluginType;
-    void* _handle;
-  };
+  void getAllGearsInfo(QList<GearInfo*> &gearsInfo);
+	GearInfo* findGearInfo(QString fullName);
+	GearInfo* findGearInfo(QString type, QString name);
 
+	bool parse(QDir rootDir);
+	bool parse();
+	QDir defaultGearsDir();
 
-  static Gear* makeGear(Schema *schema, std::string type, std::string uniqueName);
-  static void getAllGearsInfo(std::vector<const GearInfo*> &gearsInfo);
-  static void getAllGearsInfoWithNameFilter(std::vector<const GearInfo*> &gearsInfo,std::string filter);
-  static void parseGears();
-  static void parseFrei0rPlugins();
-private:  
+private:
+	static QString DRONEGEARS_SUBPATH;
+	static QString FREI0RGEARS_SUBPATH;
+	static QString METAGEARS_SUBPATH;
+		
 	GearMaker();
-  ~GearMaker();
+
+  template <class T> void parseGears(QDir dir, QString extension);
+	void parseDroneGears(QDir rootDir);
+  void parseFrei0rGears(QDir rootDir);
+  void parseMetaGears(QDir rootDir);
 	
-	static void emptyRegistry();
-	
-  static std::map<std::string, GearMaker::GearPluginDefinition*> *_registry;
-  static GearMaker _registerMyself;   
+  void emptyRegistry();
+
+  QMap<QString, GearInfo*> _registry;
+  
 };
 
 #endif

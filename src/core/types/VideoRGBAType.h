@@ -39,7 +39,7 @@ public:
 
   // returns an antialiased pixel. Warning: No bound checking is done!
 //  inline void getAAPixel(float x, float y ,RGBA * pix) const;
-  virtual std::string typeName() const { return "VideoRGBAType";}
+  virtual QString typeName() const { return "VideoRGBAType";}
   QColor color() const { return QColor(40,60,114);}
 
   bool isGray() const { return _isGray; }

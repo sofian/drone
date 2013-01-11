@@ -193,6 +193,7 @@ void SchemaEditor::slotNewMetaGear()
 
 void SchemaEditor::slotSaveMetaGear()
 {
+  /*
   if (!_contextGear->gear()->kind() == Gear::METAGEAR)
   {
     std::cout << "not a metagear, cannot save!!!" << std::endl; 
@@ -203,8 +204,8 @@ void SchemaEditor::slotSaveMetaGear()
   
   //mangle suggested filename
   std::string suggestedFilename=metaGear->fullPath();  
-  if (suggestedFilename.empty())
-    suggestedFilename=MetaGearMaker::METAGEAR_PATH + "/" + metaGear->name();
+//  if (suggestedFilename.empty())
+//    suggestedFilename=MetaGearMaker::METAGEAR_PATH + "/" + metaGear->name();
   
 
   std::string filename = Q3FileDialog::getSaveFileName(suggestedFilename.c_str(), ("*" + MetaGear::EXTENSION + ";;" + "*.*").c_str(), 
@@ -223,7 +224,7 @@ void SchemaEditor::slotSaveMetaGear()
     _schemaGui->renameGear(_contextGear, fileInfo.baseName().toStdString());
     
   }
-
+*/
 }
 
 void SchemaEditor::deleteSelected()
@@ -266,7 +267,7 @@ void SchemaEditor::slotGearCopy()
   QTextStream stream(&str,QIODevice::WriteOnly);
   doc.save(stream,4);
   _engine->setClipboardText(str.latin1());
-  std::cerr<<_engine->getClipboardText()<<std::endl;
+  qDebug()<<_engine->getClipboardText();
   
 }
 
@@ -275,7 +276,7 @@ void SchemaEditor::slotGearPaste()
   _schemaGui->clearSelection();
   QDomDocument doc("Clipboard");
 
-  QString str(_engine->getClipboardText().c_str());
+  QString str(_engine->getClipboardText());
 
   QString errMsg;
   int errLine;

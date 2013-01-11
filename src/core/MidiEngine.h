@@ -21,14 +21,14 @@
 #define MIDIENGINE_INCLUDED
 
 #include <vector>
-#include <string>
+
 #include <pthread.h>
 
 #include "RtMidi/RtMidi.h"
 
 // #include "SignalInfo.h"
 // #include "VideoInfo.h"
-// #include "DroneMath.h"
+// #include "Math.h"
 // #include "error.h"
 // #include "Schema.h"
 

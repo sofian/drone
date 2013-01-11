@@ -66,7 +66,7 @@ public:
   //! Destructor.
   virtual ~AreaArrayType() {}
 
-  virtual std::string typeName() const { return "AreaArrayType"; }  
+  virtual QString typeName() const { return "AreaArrayType"; }  
   QColor color() const { return QColor(221,111,33); }
 };
 

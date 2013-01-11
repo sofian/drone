@@ -19,4 +19,4 @@
 
 #include "AreaType.h"
 
-const std::string AreaType::TYPENAME = "Area";
+const QString AreaType::TYPENAME = "Area";

@@ -22,18 +22,21 @@
 
 #include <qcolor.h>
 #include <iostream>
-#include <string>
+
 #include <vector>
+
+class QDomDocument;
+class QDomElement;
+
 
 class AbstractType
 {
 public:
   AbstractType(){}
-  
-		
-	
+
   virtual ~AbstractType() {}
 
+	//vaten!
   virtual QColor color() const { return QColor(0,0,0);}
 
   int nSubTypes() const { return _subTypes.size();}
@@ -44,12 +47,15 @@ public:
     return &subType;
   }
 	
-  virtual std::string typeName() const {return "AbstractType";}
+  virtual QString typeName() const {return "AbstractType";}
   bool typeOf(AbstractType &other) const
   {
       return other.typeName() == typeName();
   }
   
+	virtual void save(QDomDocument &, QDomElement &) const {};
+	virtual void load(QDomElement &) {};
+	
 protected:
   std::vector<const AbstractType*> _subTypes;
 	

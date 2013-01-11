@@ -10,22 +10,20 @@
 #include "DroneCore.h"
 
 #include "GearMaker.h"
-#include "MetaGearMaker.h"
 
 #include "DroneMath.h"
 #include "Utils.h"
 
+
 void DroneCore::init()
 {
 	std::cout << "initializing the drone core..." << std::endl;
-	GearMaker::parseGears();
-	MetaGearMaker::parseMetaGears();
+	GearMaker::instance()->parse();
 	
   initMath();
   paint_funcs_setup();
 	
 }
-
 void DroneCore::release()
 {
 	paint_funcs_free();

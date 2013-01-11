@@ -33,7 +33,8 @@ Array.h \
 Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
-ConnectionItem.h \
+#ConnectionItem.h \
+Connection.h \
 ControlPanel.h \
 Control.h \
 DroneCore.h \
@@ -58,8 +59,9 @@ types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
 types/EnumType.h \
 GearClassification.h \
-GearGui.h \
+#GearGui.h \
 GearConverter.h \
+GearInfo.h \
 GearMaker.h \
 ISchemaEventListener.h \
 DroneMath.h \
@@ -68,17 +70,18 @@ MediaPool.h \
 MediaMovie.h \
 MetaGear.h \
 MetaGearMaker.h \
+Node.h \
 MidiEngine.h \
 AbstractPlug.h \
 Plug.h \
-PlugBox.h \
+#PlugBox.h \
 Properties.h \
 Project.h \
 Rasterer.h \
 Random.h \
 SummedAreaTable.h \
 Schema.h \
-SchemaGui.h \
+#SchemaGui.h \
 SignalInfo.h \
 StringUtils.h \
 TextureGl.h \
@@ -95,7 +98,8 @@ composite/CompositeGeneric.h \
 composite/AlphaComposite.h
  
 SOURCES += error.cpp \
-ConnectionItem.cpp \
+Connection.cpp \
+#ConnectionItem.cpp \
 ControlPanel.cpp \
 Control.cpp \
 DroneCore.cpp \
@@ -109,22 +113,19 @@ types/VideoChannelType.cpp \
 types/VideoRGBAType.cpp \
 types/ValueType.cpp \
 types/StringType.cpp \
-GearGui.cpp \
+GearInfo.cpp \
 GearMaker.cpp \
 Math.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
 MetaGear.cpp \
-MetaGearMaker.cpp \
 MidiEngine.cpp \
+Node.cpp \
 AbstractPlug.cpp \
-PlugBox.cpp \
-Properties.cpp \
 Project.cpp \
 Rasterer.cpp \
 Random.cpp \
 Schema.cpp \
-SchemaGui.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
 TextureGl.cpp \

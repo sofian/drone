@@ -1,9 +1,8 @@
 #ifndef MEDIAPOOL_INCLUDED
 #define MEDIAPOOL_INCLUDED
   
-#include <vector>
-#include <string>
-#include <map>
+#include <QMap>
+#include <QString>
 
 class Media;
   
@@ -17,17 +16,17 @@ public:
   void deleteMedia(Media* media);
   void empty();
 
-  Media* getMedia(std::string name);
-  std::vector<Media*> getAllMedia();
+  Media* getMedia(QString name);
+  QList<Media*> getAllMedia();
 
   MediaPool *getInstance();
 
-  static Media* createMediaFromFile(std::string filename);
+  static Media* createMediaFromFile(QString filename);
 
 private:
   MediaPool() : _instance(0){}
   
-  std::map<std::string, Media*> _medias;
+  QMap<QString, Media*> _medias;
 
   MediaPool *_instance;
 };

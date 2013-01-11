@@ -17,7 +17,7 @@ ControlPanel::ControlPanel(QWidget *panelContainerWidget, MetaGear *parentMetage
   _mainFrame->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);    
   _mainLayout = new QGridLayout(_mainFrame, 4, 4);
 
-  _labelName = new QLabel(parentMetagear->name().c_str(), _mainFrame);
+  _labelName = new QLabel(parentMetagear->name(), _mainFrame);
   _mainLayout->addWidget(_labelName, 0, 0);
   //TODO fddsfsdfsd
   

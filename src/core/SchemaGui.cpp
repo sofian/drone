@@ -72,6 +72,7 @@ void SchemaGui::setSchema(Schema *schema)
 {
   clear(); 
   _schema = schema;
+  _schema->add
   rebuildSchema();
 }
 
@@ -508,3 +509,9 @@ void SchemaGui::moveItemsBy(QList<QGraphicsItem*> list,QPointF delta)
     el->moveBy(delta.x(),delta.y());
   update();
 }
+
+  void SchemaGui::onGearAdded(Schema *schema, Gear *gear)
+  {}
+  
+  void SchemaGui::onGearRemoved(Schema *schema, Gear *gear)
+  {}

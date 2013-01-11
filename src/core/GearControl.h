@@ -11,11 +11,11 @@ class GearControl : public Gear
 {
 public:
 
-  GearControl(Schema *parentSchema, std::string type, std::string uniqueName);
+  GearControl(QString type);
 
   virtual ~GearControl(){}
   
-  virtual GearKind kind() const {return CONTROL;}
+  //virtual GearKind kind() const {return CONTROL;}
      
   Control* createControl(ControlPanel* parent);
 

@@ -26,7 +26,7 @@
 class VideoChannelType : public Array2DType<unsigned char>
 {
 public:
-  static const std::string TYPENAME;
+  static const QString TYPENAME;
   
   VideoChannelType(int width = 0,
                    int height = 0,
@@ -37,7 +37,7 @@ public:
 
   virtual ~VideoChannelType() {}
 
-  virtual std::string typeName() const { return "VideoChannelType";}
+  virtual QString typeName() const { return "VideoChannelType";}
   QColor color() const { return QColor(63,63,63);}
 };
 

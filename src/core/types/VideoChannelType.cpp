@@ -18,4 +18,4 @@
  */
 #include "VideoChannelType.h"
 
-const std::string VideoChannelType::TYPENAME = "VideoChannel";
+const QString VideoChannelType::TYPENAME = "VideoChannel";

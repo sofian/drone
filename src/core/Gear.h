@@ -20,109 +20,88 @@
 #ifndef GEAR_INCLUDED
 #define GEAR_INCLUDED
 
-#include <string>
-#include <list>
-#include <vector>
 #include <qobject.h>
 
 #include "Engine.h"
 
-#include "Properties.h"
-
 #include "Timing.h"
 #include "Plug.h"
-#include "GearClassification.h"
+#include "GearInfo.h"
+#include "Node.h"
+#include <QVector>
+#include <QList>
+#include <QString>
 
-#include <map>
-
-class GearGui;
 class QDomDocument;
 class QDomElement;
 class QGraphicsScene;
 class Schema;
-
-struct GearInfo
-{
-  GearInfo() : majorVersion(1), minorVersion(1), classification(GearClassifications::unclassified().instance()) {}
-  
-  std::string name;
-  std::string author;
-  std::string description;
-  int majorVersion;
-  int minorVersion;
-  GearClassification* classification;
-  void *data; // optional, additional information concerning the gear
-};
-
+class GearMaker;
 
 /**
  * Gear is the atomic processing unit of the dataflow and the base class for all gears.
  * 
- * 
+ * TODO : setSchema, setName 
  */
-class Gear : public QObject
+class Gear : public QObject, public Node
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-  
-  enum GearKind {GEAR, METAGEAR, CONTROL, EXPOSE_ANCHOR};
-  
-  static const std::string XML_TAGNAME;
 
-  virtual GearKind kind() const {return GEAR;}
-  
-  Gear(Schema *parentSchema, std::string type, std::string uniqueName);
+  static const QString XML_TAGNAME;
+
+  Gear(QString type);
   virtual ~Gear();
 
   void init();
-  void prePlay();    
-  void postPlay();    
+  void prePlay();
+  void postPlay();
   virtual void runAudio(){};
   virtual void runVideo(){};
-  GearGui* getGearGui();
 
-  void updateSettings();
+  void getInputs(QList<AbstractPlug*> &inputs, bool onlyExposed=false) const;
+  void getOutputs(QList<AbstractPlug*> &outputs, bool onlyExposed=false) const;
+	void getAllPlugs(QList<AbstractPlug*> &plugs) const;
 
-  void getInputs(std::list<AbstractPlug*> & inputs, bool onlyExposed=false) const;
-  void getOutputs(std::list<AbstractPlug*> &outputs, bool onlyExposed=false) const;
+  AbstractPlug* getInput(QString name) const;
+  AbstractPlug* getOutput(QString name) const;
+	AbstractPlug *getPlug(QString name) const;
 
-  AbstractPlug* getInput(std::string name) const;
-  AbstractPlug* getOutput(std::string name) const;
-
-  void getDependencies(std::vector<Gear*> & dependencies) const;
+  //Node
+	void getDependencies(QList<Node*> & dependencies) const;
 
   virtual Schema* getInternalSchema(){return NULL;}
 
-  void name(std::string vname){_name=vname;}
+  void name(QString vname);
 
-  const std::string& type() const {return _Type;};  
-  const std::string& name() const {return _name;}
-    
-  Properties& settings(){return _settings;};
+  const QString& type() const {return _Type;};  
+  const QString& name() const {return _name;}
 
   bool ready(){return _ready;}
+
   void evaluateReady();
   void unSynch();
-  
+
   //todo make bool
   void save(QDomDocument &, QDomElement &);
   void load(QDomElement &);
-
+ 
   virtual bool canConvert(const AbstractType& , const AbstractType& ,
                           std::pair<const AbstractPlug*, const AbstractPlug*>& plugs) const
   {
     plugs.first = plugs.second = 0;
     return false;
   }
-
 	
-  bool isPlugNameUnique(std::string name);  
+  bool isPlugNameUnique(QString name);  
 
   Schema *parentSchema(){return _parentSchema;}
+	void parentSchema(Schema &parentSchema);
+  //GearInfo* getGearInfo_(){return _gearInfo;}
 
 signals:
-	void readyStatusChanged();
-		
+  void readyStatusChanged();
+
 protected:
 
   virtual void internalInit(){}
@@ -131,55 +110,42 @@ protected:
   
   virtual void internalPrePlay(){}  
   virtual void internalPostPlay(){}    
-  
-  //! overload to create your own GearGui
-  virtual GearGui* createGearGui(QGraphicsScene *scene);
-  
-  virtual void onUpdateSettings(){};
+    
   virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug
   virtual void onPlugDisconnected(AbstractPlug*, AbstractPlug*){};//!disconnection form one of our plug from other plug
   friend bool AbstractPlug::connect(AbstractPlug *plug);
   friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
-  AbstractPlug* addPlug(AbstractPlug* plug);       
-  void setPlugAtLeastOneNeeded(std::vector<AbstractPlug*> &plugs);
+  AbstractPlug* addPlug(AbstractPlug* plug);
+  //void addBypassChannel(std::string in, std::string out);
+  //TODO: more flexible way of defining this
+	void setPlugAtLeastOneNeeded(QList<AbstractPlug*> &plugs);
   //void addPlugAndSubPlugs(AbstractPlug* plug, int level);
 
   void deletePlug(AbstractPlug *plug);
 
   Schema *_parentSchema;
 
-  std::list<AbstractPlug*> _plugs;    
-
-  Properties _settings;
+  QList<AbstractPlug*> _plugs;
 
 protected:
 
-  std::string _Type;
-  std::string _name;//! unique name of this gear in a schema
+  QString _Type;
+  QString _name;//! unique name of this gear in a schema
 
-  GearGui *_gearGui;
+  //GearInfo * _gearInfo;
 
 private:
 
   bool _ready;
-  std::vector<AbstractPlug*> _atLeastOneOfThemNeeded;
-
-  friend void Schema::initGear(Gear* gear) const;
-  friend void *Engine::playThread(void *parent);
-  friend bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy);
-  friend bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected);
-
-  #ifdef SINGLE_THREADED_PLAYBACK  
-  friend void Engine::debugStartPlay();
-  friend void Engine::debugStopPlay();
-  #endif
-
+	QList<AbstractPlug*> _atLeastOneOfThemNeeded;
+  
 };
 
-extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName);
-GearInfo getGearInfo();
+extern "C"
+{
+  Gear* makeGear(Schema *schema, QString uniqueName);
+  //GearInfo getGearInfo();
 }
 
 

@@ -38,7 +38,7 @@ public:
   {
   }
   
-  virtual std::string typeName() const { return "OscMessageType"; }
+  virtual QString typeName() const { return "OscMessageType"; }
   virtual QColor color() const { return QColor(149, 153, 162); }
 	
 	void setPath(const StringType &path) {_path = path;}

@@ -2,174 +2,23 @@
 #include "Gear.h"
 #include "MetaGear.h"
 #include "GearMaker.h"
-#include "ISchemaEventListener.h"
-#include "GearGui.h"
+//#include "SchemaTopoSort.h"
+#include "Connection.h"
 
-#include <qdom.h>
+
+#include <QtXml>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qtextstream.h>
 #include "XMLHelper.h"
 
-const std::string Schema::XML_TAGNAME = "Schema";
+const QString Schema::XML_TAGNAME = "Schema";
 
-void Schema::Connection::save(QDomDocument &doc, QDomElement &parent)
-{
-  QDomElement connectionElem = doc.createElement("Connection");
-  parent.appendChild(connectionElem);
-
-  QDomAttr gearA = doc.createAttribute("GearA");
-  gearA.setValue(_gearA.c_str());
-  connectionElem.setAttributeNode(gearA);
-
-  QDomAttr input = doc.createAttribute("Input");
-  input.setValue(_input.c_str());
-  connectionElem.setAttributeNode(input);
-
-  QDomAttr gearB = doc.createAttribute("GearB");
-  gearB.setValue(_gearB.c_str());
-  connectionElem.setAttributeNode(gearB);
-
-  QDomAttr output = doc.createAttribute("Output");
-  output.setValue(_output.c_str());
-  connectionElem.setAttributeNode(output);
-
-}
-
-void Schema::Connection::load(QDomElement &connectionElem)
-{
-  _gearA = connectionElem.attribute("GearA","").ascii();
-  _input = connectionElem.attribute("Input","").ascii();
-  _gearB = connectionElem.attribute("GearB","").ascii();
-  _output = connectionElem.attribute("Output","").ascii();
-}
-
-void Schema::Connection::updateWithRenameMapping(std::map<std::string,std::string> map)
-{
-  std::map<std::string,std::string>::iterator renA(map.find(_gearA));
-  std::map<std::string,std::string>::iterator renB(map.find(_gearB));
-  if(renA!=map.end())
-    _gearA = map[_gearA];
-  if(renB!=map.end())
-    _gearB = map[_gearB];
-  std::cerr<<_gearA<<" "<<_gearB<<std::endl;
-}
-
-Schema::GearGraphManip::GearGraphManip(std::vector<Gear*> &gears) :  
-  _gears(gears),
-  _depthFirstCounter(0)
-{
-  //build nodes
-  for (unsigned int i=0;i<_gears.size();++i)  
-    _nodes.push_back(Node(_gears[i]));    
-}
-
-void Schema::GearGraphManip::labelling(Node &node)
-{
-  if (node.visited)
-    return;
-
-  //tag the node has visited to avoid infinit recursion
-  node.visited=true;
-
-  //get depth fist dependent gears
-  std::vector<Gear*> depGears;
-  node.gear->getDependencies(depGears);
-  
-  //build the corresponding nodes vector
-  std::vector<Node*> depNodes;
-  bool found=false;
-  for (unsigned int i=0;i<depGears.size();++i)
-  {
-    found=false;
-       
-    for (unsigned int j=0;j<_nodes.size() && !found;++j)
-    {
-      if (_nodes[j].gear == depGears[i])
-      {
-        depNodes.push_back(&_nodes[j]);
-        found=true;
-      }
-    }
-  }
-
-  //label depending nodes
-  for (unsigned int i=0;i<depNodes.size();++i)
-    labelling(*depNodes[i]);
-  
-  //assign order
-  node.order=_depthFirstCounter;
-  
-  //inc global counter
-  _depthFirstCounter++;
-}
-
-bool Schema::GearGraphManip::compareNodes(const Node &a, const Node &b)
-{
-  return a.order < b.order;
-}
-
-
-/**
- * perform a topological sort of a cyclic graph
- * return vector of ordered gears
- * 
- * @param orderedGears
- */
-void Schema::GearGraphManip::getOrderedGears(std::list<Gear*>& orderedGears)
-{
-  //reset
-  _depthFirstCounter=0;
-  for (unsigned int i=0;i<_nodes.size();++i)
-  {
-    _nodes[i].order=0;
-    _nodes[i].visited=false;
-  }
-
-  for (unsigned int i=0;i<_nodes.size();++i)
-  {
-    if (!_nodes[i].visited)
-      labelling(_nodes[i]);  
-  }
-  
-  //sort according to order
-  std::sort(_nodes.begin(), _nodes.end(), compareNodes);
-  
-  //fill the ordered gears vector now
-  orderedGears.clear();
-  for (unsigned int i=0;i<_nodes.size();++i)
-    orderedGears.push_back(_nodes[i].gear);
-}
-
-/* Gear* Schema::getDeepGearByName(std::string name) const                                */
-/* {                                                                                      */
-/*   std::list<Gear*> allgears = getDeepGears();                                          */
-/*                                                                                        */
-/*   for (std::list<Gear*>::const_iterator it = allgears.begin();it!=allgears.end();++it) */
-/*   {                                                                                    */
-/*     if ((*it)->name() == name)                                                         */
-/*       return(*it);                                                                     */
-/*   }                                                                                    */
-/*                                                                                        */
-/*   return NULL;                                                                         */
-/* }                                                                                      */
-
-Gear* Schema::getGearByName(std::string name) const
-{
-  for (std::list<Gear*>::const_iterator it = _gears.begin();it!=_gears.end();++it)
-  {
-    if ((*it)->name() == name)
-      return(*it);
-  }
-
-  return NULL;
-}
-
-Schema::Schema(MetaGear * parentMetaGear) :
+Schema::Schema(MetaGear &parentMetaGear) :
 _needSynch(true),  
-_parentMetaGear(parentMetaGear),
+_parentMetaGear(&parentMetaGear),
 _locked(false)
 {
-  ASSERT_ERROR_MESSAGE(_parentMetaGear!=0, "Schema with a null parent metagear");
 }
 
 Schema::~Schema()
@@ -177,102 +26,100 @@ Schema::~Schema()
   clear();
 }
 
-std::list<Gear*> Schema::getDeepOrderedReadyGears()
+Gear* Schema::getGearByName(QString name) const
+{
+  return _gears.value(name, NULL);
+}
+
+QList<Gear*> Schema::getDeepOrderedReadyGears()
 {
   if(!needSynch())
     return _lastDeepOrderedReadyGears;
-
-  std::list<Gear*> deepOrderedGears;
-  std::list<Gear*> orderedGears;
-  std::list<Gear*> internalSchemaOrderedGears;
+/*
+  QList<Gear*> deepOrderedGears;
+  QList<Gear*> orderedGears;
+  QList<Gear*> internalSchemaOrderedGears;
 
   _lastDeepOrderedReadyGears.clear();
-
-	std::vector<Gear*> gearList(_gears.begin(), _gears.end()); 
-  GearGraphManip ggm(gearList);
+ 
+  SchemaTopoSort schemaTopoSort(_gears.values());
 	
-  ggm.getOrderedGears(orderedGears);
+  schemaTopoSort.getOrderedGears(orderedGears);
 
-  for(std::list<Gear*>::iterator it=orderedGears.begin();it!=orderedGears.end();++it)
+  for(QList<Gear*>::iterator it=orderedGears.begin();it!=orderedGears.end();++it)
   {
     if ((*it)->getInternalSchema()!=NULL)
     {
       internalSchemaOrderedGears.clear();
       internalSchemaOrderedGears = (*it)->getInternalSchema()->getDeepOrderedReadyGears();
-      deepOrderedGears.insert(deepOrderedGears.end(), internalSchemaOrderedGears.begin(), internalSchemaOrderedGears.end());  
+      deepOrderedGears+=internalSchemaOrderedGears;
     }
     else
-      deepOrderedGears.push_back(*it);
+      deepOrderedGears+=*it;
   }
 
 
 	//filter on ready gears only
 	//first pass, evaluateReady for all gears
-	for(std::list<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
+	for(QList<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
 	{
 		(*it)->evaluateReady();
 	}
 		
 	//finally, filter
-	for(std::list<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
+	for(QList<Gear*>::iterator it=deepOrderedGears.begin();it!=deepOrderedGears.end();++it)
 	{
 		if ((*it)->ready())
 			_lastDeepOrderedReadyGears.push_back(*it);
 	}
   
 	_needSynch=false;
-
+*/
   return _lastDeepOrderedReadyGears;
 }
 
-std::list<Gear*> Schema::getDeepGears() const
+QList<Gear*> Schema::getDeepGears() const
 {
-  std::list<Gear*> deepGears;
-  std::list<Gear*> internalSchemaGears;
+  QList<Gear*> deepGears;
+  QList<Gear*> internalSchemaGears;
 
-  for(std::list<Gear*>::const_iterator it=_gears.begin();it!=_gears.end();++it)
+  foreach(Gear* gear, _gears)
   {
-    if ((*it)->getInternalSchema()!=NULL)
+    if (gear->getInternalSchema()!=NULL)
     {
       internalSchemaGears.clear();
-      internalSchemaGears = (*it)->getInternalSchema()->getDeepGears();
-      deepGears.insert(deepGears.end(), internalSchemaGears.begin(), internalSchemaGears.end());  
+      internalSchemaGears = gear->getInternalSchema()->getDeepGears();
+      deepGears += internalSchemaGears;  
     }
     else
-      deepGears.push_back(*it);
+      deepGears.push_back(gear);
   }
 
   return deepGears;
 }
 
 /**
- * get a unique name for a gear in this schema only
+ * Mangles a unique gear name by adding a number after the name in this schema only.
  * 
- * @param prefix
+ * @param originalName
  * 
  * @return 
  */
-std::string Schema::getUniqueGearName(std::string prefix)
+QString Schema::mangleUniqueGearName(QString originalName)
 {
-  int i=1;
-  std::string tmp;
-  bool ok=false;
-  char buf[10];
-  // in drone specs : drone supports up to 123456 gears 
-  while (!ok && i<123456)
-  {
-    ok=true;
-    sprintf(buf,".%i",i);
-    tmp=prefix + buf;
-    for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
-      if ((*it)->name() == tmp)
-      {
-        ok=false;
-        break;
-      }
-    i++;
-  }
-  return tmp; 
+  if (!_gears.contains(originalName))
+		return originalName;
+
+	int i=1;
+	QString mangledName = originalName + QString::number(i);
+	
+	while(_gears.contains(mangledName))
+	{
+		i++;
+		mangledName = originalName + QString::number(i);
+	}
+	
+	return mangledName;
 }
 
 bool Schema::needSynch()
@@ -280,8 +127,8 @@ bool Schema::needSynch()
   if(_needSynch)
     return true;
   
-  std::list<Schema*> subschemas = getSubSchemas();
-  for(std::list<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
+  QList<Schema*> subschemas = getSubSchemas();
+  for(QList<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
     if((*it)->needSynch())
       return true;
   
@@ -291,26 +138,23 @@ bool Schema::needSynch()
 void Schema::synch()
 {
   _needSynch=false;
-  std::list<Schema*> subschemas = getSubSchemas();
-  for(std::list<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
+  QList<Schema*> subschemas = getSubSchemas();
+  for(QList<Schema*>::iterator it = subschemas.begin(); it!=subschemas.end();++it)
     (*it)->synch();
 }
 
 
 void Schema::clear()
 {
-  for (std::list<Gear*>::iterator it = _gears.begin(); it != _gears.end(); ++it)
-    delete *it;
-
-  _gears.clear();
+	qDeleteAll(_gears);
 }
 
-std::list<Schema*> Schema::getSubSchemas()
+QList<Schema*> Schema::getSubSchemas()
 {
-  std::list<Schema*> sub;
-  for (std::list<Gear*>::iterator it = _gears.begin(); it != _gears.end(); ++it)
-    if((*it)->getInternalSchema()!=NULL)
-      sub.push_back((*it)->getInternalSchema());
+  QList<Schema*> sub;
+  foreach(Gear* gear, _gears)
+    if(gear->getInternalSchema()!=NULL)
+      sub += gear->getInternalSchema();
   return sub;
 }
 
@@ -324,143 +168,79 @@ std::list<Schema*> Schema::getSubSchemas()
  * @return 
  */
 
-bool Schema::removeDeepGear(Gear* gear)
+bool Schema::removeDeepGear(Gear* &gear)
 {
-  ASSERT_ERROR(gear!=NULL);
-  
-  if (_locked)
+	if (_locked)
   {
-    _scheduledDeletes.push_back(gear);
+    _scheduledDeletes+=gear;
     return true;
   }
 
   // if the gear to be removed is at the current schema level, remove it here
-  if(find(_gears.begin(),_gears.end(),gear) != _gears.end())
+  if (_gears.contains(gear->name()))
   {   
-    onGearRemoved(gear);
+    onGearRemoved(*gear);
     
-    _gears.remove(gear);
+    _gears.remove(gear->name());
             
     delete gear;
+		gear=NULL;
     
     return true;
   }
 
   // otherwise, search recursively in subschemas
-  std::list<Schema*> subSchemas = getSubSchemas();
-  for(std::list<Schema*>::iterator it = subSchemas.begin();it!=subSchemas.end();++it)
+  QList<Schema*> subSchemas = getSubSchemas();
+  for(QList<Schema*>::iterator it = subSchemas.begin();it!=subSchemas.end();++it)
     if((*it)->removeDeepGear(gear))
       return true;
   return false;
 }
 
-void Schema::initGear(Gear * gear) const
-{
-  gear->init();
+void Schema::renameGear(Gear& gear, QString newName)
+{  
+	if (gear.name() == newName)
+		return;
+	
+  gear.name(mangleUniqueGearName(newName));
 }
 
-MetaGear* Schema::newMetaGear()
-{
-  std::string name="MetaGear";
-  return addMetaGear(name, getUniqueGearName(name));
-}
+bool Schema::addGear(Gear& gear)
+{		
+	//make unique naming
+	gear.name(mangleUniqueGearName(gear.name()));
+	
+	//add to the schema
+	_gears.insert(gear.name(), &gear);
+	gear.parentSchema(*this);
 
-MetaGear* Schema::addMetaGear(std::string filename)
-{
-  QFileInfo fileInfo(filename.c_str());
-  std::string name = fileInfo.baseName().toStdString();
-
-  MetaGear *metaGear = new MetaGear(this, name, getUniqueGearName(name));
-
-  initGear(metaGear);
-
-  if (!metaGear->load(filename))
-  {
-    delete metaGear;
-    return NULL;
-  }
-  
-  _gears.push_back(metaGear);
-  onGearAdded(metaGear);
-
-  return metaGear;
-}
-
-void Schema::renameGear(Gear* gear, std::string newName)
-{
-  if (!gear)
-    return;
-  
-  gear->name(getUniqueGearName(newName));
-}
-
-MetaGear* Schema::addMetaGear(std::string name, std::string uniqueName)
-{
-  MetaGear *metaGear = new MetaGear(this, name, uniqueName);
-  initGear(metaGear);
-  
-  _gears.push_back(metaGear);
-  
-  onGearAdded(metaGear);
-
-  return metaGear;
-}                         
-
-Gear* Schema::addGear(std::string geartype)
-{
-  return addGear(geartype, getUniqueGearName(geartype));
-}
-
-
-/**
- * called when loading because we already know the uniqueName
- * 
- * @param geartype
- * @param uniqueName
- * 
- * @return 
- */
-Gear* Schema::addGear(std::string geartype, std::string uniqueName)
-{
-  
-  Gear *gear = GearMaker::makeGear(this, geartype, uniqueName);
-
-  if (gear==NULL)
-    std::cout << "Schema addGear: " << geartype << " unknown" << std::endl;
-  else
-  {
-    initGear(gear);    
-        
-    _gears.push_back(gear);
-    onGearAdded(gear);    
-  }
-
-  return gear;
+	emit gearAdded(*this, gear);
+  return true;
 }
 
 //not deep
-void Schema::getAllConnections(std::list<Connection*> &connections)
+void Schema::getAllConnections(QList<Connection*> &connections)
 {
-  std::list<AbstractPlug*> outputs;
-  std::list<AbstractPlug*> connectedPlugs;
+  QList<AbstractPlug*> outputs;
+  QList<AbstractPlug*> connectedPlugs;
 
   connections.clear();
 
-  for (std::list<Gear*>::iterator itGear = _gears.begin(); itGear != _gears.end(); ++itGear)
-  {
-    (*itGear)->getOutputs(outputs);
-    for (std::list<AbstractPlug*>::iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
+	foreach(Gear *gear, _gears)  
+	{
+    gear->getOutputs(outputs);
+    for (QList<AbstractPlug*>::Iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
     {
       (*itOutput)->connectedPlugs(connectedPlugs);
 
-      for (std::list<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
+      for (QList<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
       {
         
         //in the case of an exposed plug, 
         //just be sure that the destination gear is really in our schema
         if ( (!(*itOutput)->exposed()) || 
              ((*itOutput)->exposed() && (getGearByName((*itConnectedPlug)->parent()->name()))) )
-          connections.push_back( new Connection((*itGear)->name(), (*itOutput)->name(), 
+          connections.push_back( new Connection(gear->name(), (*itOutput)->name(), 
                                                 (*itConnectedPlug)->parent()->name(), 
                                                 (*itConnectedPlug)->name()));
       }            
@@ -478,18 +258,15 @@ void Schema::getAllConnections(std::list<Connection*> &connections)
  * 
  * @return 
  */
-bool Schema::connect(AbstractPlug *plugA, AbstractPlug *plugB)
-{
-  if (!plugA || !plugB)
-    return false;
-  
+bool Schema::connect(AbstractPlug &plugA, AbstractPlug &plugB)
+{  
   if (_locked)
   {
     _scheduledConnections.push_back(ScheduledConnection(plugA, plugB));
     return true;
   }
   else
-    return plugA->connect(plugB);  
+    return plugA.connect(&plugB);  
 }
 
 /**
@@ -501,28 +278,24 @@ bool Schema::connect(AbstractPlug *plugA, AbstractPlug *plugB)
  * 
  * @return 
  */
-void Schema::disconnect(AbstractPlug *plugA, AbstractPlug *plugB)
+void Schema::disconnect(AbstractPlug &plugA, AbstractPlug &plugB)
 {
-  if (!plugA || !plugB)
-    return;
   
   if (_locked)
   {
     _scheduledDisconnections.push_back(ScheduledConnection(plugA, plugB));
   }
   else
-    plugA->disconnect(plugB);
+    plugA.disconnect(&plugB);
 }
 
-void Schema::disconnectAll(AbstractPlug *plug)
+void Schema::disconnectAll(AbstractPlug &plug)
 {
-  if (!plug)
-    return;
   
-  plug->disconnectAll();
+  plug.disconnectAll();
 }
 
-bool Schema::connect(Schema::Connection &connection)
+bool Schema::connect(Connection &connection)
 {
    Gear *gearA;                                                                             
    Gear *gearB;                                                                             
@@ -531,68 +304,66 @@ bool Schema::connect(Schema::Connection &connection)
                                                                                             
    if ( (gearA=getGearByName(connection.gearA())) == NULL)                                        
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.gearA() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.gearA() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                                                                                                                         
    if ( (gearB=getGearByName(connection.gearB())) == NULL)                                        
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.gearB() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.gearB() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (output=gearA->getOutput(connection.output())) == NULL)                             
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.output() + " not found!" << std::endl; 
+     qCritical() << "connectPlugs fail: " + connection.output() + " not found!"; 
      return false;                                                                                
    }                                                                                        
                                                                                             
    if ( (input=gearB->getInput(connection.input())) == NULL)                                
    {                                                                                        
-     std::cout << "connectPlugs fail: " + connection.input() + " not found!" << std::endl;  
+     qCritical() << "connectPlugs fail: " + connection.input() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                             
    return output->connect(input);
 }
 
-bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
+bool Schema::save(QDomDocument& doc, QDomElement &parent)
 {
-  QDomElement rootElem = doc.createElement(XML_TAGNAME.c_str());
+  QDomElement rootElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(rootElem);
 
   //save all gears
   QDomElement gearsElem = doc.createElement("Gears");
   rootElem.appendChild(gearsElem);
 
-  for (std::list<Gear*>::iterator it=_gears.begin();it!=_gears.end();++it)
+	foreach(Gear *gear, _gears)
   {
-    GearGui* ggui = (*it)->getGearGui();
-    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
-      continue;
+//    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
+//      continue;
     std::cerr<<"About to save!"<<std::endl;
-    (*it)->save(doc, gearsElem);            
+    gear->save(doc, gearsElem);            
   }
+	
 
 
   //save all connections
   QDomElement connectionsElem = doc.createElement("Connections");
   rootElem.appendChild(connectionsElem);
 
-  std::list<Connection*> connections;
+  QList<Connection*> connections;
   getAllConnections(connections);
 
-  for (std::list<Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
+  for (QList<Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
   {
     Gear * gA = getGearByName((*it)->gearA());
     Gear * gB = getGearByName((*it)->gearB());
-    GearGui* ggA = (gA==NULL?NULL:gA->getGearGui());
-    GearGui* ggB = (gB==NULL?NULL:gB->getGearGui());
-    
+/*
     if(onlySelected 
        && (ggA == NULL || !ggA->isSelected() || ggB == NULL || !ggB->isSelected()))
       continue;
-       
+*/       
     (*it)->save(doc, connectionsElem);
     delete (*it);//free
   }
@@ -600,12 +371,12 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   return true;
 }
 
-bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
+bool Schema::load(QDomElement& parent)
 {    
   std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
   // when pasting, gears have to be renamed
-  std::map<std::string,std::string> renameMap;
+  std::map<QString,QString> renameMap;
   if (gearsNode.isNull())
   {
     std::cout << "Bad DroneSchema : <Gears> tag not found!" << std::endl;
@@ -619,16 +390,17 @@ bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
     QDomElement gearElem = gearNode.toElement();
     if (!gearElem.isNull())
     {
-      std::string type = gearElem.attribute("Type","").ascii();
-      
+			pgear = GearMaker::instance()->makeGear(gearElem.attribute("Type",""));
+			/*
       if (type == MetaGear::TYPE)        
         //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
-        pgear = addMetaGear("MetaGear", gearElem.attribute("Name","").ascii());          
+        pgear = addMetaGear("MetaGear", gearElem.attribute("Name",""));          
       else                   
-        pgear = addGear(type, gearElem.attribute("Name","").ascii());
-      
+        pgear = addGear(type, gearElem.attribute("Name",""));
+      */
       if (pgear!=NULL)
       {
+				addGear(*pgear);
         pgear->load(gearElem);                                
       }              
                   
@@ -637,18 +409,16 @@ bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
     }
     gearNode = gearNode.nextSibling();
   }                
-  
+  /*
   if(pasting)
     for(unsigned int i=0;i<addedGears.size();++i)
     {
-      addedGears[i]->getGearGui()->setSelected(true);
-      std::string newname = getUniqueGearName(addedGears[i]->type());
+      QString newname = getUniqueGearName(addedGears[i]->type());
       renameMap[addedGears[i]->name()] = getUniqueGearName(addedGears[i]->type());
-      std::cerr<<"rename : "<<addedGears[i]->name()<<" to "<<renameMap[addedGears[i]->name()]<<" (newname:) "<<newname<<std::endl;
 
       addedGears[i]->name(renameMap[addedGears[i]->name()]);
     }
-    
+  */  
   //load connections    
   QDomNode connectionsNode = XMLHelper::findChildNode(parent, "Connections");
 
@@ -668,9 +438,11 @@ bool Schema::load(QDomElement& parent, bool pasting, int dx, int dy)
     if (!connectionElem.isNull())
     {
       connection.load(connectionElem);            
+	/*
       if(pasting)
         connection.updateWithRenameMapping(renameMap);
-      connect(connection);
+  */
+			    connect(connection);
     }
 
     connectionNode = connectionNode.nextSibling();
@@ -689,68 +461,47 @@ void Schema::unlock()
   //perform all scheduled operations
   
   //delete
-  for (std::vector<Gear*>::iterator it=_scheduledDeletes.begin(); it!=_scheduledDeletes.end(); ++it)
+  for (QList<Gear*>::iterator it=_scheduledDeletes.begin(); it!=_scheduledDeletes.end(); ++it)
     removeDeepGear(*it);
 
   _scheduledDeletes.clear();
 
   //connect
-  for (std::vector<ScheduledConnection>::iterator it=_scheduledConnections.begin(); it != _scheduledConnections.end(); ++it)
-    (*it)._a->connect((*it)._b);
+  for (QList<ScheduledConnection>::iterator it=_scheduledConnections.begin(); it != _scheduledConnections.end(); ++it)
+    connect(*((*it)._a), *((*it)._b));
   
   _scheduledConnections.clear();
 
   //disconnect
-  for (std::vector<ScheduledConnection>::iterator it=_scheduledDisconnections.begin(); it != _scheduledDisconnections.end(); ++it)
-    (*it)._a->disconnect((*it)._b);
+  for (QList<ScheduledConnection>::iterator it=_scheduledDisconnections.begin(); it != _scheduledDisconnections.end(); ++it)
+    disconnect(*((*it)._a), *((*it)._b));
 
   _scheduledDisconnections.clear();  
-}
-
-void Schema::onGearAdded(Gear *gear)
-{
-  for (std::list<ISchemaEventListener*>::iterator it=_schemaEventListeners.begin();it!=_schemaEventListeners.end();++it)
-  {
-    (*it)->onGearAdded(this, gear);
-  }
-
-  //foward up the event to the parent schema
-  Schema *parentSchema = getParentSchema();
-  if (parentSchema)
-    parentSchema->onGearAdded(gear);
-}
-
-void Schema::onGearRemoved(Gear *gear)
-{
-  for (std::list<ISchemaEventListener*>::iterator it=_schemaEventListeners.begin();it!=_schemaEventListeners.end();++it)
-  {
-    (*it)->onGearRemoved(this, gear);
-  }
-  
-  //foward up the event to the parent schema
-  Schema *parentSchema = getParentSchema();
-  if (parentSchema)
-    parentSchema->onGearRemoved(gear);
-  
-}
-
-void Schema::addSchemaEventListener(ISchemaEventListener *schemaEventListener)
-{
-  if (!schemaEventListener)
-    return;
-
-  _schemaEventListeners.push_back(schemaEventListener);
-}
-
-void Schema::removeSchemaEventListener(ISchemaEventListener *schemaEventListener)
-{
-  if (!schemaEventListener)
-    return;
-
-  _schemaEventListeners.remove(schemaEventListener);
 }
 
 Schema *Schema::getParentSchema()
 {
   return _parentMetaGear->parentSchema();
 }
+
+void Schema::onGearAdded(Gear &gear)
+{
+	emit gearAdded(*this, gear);
+	
+  //foward up the event to the parent schema
+  Schema *parentSchema = getParentSchema();
+  if (parentSchema)
+    parentSchema->onGearAdded(gear);
+}
+
+void Schema::onGearRemoved(Gear &gear)
+{
+	emit gearRemoved(*this, gear);
+	
+  //foward up the event to the parent schema
+  Schema *parentSchema = getParentSchema();
+  if (parentSchema)
+    parentSchema->onGearRemoved(gear);
+}
+
+

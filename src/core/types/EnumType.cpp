@@ -1,3 +1,3 @@
 #include "EnumType.h"
 
-const std::string EnumType::TYPENAME = "Enum";
+const QString EnumType::TYPENAME = "Enum";

@@ -24,6 +24,7 @@
 #include <QFileInfo>
 #include <QMenu>
 #include "Schema.h"
+#include "ISchemaEventListener.h"
 
 class GearGui;
 class PlugBox;
@@ -34,7 +35,7 @@ class GearListMenu;
 class MetaGearListMenu;
 class SchemaEditor;
 
-class SchemaGui : public QGraphicsScene
+class SchemaGui : public QGraphicsScene, public ISchemaEventListener
 {
   Q_OBJECT
   
@@ -50,6 +51,10 @@ public:
   void renameGear(GearGui *gearGui, std::string newName);
   void removeGear(GearGui* gearGui);
     
+  
+  void onGearAdded(Schema *schema, Gear *gear);
+  void onGearRemoved(Schema *schema, Gear *gear);
+
   void setSchemaEditor(SchemaEditor* se);
   SchemaEditor* getSchemaEditor() const;
   bool connect(PlugBox *plugA, PlugBox *plugB);

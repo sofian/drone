@@ -4035,10 +4035,9 @@ MediaMovie::MediaMovie() :
   _thumbnail->resize(64,64);
 }
 
-void MediaMovie::load(std::string)
+void MediaMovie::load(QString)
 {
 }
-
 QPixmap *MediaMovie::thumbNail()
 {
   return _thumbnail;

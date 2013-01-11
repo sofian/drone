@@ -21,16 +21,18 @@
 #include <iostream>
 #include <sstream>
 #include "AbstractPlug.h"
+#include "XMLHelper.h"
 
 #include "Gear.h"
 
-const std::string AbstractPlug::XML_TAGNAME = "Plug";
+const QString AbstractPlug::XML_TAGNAME = "Plug";
+const QString AbstractPlug::XML_TAGNAME_TYPE_ELEM = "Type";
 
-AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory) :
+AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractType* type, bool mandatory) :
   _abstractType(type),
   _abstractDefaultType(type),
-  _parent(parent),
-  _mandatory(mandatory),
+	_mandatory(mandatory),
+	_parent(parent),
   _sleeping(false),
   _inOut(inOut),
   _name(name),
@@ -53,7 +55,7 @@ bool AbstractPlug::canConnect(AbstractPlug *plug, bool onlyTypeCheck)
     return false;
 
   //s'assurer que plug n'est pas deja connecte a nous
-  if (find(_connectedPlugs.begin(), _connectedPlugs.end(), plug) != _connectedPlugs.end())
+  if (_connectedPlugs.contains(plug))
     return false;
 
   //est-ce que ce sont des plugs de meme type
@@ -97,12 +99,12 @@ bool AbstractPlug::connect(AbstractPlug *plug)
     plug->exposed(false);
 
   AbstractPlug * deepestPlug = 0;
-  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug) ;
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
   if(deepestPlug != this)
     deepestPlug->_connectedPlugs.push_back(plug);
 
   AbstractPlug * deepestOtherPlug = 0;
-  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug) ; 
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.push_back(this);
 
@@ -133,8 +135,7 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
     return false;
 
   //on ne peut pas deconnecter une plug qui n'est pas connecte a nous
-  std::list<AbstractPlug*>::iterator it = find(_connectedPlugs.begin(), _connectedPlugs.end(), plug);
-  if (it == _connectedPlugs.end())
+  if (!_connectedPlugs.contains(plug))
     return false;
 
   _parent->onPlugDisconnected(this, plug);
@@ -145,18 +146,18 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   plug->onDisconnection(this);
 
   //remove this plug from our connections
-  _connectedPlugs.remove(plug);
+  _connectedPlugs.removeAll(plug);
   AbstractPlug * deepestPlug = 0;
-  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug) ;
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
   if(deepestPlug != this)
-    deepestPlug->_connectedPlugs.remove(plug);
+    deepestPlug->_connectedPlugs.removeAll(plug);
 
   //remove ourself from the other plug connections
-  plug->_connectedPlugs.remove(this);
+  plug->_connectedPlugs.removeAll(this);
   AbstractPlug * deepestOtherPlug = 0;
-  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug) ;
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
   if(deepestOtherPlug != plug)
-    deepestOtherPlug->_connectedPlugs.remove(this);
+    deepestOtherPlug->_connectedPlugs.removeAll(this);
 
   //tell the gear that disconnection have been made and that we need synch
   _parent->unSynch();
@@ -174,25 +175,22 @@ void AbstractPlug::disconnectAll()
   }
 }
 
-int AbstractPlug::connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const
+void AbstractPlug::connectedPlugs(QList<AbstractPlug*> &connectedPlugs) const
 {
-  connectedplugs.clear();
-  connectedplugs.assign(_connectedPlugs.begin(), _connectedPlugs.end());
-
-  return connectedplugs.size();
+	connectedPlugs = _connectedPlugs;
 }
 
-std::string AbstractPlug::fullName() const
+QString AbstractPlug::fullName() const
 {
   return _parent->name()+"/"+_name;
 }
 
-std::string AbstractPlug::shortName(int nbChars) const
+QString AbstractPlug::shortName(int nbChars) const
 {
-  std::string abbrev;
+  QString abbrev;
 
   int c=0;
-  for (std::string::const_iterator it=_name.begin();it != _name.end() && c < nbChars; ++it, ++c)
+  for (QString::const_iterator it=_name.begin();it != _name.end() && c < nbChars; ++it, ++c)
   {
     abbrev+=*it;
   }
@@ -217,7 +215,7 @@ void AbstractPlug::exposed(bool exp)
   }
 }
 
-bool AbstractPlug::name(std::string newName)
+bool AbstractPlug::name(QString newName)
 {
   if (!_parent->isPlugNameUnique(newName))
     return false;
@@ -228,12 +226,12 @@ bool AbstractPlug::name(std::string newName)
 
 void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
 {
-  QDomElement plugElem = doc.createElement(XML_TAGNAME.c_str());
+  QDomElement plugElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(plugElem);
 
   QDomAttr nameAttr;
   nameAttr = doc.createAttribute("Name");
-  nameAttr.setValue(name().c_str());
+  nameAttr.setValue(name());
   plugElem.setAttributeNode(nameAttr);
 
   QDomAttr exposedAttr;
@@ -242,13 +240,28 @@ void AbstractPlug::save(QDomDocument &doc, QDomElement &parent) const
   oss << exposed();
   exposedAttr.setValue(oss.str().c_str());
   plugElem.setAttributeNode(exposedAttr);
+
+  QDomElement typeElem = doc.createElement(XML_TAGNAME_TYPE_ELEM);
+  plugElem.appendChild(typeElem);
+	
+	if (_inOut==IN)
+		_abstractDefaultType->save(doc, typeElem);
 }
 
 void AbstractPlug::load(QDomElement &plugElem)
 {
-  std::string val = plugElem.attribute("Exposed","0").ascii();
-
+  QString val = plugElem.attribute("Exposed","0");
   exposed(val == "1" ? true : false);
+	
+	if (_inOut==IN)
+	{
+		QDomNode typeNode = XMLHelper::findChildNode(plugElem, XML_TAGNAME_TYPE_ELEM);	
+		if (!typeNode.isNull())
+		{
+			QDomElement typeElem = typeNode.toElement();
+			_abstractDefaultType->load(typeElem);
+		}
+	}
 }
 
 void AbstractPlug::sleeping(bool s)

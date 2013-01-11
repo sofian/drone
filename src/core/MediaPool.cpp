@@ -8,17 +8,13 @@ MediaPool::~MediaPool()
   empty();
 }
 
-
 bool MediaPool::addMedia(Media* media)
 {
   if (!media)
     return false;
   
-  //verify for unique name
-  std::map<std::string, Media*>::iterator it = _medias.find(media->uniqueName());
-
-  if (it != _medias.end())
-    return false;
+	if (_medias.contains(media->uniqueName()))
+		return false;
 
   _medias[media->uniqueName()]=media;
 
@@ -30,44 +26,22 @@ void MediaPool::deleteMedia(Media* media)
   if (!media)
     return;
 
-  std::map<std::string, Media*>::iterator it = _medias.find(media->uniqueName());
-
-  if (it != _medias.end())
-  {
-    delete media; 
-    _medias.erase(it);
-  }
-  else
-    ASSERT_ERROR_MESSAGE(false, "Media not found in the pool, potential memory leak");
-
+	_medias.remove(media->uniqueName());
 }
 
 void MediaPool::empty()
 {
-  for (std::map<std::string, Media*>::iterator it=_medias.begin();it!=_medias.end();++it)  
-    delete it->second;
-
   _medias.clear();
 }
 
-Media* MediaPool::getMedia(std::string name)
-{
-  std::map<std::string, Media*>::iterator it = _medias.find(name);
-  
-  if (it != _medias.end())
-    return it->second;
-  else
-    return NULL;
+Media* MediaPool::getMedia(QString name)
+{  
+	return _medias.value(name, NULL);
 }
 
-std::vector<Media*> MediaPool::getAllMedia()
+QList<Media*> MediaPool::getAllMedia()
 {
-  std::vector<Media*> mediaVec;
-
-  for (std::map<std::string, Media*>::iterator it=_medias.begin();it!=_medias.end();++it)  
-    mediaVec.push_back(it->second);
-  
-  return mediaVec;
+  return _medias.values();
 }
 
 
@@ -80,7 +54,7 @@ MediaPool *MediaPool::getInstance()
 }
 
 
-Media* MediaPool::createMediaFromFile(std::string)
+Media* MediaPool::createMediaFromFile(QString)
 {
   return NULL;
 }

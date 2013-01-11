@@ -40,7 +40,7 @@ public:
 
   virtual ~DisplaceGrid() {}
   
-  virtual std::string typeName() const { return "DisplaceGrid";}
+  virtual QString typeName() const { return "DisplaceGrid";}
   QColor color() const { return QColor(240,255,14);}
 };
 
