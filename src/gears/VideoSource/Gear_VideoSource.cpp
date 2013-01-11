@@ -464,7 +464,10 @@ bool Gear_VideoSource::loadMovie(std::string filename)
                                           Engine::signalInfo().sampleRate(), (int)(sizeof(Signal_T)*8), (int)(sizeof(Signal_T)*8) );
   GstCaps* audioCaps = gst_caps_from_string (audioCapsText);
   g_object_set (_audioSink, "emit-signals", TRUE,
-                            "caps", audioCaps, NULL);
+                            "caps", audioCaps,
+//                            "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
+//                            "drop", TRUE,         // ... other buffers are dropped
+                            NULL);
   g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
   gst_caps_unref (audioCaps);
   g_free (audioCapsText);
@@ -475,7 +478,8 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   g_object_set (_videoSink, "emit-signals", TRUE,
                             "caps", videoCaps,    // this sets video caps to "video/x-raw-rgb"
                             "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
-                            "drop", true, NULL);  // ... other buffers are dropped
+                            "drop", TRUE,         // ... other buffers are dropped
+                            NULL);
   g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
   gst_caps_unref (videoCaps);
 
