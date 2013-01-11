@@ -104,9 +104,9 @@ void Gear::deletePlug(AbstractPlug *plug)
 bool Gear::isPlugNameUnique(QString name)
 {
   //check for duplicate plug name
-  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  foreach(AbstractPlug* plug, _plugs)
   {
-    if ((*it)->name() == name)
+    if (plug->name() == name)
       return false;
   }
 
@@ -169,20 +169,20 @@ void Gear::addPlugAndSubPlugs(AbstractPlug* plug, int level)
 void Gear::getInputs(QList<AbstractPlug*> &inputs, bool onlyExposed) const
 {
   inputs.clear();
-  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  foreach(AbstractPlug* plug,_plugs)
   {
-    if ( ((*it)->inOut() == IN && ((onlyExposed && (*it)->exposed()) || !onlyExposed)) )
-      inputs.push_back(*it);
+    if ( (plug->inOut() == IN && ((onlyExposed && plug->exposed()) || !onlyExposed)) )
+      inputs<<plug;
   }
 }
 
 void Gear::getOutputs(QList<AbstractPlug*> &outputs, bool onlyExposed) const
 {
   outputs.clear();
-  for (QList<AbstractPlug*>::ConstIterator it=_plugs.begin(); it != _plugs.end(); ++it)
+  foreach(AbstractPlug* plug,_plugs)
   {
-    if ( ((*it)->inOut() == OUT) && ((onlyExposed && (*it)->exposed()) || !onlyExposed) )
-      outputs.push_back(*it);
+    if ( (plug->inOut() == OUT) && ((onlyExposed && plug->exposed()) || !onlyExposed) )
+      outputs<<plug;
   }
 }
 
@@ -196,11 +196,11 @@ void Gear::getDependencies(QList<Node*> &dependencies) const
   QList<AbstractPlug*> inputs;
   getInputs(inputs);
 	QList<AbstractPlug*> lplug;
-  for (QList<AbstractPlug*>::ConstIterator it = inputs.constBegin();it!=inputs.constEnd();++it)
+  foreach(AbstractPlug* plug, inputs)
   {
-    (*it)->connectedPlugs(lplug);
-		for (QList<AbstractPlug*>::ConstIterator it2 = lplug.constBegin();it2!=lplug.constEnd();++it2)
-			dependencies += (*it2)->parent();
+    plug->connectedPlugs(lplug);
+		foreach(AbstractPlug* plug2,lplug)
+      dependencies<<plug2->parent();
   }
 }
 
@@ -220,8 +220,8 @@ void Gear::save(QDomDocument &doc, QDomElement &parent)
   //save plugs
   QDomElement plugElem = doc.createElement("Plugs");
   gearElem.appendChild(plugElem);
-  for (QList<AbstractPlug*>::ConstIterator it=_plugs.constBegin(); it != _plugs.constEnd(); ++it)
-    (*it)->save(doc, plugElem);
+  foreach(AbstractPlug* plug, _plugs)
+    plug->save(doc, plugElem);
 
   internalSave(doc, gearElem);
 }
@@ -243,10 +243,10 @@ void Gear::load(QDomElement &gearElem)
     {
 			QString name = plugElem.attribute("Name","");
 			//now find this plug and load is attributes
-			for (QList<AbstractPlug*>::iterator it=_plugs.begin(); it != _plugs.end(); ++it)
-			{
-				if ((*it)->name() == name)
-					(*it)->load(plugElem);
+			foreach(AbstractPlug* plug, _plugs)
+      {
+				if (plug->name() == name)
+					plug->load(plugElem);
 			}
 		}
 		plugNode = plugNode.nextSibling();
@@ -260,10 +260,11 @@ AbstractPlug* Gear::getInput(QString name) const
   
   QString nameAlower=name.toLower();
   
-  for (QList<AbstractPlug*>::ConstIterator it = inputs.constBegin();it!=inputs.constEnd();++it)
+  AbstractPlug* plug;
+  foreach(plug,inputs)
   {    
-    if (nameAlower == (*it)->name().toLower())
-      return(*it);
+    if (nameAlower == plug->name().toLower())
+      return plug;
   }
 
   return NULL;
@@ -273,10 +274,11 @@ AbstractPlug *Gear::getPlug(QString name) const
 {
   QString nameAlower=name.toLower();
   
-  for (QList<AbstractPlug*>::ConstIterator it = _plugs.constBegin();it!=_plugs.constEnd();++it)
+  AbstractPlug* plug;
+  foreach(plug,_plugs)
   {    
-    if (nameAlower == (*it)->name().toLower())
-      return(*it);
+    if (nameAlower == plug->name().toLower())
+      return plug;
   }
 
   return NULL;
@@ -287,13 +289,13 @@ AbstractPlug* Gear::getOutput(QString name) const
   QList<AbstractPlug*> outputs;
   getOutputs(outputs);
 
-  int (*pf)(int)=tolower;
   QString nameAlower=name.toLower();
   
-  for (QList<AbstractPlug*>::ConstIterator it = outputs.constBegin();it!=outputs.constEnd();++it)
+  AbstractPlug* plug;
+  foreach(plug,outputs)
   {
-    if (nameAlower == (*it)->name().toLower())
-      return(*it);
+    if (nameAlower == plug->name().toLower())
+      return plug;
   }
 
   return NULL;
@@ -313,15 +315,15 @@ void Gear::evaluateReady()
   if (_atLeastOneOfThemNeeded.size()>0)
   {
     bool atLeastOneConnected=false;
-    for(QList<AbstractPlug*>::iterator it=_atLeastOneOfThemNeeded.begin();it!=_atLeastOneOfThemNeeded.end();++it)
+    foreach(AbstractPlug* plug,_atLeastOneOfThemNeeded)
     {
-      if ((*it)->connected())
+      if (plug->connected())
       {
         atLeastOneConnected=true;
-        (*it)->mandatory(true);
+        plug->mandatory(true);
       }
       else
-        (*it)->mandatory(false);
+        plug->mandatory(false);
     }
 
     if (!atLeastOneConnected)
@@ -336,9 +338,9 @@ void Gear::evaluateReady()
 
   QList<AbstractPlug*> inputs;
   getInputs(inputs);
-  for(QList<AbstractPlug*>::Iterator it=inputs.begin();it!=inputs.end();++it)
+  foreach(AbstractPlug* plug, inputs)
   {
-    if (!(*it)->ready())
+    if (!plug->ready())
     {
       _ready=false;
       if (_ready!=_oldStatus)
@@ -349,9 +351,9 @@ void Gear::evaluateReady()
 
   QList<AbstractPlug*> outputs;
   getOutputs(outputs);
-  for(QList<AbstractPlug*>::Iterator it=outputs.begin();it!=outputs.end();++it)
+  foreach(AbstractPlug* plug, outputs)
   {
-    if (!(*it)->ready())
+    if (!plug->ready())
     {
       _ready=false;
       if (_ready!=_oldStatus)

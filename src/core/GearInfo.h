@@ -86,12 +86,12 @@ protected:
 	static const QString XML_TAGNAME;
 
 	QString _pluginType;
+  QFileInfo _pluginFile;
+  QMap<QString, PlugInfo> _plugsInfo;
 	int _majorVersion;
   int _minorVersion;
   QString _author,_intro,_description;
-  QMap<QString, PlugInfo> _plugsInfo;
   QStringList _classification;
-  QFileInfo _pluginFile;
 };
 
 /**

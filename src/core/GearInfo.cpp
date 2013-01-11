@@ -204,25 +204,25 @@ void GearInfo::syncPlugsInfo()
 		if (!gear->getPlug(it.key()))
 			plugsToRemove.push_back(it.key());
 	}
-	for(QList<QString>::Iterator it = plugsToRemove.begin(); it!=plugsToRemove.end();++it)
-		_plugsInfo.remove(*it);
+	foreach(QString plugName, plugsToRemove)
+		_plugsInfo.remove(plugName);
 
 	//create plugsInfo that have not been created yet
 	QList<AbstractPlug*> plugs; 
 	gear->getAllPlugs(plugs);
-	for(QList<AbstractPlug*>::Iterator it = plugs.begin(); it!=plugs.end();++it)
+	foreach(AbstractPlug* plug,plugs)
 	{
-			if (!_plugsInfo.contains((*it)->name()))
+			if (!_plugsInfo.contains(plug->name()))
 			{
-				PlugInfo plugInfo((*it)->name(), (*it)->inOut(), (*it)->abstractDefaultType()->typeName());
+				PlugInfo plugInfo(plug->name(), plug->inOut(), plug->abstractDefaultType()->typeName());
 				addPlugInfo(plugInfo);
 			}
 			else
 			{
 				//sync info that is duplicated in abstractPlug
-				PlugInfo plugInfo = getPlugInfo((*it)->name());
-				plugInfo.inOut((*it)->inOut());
-				plugInfo.type((*it)->abstractDefaultType()->typeName());
+				PlugInfo plugInfo = getPlugInfo(plug->name());
+				plugInfo.inOut(plug->inOut());
+				plugInfo.type(plug->abstractDefaultType()->typeName());
 				setPlugInfo(plugInfo);
 			}	
 	}
