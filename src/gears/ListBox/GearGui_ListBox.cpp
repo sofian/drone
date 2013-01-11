@@ -42,7 +42,7 @@ void GearGui_ListBox::paint(QPainter* painter,const QStyleOptionGraphicsItem *op
     Q_UNUSED(widget);    
   //make the title bar show the value
   std::ostringstream sstream;
-  std::string str = ((Gear_ListBox*)_gear)->getLabel();
+  QString str = ((Gear_ListBox*)_gear)->getLabel();
   sstream << str;//((Gear_ListBox*)_gear)->getLabel();
   setTitle(sstream.str());
 

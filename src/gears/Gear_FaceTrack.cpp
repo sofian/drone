@@ -30,7 +30,7 @@
 
 Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 
-Gear_FaceTrack::Gear_FaceTrack(Schema *schema, std::string uniqueName) : Gear(schema, "FaceTrack", uniqueName),
+Gear_FaceTrack::Gear_FaceTrack(Schema *schema, QString uniqueName) : Gear(schema, "FaceTrack", uniqueName),
                                                                    _pCascadeFeatures(0),
                                                                    _threshold(0),
                                                                    _deltaS(2)
@@ -180,7 +180,7 @@ void *Gear_FaceTrack::loopThread()
 
 
 // Loads all the features and put them into the _selFeatures vector
-void Gear_FaceTrack::readFeaturesCascade(const std::string& baseName)
+void Gear_FaceTrack::readFeaturesCascade(const QString& baseName)
 {
   Feature tmpFeature;
   std::vector<Feature> tmpBlocFeatures;

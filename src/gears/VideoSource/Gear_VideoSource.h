@@ -45,15 +45,15 @@ public:
     N_PLAYBACK_MODE
   };
   
-  static const std::string SETTING_FILENAME;
+  static const QString SETTING_FILENAME;
 
-  Gear_VideoSource(Schema *schema, std::string uniqueName);
+  Gear_VideoSource(Schema *schema, QString uniqueName);
   virtual ~Gear_VideoSource();
 
   void runVideo();
 
 protected:
-  bool loadMovie(std::string filename);
+  bool loadMovie(QString filename);
 
 private:
 
@@ -68,7 +68,7 @@ private:
   VideoRGBAType *_imageOut;
 
   //locals
-  std::string _currentMovie;  
+  QString _currentMovie;  
   float *_audioBuffer;
   //RGBA *_outData;  
   long _previousFramePos;

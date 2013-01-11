@@ -31,7 +31,7 @@ aa_hardware_params _aaHDParams;
 aa_renderparams *_aaRParams;
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AsciiArt(schema, uniqueName);
 }
@@ -45,7 +45,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AsciiArt::Gear_AsciiArt(Schema *schema, std::string uniqueName) : 
+Gear_AsciiArt::Gear_AsciiArt(Schema *schema, QString uniqueName) : 
   Gear(schema, "AsciiArt", uniqueName)
 {
   //  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));

@@ -29,22 +29,22 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-std::map<std::string, VideoOutputMaker*> *VideoOutputMaker::_Registry=NULL;
+std::map<QString, VideoOutputMaker*> *VideoOutputMaker::_Registry=NULL;
 
-VideoOutputMaker::VideoOutputMaker(std::string type)
+VideoOutputMaker::VideoOutputMaker(QString type)
 {
   static bool registry_instanciated=false;
 
   if (!registry_instanciated)
   {
-    _Registry = new std::map<std::string, VideoOutputMaker*>();
+    _Registry = new std::map<QString, VideoOutputMaker*>();
     registry_instanciated=true;
   }
 
   _Registry->insert(std::make_pair(type, this));
 }
 
-VideoOutput* VideoOutputMaker::makeVideoOutput(std::string type)
+VideoOutput* VideoOutputMaker::makeVideoOutput(QString type)
 {    
   if (_Registry==NULL)
     return NULL;
@@ -58,12 +58,12 @@ VideoOutput* VideoOutputMaker::makeVideoOutput(std::string type)
   return VideoOutputmaker->internalMakeVideoOutput();
 }
 
-void VideoOutputMaker::getAllVideoOutputsType(std::vector<std::string> &videoOutputsType)
+void VideoOutputMaker::getAllVideoOutputsType(std::vector<QString> &videoOutputsType)
 {
   if (_Registry==NULL)
     return;
   
-  for (std::map<std::string, VideoOutputMaker*>::iterator it=_Registry->begin(); it != _Registry->end(); ++it)
+  for (std::map<QString, VideoOutputMaker*>::iterator it=_Registry->begin(); it != _Registry->end(); ++it)
   {
     videoOutputsType.push_back(it->first);
   }

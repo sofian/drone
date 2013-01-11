@@ -28,7 +28,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_SetAlpha(schema, uniqueName);
 }
@@ -42,7 +42,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_SetAlpha::Gear_SetAlpha(Schema *schema, std::string uniqueName) : Gear(schema, "SetAlpha", uniqueName)
+Gear_SetAlpha::Gear_SetAlpha(Schema *schema, QString uniqueName) : Gear(schema, "SetAlpha", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_ALPHA_MASK_IN = new PlugIn<VideoChannelType>(this, "Mask", true));

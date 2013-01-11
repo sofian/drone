@@ -27,7 +27,7 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Tempo(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Tempo::Gear_Tempo(Schema *schema, std::string uniqueName) : Gear(schema, "Tempo", uniqueName)
+Gear_Tempo::Gear_Tempo(Schema *schema, QString uniqueName) : Gear(schema, "Tempo", uniqueName)
 {
   // Inputs.
   addPlug(_FREQUENCY_IN = new PlugIn<ValueType>(this, "Freq", false, new ValueType(1, 0, 1)));

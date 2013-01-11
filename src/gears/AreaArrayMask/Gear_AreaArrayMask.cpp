@@ -25,7 +25,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AreaArrayMask(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaArrayMask::Gear_AreaArrayMask(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayMask", uniqueName)
+Gear_AreaArrayMask::Gear_AreaArrayMask(Schema *schema, QString uniqueName) : Gear(schema, "AreaArrayMask", uniqueName)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
   addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));

@@ -26,7 +26,7 @@
 #include "GearMaker.h"
 
 extern "C" {           
-  Gear* makeGear(Schema *schema, std::string uniqueName)
+  Gear* makeGear(Schema *schema, QString uniqueName)
   {
     return new Gear_VideoSource(schema, uniqueName);
   }  
@@ -39,9 +39,9 @@ extern "C" {
   }
 }
 
-const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
+const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
+Gear_VideoSource::Gear_VideoSource(Schema *schema, QString uniqueName) : 
 Gear(schema, "VideoSource", uniqueName),
 _currentMovie(""),
 _formatContext(NULL),
@@ -100,7 +100,7 @@ void Gear_VideoSource::freeResources()
 	unSynch();
 }
 
-bool Gear_VideoSource::loadMovie(std::string filename)
+bool Gear_VideoSource::loadMovie(QString filename)
 {
   std::cout << "opening movie : " << filename << std::endl;
 

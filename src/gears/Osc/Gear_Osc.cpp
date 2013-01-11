@@ -23,23 +23,17 @@
 #include "DroneMath.h"
 #include "Engine.h"
 
+
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Osc(schema, uniqueName);
+  return new Gear_Osc();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Osc";
-  gearInfo.classification = GearClassifications::signal().generator().instance();
-  return gearInfo;
-}
 }
 
-Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "Osc", uniqueName),
+Gear_Osc::Gear_Osc() : 
+  Gear("Osc"),
   _phaseCorrection(0.0f)
 {
   // Inputs.

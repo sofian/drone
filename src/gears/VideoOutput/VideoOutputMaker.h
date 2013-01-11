@@ -29,13 +29,13 @@ class VideoOutput;
 class VideoOutputMaker  
 {
 public:
-  VideoOutputMaker(std::string type);
+  VideoOutputMaker(QString type);
 
-  static VideoOutput* makeVideoOutput(std::string type);
-  static void getAllVideoOutputsType(std::vector<std::string> &videoOutputTypes);
+  static VideoOutput* makeVideoOutput(QString type);
+  static void getAllVideoOutputsType(std::vector<QString> &videoOutputTypes);
 
 private:
-  static std::map<std::string, VideoOutputMaker*> *_Registry;
+  static std::map<QString, VideoOutputMaker*> *_Registry;
   virtual VideoOutput* internalMakeVideoOutput()=0;
 };
 

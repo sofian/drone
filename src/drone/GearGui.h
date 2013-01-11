@@ -90,8 +90,8 @@ public:
   QPainterPath shape() const;
 
   void rebuildLayout();
-  PlugBox* getInputPlugBox(std::string name) const;
-  PlugBox* getOutputPlugBox(std::string name) const;
+  PlugBox* getInputPlugBox(QString name) const;
+  PlugBox* getOutputPlugBox(QString name) const;
 
   Gear* gear(){return _gear;};
 
@@ -111,7 +111,7 @@ public:
   virtual bool keyEvent(QKeyEvent *){return false;}
 
   void getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY);
-  void setTitle(std::string title){_title=title;}
+  void setTitle(QString title){_title=title;}
 
   void setLayoutMode(layoutMode mode);  
   layoutMode getLayoutMode() const {return _layoutMode;}
@@ -131,9 +131,9 @@ protected:
   virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
   
   Gear *_gear;
-  std::vector<PlugBox*> _inputPlugBoxes;
-  std::vector<PlugBox*> _outputPlugBoxes;
-  std::vector<PlugBox*> _plugBoxes;//!contain all inputs and outputs
+  QList<PlugBox*> _inputPlugBoxes;
+  QList<PlugBox*> _outputPlugBoxes;
+  QList<PlugBox*> _plugBoxes;//!contain all inputs and outputs
 
   bool _selected;
   layoutMode _layoutMode;
@@ -147,7 +147,7 @@ protected:
   qreal _controllerHeight;
   
   QColor _boxNameColor;
-  std::string _title;
+  QString _title;
 private:
   QColor interpolateColors(qreal ratio, const QColor &c1, const QColor &c2) const;
   inline qreal radiusHelper(qreal pix, qreal goalRadius){return 100.0*goalRadius/pix;}

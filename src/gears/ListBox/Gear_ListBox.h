@@ -28,17 +28,17 @@
 class Gear_ListBox : public GearControl
 {
 public:
-  static const std::string SETTING_NELEMS;
-  static const std::string SETTING_LABELS; // XXX temporary hack to save labels
+  static const QString SETTING_NELEMS;
+  static const QString SETTING_LABELS; // XXX temporary hack to save labels
 
-  Gear_ListBox(Schema *schema, std::string uniqueName);
+  Gear_ListBox(Schema *schema, QString uniqueName);
   virtual ~Gear_ListBox();
 
   void runAudio();
 
   void setValue(int value);
   int getValue(){ return _VALUE_OUT->type()->value(); }
-  const std::string& getLabel() { return _labels[getValue()]; }
+  const QString& getLabel() { return _labels[getValue()]; }
 
 protected:
 
@@ -57,7 +57,7 @@ private:
   bool _acceptHint;
 
    // XXX temporary hack to save labels
-  std::vector<std::string> _labels;
+  std::vector<QString> _labels;
 };
 
 #endif 

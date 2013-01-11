@@ -38,16 +38,16 @@ extern "C" {
 class Gear_VideoInput : public Gear
 {
 public:
-  static const std::string SETTING_DEVICE;
-  static const std::string DEFAULT_DEVICE;
+  static const QString SETTING_DEVICE;
+  static const QString DEFAULT_DEVICE;
 
-  static const std::string SETTING_WIDTH;
-  static const std::string SETTING_HEIGHT;
+  static const QString SETTING_WIDTH;
+  static const QString SETTING_HEIGHT;
   static const int DEFAULT_WIDTH;
   static const int DEFAULT_HEIGHT;
 
 
-  Gear_VideoInput(Schema *schema, std::string uniqueName);
+  Gear_VideoInput(Schema *schema, QString uniqueName);
   virtual ~Gear_VideoInput();
 
   void runVideo();  
@@ -104,8 +104,8 @@ private:
   bool _frameGrabbed;
   bool _playing;
                                     
-  static std::list<std::string> _lockedDevices;
-  std::string _ownedDevice;
+  static std::list<QString> _lockedDevices;
+  QString _ownedDevice;
 
 };
 

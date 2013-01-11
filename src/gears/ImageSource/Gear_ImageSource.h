@@ -29,9 +29,9 @@
 class Gear_ImageSource : public Gear
 {
 public:
-  static const std::string SETTING_FILENAME;
+  static const QString SETTING_FILENAME;
 
-  Gear_ImageSource(Schema *schema, std::string name);
+  Gear_ImageSource(Schema *schema, QString name);
   virtual ~Gear_ImageSource();
 
   void runVideo();
@@ -47,7 +47,7 @@ private:
   PlugOut<ValueType> *_N_FRAMES_OUT;
 
   // Functions.
-  void loadImage(const std::string& filename, Array2D<RGBA>& image);
+  void loadImage(const QString& filename, Array2D<RGBA>& image);
 
   // local
   Array< Array2D<RGBA> > _imageBuffers;

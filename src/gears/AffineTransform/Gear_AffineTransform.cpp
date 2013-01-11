@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AffineTransform(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AffineTransform::Gear_AffineTransform(Schema *schema, std::string uniqueName) : Gear(schema, "AffineTransform", uniqueName)
+Gear_AffineTransform::Gear_AffineTransform(Schema *schema, QString uniqueName) : Gear(schema, "AffineTransform", uniqueName)
 {
 
   addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "In", true, new ValueType(0.0f)));

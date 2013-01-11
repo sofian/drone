@@ -72,26 +72,26 @@ void SchemaGui::setSchema(Schema *schema)
 {
   clear(); 
   _schema = schema;
-  _schema->add
+  //_schema->add
   rebuildSchema();
 }
 
 void SchemaGui::rebuildSchema()
 {
   //add gearguis
-  std::list<Gear*> gears = _schema->getGears();
+  QList<Gear*> gears = _schema->getGears();
   
   
   GearGui *gearGui=NULL;
-  for (std::list<Gear*>::iterator it=gears.begin();it!=gears.end();++it)
+  foreach(Gear* gear,gears)
   {
-		gearGui=(*it)->getGearGui();
-		addItem(gearGui);
-    gearGui->show();
+		//gearGui=gear->getGearGui();
+		//addItem(gearGui);
+    //gearGui->show();
   }
 	
   //add connectionItems
-  std::list<Schema::Connection*> connections;
+  QList<Connection*> connections;
   _schema->getAllConnections(connections);
   
   PlugBox *sourcePlugBox;
@@ -99,19 +99,19 @@ void SchemaGui::rebuildSchema()
   Gear *gearA;
   Gear *gearB;
 
-  for (std::list<Schema::Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
+  foreach(Connection* conn,connections)
   {   
-    gearA = _schema->getGearByName((*it)->gearA());
-    gearB = _schema->getGearByName((*it)->gearB());
+    gearA = _schema->getGearByName(conn->gearA());
+    gearB = _schema->getGearByName(conn->gearB());
 
     if (gearA && gearB)
 		{
-			sourcePlugBox = gearA->getGearGui()->getOutputPlugBox((*it)->output());
-			destPlugBox = gearB->getGearGui()->getInputPlugBox((*it)->input());
-			sourcePlugBox->connect(destPlugBox);
+//			sourcePlugBox = gearA->getGearGui()->getOutputPlugBox(conn->output());
+//			destPlugBox = gearB->getGearGui()->getInputPlugBox(conn->input());
+//			sourcePlugBox->connect(destPlugBox);
 		}
 		
-    delete (*it);//free temporary Connection
+    delete conn;//free temporary Connection
   }
 
   update();
@@ -133,52 +133,57 @@ void SchemaGui::rebuildSchema()
   }
 
   
-Gear* SchemaGui::addGear(std::string type, QPointF pos)
-{            
-  Gear *gear = _schema->addGear(type);    
+Gear* SchemaGui::addGear(QString type, QPointF pos)
+{ 
+  return NULL;
+/*  Gear *gear = _schema->addGear(type);    
 
   if (!gear)
     return NULL;
     
-  GearGui *gearGui = gear->getGearGui();    
+  //GearGui *gearGui = gear->getGearGui();    
 
-  addItem(gearGui);    
-  gearGui->setPos(pos);    
-  gearGui->setZValue(0);
-  gearGui->show();
+  //addItem(gearGui);    
+  //gearGui->setPos(pos);    
+  //gearGui->setZValue(0);
+  //gearGui->show();
   update();
 
   return gear;
+ */
 }
 
-MetaGear *SchemaGui::addMetaGear(std::string filename, QPointF pos)
+MetaGear *SchemaGui::addMetaGear(QString filename, QPointF pos)
 {    
-  MetaGear *metaGear = _schema->addMetaGear(filename);    
+  return NULL;
+/*  MetaGear *metaGear = _schema->addMetaGear(filename);    
 
   if (metaGear==NULL)
     return NULL;
   
-  GearGui *gearGui = metaGear->getGearGui();    
-  addItem(gearGui);
-  gearGui->setPos(pos);    
-  gearGui->setZValue(0);
-  gearGui->show();
+  //GearGui *gearGui = metaGear->getGearGui();    
+  //addItem(gearGui);
+  //gearGui->setPos(pos);    
+  //gearGui->setZValue(0);
+  //gearGui->show();
   update();
 
   return metaGear;
+ */
 }
 
 
-void SchemaGui::renameGear(GearGui *gearGui, std::string newName)
+void SchemaGui::renameGear(GearGui *gearGui, QString newName)
 {
   if (!gearGui)
     return;
 
-  _schema->renameGear(gearGui->gear(), newName);
+  _schema->renameGear(*gearGui->gear(), newName);
 }
 
 MetaGear* SchemaGui::newMetaGear(QPointF pos)
-{    
+{ 
+  /*
   MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
 
@@ -188,7 +193,8 @@ MetaGear* SchemaGui::newMetaGear(QPointF pos)
   gearGui->show();
   update();
   
-  return metaGear;
+  return metaGear;*/
+  return NULL;
 }
 
 void SchemaGui::removeGear(GearGui* gearGui)
@@ -332,9 +338,9 @@ void SchemaGui::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     foreach(el, selectedList)
     {
       gearGui = qgraphicsitem_cast<GearGui*>(el);
-      if (gearGui)std::cerr << gearGui->gear()->name().c_str() << std::endl;
+      if (gearGui)qDebug() << gearGui->gear()->name();
       if (gearGui && (el->flags() & QGraphicsItem::ItemIsMovable))
-        _movingItems << gearGui->gear()->name().c_str();
+        _movingItems << gearGui->gear()->name();
     }
     //std::cerr << "mod"<<event->modifiers()<<" Looks like we're moving" << _movingItems.count()<<std::endl;
     _movingStartPos = event->scenePos();
@@ -352,11 +358,11 @@ void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 
   foreach(el, list)
   {
-    std::cerr << "found item" << std::endl;
+    qDebug()<< "found item";
 
     if (ci = qgraphicsitem_cast<ConnectionItem*>(el))
     {
-      std::cerr << "disconnect" << std::endl;
+      qDebug()<< "disconnect";
 
       disconnect(ci->sourcePlugBox(), ci->destPlugBox());
       return;
@@ -435,7 +441,7 @@ bool SchemaGui::connect(PlugBox *plugA, PlugBox *plugB)
   update();
 
   //tell the schema to make the connection
-  return _schema->connect(plugA->plug(), plugB->plug());
+  return _schema->connect(*plugA->plug(), *plugB->plug());
 }
 
 void SchemaGui::disconnect(PlugBox *plugA, PlugBox *plugB)
@@ -447,7 +453,7 @@ void SchemaGui::disconnect(PlugBox *plugA, PlugBox *plugB)
   plugA->disconnect(plugB);
   
   //tell the schema to disconnect plugs
-  _schema->disconnect(plugA->plug(), plugB->plug());  
+  _schema->disconnect(*plugA->plug(), *plugB->plug());  
 
   //update the canvas
   update();
@@ -463,27 +469,27 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
   update();
 
   //tell the schema to disconnect all from this plug
-  _schema->disconnectAll(plugBox->plug());
+  _schema->disconnectAll(*plugBox->plug());
 }
 
-std::vector<GearGui*> SchemaGui::getAllGears()
+QList<GearGui*> SchemaGui::getAllGears()
 {
-  std::vector<GearGui*> vec;
+  QList<GearGui*> gg;
   QList<QGraphicsItem*> l=items();
   foreach(QGraphicsItem* it,l)
     if ( qgraphicsitem_cast<GearGui*>(it))    
-      vec.push_back((GearGui*)(it));
-  return vec;
+      gg<<((GearGui*)(it));
+  return gg;
 }
 
-std::vector<GearGui*> SchemaGui::getSelectedGears()
+QList<GearGui*> SchemaGui::getSelectedGears()
 {
-  std::vector<GearGui*> vec;
+  QList<GearGui*> gg;
   QList<QGraphicsItem*> l=selectedItems();
   foreach(QGraphicsItem * it,l)
     if ( qgraphicsitem_cast<GearGui*>(it))    
-      vec.push_back((GearGui*)(it));
-  return vec;
+      gg<<((GearGui*)(it));
+  return gg;
 }
 
 // Warning : order is not preserved ! 
@@ -496,7 +502,7 @@ QList<QGraphicsItem*> SchemaGui::getItemsByName(QList<QString>& list)
   {
     // forced to do this since all elements don't have a common interface with name()
     if((ggui=qgraphicsitem_cast<GearGui*>(el))
-            && list.contains(ggui->gear()->name().c_str()))
+            && list.contains(ggui->gear()->name()))
       selection<<el;
   }
   return selection;

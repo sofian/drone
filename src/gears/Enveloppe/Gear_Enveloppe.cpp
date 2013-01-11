@@ -27,7 +27,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Enveloppe(schema, uniqueName);
 }
@@ -45,7 +45,7 @@ GearInfo getGearInfo()
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_Enveloppe::Gear_Enveloppe(Schema *schema, std::string uniqueName) : Gear(schema, "Enveloppe", uniqueName)
+Gear_Enveloppe::Gear_Enveloppe(Schema *schema, QString uniqueName) : Gear(schema, "Enveloppe", uniqueName)
 {    
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));

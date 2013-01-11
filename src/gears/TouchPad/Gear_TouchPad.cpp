@@ -29,7 +29,7 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_TouchPad(schema, uniqueName);
 }
@@ -45,12 +45,12 @@ GearInfo getGearInfo()
 
 const float  Gear_TouchPad::DEFAULT_VALUE = 0.5f;
 
-const std::string Gear_TouchPad::SETTING_HORIZONTAL_LOWERBOUND = "Horizontal lower Bound";
-const std::string Gear_TouchPad::SETTING_HORIZONTAL_HIGHERBOUND = "Horizontal higher Bound";
-const std::string Gear_TouchPad::SETTING_VERTICAL_LOWERBOUND = "Vertical lower Bound";
-const std::string Gear_TouchPad::SETTING_VERTICAL_HIGHERBOUND = "Vertical higher Bound";
+const QString Gear_TouchPad::SETTING_HORIZONTAL_LOWERBOUND = "Horizontal lower Bound";
+const QString Gear_TouchPad::SETTING_HORIZONTAL_HIGHERBOUND = "Horizontal higher Bound";
+const QString Gear_TouchPad::SETTING_VERTICAL_LOWERBOUND = "Vertical lower Bound";
+const QString Gear_TouchPad::SETTING_VERTICAL_HIGHERBOUND = "Vertical higher Bound";
 
-Gear_TouchPad::Gear_TouchPad(Schema *schema, std::string uniqueName) : 
+Gear_TouchPad::Gear_TouchPad(Schema *schema, QString uniqueName) : 
   GearControl(schema, "TouchPad", uniqueName),
  _acceptHorizontalHint(true),
  _acceptVerticalHint(true)

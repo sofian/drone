@@ -28,7 +28,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Invert(schema, uniqueName);
 }
@@ -42,7 +42,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Invert::Gear_Invert(Schema *schema, std::string uniqueName) : 
+Gear_Invert::Gear_Invert(Schema *schema, QString uniqueName) : 
   Gear(schema, "Invert", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));

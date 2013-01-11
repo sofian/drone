@@ -27,7 +27,7 @@
 class Gear_RandomValue : public Gear  
 {
 public:
-  Gear_RandomValue(Schema *schema, std::string uniqueName);
+  Gear_RandomValue(Schema *schema, QString uniqueName);
   virtual ~Gear_RandomValue();
 
   void runVideo();

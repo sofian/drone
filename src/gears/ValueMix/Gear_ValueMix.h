@@ -29,7 +29,7 @@ class PlugValue;
 class Gear_ValueMix : public Gear  
 {
 public:
-  Gear_ValueMix(Schema *schema, std::string uniqueName);
+  Gear_ValueMix(Schema *schema, QString uniqueName);
   virtual ~Gear_ValueMix();
 
   void runVideo();

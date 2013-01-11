@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_UnpackList(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_UnpackList::Gear_UnpackList(Schema *schema, std::string uniqueName) : 
+Gear_UnpackList::Gear_UnpackList(Schema *schema, QString uniqueName) : 
   Gear(schema, "UnpackList", uniqueName)
 {
   addPlug(_LIST_IN = new PlugIn<ListType>(this, "ListI", true));

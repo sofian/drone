@@ -26,7 +26,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AlphaMix(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AlphaMix::Gear_AlphaMix(Schema *schema, std::string uniqueName) : Gear(schema, "AlphaMix", uniqueName)
+Gear_AlphaMix::Gear_AlphaMix(Schema *schema, QString uniqueName) : Gear(schema, "AlphaMix", uniqueName)
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", true));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));

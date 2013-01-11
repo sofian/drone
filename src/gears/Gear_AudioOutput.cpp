@@ -30,10 +30,10 @@ Register_Gear(MAKERGear_AudioOutput, Gear_AudioOutput, "AudioOutput")
 const int Gear_AudioOutput::DEFAULT_FRAMES_PER_BUFFER=512;
 const int Gear_AudioOutput::DEFAULT_NB_BUFFERS=0;
 
-const std::string Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
-const std::string Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
+const QString Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
+const QString Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioOutput::Gear_AudioOutput(Schema *schema, std::string uniqueName) : 
+Gear_AudioOutput::Gear_AudioOutput(Schema *schema, QString uniqueName) : 
 Gear(schema, "AudioOutput", uniqueName),     
 _stream(0),
 _ringBufferSize(512),

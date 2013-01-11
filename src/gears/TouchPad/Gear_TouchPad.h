@@ -29,12 +29,12 @@ class Gear_TouchPad : public GearControl
 public:
   static const float  DEFAULT_VALUE;
 
-  static const std::string SETTING_HORIZONTAL_LOWERBOUND;
-  static const std::string SETTING_HORIZONTAL_HIGHERBOUND;
-  static const std::string SETTING_VERTICAL_LOWERBOUND;
-  static const std::string SETTING_VERTICAL_HIGHERBOUND;
+  static const QString SETTING_HORIZONTAL_LOWERBOUND;
+  static const QString SETTING_HORIZONTAL_HIGHERBOUND;
+  static const QString SETTING_VERTICAL_LOWERBOUND;
+  static const QString SETTING_VERTICAL_HIGHERBOUND;
 
-  Gear_TouchPad(Schema *schema, std::string uniqueName);
+  Gear_TouchPad(Schema *schema, QString uniqueName);
   virtual ~Gear_TouchPad();
 
   void save(QDomDocument &doc, QDomElement &gearElem);

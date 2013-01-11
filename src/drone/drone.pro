@@ -35,6 +35,8 @@ unix:!macx:TARGET = ../../drone
 
 HEADERS += commands/CommandMoveItems.h \
 config.h \
+ConnectionItem.h \
+GearGui.h \
 GearListMenu.h \
 GearListView.h \
 GearPropertiesDialog.h \
@@ -51,17 +53,21 @@ PropertyControl.h \
 PropertyControlFilename.h \
 PropertyControlString.h \
 PropertyControlBool.h \
+PlugBox.h \
 PlugPropertiesTable.h \
 PlugPropertiesTableItem.h \
 PlugPropertiesTableItemValue.h \
 PlugPropertiesTableItemString.h \
 SchemaEditor.h \
+SchemaGui.h \
 Play.xpm \
 Pause.xpm \
 splash.xpm
 
 SOURCES += commands/CommandMoveItems.cpp \
 drone.cpp \
+GearGui.cpp \
+ConnectionItem.cpp \
 GearListMenu.cpp \
 GearListView.cpp \ 
 GearPropertiesDialog.cpp \
@@ -82,7 +88,9 @@ PlugPropertiesTableItem.cpp \
 PlugPropertiesTableItemValue.cpp \
 PlugPropertiesTableItemString.cpp \
 #PreferencesDialog.cpp \
-SchemaEditor.cpp
+PlugBox.cpp \
+SchemaEditor.cpp \
+SchemaGui.cpp
 
 #The following line was inserted by qt3to4
 QT += xml  opengl qt3support 

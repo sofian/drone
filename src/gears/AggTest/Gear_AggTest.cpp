@@ -360,7 +360,7 @@ unsigned parse_lion(agg::path_storage& path, agg::rgba8* colors, unsigned* path_
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AggTest(schema, uniqueName);
 }
@@ -374,7 +374,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AggTest::Gear_AggTest(Schema *schema, std::string uniqueName) : Gear(schema, "AggTest", uniqueName)
+Gear_AggTest::Gear_AggTest(Schema *schema, QString uniqueName) : Gear(schema, "AggTest", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

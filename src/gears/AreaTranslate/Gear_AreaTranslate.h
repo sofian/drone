@@ -30,7 +30,7 @@ class Gear_AreaTranslate : public Gear
 {
 public:
 
-  Gear_AreaTranslate(Schema *schema, std::string uniqueName);
+  Gear_AreaTranslate(Schema *schema, QString uniqueName);
   virtual ~Gear_AreaTranslate();
 
   void runVideo();

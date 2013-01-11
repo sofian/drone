@@ -33,11 +33,11 @@ class Gear_AudioOutput : public Gear
 public:
 
 //CONFIG PARAMETERS
-  static const std::string SETTING_FRAMES_PER_BUFFER;
-  static const std::string SETTING_NB_BUFFERS;
+  static const QString SETTING_FRAMES_PER_BUFFER;
+  static const QString SETTING_NB_BUFFERS;
 //
 
-  Gear_AudioOutput(Schema *schema, std::string uniqueName);
+  Gear_AudioOutput(Schema *schema, QString uniqueName);
   virtual ~Gear_AudioOutput();
 
   void runAudio();    

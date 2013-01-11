@@ -67,8 +67,8 @@ public:
 
   void zoom(float factor);
 
-  void addGear(std::string name, QPoint pos);
-  void addMetaGear(std::string filename, QPoint pos);
+  void addGear(QString name, QPoint pos);
+  void addMetaGear(QString filename, QPoint pos);
   void addNewMetaGear(QPoint pos);
 
   void setContextGear(GearGui* gui){_contextGear = gui;}
@@ -135,7 +135,7 @@ private:
   
   void associateControlPanelWithMetaGear(MetaGear *metaGear);
 
-  static const std::string NAME;
+  static const QString NAME;
   static const double ZOOM_FACTOR;
   
 

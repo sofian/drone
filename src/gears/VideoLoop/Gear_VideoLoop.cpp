@@ -27,7 +27,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_VideoLoop(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName)
+Gear_VideoLoop::Gear_VideoLoop(Schema *schema, QString uniqueName) : Gear(schema, "VideoLoop", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

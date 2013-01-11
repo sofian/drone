@@ -27,10 +27,10 @@
 #include "GearMaker.h"
 #include "DroneMath.h"
 
-const std::string Gear_ImageSequence::SETTING_FILENAME = "Filename";
+const QString Gear_ImageSequence::SETTING_FILENAME = "Filename";
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ImageSequence(schema, uniqueName);
 }
@@ -44,7 +44,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ImageSequence::Gear_ImageSequence(Schema *schema, std::string uniqueName) : 
+Gear_ImageSequence::Gear_ImageSequence(Schema *schema, QString uniqueName) : 
   Gear(schema, "ImageSequence", uniqueName),
   _current(0),
   _nFramesCurrent(0)
@@ -68,7 +68,7 @@ void Gear_ImageSequence::onUpdateSettings()
 {
   _imageBuffers.clear();
     
-  std::vector<std::string> filenames = _settings.get(SETTING_FILENAME)->valueStrList();
+  std::vector<QString> filenames = _settings.get(SETTING_FILENAME)->valueStrList();
   
   for (int i=0; i<filenames.size(); ++i)
   {
@@ -86,7 +86,7 @@ void Gear_ImageSequence::internalInit()
   _nFramesCurrent = 0;
 }
 
-void Gear_ImageSequence::loadImage(const std::string& filename, Array2D<RGBA>& image)
+void Gear_ImageSequence::loadImage(const QString& filename, Array2D<RGBA>& image)
 {
   QImage img(filename.c_str());
     

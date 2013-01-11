@@ -43,7 +43,7 @@ class Gear_FaceTrack : public Gear
 {
 public:
 
-  Gear_FaceTrack(Schema *schema, std::string uniqueName);
+  Gear_FaceTrack(Schema *schema, QString uniqueName);
   virtual ~Gear_FaceTrack();
 
   
@@ -132,7 +132,7 @@ private:
     int shifting;
   };
 
-  void   readFeaturesCascade(const std::string& featuresFileName);
+  void   readFeaturesCascade(const QString& featuresFileName);
   void   findFaces();
   inline bool detector(unsigned int*& pCurrWindow, unsigned int*& pSquareCurrWindow, 
                               std::vector< Feature >& precFeatures, int& newWinSize, 

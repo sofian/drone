@@ -26,7 +26,7 @@
 class Gear_Tempo : public Gear
 {
 public:
-  Gear_Tempo(Schema *schema, std::string uniqueName);
+  Gear_Tempo(Schema *schema, QString uniqueName);
   virtual ~Gear_Tempo();
 
   void runAudio();

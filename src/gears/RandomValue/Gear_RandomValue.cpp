@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_RandomValue(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_RandomValue::Gear_RandomValue(Schema *schema, std::string uniqueName) : 
+Gear_RandomValue::Gear_RandomValue(Schema *schema, QString uniqueName) : 
   Gear(schema, "RandomValue", uniqueName)
 {
   addPlug(_NEXT = new PlugIn<ValueType>(this, "Next", false, new ValueType(1, 0, 1)));

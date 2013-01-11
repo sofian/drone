@@ -28,7 +28,7 @@ class Gear_EmptyImage : public Gear
 {
 public:
 
-  Gear_EmptyImage(Schema *schema, std::string name);
+  Gear_EmptyImage(Schema *schema, QString name);
   virtual ~Gear_EmptyImage();
 
   void runVideo();

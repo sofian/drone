@@ -41,7 +41,7 @@
 
 
 extern "C" {
-  Gear* makeGear(Schema *schema, std::string uniqueName)
+  Gear* makeGear(Schema *schema, QString uniqueName)
   {
     return new Gear_VideoInput(schema, uniqueName);
   }
@@ -55,16 +55,16 @@ extern "C" {
   }
 }
 
-const std::string Gear_VideoInput::SETTING_DEVICE = "Device";
-const std::string Gear_VideoInput::DEFAULT_DEVICE = "/dev/video0";
-const std::string Gear_VideoInput::SETTING_WIDTH = "width";
-const std::string Gear_VideoInput::SETTING_HEIGHT = "height";
+const QString Gear_VideoInput::SETTING_DEVICE = "Device";
+const QString Gear_VideoInput::DEFAULT_DEVICE = "/dev/video0";
+const QString Gear_VideoInput::SETTING_WIDTH = "width";
+const QString Gear_VideoInput::SETTING_HEIGHT = "height";
 const int Gear_VideoInput::DEFAULT_WIDTH = 640;
 const int Gear_VideoInput::DEFAULT_HEIGHT = 480;
-std::list<std::string> Gear_VideoInput::_lockedDevices;
+std::list<QString> Gear_VideoInput::_lockedDevices;
 
 
-Gear_VideoInput::Gear_VideoInput(Schema *schema, std::string uniqueName) : Gear(schema, "VideoInput", uniqueName),
+Gear_VideoInput::Gear_VideoInput(Schema *schema, QString uniqueName) : Gear(schema, "VideoInput", uniqueName),
 _sizeX(0),
 _sizeY(0),
 _device(0),

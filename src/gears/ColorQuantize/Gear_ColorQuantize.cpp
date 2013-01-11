@@ -25,7 +25,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ColorQuantize(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 
 const int Gear_ColorQuantize::MAX_COLOR = 256;
 
-Gear_ColorQuantize::Gear_ColorQuantize(Schema *schema, std::string uniqueName)
+Gear_ColorQuantize::Gear_ColorQuantize(Schema *schema, QString uniqueName)
   : Gear(schema, "ColorQuantize", uniqueName), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
 {

@@ -29,7 +29,7 @@ class Gear_Invert : public Gear
 {
 public:
 
-  Gear_Invert(Schema *schema, std::string name);
+  Gear_Invert(Schema *schema, QString name);
   virtual ~Gear_Invert();
 
   void runVideo();  

@@ -29,7 +29,7 @@
 class Gear_OscOutput : public Gear  
 {
 public:
-  Gear_OscOutput(Schema *schema, std::string uniqueName);
+  Gear_OscOutput(Schema *schema, QString uniqueName);
   virtual ~Gear_OscOutput();
 
   void runVideo();

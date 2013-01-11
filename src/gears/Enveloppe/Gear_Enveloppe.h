@@ -29,7 +29,7 @@ class PlugSignal;
 class Gear_Enveloppe : public Gear  
 {
 public:
-	Gear_Enveloppe(Schema *schema, std::string uniqueName);
+	Gear_Enveloppe(Schema *schema, QString uniqueName);
 	virtual ~Gear_Enveloppe();
 
   void runAudio();

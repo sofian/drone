@@ -179,16 +179,16 @@ void GearGui::rebuildLayout()
 {
   // compute gear name width
   QFontMetrics fm(NAME_FONT);
-  qreal name_width = fm.width(_gear->name().c_str());
+  qreal name_width = fm.width(_gear->name());
 
   //delete and remove inputplugboxes that we dont have anymore
   //we also erase plugs in inputs that we already have
-  std::list<AbstractPlug*> inputs;
+  QList<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
   
   //delete and remove output plugboxes that we dont have anymore
   //we also erase plugs in outputs that we already have
-  std::list<AbstractPlug*> outputs;
+  QList<AbstractPlug*> outputs;
   _gear->getOutputs(outputs);
   
   
@@ -209,13 +209,13 @@ void GearGui::rebuildLayout()
   if (_layoutMode == normal)
   {
     qreal longestInputPlugName = 0;
-    for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
-      longestInputPlugName = qMax(longestInputPlugName, PlugBox::plugNameWidth((*it)->name()));
+    foreach(AbstractPlug* in,inputs)
+      longestInputPlugName = qMax(longestInputPlugName, PlugBox::plugNameWidth(in->name()));
     _sizeX += longestInputPlugName;
 
     qreal longestOutputPlugName = 0;
-    for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
-      longestOutputPlugName = qMax(longestOutputPlugName, PlugBox::plugNameWidth((*it)->name()));
+    foreach(AbstractPlug* out,outputs)
+      longestOutputPlugName = qMax(longestOutputPlugName, PlugBox::plugNameWidth(out->name()));
     _sizeX += longestOutputPlugName;
   
   }
@@ -232,25 +232,25 @@ void GearGui::rebuildLayout()
   PlugBox *plugBox;
   by = MARGIN_TOP + titleBarHeight() +  PLUGBOX_VERTICAL_OFFSET;
     
-  for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it)
+  foreach(AbstractPlug* in,inputs)
   {
     
-    plugBox = new PlugBox(*it, this);
+    plugBox = new PlugBox(in, this);
     plugBox->setPos(QPointF(0, by));
-    _plugBoxes.push_back(plugBox);
-    _inputPlugBoxes.push_back(plugBox);
+    _plugBoxes<<plugBox;
+    _inputPlugBoxes<<plugBox;
     by+=PLUGBOX_VERTICAL_SPACING;
   }
   
   by = MARGIN_TOP + titleBarHeight() + PLUGBOX_VERTICAL_OFFSET;
   bx = _sizeX - PlugBox::PLUGBOX_RADIUS;
     
-  for (std::list<AbstractPlug*>::iterator it = outputs.begin(); it != outputs.end(); ++it)
+  foreach(AbstractPlug* out,outputs)
   {
-    plugBox = new PlugBox(*it, this);
+    plugBox = new PlugBox(out, this);
     plugBox->setPos(QPointF(bx, by));
-    _plugBoxes.push_back(plugBox);
-    _outputPlugBoxes.push_back(plugBox);
+    _plugBoxes<<plugBox;
+    _outputPlugBoxes<<plugBox;
     by+=PLUGBOX_VERTICAL_SPACING;
   }
   
@@ -262,8 +262,7 @@ void GearGui::removeAllPlugBoxes()
   //delete all the plugBoxes
   //plugboxes take care of deleting connectionItems when deleted
   //Everything is taken care of ! :)
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
-    delete (*it);
+  qDeleteAll(_plugBoxes);
   _plugBoxes.clear();
   _inputPlugBoxes.clear();
   _outputPlugBoxes.clear();
@@ -314,10 +313,10 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
     painter->setBrush(gradient2);
     painter->setPen(Qt::NoPen);
     painter->drawRoundRect(QRectF(-2, -2, _sizeX+4, _sizeY+4), this->radiusHelper(_sizeX+4, 16), this->radiusHelper(_sizeY+4, 16));
-    for (std::vector<PlugBox*>::iterator it = _inputPlugBoxes.begin(); it != _inputPlugBoxes.end(); ++it)
-      (*it)->drawSelected(painter);
-    for (std::vector<PlugBox*>::iterator it = _outputPlugBoxes.begin(); it != _outputPlugBoxes.end(); ++it)
-      (*it)->drawSelected(painter);
+    foreach(PlugBox* ipb,_inputPlugBoxes)
+      ipb->drawSelected(painter);
+    foreach(PlugBox* opb,_outputPlugBoxes)
+      opb->drawSelected(painter);
   
   }
 
@@ -342,11 +341,11 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   painter->setPen(Qt::white);
 
   //title default to gear name if not explicitly set
-  std::string title=_title;
-  if (title.empty())
+  QString title=_title;
+  if (title.isEmpty())
     title=_gear->name();
 	
-  painter->drawText(0,1, _sizeX, TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title.c_str());
+  painter->drawText(0,1, _sizeX, TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title);
   
 	//ready box
   //painter->setPen(Qt::black);
@@ -354,20 +353,20 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   //painter->drawRoundRect(_sizeX - 10, 2, 8, 8, 50, 50);
 
   //plugboxes
-  for (std::vector<PlugBox*>::iterator it = _inputPlugBoxes.begin(); it != _inputPlugBoxes.end(); ++it)
-    (*it)->draw(painter);
-  for (std::vector<PlugBox*>::iterator it = _outputPlugBoxes.begin(); it != _outputPlugBoxes.end(); ++it)
-    (*it)->draw(painter);
+  foreach(PlugBox* ipb,_inputPlugBoxes)
+    ipb->draw(painter);
+  foreach(PlugBox* opb,_outputPlugBoxes)
+    opb->draw(painter);
 
 }
 
 // test for plug collision in gear coordinates
 PlugBox* GearGui::plugHit(const QPointF &p)
 {
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
+  foreach(PlugBox* pb,_plugBoxes)
   {
-    if ((*it)->hit(p))
-      return(*it);
+    if (pb->hit(p))
+      return(pb);
   }
 
   return NULL;
@@ -378,10 +377,8 @@ void GearGui::performPlugHighligthing(const QPointF &p)
   PlugBox *plugbox;
 
   
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
+  foreach(PlugBox* plugbox,_plugBoxes)
   {
-    plugbox = *it;
-
     if (plugbox->hit(p))
       plugbox->hilight(true);
     else
@@ -394,20 +391,20 @@ void GearGui::performPlugHighligthing(const QPointF &p)
 
 void GearGui::performPlugHighligthing(PlugBox *plugBox)
 {
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)  
-    if ((*it)!=plugBox)    
-      (*it)->hilight(false);
+  foreach(PlugBox* pb,_plugBoxes)
+    if (pb!=plugBox)    
+      pb->hilight(false);
   
   if (plugBox)
     plugBox->hilight(true);
   
-update();
+  update();
 }
 
 void GearGui::unHilightAllPlugBoxes()
 {
-  for (std::vector<PlugBox*>::iterator it = _plugBoxes.begin(); it != _plugBoxes.end(); ++it)
-    (*it)->hilight(false);
+  foreach(PlugBox* pb,_plugBoxes)
+  pb->hilight(false);
 
   update();
 }
@@ -435,23 +432,23 @@ void GearGui::load(QDomElement &gearElem)
 }
 
 
-PlugBox* GearGui::getInputPlugBox(std::string name) const
+PlugBox* GearGui::getInputPlugBox(QString name) const
 {
-  for (std::vector<PlugBox*>::const_iterator it = _inputPlugBoxes.begin();it!=_inputPlugBoxes.end();++it)
-  {
-    if ((*it)->plug()->name() == name)
-      return(*it);
+    foreach(PlugBox* ipb,_inputPlugBoxes)
+{
+    if (ipb->plug()->name() == name)
+      return(ipb);
   }
 
   return NULL;
 }
 
-PlugBox* GearGui::getOutputPlugBox(std::string name) const
+PlugBox* GearGui::getOutputPlugBox(QString name) const
 {
-  for (std::vector<PlugBox*>::const_iterator it = _outputPlugBoxes.begin();it!=_outputPlugBoxes.end();++it)
+  foreach(PlugBox* opb,_outputPlugBoxes)
   {
-    if ((*it)->plug()->name() == name)
-      return(*it);
+    if (opb->plug()->name() == name)
+      return(opb);
   }
 
   return NULL;

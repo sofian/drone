@@ -26,7 +26,7 @@
 #include <stdio.h>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_StringFormat(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_StringFormat::Gear_StringFormat(Schema *schema, std::string uniqueName) : 
+Gear_StringFormat::Gear_StringFormat(Schema *schema, QString uniqueName) : 
   Gear(schema, "StringFormat", uniqueName)
 {
   addPlug(_FORMAT = new PlugIn<StringType>(this, "Format", true));
@@ -57,9 +57,9 @@ Gear_StringFormat::~Gear_StringFormat()
 void Gear_StringFormat::runVideo()
 {
   const ListType *listType = _PARAMS->type();
-  std::string format = _FORMAT->type()->value();
+  QString format = _FORMAT->type()->value();
   
-  std::string outputString = "";
+  QString outputString = "";
 
   for (ListType::const_iterator it = listType->begin(); it != listType->end(); ++it)
   {

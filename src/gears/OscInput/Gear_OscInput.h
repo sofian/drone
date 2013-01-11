@@ -34,7 +34,7 @@
 class Gear_OscInput : public Gear  
 {
 public:
-  Gear_OscInput(Schema *schema, std::string uniqueName);
+  Gear_OscInput(Schema *schema, QString uniqueName);
   virtual ~Gear_OscInput();
 
   void runVideo();
@@ -43,7 +43,7 @@ protected:
 	void internalPostPlay();
 	
 private:
-	void startOscServer(std::string port);
+	void startOscServer(QString port);
 	void stopOscServer();
 	
 	static void error(int num, const char *m, const char *path);	
@@ -54,7 +54,7 @@ private:
   PlugOut<OscMessageType> *_OSC_OUT;
 	
 	bool _forceOscServerInit;
-	std::string _currentPort;
+	QString _currentPort;
 	
 	lo_server_thread _loServerThread;
 	pthread_mutex_t *_mutex;

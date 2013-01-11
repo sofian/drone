@@ -26,7 +26,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ColorAdjust(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ColorAdjust::Gear_ColorAdjust(Schema *schema, std::string uniqueName) : Gear(schema, "ColorAdjust", uniqueName)
+Gear_ColorAdjust::Gear_ColorAdjust(Schema *schema, QString uniqueName) : Gear(schema, "ColorAdjust", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

@@ -29,7 +29,7 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_PushButton(schema, uniqueName);
 }
@@ -43,15 +43,15 @@ GearInfo getGearInfo()
 }
 }
 
-const std::string Gear_PushButton::SETTING_OFFVALUE = "Off Value";
-const std::string Gear_PushButton::SETTING_ONVALUE = "On Value";
-const std::string Gear_PushButton::SETTING_ONESHOT = "One Shot";
+const QString Gear_PushButton::SETTING_OFFVALUE = "Off Value";
+const QString Gear_PushButton::SETTING_ONVALUE = "On Value";
+const QString Gear_PushButton::SETTING_ONESHOT = "One Shot";
 
-const std::string Gear_PushButton::SETTING_ACCEPTMIDI = "Accept Midi";
-const std::string Gear_PushButton::SETTING_MIDICHANNEL = "Midi Channel";
-const std::string Gear_PushButton::SETTING_MIDINOTE = "Midi Note";
+const QString Gear_PushButton::SETTING_ACCEPTMIDI = "Accept Midi";
+const QString Gear_PushButton::SETTING_MIDICHANNEL = "Midi Channel";
+const QString Gear_PushButton::SETTING_MIDINOTE = "Midi Note";
 
-Gear_PushButton::Gear_PushButton(Schema *schema, std::string uniqueName) : 
+Gear_PushButton::Gear_PushButton(Schema *schema, QString uniqueName) : 
   GearControl(schema, "PushButton", uniqueName),_acceptHint(true)
 {
 

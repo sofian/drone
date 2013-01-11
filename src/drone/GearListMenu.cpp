@@ -17,27 +17,27 @@ GearListMenu::GearListMenu(QWidget *parent) :
  */
 void GearListMenu::create()
 {
-  std::vector<const GearInfo*> gearsInfo;
+  QList<GearInfo*> gearsInfo;
 
   //get all gearsInfo from the GearMaker
-  GearMaker::getAllGearsInfo(gearsInfo);
+  GearMaker::instance()->getAllGearsInfo(gearsInfo);
  
-  for (std::vector<const GearInfo*>::iterator it = gearsInfo.begin(); it != gearsInfo.end(); ++it)
+  foreach(GearInfo* gi, gearsInfo)
   {
      GearListMenu *menu=this;
      
-     if ((*it)->classification)
+     /*if (gi->classification)
      {     
-       std::vector<std::string> path = (*it)->classification->path();
+       QList<QString> path = gi->classification->path();
                                  
        //create subMenu path for this gear
-       for (std::vector<std::string>::iterator it2 = path.begin(); it2!=path.end();++it2)       
-         menu = menu->addSubMenu((*it2));
+       foreach(QString str,path)       
+         menu = menu->addSubMenu(str);
        
-     }
+     }*/
 
      //insert the gear name in the correct menu
-     menu->addAction(new QAction((*it)->name.c_str(),this));
+     menu->addAction(new QAction(gi->name(),this));
   }
 }
 

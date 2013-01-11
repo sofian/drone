@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_OscFilter(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_OscFilter::Gear_OscFilter(Schema *schema, std::string uniqueName) : 
+Gear_OscFilter::Gear_OscFilter(Schema *schema, QString uniqueName) : 
 	Gear(schema, "OscFilter", uniqueName)
 {
 	addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));

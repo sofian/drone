@@ -30,15 +30,15 @@ class Gear_PushButton : public GearControl
 public:
   static const float  DEFAULT_VALUE;
 
-  static const std::string SETTING_OFFVALUE;
-  static const std::string SETTING_ONVALUE;
-  static const std::string SETTING_ONESHOT;
+  static const QString SETTING_OFFVALUE;
+  static const QString SETTING_ONVALUE;
+  static const QString SETTING_ONESHOT;
 
-  static const std::string SETTING_ACCEPTMIDI;
-  static const std::string SETTING_MIDICHANNEL;
-  static const std::string SETTING_MIDINOTE;
+  static const QString SETTING_ACCEPTMIDI;
+  static const QString SETTING_MIDICHANNEL;
+  static const QString SETTING_MIDINOTE;
 
-  Gear_PushButton(Schema *schema, std::string uniqueName);
+  Gear_PushButton(Schema *schema, QString uniqueName);
   virtual ~Gear_PushButton();
 
   void runVideo();

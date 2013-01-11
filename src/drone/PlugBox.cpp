@@ -60,10 +60,10 @@ PlugBox::~PlugBox()
   disconnectAll();
 }
 
-qreal PlugBox::plugNameWidth(std::string name)
+qreal PlugBox::plugNameWidth(QString name)
 {
   QFontMetrics fm(SHORTNAME_FONT);
-  qreal val= fm.width(name.c_str()) + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE;
+  qreal val= fm.width(name) + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE;
   return val;
 }
 
@@ -137,9 +137,9 @@ void PlugBox::draw(QPainter *painter)
 
     //align text left or right if In or Out
     if (_plug->inOut() == IN)
-      painter->drawText(_pos.x() + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE, _pos.y() - 4, halfGearSizeX, PLUGBOX_RADIUS + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+      painter->drawText(_pos.x() + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE, _pos.y() - 4, halfGearSizeX, PLUGBOX_RADIUS + 8, Qt::AlignLeft | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS));
     else
-      painter->drawText(_pos.x() - halfGearSizeX, _pos.y() - 4, halfGearSizeX - PLUGBOX_INBETWEEN_SPACE, PLUGBOX_RADIUS + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS).c_str());
+      painter->drawText(_pos.x() - halfGearSizeX, _pos.y() - 4, halfGearSizeX - PLUGBOX_INBETWEEN_SPACE, PLUGBOX_RADIUS + 8, Qt::AlignRight | Qt::AlignVCenter, _plug->shortName(PLUG_NAME_NB_CHARS));
   }
 }
 

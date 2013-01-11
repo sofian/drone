@@ -26,7 +26,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AreaClip(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaClip::Gear_AreaClip(Schema *schema, std::string uniqueName) : Gear(schema, "AreaClip", uniqueName)
+Gear_AreaClip::Gear_AreaClip(Schema *schema, QString uniqueName) : Gear(schema, "AreaClip", uniqueName)
 {    
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
   addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));

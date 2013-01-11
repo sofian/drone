@@ -30,7 +30,7 @@ enum { flip_y = true };
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Vectorial2Raster(schema, uniqueName);
 }
@@ -44,7 +44,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Vectorial2Raster::Gear_Vectorial2Raster(Schema *schema, std::string uniqueName) : Gear(schema, "Vectorial2Raster", uniqueName)
+Gear_Vectorial2Raster::Gear_Vectorial2Raster(Schema *schema, QString uniqueName) : Gear(schema, "Vectorial2Raster", uniqueName)
 {
   addPlug(_XOFF = new PlugIn<ValueType>(this, "xoff", false, new ValueType(0, -100, 100)));
   addPlug(_YOFF = new PlugIn<ValueType>(this, "yoff", false, new ValueType(0, -100, 100)));

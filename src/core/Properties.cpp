@@ -147,7 +147,7 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
 void Properties::load(QDomElement &parentElem)
 {
   //properties
-  QDomNode propertiesNodes = XMLHelper::findChildNode(parentElem, XML_TAGNAME);
+  QDomNode propertiesNodes = XMLHelper::findChildNode(parentElem, XML_TAGNAME.c_str());
 
   if (propertiesNodes.isNull())
   {

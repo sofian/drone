@@ -27,7 +27,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Rescale(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Rescale::Gear_Rescale(Schema *schema, std::string uniqueName) : Gear(schema, "Rescale", uniqueName)
+Gear_Rescale::Gear_Rescale(Schema *schema, QString uniqueName) : Gear(schema, "Rescale", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT",true ));

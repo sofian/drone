@@ -29,9 +29,9 @@ class Gear_StringSource : public Gear
 {
 public:
 public:
-  static const std::string SETTING_STRING;
+  static const QString SETTING_STRING;
 
-  Gear_StringSource(Schema *schema, std::string uniqueName);
+  Gear_StringSource(Schema *schema, QString uniqueName);
   virtual ~Gear_StringSource();
 
   void runVideo();
@@ -42,7 +42,7 @@ protected:
 protected:
 
 	PlugOut<StringType> *_STR_OUT;
-  std::string _currentString;
+  QString _currentString;
 };
 
 #endif 

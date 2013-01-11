@@ -25,7 +25,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AreaTranslate(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaTranslate::Gear_AreaTranslate(Schema *schema, std::string uniqueName) : Gear(schema, "AreaTranslate", uniqueName)
+Gear_AreaTranslate::Gear_AreaTranslate(Schema *schema, QString uniqueName) : Gear(schema, "AreaTranslate", uniqueName)
 {
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 

@@ -48,7 +48,7 @@ public:
   void setPos(QPointF pos){_pos=pos;}
   bool hit(QPointF pos);
   void hilight(bool hiLight);
-  static qreal plugNameWidth(std::string name);
+  static qreal plugNameWidth(QString name);
 
   bool connect(PlugBox *plugBox);  
   bool canConnectWith(PlugBox *plugBox);    

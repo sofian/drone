@@ -27,7 +27,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_StringOutput(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_StringOutput::Gear_StringOutput(Schema *schema, std::string uniqueName) : 
+Gear_StringOutput::Gear_StringOutput(Schema *schema, QString uniqueName) : 
 	Gear(schema, "StringOutput", uniqueName)
 {
   addPlug(_STRING_IN = new PlugIn<StringType>(this, "String", true));
@@ -62,7 +62,7 @@ void Gear_StringOutput::runVideo()
 {    
 }
 
-std::string Gear_StringOutput::getString()
+QString Gear_StringOutput::getString()
 {
   if (_VALUE_IN->connected())
   {

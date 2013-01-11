@@ -28,7 +28,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Brightness(schema, uniqueName);
 }
@@ -42,7 +42,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Brightness::Gear_Brightness(Schema *schema, std::string uniqueName) : Gear(schema, "Brightness", uniqueName)
+Gear_Brightness::Gear_Brightness(Schema *schema, QString uniqueName) : Gear(schema, "Brightness", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

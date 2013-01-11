@@ -27,7 +27,7 @@
 using namespace std;
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_TapTempo(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_TapTempo::Gear_TapTempo(Schema *schema, std::string uniqueName) : Gear(schema, "TapTempo", uniqueName)
+Gear_TapTempo::Gear_TapTempo(Schema *schema, QString uniqueName) : Gear(schema, "TapTempo", uniqueName)
 {
 
   addPlug(_TAP_IN   = new PlugIn<ValueType>(this, "Tap", false, new ValueType(0.0f)));

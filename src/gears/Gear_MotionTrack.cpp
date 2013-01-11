@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_MotionTrack, Gear_MotionTrack, "MotionTrack")
 
-Gear_MotionTrack::Gear_MotionTrack(Schema *schema, std::string uniqueName)
+Gear_MotionTrack::Gear_MotionTrack(Schema *schema, QString uniqueName)
   : Gear(schema, "MotionTrack", uniqueName),
     _image_rgba(0), _image_rgb(0), _sizeX(0), _sizeY(0), _firstRun(true)
 {

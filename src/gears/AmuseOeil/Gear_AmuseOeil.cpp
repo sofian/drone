@@ -29,7 +29,7 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AmuseOeil(schema, uniqueName);
 }
@@ -43,7 +43,7 @@ GearInfo getGearInfo()
 }
 
 
-Gear_AmuseOeil::Gear_AmuseOeil(Schema *schema, std::string uniqueName) : 
+Gear_AmuseOeil::Gear_AmuseOeil(Schema *schema, QString uniqueName) : 
   Gear(schema, "AmuseOeil", uniqueName)
 {
   addPlug(_P1_IN = new PlugIn<ValueType>(this, "P1", new ValueType(6, 0, 16)));

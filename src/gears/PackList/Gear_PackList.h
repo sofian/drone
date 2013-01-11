@@ -28,7 +28,7 @@
 class Gear_PackList : public Gear  
 {
 public:
-  Gear_PackList(Schema *schema, std::string uniqueName);
+  Gear_PackList(Schema *schema, QString uniqueName);
   virtual ~Gear_PackList();
 
   void runVideo();

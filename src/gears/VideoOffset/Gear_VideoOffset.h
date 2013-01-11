@@ -28,7 +28,7 @@ class Gear_VideoOffset : public Gear
 {
 public:
 
-  Gear_VideoOffset(Schema *schema, std::string name);
+  Gear_VideoOffset(Schema *schema, QString name);
   virtual ~Gear_VideoOffset();
 
   void runVideo();  

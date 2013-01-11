@@ -329,7 +329,7 @@ bool Schema::connect(Connection &connection)
    return output->connect(input);
 }
 
-bool Schema::save(QDomDocument& doc, QDomElement &parent)
+bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 {
   QDomElement rootElem = doc.createElement(XML_TAGNAME);
   parent.appendChild(rootElem);
@@ -371,7 +371,7 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent)
   return true;
 }
 
-bool Schema::load(QDomElement& parent)
+bool Schema::load(QDomElement& parent, bool onlySelected)
 {    
   std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");

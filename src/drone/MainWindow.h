@@ -50,7 +50,7 @@ class MainWindow : public QMainWindow
 public:
 
   //! loads the specified schema file
-  void load(std::string filename);
+  void load(QString filename);
   //void play(bool pl);
   static MainWindow* getInstance();
 
@@ -92,9 +92,9 @@ public slots:
 private:
 
   static const unsigned int MAX_RECENT_SCHEMAS;
-  static const std::string SCHEMA_EXTENSION;
+  static const QString SCHEMA_EXTENSION;
 
-  void addToRecentSchema(std::string filename);
+  void addToRecentSchema(QString filename);
   
 
   Engine* _engine;
@@ -149,7 +149,7 @@ protected:
   std::string _currentSchemaFilename;  
   QString _lastLoadPath;
   QString _lastSavePath;
-  std::list<std::string> _recentSchemas;
+  QList<QString> _recentSchemas;
   int _menuFirstRecentSchemaId;
 	int _menuShowSmallGearsId;
 	bool _showSmallGears;

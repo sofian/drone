@@ -25,7 +25,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AreaVideoSelect(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaVideoSelect::Gear_AreaVideoSelect(Schema *schema, std::string uniqueName) : Gear(schema, "AreaVideoSelect", uniqueName)
+Gear_AreaVideoSelect::Gear_AreaVideoSelect(Schema *schema, QString uniqueName) : Gear(schema, "AreaVideoSelect", uniqueName)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoOut", true));
   addPlug(_SELECT_IN = new PlugIn<AreaType>(this, "Select", true));

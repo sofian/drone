@@ -26,7 +26,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_VideoDelay(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoDelay::Gear_VideoDelay(Schema *schema, std::string uniqueName) : Gear(schema, "VideoDelay", uniqueName)
+Gear_VideoDelay::Gear_VideoDelay(Schema *schema, QString uniqueName) : Gear(schema, "VideoDelay", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

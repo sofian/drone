@@ -56,7 +56,7 @@ class Gear_AsciiArt : public Gear
 /*   }; */
 
 public:
-  Gear_AsciiArt(Schema *schema, std::string name);
+  Gear_AsciiArt(Schema *schema, QString name);
   virtual ~Gear_AsciiArt();
   
   void runVideo();

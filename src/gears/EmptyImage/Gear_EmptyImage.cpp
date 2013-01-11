@@ -27,7 +27,7 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_EmptyImage(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_EmptyImage::Gear_EmptyImage(Schema *schema, std::string uniqueName) : 
+Gear_EmptyImage::Gear_EmptyImage(Schema *schema, QString uniqueName) : 
   Gear(schema, "EmptyImage", uniqueName)
 {
   // Inputs.

@@ -30,7 +30,7 @@ class Gear_AreaScale : public Gear
 {
 public:
 
-  Gear_AreaScale(Schema *schema, std::string uniqueName);
+  Gear_AreaScale(Schema *schema, QString uniqueName);
   virtual ~Gear_AreaScale();
 
   void runVideo();

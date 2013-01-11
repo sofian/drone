@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ValueMix(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ValueMix::Gear_ValueMix(Schema *schema, std::string uniqueName) : Gear(schema, "ValueMix", uniqueName)
+Gear_ValueMix::Gear_ValueMix(Schema *schema, QString uniqueName) : Gear(schema, "ValueMix", uniqueName)
 {
 
   addPlug(_VALUE_IN1 = new PlugIn<ValueType>(this, "In1", true, new ValueType(0.0f)));

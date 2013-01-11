@@ -27,7 +27,7 @@ class Gear_TV : public GearControl
 {
 public:
 
-  Gear_TV(Schema *schema, std::string uniqueName);
+  Gear_TV(Schema *schema, QString uniqueName);
   virtual ~Gear_TV();
 
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};

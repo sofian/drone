@@ -30,7 +30,7 @@ class CircularBuffer;
 class Gear_VideoRecord : public Gear
 {
 public:
-  Gear_VideoRecord(Schema *schema, std::string uniqueName);
+  Gear_VideoRecord(Schema *schema, QString uniqueName);
   virtual ~Gear_VideoRecord();
 
   void runVideo();

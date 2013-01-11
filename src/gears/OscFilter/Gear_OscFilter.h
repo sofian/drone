@@ -28,7 +28,7 @@
 class Gear_OscFilter : public Gear  
 {
 public:
-  Gear_OscFilter(Schema *schema, std::string uniqueName);
+  Gear_OscFilter(Schema *schema, QString uniqueName);
   virtual ~Gear_OscFilter();
 
   void runVideo();

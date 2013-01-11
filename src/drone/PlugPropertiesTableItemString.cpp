@@ -3,7 +3,7 @@
 #include "StringType.h"
 
 PlugPropertiesTableItemString::PlugPropertiesTableItemString(AbstractPlug *plug, Q3Table * table, EditType et) :
-  PlugPropertiesTableItem(plug, table, et, static_cast<StringType*>(plug->abstractDefaultType())->value().c_str()),
+  PlugPropertiesTableItem(plug, table, et, static_cast<StringType*>(plug->abstractDefaultType())->value()),
   _lineEdit(NULL)
 {
   setReplaceable(false);  
@@ -21,7 +21,7 @@ QWidget *PlugPropertiesTableItemString::createEditor() const
   ((PlugPropertiesTableItemString*)this)->_lineEdit = new QLineEdit(table()->viewport());
   StringType *data = static_cast<StringType*>(_plug->abstractDefaultType());
   
-  _lineEdit->setText(data->value().c_str());  
+  _lineEdit->setText(data->value());  
   
   QObject::connect(_lineEdit, SIGNAL( textChanged(const QString&)), table(), SLOT( doValueChanged()) );
   return _lineEdit;
@@ -40,7 +40,7 @@ void PlugPropertiesTableItemString::setText(const QString &s)
 {
   std::cout << "settext" << std::endl;
   StringType *data = static_cast<StringType*>(_plug->abstractDefaultType());
-  data->setValue(s.toStdString());
+  data->setValue(s);
   
   if (_lineEdit)
     _lineEdit->setText(s);

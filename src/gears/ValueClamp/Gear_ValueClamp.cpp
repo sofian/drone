@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ValueClamp(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_ValueClamp::Gear_ValueClamp(Schema *schema, std::string uniqueName) : 
+Gear_ValueClamp::Gear_ValueClamp(Schema *schema, QString uniqueName) : 
   Gear(schema, "ValueClamp", uniqueName)
 {
   addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "In", false, new ValueType(0.5f, 0, 1)));

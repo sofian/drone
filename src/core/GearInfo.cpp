@@ -66,8 +66,8 @@ bool GearInfo::save()
   QDomElement infoElem = doc.createElement(XML_TAGNAME);
   doc.appendChild(infoElem);
 
-  XMLHelper::appendTaggedString(doc,infoElem,"Name",name());// writed but never readed. Just to make things more obvious when looking at the xml file.
-  XMLHelper::appendTaggedString(doc,infoElem,"Type",pluginType());// writed but never readed. Just to make things more obvious when looking at the xml file.
+  XMLHelper::appendTaggedString(doc,infoElem,"Name",name());// written but never read. Just to make things more obvious when looking at the xml file.
+  XMLHelper::appendTaggedString(doc,infoElem,"Type",pluginType());// written but never read. Just to make things more obvious when looking at the xml file.
   XMLHelper::appendTaggedString(doc,infoElem,"Author",_author);
   XMLHelper::appendTaggedString(doc,infoElem,"Minor",QString::number(_minorVersion));
   XMLHelper::appendTaggedString(doc,infoElem,"Major",QString::number(_majorVersion));
@@ -284,12 +284,12 @@ bool GearInfoDrone::bindPlugin()
 	}
 	
 	//query makeGear ptrfun interface
-	Gear* (*makeGear)(Schema *schema, QString uniqueName);
-	*(void**) (&_makeGear) = dlsym(_handle, "makeGear");	
-	
-	if (dlerror())
+	Gear* (*makeGear)();
+	*(void**) (&_makeGear) = dlsym(_handle, "_makeGear");	
+	char*e=dlerror();
+	if (e)
 	{
-		qCritical() << _pluginFile.absoluteFilePath() << " : not a drone plugin!";
+		qCritical() << _pluginFile.absoluteFilePath() << " : not a drone plugin!. Error: '"<<e<<"'";
 		return false;
 	}
 		

@@ -25,7 +25,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
 	return new Gear_VideoSwitch(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoSwitch::Gear_VideoSwitch(Schema *schema, std::string uniqueName) : Gear(schema, "VideoSwitch", uniqueName)
+Gear_VideoSwitch::Gear_VideoSwitch(Schema *schema, QString uniqueName) : Gear(schema, "VideoSwitch", uniqueName)
 {
   addPlug(_VIDEO_OUT_A = new PlugOut<VideoRGBAType>(this, "ImgA", false));
   addPlug(_VIDEO_OUT_B = new PlugOut<VideoRGBAType>(this, "ImgB", false));

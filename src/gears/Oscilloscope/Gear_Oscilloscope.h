@@ -34,7 +34,7 @@ class Gear_Oscilloscope : public Gear
 {
 public:
 
-  Gear_Oscilloscope(Schema *schema, std::string uniqueName);
+  Gear_Oscilloscope(Schema *schema, QString uniqueName);
   virtual ~Gear_Oscilloscope();
 
   void runAudio();

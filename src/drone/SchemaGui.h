@@ -44,11 +44,11 @@ public:
   SchemaGui(Schema *schema, Engine *engine);
   ~SchemaGui();
 
-  //Gear* addGear(std::string type, std::string name, int x, int y);
-  Gear* addGear(std::string type, QPointF pos);
-  MetaGear* addMetaGear(std::string filename, QPointF pos);  
+  //Gear* addGear(QString type, QString name, int x, int y);
+  Gear* addGear(QString type, QPointF pos);
+  MetaGear* addMetaGear(QString filename, QPointF pos);  
   MetaGear* newMetaGear(QPointF pos);  
-  void renameGear(GearGui *gearGui, std::string newName);
+  void renameGear(GearGui *gearGui, QString newName);
   void removeGear(GearGui* gearGui);
     
   
@@ -65,8 +65,8 @@ public:
   bool load(QDomElement& parent);
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
 
-  std::vector<GearGui*> getAllGears();
-  std::vector<GearGui*> getSelectedGears();
+  QList<GearGui*> getAllGears();
+  QList<GearGui*> getSelectedGears();
 
   Schema * getSchema(){return _schema;}
   void rebuildSchema();

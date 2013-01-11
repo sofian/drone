@@ -30,7 +30,7 @@ class Gear_ApplyDisplaceGrid : public Gear
 {
 public:
 
-  Gear_ApplyDisplaceGrid(Schema *schema, std::string uniqueName);
+  Gear_ApplyDisplaceGrid(Schema *schema, QString uniqueName);
   virtual ~Gear_ApplyDisplaceGrid();
 
   void runVideo();

@@ -27,7 +27,7 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Blur(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Blur::Gear_Blur(Schema *schema, std::string uniqueName) : Gear(schema, "Blur", uniqueName)
+Gear_Blur::Gear_Blur(Schema *schema, QString uniqueName) : Gear(schema, "Blur", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

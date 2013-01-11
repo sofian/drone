@@ -1,4 +1,4 @@
-CONFIG = qt warn_on thread debug agg resources
+CONFIG = qt warn_on thread debug resources
 
 #QT += qt3support
 
@@ -46,7 +46,7 @@ release {
 
 }
 
-INCLUDEPATH += ../contrib/frei0r
+INCLUDEPATH += ../../contrib/frei0r/spec
 #disable prebinding
 macx:QMAKE_LFLAGS_SHLIB -= -prebind
 

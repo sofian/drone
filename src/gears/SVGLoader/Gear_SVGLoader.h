@@ -41,7 +41,7 @@ class Gear_SVGLoader : public Gear
 {
 public:
 
-  Gear_SVGLoader(Schema *schema, std::string uniqueName);
+  Gear_SVGLoader(Schema *schema, QString uniqueName);
   virtual ~Gear_SVGLoader();
 
   void runVideo();
@@ -52,7 +52,7 @@ protected:
 private:
   double m_min_x,m_min_y,m_max_x,m_max_y;
 
-  static const std::string SETTING_FILENAME;
+  static const QString SETTING_FILENAME;
 
   agg::svg::path_renderer m_path;
   

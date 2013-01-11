@@ -41,7 +41,7 @@ class Gear_VecAffineTrans : public Gear
 {
 public:
 
-  Gear_VecAffineTrans(Schema *schema, std::string uniqueName);
+  Gear_VecAffineTrans(Schema *schema, QString uniqueName);
   virtual ~Gear_VecAffineTrans();
 
   void runVideo();

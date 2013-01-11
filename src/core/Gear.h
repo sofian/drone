@@ -144,7 +144,7 @@ private:
 
 extern "C"
 {
-  Gear* makeGear(Schema *schema, QString uniqueName);
+  Gear* makeGear();
   //GearInfo getGearInfo();
 }
 

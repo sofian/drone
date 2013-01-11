@@ -173,9 +173,9 @@ void GearMaker::parseGears(QDir dir, QString extension)
   const QFileInfoList files = dir.entryInfoList();
   const char* error;
 
-  for(QFileInfoList::const_iterator it=files.begin();it!=files.end();++it)
+  foreach(QFileInfo fi,files)
   {		
-		T *gearInfo = new T(*it);
+		T *gearInfo = new T(fi);
 		//add gearInfo to the registry
 		//the key will be unique since each gears type
 		//are in there own path and we use fullName as the key.

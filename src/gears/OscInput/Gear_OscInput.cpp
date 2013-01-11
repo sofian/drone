@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_OscInput(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_OscInput::Gear_OscInput(Schema *schema, std::string uniqueName) : 
+Gear_OscInput::Gear_OscInput(Schema *schema, QString uniqueName) : 
   Gear(schema, "OscInput", uniqueName),
   _forceOscServerInit(true),
   _currentPort(""),
@@ -87,7 +87,7 @@ void Gear_OscInput::internalPostPlay()
 	_forceOscServerInit=true;//for the next startup
 }
 
-void Gear_OscInput::startOscServer(std::string port)
+void Gear_OscInput::startOscServer(QString port)
 {
 	stopOscServer();
 	
@@ -123,7 +123,7 @@ int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_
 	OscMessageType message;
 	ListType list;
 	
-	message.setPath(std::string(path));
+	message.setPath(QString(path));
 
 	for (int i=0; i<argc; i++) 
 	{

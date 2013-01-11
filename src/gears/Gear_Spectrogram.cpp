@@ -24,7 +24,7 @@
 
 Register_Gear(MAKERGear_Spectrogram, Gear_Spectrogram, "Spectrogram")
 
-Gear_Spectrogram::Gear_Spectrogram(Schema *schema, std::string uniqueName) : Gear(schema, "Spectrogram", uniqueName)
+Gear_Spectrogram::Gear_Spectrogram(Schema *schema, QString uniqueName) : Gear(schema, "Spectrogram", uniqueName)
 {
   addPlug(_FFT_IN = new PlugIn<FFTType>(this, "In", true));
   addPlug(_SIZE_X = new PlugIn<ValueType>(this, "SizeX", false, new ValueType(512,32,768)));

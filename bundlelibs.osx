@@ -9,4 +9,4 @@ fi
 
 #cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
 
-install_name_tool -id @executable_path/../Frameworks/liblo.dylib drone.app/Contents/Frameworks/liblo.dylib
+#install_name_tool -id @executable_path/../Frameworks/liblo.dylib drone.app/Contents/Frameworks/liblo.dylib

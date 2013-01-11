@@ -25,7 +25,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AreaScale(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_AreaScale::Gear_AreaScale(Schema *schema, std::string uniqueName) : Gear(schema, "AreaScale", uniqueName)
+Gear_AreaScale::Gear_AreaScale(Schema *schema, QString uniqueName) : Gear(schema, "AreaScale", uniqueName)
 {
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 

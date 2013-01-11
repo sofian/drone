@@ -23,7 +23,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_SignalStat(schema, uniqueName);
 }
@@ -37,7 +37,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_SignalStat::Gear_SignalStat(Schema *schema, std::string uniqueName)
+Gear_SignalStat::Gear_SignalStat(Schema *schema, QString uniqueName)
   : GearConverter<SignalType, ValueType>(schema, "SignalStat", uniqueName)
 {
   addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", false, new ValueType(0, 0, 6)));

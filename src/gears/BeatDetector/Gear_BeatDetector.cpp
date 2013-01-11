@@ -40,7 +40,7 @@ static const float DEFAULT_ACORR_DECAY = 0.98;//0.95;
 static const unsigned int DEFAULT_ACORR_DECAY_STEP = 5;
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_BeatDetector(schema, uniqueName);
 }
@@ -54,7 +54,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_BeatDetector::Gear_BeatDetector(Schema *schema, std::string uniqueName)
+Gear_BeatDetector::Gear_BeatDetector(Schema *schema, QString uniqueName)
   : Gear(schema, "BeatDetector", uniqueName)
 {
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "AudioIn", true) );

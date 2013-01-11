@@ -30,7 +30,7 @@ class Gear_Blur : public Gear
 {
 public:
 
-  Gear_Blur(Schema *schema, std::string uniqueName);
+  Gear_Blur(Schema *schema, QString uniqueName);
   virtual ~Gear_Blur();
 
   void runVideo();

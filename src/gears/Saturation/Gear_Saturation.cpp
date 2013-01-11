@@ -27,7 +27,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Saturation(schema, uniqueName);
 }
@@ -41,7 +41,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Saturation::Gear_Saturation(Schema *schema, std::string uniqueName) : Gear(schema, "Saturation", uniqueName)
+Gear_Saturation::Gear_Saturation(Schema *schema, QString uniqueName) : Gear(schema, "Saturation", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

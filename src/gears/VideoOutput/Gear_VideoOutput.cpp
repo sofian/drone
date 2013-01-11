@@ -32,7 +32,7 @@
 #include <iostream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_VideoOutput(schema, uniqueName);
 }
@@ -53,16 +53,16 @@ const int Gear_VideoOutput::DEFAULT_YPOS = 0;
 
 const bool Gear_VideoOutput::DEFAULT_FULLSCREEN = false; 
 
-const std::string Gear_VideoOutput::SETTING_XRES = "XRes";
-const std::string Gear_VideoOutput::SETTING_YRES = "YRes";
+const QString Gear_VideoOutput::SETTING_XRES = "XRes";
+const QString Gear_VideoOutput::SETTING_YRES = "YRes";
 
-const std::string Gear_VideoOutput::SETTING_XPOS = "XPos";
-const std::string Gear_VideoOutput::SETTING_YPOS = "YPos";
+const QString Gear_VideoOutput::SETTING_XPOS = "XPos";
+const QString Gear_VideoOutput::SETTING_YPOS = "YPos";
 
-const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
+const QString Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
-Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) : 
+Gear_VideoOutput::Gear_VideoOutput(Schema *schema, QString uniqueName) : 
 Gear(schema, "VideoOutput", uniqueName),
 _videoOutput(NULL)
 {
@@ -110,7 +110,7 @@ void Gear_VideoOutput::internalInit()
 	}
 #else
   std::cout << "selecting best video output for your hardware..." << std::endl; 
-  for (std::vector<std::string>::iterator it=_allOutputs.begin();it!=_allOutputs.end();++it)
+  for (std::vector<QString>::iterator it=_allOutputs.begin();it!=_allOutputs.end();++it)
   {
     std::cout << "trying " << (*it) << "..." << std::endl;
     if ((_videoOutput = VideoOutputMaker::makeVideoOutput(*it))!=NULL)

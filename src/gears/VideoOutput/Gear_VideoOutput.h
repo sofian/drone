@@ -30,7 +30,7 @@ class Gear_VideoOutput : public Gear
 {
 public:
 
-  Gear_VideoOutput(Schema *schema, std::string uniqueName);
+  Gear_VideoOutput(Schema *schema, QString uniqueName);
   virtual ~Gear_VideoOutput();
 
   void runVideo();
@@ -44,12 +44,12 @@ protected:
 
 
 private:
-  static const std::string SETTING_XRES;
-  static const std::string SETTING_YRES;
-  static const std::string SETTING_XPOS;
-  static const std::string SETTING_YPOS;
+  static const QString SETTING_XRES;
+  static const QString SETTING_YRES;
+  static const QString SETTING_XPOS;
+  static const QString SETTING_YPOS;
 
-  static const std::string SETTING_FULLSCREEN;
+  static const QString SETTING_FULLSCREEN;
 
   static const int DEFAULT_XRES;
   static const int DEFAULT_YRES;    
@@ -61,7 +61,7 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
 
   VideoOutput *_videoOutput;
-  std::vector<std::string> _allOutputs;
+  std::vector<QString> _allOutputs;
 
   const VideoRGBAType *_image; 
 

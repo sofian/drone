@@ -125,6 +125,7 @@ AbstractPlug.cpp \
 Project.cpp \
 Rasterer.cpp \
 Random.cpp \
+Properties.cpp \
 Schema.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \

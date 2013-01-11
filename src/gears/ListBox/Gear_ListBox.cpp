@@ -29,7 +29,7 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_ListBox(schema, uniqueName);
 }
@@ -43,10 +43,10 @@ GearInfo getGearInfo()
 }
 }
 
-const std::string Gear_ListBox::SETTING_NELEMS = "Number of elements";
-const std::string Gear_ListBox::SETTING_LABELS = "Labels of elements";
+const QString Gear_ListBox::SETTING_NELEMS = "Number of elements";
+const QString Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
-Gear_ListBox::Gear_ListBox(Schema *schema, std::string uniqueName) : 
+Gear_ListBox::Gear_ListBox(Schema *schema, QString uniqueName) : 
   GearControl(schema, "ListBox", uniqueName),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value", true));
@@ -103,10 +103,10 @@ void Gear_ListBox::onPlugConnected(AbstractPlug *plug, AbstractPlug *)
     _settings.get(Gear_ListBox::SETTING_NELEMS)->valueInt((int)tmpType->size());
     _VALUE_OUT->type()->resize(tmpType->size());
     _labels.resize(tmpType->size());
-    std::string labels = "";
+    QString labels = "";
     if (tmpType->size() > 0)
     {
-      std::string label = tmpType->label(0);
+      QString label = tmpType->label(0);
       labels += label;
       _VALUE_OUT->type()->setLabel(0, label);
       for (int i=1; i<(int)tmpType->size(); ++i)

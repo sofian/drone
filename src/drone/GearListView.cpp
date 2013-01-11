@@ -34,17 +34,17 @@ GearListView::GearListView(QWidget *parent) :
  */
 void GearListView::create()
 {
-  std::vector<const GearInfo*> gearsInfo;
-  
+ QList<GearInfo*> gearsInfo;
+
   //get all gearsInfo from the GearMaker
-  GearMaker::getAllGearsInfo(gearsInfo);
-  
-  for (std::vector<const GearInfo*>::iterator it = gearsInfo.begin(); it != gearsInfo.end(); ++it)
-  {
+  GearMaker::instance()->getAllGearsInfo(gearsInfo);
+ 
+  foreach(GearInfo* gi, gearsInfo)
+   {
     Q3ListViewItem *parentItem=NULL;
     Q3ListViewItem *rootItem=NULL;
     
-    if ((*it)->classification)
+    /*if ((*it)->classification)
     {     
       std::vector<std::string> path = (*it)->classification->path();
             
@@ -69,10 +69,10 @@ void GearListView::create()
         if (parentItem==NULL)
             parentItem = new Q3ListViewItem(rootItem, it2->c_str());
       }
-    }
+    }*/
     
     //insert the gear name in the correct node
-    Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, (*it)->name.c_str());
+    Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, gi->name());
     gearItem->setDragEnabled(true);
   }
 }

@@ -25,7 +25,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_VideoRecord(schema, uniqueName);
 }
@@ -39,7 +39,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VideoRecord::Gear_VideoRecord(Schema *schema, std::string uniqueName) : Gear(schema, "VideoRecord", uniqueName)
+Gear_VideoRecord::Gear_VideoRecord(Schema *schema, QString uniqueName) : Gear(schema, "VideoRecord", uniqueName)
 {
   // Inputs.
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));

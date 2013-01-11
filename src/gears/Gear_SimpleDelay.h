@@ -26,7 +26,7 @@
 class Gear_SimpleDelay : public Gear
 {
 public:
-  Gear_SimpleDelay(Schema *schema, std::string uniqueName);
+  Gear_SimpleDelay(Schema *schema, QString uniqueName);
   virtual ~Gear_SimpleDelay();
 
   void runAudio();

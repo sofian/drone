@@ -31,7 +31,7 @@ class Gear_VideoSwitch : public Gear
 {
 public:
 
-  Gear_VideoSwitch(Schema *schema, std::string uniqueName);
+  Gear_VideoSwitch(Schema *schema, QString uniqueName);
   virtual ~Gear_VideoSwitch();
 
   void runVideo();

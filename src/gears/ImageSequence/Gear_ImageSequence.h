@@ -39,9 +39,9 @@ class Gear_ImageSequence : public Gear
   };
 
 public:
-  static const std::string SETTING_FILENAME;
+  static const QString SETTING_FILENAME;
 
-  Gear_ImageSequence(Schema *schema, std::string name);
+  Gear_ImageSequence(Schema *schema, QString name);
   virtual ~Gear_ImageSequence();
 
   void runVideo();
@@ -51,7 +51,7 @@ protected:
   void internalInit();
 
 private:
-  void loadImage(const std::string& filename, Array2D<RGBA>& image);
+  void loadImage(const QString& filename, Array2D<RGBA>& image);
   
   PlugOut<VideoRGBAType> *_VIDEO_OUT;
   PlugIn<ValueType> *_SPEED_IN;

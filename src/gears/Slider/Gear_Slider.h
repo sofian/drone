@@ -30,14 +30,14 @@ class Gear_Slider : public GearControl
 public:
   static const float  DEFAULT_VALUE;
 
-  static const std::string SETTING_LOWERBOUND;
-  static const std::string SETTING_HIGHERBOUND;
+  static const QString SETTING_LOWERBOUND;
+  static const QString SETTING_HIGHERBOUND;
 
-  static const std::string SETTING_ACCEPTMIDI;
-  static const std::string SETTING_MIDICHANNEL;
-  static const std::string SETTING_MIDICONTROLLER;
+  static const QString SETTING_ACCEPTMIDI;
+  static const QString SETTING_MIDICHANNEL;
+  static const QString SETTING_MIDICONTROLLER;
 
-  Gear_Slider(Schema *schema, std::string uniqueName);
+  Gear_Slider(Schema *schema, QString uniqueName);
   virtual ~Gear_Slider();
 
   void runAudio();

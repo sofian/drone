@@ -26,7 +26,7 @@
 #include <string>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_StringSource(schema, uniqueName);
 }
@@ -40,9 +40,9 @@ GearInfo getGearInfo()
 }
 }
 
-const std::string Gear_StringSource::SETTING_STRING = "Source";
+const QString Gear_StringSource::SETTING_STRING = "Source";
 
-Gear_StringSource::Gear_StringSource(Schema *schema, std::string uniqueName) : 
+Gear_StringSource::Gear_StringSource(Schema *schema, QString uniqueName) : 
   Gear(schema, "StringSource", uniqueName)
 {
   addPlug(_STR_OUT = new PlugOut<StringType>(this, "str", false, new StringType("aaa")));

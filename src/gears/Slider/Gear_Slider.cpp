@@ -33,7 +33,7 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_Slider(schema, uniqueName);
 }
@@ -49,14 +49,14 @@ GearInfo getGearInfo()
 
 const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
 
-const std::string Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
-const std::string Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
+const QString Gear_Slider::SETTING_LOWERBOUND = "Lower Bound";
+const QString Gear_Slider::SETTING_HIGHERBOUND = "Higher Bound";
 
-const std::string Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
-const std::string Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
-const std::string Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
+const QString Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
+const QString Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
+const QString Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
 
-Gear_Slider::Gear_Slider(Schema *schema, std::string uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
+Gear_Slider::Gear_Slider(Schema *schema, QString uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));

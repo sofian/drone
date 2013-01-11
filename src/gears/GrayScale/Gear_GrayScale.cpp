@@ -29,7 +29,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_GrayScale(schema, uniqueName);
 }
@@ -43,7 +43,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_GrayScale::Gear_GrayScale(Schema *schema, std::string uniqueName) : Gear(schema, "GrayScale", uniqueName)
+Gear_GrayScale::Gear_GrayScale(Schema *schema, QString uniqueName) : Gear(schema, "GrayScale", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT", false));

@@ -26,7 +26,7 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_SmearGrid(schema, uniqueName);
 }
@@ -40,7 +40,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_SmearGrid::Gear_SmearGrid(Schema *schema, std::string uniqueName) : Gear(schema, "SmearGrid", uniqueName)
+Gear_SmearGrid::Gear_SmearGrid(Schema *schema, QString uniqueName) : Gear(schema, "SmearGrid", uniqueName)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID", true));

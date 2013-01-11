@@ -23,7 +23,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_FlatSignal(schema, uniqueName);
 }
@@ -37,7 +37,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_FlatSignal::Gear_FlatSignal(Schema *schema, std::string uniqueName)
+Gear_FlatSignal::Gear_FlatSignal(Schema *schema, QString uniqueName)
   : GearConverter<ValueType, SignalType>(schema, "FlatSignal", uniqueName)
 {
   _PLUG_IN->hintType()->setValue(0.0f);

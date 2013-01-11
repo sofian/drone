@@ -52,7 +52,7 @@
 
 #include <qdom.h>
 
-const std::string SchemaEditor::NAME = "SchemaEditor";
+const QString SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 1.4;
 
 SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView) :
@@ -203,18 +203,18 @@ void SchemaEditor::slotSaveMetaGear()
   MetaGear* metaGear = (MetaGear*)_contextGear->gear();
   
   //mangle suggested filename
-  std::string suggestedFilename=metaGear->fullPath();  
+  QString suggestedFilename=metaGear->fullPath();  
 //  if (suggestedFilename.empty())
 //    suggestedFilename=MetaGearMaker::METAGEAR_PATH + "/" + metaGear->name();
   
 
-  std::string filename = Q3FileDialog::getSaveFileName(suggestedFilename.c_str(), ("*" + MetaGear::EXTENSION + ";;" + "*.*").c_str(), 
+  QString filename = Q3FileDialog::getSaveFileName(suggestedFilename.c_str(), ("*" + MetaGear::EXTENSION + ";;" + "*.*").c_str(), 
                                                       0, "Save as", "Save as").toStdString();
   
   if (!filename.empty())
   {
     //set the extension if not already present
-    if (filename.find(MetaGear::EXTENSION.c_str(), filename.size()-MetaGear::EXTENSION.size())==std::string::npos)
+    if (filename.find(MetaGear::EXTENSION.c_str(), filename.size()-MetaGear::EXTENSION.size())==QString::npos)
       filename.append(MetaGear::EXTENSION);  
     
     metaGear->save(filename);    
@@ -229,9 +229,9 @@ void SchemaEditor::slotSaveMetaGear()
 
 void SchemaEditor::deleteSelected()
 {
-  std::vector<GearGui*> allGears = _schemaGui->getSelectedGears();
-  for(unsigned int i=0;i<allGears.size();++i)
-    _schemaGui->removeGear(allGears[i]);
+  QList<GearGui*> allGears = _schemaGui->getSelectedGears();
+  foreach(GearGui* gg,allGears)
+    _schemaGui->removeGear(gg);
   _contextGear = NULL;
 
 }
@@ -358,11 +358,13 @@ void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)
       } 
       else
       {
-        if (_contextGear->gear()->kind() == Gear::METAGEAR)
-        {
-          _metaGearContextMenu->popup(QCursor::pos());
-        }
-        else
+        
+        // reenable for metagear restoration
+        //if (_contextGear->gear()->kind() == Gear::METAGEAR)
+        //{
+        //  _metaGearContextMenu->popup(QCursor::pos());
+        //}
+        //else
           _gearContextMenu->popup(QCursor::pos());
       }
       contextMenuEvent->accept();
@@ -428,13 +430,13 @@ void SchemaEditor::zoom(float factor)
  */
 
 // add a gear by name and view coordinates
-void SchemaEditor::addGear(std::string name, QPoint pos)
+void SchemaEditor::addGear(QString name, QPoint pos)
 {
   // defer to QGraphicsScene, but first convert to scene Coord
   _schemaGui->addGear(name, mapToScene(pos));    
 }
 
-void SchemaEditor::addMetaGear(std::string filename, QPoint pos)
+void SchemaEditor::addMetaGear(QString filename, QPoint pos)
 {  
   MetaGear *metaGear = _schemaGui->addMetaGear(filename, mapToScene(pos));
   associateControlPanelWithMetaGear(metaGear);
@@ -463,7 +465,7 @@ void SchemaEditor::dropEvent(QDropEvent* event)
   if ( Q3TextDrag::decode(event, text) )
   {
     event->accept(true);
-    addGear(text.toStdString(), event->pos());
+    addGear(text, event->pos());
   }
 }
 

@@ -24,7 +24,7 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_OscMessage(schema, uniqueName);
 }
@@ -38,7 +38,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_OscMessage::Gear_OscMessage(Schema *schema, std::string uniqueName) : 
+Gear_OscMessage::Gear_OscMessage(Schema *schema, QString uniqueName) : 
   Gear(schema, "OscMessage", uniqueName)
 {
 

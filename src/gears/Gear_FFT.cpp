@@ -16,7 +16,7 @@ Register_Gear(MAKERGear_FFT, Gear_FFT, "FFT")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_FFT::Gear_FFT(Schema *schema, std::string uniqueName) : 
+Gear_FFT::Gear_FFT(Schema *schema, QString uniqueName) : 
 Gear(schema, "FFT", uniqueName)                                                                        
 {    
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));

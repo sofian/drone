@@ -28,7 +28,7 @@
 class Gear_TapTempo : public Gear  
 {
 public:
-  Gear_TapTempo(Schema *schema, std::string uniqueName);
+  Gear_TapTempo(Schema *schema, QString uniqueName);
   virtual ~Gear_TapTempo();
 
   void runVideo();

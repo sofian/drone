@@ -30,7 +30,7 @@ class Gear_AggTest : public Gear
 {
 public:
 
-  Gear_AggTest(Schema *schema, std::string uniqueName);
+  Gear_AggTest(Schema *schema, QString uniqueName);
   virtual ~Gear_AggTest();
 
   void runVideo();  bool ready();

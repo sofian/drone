@@ -30,7 +30,7 @@ enum { flip_y = true };
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_VecAffineTrans(schema, uniqueName);
 }
@@ -44,7 +44,7 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_VecAffineTrans::Gear_VecAffineTrans(Schema *schema, std::string uniqueName) : Gear(schema, "VecAffineTrans", uniqueName),
+Gear_VecAffineTrans::Gear_VecAffineTrans(Schema *schema, QString uniqueName) : Gear(schema, "VecAffineTrans", uniqueName),
                                                                          m_min_x(0.0),
                                                                          m_min_y(0.0),
                                                                          m_max_x(0.0),

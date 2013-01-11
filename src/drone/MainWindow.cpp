@@ -53,7 +53,7 @@
 //#include "PreferencesDialog.h"
 
 const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
-const std::string MainWindow::SCHEMA_EXTENSION = ".drn";
+const QString MainWindow::SCHEMA_EXTENSION = ".drn";
 
 #include <qsettings.h>
 
@@ -84,7 +84,7 @@ _menuShowSmallGearsId(false)
   _mainSchemaGui = _metaGearEditor->schemaGui();
   SchemaEditor* schemaEditor = _metaGearEditor->schemaEditor();
   
-  _project = new Project(_mainSchemaGui);
+  _project = new Project(_engine->mainMetaGear()->getInternalSchema());
   
   setCentralWidget(_metaGearEditor);
 
@@ -177,7 +177,7 @@ _menuShowSmallGearsId(false)
   {
     QString filename = globalSettings.readEntry(*it);
     //_fileMenu->insertItem(filename, i);
-    _recentSchemas.push_back(filename.toStdString());    
+    _recentSchemas<<filename;    
   }
   globalSettings.endGroup();
 }
@@ -274,14 +274,14 @@ void MainWindow::slotMenuNew()
 
 void MainWindow::slotMenuLoad()
 {  
-  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
+  QString filename = QFileDialog::getOpenFileName(_lastLoadPath, ("*" + SCHEMA_EXTENSION + ";;" + "*.*"), 
                                                   this, "Load", "Load");
-  load(filename.toStdString());
+  load(filename);
 }
 
-void MainWindow::load(std::string filename)
+void MainWindow::load(QString filename)
 {
-  if (filename.empty())
+  if (filename.isEmpty())
     return;
   
   //stop before loading
@@ -291,7 +291,7 @@ void MainWindow::load(std::string filename)
   _actSave->setDisabled(false);
   
   //save the last load path
-  _lastLoadPath=_project->projectName().c_str();
+  _lastLoadPath=_project->projectName();
   globalSettings.writeEntry("/drone/Schema/LastLoadPath", _lastLoadPath);
 
   //add to recent schema
@@ -306,21 +306,21 @@ void MainWindow::slotMenuSave()
 
 void MainWindow::slotMenuSaveAs()
 {
-  std::string filename = QFileDialog::getSaveFileName(_project->projectName().c_str(), ("*" + SCHEMA_EXTENSION + ";;" + "*.*").c_str(), 
-                                                      this, "Save as", "Save as").toStdString();
+  QString filename = QFileDialog::getSaveFileName(_project->projectName(), QString(("*" + SCHEMA_EXTENSION + ";;" + "*.*")), 
+                                                      this, "Save as", "Save as");
   
-  if (!filename.empty())
+  if (!filename.isEmpty())
   {
     //set the extension if not already present
-    if (filename.find(SCHEMA_EXTENSION.c_str(), filename.size()-SCHEMA_EXTENSION.size())==std::string::npos)
-      filename.append(SCHEMA_EXTENSION);  
+    if (!filename.endsWith(SCHEMA_EXTENSION))
+      filename+=SCHEMA_EXTENSION;  
     
     _project->saveAs(filename);
     
     _actSave->setDisabled(false);
 
     //save the last save path
-    _lastSavePath=filename.c_str();
+    _lastSavePath=filename;
     globalSettings.writeEntry("/drone/Schema/LastSavePath", _lastSavePath);
 
     //add to recent schema
@@ -335,7 +335,7 @@ void MainWindow::slotMenuPreferences()
   
 }
 
-void MainWindow::addToRecentSchema(std::string filename)
+void MainWindow::addToRecentSchema(QString filename)
 {  
   //clean recent menu and settings first
   for (unsigned int j=0; j<_recentSchemas.size();++j)  
@@ -359,12 +359,11 @@ void MainWindow::addToRecentSchema(std::string filename)
   //rebuild the recent schema menu and save to globalSettings
   //item will range from 0 to MAX_RECENT_SCHEMAS  
   int i=0;
-  for (std::list<std::string>::iterator it=_recentSchemas.begin(); it!=_recentSchemas.end();++it, ++i)
+  foreach (QString rs,_recentSchemas)
   {
-    _fileMenu->insertItem(it->c_str(), i);
-    std::ostringstream oss;
-    oss << "/drone/Schema/Recent Files/" << i;
-    globalSettings.writeEntry(oss.str().c_str(), it->c_str());
+    i++;
+    _fileMenu->insertItem(rs, i);
+    globalSettings.writeEntry(QString("/drone/Schema/Recent Files/%1").arg(i), rs);
   }
 }
 
@@ -374,7 +373,7 @@ void MainWindow::slotMenuItemSelected(int id)
   if (id < 0 || id > (int)MAX_RECENT_SCHEMAS)
     return;
   
-  load(_fileMenu->text(id).toStdString());
+  load(_fileMenu->text(id));
 }
 
 void MainWindow::slotMenuQuit()

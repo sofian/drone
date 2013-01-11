@@ -29,7 +29,7 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear(Schema *schema, QString uniqueName)
 {
   return new Gear_AudioPushButton(schema, uniqueName);
 }
@@ -43,11 +43,11 @@ GearInfo getGearInfo()
 }
 }
 
-const std::string Gear_AudioPushButton::SETTING_OFFVALUE = "Off Value";
-const std::string Gear_AudioPushButton::SETTING_ONVALUE = "On Value";
-const std::string Gear_AudioPushButton::SETTING_ONESHOT = "One Shot";
+const QString Gear_AudioPushButton::SETTING_OFFVALUE = "Off Value";
+const QString Gear_AudioPushButton::SETTING_ONVALUE = "On Value";
+const QString Gear_AudioPushButton::SETTING_ONESHOT = "One Shot";
 
-Gear_AudioPushButton::Gear_AudioPushButton(Schema *schema, std::string uniqueName) : Gear(schema, "AudioPushButton", uniqueName),_acceptHint(true)
+Gear_AudioPushButton::Gear_AudioPushButton(Schema *schema, QString uniqueName) : Gear(schema, "AudioPushButton", uniqueName),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
