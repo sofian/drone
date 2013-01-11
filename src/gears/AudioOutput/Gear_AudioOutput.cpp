@@ -246,6 +246,59 @@ void Gear_AudioOutput::runAudio()
 
   _testIter++;
 
+  // Parse message.
+  if (_bus != NULL)
+  {
+    GstMessage *msg = gst_bus_timed_pop_filtered(
+                        _bus, 0,
+                        (GstMessageType) (GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+
+    if (msg != NULL) {
+      GError *err;
+      gchar *debug_info;
+
+      switch (GST_MESSAGE_TYPE (msg)) {
+
+      case GST_MESSAGE_ERROR:
+        gst_message_parse_error(msg, &err, &debug_info);
+        g_printerr("Error received from element %s: %s\n",
+            GST_OBJECT_NAME (msg->src), err->message);
+        g_printerr("Debugging information: %s\n",
+            debug_info ? debug_info : "none");
+        g_clear_error(&err);
+        g_free(debug_info);
+//        _finish();
+        break;
+
+      case GST_MESSAGE_EOS:
+        g_print("End-Of-Stream reached.\n");
+//        _terminate = true;
+//        _finish();
+        break;
+
+      case GST_MESSAGE_STATE_CHANGED:
+        // We are only interested in state-changed messages from the pipeline.
+        if (GST_MESSAGE_SRC (msg) == GST_OBJECT (_pipeline)) {
+          GstState oldState, newState, pendingState;
+          gst_message_parse_state_changed(msg, &oldState, &newState,
+              &pendingState);
+          g_print("Pipeline state for audio output changed from %s to %s:\n",
+              gst_element_state_get_name(oldState),
+              gst_element_state_get_name(newState));
+
+        }
+        break;
+
+      default:
+        // We should not reach here.
+        g_printerr("Unexpected message received.\n");
+        break;
+      }
+      gst_message_unref(msg);
+    }
+  }
+
+
   /*
   const float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
   int signal_blocksize = Engine::signalInfo().blockSize();
