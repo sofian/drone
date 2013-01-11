@@ -35,7 +35,8 @@ public:
 
   void sampleRate(int samplerate){
     _sampleRate = samplerate;
-    _timePerSample = 1.0f / (float)samplerate;
+    _timePerSample = 1.0f / (Time_T)samplerate;
+    _timePerBlock = _blockSize * _timePerSample;
   }
 
   int blockSize() const {return _blockSize;}
@@ -44,10 +45,13 @@ public:
 
   Time_T timePerSample() const {return _timePerSample;}
 
+  Time_T timePerBlock() const {return _timePerBlock;}
+
 private:    
   int _blockSize;
   int _sampleRate;
-  Time_T _timePerSample;    
+  Time_T _timePerSample;
+  Time_T _timePerBlock;
 };
 
 #endif

@@ -51,7 +51,7 @@ private:
   float _phaseCorrection;
 
   // TODO: it would be nice that a Gear can send us its current time ie. Gear::currentTime().
-  float _currentOscTime;
+  Time_T _currentOscTime;
 
 };
 
