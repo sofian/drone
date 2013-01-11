@@ -72,6 +72,9 @@ protected:
 //  void init();
 
 private:
+  bool _setPlayState(bool play);
+
+private:
 
 //PLUGS
   PlugIn<SignalType> *_AUDIO_IN_LEFT;

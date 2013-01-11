@@ -170,6 +170,28 @@ void Gear_AudioOutput::freeResources()
   unSynch();
 }
 
+
+bool Gear_AudioOutput::_setPlayState(bool play)
+{
+  if (_pipeline == NULL)
+    return false;
+
+  GstStateChangeReturn ret = gst_element_set_state (_pipeline, (play ? GST_STATE_PLAYING : GST_STATE_PAUSED));
+  if (ret == GST_STATE_CHANGE_FAILURE)
+  {
+    std::cout << "Unable to set the pipeline to the playing state." << std::endl;
+//.    freeResources();
+//    unloadMovie();
+    return false;
+  }
+  else
+  {
+//    initOutput();
+//    _setReady(play);
+    return true;
+  }
+}
+
 void Gear_AudioOutput::internalInit()
 {
   initOutput();
@@ -291,13 +313,16 @@ void Gear_AudioOutput::gstEnoughDataCallback(GstElement *source, guint size, Gea
 
 void Gear_AudioOutput::internalPrePlay()
 {
-//   Pa_StartStream(_stream);
+  // Start/resume playback.
+  _setPlayState(true);
 }    
 
 void Gear_AudioOutput::internalPostPlay()
 {
-//   Pa_AbortStream(_stream);
+  // Pause playback.
+  _setPlayState(false);
 }    
+
 
 
 //void Gear_AudioOutput::initPortAudio()
