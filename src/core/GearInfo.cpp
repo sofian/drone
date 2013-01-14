@@ -160,7 +160,7 @@ bool GearInfo::loadMetaInfo()
   while(!curnode.isNull())
   {
     QDomElement elem = curnode.toElement();
-    //std::cerr<<"found a tag !: "<<elem.tagName().latin1()<<std::endl;
+    std::cerr<<"found a  tag !: "<<elem.tagName().latin1()<<std::endl;
 
     if(elem.tagName()=="Intro")
       _intro=elem.text();
@@ -262,6 +262,7 @@ GearInfoDrone::GearInfoDrone(QFileInfo pluginFile) :
 	_handle(0),
 	_makeGear(0)
 {
+  qDebug();
 }
 
 GearInfoDrone::~GearInfoDrone()
@@ -285,7 +286,7 @@ bool GearInfoDrone::bindPlugin()
 	
 	//query makeGear ptrfun interface
 	Gear* (*makeGear)();
-	*(void**) (&_makeGear) = dlsym(_handle, "_makeGear");	
+	*(void**) (&_makeGear) = dlsym(_handle, "makeGear");	
 	char*e=dlerror();
 	if (e)
 	{

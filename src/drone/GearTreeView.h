@@ -1,5 +1,5 @@
 /*
- *  GearListView.h
+ *  GearTreeView.h
  *  drone
  *
  *  Created by foogy on 11/09/05.
@@ -7,15 +7,16 @@
  *
  */
 
-#ifndef GEARLISTVIEW_INCLUDED
-#define GEARLISTVIEW_INCLUDED
+#ifndef GEARTREEVIEW_INCLUDED
+#define GEARTREEVIEW_INCLUDED
 
-#include <q3listview.h>
+#include <qtreewidget.h>
+class Q3DragObject;
 
-class GearListView : public Q3ListView
+class GearTreeView : public QTreeWidget
 {
 public:
-  GearListView(QWidget *parent);
+  GearTreeView(QWidget *parent);
   
   void create();    
 protected:

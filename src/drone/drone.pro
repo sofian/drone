@@ -38,7 +38,7 @@ config.h \
 ConnectionItem.h \
 GearGui.h \
 GearListMenu.h \
-GearListView.h \
+GearTreeView.h \
 GearPropertiesDialog.h \
 #GuileBindings.h \
 MediaPoolIconView.h \
@@ -69,7 +69,7 @@ drone.cpp \
 GearGui.cpp \
 ConnectionItem.cpp \
 GearListMenu.cpp \
-GearListView.cpp \ 
+GearTreeView.cpp \ 
 GearPropertiesDialog.cpp \
 #GuileBindings.cpp \
 MainWindow.cpp \

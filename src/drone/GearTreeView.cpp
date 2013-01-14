@@ -1,12 +1,12 @@
 /*
- *  GearListView.cpp
+ *  GearTreeView.cpp
  *  drone
  *
  *  Created by foogy on 12/09/05.
  *  Copyright 2005 __MyCompanyName__. All rights reserved.
  *
  */
-#include "GearListView.h"
+#include "GearTreeView.h"
 #include "GearMaker.h"
 #include "GearClassification.h"
 #include <q3dragobject.h>
@@ -15,10 +15,16 @@
 #include "draggear.xpm"
 
 
-GearListView::GearListView(QWidget *parent) :
-  Q3ListView(parent)
+GearTreeView::GearTreeView(QWidget *parent) :
+  QTreeWidget(parent)
 {
-    addColumn("Gears");
+  setColumnCount(1);
+  setDragEnabled(true);
+  setDragDropMode(QAbstractItemView::DragOnly);
+  setDropIndicatorShown (true);
+  /*
+  
+  addColumn("Gears");
     setAcceptDrops(true);
     setRootIsDecorated(true);
     setResizeMode(Q3ListView::AllColumns);
@@ -26,25 +32,41 @@ GearListView::GearListView(QWidget *parent) :
     setMinimumWidth(200);
     setMinimumHeight(450);
     setTreeStepSize(10);
-
+*/
 }
 
 /**
 * create the GearListTree by consulting the gearsInfos in the GearMaker registry
  */
-void GearListView::create()
+void GearTreeView::create()
 {
  QList<GearInfo*> gearsInfo;
 
   //get all gearsInfo from the GearMaker
   GearMaker::instance()->getAllGearsInfo(gearsInfo);
  
+  
+  
+  
+  
+  
+  
+  QList<QTreeWidgetItem *> items;
   foreach(GearInfo* gi, gearsInfo)
+  {        
+     items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(gi->name()))));
+  }
+  insertTopLevelItems(0, items);
+  
+  
+  
+  
+/*  foreach(GearInfo* gi, gearsInfo)
    {
     Q3ListViewItem *parentItem=NULL;
     Q3ListViewItem *rootItem=NULL;
     
-    /*if ((*it)->classification)
+    if ((*it)->classification)
     {     
       std::vector<std::string> path = (*it)->classification->path();
             
@@ -69,15 +91,15 @@ void GearListView::create()
         if (parentItem==NULL)
             parentItem = new Q3ListViewItem(rootItem, it2->c_str());
       }
-    }*/
+    }
     
     //insert the gear name in the correct node
-    Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, gi->name());
-    gearItem->setDragEnabled(true);
-  }
+  //  Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, gi->name());
+  //  gearItem->setDragEnabled(true);
+  }*/
 }
 
-Q3DragObject *GearListView::dragObject()
+Q3DragObject *GearTreeView::dragObject()
 {
   Q3DragObject *d = new Q3TextDrag(currentItem()->text(0), this);
   d->setPixmap(QPixmap(draggear));

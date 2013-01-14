@@ -3,7 +3,7 @@
 #include "MetaGear.h"
 #include "SchemaEditor.h"
 #include "PanelScrollView.h"
-#include "GearListView.h"
+#include "GearTreeView.h"
 #include "PlugPropertiesTable.h"
 
 #include <qsplitter.h>
@@ -40,8 +40,8 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   
   //_panelScrollView = new PanelScrollView(_horizontalSplitter);
   _panelScrollView = NULL;
-  _gearListView = new GearListView(_verticalSplitter);
-  _gearListView->create();
+  _gearTreeView = new GearTreeView(_verticalSplitter);
+  _gearTreeView->create();
   _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
   _schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine, _panelScrollView);  
   
