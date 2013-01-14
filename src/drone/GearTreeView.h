@@ -21,8 +21,8 @@ public:
   void create();    
 protected:
   void mousePressEvent(QMouseEvent *event);
+  QTreeWidgetItem* findClassificationItem(QStringList path, QTreeWidgetItem * parent);
 
-  Q3DragObject *dragObject();
 };
 
 #endif

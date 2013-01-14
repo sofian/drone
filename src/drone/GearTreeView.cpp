@@ -11,13 +11,14 @@
 #include "GearClassification.h"
 #include <q3dragobject.h>
 #include <qmouseevent>
+#include <qtreewidgetitem>
 #include <QMimeData>
 #include <qdatastream>
 #include <qbytearray>
 //Added by qt3to4:
 #include <QPixmap>
 #include "draggear.xpm"
-
+#include <qheaderview>
 
 GearTreeView::GearTreeView(QWidget *parent) :
   QTreeWidget(parent)
@@ -26,17 +27,9 @@ GearTreeView::GearTreeView(QWidget *parent) :
   setDragEnabled(true);
   setDragDropMode(QAbstractItemView::DragOnly);
   setDropIndicatorShown (true);
-  /*
-  
-  addColumn("Gears");
-    setAcceptDrops(true);
-    setRootIsDecorated(true);
-    setResizeMode(Q3ListView::AllColumns);
-    setColumnWidthMode(0, Q3ListView::Manual);
-    setMinimumWidth(200);
-    setMinimumHeight(450);
-    setTreeStepSize(10);
-*/
+  header()->hide();
+  setMinimumWidth(200);
+  setMinimumHeight(400);
 }
 
 
@@ -46,11 +39,14 @@ GearTreeView::GearTreeView(QWidget *parent) :
 void GearTreeView::mousePressEvent(QMouseEvent *event)
  {
      QTreeWidgetItem *item = itemAt(event->pos());
-     if (!item)
+     if (!item || item->childCount()>0 || event->button() != Qt::LeftButton)
+     {
+         QTreeView::mousePressEvent(event);
          return;
-
+     }
+     
      QMimeData *mimeData = new QMimeData;
-     mimeData->setText(item->text(1));
+     mimeData->setText(item->text(0));
      
      QDrag *drag = new QDrag(this);
      drag->setMimeData(mimeData);
@@ -70,6 +66,34 @@ void GearTreeView::mousePressEvent(QMouseEvent *event)
 /**
 * create the GearListTree by consulting the gearsInfos in the GearMaker registry
  */
+QTreeWidgetItem* GearTreeView::findClassificationItem(QStringList path, QTreeWidgetItem * parent)
+{
+  qDebug()<<"lokking for "<<path;
+  QTreeWidgetItem* base=NULL;
+  int childIndex=0;
+  
+  for(int i=0;i<parent->childCount();i++)
+  {
+    if(parent->child(i)->text(0) == path[0])
+    {
+      base=parent->child(i);
+      break;
+    }
+  }
+  if(base!=NULL)
+    return base;
+  else
+  {
+    base = new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(path[0])));
+    parent->addChild(base);
+    path.removeFirst();
+    if(path.isEmpty())
+      return base;
+    return findClassificationItem(path,base);
+  }
+}
+
+
 void GearTreeView::create()
 {
  QList<GearInfo*> gearsInfo;
@@ -80,9 +104,9 @@ void GearTreeView::create()
   QList<QTreeWidgetItem *> items;
   foreach(GearInfo* gi, gearsInfo)
   {        
-     items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(gi->name()))));
+    QTreeWidgetItem* parentItem = findClassificationItem(gi->getClassification(),invisibleRootItem());
+    parentItem->addChild(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(gi->name()))));
   }
-  insertTopLevelItems(0, items);
   expandAll();
   
   
@@ -125,9 +149,3 @@ void GearTreeView::create()
   }*/
 }
 
-Q3DragObject *GearTreeView::dragObject()
-{
-  Q3DragObject *d = new Q3TextDrag(currentItem()->text(0), this);
-  d->setPixmap(QPixmap(draggear));
-  return d;  
-}

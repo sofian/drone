@@ -75,7 +75,8 @@ public:
   bool setPlugInfo(const PlugInfo &plugInfo);
 	PlugInfo getPlugInfo(QString name) {return _plugsInfo.value(name);}
 	QMap<QString, PlugInfo> getAllPlugsInfo(){return _plugsInfo;}
-
+  const QStringList getClassification(){return _classification;}
+  
 protected:
   void syncPlugsInfo();
 	bool addPlugInfo(const PlugInfo& pi);
