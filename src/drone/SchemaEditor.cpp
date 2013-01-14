@@ -448,25 +448,39 @@ void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
   //_panelScrollView->addControlPanel(metaGear);    
 }
 
-void SchemaEditor::dragEnterEvent(QDragEnterEvent* event)
-{
-  event->accept(Q3TextDrag::canDecode(event));
-}
+void SchemaEditor::dragEnterEvent(QDragEnterEvent *event)
+ {
+     if (event->mimeData()->hasText()) {
+             event->accept();
+             qDebug()<<"accept!";
+     } else {
+         event->ignore();
+     }
+ }
+
 
 void SchemaEditor::dragMoveEvent ( QDragMoveEvent * event ) 
 {
-  event->accept(Q3TextDrag::canDecode(event));
+     if (event->mimeData()->hasText()) {
+             event->accept();
+             qDebug()<<"accept move!";
+     } else {
+         event->ignore();
+     }
 }
 
 void SchemaEditor::dropEvent(QDropEvent* event)
 {
   QString text;
+  qDebug()<<"here#";
+     if (event->mimeData()->hasText()) {
+             event->accept();
+             qDebug()<<"addgear!";
+            addGear(event->mimeData()->text(), event->pos());
+     } else {
+         event->ignore();
+     }
   
-  if ( Q3TextDrag::decode(event, text) )
-  {
-    event->accept(true);
-    addGear(text, event->pos());
-  }
 }
 
 

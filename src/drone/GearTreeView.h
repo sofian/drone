@@ -20,6 +20,8 @@ public:
   
   void create();    
 protected:
+  void mousePressEvent(QMouseEvent *event);
+
   Q3DragObject *dragObject();
 };
 

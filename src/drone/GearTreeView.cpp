@@ -10,6 +10,10 @@
 #include "GearMaker.h"
 #include "GearClassification.h"
 #include <q3dragobject.h>
+#include <qmouseevent>
+#include <QMimeData>
+#include <qdatastream>
+#include <qbytearray>
 //Added by qt3to4:
 #include <QPixmap>
 #include "draggear.xpm"
@@ -35,6 +39,34 @@ GearTreeView::GearTreeView(QWidget *parent) :
 */
 }
 
+
+
+
+
+void GearTreeView::mousePressEvent(QMouseEvent *event)
+ {
+     QTreeWidgetItem *item = itemAt(event->pos());
+     if (!item)
+         return;
+
+     QMimeData *mimeData = new QMimeData;
+     mimeData->setText(item->text(1));
+     
+     QDrag *drag = new QDrag(this);
+     drag->setMimeData(mimeData);
+     //drag->setHotSpot(event->pos() - item->pos());
+
+/*     QPixmap tempPixmap = pixmap;
+     QPainter painter;
+     painter.begin(&tempPixmap);
+     painter.fillRect(pixmap.rect(), QColor(127, 127, 127, 127));
+     painter.end();
+
+     child->setPixmap(tempPixmap);
+*/
+     drag->exec();
+ }
+
 /**
 * create the GearListTree by consulting the gearsInfos in the GearMaker registry
  */
@@ -45,19 +77,13 @@ void GearTreeView::create()
   //get all gearsInfo from the GearMaker
   GearMaker::instance()->getAllGearsInfo(gearsInfo);
  
-  
-  
-  
-  
-  
-  
   QList<QTreeWidgetItem *> items;
   foreach(GearInfo* gi, gearsInfo)
   {        
      items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(gi->name()))));
   }
   insertTopLevelItems(0, items);
-  
+  expandAll();
   
   
   
