@@ -8,11 +8,11 @@ INCLUDEPATH+=../../core/ ../../core/types ../../../lib/liblo
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_RandomValue
+unix:!macx:TARGET=../../../gears/drone/Gear_RandomValue
 
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_RandomValue
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_RandomValue
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

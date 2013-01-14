@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_ColorAdjust
+unix:!macx:TARGET=../../../gears/drone/Gear_ColorAdjust
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_ColorAdjust
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_ColorAdjust
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

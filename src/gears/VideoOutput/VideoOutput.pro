@@ -14,7 +14,7 @@ unix:!macx:SOURCES+=VideoOutputGl.cpp VideoOutputShm.cpp VideoOutputX11Base.cpp 
 unix:!macx:HEADERS+=VideoOutputGl.h VideoOutputShm.h VideoOutputX11Base.h VideoOutputXv.h VideoOutputQT.h
 unix:!macx:INCLUDEPATH+=../../core/ ../../core/types /usr/X11R6/include
 unix:!macx:LIBS+= -L../../../lib/ -L/usr/X11R6/lib/ -ldroneCore -lGL -lXv -lXxf86vm
-unix:!macx:TARGET=../../../gears/Gear_VideoOutput
+unix:!macx:TARGET=../../../gears/drone/Gear_VideoOutput
 
 #osx
 
@@ -26,7 +26,7 @@ macx:INCLUDEPATH+= /Developer/Headers/FlatCarbon
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoOutput
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_VideoOutput
 
 #The following line was inserted by qt3to4
 QT += xml  opengl qt3support 

@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types ../../core/composite
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_InvertAlpha
+unix:!macx:TARGET=../../../gears/drone/Gear_InvertAlpha
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_InvertAlpha
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_InvertAlpha
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 #The following line was inserted by qt3to4

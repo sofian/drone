@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_GrayScale
+unix:!macx:TARGET=../../../gears/drone/Gear_GrayScale
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_GrayScale
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_GrayScale
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 macx:QMAKE_CXXFLAGS += -D__MACOSX_CORE__
 

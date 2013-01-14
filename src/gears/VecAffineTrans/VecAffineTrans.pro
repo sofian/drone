@@ -11,10 +11,10 @@ INCLUDEPATH+=../../core/ ../../core/types ../../../lib/agg23/include ../../../li
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../../lib/agg23/src/ -lagg
-unix:!macx:TARGET=../../../gears/Gear_VecAffineTrans
+unix:!macx:TARGET=../../../gears/drone/Gear_VecAffineTrans
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_VecAffineTrans
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_VecAffineTrans
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 
