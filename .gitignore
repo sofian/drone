@@ -27,8 +27,11 @@ Makefile
 
 # Executable
 /drone
+/lib
 
 # Eclipse
 .project
 .cproject
 
+# Drone schemas
+*.drn
