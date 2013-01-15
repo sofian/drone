@@ -72,9 +72,22 @@ void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear
   }
 
   // If our converter is already linked, we have nothing to do here.
-  if (gst_pad_is_linked (sinkPad)) {
-    g_print ("  We are already linked. Ignoring.\n");
-    goto exit;
+  if (gst_pad_is_linked (sinkPad))
+  {
+    // Best prefixes.
+    if (g_str_has_prefix (newPadType, "audio/x-raw-float") ||
+        g_str_has_prefix (newPadType, "video/x-raw-int") )
+    {
+      g_print ("  Found a better pad.\n");
+      GstPad* oldPad = gst_pad_get_peer(sinkPad);
+      gst_pad_unlink(oldPad, sinkPad);
+      g_object_unref(oldPad);
+    }
+    else
+    {
+      g_print ("  We are already linked. Ignoring.\n");
+      goto exit;
+    }
   }
 
   // Attempt the link
