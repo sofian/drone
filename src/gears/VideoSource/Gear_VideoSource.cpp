@@ -677,8 +677,8 @@ void Gear_VideoSource::gstNewAudioBufferCallback(GstElement *sink, GstNewAudioBu
 //    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
 //    unsigned int blockByteSize = Engine::signalInfo().blockSize() * sizeof(Signal_T);
 
-    std::cout << "bufsize: "<< GST_BUFFER_SIZE(buffer) <<
-                 " / adaptersize: " << gst_adapter_available(data->audioBufferAdapter) << std::endl;
+//    std::cout << "bufsize: "<< GST_BUFFER_SIZE(buffer) <<
+//                 " / adaptersize: " << gst_adapter_available(data->audioBufferAdapter) << std::endl;
 
     // Add buffer to the adapter.
     gst_adapter_push(data->audioBufferAdapter, buffer);
