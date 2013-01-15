@@ -68,7 +68,7 @@ public:
   bool createDefaultMetaInfo();
 	
 	virtual QFileInfo metaFile()=0;//! mangling for the metaInfo filename from the pluginfile
-	QString name(){return metaFile().baseName();}//! name of the gearInfo is taken from the metaFile name.
+	QString name();//! name of the gearInfo is taken from the metaFile name.
 	QString fullName(){return pluginType() + ":" + name();}//! the type + ":" + the name
 	virtual Gear* createGearInstance()=0;
 

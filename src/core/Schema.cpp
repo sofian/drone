@@ -179,7 +179,7 @@ bool Schema::removeDeepGear(Gear* &gear)
   // if the gear to be removed is at the current schema level, remove it here
   if (_gears.contains(gear->name()))
   {   
-    onGearRemoved(*gear);
+    emit gearRemoved(*this,*gear);
     
     _gears.remove(gear->name());
             
@@ -484,6 +484,9 @@ Schema *Schema::getParentSchema()
   return _parentMetaGear->parentSchema();
 }
 
+
+
+/*
 void Schema::onGearAdded(Gear &gear)
 {
 	emit gearAdded(*this, gear);
@@ -503,5 +506,5 @@ void Schema::onGearRemoved(Gear &gear)
   if (parentSchema)
     parentSchema->onGearRemoved(gear);
 }
-
+*/
 

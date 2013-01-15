@@ -101,6 +101,16 @@ bool GearInfo::save()
 	return true;
 }
 
+
+QString GearInfo::name()
+{
+  QString name = metaFile().baseName();
+  qDebug()<<name.mid(5);
+  if(name.startsWith("G"))
+    return name.mid(5);
+  else return name;
+}
+
 bool GearInfo::load()
 {
 	if (!_pluginFile.exists())
@@ -293,7 +303,8 @@ bool GearInfoDrone::bindPlugin()
 		qCritical() << _pluginFile.absoluteFilePath() << " : not a drone plugin!. Error: '"<<e<<"'";
 		return false;
 	}
-		
+
+  
 	return true;
 }
 

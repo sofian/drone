@@ -46,7 +46,7 @@ void GearTreeView::mousePressEvent(QMouseEvent *event)
      }
      
      QMimeData *mimeData = new QMimeData;
-     mimeData->setText(item->text(0));
+     mimeData->setText(item->data(1,Qt::UserRole).toString());
      
      QDrag *drag = new QDrag(this);
      drag->setMimeData(mimeData);
@@ -63,12 +63,8 @@ void GearTreeView::mousePressEvent(QMouseEvent *event)
      drag->exec();
  }
 
-/**
-* create the GearListTree by consulting the gearsInfos in the GearMaker registry
- */
 QTreeWidgetItem* GearTreeView::findClassificationItem(QStringList path, QTreeWidgetItem * parent)
 {
-  qDebug()<<"lokking for "<<path;
   QTreeWidgetItem* base=NULL;
   int childIndex=0;
   
@@ -94,6 +90,9 @@ QTreeWidgetItem* GearTreeView::findClassificationItem(QStringList path, QTreeWid
 }
 
 
+/**
+* create the GearListTree by consulting the gearsInfos in the GearMaker registry
+ */
 void GearTreeView::create()
 {
  QList<GearInfo*> gearsInfo;
@@ -105,47 +104,11 @@ void GearTreeView::create()
   foreach(GearInfo* gi, gearsInfo)
   {        
     QTreeWidgetItem* parentItem = findClassificationItem(gi->getClassification(),invisibleRootItem());
-    parentItem->addChild(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString(gi->name()))));
+    
+    QTreeWidgetItem* child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(gi->name()));
+    child->setData(1,Qt::UserRole, gi->fullName());
+    parentItem->addChild(child);
   }
-  expandAll();
-  
-  
-  
-/*  foreach(GearInfo* gi, gearsInfo)
-   {
-    Q3ListViewItem *parentItem=NULL;
-    Q3ListViewItem *rootItem=NULL;
-    
-    if ((*it)->classification)
-    {     
-      std::vector<std::string> path = (*it)->classification->path();
-            
-      //search or create the root for this gear
-      parentItem=firstChild();
-      while(parentItem!=NULL && parentItem->text(0) != path[0].c_str())
-        parentItem=parentItem->nextSibling();
-      
-      if (parentItem==NULL)
-        parentItem = new Q3ListViewItem(this, path[0].c_str());
-
-      parentItem->setOpen(true);
-      //search or create subItems path for this gear
-      for (std::vector<std::string>::iterator it2 = path.begin()+1; it2!=path.end();++it2)
-      {
-        rootItem=parentItem;
-        parentItem=parentItem->firstChild();
-
-        while(parentItem!=NULL && parentItem->text(0) != it2->c_str())
-          parentItem=parentItem->nextSibling();
-        
-        if (parentItem==NULL)
-            parentItem = new Q3ListViewItem(rootItem, it2->c_str());
-      }
-    }
-    
-    //insert the gear name in the correct node
-  //  Q3ListViewItem *gearItem = new Q3ListViewItem(parentItem, gi->name());
-  //  gearItem->setDragEnabled(true);
-  }*/
+  expandAll();  
 }
 

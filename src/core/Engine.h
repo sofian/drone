@@ -75,11 +75,13 @@ public:
   void debugStopPlay();
 #endif
 
+protected slots:
 
   //ISchemaEventListener Interface implementation
 	void onGearAdded(Schema &schema, Gear &gear);
   void onGearRemoved(Schema &schema, Gear &gear);
 
+public:
   void setClipboardText(QString txt){_clipboard=txt;}
   QString getClipboardText(){return _clipboard;}
 

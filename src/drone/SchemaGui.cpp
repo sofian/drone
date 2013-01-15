@@ -23,6 +23,7 @@
 #include "Schema.h"
 #include "Gear.h"
 #include "MetaGear.h"
+#include "GearMaker.h"
 #include "GearGui.h"
 #include "PlugBox.h"
 //#include "commands/CommandMoveItems.h"
@@ -133,24 +134,41 @@ void SchemaGui::rebuildSchema()
   }
 
   
-Gear* SchemaGui::addGear(QString type, QPointF pos)
+Gear* SchemaGui::addGear(QString fullname, QPointF pos)
 { 
-  return NULL;
-/*  Gear *gear = _schema->addGear(type);    
 
+
+  Gear* gear = GearMaker::instance()->makeGear(fullname);
   if (!gear)
     return NULL;
-    
-  //GearGui *gearGui = gear->getGearGui();    
 
-  //addItem(gearGui);    
-  //gearGui->setPos(pos);    
-  //gearGui->setZValue(0);
-  //gearGui->show();
+
+
+  _schema->addGear(*gear);    
+
+    
+  
+  /*GearInfo* gi = GearMaker::findGearInfo(fullname);
+  
+  if(!gi)
+  {
+    qDebug()<<"Can't find GearInfo in registry for gear type:"<<fullname;
+    return NULL;
+  }*/
+//  GearMaker::makeGear(fullname);
+  
+  
+  
+  GearGui *gearGui = new GearGui(gear,this);    
+
+  addItem(gearGui);    
+  gearGui->setPos(pos);    
+  gearGui->setZValue(0);
+  gearGui->show();
   update();
 
   return gear;
- */
+ 
 }
 
 MetaGear *SchemaGui::addMetaGear(QString filename, QPointF pos)

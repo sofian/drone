@@ -84,8 +84,8 @@ signals:
 private:
   QString mangleUniqueGearName(QString originalName);
 
-	void onGearAdded(Gear &gear);
-	void onGearRemoved(Gear &gear);
+//	void onGearAdded(Gear &gear);
+//	void onGearRemoved(Gear &gear);
 
   bool needSynch();
   void synch();
