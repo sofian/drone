@@ -186,6 +186,7 @@ bool Gear_AudioOutput::_setPlayState(bool play)
   }
   else
   {
+    std::cout << "Set pipeline to new playing state : " << (play ? "PLAYING" : "PAUSE") << std::endl;
 //    initOutput();
 //    _setReady(play);
     return true;
@@ -295,66 +296,7 @@ void Gear_AudioOutput::runAudio()
       gst_message_unref(msg);
     }
   }
-
-
-  /*
-  const float *left_buffer  = _AUDIO_IN_LEFT->type()->data();
-  int signal_blocksize = Engine::signalInfo().blockSize();
-  
-  for (int i=0; i<signal_blocksize; i++)
-    _lBuffer[_readIndex++] = left_buffer[i];
-
-  _readIndex %= _ringBufferSize;    */
-
 }
-//
-//void Gear_AudioOutput::gstStartFeedCallback(GstElement *source, guint size, GstFeedData *data)
-//{
-//  std::cout << "Need data" << std::endl;
-//
-//  return;
-//
-//  GstBuffer *buffer;
-//  GstFlowReturn ret;
-//  int i;
-////
-////  gint16 *raw;
-////  gint num_samples = CHUNK_SIZE / 2; /* Because each sample is 16 bits */
-////  gfloat freq;
-//
-//  /* Create a new empty buffer */
-//  const SignalType* audio = data->plug->type();
-//  unsigned int blockByteSize = audio->size() * sizeof (Signal_T);
-//  unsigned int sampleRate = Engine::signalInfo().sampleRate();
-//  buffer = gst_buffer_new_and_alloc ( blockByteSize );
-//
-//  /* Set its timestamp and duration */
-// // GST_BUFFER_TIMESTAMP (buffer) = gst_util_uint64_scale (data->num_samples, GST_SECOND, sampleRate);
-// // GST_BUFFER_DURATION (buffer) = gst_util_uint64_scale (blockByteSize, GST_SECOND, sampleRate);
-//
-//  /* Generate some psychodelic waveforms */
-//  memcpy(GST_BUFFER_DATA(buffer), audio->data(), blockByteSize);
-//
-//  /* Push the buffer into the appsrc */
-//  g_signal_emit_by_name (data->audioSource, "push-buffer", buffer, &ret);
-//
-//  /* Free the buffer now that we are done with it */
-//  gst_buffer_unref (buffer);
-//
-//  if (ret != GST_FLOW_OK) {
-//    /* We got some error, stop sending data */
-//    std::cout << "We got some error, stop sending data" << std::endl;
-//    exit(-1); // XXX baaaad!
-////    return false;
-//  }
-//
-////  return true;
-//}
-//
-//void Gear_AudioOutput::gstStopFeedCallback(GstElement *source, guint size, GstFeedData *data)
-//{
-//
-//}
 
 void Gear_AudioOutput::gstNeedsDataCallback(GstElement *source, guint size, Gear_AudioOutput *gear)
 {
@@ -376,9 +318,7 @@ void Gear_AudioOutput::internalPostPlay()
 {
   // Pause playback.
   _setPlayState(false);
-}    
-
-
+}
 
 //void Gear_AudioOutput::initPortAudio()
 //{
