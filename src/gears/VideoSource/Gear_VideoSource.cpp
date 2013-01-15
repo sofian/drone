@@ -45,77 +45,6 @@ extern "C" {
 
 //const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear_VideoSource::GstPadHandlerData* data) {
-  g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (newPad), GST_ELEMENT_NAME (src));
-  bool isAudio = false;
-  GstPad *sinkPad = NULL;
-
-  // Check the new pad's type.
-  GstCaps *newPadCaps   = gst_pad_get_caps (newPad);
-  GstStructure *newPadStruct = gst_caps_get_structure (newPadCaps, 0);
-  const gchar *newPadType   = gst_structure_get_name (newPadStruct);
-  g_print("Structure is %s\n", gst_structure_to_string(newPadStruct));
-  if (g_str_has_prefix (newPadType, "audio/x-raw"))
-  {
-    sinkPad = gst_element_get_static_pad (data->audioToConnect, "sink");
-    isAudio = true;
-  }
-  else if (g_str_has_prefix (newPadType, "video/x-raw"))
-  {
-    sinkPad = gst_element_get_static_pad (data->videoToConnect, "sink");
-    isAudio = false;
-  }
-  else
-  {
-    g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", newPadType);
-    goto exit;
-  }
-
-  // If our converter is already linked, we have nothing to do here.
-  if (gst_pad_is_linked (sinkPad))
-  {
-    // Best prefixes.
-    if (g_str_has_prefix (newPadType, "audio/x-raw-float") ||
-        g_str_has_prefix (newPadType, "video/x-raw-int") )
-    {
-      g_print ("  Found a better pad.\n");
-      GstPad* oldPad = gst_pad_get_peer(sinkPad);
-      gst_pad_unlink(oldPad, sinkPad);
-      g_object_unref(oldPad);
-    }
-    else
-    {
-      g_print ("  We are already linked. Ignoring.\n");
-      goto exit;
-    }
-  }
-
-  // Attempt the link
-  if (GST_PAD_LINK_FAILED (gst_pad_link (newPad, sinkPad))) {
-    g_print ("  Type is '%s' but link failed.\n", newPadType);
-    goto exit;
-  } else {
-    g_print ("  Link succeeded (type '%s').\n", newPadType);
-    if (isAudio)
-    {
-      data->audioIsConnected = true;
-    }
-    else
-    {
-      data->videoIsConnected = true;
-    }
-  }
-
-exit:
-  // Unreference the new pad's caps, if we got them.
-  if (newPadCaps != NULL)
-    gst_caps_unref (newPadCaps);
-
-  // Unreference the sink pad.
-  if (sinkPad != NULL)
-    gst_object_unref (sinkPad);
-}
-
 bool Gear_VideoSource::_videoPull()
 {
   GstBuffer *buffer;
@@ -179,60 +108,6 @@ bool Gear_VideoSource::_videoPull()
 
 }
 
-bool Gear_VideoSource::_audioPull()
-{
-  GstBuffer *buffer;
-
-  // Retrieve the buffer.
-  // TODO: we should pull ALL buffers and add them to the adapter
-  g_signal_emit_by_name (_audioSink, "pull-buffer", &buffer);
-
-  if (!buffer)
-  {
-    // Either means we are not playing or we have reached EOS.
-    return false;
-  }
-
-  else
-  {
-    ASSERT_WARNING_MESSAGE( ! GST_BUFFER_IS_DISCONT(buffer), "Discontinuity detected in audio buffer." );
-
-//    int blockSize  = 2;
-//    int sampleRate = 1;
-//    int channels  = 0;
-//    int width = 0;
-//    GstCaps* caps = GST_BUFFER_CAPS(buffer);
-//    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
-//
-//    gst_structure_get_int(capsStruct, "rate",  &sampleRate);
-//    gst_structure_get_int(capsStruct, "channels", &channels);
-//    gst_structure_get_int(capsStruct, "width",  &width);
-
-//    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
-    SignalType *audio = _AUDIO_OUT->type();
-    unsigned int blockByteSize = Engine::signalInfo().blockSize() * sizeof(Signal_T);
-    ASSERT_ERROR( blockByteSize == audio->size()*sizeof(Signal_T) );
-
-    //std::cout << "bufsize: "<< GST_BUFFER_SIZE(buffer) <<
-    //             " / adaptersize: " << gst_adapter_available(_audioBufferAdapter) ;
-    // Add buffer to the adapter.0
-    gst_adapter_push(_audioBufferAdapter, buffer);
-   // std::cout << " .. after push = : "<< gst_adapter_available(_audioBufferAdapter);
-
-    if (gst_adapter_available(_audioBufferAdapter) >= blockByteSize ) {
-      gst_adapter_copy(_audioBufferAdapter, (guint8*)audio->data(), 0, blockByteSize);
-      gst_adapter_flush (_audioBufferAdapter, blockByteSize);
-    //  std::cout << " flushing: " << blockByteSize;
-    }
-    //std::cout << gst_adapter_available(_audioBufferAdapter) << std::endl;
-
-    // NOTE: no need to unref the buffer here because the buffer was given away with the
-    // call to gst_adapter_push()
-    //gst_buffer_unref (buffer);
-    return true;
-  }
-
-}
 bool Gear_VideoSource::_eos() const
 {
   if (_movieReady)
@@ -417,6 +292,9 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   _padHandlerData.videoSink        = _videoSink;
   _padHandlerData.audioIsConnected = _padHandlerData.videoIsConnected = false;
 
+  _newAudioBufferHandlerData.audioSink          = _audioSink;
+  _newAudioBufferHandlerData.audioBufferAdapter = _audioBufferAdapter;
+
   // Create the empty pipeline.
   _pipeline = gst_pipeline_new ( "video-source-pipeline" );
 
@@ -434,16 +312,13 @@ bool Gear_VideoSource::loadMovie(std::string filename)
                     _audioQueue, _audioConvert, _audioResample, _audioSink,
                     _videoQueue, _videoColorSpace, _videoSink, NULL);
 
-  if (!gst_element_link (_audioQueue, _audioConvert) ||
-      !gst_element_link (_audioConvert, _audioResample) ||
-      !gst_element_link (_audioResample, _audioSink)) {
+  if (!gst_element_link_many(_audioQueue, _audioConvert, _audioResample, _audioSink, NULL)) {
     g_printerr ("Audio elements could not be linked.\n");
     unloadMovie();
     return false;
   }
 
-  if (!gst_element_link (_videoQueue, _videoColorSpace) ||
-      !gst_element_link (_videoColorSpace, _videoSink)) {
+  if (!gst_element_link_many (_videoQueue, _videoColorSpace, _videoSink, NULL)) {
     g_printerr ("Video elements could not be linked.\n");
     unloadMovie();
     return false;
@@ -481,7 +356,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 //                            "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
 //                            "drop", TRUE,         // ... other buffers are dropped
                             NULL);
-  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioNewBufferCounter);
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewAudioBufferCallback), &_newAudioBufferHandlerData);
   gst_caps_unref (audioCaps);
   g_free (audioCapsText);
 
@@ -515,7 +390,8 @@ void Gear_VideoSource::runVideo() {
   if (!_VIDEO_OUT->connected())
     return;
 
-  _preRun();
+  if (!_preRun())
+    return;
 
   if (_videoNewBufferCounter > 0) {
 
@@ -524,7 +400,9 @@ void Gear_VideoSource::runVideo() {
     {
       _FINISH_OUT->type()->setValue(1.0f);
       _VIDEO_OUT->sleeping(true);
-    }
+    } else
+      _VIDEO_OUT->sleeping(false);
+
 
     _videoNewBufferCounter--;
   }
@@ -538,24 +416,28 @@ void Gear_VideoSource::runAudio() {
   if (!_AUDIO_OUT->connected())
     return;
 
-  _preRun();
+  if (!_preRun())
+    return;
 
-  if (_audioNewBufferCounter > 0) {
+  int blockByteSize = Engine::signalInfo().blockSize()*sizeof(Signal_T);
+  if (gst_adapter_available(_audioBufferAdapter) >= blockByteSize )
+  {
+    // Copy block of data to audio output.
+    gst_adapter_copy(_audioBufferAdapter, (guint8*)_AUDIO_OUT->type()->data(), 0, blockByteSize);
+    gst_adapter_flush (_audioBufferAdapter, blockByteSize);
 
-    // Pull audio.
-    if (!_audioPull())
-    {
-      _FINISH_OUT->type()->setValue(1.0f);
-      _AUDIO_OUT->sleeping(true);
-    }
-
-    _audioNewBufferCounter--;
+    _AUDIO_OUT->sleeping(false);
+  }
+  else
+  {
+    _FINISH_OUT->type()->setValue(1.0f);
+    _AUDIO_OUT->sleeping(true);
   }
 
   _postRun();
 }
 
-void Gear_VideoSource::_preRun()
+bool Gear_VideoSource::_preRun()
 {
   // Check for end-of-stream or terminate.
   if (_eos() || _terminate)
@@ -564,7 +446,8 @@ void Gear_VideoSource::_preRun()
     _VIDEO_OUT->sleeping(true);
     _AUDIO_OUT->sleeping(true);
 
-    gst_adapter_clear(_audioBufferAdapter);
+    if (_audioBufferAdapter != NULL)
+      gst_adapter_clear(_audioBufferAdapter);
   }
   else
     _FINISH_OUT->type()->setValue(0.0f);
@@ -575,12 +458,14 @@ void Gear_VideoSource::_preRun()
   if (_currentMovie != _MOVIE_IN->type()->value()) {
     _currentMovie = _MOVIE_IN->type()->value();
     if (!loadMovie(_currentMovie))
-      return;
+      return false;
   }
 
   if (!_movieReady ||
       !_padHandlerData.isConnected())
-    return;
+    return false;
+
+  return true;
 }
 
 void Gear_VideoSource::_postRun()
@@ -694,6 +579,115 @@ void Gear_VideoSource::_setReady(bool ready)
   _movieReady = ready;
   _VIDEO_OUT->sleeping(!ready);
   _AUDIO_OUT->sleeping(!ready);
+}
+
+void Gear_VideoSource::gstPadAddedCallback(GstElement *src, GstPad *newPad, Gear_VideoSource::GstPadHandlerData* data) {
+  g_print ("Received new pad '%s' from '%s':\n", GST_PAD_NAME (newPad), GST_ELEMENT_NAME (src));
+  bool isAudio = false;
+  GstPad *sinkPad = NULL;
+
+  // Check the new pad's type.
+  GstCaps *newPadCaps   = gst_pad_get_caps (newPad);
+  GstStructure *newPadStruct = gst_caps_get_structure (newPadCaps, 0);
+  const gchar *newPadType   = gst_structure_get_name (newPadStruct);
+  g_print("Structure is %s\n", gst_structure_to_string(newPadStruct));
+  if (g_str_has_prefix (newPadType, "audio/x-raw"))
+  {
+    sinkPad = gst_element_get_static_pad (data->audioToConnect, "sink");
+    isAudio = true;
+  }
+  else if (g_str_has_prefix (newPadType, "video/x-raw"))
+  {
+    sinkPad = gst_element_get_static_pad (data->videoToConnect, "sink");
+    isAudio = false;
+  }
+  else
+  {
+    g_print ("  It has type '%s' which is not raw audio/video. Ignoring.\n", newPadType);
+    goto exit;
+  }
+
+  // If our converter is already linked, we have nothing to do here.
+  if (gst_pad_is_linked (sinkPad))
+  {
+    // Best prefixes.
+    if (g_str_has_prefix (newPadType, "audio/x-raw-float") ||
+        g_str_has_prefix (newPadType, "video/x-raw-int") )
+    {
+      g_print ("  Found a better pad.\n");
+      GstPad* oldPad = gst_pad_get_peer(sinkPad);
+      gst_pad_unlink(oldPad, sinkPad);
+      g_object_unref(oldPad);
+    }
+    else
+    {
+      g_print ("  We are already linked. Ignoring.\n");
+      goto exit;
+    }
+  }
+
+  // Attempt the link
+  if (GST_PAD_LINK_FAILED (gst_pad_link (newPad, sinkPad))) {
+    g_print ("  Type is '%s' but link failed.\n", newPadType);
+    goto exit;
+  } else {
+    g_print ("  Link succeeded (type '%s').\n", newPadType);
+    if (isAudio)
+    {
+      data->audioIsConnected = true;
+    }
+    else
+    {
+      data->videoIsConnected = true;
+    }
+  }
+
+exit:
+  // Unreference the new pad's caps, if we got them.
+  if (newPadCaps != NULL)
+    gst_caps_unref (newPadCaps);
+
+  // Unreference the sink pad.
+  if (sinkPad != NULL)
+    gst_object_unref (sinkPad);
+}
+
+void Gear_VideoSource::gstNewAudioBufferCallback(GstElement *sink, GstNewAudioBufferHandlerData *data) {
+  GstBuffer *buffer = NULL;
+
+  // Retrieve the buffer.
+  // TODO: we should pull ALL buffers and add them to the adapter
+  g_signal_emit_by_name (data->audioSink, "pull-buffer", &buffer);
+
+  if (buffer)
+  {
+    ASSERT_WARNING_MESSAGE( ! GST_BUFFER_IS_DISCONT(buffer), "Discontinuity detected in audio buffer." );
+
+//    int blockSize  = 2;
+//    int sampleRate = 1;
+//    int channels  = 0;
+//    int width = 0;
+//    GstCaps* caps = GST_BUFFER_CAPS(buffer);
+//    GstStructure *capsStruct = gst_caps_get_structure (caps, 0);
+//
+//    gst_structure_get_int(capsStruct, "rate",  &sampleRate);
+//    gst_structure_get_int(capsStruct, "channels", &channels);
+//    gst_structure_get_int(capsStruct, "width",  &width);
+
+//    std::cout << "rate = " << sampleRate << " channels = " << channels << " width = " << width << std::endl;
+//    unsigned int blockByteSize = Engine::signalInfo().blockSize() * sizeof(Signal_T);
+
+    std::cout << "bufsize: "<< GST_BUFFER_SIZE(buffer) <<
+                 " / adaptersize: " << gst_adapter_available(data->audioBufferAdapter) << std::endl;
+
+    // Add buffer to the adapter.
+    gst_adapter_push(data->audioBufferAdapter, buffer);
+ //   std::cout << " .. after push = : "<< gst_adapter_available(_audioBufferAdapter);
+
+    // NOTE: no need to unref the buffer here because the buffer was given away with the
+    // call to gst_adapter_push()
+    //gst_buffer_unref (buffer);
+  }
 }
 
 void Gear_VideoSource::internalPrePlay()

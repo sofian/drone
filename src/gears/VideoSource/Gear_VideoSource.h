@@ -65,12 +65,11 @@ protected:
 
 private:
   bool _videoPull();
-  bool _audioPull();
   bool _eos() const;
 //  void _finish();
 //  void _init();
 
-  void _preRun();
+  bool _preRun();
   void _postRun();
   bool _setPlayState(bool play);
   void _setReady(bool ready);
@@ -95,8 +94,16 @@ public:
     }
   };
 
+  struct GstNewAudioBufferHandlerData {
+    GstElement* audioSink;
+    GstAdapter* audioBufferAdapter;
+    GstNewAudioBufferHandlerData() : audioSink(NULL), audioBufferAdapter(NULL) {}
+  };
+
   // GStreamer callback that simply sets the #newBuffer# flag to point to TRUE.
   static void gstNewBufferCallback(GstElement *sink, int *newBufferCounter);
+
+  static void gstNewAudioBufferCallback(GstElement *sink, GstNewAudioBufferHandlerData *data);
 
   // GStreamer callback that plugs the audio/video pads into the proper elements when they
   // are made available by the source.
@@ -130,6 +137,7 @@ private:
   GstAdapter *_audioBufferAdapter;
 
   GstPadHandlerData _padHandlerData;
+  GstNewAudioBufferHandlerData _newAudioBufferHandlerData;
 
   bool _seekEnabled;
 
