@@ -136,17 +136,11 @@ void SchemaGui::rebuildSchema()
   
 Gear* SchemaGui::addGear(QString fullname, QPointF pos)
 { 
-
-
   Gear* gear = GearMaker::instance()->makeGear(fullname);
   if (!gear)
     return NULL;
 
-
-
   _schema->addGear(*gear);    
-
-    
   
   /*GearInfo* gi = GearMaker::findGearInfo(fullname);
   
@@ -156,7 +150,6 @@ Gear* SchemaGui::addGear(QString fullname, QPointF pos)
     return NULL;
   }*/
 //  GearMaker::makeGear(fullname);
-  
   
   
   GearGui *gearGui = new GearGui(gear,this);    

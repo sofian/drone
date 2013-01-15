@@ -37,7 +37,7 @@ void GearListMenu::create()
      }*/
 
      //insert the gear name in the correct menu
-     menu->addAction(new QAction(gi->name(),this));
+     menu->addAction(new QAction(gi->fullName(),this));
   }
 }
 
