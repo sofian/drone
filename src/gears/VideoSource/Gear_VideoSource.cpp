@@ -265,9 +265,9 @@ bool Gear_VideoSource::_eos() const
 //}
 
 
-void Gear_VideoSource::gstNewBufferCallback(GstElement*, bool *newBuffer)
+void Gear_VideoSource::gstNewBufferCallback(GstElement*, int *newBufferCounter)
 {
-  *newBuffer = true;
+  (*newBufferCounter)++;
 }
 
 Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
@@ -286,8 +286,8 @@ _audioSink(NULL),
 _videoSink(NULL),
 _audioBufferAdapter(NULL),
 _seekEnabled(false),
-_audioHasNewBuffer(false),
-_videoHasNewBuffer(false),
+_audioNewBufferCounter(0),
+_videoNewBufferCounter(0),
 _movieReady(false)
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut", false));
@@ -324,8 +324,8 @@ void Gear_VideoSource::unloadMovie()
   freeResources();
 
   // Reset flags.
-  _audioHasNewBuffer = false;
-  _videoHasNewBuffer = false;
+  _audioNewBufferCounter = 0;
+  _videoNewBufferCounter = 0;
 
   _terminate = false;
   _seekEnabled = false;
@@ -481,7 +481,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
 //                            "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
 //                            "drop", TRUE,         // ... other buffers are dropped
                             NULL);
-  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioHasNewBuffer);
+  g_signal_connect (_audioSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_audioNewBufferCounter);
   gst_caps_unref (audioCaps);
   g_free (audioCapsText);
 
@@ -493,7 +493,7 @@ bool Gear_VideoSource::loadMovie(std::string filename)
                             "max-buffers", 1,     // only one buffer (the last) is maintained in the queue
                             "drop", TRUE,         // ... other buffers are dropped
                             NULL);
-  g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoHasNewBuffer);
+  g_signal_connect (_videoSink, "new-buffer", G_CALLBACK (Gear_VideoSource::gstNewBufferCallback), &_videoNewBufferCounter);
   gst_caps_unref (videoCaps);
 
   // Listen to the bus.
@@ -517,7 +517,7 @@ void Gear_VideoSource::runVideo() {
 
   _preRun();
 
-  if (_videoHasNewBuffer) {
+  if (_videoNewBufferCounter > 0) {
 
     // Pull video.
     if (!_videoPull())
@@ -526,7 +526,7 @@ void Gear_VideoSource::runVideo() {
       _VIDEO_OUT->sleeping(true);
     }
 
-    _videoHasNewBuffer = false;
+    _videoNewBufferCounter--;
   }
 
   _postRun();
@@ -540,7 +540,7 @@ void Gear_VideoSource::runAudio() {
 
   _preRun();
 
-  if (_audioHasNewBuffer) {
+  if (_audioNewBufferCounter > 0) {
 
     // Pull audio.
     if (!_audioPull())
@@ -549,7 +549,7 @@ void Gear_VideoSource::runAudio() {
       _AUDIO_OUT->sleeping(true);
     }
 
-    _audioHasNewBuffer = false;
+    _audioNewBufferCounter--;
   }
 
   _postRun();

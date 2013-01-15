@@ -96,7 +96,7 @@ public:
   };
 
   // GStreamer callback that simply sets the #newBuffer# flag to point to TRUE.
-  static void gstNewBufferCallback(GstElement *sink, bool *newBuffer);
+  static void gstNewBufferCallback(GstElement *sink, int *newBufferCounter);
 
   // GStreamer callback that plugs the audio/video pads into the proper elements when they
   // are made available by the source.
@@ -133,8 +133,8 @@ private:
 
   bool _seekEnabled;
 
-  bool _audioHasNewBuffer;
-  bool _videoHasNewBuffer;
+  int _audioNewBufferCounter;
+  int _videoNewBufferCounter;
 
   bool _terminate;
   bool _movieReady;
