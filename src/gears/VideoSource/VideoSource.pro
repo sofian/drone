@@ -27,7 +27,7 @@ macx {
 	LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L/opt/local/lib -lavformat -lavcodec -lavutil -lswscale -lz
 	LIBS+=-framework GStreamer
 	TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoSource
-	QMAKE_LFLAGS+=-read_only_relocs suppress
+#	QMAKE_LFLAGS+=-read_only_relocs suppress
 }
 
 #The following line was inserted by qt3to4
