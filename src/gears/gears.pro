@@ -1,36 +1,36 @@
 include(../../config.pro)
 
 TEMPLATE=subdirs
-SUBDIRS= Osc 
-#TV \
-#Oscilloscope \
-#VideoOutput \
-#AudioPushButton \
-#AlphaMix \
-#Blur \
-#VideoSource \
+SUBDIRS= Osc \
+TV \
+Oscilloscope \
+VideoOutput \
+AudioPushButton \
+AlphaMix \
+Blur \
+VideoSource \
 #Slider \
-#KDTree\ 
-#VideoMix \
-#Edge \
-#AffineTransform \
-#ApplyDisplaceGrid \
-#AreaClip \
-#AreaCreate \
+KDTree\ 
+VideoMix \
+Edge \
+AffineTransform \
+ApplyDisplaceGrid \
+AreaClip \
+AreaCreate \
 ###AmuseOeil \
-#AreaScale \
-#AreaTranslate \
-#AreaVideoSelect \
-#AreaVideoReplace \
-##AreaArrayMask \
+AreaScale \
+AreaTranslate \
+AreaVideoSelect \
+AreaVideoReplace \
+#AreaArrayMask \
 #AreaArrayClip \
 #AreaArrayVideoSelect \
-#Brightness \
-#ClusteredDither \
-#ColorAdjust \
-#Contrast \
-#Enveloppe \
-#EmptyImage \
+Brightness \
+ClusteredDither \
+ColorAdjust \
+Contrast \
+Enveloppe \
+EmptyImage \
 #FlatSignal \
 #FillAlpha \
 #ListBox \

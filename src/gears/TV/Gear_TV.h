@@ -23,20 +23,16 @@
 #include "GearControl.h"
 #include "VideoRGBAType.h"
 
-class Gear_TV : public GearControl
+class Gear_TV : public Gear
 {
 public:
 
-  Gear_TV(Schema *schema, QString uniqueName);
+  Gear_TV();
   virtual ~Gear_TV();
 
   PlugIn<VideoRGBAType>* VIDEO_IN(){return _VIDEO_IN;};
 
   void runVideo();
-
-protected:
-  GearGui *createGearGui(QGraphicsScene *scene);
-  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
 
 private:
 

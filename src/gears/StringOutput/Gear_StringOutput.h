@@ -30,14 +30,12 @@ class Gear_StringOutput : public Gear
 {
 public:
 
-  Gear_StringOutput(Schema *schema, QString uniqueName);
+  Gear_StringOutput();
   virtual ~Gear_StringOutput();
 
   void runVideo();
 	QString getString();
 
-protected:
-	GearGui *createGearGui(QGraphicsScene *scene);
 	
 private:
 

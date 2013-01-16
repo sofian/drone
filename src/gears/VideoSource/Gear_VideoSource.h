@@ -47,7 +47,7 @@ public:
   
   static const QString SETTING_FILENAME;
 
-  Gear_VideoSource(Schema *schema, QString uniqueName);
+  Gear_VideoSource();
   virtual ~Gear_VideoSource();
 
   void runVideo();

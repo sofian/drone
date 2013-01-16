@@ -33,8 +33,8 @@ const int Gear_AudioOutput::DEFAULT_NB_BUFFERS=0;
 const QString Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const QString Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioOutput::Gear_AudioOutput(Schema *schema, QString uniqueName) : 
-Gear(schema, "AudioOutput", uniqueName),     
+Gear_AudioOutput::Gear_AudioOutput() : 
+Gear("AudioOutput"),     
 _stream(0),
 _ringBufferSize(512),
 _lBuffer(),

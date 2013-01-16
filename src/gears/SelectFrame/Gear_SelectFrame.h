@@ -38,7 +38,7 @@ public:
     N_PLAYBACK_MODE
   };
   
-  Gear_SelectFrame(Schema *schema, QString uniqueName);
+  Gear_SelectFrame();
   virtual ~Gear_SelectFrame();
 
   void runVideo();

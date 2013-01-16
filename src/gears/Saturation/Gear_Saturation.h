@@ -30,7 +30,7 @@ class Gear_Saturation : public Gear
 {
 public:
 
-  Gear_Saturation(Schema *schema, QString uniqueName);
+  Gear_Saturation();
   virtual ~Gear_Saturation();
 
   void runVideo();

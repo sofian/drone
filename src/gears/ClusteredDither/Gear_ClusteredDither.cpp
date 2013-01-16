@@ -26,22 +26,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ClusteredDither(schema, uniqueName);
+  return new Gear_ClusteredDither();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ClusteredDither";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ClusteredDither::Gear_ClusteredDither(Schema *schema, std::string uniqueName)
-: Gear(schema, "ClusteredDither", uniqueName), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
+Gear_ClusteredDither::Gear_ClusteredDither()
+: Gear("ClusteredDither"), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
 {
   // Video I/O
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
@@ -223,7 +217,7 @@ void Gear_ClusteredDither::updateThreshold()
   int val = 0;
   iterOrder = _order;
   for (i=0; i < width2; i++, val += 0xff)
-    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas là...
+    _threshold[(iterOrder++)->first] = val / width2; // *** pas besoin de .value dans c'cas lï¿½...
 }
 
 void Gear_ClusteredDither::updatePolarCoordinates()

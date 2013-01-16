@@ -30,7 +30,7 @@ class Gear_GenDisplaceGrid : public Gear
 {
 public:
 
-  Gear_GenDisplaceGrid(Schema *schema, QString uniqueName);
+  Gear_GenDisplaceGrid();
   virtual ~Gear_GenDisplaceGrid();
 
   void runVideo();

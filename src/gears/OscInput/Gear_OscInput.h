@@ -34,7 +34,7 @@
 class Gear_OscInput : public Gear  
 {
 public:
-  Gear_OscInput(Schema *schema, QString uniqueName);
+  Gear_OscInput();
   virtual ~Gear_OscInput();
 
   void runVideo();

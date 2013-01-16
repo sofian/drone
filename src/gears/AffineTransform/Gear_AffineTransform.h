@@ -29,7 +29,7 @@ class PlugSignal;
 class Gear_AffineTransform : public Gear  
 {
 public:
-  Gear_AffineTransform(Schema *schema, QString uniqueName);
+  Gear_AffineTransform();
   virtual ~Gear_AffineTransform();
 
   void runVideo();

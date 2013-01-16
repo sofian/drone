@@ -24,21 +24,15 @@
 #include "CircularBuffer.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-	return new Gear_Oscilloscope(schema, uniqueName);
+	return new Gear_Oscilloscope();
 }
 
-GearInfo getGearInfo()
-{
-	GearInfo gearInfo;
-	gearInfo.name = "Oscilloscope";
-	gearInfo.classification = GearClassifications::signal().visualization().instance();
-	return gearInfo;
-}
+
 }
 
-Gear_Oscilloscope::Gear_Oscilloscope(Schema *schema, QString uniqueName) : Gear(schema, "Oscilloscope", uniqueName)
+Gear_Oscilloscope::Gear_Oscilloscope() : Gear("Oscilloscope")
 {
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true));
   addPlug(_ZOOM_X = new PlugIn<ValueType>(this, "ZoomX", false, new ValueType(44100,512,192400)));

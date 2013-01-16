@@ -25,7 +25,6 @@
 #include <qimage.h>
 
 
-#include "GearGui.h"
 #include "Gear_TV.h"
 
 

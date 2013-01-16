@@ -20,9 +20,9 @@
 #ifndef VIDEOOUTPUT_MAKER_INCLUDED
 #define VIDEOOUTPUT_MAKER_INCLUDED
 
-#include <map>
-#include <string>
-#include <vector>
+#include <qmap>
+#include <qstring>
+#include <qlist>
 
 class VideoOutput;
 
@@ -32,10 +32,10 @@ public:
   VideoOutputMaker(QString type);
 
   static VideoOutput* makeVideoOutput(QString type);
-  static void getAllVideoOutputsType(std::vector<QString> &videoOutputTypes);
+  static void getAllVideoOutputsType(QList<QString> &videoOutputTypes);
 
 private:
-  static std::map<QString, VideoOutputMaker*> *_Registry;
+  static QMap<QString, VideoOutputMaker*> *_Registry;
   virtual VideoOutput* internalMakeVideoOutput()=0;
 };
 

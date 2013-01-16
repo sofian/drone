@@ -20,7 +20,6 @@
 #ifndef GEARGUI_PUSHBUTTON_INCLUDED
 #define GEARGUI_PUSHBUTTON_INCLUDED
 
-#include "GearGui.h"
 
 
 #include <qcanvas.h>

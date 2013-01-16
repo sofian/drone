@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//inspired from Using libavformat and libavcodec by Martin Böhme (boehme@inb.uni-luebeckREMOVETHIS.de) 
+//inspired from Using libavformat and libavcodec by Martin Bï¿½hme (boehme@inb.uni-luebeckREMOVETHIS.de) 
 
 
 #include <iostream>
@@ -26,21 +26,15 @@
 #include "GearMaker.h"
 
 extern "C" {           
-  Gear* makeGear(Schema *schema, std::string uniqueName)
+  Gear* makeGear()
   {
-    return new Gear_SelectFrame(schema, uniqueName);
+    return new Gear_SelectFrame();
   }  
-  GearInfo getGearInfo()
-  {
-    GearInfo gearInfo;
-    gearInfo.name = "SelectFrame";
-    gearInfo.classification = GearClassifications::video().IO().instance();
-    return gearInfo;
-  }
+  
 }
 
-Gear_SelectFrame::Gear_SelectFrame(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "SelectFrame", uniqueName)
+Gear_SelectFrame::Gear_SelectFrame() : 
+  Gear("SelectFrame")
 {
   // Inputs.
   addPlug(_NEXT_IN = new PlugIn<ValueType>(this, "Next", false, new ValueType(1, 0, 1)));

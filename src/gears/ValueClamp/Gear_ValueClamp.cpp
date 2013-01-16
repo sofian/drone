@@ -24,22 +24,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ValueClamp(schema, uniqueName);
+  return new Gear_ValueClamp();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ValueClamp";
-  gearInfo.classification = GearClassifications::unclassified().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ValueClamp::Gear_ValueClamp(Schema *schema, QString uniqueName) : 
-  Gear(schema, "ValueClamp", uniqueName)
+Gear_ValueClamp::Gear_ValueClamp() : 
+  Gear("ValueClamp")
 {
   addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "In", false, new ValueType(0.5f, 0, 1)));
   addPlug(_MIN_IN = new PlugIn<ValueType>(this, "Min", false, new ValueType(0, 0, 1)));

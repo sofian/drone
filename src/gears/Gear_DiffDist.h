@@ -30,7 +30,7 @@ class Gear_DiffDist : public Gear
 {
 public:
 
-  Gear_DiffDist(Schema *schema, QString uniqueName);
+  Gear_DiffDist();
   virtual ~Gear_DiffDist();
 
   void runVideo();

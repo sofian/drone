@@ -35,7 +35,7 @@ class PlugSignal;
 class Gear_ColorQuantizer : public Gear  
 {
 public:
-  Gear_ColorQuantizer(Schema *schema, QString uniqueName);
+  Gear_ColorQuantizer();
   virtual ~Gear_ColorQuantizer();
 
   void runVideo();

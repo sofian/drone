@@ -26,21 +26,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VideoMix(schema, uniqueName);
+  return new Gear_VideoMix();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoMix";
-  gearInfo.classification = GearClassifications::video().composition().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_VideoMix::Gear_VideoMix(Schema *schema, QString uniqueName) : Gear(schema, "VideoMix", uniqueName)
+Gear_VideoMix::Gear_VideoMix() : Gear("VideoMix")
 {                                                                     
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", false));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", false));

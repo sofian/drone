@@ -29,7 +29,7 @@
 class Gear_StringFormat : public Gear  
 {
 public:
-  Gear_StringFormat(Schema *schema, QString uniqueName);
+  Gear_StringFormat();
   virtual ~Gear_StringFormat();
 
   void runVideo();

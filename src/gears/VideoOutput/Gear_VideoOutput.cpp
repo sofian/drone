@@ -32,18 +32,12 @@
 #include <iostream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VideoOutput(schema, uniqueName);
+  return new Gear_VideoOutput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoOutput";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
   
 const int Gear_VideoOutput::DEFAULT_XRES = 352;
@@ -62,8 +56,8 @@ const QString Gear_VideoOutput::SETTING_YPOS = "YPos";
 const QString Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
-Gear_VideoOutput::Gear_VideoOutput(Schema *schema, QString uniqueName) : 
-Gear(schema, "VideoOutput", uniqueName),
+Gear_VideoOutput::Gear_VideoOutput() : 
+Gear("VideoOutput"),
 _videoOutput(NULL)
 {
   //populate available video output list in order of preference

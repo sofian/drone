@@ -27,21 +27,15 @@
 using namespace std;
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_TapTempo(schema, uniqueName);
+  return new Gear_TapTempo();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "TapTempo";
-  gearInfo.classification = GearClassifications::signal().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_TapTempo::Gear_TapTempo(Schema *schema, QString uniqueName) : Gear(schema, "TapTempo", uniqueName)
+Gear_TapTempo::Gear_TapTempo() : Gear("TapTempo")
 {
 
   addPlug(_TAP_IN   = new PlugIn<ValueType>(this, "Tap", false, new ValueType(0.0f)));

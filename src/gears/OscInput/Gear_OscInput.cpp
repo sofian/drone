@@ -24,22 +24,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_OscInput(schema, uniqueName);
+  return new Gear_OscInput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "OscInput";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_OscInput::Gear_OscInput(Schema *schema, QString uniqueName) : 
-  Gear(schema, "OscInput", uniqueName),
+Gear_OscInput::Gear_OscInput() : 
+  Gear("OscInput"),
   _forceOscServerInit(true),
   _currentPort(""),
   _loServerThread(NULL)

@@ -18,7 +18,6 @@
  */
 
 #include "Gear_TV.h"
-#include "GearGui_TV.h"
 #include "Engine.h"
 
 #include <iostream>
@@ -27,21 +26,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_TV(schema, uniqueName);
+  return new Gear_TV();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "TV";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_TV::Gear_TV(Schema *schema, QString uniqueName) : GearControl(schema, "TV", uniqueName)
+Gear_TV::Gear_TV() : Gear("TV")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
 }
@@ -53,10 +46,5 @@ Gear_TV::~Gear_TV()
 
 void Gear_TV::runVideo()
 {    
-}
-
-GearGui *Gear_TV::createGearGui(QGraphicsScene *scene)
-{    
-  return new GearGui_TV(this, scene);
 }
 

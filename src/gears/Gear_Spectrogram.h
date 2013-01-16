@@ -29,7 +29,7 @@ class Gear_Spectrogram : public Gear
 {
 public:
 
-  Gear_Spectrogram(Schema *schema, QString uniqueName);
+  Gear_Spectrogram();
   virtual ~Gear_Spectrogram();
   
   void runVideo();

@@ -21,7 +21,7 @@
 #define GEAR_INCLUDED
 
 #include <qobject.h>
-
+#include "Properties.h"
 #include "Engine.h"
 
 #include "Timing.h"
@@ -125,6 +125,7 @@ protected:
   void deletePlug(AbstractPlug *plug);
 
   Schema *_parentSchema;
+  Properties _settings;
 
   QList<AbstractPlug*> _plugs;
 

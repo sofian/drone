@@ -27,21 +27,15 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Rescale(schema, uniqueName);
+  return new Gear_Rescale();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Rescale";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Rescale::Gear_Rescale(Schema *schema, QString uniqueName) : Gear(schema, "Rescale", uniqueName)
+Gear_Rescale::Gear_Rescale() : Gear("Rescale")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT",true ));

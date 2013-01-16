@@ -26,24 +26,18 @@
 #include <string>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_StringSource(schema, uniqueName);
+  return new Gear_StringSource();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "StringSource";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
 const QString Gear_StringSource::SETTING_STRING = "Source";
 
-Gear_StringSource::Gear_StringSource(Schema *schema, QString uniqueName) : 
-  Gear(schema, "StringSource", uniqueName)
+Gear_StringSource::Gear_StringSource() : 
+  Gear("StringSource")
 {
   addPlug(_STR_OUT = new PlugOut<StringType>(this, "str", false, new StringType("aaa")));
   _settings.add(Property::FILENAME, SETTING_STRING)->valueStr("");

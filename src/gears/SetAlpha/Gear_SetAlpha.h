@@ -30,7 +30,7 @@ class Gear_SetAlpha : public Gear
 {
 public:
 
-  Gear_SetAlpha(Schema *schema, QString uniqueName);
+  Gear_SetAlpha();
   virtual ~Gear_SetAlpha();
 
   void runVideo();

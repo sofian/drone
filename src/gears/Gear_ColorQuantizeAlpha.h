@@ -40,7 +40,7 @@ class PlugSignal;
 class Gear_ColorQuantizeAlpha : public Gear  
 {
 public:
-  Gear_ColorQuantizeAlpha(Schema *schema, QString uniqueName);
+  Gear_ColorQuantizeAlpha();
   virtual ~Gear_ColorQuantizeAlpha();
 
   void runVideo();

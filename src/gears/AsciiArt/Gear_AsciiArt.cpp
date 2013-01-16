@@ -31,22 +31,16 @@ aa_hardware_params _aaHDParams;
 aa_renderparams *_aaRParams;
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AsciiArt(schema, uniqueName);
+  return new Gear_AsciiArt();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AsciiArt";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AsciiArt::Gear_AsciiArt(Schema *schema, QString uniqueName) : 
-  Gear(schema, "AsciiArt", uniqueName)
+Gear_AsciiArt::Gear_AsciiArt() : 
+  Gear("AsciiArt")
 {
   //  addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOut"));
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIn"));

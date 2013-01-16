@@ -28,21 +28,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Contrast(schema, uniqueName);
+  return new Gear_Contrast();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Contrast";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Contrast::Gear_Contrast(Schema *schema, QString uniqueName) : Gear(schema, "Contrast", uniqueName)
+Gear_Contrast::Gear_Contrast() : Gear("Contrast")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

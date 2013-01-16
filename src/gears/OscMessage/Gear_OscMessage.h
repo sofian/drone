@@ -30,7 +30,7 @@
 class Gear_OscMessage : public Gear  
 {
 public:
-  Gear_OscMessage(Schema *schema, QString uniqueName);
+  Gear_OscMessage();
   virtual ~Gear_OscMessage();
 
   void runVideo();

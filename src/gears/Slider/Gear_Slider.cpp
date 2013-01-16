@@ -33,18 +33,12 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Slider(schema, uniqueName);
+  return new Gear_Slider();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Slider";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
 const float  Gear_Slider::DEFAULT_VALUE = 1.0f;
@@ -56,7 +50,7 @@ const QString Gear_Slider::SETTING_ACCEPTMIDI = "Accept Midi";
 const QString Gear_Slider::SETTING_MIDICHANNEL = "Midi Channel";
 const QString Gear_Slider::SETTING_MIDICONTROLLER = "Midi controller";
 
-Gear_Slider::Gear_Slider(Schema *schema, QString uniqueName) : GearControl(schema, "Slider", uniqueName),_acceptHint(true)
+Gear_Slider::Gear_Slider() : GearControl(schema, "Slider"),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
@@ -170,15 +164,6 @@ void Gear_Slider::runAudio()
   }
 }
 
-GearGui *Gear_Slider::createGearGui(QGraphicsScene *scene)
-{                
-  return new GearGui_Slider(this, scene);
-}
-
-Control* Gear_Slider::internalCreateControl(ControlPanel* parent)
-{
-  return new ControlSlider(this, parent);  
-}
 
 void Gear_Slider::internalSave(QDomDocument &doc, QDomElement &gearElem)
 {

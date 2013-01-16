@@ -27,21 +27,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Sobel(schema, uniqueName);
+  return new Gear_Sobel();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Sobel";
-  gearInfo.classification = GearClassifications::video().featureExtraction().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Sobel::Gear_Sobel(Schema *schema, QString uniqueName) : Gear(schema, "Sobel", uniqueName)
+Gear_Sobel::Gear_Sobel() : Gear("Sobel")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

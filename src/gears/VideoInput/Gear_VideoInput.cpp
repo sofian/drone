@@ -41,18 +41,12 @@
 
 
 extern "C" {
-  Gear* makeGear(Schema *schema, QString uniqueName)
+  Gear* makeGear()
   {
-    return new Gear_VideoInput(schema, uniqueName);
+    return new Gear_VideoInput();
   }
 
-  GearInfo getGearInfo()
-  {
-    GearInfo gearInfo;
-    gearInfo.name = "VideoInput";
-    gearInfo.classification = GearClassifications::video().IO().instance();
-    return gearInfo;
-  }
+  
 }
 
 const QString Gear_VideoInput::SETTING_DEVICE = "Device";
@@ -64,7 +58,7 @@ const int Gear_VideoInput::DEFAULT_HEIGHT = 480;
 std::list<QString> Gear_VideoInput::_lockedDevices;
 
 
-Gear_VideoInput::Gear_VideoInput(Schema *schema, QString uniqueName) : Gear(schema, "VideoInput", uniqueName),
+Gear_VideoInput::Gear_VideoInput() : Gear("VideoInput"),
 _sizeX(0),
 _sizeY(0),
 _device(0),

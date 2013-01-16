@@ -27,7 +27,7 @@
 class Gear_ValueClamp : public Gear  
 {
 public:
-  Gear_ValueClamp(Schema *schema, QString uniqueName);
+  Gear_ValueClamp();
   virtual ~Gear_ValueClamp();
 
   void runVideo();

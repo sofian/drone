@@ -28,7 +28,7 @@ Register_Gear(MAKERGear_AudioSource, Gear_AudioSource, "AudioSource");
 
 const QString Gear_AudioSource::SETTING_FILENAME = "Filename";
 
-Gear_AudioSource::Gear_AudioSource(Schema *schema, QString uniqueName) : Gear(schema, "AudioSource", uniqueName),
+Gear_AudioSource::Gear_AudioSource() : Gear("AudioSource"),
 _File(NULL)
 {        
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));       

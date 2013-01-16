@@ -25,22 +25,15 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaCreate(schema, uniqueName);
+  return new Gear_AreaCreate();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaCreate";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
 }
 
 
-Gear_AreaCreate::Gear_AreaCreate(Schema *schema, QString uniqueName) : Gear(schema, "AreaCreate", uniqueName)
+Gear_AreaCreate::Gear_AreaCreate() : Gear("AreaCreate")
 {
   addPlug(_H_POSITION_IN = new PlugIn<ValueType>(this, "X", false, new ValueType(0, 0, 352)));
   addPlug(_V_POSITION_IN = new PlugIn<ValueType>(this, "Y", false, new ValueType(0, 0, 288)));

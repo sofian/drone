@@ -52,7 +52,7 @@ class Gear_VideoMix : public Gear
     ADD,
     SUBTRACT,
     DIFFERENCE,
-    //    DISSOLVE, // XXX trop de paramètres, faire dans une gear differente
+    //    DISSOLVE, // XXX trop de paramï¿½tres, faire dans une gear differente
     //    REPLACE,  // XXX idem
     SCALE,
     N_VIDEOMIX_TYPES
@@ -60,7 +60,7 @@ class Gear_VideoMix : public Gear
 
 public:
 
-  Gear_VideoMix(Schema *schema, std::string uniqueName);
+  Gear_VideoMix();
   virtual ~Gear_VideoMix();
 
   void runVideo();

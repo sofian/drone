@@ -27,25 +27,19 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Enveloppe(schema, uniqueName);
+  return new Gear_Enveloppe();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Enveloppe";
-  gearInfo.classification = GearClassifications::signal().enveloppe().instance();
-  return gearInfo;
-}
+
 }
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_Enveloppe::Gear_Enveloppe(Schema *schema, QString uniqueName) : Gear(schema, "Enveloppe", uniqueName)
+Gear_Enveloppe::Gear_Enveloppe() : Gear("Enveloppe")
 {    
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true));
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));

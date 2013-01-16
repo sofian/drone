@@ -30,22 +30,16 @@
 const QString Gear_ImageSequence::SETTING_FILENAME = "Filename";
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageSequence(schema, uniqueName);
+  return new Gear_ImageSequence();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageSequence";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ImageSequence::Gear_ImageSequence(Schema *schema, QString uniqueName) : 
-  Gear(schema, "ImageSequence", uniqueName),
+Gear_ImageSequence::Gear_ImageSequence() : 
+  Gear("ImageSequence"),
   _current(0),
   _nFramesCurrent(0)
 {

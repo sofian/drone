@@ -30,7 +30,7 @@ class Gear_AudioSource : public Gear
 public:
   static const QString SETTING_FILENAME;
 
-  Gear_AudioSource(Schema *schema, QString uniqueName);
+  Gear_AudioSource();
   virtual ~Gear_AudioSource();
 
   void runAudio();

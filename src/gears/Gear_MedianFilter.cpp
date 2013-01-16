@@ -27,7 +27,7 @@
 
 Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 
-Gear_MedianFilter::Gear_MedianFilter(Schema *schema, QString uniqueName) : Gear(schema, "MedianFilter", uniqueName)
+Gear_MedianFilter::Gear_MedianFilter() : Gear("MedianFilter")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

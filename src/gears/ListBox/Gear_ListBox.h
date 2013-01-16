@@ -31,7 +31,7 @@ public:
   static const QString SETTING_NELEMS;
   static const QString SETTING_LABELS; // XXX temporary hack to save labels
 
-  Gear_ListBox(Schema *schema, QString uniqueName);
+  Gear_ListBox();
   virtual ~Gear_ListBox();
 
   void runAudio();

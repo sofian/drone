@@ -41,7 +41,7 @@ class Gear_AlphaMix : public Gear
 
 public:
 
-  Gear_AlphaMix(Schema *schema, QString uniqueName);
+  Gear_AlphaMix();
   virtual ~Gear_AlphaMix();
 
   void runVideo();

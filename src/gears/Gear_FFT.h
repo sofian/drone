@@ -12,7 +12,7 @@ class CircularBuffer;
 class Gear_FFT : public Gear
 {
 public:
-  Gear_FFT(Schema *schema, QString uniqueName);
+  Gear_FFT();
   virtual ~Gear_FFT();
 
   bool ready();  

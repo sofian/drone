@@ -25,21 +25,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaVideoReplace(schema, uniqueName);
+  return new Gear_AreaVideoReplace();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaVideoReplace";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaVideoReplace::Gear_AreaVideoReplace(Schema *schema, QString uniqueName) : Gear(schema, "AreaVideoReplace", uniqueName)
+Gear_AreaVideoReplace::Gear_AreaVideoReplace() : Gear("AreaVideoReplace")
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoOut", true));
 

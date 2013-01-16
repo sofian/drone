@@ -37,7 +37,7 @@ public:
   static const QString SETTING_NB_BUFFERS;
 //
 
-  Gear_AudioOutput(Schema *schema, QString uniqueName);
+  Gear_AudioOutput();
   virtual ~Gear_AudioOutput();
 
   void runAudio();    

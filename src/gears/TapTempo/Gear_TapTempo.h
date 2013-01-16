@@ -28,7 +28,7 @@
 class Gear_TapTempo : public Gear  
 {
 public:
-  Gear_TapTempo(Schema *schema, QString uniqueName);
+  Gear_TapTempo();
   virtual ~Gear_TapTempo();
 
   void runVideo();

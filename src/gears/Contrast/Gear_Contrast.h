@@ -30,7 +30,7 @@ class Gear_Contrast : public Gear
 {
 public:
 
-  Gear_Contrast(Schema *schema, QString uniqueName);
+  Gear_Contrast();
   virtual ~Gear_Contrast();
 
   void runVideo();

@@ -40,7 +40,7 @@ public:
     N_PLAYBACK_MODE
   };
 
-  Gear_VideoLoop(Schema *schema, QString uniqueName);
+  Gear_VideoLoop();
   virtual ~Gear_VideoLoop();
 
   void runVideo();

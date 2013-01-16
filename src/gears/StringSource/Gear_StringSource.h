@@ -31,7 +31,7 @@ public:
 public:
   static const QString SETTING_STRING;
 
-  Gear_StringSource(Schema *schema, QString uniqueName);
+  Gear_StringSource();
   virtual ~Gear_StringSource();
 
   void runVideo();

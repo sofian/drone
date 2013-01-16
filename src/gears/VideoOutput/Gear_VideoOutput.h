@@ -30,7 +30,7 @@ class Gear_VideoOutput : public Gear
 {
 public:
 
-  Gear_VideoOutput(Schema *schema, QString uniqueName);
+  Gear_VideoOutput();
   virtual ~Gear_VideoOutput();
 
   void runVideo();

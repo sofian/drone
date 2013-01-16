@@ -33,21 +33,15 @@ const QString Gear_SVGLoader::SETTING_FILENAME = "Filename";
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_SVGLoader(schema, uniqueName);
+  return new Gear_SVGLoader();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "SVGLoader";
-  gearInfo.classification = GearClassifications::video().vectorial().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_SVGLoader::Gear_SVGLoader(Schema *schema, QString uniqueName) : Gear(schema, "SVGLoader", uniqueName)
+Gear_SVGLoader::Gear_SVGLoader() : Gear("SVGLoader")
 {
   addPlug(_VEC_OUT = new PlugOut<VectorialType>(this, "VecOUT",false));
   _settings.add(Property::FILENAME, SETTING_FILENAME)->valueStr("");    

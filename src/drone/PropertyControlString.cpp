@@ -28,11 +28,11 @@ PropertyControlString::PropertyControlString(QWidget *parent, Property *property
 PropertyControl(parent, property)
 {
   _hLayout = new Q3HBoxLayout(this, 2);    
-  _hLayout->addWidget(new QLabel(property->name().c_str(), this, ""));
+  _hLayout->addWidget(new QLabel(property->name(), this, ""));
   _lineEdit = new QLineEdit(this);
   _hLayout->addWidget(_lineEdit);
 
-  _lineEdit->setText(property->valueStr().c_str());
+  _lineEdit->setText(property->valueStr());
 }
 
 PropertyControlString::~PropertyControlString()
@@ -41,7 +41,7 @@ PropertyControlString::~PropertyControlString()
 
 void PropertyControlString::save()
 {
-  _property->valueStr(_lineEdit->text().ascii());
+  _property->valueStr(_lineEdit->text());
 }
 
 

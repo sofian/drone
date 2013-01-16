@@ -30,7 +30,7 @@
 
 Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 
-Gear_FaceTrack::Gear_FaceTrack(Schema *schema, QString uniqueName) : Gear(schema, "FaceTrack", uniqueName),
+Gear_FaceTrack::Gear_FaceTrack() : Gear("FaceTrack"),
                                                                    _pCascadeFeatures(0),
                                                                    _threshold(0),
                                                                    _deltaS(2)

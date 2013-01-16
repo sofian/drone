@@ -30,7 +30,7 @@ class Gear_InvertAlpha : public Gear
 {
 public:
 
-  Gear_InvertAlpha(Schema *schema, QString uniqueName);
+  Gear_InvertAlpha();
   virtual ~Gear_InvertAlpha();
 
   void runVideo();

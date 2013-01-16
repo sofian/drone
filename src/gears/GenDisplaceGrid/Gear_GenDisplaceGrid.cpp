@@ -26,21 +26,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_GenDisplaceGrid(schema, uniqueName);
+  return new Gear_GenDisplaceGrid();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "GenDisplaceGrid";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_GenDisplaceGrid::Gear_GenDisplaceGrid(Schema *schema, QString uniqueName) : Gear(schema, "GenDisplaceGrid", uniqueName)
+Gear_GenDisplaceGrid::Gear_GenDisplaceGrid() : Gear("GenDisplaceGrid")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", false));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID", true));

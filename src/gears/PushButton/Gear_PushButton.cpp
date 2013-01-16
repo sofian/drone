@@ -29,18 +29,12 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_PushButton(schema, uniqueName);
+  return new Gear_PushButton();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "PushButton";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
 const QString Gear_PushButton::SETTING_OFFVALUE = "Off Value";
@@ -51,8 +45,8 @@ const QString Gear_PushButton::SETTING_ACCEPTMIDI = "Accept Midi";
 const QString Gear_PushButton::SETTING_MIDICHANNEL = "Midi Channel";
 const QString Gear_PushButton::SETTING_MIDINOTE = "Midi Note";
 
-Gear_PushButton::Gear_PushButton(Schema *schema, QString uniqueName) : 
-  GearControl(schema, "PushButton", uniqueName),_acceptHint(true)
+Gear_PushButton::Gear_PushButton() : 
+  GearControl(schema, "PushButton"),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));

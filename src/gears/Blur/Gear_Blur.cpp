@@ -27,21 +27,15 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Blur(schema, uniqueName);
+  return new Gear_Blur();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Blur";
-  gearInfo.classification = GearClassifications::video().blur().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Blur::Gear_Blur(Schema *schema, QString uniqueName) : Gear(schema, "Blur", uniqueName)
+Gear_Blur::Gear_Blur() : Gear("Blur")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

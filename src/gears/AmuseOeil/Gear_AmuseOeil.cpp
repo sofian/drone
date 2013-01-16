@@ -29,22 +29,14 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AmuseOeil(schema, uniqueName);
+  return new Gear_AmuseOeil();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AmuseOeil";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
 }
-
-
-Gear_AmuseOeil::Gear_AmuseOeil(Schema *schema, QString uniqueName) : 
-  Gear(schema, "AmuseOeil", uniqueName)
+Gear_AmuseOeil::Gear_AmuseOeil() : 
+  Gear("AmuseOeil")
 {
   addPlug(_P1_IN = new PlugIn<ValueType>(this, "P1", new ValueType(6, 0, 16)));
   addPlug(_FRIC_IN = new PlugIn<ValueType>(this, "FRIC", new ValueType(.1, 0, 1)));
@@ -314,5 +306,5 @@ void Gear_AmuseOeil::runVideo()
 
 
 }
-}
+
 

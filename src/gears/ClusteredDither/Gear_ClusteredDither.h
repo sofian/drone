@@ -37,7 +37,7 @@
  * (see http://www.cl.cam.ac.uk/~and1000/newsprint/index.html). It simulates a dot
  * matrix printer.
  *
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sï¿½bastien Senï¿½cal
  * version %I% %G%
  */
 
@@ -55,7 +55,7 @@ class Gear_ClusteredDither : public Gear
 
 public:
   //! Default constructor.
-  Gear_ClusteredDither(Schema *schema, std::string uniqueName);
+  Gear_ClusteredDither();
 
   // Destructor.
   virtual ~Gear_ClusteredDither();

@@ -26,23 +26,17 @@
 #include "GearMaker.h"
 
 extern "C" {           
-  Gear* makeGear(Schema *schema, QString uniqueName)
+  Gear* makeGear()
   {
-    return new Gear_VideoSource(schema, uniqueName);
+    return new Gear_VideoSource();
   }  
-  GearInfo getGearInfo()
-  {
-    GearInfo gearInfo;
-    gearInfo.name = "VideoSource";
-    gearInfo.classification = GearClassifications::video().IO().instance();
-    return gearInfo;
-  }
+  
 }
 
 const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
 
-Gear_VideoSource::Gear_VideoSource(Schema *schema, QString uniqueName) : 
-Gear(schema, "VideoSource", uniqueName),
+Gear_VideoSource::Gear_VideoSource() : 
+Gear("VideoSource"),
 _currentMovie(""),
 _formatContext(NULL),
 _codecContext(NULL),
@@ -58,7 +52,7 @@ _movieReady(false)
 
   addPlug(_FINISH_OUT = new PlugOut<ValueType>(this, "FinishOut", false));
   
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
   atLeastOneOfThem.push_back(_AUDIO_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);
@@ -102,12 +96,12 @@ void Gear_VideoSource::freeResources()
 
 bool Gear_VideoSource::loadMovie(QString filename)
 {
-  std::cout << "opening movie : " << filename << std::endl;
+  std::cout << "opening movie : " << filename.latin1() << std::endl;
 
   //free previously allocated structures
   freeResources();
 
-  if (avformat_open_input(&_formatContext, filename.c_str(), NULL,  NULL)<0)
+  if (avformat_open_input(&_formatContext, filename.latin1(), NULL,  NULL)<0)
   {
     std::cout << "fail to open movie!" << std::endl;
     return false;
@@ -119,7 +113,7 @@ bool Gear_VideoSource::loadMovie(QString filename)
     return false;
   }
 
-  av_dump_format(_formatContext, 0, filename.c_str(), 0);
+  av_dump_format(_formatContext, 0, filename.latin1(), 0);
 
   _videoStreamIndex=-1;
   for (int i=0; i<_formatContext->nb_streams; i++)

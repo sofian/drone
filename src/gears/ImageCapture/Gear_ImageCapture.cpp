@@ -35,22 +35,16 @@ const QString Gear_ImageCapture::FORMAT_EXTENSION = "png";
 const QString Gear_ImageCapture::DEFAULT_FILENAME = "droneImgCapture";
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageCapture(schema, uniqueName);
+  return new Gear_ImageCapture();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageCapture";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ImageCapture::Gear_ImageCapture(Schema *schema, QString uniqueName) : 
-  Gear(schema, "ImageCapture", uniqueName)  
+Gear_ImageCapture::Gear_ImageCapture() : 
+  Gear("ImageCapture")  
 {
   // Inputs.
   addPlug(_CAPTURE_IN = new PlugIn<ValueType>(this, "Go", false, new ValueType(0, 0, 0)));

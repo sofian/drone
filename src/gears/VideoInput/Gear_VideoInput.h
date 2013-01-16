@@ -47,7 +47,7 @@ public:
   static const int DEFAULT_HEIGHT;
 
 
-  Gear_VideoInput(Schema *schema, QString uniqueName);
+  Gear_VideoInput();
   virtual ~Gear_VideoInput();
 
   void runVideo();  

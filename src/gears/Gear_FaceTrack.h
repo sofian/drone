@@ -43,7 +43,7 @@ class Gear_FaceTrack : public Gear
 {
 public:
 
-  Gear_FaceTrack(Schema *schema, QString uniqueName);
+  Gear_FaceTrack();
   virtual ~Gear_FaceTrack();
 
   

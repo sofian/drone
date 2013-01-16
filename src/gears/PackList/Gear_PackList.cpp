@@ -24,22 +24,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_PackList(schema, uniqueName);
+  return new Gear_PackList();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "PackList";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_PackList::Gear_PackList(Schema *schema, QString uniqueName) : 
-  Gear(schema, "PackList", uniqueName)
+Gear_PackList::Gear_PackList() : 
+  Gear("PackList")
 {
 
   addPlug(_STR1 = new PlugIn<AbstractType>(this, "Str1", true));

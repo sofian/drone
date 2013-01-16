@@ -38,7 +38,7 @@ public:
   static const QString SETTING_MIDICHANNEL;
   static const QString SETTING_MIDINOTE;
 
-  Gear_PushButton(Schema *schema, QString uniqueName);
+  Gear_PushButton();
   virtual ~Gear_PushButton();
 
   void runVideo();

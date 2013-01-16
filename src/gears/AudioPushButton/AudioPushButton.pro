@@ -1,8 +1,8 @@
 include (../../../config.pro)
 
 TEMPLATE=lib
-SOURCES+=Gear_AudioPushButton.cpp GearGui_AudioPushButton.cpp
-HEADERS+=Gear_AudioPushButton.h GearGui_AudioPushButton.h
+SOURCES+=Gear_AudioPushButton.cpp #GearGui_AudioPushButton.cpp
+HEADERS+=Gear_AudioPushButton.h #GearGui_AudioPushButton.h
 INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
@@ -14,3 +14,4 @@ macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_AudioPushButton
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 
+QT += xml  qt3support canvas

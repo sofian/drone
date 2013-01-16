@@ -29,21 +29,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_GrayScale(schema, uniqueName);
+  return new Gear_GrayScale();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "GrayScale";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_GrayScale::Gear_GrayScale(Schema *schema, QString uniqueName) : Gear(schema, "GrayScale", uniqueName)
+Gear_GrayScale::Gear_GrayScale() : Gear("GrayScale")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this,"ImgOUT", false));

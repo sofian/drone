@@ -29,25 +29,19 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ListBox(schema, uniqueName);
+  return new Gear_ListBox();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ListBox";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
 const QString Gear_ListBox::SETTING_NELEMS = "Number of elements";
 const QString Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
-Gear_ListBox::Gear_ListBox(Schema *schema, QString uniqueName) : 
-  GearControl(schema, "ListBox", uniqueName),_acceptHint(true)
+Gear_ListBox::Gear_ListBox() : 
+  GearControl(schema, "ListBox"),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value", true));
 

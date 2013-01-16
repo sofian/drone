@@ -25,22 +25,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_KDTree(schema, uniqueName);
+  return new Gear_KDTree();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "KDTree";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
-: Gear(schema, "KDTree", uniqueName)
+Gear_KDTree::Gear_KDTree()
+: Gear("KDTree")
 {
   // Inputs.
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
@@ -55,7 +49,7 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, false, "ImgOUT"));
   addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, false, "Segm"));
   
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
   atLeastOneOfThem.push_back(_AREA_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);
@@ -177,7 +171,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, mid, y1);
         if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
-          lower = mid+1; // look right //*** attention risque d'erreur : vérifier
+          lower = mid+1; // look right //*** attention risque d'erreur : vï¿½rifier
         else
           upper = mid;  // look left
       }
@@ -205,7 +199,7 @@ void Gear_KDTree::split(int x0, int x1, int y0, int y1, int depth, bool hSplit)
         /// XXX pas besoin de "area" ici, il faut du code separe getSumAndArea dans SummedAreaTable...
         _table->getSum(rgba, area, x0minus1, y0minus1, x1, mid);
         if (intensity(rgba[0], rgba[1], rgba[2]) < cut)
-          lower = mid+1; // look up //*** attention risque d'erreur : vérifier
+          lower = mid+1; // look up //*** attention risque d'erreur : vï¿½rifier
         else
           upper = mid;  // look down
       }

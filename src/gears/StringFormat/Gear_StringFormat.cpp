@@ -26,22 +26,16 @@
 #include <stdio.h>
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_StringFormat(schema, uniqueName);
+  return new Gear_StringFormat();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "StringFormat";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_StringFormat::Gear_StringFormat(Schema *schema, QString uniqueName) : 
-  Gear(schema, "StringFormat", uniqueName)
+Gear_StringFormat::Gear_StringFormat() : 
+  Gear("StringFormat")
 {
   addPlug(_FORMAT = new PlugIn<StringType>(this, "Format", true));
   addPlug(_PARAMS = new PlugIn<ListType>(this, "Params", false));

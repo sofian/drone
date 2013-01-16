@@ -41,7 +41,7 @@ class Gear_SVGLoader : public Gear
 {
 public:
 
-  Gear_SVGLoader(Schema *schema, QString uniqueName);
+  Gear_SVGLoader();
   virtual ~Gear_SVGLoader();
 
   void runVideo();

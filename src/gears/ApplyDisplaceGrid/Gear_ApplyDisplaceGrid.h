@@ -30,7 +30,7 @@ class Gear_ApplyDisplaceGrid : public Gear
 {
 public:
 
-  Gear_ApplyDisplaceGrid(Schema *schema, QString uniqueName);
+  Gear_ApplyDisplaceGrid();
   virtual ~Gear_ApplyDisplaceGrid();
 
   void runVideo();

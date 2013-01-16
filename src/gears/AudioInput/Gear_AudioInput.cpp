@@ -25,19 +25,12 @@
 #include "ThreadUtil.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AudioInput(schema, uniqueName);
+  return new Gear_AudioInput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AudioInput";
-  gearInfo.classification = GearClassifications::signal().IO().instance();
 
-  return gearInfo;
-}
 }
 
 //const int Gear_AudioInput::DEFAULT_FRAMES_PER_BUFFER=Engine::signalInfo().blockSize();
@@ -46,8 +39,8 @@ const int Gear_AudioInput::DEFAULT_NB_BUFFERS=0;//auto
 const QString Gear_AudioInput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
 const QString Gear_AudioInput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioInput::Gear_AudioInput(Schema *schema, QString uniqueName) : 
-  Gear(schema, "AudioInput", uniqueName),
+Gear_AudioInput::Gear_AudioInput() : 
+  Gear("AudioInput"),
   _stream(0),
   _ringBufferSize(Engine::signalInfo().blockSize() ),
   _lBuffer(),

@@ -37,7 +37,7 @@ public:
   static const QString SETTING_MIDICHANNEL;
   static const QString SETTING_MIDICONTROLLER;
 
-  Gear_Slider(Schema *schema, QString uniqueName);
+  Gear_Slider();
   virtual ~Gear_Slider();
 
   void runAudio();
@@ -50,8 +50,6 @@ protected:
   void internalSave(QDomDocument &doc, QDomElement &gearElem);
   void internalLoad(QDomElement &gearElem);
 
-  GearGui* createGearGui(QGraphicsScene *scene);//we want a slider so we overload
-  Control* internalCreateControl(ControlPanel *parent);
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);

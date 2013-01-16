@@ -27,22 +27,16 @@
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_EmptyImage(schema, uniqueName);
+  return new Gear_EmptyImage();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "EmptyImage";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_EmptyImage::Gear_EmptyImage(Schema *schema, QString uniqueName) : 
-  Gear(schema, "EmptyImage", uniqueName)
+Gear_EmptyImage::Gear_EmptyImage() : 
+  Gear("EmptyImage")
 {
   // Inputs.
   addPlug(_XSIZE = new PlugIn<ValueType>(this, "xsize", false, new ValueType(320, 0, 720)));

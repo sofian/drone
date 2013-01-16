@@ -46,7 +46,7 @@ private:
   QLineEdit *_lineEdit;
   QPushButton *_browseButton;
   bool _multiple;
-  std::vector<std::string> _values;
+  QStringList _values;
 
 
 };

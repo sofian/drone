@@ -24,22 +24,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_RandomValue(schema, uniqueName);
+  return new Gear_RandomValue();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "RandomValue";
-  gearInfo.classification = GearClassifications::unclassified().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_RandomValue::Gear_RandomValue(Schema *schema, QString uniqueName) : 
-  Gear(schema, "RandomValue", uniqueName)
+Gear_RandomValue::Gear_RandomValue() : 
+  Gear("RandomValue")
 {
   addPlug(_NEXT = new PlugIn<ValueType>(this, "Next", false, new ValueType(1, 0, 1)));
   addPlug(_NUMBER = new PlugOut<ValueType>(this, "Rand", true));

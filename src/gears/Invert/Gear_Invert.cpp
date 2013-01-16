@@ -28,22 +28,16 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Invert(schema, uniqueName);
+  return new Gear_Invert();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Invert";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Invert::Gear_Invert(Schema *schema, QString uniqueName) : 
-  Gear(schema, "Invert", uniqueName)
+Gear_Invert::Gear_Invert() : 
+  Gear("Invert")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

@@ -33,7 +33,7 @@
 class Gear_UnpackList : public Gear  
 {
 public:
-  Gear_UnpackList(Schema *schema, QString uniqueName);
+  Gear_UnpackList();
   virtual ~Gear_UnpackList();
 
   void runVideo();

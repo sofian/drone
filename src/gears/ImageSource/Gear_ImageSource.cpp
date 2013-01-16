@@ -29,22 +29,16 @@
 const QString Gear_ImageSource::SETTING_FILENAME = "Filename";
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageSource(schema, uniqueName);
+  return new Gear_ImageSource();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageSource";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ImageSource::Gear_ImageSource(Schema *schema, QString uniqueName) : 
-  Gear(schema, "ImageSource", uniqueName),
+Gear_ImageSource::Gear_ImageSource() : 
+  Gear("ImageSource"),
   _current(0)
 {
   // Inputs.

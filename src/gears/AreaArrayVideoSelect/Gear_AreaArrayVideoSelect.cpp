@@ -25,21 +25,15 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaArrayVideoSelect(schema, uniqueName);
+  return new Gear_AreaArrayVideoSelect();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaArrayVideoSelect";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaArrayVideoSelect::Gear_AreaArrayVideoSelect(Schema *schema, QString uniqueName) : Gear(schema, "AreaArrayVideoSelect", uniqueName)
+Gear_AreaArrayVideoSelect::Gear_AreaArrayVideoSelect() : Gear("AreaArrayVideoSelect")
 {    
   addPlug(_VIDEO_LIST_OUT = new PlugOut<ListType>(this, "VideoList", true));
   addPlug(_SELECT_IN = new PlugIn<AreaArrayType>(this, "Select", true));

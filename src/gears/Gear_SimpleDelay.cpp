@@ -33,7 +33,7 @@ Register_Gear(MAKERGear_SimpleDelay, Gear_SimpleDelay, "SimpleDelay")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_SimpleDelay::Gear_SimpleDelay(Schema *schema, QString uniqueName) : Gear(schema, "SimpleDelay", uniqueName)
+Gear_SimpleDelay::Gear_SimpleDelay() : Gear("SimpleDelay")
 {
   addPlug(_PARAM_FEEDBACK = new PlugIn<SignalType>(this, "Feedback", false, new SignalType(0.3f)));
   addPlug(_PARAM_TIME = new PlugIn<SignalType>(this, "Time", false, new SignalType(0.3f)));

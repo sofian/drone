@@ -30,7 +30,7 @@ class Gear_Rescale : public Gear
 {
 public:
 
-  Gear_Rescale(Schema *schema, QString uniqueName);
+  Gear_Rescale();
   virtual ~Gear_Rescale();
 
   void runVideo();

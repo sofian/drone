@@ -27,22 +27,16 @@
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_StringOutput(schema, uniqueName);
+  return new Gear_StringOutput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "StringOutput";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_StringOutput::Gear_StringOutput(Schema *schema, QString uniqueName) : 
-	Gear(schema, "StringOutput", uniqueName)
+Gear_StringOutput::Gear_StringOutput() : 
+	Gear("StringOutput")
 {
   addPlug(_STRING_IN = new PlugIn<StringType>(this, "String", true));
   addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "Value", true));
@@ -74,9 +68,4 @@ QString Gear_StringOutput::getString()
     return _STRING_IN->type()->value();
 }
 
-
-GearGui *Gear_StringOutput::createGearGui(QGraphicsScene *scene)
-{    
-  return new GearGui_StringOutput(this, scene);
-}
 

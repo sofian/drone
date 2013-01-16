@@ -24,22 +24,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_OscFilter(schema, uniqueName);
+  return new Gear_OscFilter();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "OscFilter";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_OscFilter::Gear_OscFilter(Schema *schema, QString uniqueName) : 
-	Gear(schema, "OscFilter", uniqueName)
+Gear_OscFilter::Gear_OscFilter() : 
+	Gear("OscFilter")
 {
 	addPlug(_OSC_IN = new PlugIn<OscMessageType>(this, "Osc In", true));
 	addPlug(_PATH_IN = new PlugIn<StringType>(this, "path", false, new StringType("/")));

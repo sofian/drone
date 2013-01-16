@@ -23,22 +23,16 @@
 #include "GearMaker.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, QString uniqueName)
+Gear* makeGear()
 {
-  return new Gear_FlatSignal(schema, uniqueName);
+  return new Gear_FlatSignal();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "FlatSignal";
-  gearInfo.classification = GearClassifications::signal().transform().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_FlatSignal::Gear_FlatSignal(Schema *schema, QString uniqueName)
-  : GearConverter<ValueType, SignalType>(schema, "FlatSignal", uniqueName)
+Gear_FlatSignal::Gear_FlatSignal()
+  : GearConverter<ValueType, SignalType>(schema, "FlatSignal")
 {
   _PLUG_IN->hintType()->setValue(0.0f);
   _PLUG_IN->hintType()->setMinValue(-1.0f);
