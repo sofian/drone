@@ -32,7 +32,7 @@ Gear* makeGear()
 }
 
 Gear_FlatSignal::Gear_FlatSignal()
-  : GearConverter<ValueType, SignalType>(schema, "FlatSignal")
+  : GearConverter<ValueType, SignalType>("FlatSignal")
 {
   _PLUG_IN->hintType()->setValue(0.0f);
   _PLUG_IN->hintType()->setMinValue(-1.0f);

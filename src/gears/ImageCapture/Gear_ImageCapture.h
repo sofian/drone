@@ -33,7 +33,7 @@ public:
   static const QString FORMAT_EXTENSION;
   static const QString DEFAULT_FILENAME;
 
-  Gear_ImageCapture(Schema *schema, QString name);
+  Gear_ImageCapture();
   virtual ~Gear_ImageCapture();
 
   void runVideo();

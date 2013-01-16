@@ -29,7 +29,7 @@
  * This class implements Xiaolin Wu's color quantizer. The code was taken from his website
  * (see http://www.ece.mcmaster.ca/~xwu/cq.c).
  *
- * @author Jean-Sébastien Senécal, Xiaolin Wu
+ * @author Jean-Sï¿½bastien Senï¿½cal, Xiaolin Wu
  * @version %I% %G%
  */
 class Gear_ColorQuantize : public Gear  
@@ -39,7 +39,7 @@ class Gear_ColorQuantize : public Gear
 
 public:
   //! Default constructor.
-  Gear_ColorQuantize(Schema *schema, std::string uniqueName);
+  Gear_ColorQuantize();
 
   //! Destructor.
   virtual ~Gear_ColorQuantize();

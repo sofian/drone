@@ -20,7 +20,6 @@
 #ifndef GEARGUI_LISTBOX_INCLUDED
 #define GEARGUI_LISTBOX_INCLUDED
 
-#include "GearGui.h"
 
 
 #include <QGraphicsScene.h>

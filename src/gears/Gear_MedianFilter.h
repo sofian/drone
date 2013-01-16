@@ -31,14 +31,14 @@
  * the which is based on the algorithm described in "Numerical recipies in C", Second Edition,
  * Cambridge University Press, 1992, Section 8.5, ISBN 0-521-43108-5.
  * 
- * @author Jean-Sébastien Senécal, Nicolas Devillard
+ * @author Jean-Sï¿½bastien Senï¿½cal, Nicolas Devillard
  * @version %I% %G%
  */
 class Gear_MedianFilter : public Gear
 {
 public:
   //! Default constructor.
-  Gear_MedianFilter(Schema *schema, std::string uniqueName);
+  Gear_MedianFilter();
 
   // Destructor.
   virtual ~Gear_MedianFilter();

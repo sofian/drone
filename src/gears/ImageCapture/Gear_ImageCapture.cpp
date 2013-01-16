@@ -78,7 +78,7 @@ void Gear_ImageCapture::saveImage(const QString& filename, const VideoRGBAType *
     baseFilename = DEFAULT_FILENAME;
    
   //remove extension from basefilename if already there
-  if (baseFilename.find(FORMAT_EXTENSION.c_str(), baseFilename.size()-FORMAT_EXTENSION.size())!=QString::npos)  
+  if (baseFilename.find(FORMAT_EXTENSION, baseFilename.size()-FORMAT_EXTENSION.size())!=QString::npos)  
     baseFilename = baseFilename.substr(baseFilename.size()-FORMAT_EXTENSION.size(), baseFilename.size());
         
   //already exist? find unique name
@@ -86,7 +86,7 @@ void Gear_ImageCapture::saveImage(const QString& filename, const VideoRGBAType *
   
   std::ostringstream oss;
   oss << baseFilename << "." << FORMAT_EXTENSION;
-  while(QFile::exists(oss.str().c_str()))
+  while(QFile::exists(oss.str()))
   {    
     oss.seekp(0);
     oss.str("");

@@ -19,7 +19,6 @@
 
 #include "Gear_ListBox.h"
 #include "GearMaker.h"
-#include "GearGui_ListBox.h"
 #include "DroneMath.h"
 
 #include "Engine.h"
@@ -41,7 +40,7 @@ const QString Gear_ListBox::SETTING_NELEMS = "Number of elements";
 const QString Gear_ListBox::SETTING_LABELS = "Labels of elements";
 
 Gear_ListBox::Gear_ListBox() : 
-  GearControl(schema, "ListBox"),_acceptHint(true)
+  Gear("ListBox"),_acceptHint(true)
 {
   addPlug(_VALUE_OUT = new PlugOut<EnumType>(this, "Value", true));
 
@@ -67,11 +66,11 @@ void Gear_ListBox::onUpdateSettings()
   setValue(getValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->rebuildLayout();
+//  getGearGui()->rebuildLayout();
 
   // XXX temporary hack to save labels, to be removed ultimately
   char str[1000];
-  strcpy(str, _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr().c_str());
+  strcpy(str, _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr());
   char *tok = strtok(str, ",");
   _labels.resize(0);
   while (tok != NULL) // parse comma-separated array
@@ -80,7 +79,7 @@ void Gear_ListBox::onUpdateSettings()
     tok = strtok (NULL, ",");
   }
   
-  std::cout << "labels : " << _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr() << std::endl;
+  std::cout << "labels : " << _settings.get(Gear_ListBox::SETTING_LABELS)->valueStr().latin1() << std::endl;
   std::cout << "value out type: " << _VALUE_OUT->type()->size() <<std::endl;
   std::cout << "label: " << _labels.size() <<std::endl;
 
@@ -136,11 +135,6 @@ void Gear_ListBox::setValue(int value)
 void Gear_ListBox::runAudio()
 {
 
-}
-
-GearGui *Gear_ListBox::createGearGui(QGraphicsScene *scene)
-{                
-  return new GearGui_ListBox(this, scene);
 }
 
 void Gear_ListBox::internalSave(QDomDocument &doc, QDomElement &gearElem)

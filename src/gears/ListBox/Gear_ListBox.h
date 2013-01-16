@@ -25,7 +25,7 @@
 
 #include <string>
 
-class Gear_ListBox : public GearControl
+class Gear_ListBox : public Gear
 {
 public:
   static const QString SETTING_NELEMS;
@@ -45,11 +45,9 @@ protected:
   void internalSave(QDomDocument &doc, QDomElement &gearElem);
   void internalLoad(QDomElement &gearElem);
 
-  GearGui* createGearGui(QGraphicsScene *scene);//we want a listbox so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug *);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug *);
-  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
   
 private:
   PlugOut<EnumType>* _VALUE_OUT;  

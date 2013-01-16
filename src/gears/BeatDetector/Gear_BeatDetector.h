@@ -35,14 +35,14 @@
  * generally as a converter from <code>ValueType</code> to <code>SignalType</code>.
  * 
  * @author Norman Casagrande
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sï¿½bastien Senï¿½cal
  * @version %I% %G%
  */
 class Gear_BeatDetector : public Gear
 {
 public:
   //! Default constructor.
-  Gear_BeatDetector(Schema *schema, std::string uniqueName);
+  Gear_BeatDetector();
 
   // Destructor.
   virtual ~Gear_BeatDetector() { /*_outTestFile.close();*/ }
