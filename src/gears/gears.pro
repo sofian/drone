@@ -23,7 +23,7 @@ AreaVideoReplace \
 #AreaArrayMask \
 #AreaArrayClip \
 #AreaArrayVideoSelect \
-AudioInput \
+#AudioInput \
 AudioOutput \
 Brightness \
 ClusteredDither \
@@ -82,9 +82,7 @@ VecAffineTrans
 
 #linux specific gears
 unix:!macx {
-#SUBDIRS += VideoInput AudioInput
 SUBDIRS += \
-#AudioInput \
 OscMessage \
 OscInput \
 OscOutput \
