@@ -21,10 +21,10 @@ unix:!macx {
 #osx
 macx {
 	INCLUDEPATH += /Library/Frameworks/GStreamer.framework/Headers
-#	LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L/opt/local/lib -lavformat -lavcodec -lavutil -lswscale -lz
+	LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L/opt/local/lib -lavformat -lavcodec -lavutil -lswscale -lz
 	LIBS+=-framework GStreamer
-	TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoSource
-	QMAKE_LFLAGS+=-read_only_relocs suppress
+	TARGET=../../../drone.app/Contents/PlugIns/Gear_AudioOutput
+#	QMAKE_LFLAGS+=-read_only_relocs suppress
 }
 
 
