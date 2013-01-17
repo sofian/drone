@@ -51,12 +51,14 @@ public:
 private:
 	static QString DRONEGEARS_SUBPATH;
 	static QString FREI0RGEARS_SUBPATH;
+	static QString CONTROLGEARS_SUBPATH;
 	static QString METAGEARS_SUBPATH;
 		
 	GearMaker();
 
   template <class T> void parseGears(QDir dir, QString extension);
 	void parseDroneGears(QDir rootDir);
+  void parseControlGears(QDir rootDir);
   void parseFrei0rGears(QDir rootDir);
   void parseMetaGears(QDir rootDir);
 	

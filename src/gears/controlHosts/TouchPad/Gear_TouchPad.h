@@ -48,11 +48,9 @@ public:
   float getVerticalValue(){return _VALUE_V_OUT->type()->value();};
 
 protected:
-  GearGui* createGearGui(QGraphicsScene *scene);//we want a slider so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
-  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO finish this
 
 private:
   PlugOut<ValueType>* _VALUE_H_OUT;

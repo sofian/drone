@@ -2,9 +2,7 @@
 
 #include "ControlPanel.h"
 
-Control::Control(Gear *gear, ControlPanel *parentControlPanel) :
-  QWidget(parentControlPanel->mainWidget()),
-  _parentControlPanel(parentControlPanel),
+Control::Control(Gear *gear) :
   _parentGear(gear)
 {
 }

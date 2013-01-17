@@ -21,6 +21,7 @@
 #include "Gear.h"   
 #include "Engine.h"
 #include "PlugBox.h"
+#include "Control.h"
 #include "ThreadUtil.h"
 #include <iostream>
 #include <sstream>
@@ -42,7 +43,7 @@ const int GearGui::CANVAS_RTTI_GEAR = 2000;
 const qreal GearGui::TITLE_BAR_HEIGHT = 14;
 // vertical space in pixels between two plugs
 
-// space between plugs and center (controller) region 
+// space between plugs and center (control) region 
 const qreal GearGui::MARGIN_SIDE = 0;
 // space to the left and right of gear name 
 const qreal GearGui::MARGIN_NAME = 5;
@@ -72,6 +73,52 @@ const QColor GearGui::SELECT_OUTLINE_BOTTOM(225, 155, 0);
 const QFont GearGui::NAME_FONT("Roboto", 10, QFont::Normal);
 
 
+ 
+GearGui::GearGui(Gear *pgear, QColor color) :
+QObject(),
+QGraphicsRectItem(),
+_gear(pgear),
+_layoutMode(normal),
+_sizeX(100),
+_sizeY(100),
+_controlWidth(0),
+_controlHeight(0),
+_boxNameColor(color)
+{
+  
+  setFlags(ItemIsSelectable | ItemIsMovable );
+  //not needed for now
+  //setAcceptsHoverEvents(true);
+  
+  //setCacheMode(DeviceCoordinateCache);
+  // specify an update rate to periodically refresh gear control (ex : GearTV)  
+  //if (updateRate>=0)
+  //  startTimer(updateRate);
+
+  rebuildLayout();
+
+  // setup drop shadow effect
+  QGraphicsDropShadowEffect* dropShadow = new QGraphicsDropShadowEffect();
+  dropShadow->setBlurRadius(20);
+  dropShadow->setOffset(SHADOW_OFFSET);
+  dropShadow->setColor(QColor(0, 0, 0, 120));
+  setGraphicsEffect(dropShadow);
+  QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(redraw()));
+
+  if(gear->getControl()!=NULL)
+    setControl(gear->getControl());
+
+}
+
+GearGui::~GearGui()
+{
+  //delete all the plugBoxes
+  //plugboxes take care of deleting connectionItems when deleted
+  //Everything is taken care of ! :)
+  removeAllPlugBoxes();
+}
+
+
 QRectF GearGui::boundingRect() const
 {
     return QRectF(-6, -2, _sizeX+12, _sizeY+4);
@@ -82,6 +129,20 @@ QPainterPath GearGui::shape() const
     QPainterPath path;
     path.addRect(0, 0, _sizeX, _sizeY);
     return path;
+}
+
+void GearGui::setControl(Control* control)
+{
+  _control=control;
+  QObject::connect(control,SIGNAL(geometryChanged()),this,SLOT(controlGeometryChanged()));
+  controlGeometryChanged();
+}
+
+void GearGui::controlGeometryChanged()
+{
+  _controlWidth = _control->size().width();
+  _controlHeight = _control->size().height();
+  rebuildLayout();
 }
 
 // this should probably be moved in a helper class
@@ -112,51 +173,12 @@ QColor GearGui::colorAtY(qreal y)
   return GearGui::interpolateColors(ratio,c1,c2);
 
 }
- 
-GearGui::GearGui(Gear *pgear, QGraphicsScene *scene, QColor color, qreal controllerWidth, qreal controllerHeight, int updateRate) :
-QObject(),
-QGraphicsRectItem(),
-_gear(pgear),
-_layoutMode(normal),
-_sizeX(100),
-_sizeY(100),
-_controllerWidth(controllerWidth),
-_controllerHeight(controllerHeight),
-_boxNameColor(color)
-{
-  
-  setFlags(ItemIsSelectable | ItemIsMovable );
-  //not needed for now
-  //setAcceptsHoverEvents(true);
-  
-  
-  // specify an update rate to periodically refresh gear control (ex : GearTV)  
-  if (updateRate>=0)
-    startTimer(updateRate);
-
-  rebuildLayout();
-
-  // setup drop shadow effect
-  QGraphicsDropShadowEffect* dropShadow = new QGraphicsDropShadowEffect();
-  dropShadow->setBlurRadius(20);
-  dropShadow->setOffset(SHADOW_OFFSET);
-  dropShadow->setColor(QColor(0, 0, 0, 120));
-  setGraphicsEffect(dropShadow);
-  QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(redraw()));
-}
 
 void GearGui::redraw()
 {
   update();
 }
 
-GearGui::~GearGui()
-{
-  //delete all the plugBoxes
-  //plugboxes take care of deleting connectionItems when deleted
-  //Everything is taken care of ! :)
-  removeAllPlugBoxes();
-}
 
 void GearGui::setLayoutMode(layoutMode mode)
 {
@@ -200,7 +222,7 @@ void GearGui::rebuildLayout()
 
   // compute minimal height
   _sizeY = (maxPlugs * PLUGBOX_VERTICAL_SPACING) + MARGIN_TOP + MARGIN_BOTTOM;
-  _sizeY = qMax(_sizeY, _controllerHeight);
+  _sizeY = qMax(_sizeY, _controlHeight);
   _sizeY += titleBarHeight();
 
   _sizeX=0;
@@ -220,7 +242,7 @@ void GearGui::rebuildLayout()
   
   }
   else _sizeX+=PlugBox::PLUGBOX_RADIUS * 2 + 6;
-  _sizeX+=_controllerWidth;
+  _sizeX+=_controlWidth;
   _sizeX=qMax(_sizeX,name_width + 2*MARGIN_NAME);
   _sizeX+=MARGIN_SIDE*2;
   

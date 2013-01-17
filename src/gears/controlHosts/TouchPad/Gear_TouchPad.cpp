@@ -19,7 +19,6 @@
 
 #include "Gear_TouchPad.h"
 #include "GearMaker.h"
-#include "GearGui_TouchPad.h"
 #include "DroneMath.h"
 
 #include "Engine.h"
@@ -45,7 +44,7 @@ const QString Gear_TouchPad::SETTING_VERTICAL_LOWERBOUND = "Vertical lower Bound
 const QString Gear_TouchPad::SETTING_VERTICAL_HIGHERBOUND = "Vertical higher Bound";
 
 Gear_TouchPad::Gear_TouchPad() : 
-  GearControl(schema, "TouchPad"),
+  GearControl("TouchPad"),
  _acceptHorizontalHint(true),
  _acceptVerticalHint(true)
 {
@@ -85,7 +84,7 @@ void Gear_TouchPad::onUpdateHorizontal()
   setHorizontalValue(getHorizontalValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->rebuildLayout();
+//  getGearGui()->rebuildLayout();
 
   _acceptHorizontalHint = false;
 }
@@ -104,7 +103,7 @@ void Gear_TouchPad::onUpdateVertical()
   setVerticalValue(getVerticalValue());
 
   //then we need to redraw the gearGui
-  getGearGui()->rebuildLayout();
+//  getGearGui()->rebuildLayout();
 
   _acceptVerticalHint = false;
 }
@@ -165,11 +164,6 @@ void Gear_TouchPad::setVerticalValue(float value)
 
 void Gear_TouchPad::runAudio()
 {
-}
-
-GearGui *Gear_TouchPad::createGearGui(QGraphicsScene *scene)
-{                
-  return new GearGui_TouchPad(this, scene);
 }
 
 void Gear_TouchPad::save(QDomDocument &doc, QDomElement &gearElem)

@@ -28,7 +28,7 @@
 #include "GearMaker.h"
 
 GearFrei0r::GearFrei0r(void* handle) : 
-  Gear("Frei0r"),//exact type setted when the frei0r plugin is loaded 
+  Gear("Frei0r"),//exact type set when the frei0r plugin is loaded 
 	_handle(handle),
   _instance(0),
   _sizeX(0),

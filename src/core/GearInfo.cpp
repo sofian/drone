@@ -2,6 +2,7 @@
 #include "GearInfo.h"
 #include "Gear.h"
 #include "GearFrei0r.h"
+#include "GearControl.h"
 
 #include <QtXml>
 #include <qfile.h>
@@ -11,7 +12,7 @@
 #include <dlfcn.h>
 
 const QString GearInfo::XML_TAGNAME = "GearInfo";
-
+const QString GearInfoControl::TYPENAME = "Control";
 const QString GearInfoDrone::TYPENAME = "Drone";
 const QString GearInfoFrei0r::TYPENAME = "Frei0r";
 const QString GearInfoMeta::TYPENAME = "Meta";
@@ -66,7 +67,7 @@ bool GearInfo::save()
   QDomElement infoElem = doc.createElement(XML_TAGNAME);
   doc.appendChild(infoElem);
 
-  XMLHelper::appendTaggedString(doc,infoElem,"Name",name());// written but never read. Just to make things more obvious when looking at the xml file.
+  XMLHelper::appendTaggedString(doc,infoElem,"Name",type());// written but never read. Just to make things more obvious when looking at the xml file.
   XMLHelper::appendTaggedString(doc,infoElem,"Type",pluginType());// written but never read. Just to make things more obvious when looking at the xml file.
   XMLHelper::appendTaggedString(doc,infoElem,"Author",_author);
   XMLHelper::appendTaggedString(doc,infoElem,"Minor",QString::number(_minorVersion));
@@ -82,7 +83,7 @@ bool GearInfo::save()
   for (QMap<QString,PlugInfo>::Iterator it = _plugsInfo.begin(); it != _plugsInfo.end(); ++it )
 		(*it).save(doc, plugElem);
 
-  QFile file(metaFile().absoluteFilePath());
+  QFile file(infoFile().absoluteFilePath());
   if (file.open(QIODevice::WriteOnly))
 		file.remove();
 
@@ -102,13 +103,10 @@ bool GearInfo::save()
 }
 
 
-QString GearInfo::name()
+QString GearInfo::type()
 {
-  QString name = metaFile().baseName();
-  qDebug()<<name.mid(5);
-  if(name.startsWith("G"))
-    return name.mid(5);
-  else return name;
+  QString name = infoFile().baseName();
+  return name;
 }
 
 bool GearInfo::load()
@@ -124,7 +122,7 @@ bool GearInfo::load()
 
   if(!loadMetaInfo())
   {
-    qWarning() << "could not open gear meta Info " << metaFile().fileName() << ", creating default";
+    qWarning() << "could not open gear meta Info " << infoFile().fileName() << ", creating default";
 		return createDefaultMetaInfo();
   }
 	
@@ -133,9 +131,9 @@ bool GearInfo::load()
 
 bool GearInfo::loadMetaInfo()
 {
-  qDebug() << "loading: " << metaFile().fileName(); 
+  qDebug() << "loading: " << infoFile().fileName(); 
 
-	QFile file(metaFile().absoluteFilePath());
+	QFile file(infoFile().absoluteFilePath());
 
 	if( !file.open(QIODevice::ReadOnly) )
 		return false;
@@ -314,6 +312,60 @@ Gear* GearInfoDrone::createGearInstance()
 		return _makeGear();
 	else
 		return NULL;
+}
+
+
+GearInfoControl::GearInfoControl(QFileInfo pluginFile) :
+	GearInfo(TYPENAME, pluginFile),
+	_handle(0)
+{
+}
+
+GearInfoControl::~GearInfoControl()
+{
+	if (_handle)
+		dlclose(_handle);
+}
+
+bool GearInfoControl::bindPlugin()
+{
+ 	qDebug() << "binding: " << _pluginFile.fileName();
+
+	//open file
+	_handle = dlopen(_pluginFile.absoluteFilePath().toAscii(), RTLD_LAZY);
+
+	if (!_handle)
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : " << dlerror();
+		return false;
+	}
+	
+	//query makeControl ptrfun interface
+	Control* (*makeControl)();
+	*(void**) (&_makeControl) = dlsym(_handle, "makeControl");	
+	char*e=dlerror();
+	if (e)
+	{
+		qCritical() << _pluginFile.absoluteFilePath() << " : not a drone control!. Error: '"<<e<<"'";
+		return false;
+	}
+
+ 	return true;
+}
+
+Gear* GearInfoControl::createGearInstance()
+{
+  Control* control;
+  if (_makeControl)
+    control = _makeControl();
+  else
+    return NULL;
+
+  GearControl* gear = (GearControl*)GearMaker::instance()->makeGear("Gear:Drone:" + control->getGearType());
+  if(!gear)
+    return;
+  gear->setControl(control);
+
 }
 
 GearInfoFrei0r::GearInfoFrei0r(QFileInfo pluginFile) :

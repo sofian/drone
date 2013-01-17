@@ -1,4 +1,4 @@
-/* GearGui_TouchPad.h
+/* Gear_StringSource.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,39 +17,32 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEARGUI_TOUCHPAD_INCLUDED
-#define GEARGUI_TOUCHPAD_INCLUDED
+#ifndef GEAR_StringSource_INCLUDED
+#define GEAR_StringSource_INCLUDED
 
-#include "GearGui.h"
+#include "Gear.h"
+#include "StringType.h"
+#include "ValueType.h"
 
 
-#include <QGraphicsScene.h>
-#include <vector>
-
-class Gear_TouchPad;
-
-class GearGui_TouchPad : public GearGui
+class Gear_StringSource : public Gear  
 {
 public:
-  static const int TOUCHPAD_THICKNESS;
-  static const int TOUCHPAD_SIZEY;
-  static const int TOUCHPAD_SIZEX;
-  static const int TOUCHPAD_LINE_OFFSETY;
-  static const QColor TOUCHPAD_COLOR;
-  static const QColor TOUCHPAD_BOX_COLOR;
+public:
+  static const QString SETTING_STRING;
 
-  GearGui_TouchPad(Gear_TouchPad *gear, QGraphicsScene *scene);
+  Gear_StringSource();
+  virtual ~Gear_StringSource();
 
-  bool mouseEvent(const QPoint& p, Qt::ButtonState button);
-  void moveTouchPad(int xSliderPos, int ySliderPos);
+  void runVideo();
+
+protected:
+  void onUpdateSettings();
 
 protected:
 
-void paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-
+	PlugOut<StringType> *_STR_OUT;
+  QString _currentString;
 };
 
-
-#endif
-
+#endif 

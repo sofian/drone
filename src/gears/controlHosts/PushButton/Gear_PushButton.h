@@ -20,12 +20,12 @@
 #ifndef GEAR_PUSHBUTTON_INCLUDED
 #define GEAR_PUSHBUTTON_INCLUDED
 
-#include "GearControl.h"
+#include "Control.h"
 #include "SignalType.h"
 
 enum eButtonState {ON, OFF};
 
-class Gear_PushButton : public GearControl  
+class Gear_PushButton : public Gear  
 {
 public:
   static const float  DEFAULT_VALUE;
@@ -48,12 +48,9 @@ public:
   float getValue(){return _VALUE_OUT->type()->value();}
 
 protected:
-  GearGui* createGearGui(QGraphicsScene *scene);//we want a PushButton so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);
-  
-  Control* internalCreateControl(ControlPanel *){return NULL;}//TODO: finish this
   
 private:
   PlugOut<ValueType>* _VALUE_OUT;  

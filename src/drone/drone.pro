@@ -67,6 +67,7 @@ splash.xpm
 SOURCES += commands/CommandMoveItems.cpp \
 drone.cpp \
 GearGui.cpp \
+ControlPanel.cpp \ 
 ConnectionItem.cpp \
 GearListMenu.cpp \
 GearTreeView.cpp \ 

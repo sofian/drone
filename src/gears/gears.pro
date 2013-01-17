@@ -1,8 +1,10 @@
 include(../../config.pro)
 
 TEMPLATE=subdirs
-SUBDIRS= Osc \
-TV \
+#SUBDIRS= control/PushButton
+
+SUBDIRS+= Osc \
+#TV \
 Oscilloscope \
 VideoOutput \
 AudioPushButton \
@@ -33,7 +35,7 @@ Enveloppe \
 EmptyImage \
 FlatSignal \
 FillAlpha \
-ListBox \
+#ListBox \
 #ImageCapture \
 #PushButton \
 Rescale \

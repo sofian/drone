@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "GearGui_PushButton.h"
+#include "Ctrl_PushButton.h"
 #include "Gear_PushButton.h"    
 
 #include <qpainter.h>
@@ -27,26 +27,35 @@
 #include <sstream>
 
 
-const int GearGui_PushButton::PUSHBUTTON_SIZEY = 20;
-const int GearGui_PushButton::PUSHBUTTON_SIZEX = 60;
-const QColor GearGui_PushButton::PUSHBUTTON_COLOR(249, 169, 7);
-const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
-const QColor GearGui_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
+const int Ctrl_PushButton::PUSHBUTTON_SIZEY = 20;
+const int Ctrl_PushButton::PUSHBUTTON_SIZEX = 60;
+const QColor Ctrl_PushButton::PUSHBUTTON_COLOR(249, 169, 7);
+const QColor Ctrl_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
+const QColor Ctrl_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
-GearGui_PushButton::GearGui_PushButton(Gear_PushButton *gear, QGraphicsScene *scene) : 
-GearGui(gear, scene, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
-{        
+Ctrl_PushButton::Ctrl_PushButton(GearControlHost *gear) : 
+Control()    
+{       
+  resize(QRectF(PUSH_BUTTON_SIZEX,PUSH_BUTTON_SIZEY));
+  
 }
 
-void GearGui_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Ctrl_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(widget);
+  Q_UNUSED(widget);
   //make the title bar show the value
+  painter.setPen( Qt::black );
+    
+  QPoint point = QPoint( 10, 20 );
+  painter.drawText( point, "You can draw text from a point..." );
+  
+  return;
+  /*
   std::ostringstream sstream;
   sstream << ((Gear_PushButton*)_gear)->getValue();
   setTitle(sstream.str());
 
-  GearGui::paint(painter,option,widget);    
+  Ctrl::paint(painter,option,widget);    
 
   int PushButtonStartX, PushButtonStartY, sizeX, sizeY;
   getDrawableArea(&PushButtonStartX, &PushButtonStartY, &sizeX , &sizeY);
@@ -79,15 +88,15 @@ void GearGui_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem 
   painter->setPen(border2);
   painter->drawRect(PushButtonStartX, PushButtonStartY + sizeY - 1, sizeX, 1);
   painter->drawRect(PushButtonStartX + sizeX - 1, PushButtonStartY, 1, sizeY);
-
+*/
 }
 
-bool GearGui_PushButton::mouseEvent(const QPoint& p, Qt::ButtonState button)
+bool Ctrl_PushButton::mouseEvent(const QPoint& p, Qt::ButtonState button)
 {
   bool ret=false;
 
   // Pushbutton zone ?
-if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
+  if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
   {
     ((Gear_PushButton*)_gear)->setState(OFF);
     ret=true;
@@ -114,7 +123,7 @@ if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
   return ret;
 }
 
-bool GearGui_PushButton::keyEvent(QKeyEvent *e)
+bool Ctrl_PushButton::keyEvent(QKeyEvent *e)
 {
   std::cerr<<e->ascii()<<" "<<e->stateAfter()<<std::endl;
   return false;

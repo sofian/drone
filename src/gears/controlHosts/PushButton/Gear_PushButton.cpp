@@ -19,7 +19,6 @@
 
 #include "Gear_PushButton.h"
 #include "GearMaker.h"
-#include "GearGui_PushButton.h"
 #include "DroneMath.h"
 #include "MidiEngine.h"
 #include "Engine.h"
@@ -46,7 +45,7 @@ const QString Gear_PushButton::SETTING_MIDICHANNEL = "Midi Channel";
 const QString Gear_PushButton::SETTING_MIDINOTE = "Midi Note";
 
 Gear_PushButton::Gear_PushButton() : 
-  GearControl(schema, "PushButton"),_acceptHint(true)
+  GearControl("PushButton"),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
@@ -69,12 +68,6 @@ Gear_PushButton::Gear_PushButton() :
 Gear_PushButton::~Gear_PushButton()
 {
 
-}
-
-void Gear_PushButton::onUpdateSettings()
-{
-  //then we need to redraw the gearGui
-  getGearGui()->rebuildLayout();
 }
 
 void Gear_PushButton::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
@@ -182,7 +175,3 @@ void Gear_PushButton::runVideo()
     setState(OFF);
 }
 
-GearGui *Gear_PushButton::createGearGui(QGraphicsScene *scene)
-{                
-  return new GearGui_PushButton(this, scene);
-}

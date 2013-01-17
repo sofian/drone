@@ -1,6 +1,5 @@
 #include "GearListMenu.h"
 #include "GearMaker.h"
-#include "GearClassification.h"
 //Added by qt3to4:
 #include <qmenu>
 
@@ -37,7 +36,7 @@ void GearListMenu::create()
      }*/
 
      //insert the gear name in the correct menu
-     menu->addAction(new QAction(gi->fullName(),this));
+     menu->addAction(new QAction(gi->fullType(),this));
   }
 }
 

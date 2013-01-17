@@ -8,7 +8,6 @@
  */
 #include "GearTreeView.h"
 #include "GearMaker.h"
-#include "GearClassification.h"
 #include <q3dragobject.h>
 #include <qmouseevent>
 #include <qtreewidgetitem>
@@ -105,8 +104,8 @@ void GearTreeView::create()
   {        
     QTreeWidgetItem* parentItem = findClassificationItem(gi->getClassification(),invisibleRootItem());
     
-    QTreeWidgetItem* child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(gi->name()));
-    child->setData(1,Qt::UserRole, gi->fullName());
+    QTreeWidgetItem* child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(gi->type()));
+    child->setData(1,Qt::UserRole, gi->fullType());
     parentItem->addChild(child);
   }
   expandAll();  

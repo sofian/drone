@@ -30,10 +30,10 @@ ControlPanel::~ControlPanel()
 
 Control *ControlPanel::addControl(GearControl* gear)
 {
-  if (!gear)
+//  if (!gear)
     return NULL;
-  
-  Control* control = gear->createControl(this);
+  /*
+  Control* control;// = gear->createControl(this);
   
   _mainLayout->addWidget(control, 0, 1);
 
@@ -44,7 +44,7 @@ Control *ControlPanel::addControl(GearControl* gear)
 
   _controls.push_back(control);
 
-  return control;
+  return control;*/
 }
 
 void ControlPanel::addControlPanel(ControlPanel* controlPanel)

@@ -20,17 +20,21 @@
 #include "Gear.h"
 #include "GearMaker.h"
 #include "GearFrei0r.h"
+#include "GearControl.h"
 #include "frei0r.h"
 #include "error.h"
 #include <qdir.h>
 #include <qdom.h>
 #include <iostream>
 
+class GearInfoControl;
+
 #if defined(Q_OS_MACX)
 #include <CFBundle.h>
 #endif
 
 QString GearMaker::DRONEGEARS_SUBPATH = "drone";
+QString GearMaker::CONTROLGEARS_SUBPATH = "controls";
 QString GearMaker::FREI0RGEARS_SUBPATH = "frei0r";
 QString GearMaker::METAGEARS_SUBPATH = "meta";
 
@@ -70,7 +74,7 @@ Gear* GearMaker::makeGear(QString fullName)
   //be sure we have this gear
   if (!gearInfo)
   {
-    qCritical() << "gear not found: " << fullName;
+    qCritical() << "[GearMaker::makeGear] gear type not found: " << fullName;
     return NULL;
   }
 
@@ -128,6 +132,7 @@ bool GearMaker::parse(QDir rootDir)
 	qDebug() << "parsing Gears in path: " << rootDir.path();
 	emptyRegistry();
 	parseDroneGears(rootDir);
+	parseControlGears(rootDir);
 	parseFrei0rGears(rootDir);
 	parseMetaGears(rootDir);
 	
@@ -180,7 +185,7 @@ void GearMaker::parseGears(QDir dir, QString extension)
 		//the key will be unique since each gears type
 		//are in there own path and we use fullName as the key.
 		if (gearInfo->load())
-			_registry[gearInfo->fullName()]=gearInfo;
+			_registry[gearInfo->fullType()]=gearInfo;
 		else
 		  delete gearInfo;
   }
@@ -212,6 +217,20 @@ void GearMaker::parseFrei0rGears(QDir rootDir)
   	QString extension("*.so");
 #endif
 	parseGears<GearInfoFrei0r>(gearsDir, extension);
+}
+
+void GearMaker::parseControlGears(QDir rootDir)
+{
+  std::cout << "--- loading control gears ---" << std::endl;
+
+	QDir gearsDir(rootDir.path() + "/" +CONTROLGEARS_SUBPATH); 
+	
+#if defined(Q_OS_MACX)
+  	QString extension("*.dylib");
+#else
+  	QString extension("*.so");
+#endif
+//	parseGears<GearInfoControl>(gearsDir, extension);
 }
 
 void GearMaker::parseMetaGears(QDir rootDir)

@@ -7,7 +7,7 @@
 #include "XMLHelper.h"
 #include "AbstractPlug.h"
 #include "frei0r.h"
-
+#include "Control.h"
 
 class Gear;
 class Schema;
@@ -53,7 +53,7 @@ private:
  * GearInfo provide every information related to a Gear plugin and is actually used to instanciate
  * gears. GearInfo manage the plugin file and the metaInfo file.
  *
- * Each type of drone plugins inherit GearInfo. The createGearInstance(), metaFile() and bindPlugin() method must be implemented.
+ * Each type of drone plugins inherit GearInfo. The createGearInstance(), infoFile() and bindPlugin() method must be implemented.
 **/ 
 class GearInfo
 {
@@ -67,9 +67,9 @@ public:
   bool load();	
   bool createDefaultMetaInfo();
 	
-	virtual QFileInfo metaFile()=0;//! mangling for the metaInfo filename from the pluginfile
-	QString name();//! name of the gearInfo is taken from the metaFile name.
-	QString fullName(){return pluginType() + ":" + name();}//! the type + ":" + the name
+	virtual QFileInfo infoFile()=0;//! mangling for the metaInfo filename from the pluginfile
+	QString type();//! name of the gearInfo is taken from the infoFile name.
+	QString fullType(){return "Gear:"+pluginType() + ":" + type();}//! the type + ":" + the name
 	virtual Gear* createGearInstance()=0;
 
   bool setPlugInfo(const PlugInfo &plugInfo);
@@ -108,7 +108,7 @@ public:
 											
 	Gear* createGearInstance();
 
-	QFileInfo metaFile()
+	QFileInfo infoFile()
 	{
 		return QFileInfo(_pluginFile.absolutePath() + "/" + _pluginFile.baseName().mid(3) + ".xml");
 	}
@@ -121,6 +121,34 @@ protected:
 };
 
 /**
+ * GearInfo for drone control gears.
+**/
+class GearInfoControl : public GearInfo
+{
+public:
+	static const QString TYPENAME;
+	
+	GearInfoControl(QFileInfo pluginFile);
+	~GearInfoControl();				
+												  
+	QFileInfo infoFile()
+	{
+		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName().mid(3) + ".xml");
+	}
+										
+	Gear* createGearInstance();
+	bool bindPlugin();
+					
+protected:
+
+  Control* (*_makeControl)();	
+
+	void* _handle;
+
+};
+
+
+/**
  * GearInfo for drone Frei0r gears.
 **/
 class GearInfoFrei0r : public GearInfo
@@ -131,7 +159,7 @@ public:
 	GearInfoFrei0r(QFileInfo pluginFile);
 	~GearInfoFrei0r();				
 												  
-	QFileInfo metaFile()
+	QFileInfo infoFile()
 	{
 		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName().mid(3) + ".xml");
 	}
@@ -147,6 +175,7 @@ protected:
 
 };
 
+
 /**
  * GearInfo for MetaGears.
 **/
@@ -158,7 +187,7 @@ public:
 	GearInfoMeta(QFileInfo pluginFile);
 	~GearInfoMeta();				
 
-	QFileInfo metaFile()
+	QFileInfo infoFile()
 	{
 		//!!!! need to append a string like metainfo?
 		return QFileInfo(_pluginFile.absolutePath() +  "/" + _pluginFile.baseName() + ".xml");

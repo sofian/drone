@@ -29,6 +29,7 @@
 #include <QLinearGradient>
 #include <QColor>
 
+class Control;
 class Gear;
 class PlugBox;
 class Engine;
@@ -79,7 +80,7 @@ public:
 	
   virtual int rtti() const;
 
-  GearGui(Gear *pgear, QGraphicsScene *scene, QColor color=BOXNAME_COLOR, qreal controllerWidth=0, qreal controllerHeight=0, int updateRate=-1);
+  GearGui(Gear *pgear, QColor color=BOXNAME_COLOR);
   virtual ~GearGui();
 
   int renderingStartX();
@@ -119,10 +120,13 @@ public:
   qreal sizeX() const {return _sizeX;}
   qreal sizeY() const {return _sizeY;}
 
+  void setControl(Control* control);
+  
   int type() const {return Type;}
 
 public slots: 
   void redraw();
+  void controlGeometryChanged();
 	
 protected:
   
@@ -143,8 +147,12 @@ protected:
   qreal _sizeY;
 
   // minimum required size for controller region (space at center of a gear where something custom can be drawn)
-  qreal _controllerWidth;
-  qreal _controllerHeight;
+  qreal _controlWidth;
+  qreal _controlHeight;
+  
+  // The control that is at the center 
+  Control* _control;
+  
   
   QColor _boxNameColor;
   QString _title;

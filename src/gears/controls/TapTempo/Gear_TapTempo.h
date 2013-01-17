@@ -1,4 +1,4 @@
-/* GearGui_PushButton.h
+/* Gear_TapTempo.h
  * Copyright (C) 2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
@@ -17,40 +17,35 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef GEARGUI_PUSHBUTTON_INCLUDED
-#define GEARGUI_PUSHBUTTON_INCLUDED
+#ifndef GEAR_TapTempo_INCLUDED
+#define GEAR_TapTempo_INCLUDED
 
-#include "GearGui.h"
+#include <deque>
+#include "Gear.h"
+#include "SignalType.h"
+#include "ValueType.h"
 
-
-#include <QGraphicsScene.h>
-//Added by qt3to4:
-#include <QKeyEvent>
-#include <vector>
-
-class Gear_PushButton;
-
-class GearGui_PushButton : public GearGui
+class Gear_TapTempo : public Gear  
 {
 public:
-  static const int PUSHBUTTON_SIZEY;
-  static const int PUSHBUTTON_SIZEX;
-  static const QColor PUSHBUTTON_COLOR;
-  static const QColor PUSHBUTTON_BOX_COLOR;
-  static const QColor PUSHBUTTON_BOX_COLORON;
+  Gear_TapTempo();
+  virtual ~Gear_TapTempo();
 
-  GearGui_PushButton(Gear_PushButton *gear, QGraphicsScene *scene);
+  void runVideo();
 
-  bool mouseEvent(const QPoint& p, Qt::ButtonState button);
-  bool keyEvent(QKeyEvent *e);
-  
 protected:
+  void internalInit();
+  
+private:
+  PlugIn<ValueType> *_TAP_IN;
+  PlugIn<ValueType> *_DECAY_IN;
+  
+  PlugOut<ValueType> *_VALUE_OUT;
 
-  void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
-
+  float _lastTapTime;
+  float _estimatedTempo;
+  float _scheduledBeatTimeStamp;
 
 };
 
-
-#endif
-
+#endif 

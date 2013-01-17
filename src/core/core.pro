@@ -33,10 +33,7 @@ Array.h \
 Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
-#ConnectionItem.h \
 Connection.h \
-ControlPanel.h \
-Control.h \
 DroneCore.h \
 Engine.h \
 Gear.h \
@@ -58,8 +55,6 @@ types/VideoChannelType.h \
 types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
 types/EnumType.h \
-GearClassification.h \
-#GearGui.h \
 GearConverter.h \
 GearInfo.h \
 GearMaker.h \
@@ -74,14 +69,12 @@ Node.h \
 MidiEngine.h \
 AbstractPlug.h \
 Plug.h \
-#PlugBox.h \
 Properties.h \
 Project.h \
 Rasterer.h \
 Random.h \
 SummedAreaTable.h \
 Schema.h \
-#SchemaGui.h \
 SignalInfo.h \
 StringUtils.h \
 TextureGl.h \
@@ -99,9 +92,6 @@ composite/AlphaComposite.h
  
 SOURCES += error.cpp \
 Connection.cpp \
-#ConnectionItem.cpp \
-ControlPanel.cpp \
-Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
 Gear.cpp \
