@@ -14,12 +14,17 @@
 #include "DroneMath.h"
 #include "Utils.h"
 
+extern Gear* makeGear_PushButton();
+
 
 void DroneCore::init()
 {
 	std::cout << "initializing the drone core..." << std::endl;
 	GearMaker::instance()->parse();
 	
+  GearMaker::instance()->registerStaticGear("PushButton", &makeGear_PushButton);
+	
+  
   initMath();
   paint_funcs_setup();
 	

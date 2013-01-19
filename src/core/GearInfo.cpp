@@ -14,6 +14,7 @@
 const QString GearInfo::XML_TAGNAME = "GearInfo";
 const QString GearInfoControl::TYPENAME = "Control";
 const QString GearInfoDrone::TYPENAME = "Drone";
+const QString GearInfoStatic::TYPENAME = "Static";
 const QString GearInfoFrei0r::TYPENAME = "Frei0r";
 const QString GearInfoMeta::TYPENAME = "Meta";
 
@@ -40,11 +41,11 @@ bool PlugInfo::load(QDomElement elem)
 	return true;
 }
 
-GearInfo::GearInfo(QString pluginType, QFileInfo pluginFile) : 
-	_pluginType(pluginType),
-	_pluginFile(pluginFile), 
+GearInfo::GearInfo(QString pluginType) : 
+	_pluginType(pluginType), 
 	_majorVersion(1), 
-	_minorVersion(0)
+	_minorVersion(0),
+  _instanciableFromGUI(true)
 {
 }
 
@@ -59,8 +60,6 @@ bool GearInfo::createDefaultMetaInfo()
 
 bool GearInfo::save()
 {
-	if (!_pluginFile.exists())
-		return false;
 		
   QDomDocument doc(XML_TAGNAME);
   
@@ -111,15 +110,6 @@ QString GearInfo::type()
 
 bool GearInfo::load()
 {
-	if (!_pluginFile.exists())
-	{
-		qCritical() << "plugin file doesnt exists: " << _pluginFile.fileName(); 
-		return false;
-	}
-	
-	if (!bindPlugin())
-		return false;
-
   if(!loadMetaInfo())
   {
     qWarning() << "could not open gear meta Info " << infoFile().fileName() << ", creating default";
@@ -262,11 +252,38 @@ bool GearInfo::setPlugInfo(const PlugInfo& pi)
 	return true;
 }
 
+
+
+GearInfoPlugin::GearInfoPlugin(QString pluginType,QFileInfo pluginFile) : 
+	GearInfo(pluginType),
+	_pluginFile(pluginFile)
+{
+}
+
+
+bool GearInfoPlugin::save()
+{
+	if (!_pluginFile.exists())
+		return false;
+  else 
+    return GearInfo::save();
+}
+
+bool GearInfoPlugin::load()
+{
+	if (!_pluginFile.exists())
+		return false;
+  if (!bindPlugin())
+		return false;
+
+  return GearInfo::load();
+}
+
 /**
 * GearInfo for drone gears.
 **/
 GearInfoDrone::GearInfoDrone(QFileInfo pluginFile) :
-	GearInfo(TYPENAME, pluginFile),
+	GearInfoPlugin(TYPENAME, pluginFile),
 	_handle(0),
 	_makeGear(0)
 {
@@ -293,7 +310,6 @@ bool GearInfoDrone::bindPlugin()
 	}
 	
 	//query makeGear ptrfun interface
-	Gear* (*makeGear)();
 	*(void**) (&_makeGear) = dlsym(_handle, "makeGear");	
 	char*e=dlerror();
 	if (e)
@@ -302,7 +318,10 @@ bool GearInfoDrone::bindPlugin()
 		return false;
 	}
 
-  
+  Gear* gear = _makeGear();
+  if(qobject_cast<GearControl*>(gear))
+    _instanciableFromGUI=false;
+  delete gear;
 	return true;
 }
 
@@ -315,8 +334,38 @@ Gear* GearInfoDrone::createGearInstance()
 }
 
 
+/**
+* GearInfo for drone gears.
+**/
+GearInfoStatic::GearInfoStatic(QString type, GearCreator gear_creator) :
+	GearInfo(TYPENAME),
+	_makeGear(gear_creator),
+  _type(type)
+{
+  qDebug()<<"Registering static drone gear: "<<fullType();
+}
+
+QString GearInfoStatic::type()
+{
+  return _type;
+}
+
+
+GearInfoStatic::~GearInfoStatic()
+{
+}
+
+Gear* GearInfoStatic::createGearInstance()
+{
+	if (_makeGear)
+		return _makeGear();
+	else
+		return NULL;
+}
+
+
 GearInfoControl::GearInfoControl(QFileInfo pluginFile) :
-	GearInfo(TYPENAME, pluginFile),
+	GearInfoPlugin(TYPENAME, pluginFile),
 	_handle(0)
 {
 }
@@ -341,7 +390,7 @@ bool GearInfoControl::bindPlugin()
 	}
 	
 	//query makeControl ptrfun interface
-	Control* (*makeControl)();
+	//Control* (*makeControl)();
 	*(void**) (&_makeControl) = dlsym(_handle, "makeControl");	
 	char*e=dlerror();
 	if (e)
@@ -363,13 +412,14 @@ Gear* GearInfoControl::createGearInstance()
 
   GearControl* gear = (GearControl*)GearMaker::instance()->makeGear("Gear:Drone:" + control->getGearType());
   if(!gear)
-    return;
+    return NULL;
   gear->setControl(control);
-
+  control->setGear(gear);
+  return gear;
 }
 
 GearInfoFrei0r::GearInfoFrei0r(QFileInfo pluginFile) :
-	GearInfo(TYPENAME, pluginFile),
+	GearInfoPlugin(TYPENAME, pluginFile),
 	_handle(0)
 {
 }
@@ -430,7 +480,7 @@ Gear* GearInfoFrei0r::createGearInstance()
 
 
 GearInfoMeta::GearInfoMeta(QFileInfo pluginFile) :
-	GearInfo(TYPENAME, pluginFile)
+	GearInfoPlugin(TYPENAME, pluginFile)
 {
 }
 

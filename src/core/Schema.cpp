@@ -340,6 +340,7 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 
 	foreach(Gear *gear, _gears)
   {
+    Q_UNUSED(onlySelected);
 //    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
 //      continue;
     std::cerr<<"About to save!"<<std::endl;
@@ -355,17 +356,24 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   QList<Connection*> connections;
   getAllConnections(connections);
 
-  for (QList<Connection*>::iterator it = connections.begin(); it != connections.end(); ++it)
+  foreach(Connection* conn,connections)
   {
-    Gear * gA = getGearByName((*it)->gearA());
-    Gear * gB = getGearByName((*it)->gearB());
+    Gear * gA = getGearByName(conn->gearA());
+    Gear * gB = getGearByName(conn->gearB());
+    //mute waringn for now
+    gA=gB;
 /*
     if(onlySelected 
        && (ggA == NULL || !ggA->isSelected() || ggB == NULL || !ggB->isSelected()))
       continue;
 */       
-    (*it)->save(doc, connectionsElem);
-    delete (*it);//free
+    conn->save(doc, connectionsElem);
+
+
+    // JK : WHY DO WE DELETE THIS ? I DONT GET IT 
+    // *******************************************
+    
+    delete conn;//free
   }
     
   return true;
@@ -373,6 +381,7 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
 
 bool Schema::load(QDomElement& parent, bool onlySelected)
 {    
+  Q_UNUSED(onlySelected);
   std::vector<Gear*> addedGears;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
   // when pasting, gears have to be renamed

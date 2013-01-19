@@ -7,7 +7,7 @@ then
     mkdir drone.app/Contents/Frameworks
     mkdir drone.app/Contents/PlugIns
     mkdir drone.app/Contents/PlugIns/drone
-    mkdir drone.app/Contents/PlugIns/control
+    mkdir drone.app/Contents/PlugIns/controls
     mkdir drone.app/Contents/PlugIns/frei0r
     mkdir drone.app/Contents/PlugIns/metagear
 fi

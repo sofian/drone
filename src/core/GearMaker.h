@@ -37,6 +37,8 @@ class GearMaker
 public:									
 	static GearMaker* instance();
 
+  void registerStaticGear(QString type, GearInfo::GearCreator gear_creator);
+
   Gear* makeGear(QString fullName);
 	Gear* makeGear(QString type, QString name);
 

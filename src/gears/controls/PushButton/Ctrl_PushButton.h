@@ -22,28 +22,30 @@
 
 #include <QGraphicsScene.h>
 //Added by qt3to4:
-#include "../../controlHosts/PushButton/Gear_PushButton.h"
+#include "controlHosts/PushButton/Gear_PushButton.h"
 #include <QKeyEvent>
 #include <vector>
 
 class Ctrl_PushButton : public Control
 {
 public:
-  static const int PUSHBUTTON_SIZEY;
-  static const int PUSHBUTTON_SIZEX;
+  static const qreal PUSHBUTTON_SIZEY;
+  static const qreal PUSHBUTTON_SIZEX;
   static const QColor PUSHBUTTON_COLOR;
   static const QColor PUSHBUTTON_BOX_COLOR;
   static const QColor PUSHBUTTON_BOX_COLORON;
 
-  Ctrl_PushButton(Gear_PushButton* gear);
-  ~Ctrl_PushButton();
+  Ctrl_PushButton();
+  ~Ctrl_PushButton(){};
   
+  QString getGearType(){return "Gear_PushButton";}
+
 protected:
+  Gear_PushButton* getGear(){return (static_cast<Gear_PushButton*>(_parentGear));}
   void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
   void mousePressEvent ( QGraphicsSceneMouseEvent * event );
   void mouseReleaseEvent ( QGraphicsSceneMouseEvent * event );
 
-  
   bool _pressed;
 };
 

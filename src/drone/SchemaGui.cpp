@@ -22,6 +22,7 @@
 
 #include "Schema.h"
 #include "Gear.h"
+#include "GearControl.h"
 #include "MetaGear.h"
 #include "GearMaker.h"
 #include "GearGui.h"
@@ -41,12 +42,12 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
   _activeConnection(NULL),
   _connecting(false),
-  _moving(No),
   _engine(engine),
   _maxZValue(0),
+  _moving(No),
+  _selectionChangeBypass(false),
   _movingItems(),
-  _movingStartPos(0,0),
-  _selectionChangeBypass(false)
+  _movingStartPos(0,0)
 {
   QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(selectionHasChanged()));
   //QObject::connect(this, SIGNAL(itemMoved(DiagramItem*,QPntF)),
@@ -83,20 +84,21 @@ void SchemaGui::rebuildSchema()
   QList<Gear*> gears = _schema->getGears();
   
   
-  GearGui *gearGui=NULL;
+/*  GearGui *gearGui=NULL;
   foreach(Gear* gear,gears)
   {
 		//gearGui=gear->getGearGui();
 		//addItem(gearGui);
     //gearGui->show();
   }
+ */
 	
   //add connectionItems
   QList<Connection*> connections;
   _schema->getAllConnections(connections);
   
-  PlugBox *sourcePlugBox;
-  PlugBox *destPlugBox;
+  //PlugBox *sourcePlugBox;
+  //PlugBox *destPlugBox;
   Gear *gearA;
   Gear *gearB;
 
@@ -157,8 +159,7 @@ Gear* SchemaGui::addGear(QString fullname, QPointF pos)
   addItem(gearGui);    
   gearGui->setPos(pos);    
   gearGui->setZValue(0);
-  gearGui->show();
-  update();
+  gearGui->update();
 
   return gear;
  
@@ -371,7 +372,7 @@ void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
   {
     qDebug()<< "found item";
 
-    if (ci = qgraphicsitem_cast<ConnectionItem*>(el))
+    if ((ci = qgraphicsitem_cast<ConnectionItem*>(el)))
     {
       qDebug()<< "disconnect";
 

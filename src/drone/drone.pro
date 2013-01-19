@@ -93,6 +93,7 @@ PlugBox.cpp \
 SchemaEditor.cpp \
 SchemaGui.cpp
 
+
 #The following line was inserted by qt3to4
 QT += xml  opengl qt3support 
 

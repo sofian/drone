@@ -63,7 +63,7 @@ PlugBox::~PlugBox()
 qreal PlugBox::plugNameWidth(QString name)
 {
   QFontMetrics fm(SHORTNAME_FONT);
-  qreal val= fm.width(name) + PLUGBOX_RADIUS + PLUGBOX_INBETWEEN_SPACE;
+  qreal val= fm.width(name) + PLUGBOX_RADIUS*2 + PLUGBOX_INBETWEEN_SPACE;
   return val;
 }
 
@@ -85,7 +85,7 @@ void PlugBox::drawSelected(QPainter *painter)
 // Draws the actual plug with corresponding label
 void PlugBox::draw(QPainter *painter)
 { 
-  int halfGearSizeX = _gearGui->sizeX() / 2;    
+  int halfGearSizeX = _gearGui->size().width() / 2;    
   painter->setPen(QPen(Qt::black,1));
   QColor cay=_gearGui->colorAtY(_pos.y());
   //set color of the round box according to exposition

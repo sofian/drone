@@ -33,6 +33,7 @@ Array.h \
 Array2D.h \
 CircularBuffer.h \
 ColorSpace.h \
+Control.h \
 Connection.h \
 DroneCore.h \
 Engine.h \
@@ -92,6 +93,7 @@ composite/AlphaComposite.h
  
 SOURCES += error.cpp \
 Connection.cpp \
+Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
 Gear.cpp \
@@ -127,6 +129,13 @@ RtMidi/RtMidi.cpp \
 composite/Composite.cpp \
 composite/CompositeGeneric.cpp \
 composite/AlphaComposite.cpp
+
+
+# controlHosts
+HEADERS += controlHosts/PushButton/Gear_PushButton.h
+
+SOURCES += controlHosts/PushButton/Gear_PushButton.cpp
+
 
 agg {
 

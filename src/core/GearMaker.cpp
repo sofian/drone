@@ -63,18 +63,18 @@ void GearMaker::emptyRegistry()
 }
 
 /**
- * Creates an instance of fullname gear, using all parsed gearInfos.
+ * Creates an instance of fullType gear, using all parsed gearInfos.
  * The init() method of gear is also called.
  */
-Gear* GearMaker::makeGear(QString fullName)
+Gear* GearMaker::makeGear(QString fullType)
 {
   Gear* thegear;
-  GearInfo *gearInfo = findGearInfo(fullName);
+  GearInfo *gearInfo = findGearInfo(fullType);
 
   //be sure we have this gear
   if (!gearInfo)
   {
-    qCritical() << "[GearMaker::makeGear] gear type not found: " << fullName;
+    qCritical() << "[GearMaker::makeGear] gear type not found: " << fullType;
     return NULL;
   }
 
@@ -97,11 +97,11 @@ GearInfo* GearMaker::findGearInfo(QString type, QString name)
 }
 
 /**
-* Find the gearInfo using the fullName (ex: Drone:Blur)
+* Find the gearInfo using the fullType (ex: Drone:Blur)
 **/
-GearInfo* GearMaker::findGearInfo(QString fullName)
+GearInfo* GearMaker::findGearInfo(QString fullType)
 {
-  QMap<QString, GearInfo*>::iterator it = _registry.find(fullName);
+  QMap<QString, GearInfo*>::iterator it = _registry.find(fullType);
 
 	if (it == _registry.end())
 		return NULL;
@@ -162,6 +162,12 @@ QDir GearMaker::defaultGearsDir()
 #endif	
 }
 
+void GearMaker::registerStaticGear(QString type, GearInfo::GearCreator gear_creator)
+{
+		GearInfoStatic *gearInfo = new GearInfoStatic(type, gear_creator);
+		if(gearInfo->load())
+      _registry[gearInfo->fullType()]=gearInfo;
+}
 
 template<class T>
 void GearMaker::parseGears(QDir dir, QString extension)
@@ -172,7 +178,7 @@ void GearMaker::parseGears(QDir dir, QString extension)
     qWarning() << "gears folder not found: " << dir.path();
     return;
   }
-	
+
   dir.setNameFilters(QStringList(extension));
 
   const QFileInfoList files = dir.entryInfoList();
@@ -183,13 +189,14 @@ void GearMaker::parseGears(QDir dir, QString extension)
 		T *gearInfo = new T(fi);
 		//add gearInfo to the registry
 		//the key will be unique since each gears type
-		//are in there own path and we use fullName as the key.
+		//are in there own path and we use fullType as the key.
 		if (gearInfo->load())
 			_registry[gearInfo->fullType()]=gearInfo;
 		else
 		  delete gearInfo;
   }
 }
+
 
 void GearMaker::parseDroneGears(QDir rootDir)
 {  	
@@ -198,7 +205,7 @@ void GearMaker::parseDroneGears(QDir rootDir)
 	QDir gearsDir(rootDir.path() + "/" + DRONEGEARS_SUBPATH); 
 	
 #if defined(Q_OS_MACX)
-  	QString extension("*.dylib");
+  	QString extension("*.dylib.1");
 #else
   	QString extension("*.so");
 #endif
@@ -230,7 +237,7 @@ void GearMaker::parseControlGears(QDir rootDir)
 #else
   	QString extension("*.so");
 #endif
-//	parseGears<GearInfoControl>(gearsDir, extension);
+	parseGears<GearInfoControl>(gearsDir, extension);
 }
 
 void GearMaker::parseMetaGears(QDir rootDir)

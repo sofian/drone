@@ -1,7 +1,6 @@
 include(../../config.pro)
 
 TEMPLATE=subdirs
-#SUBDIRS= control/PushButton
 
 SUBDIRS+= Osc \
 #TV \
@@ -77,6 +76,19 @@ HalfToning
 #VideoReplaceAreas \
 #VideoSwitch \
 #ValueMix
+
+
+
+
+#Controls
+
+SUBDIRS+= controls/PushButton
+
+
+
+
+
+
 
 agg {
 SUBDIRS+= SVGLoader \

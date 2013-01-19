@@ -22,10 +22,11 @@
 
 #include "Control.h"
 #include "SignalType.h"
+#include "GearControl.h"
 
 enum eButtonState {ON, OFF};
 
-class Gear_PushButton : public Gear  
+class Gear_PushButton : public GearControl  
 {
 public:
   static const float  DEFAULT_VALUE;
@@ -42,7 +43,7 @@ public:
   virtual ~Gear_PushButton();
 
   void runVideo();
-  
+    
   void setState(eButtonState state);
   eButtonState getState(){return _state;}
   float getValue(){return _VALUE_OUT->type()->value();}

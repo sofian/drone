@@ -18,36 +18,43 @@
  */
 
 #include "Ctrl_PushButton.h"
-#include "Gear_PushButton.h"    
+#include "controlHosts/PushButton/Gear_PushButton.h"    
 
 #include <qpainter.h>
 //Added by qt3to4:
 #include <QKeyEvent>
 #include <iostream>
 #include <sstream>
+#include <QGraphicsSceneMouseEvent> 
 
-
-const int Ctrl_PushButton::PUSHBUTTON_SIZEY = 20;
-const int Ctrl_PushButton::PUSHBUTTON_SIZEX = 60;
+const qreal Ctrl_PushButton::PUSHBUTTON_SIZEY = 20;
+const qreal Ctrl_PushButton::PUSHBUTTON_SIZEX = 60;
 const QColor Ctrl_PushButton::PUSHBUTTON_COLOR(249, 169, 7);
 const QColor Ctrl_PushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
 const QColor Ctrl_PushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
-Ctrl_PushButton::Ctrl_PushButton(GearControlHost *gear) : 
+extern "C"
+{
+  Control* makeControl()
+  {
+    return new Ctrl_PushButton();
+  }
+}
+
+Ctrl_PushButton::Ctrl_PushButton() : 
 Control()    
 {       
-  resize(QRectF(PUSH_BUTTON_SIZEX,PUSH_BUTTON_SIZEY));
-  
+  resize(QSizeF(PUSHBUTTON_SIZEX,PUSHBUTTON_SIZEY));
 }
 
 void Ctrl_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
   Q_UNUSED(widget);
   //make the title bar show the value
-  painter.setPen( Qt::black );
+  painter->setPen( Qt::black );
     
-  QPoint point = QPoint( 10, 20 );
-  painter.drawText( point, "You can draw text from a point..." );
+  QPoint point = QPoint( 0, 0 );
+  painter->drawRect(0,0,size().width(),size().height());
   
   return;
   /*
@@ -91,41 +98,43 @@ void Ctrl_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *op
 */
 }
 
-bool Ctrl_PushButton::mouseEvent(const QPoint& p, Qt::ButtonState button)
+void Ctrl_PushButton::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
-  bool ret=false;
-
+  qDebug()<<"mouse press in ctrl!";
+  QPointF p = event->pos();
+  
   // Pushbutton zone ?
-  if (((Gear_PushButton*)_gear)->getState()==ON && button == Qt::NoButton)
-  {
-    ((Gear_PushButton*)_gear)->setState(OFF);
-    ret=true;
-  }
-  else if (((Gear_PushButton*)_gear)->getState()==OFF && button == Qt::LeftButton)
+  if (getGear()->getState()==OFF && (event->button() & Qt::LeftButton))
   {
     static int i=0;
 
-    int sliderStartX, sliderStartY, sizeX, sizeY;
+/*    int sliderStartX, sliderStartY, sizeX, sizeY;
     getDrawableArea(&sliderStartX, &sliderStartY, &sizeX , &sizeY);
 
     if (p.y() < sliderStartY || p.y() > sliderStartY + sizeY ||
         p.x() < sliderStartX || p.x() > sliderStartX + sizeX)
       ret = false;
-    else
-    {
-      NOTICE("Pushbutton: %d",i++);
-      ((Gear_PushButton*)_gear)->setState(ON);
-      ret=true;
-    }
+    else*/
+      qDebug()<<"Pushbutton: "<<(i++);
+      getGear()->setState(ON);
+      update();
+      event->accept();
   }
-  update();
-  scene()->update();   
-  return ret;
 }
 
-bool Ctrl_PushButton::keyEvent(QKeyEvent *e)
+
+void Ctrl_PushButton::mouseReleaseEvent( QGraphicsSceneMouseEvent * event )
 {
-  std::cerr<<e->ascii()<<" "<<e->stateAfter()<<std::endl;
-  return false;
-}
+  bool ret=false;
+
+  QPointF p = event->pos();
   
+  // Pushbutton zone ?
+  if (getGear()->getState()==ON && !(event->button() & Qt::LeftButton))
+  {
+    getGear()->setState(OFF);
+    update();
+    event->accept();
+  }
+}
+

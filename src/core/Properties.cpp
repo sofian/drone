@@ -128,7 +128,7 @@ void Properties::save(QDomDocument &doc, QDomElement &parent)
     if(lst.size()>1)
     {
       
-      for(unsigned int i=0;i<lst.size(); i++)
+      for(int i=0;i<lst.size(); i++)
       {
         QString index;
         index.sprintf("%i",i);

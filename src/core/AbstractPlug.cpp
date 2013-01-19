@@ -99,12 +99,12 @@ bool AbstractPlug::connect(AbstractPlug *plug)
     plug->exposed(false);
 
   AbstractPlug * deepestPlug = 0;
-  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug) ;
   if(deepestPlug != this)
     deepestPlug->_connectedPlugs.push_back(plug);
 
   AbstractPlug * deepestOtherPlug = 0;
-  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug) ;
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.push_back(this);
 
@@ -148,14 +148,14 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
   //remove this plug from our connections
   _connectedPlugs.removeAll(plug);
   AbstractPlug * deepestPlug = 0;
-  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug);
+  for(deepestPlug = this; deepestPlug->_forwardPlug != 0; deepestPlug = deepestPlug->_forwardPlug) ;
   if(deepestPlug != this)
     deepestPlug->_connectedPlugs.removeAll(plug);
 
   //remove ourself from the other plug connections
   plug->_connectedPlugs.removeAll(this);
   AbstractPlug * deepestOtherPlug = 0;
-  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug);
+  for(deepestOtherPlug = plug; deepestOtherPlug->_forwardPlug != 0; deepestOtherPlug = deepestOtherPlug->_forwardPlug) ;
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.removeAll(this);
 

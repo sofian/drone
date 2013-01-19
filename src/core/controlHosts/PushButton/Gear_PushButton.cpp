@@ -27,15 +27,11 @@
 #include <iostream>
 #include <sstream>
 
-extern "C" {
-Gear* makeGear()
+Gear* makeGear_PushButton()
 {
   return new Gear_PushButton();
 }
-
-
-}
-
+ 
 const QString Gear_PushButton::SETTING_OFFVALUE = "Off Value";
 const QString Gear_PushButton::SETTING_ONVALUE = "On Value";
 const QString Gear_PushButton::SETTING_ONESHOT = "One Shot";

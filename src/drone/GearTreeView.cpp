@@ -102,6 +102,12 @@ void GearTreeView::create()
   QList<QTreeWidgetItem *> items;
   foreach(GearInfo* gi, gearsInfo)
   {        
+    qDebug()<<"looking at" <<gi->fullType()<<" : "<<gi->getClassification();
+    if(!gi->instanciableFromGUI())
+    {
+    qDebug()<<"not shown!";
+      continue;
+    }
     QTreeWidgetItem* parentItem = findClassificationItem(gi->getClassification(),invisibleRootItem());
     
     QTreeWidgetItem* child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(gi->type()));

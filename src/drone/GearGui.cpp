@@ -19,6 +19,7 @@
 
 #include "GearGui.h"
 #include "Gear.h"   
+#include "GearControl.h"
 #include "Engine.h"
 #include "PlugBox.h"
 #include "Control.h"
@@ -79,10 +80,12 @@ QObject(),
 QGraphicsRectItem(),
 _gear(pgear),
 _layoutMode(normal),
-_sizeX(100),
-_sizeY(100),
+_size(100,100),
 _controlWidth(0),
 _controlHeight(0),
+_control(NULL),
+_longestInputPlugName(0),
+_longestOutputPlugName(0),
 _boxNameColor(color)
 {
   
@@ -95,7 +98,6 @@ _boxNameColor(color)
   //if (updateRate>=0)
   //  startTimer(updateRate);
 
-  rebuildLayout();
 
   // setup drop shadow effect
   QGraphicsDropShadowEffect* dropShadow = new QGraphicsDropShadowEffect();
@@ -105,9 +107,25 @@ _boxNameColor(color)
   setGraphicsEffect(dropShadow);
   QObject::connect(_gear, SIGNAL(readyStatusChanged()), this, SLOT(redraw()));
 
-  if(gear->getControl()!=NULL)
-    setControl(gear->getControl());
+  bool rebuildLayoutDone=false;
+  GearControl *gear_c;
+  // Is this a GearControl instance ? 
+  if((gear_c=qobject_cast<GearControl*>(pgear)))
+  {
+    // If so, then check if it has a controller.
+    // If it has none, it's likely because it's instanciated from the core, without a GUI
+    if(gear_c->getControl()!=NULL)
+    {
+      setControl(gear_c->getControl());
+      rebuildLayoutDone=true;
+    }
+  }
+  if(!rebuildLayoutDone)
+      rebuildLayout();
 
+  
+  
+  
 }
 
 GearGui::~GearGui()
@@ -121,27 +139,22 @@ GearGui::~GearGui()
 
 QRectF GearGui::boundingRect() const
 {
-    return QRectF(-6, -2, _sizeX+12, _sizeY+4);
+    return QRectF(-6, -2, _size.width()+12, _size.height()+4);
 }
 
 QPainterPath GearGui::shape() const
 {
     QPainterPath path;
-    path.addRect(0, 0, _sizeX, _sizeY);
+    path.addRect(0, 0, _size.width(), _size.height());
     return path;
 }
 
 void GearGui::setControl(Control* control)
 {
   _control=control;
-  QObject::connect(control,SIGNAL(geometryChanged()),this,SLOT(controlGeometryChanged()));
-  controlGeometryChanged();
-}
-
-void GearGui::controlGeometryChanged()
-{
-  _controlWidth = _control->size().width();
-  _controlHeight = _control->size().height();
+  _control->setParentItem(this);
+  _layoutMode = noPlugNames;
+  QObject::connect(control,SIGNAL(geometryChanged()),this,SLOT(rebuildLayout()));
   rebuildLayout();
 }
 
@@ -169,7 +182,7 @@ QColor GearGui::colorAtY(qreal y)
   QColor c1(getCurrentColor()), c2;
   c2 = c1.darker(BOX_GRADIENT_DARKER_AMOUT);
   
-  double ratio = (y-titleBarHeight()) / (_sizeY - titleBarHeight());
+  double ratio = (y-titleBarHeight()) / (_size.height() - titleBarHeight());
   return GearGui::interpolateColors(ratio,c1,c2);
 
 }
@@ -186,23 +199,22 @@ void GearGui::setLayoutMode(layoutMode mode)
   rebuildLayout();
 }
 
-int GearGui::renderingStartX()
-{
-	return RENDERING_OFFSET;
-}
-
-int GearGui::renderingStartY()
-{
-	return RENDERING_OFFSET;
-}
-
 //! recompute layout and recreate plugBoxes from the parent gear plugs
 void GearGui::rebuildLayout()
 {
   // compute gear name width
   QFontMetrics fm(NAME_FONT);
   qreal name_width = fm.width(_gear->name());
-
+  qreal sizeX,sizeY;
+  
+  if(_control!=NULL)
+  {
+    _controlWidth = _control->size().width();
+    _controlHeight = _control->size().height();
+  }
+  else
+    _controlWidth = _controlHeight = 0;
+  
   //delete and remove inputplugboxes that we dont have anymore
   //we also erase plugs in inputs that we already have
   QList<AbstractPlug*> inputs;
@@ -221,30 +233,36 @@ void GearGui::rebuildLayout()
   int maxPlugs = inputs.size() > outputs.size() ? inputs.size() : outputs.size();
 
   // compute minimal height
-  _sizeY = (maxPlugs * PLUGBOX_VERTICAL_SPACING) + MARGIN_TOP + MARGIN_BOTTOM;
-  _sizeY = qMax(_sizeY, _controlHeight);
-  _sizeY += titleBarHeight();
+  sizeY = (maxPlugs * PLUGBOX_VERTICAL_SPACING) + MARGIN_TOP + MARGIN_BOTTOM;
+  sizeY = qMax(sizeY, _controlHeight);
+  sizeY += titleBarHeight();
 
-  _sizeX=0;
+  sizeX=0;
 
   // add plug name width if they are visible
+  _longestInputPlugName = 0;
+  _longestOutputPlugName = 0;
   if (_layoutMode == normal)
   {
-    qreal longestInputPlugName = 0;
     foreach(AbstractPlug* in,inputs)
-      longestInputPlugName = qMax(longestInputPlugName, PlugBox::plugNameWidth(in->name()));
-    _sizeX += longestInputPlugName;
+      _longestInputPlugName = qMax(_longestInputPlugName, PlugBox::plugNameWidth(in->name()));
+    sizeX += _longestInputPlugName;
 
-    qreal longestOutputPlugName = 0;
     foreach(AbstractPlug* out,outputs)
-      longestOutputPlugName = qMax(longestOutputPlugName, PlugBox::plugNameWidth(out->name()));
-    _sizeX += longestOutputPlugName;
+      _longestOutputPlugName = qMax(_longestOutputPlugName, PlugBox::plugNameWidth(out->name()));
+    sizeX += _longestOutputPlugName;
   
   }
-  else _sizeX+=PlugBox::PLUGBOX_RADIUS * 2 + 6;
-  _sizeX+=_controlWidth;
-  _sizeX=qMax(_sizeX,name_width + 2*MARGIN_NAME);
-  _sizeX+=MARGIN_SIDE*2;
+  else 
+  {
+    if(inputs.count())
+      sizeX+=PlugBox::PLUGBOX_RADIUS + 3;
+    if(outputs.count())
+      sizeX+=PlugBox::PLUGBOX_RADIUS + 3;
+  }
+  sizeX+=_controlWidth;
+  sizeX=qMax(sizeX,name_width + 2*MARGIN_NAME);
+  sizeX+=MARGIN_SIDE*2;
   
   
   qreal by=0;
@@ -265,7 +283,7 @@ void GearGui::rebuildLayout()
   }
   
   by = MARGIN_TOP + titleBarHeight() + PLUGBOX_VERTICAL_OFFSET;
-  bx = _sizeX - PlugBox::PLUGBOX_RADIUS;
+  bx = sizeX - PlugBox::PLUGBOX_RADIUS;
     
   foreach(AbstractPlug* out,outputs)
   {
@@ -276,6 +294,17 @@ void GearGui::rebuildLayout()
     by+=PLUGBOX_VERTICAL_SPACING;
   }
   
+  _size = QSizeF(sizeX,sizeY);
+  if(_control)
+  {
+        qDebug()<<"##"<<_size.width() <<";"<< MARGIN_SIDE*2 <<";"<< _longestInputPlugName <<";"<< _longestOutputPlugName <<";"<< _control->size().width();
+        qDebug()<<"@@"<<(name_width + 2*MARGIN_NAME);
+    qreal extraControlWidth = _size.width() - (MARGIN_SIDE*2 + _longestInputPlugName + _longestOutputPlugName + _control->size().width());
+    qreal extraControlHeight = _size.height() - (titleBarHeight() + _control->size().height());
+        qDebug()<<"!!"<<extraControlWidth<<":"<<(MARGIN_SIDE + _longestInputPlugName + extraControlWidth/2);
+    _control->setPos(MARGIN_SIDE + _longestInputPlugName + extraControlWidth/2, titleBarHeight() + extraControlHeight/2);
+    
+  }
   update();
 }
 
@@ -288,15 +317,6 @@ void GearGui::removeAllPlugBoxes()
   _plugBoxes.clear();
   _inputPlugBoxes.clear();
   _outputPlugBoxes.clear();
-}
-
-void GearGui::getDrawableArea(int *ox, int *oy, int *sizeX, int *sizeY)
-{
-
-  *ox = (int)renderingStartX() + PlugBox::PLUGBOX_RADIUS + 4;
-  *oy = (int)renderingStartY() + GearGui::TITLE_BAR_HEIGHT + 4;
-  *sizeX = _sizeX - (PlugBox::PLUGBOX_RADIUS+4)*2;
-  *sizeY = _sizeY - GearGui::TITLE_BAR_HEIGHT - 10;            
 }
 
 QColor GearGui::getCurrentColor()
@@ -329,12 +349,12 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   pen.setWidthF(1);
   if(selected)
 {
-    QLinearGradient gradient2(0, 0, 0, _sizeY);
+    QLinearGradient gradient2(0, 0, 0, _size.height());
     gradient2.setColorAt(0, SELECT_OUTLINE_TOP);
     gradient2.setColorAt(1, SELECT_OUTLINE_BOTTOM);
     painter->setBrush(gradient2);
     painter->setPen(Qt::NoPen);
-    painter->drawRoundRect(QRectF(-2, -2, _sizeX+4, _sizeY+4), this->radiusHelper(_sizeX+4, 16), this->radiusHelper(_sizeY+4, 16));
+    painter->drawRoundRect(QRectF(-2, -2, _size.width()+4, _size.height()+4), this->radiusHelper(_size.width()+4, 16), this->radiusHelper(_size.height()+4, 16));
     foreach(PlugBox* ipb,_inputPlugBoxes)
       ipb->drawSelected(painter);
     foreach(PlugBox* opb,_outputPlugBoxes)
@@ -345,15 +365,15 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   painter->setPen(pen);
   
   
-  QLinearGradient gradient(0, 0, 0, _sizeY);
+  QLinearGradient gradient(0, 0, 0, _size.height());
   gradient.setColorAt(0, fillColor.lighter(300));
-  gradient.setColorAt(pixToGradientPos(2,_sizeY), fillColor.lighter(150));
-  gradient.setColorAt(pixToGradientPos(TITLE_BAR_HEIGHT,_sizeY), fillColor.lighter(130)); 
-  gradient.setColorAt(pixToGradientPos(TITLE_BAR_HEIGHT+1,_sizeY), fillColor); 
+  gradient.setColorAt(pixToGradientPos(2,_size.height()), fillColor.lighter(150));
+  gradient.setColorAt(pixToGradientPos(TITLE_BAR_HEIGHT,_size.height()), fillColor.lighter(130)); 
+  gradient.setColorAt(pixToGradientPos(TITLE_BAR_HEIGHT+1,_size.height()), fillColor); 
   gradient.setColorAt(1, fillColor.darker(BOX_GRADIENT_DARKER_AMOUT)); 
   painter->setBrush(gradient);
   
-  painter->drawRoundRect(QRectF(0,0,_sizeX,_sizeY),this->radiusHelper(_sizeX,14),this->radiusHelper(_sizeY,14));
+  painter->drawRoundRect(QRectF(0,0,_size.width(),_size.height()),this->radiusHelper(_size.width(),14),this->radiusHelper(_size.height(),14));
 
 
   //gear name
@@ -367,12 +387,12 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   if (title.isEmpty())
     title=_gear->name();
 	
-  painter->drawText(0,1, _sizeX, TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title);
+  painter->drawText(0,1, _size.width(), TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title);
   
 	//ready box
   //painter->setPen(Qt::black);
   //painter->setBrush(gear()->ready() ? GEAR_READY_COLOR : GEAR_NOT_READY_COLOR);
-  //painter->drawRoundRect(_sizeX - 10, 2, 8, 8, 50, 50);
+  //painter->drawRoundRect(sizeX - 10, 2, 8, 8, 50, 50);
 
   //plugboxes
   foreach(PlugBox* ipb,_inputPlugBoxes)

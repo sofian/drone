@@ -10,7 +10,7 @@ unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
 unix:!macx:TARGET=../../../gears/drone/Gear_Osc
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/drone/drone/Gear_Osc
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_Osc
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 #The following line was inserted by qt3to4

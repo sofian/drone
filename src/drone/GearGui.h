@@ -90,7 +90,6 @@ public:
   QRectF boundingRect() const;
   QPainterPath shape() const;
 
-  void rebuildLayout();
   PlugBox* getInputPlugBox(QString name) const;
   PlugBox* getOutputPlugBox(QString name) const;
 
@@ -117,8 +116,7 @@ public:
   void setLayoutMode(layoutMode mode);  
   layoutMode getLayoutMode() const {return _layoutMode;}
   qreal titleBarHeight(){return (_layoutMode==normal || _layoutMode==noPlugNames)?TITLE_BAR_HEIGHT:0;}  
-  qreal sizeX() const {return _sizeX;}
-  qreal sizeY() const {return _sizeY;}
+  QSizeF size() const {return _size;}
 
   void setControl(Control* control);
   
@@ -126,7 +124,7 @@ public:
 
 public slots: 
   void redraw();
-  void controlGeometryChanged();
+  void rebuildLayout();
 	
 protected:
   
@@ -143,8 +141,7 @@ protected:
   layoutMode _layoutMode;
   
   // the effective Size (can be stretched by user)
-  qreal _sizeX;
-  qreal _sizeY;
+  QSizeF _size;
 
   // minimum required size for controller region (space at center of a gear where something custom can be drawn)
   qreal _controlWidth;
@@ -153,7 +150,7 @@ protected:
   // The control that is at the center 
   Control* _control;
   
-  
+  qreal _longestInputPlugName, _longestOutputPlugName;
   QColor _boxNameColor;
   QString _title;
 private:

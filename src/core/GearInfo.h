@@ -6,7 +6,7 @@
 #include <vector>
 #include "XMLHelper.h"
 #include "AbstractPlug.h"
-#include "frei0r.h"
+#include "../contrib/frei0r/spec/frei0r.h"
 #include "Control.h"
 
 class Gear;
@@ -58,17 +58,28 @@ private:
 class GearInfo
 {
 public:
-	GearInfo(QString pluginType, QFileInfo pluginFile);
+  typedef Gear* (*GearCreator)();
+  typedef Control* (*ControlCreator)();
+
+  GearInfo(QString pluginType);
 	virtual ~GearInfo(){}
 
   QString pluginType() const {return _pluginType;}
 	
   virtual bool save();
-  bool load();	
+  virtual bool load();	
   bool createDefaultMetaInfo();
-	
+  
+  // is the gear instanciable from the Drone GUI ? 
+  // (GearControl are merely hosts for controls. They are not instanciable by the user
+  // The user will instead instanciate Control, which build their respective GearControl. 
+  // For example, you might have 3 Controls using the same GearControl. 
+  // Instanciating this gearControl doesn't make sense
+  // unless you're running the core in stand alone.  
+	virtual bool instanciableFromGUI(){return _instanciableFromGUI;}
+  
 	virtual QFileInfo infoFile()=0;//! mangling for the metaInfo filename from the pluginfile
-	QString type();//! name of the gearInfo is taken from the infoFile name.
+	virtual QString type();//! name of the gearInfo is taken from the infoFile name.
 	QString fullType(){return "Gear:"+pluginType() + ":" + type();}//! the type + ":" + the name
 	virtual Gear* createGearInstance()=0;
 
@@ -78,34 +89,61 @@ public:
   const QStringList getClassification(){return _classification;}
   
 protected:
+    
+  
   void syncPlugsInfo();
 	bool addPlugInfo(const PlugInfo& pi);
 	
   virtual bool loadMetaInfo();
-	virtual bool bindPlugin()=0;//! bind to the plugin file
 
 	static const QString XML_TAGNAME;
 
 	QString _pluginType;
-  QFileInfo _pluginFile;
   QMap<QString, PlugInfo> _plugsInfo;
 	int _majorVersion;
   int _minorVersion;
   QString _author,_intro,_description;
   QStringList _classification;
+  bool _instanciableFromGUI;
 };
+
+
+
+
+
+
+
+class GearInfoPlugin: public GearInfo
+{
+public:
+  GearInfoPlugin(QString pluginType, QFileInfo pluginFile);
+	virtual ~GearInfoPlugin(){}
+  virtual bool save();
+  virtual bool load();	
+
+  
+protected:
+    
+ 	virtual bool bindPlugin()=0;//! bind to the plugin file
+  QFileInfo _pluginFile;
+};
+
+
+
+
+
+
 
 /**
  * GearInfo for drone gears.
 **/
-class GearInfoDrone : public GearInfo
+class GearInfoDrone : public GearInfoPlugin
 {
 public:
 	static const QString TYPENAME;
 	
 	GearInfoDrone(QFileInfo pluginFile);
-	~GearInfoDrone();				
-											
+	~GearInfoDrone();	
 	Gear* createGearInstance();
 
 	QFileInfo infoFile()
@@ -116,14 +154,40 @@ public:
 protected:
 	bool bindPlugin();
 
-  Gear* (*_makeGear)();	
 	void* _handle;
+  GearCreator _makeGear;	
 };
+
+
+/**
+ * GearInfo for static drone gears. (Gears that are bundled in app)
+**/
+class GearInfoStatic : public GearInfo
+{
+public:
+	static const QString TYPENAME;
+	
+	GearInfoStatic(QString type, GearCreator _makeGear);
+	~GearInfoStatic();	
+	Gear* createGearInstance();
+  QString type();//! overriden because no plugin file 
+	
+	QFileInfo infoFile()
+	{
+		return QFileInfo();//_pluginFile.absolutePath() + "/" + _pluginFile.baseName().mid(3) + ".xml");
+	}
+					
+protected:
+  GearCreator _makeGear;
+  QString _type;
+};
+
+
 
 /**
  * GearInfo for drone control gears.
 **/
-class GearInfoControl : public GearInfo
+class GearInfoControl : public GearInfoPlugin
 {
 public:
 	static const QString TYPENAME;
@@ -141,7 +205,7 @@ public:
 					
 protected:
 
-  Control* (*_makeControl)();	
+  ControlCreator _makeControl;	
 
 	void* _handle;
 
@@ -151,7 +215,7 @@ protected:
 /**
  * GearInfo for drone Frei0r gears.
 **/
-class GearInfoFrei0r : public GearInfo
+class GearInfoFrei0r : public GearInfoPlugin
 {
 public:
 	static const QString TYPENAME;
@@ -179,7 +243,7 @@ protected:
 /**
  * GearInfo for MetaGears.
 **/
-class GearInfoMeta : public GearInfo
+class GearInfoMeta : public GearInfoPlugin
 {
 public:
 	static const QString TYPENAME;
