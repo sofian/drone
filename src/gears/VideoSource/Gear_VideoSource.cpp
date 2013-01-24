@@ -116,7 +116,7 @@ bool Gear_VideoSource::loadMovie(QString filename)
   av_dump_format(_formatContext, 0, filename.latin1(), 0);
 
   _videoStreamIndex=-1;
-  for (int i=0; i<_formatContext->nb_streams; i++)
+  for (unsigned int i=0; i<_formatContext->nb_streams; i++)
     if (_formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
     {
       _videoStreamIndex=i;

@@ -115,12 +115,12 @@ void Gear_PushButton::runVideo()
      int Note = _settings.get(Gear_PushButton::SETTING_MIDINOTE)->valueInt();
 
      // we only consider the LAST Note value
-     float on =_settings.get(Gear_PushButton::SETTING_ONVALUE)->valueFloat();
-     float off =_settings.get(Gear_PushButton::SETTING_OFFVALUE)->valueFloat();
+     //float on =_settings.get(Gear_PushButton::SETTING_ONVALUE)->valueFloat();
+     //float off =_settings.get(Gear_PushButton::SETTING_OFFVALUE)->valueFloat();
      
      float highValue = -1,lastStamp;
      noteOff=false;
-     for(int i=0;i<messages.size();i++)
+     for(unsigned int i=0;i<messages.size();i++)
      {
        msg = messages[i];
        if(msg->isNoteEvent() && msg->getChannel()==channel  && msg->getNote()==Note)

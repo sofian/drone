@@ -70,14 +70,6 @@
 
 // #define RANDOM_TABLE_SIZE  4096
 
-/* A drawable has an alphachannel if contains either 4 or 2 bytes data
- * aka GRAYA and RGBA and thus the macro below works. This will have
- * to change if we support bigger formats. We'll do it so for now because
- * masking is always cheaper than passing parameters over the stack.      */
-/* FIXME: Move to a global place */
-
-#define HAS_ALPHA(bytes) (~bytes & 1)
-
 
 // static guchar add_lut[511];
 // static gint32 random_table[RANDOM_TABLE_SIZE];
@@ -98,15 +90,15 @@
 void
 gimp_composite_convert_any_any_any_generic (GimpCompositeContext *ctx)
 {
-  int i;
-  int j;
+  unsigned int i;
+  unsigned int j;
   unsigned char *D = ctx->D;
   unsigned char *A = ctx->A;
   int bpp_A = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_A];
   int bpp_D = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_D];
 
   for (i = 0; i < ctx->n_pixels; i++) {
-    for (j = 0; j < bpp_A; j++) {
+    for (j = 0; j < (unsigned int)bpp_A; j++) {
       D[j] = A[j];
     }
     D[j] = GIMP_COMPOSITE_ALPHA_OPAQUE;

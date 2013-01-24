@@ -17,7 +17,6 @@
 #include <qbytearray>
 //Added by qt3to4:
 #include <QPixmap>
-#include "draggear.xpm"
 #include <qheaderview>
 
 GearTreeView::GearTreeView(QWidget *parent) :
@@ -66,7 +65,7 @@ void GearTreeView::mousePressEvent(QMouseEvent *event)
 QTreeWidgetItem* GearTreeView::findClassificationItem(QStringList path, QTreeWidgetItem * parent)
 {
   QTreeWidgetItem* base=NULL;
-  int childIndex=0;
+  //int childIndex=0;
   
   for(int i=0;i<parent->childCount();i++)
   {

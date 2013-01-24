@@ -8,7 +8,7 @@
  */
 
 #include "DroneCore.h"
-
+#include <quuid>
 #include "gearFactory/GearMaker.h"
 #include "QString.h"
 #include "DroneMath.h"
@@ -16,14 +16,6 @@
 
 extern Gear* makeGear_PushButton();
 
-extern "C"
-{
-#ifdef WIN32
-#include <Rpc.h>
-#else
-#include <uuid/uuid.h>
-#endif
-}
 
 namespace Drone{
     LoadingModeFlags LoadFromFile=0; 
@@ -33,23 +25,7 @@ namespace Drone{
 
 QString DroneCore::newUUID()
 {
-#ifdef WIN32
-    UUID uuid;
-    UuidCreate ( &uuid );
-
-    unsigned char * str;
-    UuidToStringA ( &uuid, &str );
-
-    std::string s( ( char* ) str );
-
-    RpcStringFreeA ( &str );
-#else
-    uuid_t uuid;
-    uuid_generate_random ( uuid );
-    char s[37];
-    uuid_unparse ( uuid, s );
-#endif
-    return s;
+  return QUuid().toString();
 }
 
 

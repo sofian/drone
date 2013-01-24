@@ -49,12 +49,14 @@ Control()
 
 void Ctrl_PushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+  Q_UNUSED(option);
   Q_UNUSED(widget);
   //make the title bar show the value
   painter->setPen( Qt::black );
     
   QPoint point = QPoint( 0, 0 );
   painter->drawRect(0,0,size().width(),size().height());
+
   
   return;
   /*
@@ -125,8 +127,6 @@ void Ctrl_PushButton::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
 void Ctrl_PushButton::mouseReleaseEvent( QGraphicsSceneMouseEvent * event )
 {
-  bool ret=false;
-
   QPointF p = event->pos();
   
   // Pushbutton zone ?

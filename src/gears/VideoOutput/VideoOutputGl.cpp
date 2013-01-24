@@ -189,6 +189,7 @@ bool VideoOutputGl::init(int xRes, int yRes, bool fullscreen)
 
 bool VideoOutputGl::toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int yPos)
 {
+  Q_UNUSED(xRes);Q_UNUSED(yRes);
 	_fullscreen = fs;
 
 	_window->move(xPos, yPos);
@@ -200,6 +201,8 @@ bool VideoOutputGl::toggleFullscreen(bool fs, int xRes, int yRes, int xPos, int 
 }
 
 void VideoOutputGl::onResize(int sizeX, int sizeY)
-{    
+{
+    Q_UNUSED(sizeX);Q_UNUSED(sizeY);
+
 }
 

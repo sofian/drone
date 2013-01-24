@@ -80,23 +80,23 @@ public:
 public slots:
 
   //common slots  
-  void slotZoomIn();
-  void slotZoomOut();
+  void onZoomIn();
+  void onZoomOut();
 
-  void slotMenuGearSelected(QString name);
-  void slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
-  void slotGearProperties();
-  void slotDeleteSelected();
-  void slotSelectAll();
-  void slotGearCopy();
-  void slotGearPaste();
-  void slotNewMetaGear();
+  void onMenuGearSelected(QString name);
+  void onMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
+  void onGearProperties();
+  void onDeleteSelected();
+  void onSelectAll();
+  void onGearCopy();
+  void onGearPaste();
+  void onNewMetaGear();
 
   //plug editing slots
-  void slotPlugToggleExpose();
+  void onPlugToggleExpose();
   
   //metagear editing slots
-  void slotSaveMetaGear();
+  void onSaveMetaGear();
 
   
 

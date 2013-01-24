@@ -55,8 +55,8 @@ Gear_EmptyImage::~Gear_EmptyImage()
 void Gear_EmptyImage::runVideo()
 {
 
-  int xs = _XSIZE->type()->value();
-  int ys = _YSIZE->type()->value();
+  unsigned int xs = _XSIZE->type()->value();
+  unsigned int ys = _YSIZE->type()->value();
   
   if(xs!=_VIDEO_OUT->type()->width() || ys!=_VIDEO_OUT->type()->height())
     {

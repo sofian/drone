@@ -167,6 +167,8 @@ void
 gimp_composite_init (gboolean  be_verbose,
                      gboolean  use_cpu_accel)
 {
+  (void)be_verbose;
+  (void)use_cpu_accel;
 //   const gchar *p;
 
 //   if ((p = g_getenv ("GIMP_COMPOSITE")))
