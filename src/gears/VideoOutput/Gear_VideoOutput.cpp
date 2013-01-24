@@ -19,7 +19,6 @@
 
 #include "Gear_VideoOutput.h"
 
-#include "GearMaker.h"
 #include "Engine.h"
 #include "VideoOutput.h"
 

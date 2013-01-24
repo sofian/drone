@@ -20,9 +20,9 @@
 #ifndef __ABSTRACTTYPE_INCLUDED
 #define __ABSTRACTTYPE_INCLUDED
 
+#include "DroneGlobals.h"
 #include <qcolor.h>
 #include <iostream>
-
 #include <vector>
 
 class QDomDocument;

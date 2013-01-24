@@ -26,7 +26,9 @@
 #include <qdir.h>
 
 #include "Gear.h"
-#include "GearInfo.h"
+
+class GearInfo;
+class Control;
 
 /**
  * note : parseGears have to be called to discover gears in path and populate the 
@@ -35,9 +37,12 @@
 class GearMaker
 {
 public:									
+  typedef Gear* (*GearCreator)();
+  typedef Control* (*ControlCreator)();
+
 	static GearMaker* instance();
 
-  void registerStaticGear(QString type, GearInfo::GearCreator gear_creator);
+  void registerStaticGear(GearCreator gear_creator);
 
   Gear* makeGear(QString fullName);
 	Gear* makeGear(QString type, QString name);
@@ -50,12 +55,13 @@ public:
 	bool parse();
 	QDir defaultGearsDir();
 
+	static const QString DRONEGEARS_SUBPATH;
+	static const QString FREI0RGEARS_SUBPATH;
+	static const QString CONTROLGEARS_SUBPATH;
+	static const QString METAGEARS_SUBPATH;
 private:
-	static QString DRONEGEARS_SUBPATH;
-	static QString FREI0RGEARS_SUBPATH;
-	static QString CONTROLGEARS_SUBPATH;
-	static QString METAGEARS_SUBPATH;
-		
+  
+  
 	GearMaker();
 
   template <class T> void parseGears(QDir dir, QString extension);

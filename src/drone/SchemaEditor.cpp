@@ -25,6 +25,7 @@
 #include "Engine.h"
 #include "Gear.h"
 #include "MetaGear.h"
+#include "commands/CommandGeneric.h"
 
 #include "MetaGearEditor.h"
 #include "PanelScrollView.h"
@@ -32,7 +33,8 @@
 #include "GearListMenu.h"
 #include "MetaGearListMenu.h"
 #include "GearPropertiesDialog.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
+#include "gearFactory/GearMaker.h"
 #include "MetaGearMaker.h"
 
 #include <q3mainwindow.h>
@@ -62,9 +64,9 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   _engine(engine),
   _schemaGui(schemaGui),
   _scale(1),
-  _panelScrollView(panelScrollView),
   _maxZValue(1),
-  _selectionChangeBypass(false)
+  _selectionChangeNotificationBypass(false),
+  _panelScrollView(panelScrollView)
   
 
 {
@@ -78,7 +80,7 @@ SchemaEditor::SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engin
   setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
   
   // render with OpenGL
-  if(0)
+  if(1)
     setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 
   resetTransform();
@@ -229,10 +231,15 @@ void SchemaEditor::slotSaveMetaGear()
 
 void SchemaEditor::deleteSelected()
 {
+    CommandGeneric* com = new CommandGeneric();
   QList<GearGui*> allGears = _schemaGui->getSelectedGears();
   foreach(GearGui* gg,allGears)
     _schemaGui->removeGear(gg);
   _contextGear = NULL;
+  com->saveSnapshotAfter();
+  com->setText(QString("Deleted selected items"));
+  MainWindow::getInstance()->pushUndoCommand(com);
+
 
 }
 
@@ -241,23 +248,11 @@ void SchemaEditor::deleteSelected()
 
 void SchemaEditor::slotGearCopy()
 {
+  _schemaGui->resetPasteOffset();
   QDomDocument doc("Clipboard");
   
   QDomElement clipboardElem = doc.createElement("Clipboard");
   doc.appendChild(clipboardElem);
-
-//   QDomElement cornerElem = doc.createElement("SelectedBoxUpperLeftCorner");
-//   doc.appendChild(cornerElem);
-
-//   QRect box = getBoundingBoxOfAllSelectedGears();
-
-//   QDomAttr xcoord = doc.createAttribute("X");
-//   xcoord.setValue(QString("%1").arg(box.left()));
-//   clipboardElem.setAttributeNode(xcoord);
-
-//   QDomAttr ycoord = doc.createAttribute("Y");
-//   ycoord.setValue(QString("%1").arg(box.top()));
-//   clipboardElem.setAttributeNode(ycoord);
 
   if(!_schemaGui->save(doc, clipboardElem,true))
     return;
@@ -267,12 +262,17 @@ void SchemaEditor::slotGearCopy()
   QTextStream stream(&str,QIODevice::WriteOnly);
   doc.save(stream,4);
   _engine->setClipboardText(str.latin1());
-  qDebug()<<_engine->getClipboardText();
+  qDebug()<<"copied! size:"<<_engine->getClipboardText().length();
   
 }
 
 void SchemaEditor::slotGearPaste()
 {
+  
+  CommandGeneric* com = new CommandGeneric();
+  
+  
+  
   _schemaGui->clearSelection();
   QDomDocument doc("Clipboard");
 
@@ -306,31 +306,41 @@ void SchemaEditor::slotGearPaste()
     std::cout << "Bad drone project, main schema elem isNull" << std::endl;
     return;
   }
-  std::cerr<<"pasted.."<<std::endl;
-  _schemaGui->getSchema()->load(schemaElem, true);
-  _schemaGui->rebuildSchema();
-
-//  _state = MOVING_GEAR; 
-  //QRectF rect = getBoundingBoxOfAllSelectedGears();
-  //_movingGearStartPos = rect.center();
   
+  _schemaGui->setSelectionChangeNotificationBypass(true);
+  _schemaGui->setAutoSelectNewElements(true);
+  
+  _schemaGui->getSchema()->load(schemaElem, Drone::PasteFromClipboard);
+  
+  _schemaGui->setAutoSelectNewElements(false);
+  _schemaGui->setSelectionChangeNotificationBypass(false);
+  _schemaGui->selectionHasChanged();
+  _schemaGui->moveItemsBy(_schemaGui->selectedItems(),_schemaGui->getPasteOffset());
+  //_schemaGui->rebuildSchema();
+  
+  com->saveSnapshotAfter();
+  com->setText(QString("Pasted"));
+  MainWindow::getInstance()->pushUndoCommand(com);
+
 }
 
 void SchemaEditor::slotSelectAll()
 {
   QList<QGraphicsItem*> all = _schemaGui->items();
-  QGraphicsItem* el;
-  GearGui* ggui;
-  _schemaGui->setSelectionChangeBypass(true);
+  QGraphicsItem* el=NULL;
+  if(!all.count())
+    return;
+  _schemaGui->setSelectionChangeNotificationBypass(true);
   foreach(el,all)
   {
     el->setSelected(true);
   }
   el->setSelected(false);
-  _schemaGui->setSelectionChangeBypass(false);
+  _schemaGui->setSelectionChangeNotificationBypass(false);
 // hack to emit signal because we can't manually
   el->setSelected(true);
   update();
+  
 }
 
 void SchemaEditor::contextMenuEvent(QContextMenuEvent *contextMenuEvent)

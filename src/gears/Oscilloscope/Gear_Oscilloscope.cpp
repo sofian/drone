@@ -20,7 +20,6 @@
 #include "Gear_Oscilloscope.h"
 #include "Engine.h"
 #include <iostream>
-#include "GearMaker.h"
 #include "CircularBuffer.h"
 
 extern "C" {

@@ -18,7 +18,7 @@
  */
 
 #include "Gear_PushButton.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
 #include "DroneMath.h"
 #include "MidiEngine.h"
 #include "Engine.h"

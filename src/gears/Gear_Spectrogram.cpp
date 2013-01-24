@@ -20,7 +20,7 @@
 #include "Gear_Spectrogram.h"
 #include "Engine.h"
 #include <iostream>
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_Spectrogram, Gear_Spectrogram, "Spectrogram")
 

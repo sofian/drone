@@ -36,7 +36,7 @@ public:
   virtual ~StringType() {}
   
 	void save(QDomDocument &doc, QDomElement &parent) const;
-	void load(QDomElement &typeElem);
+	void load(QDomElement &typeElem, Drone::LoadingModeFlags lmf);
 	
   virtual QString typeName() const { return TYPENAME; }
   virtual QColor color() const { return QColor(123, 173, 241); }

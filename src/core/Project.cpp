@@ -25,7 +25,7 @@ bool Project::save()
   return saveAs(_projectName);
 }
 
-bool Project::saveAs(QString filename)
+QDomDocument Project::getSnapshot()
 {
   QDomDocument doc("DroneProject");
   
@@ -33,10 +33,16 @@ bool Project::saveAs(QString filename)
   doc.appendChild(projectElem);
 
   if(!_mainSchema->save(doc, projectElem))
-    return false;
+    return QDomDocument();
+  qDebug()<<"Just serialized this:"<<doc.toString();
+  return doc;
+  
+}
 
-  //save to file  
-       
+bool Project::saveAs(QString filename)
+{
+  QDomDocument doc(getSnapshot());
+  
   QFile file(filename);
   if (file.open(QIODevice::WriteOnly))
   {
@@ -55,7 +61,7 @@ bool Project::saveAs(QString filename)
 
 }
 
-bool Project::load(QString filename)
+bool Project::loadFromFile(QString filename)
 {
   QDomDocument doc("DroneProject");
 
@@ -79,9 +85,15 @@ bool Project::load(QString filename)
     file.close();
     return false;
   }
-
+  
   file.close();
+  _projectName=filename;
+  return load(doc,0);
+}
 
+bool Project::load(const QDomDocument &doc, Drone::LoadingModeFlags lmf)
+{
+  qDebug()<<"about to load this:"<<doc.toString();
   
   QDomNode projectNode = doc.firstChild();
   QDomNode schemaNode = projectNode.firstChild();
@@ -100,10 +112,9 @@ bool Project::load(QString filename)
     return false;
   }
   
-  if(!_mainSchema->load(schemaElem))
+  if(!_mainSchema->load(schemaElem, lmf))
     return false;
   
-  _projectName=filename;
   return true;
 }
 

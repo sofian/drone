@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include "SchemaGui.h"
+#include "XMLHelper.h"
 #include <qpainter.h>
 #include <qdom.h>
 //Added by qt3to4:
@@ -130,10 +131,19 @@ _boxNameColor(color)
 
 GearGui::~GearGui()
 {
+  GearControl* controlGear;
+
   //delete all the plugBoxes
   //plugboxes take care of deleting connectionItems when deleted
   //Everything is taken care of ! :)
   removeAllPlugBoxes();
+
+  if ((controlGear = qobject_cast<GearControl*>(_gear)))
+  {
+    if (controlGear->getControl())
+      delete controlGear->getControl();
+  }
+
 }
 
 
@@ -331,7 +341,8 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
 
     
    bool selected = (option->state & QStyle::State_Selected);
-   bool hover = (option->state & QStyle::State_MouseOver);
+   //qDebug()<<_gear->getUUID()<<":"<<selected;
+   //bool hover = (option->state & QStyle::State_MouseOver);
 
 //   setOpacity(gear()->ready()?0.97:0.6); 
    QColor fillColor(getCurrentColor());
@@ -385,7 +396,7 @@ void GearGui::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QW
   //title default to gear name if not explicitly set
   QString title=_title;
   if (title.isEmpty())
-    title=_gear->name();
+    title=_gear->instanceName();
 	
   painter->drawText(0,1, _size.width(), TITLE_BAR_HEIGHT, Qt::AlignHCenter | Qt::AlignVCenter, title);
   
@@ -416,7 +427,7 @@ PlugBox* GearGui::plugHit(const QPointF &p)
 
 void GearGui::performPlugHighligthing(const QPointF &p)
 {
-  PlugBox *plugbox;
+  //PlugBox *plugbox;
 
   
   foreach(PlugBox* plugbox,_plugBoxes)
@@ -465,12 +476,47 @@ void GearGui::save(QDomDocument &doc, QDomElement &gearElem)
   gearPosY.setValue(strY.str().c_str());
   gearElem.setAttributeNode(gearPosY);
 
+  QDomAttr sel = doc.createAttribute("Sel");
+  sel.setValue(isSelected()?"1":"0");
+  gearElem.setAttributeNode(sel);
+
+  QDomAttr z = doc.createAttribute("Z");
+  z.setValue(QString('%1').arg(zValue()));
+  gearElem.setAttributeNode(z);
 }                                                                                                                       
 
 void GearGui::load(QDomElement &gearElem)                        
 {
   setX(gearElem.attribute("PosX","").toInt());
   setY(gearElem.attribute("PosY","").toInt());
+  setSelected(gearElem.attribute("Sel","").toInt());
+  setZValue(gearElem.attribute("Z","").toInt());
+  
+  
+  //load plugs attributes
+  QDomNode gearGuiNode = XMLHelper::findChildNode(gearElem, "GearGui");
+
+  if(!gearGuiNode.isNull())
+  {
+    QDomElement gearGuiElem = gearGuiNode.toElement();
+    if (!gearGuiElem.isNull())
+    {
+      setX(gearGuiElem.attribute("PosX","").toInt());
+      setY(gearGuiElem.attribute("PosY","").toInt());
+		}
+	}
+}
+
+PlugBox* GearGui::getPlugBox(QString name) const
+{
+
+  foreach(PlugBox* pb, _plugBoxes)
+  {
+    if (pb->plug()->name() == name)
+      return (pb);
+  }
+
+  return NULL;
 }
 
 

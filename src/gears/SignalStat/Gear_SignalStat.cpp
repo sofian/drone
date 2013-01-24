@@ -20,7 +20,7 @@
 #include "Gear_SignalStat.h"
 #include "DroneMath.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

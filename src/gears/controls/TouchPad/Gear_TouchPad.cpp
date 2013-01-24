@@ -18,7 +18,7 @@
  */
 
 #include "Gear_TouchPad.h"
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 #include "Engine.h"

@@ -21,7 +21,7 @@
 #include "Gear_VideoReplaceAreas.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {

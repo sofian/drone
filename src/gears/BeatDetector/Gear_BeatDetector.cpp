@@ -23,7 +23,7 @@
 #include "DroneMath.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 // the buffer of the DOWNSAMPLED data
 static const unsigned int SECS_BUFFERED = 5; // 5 secs

@@ -17,6 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "DroneCore.h"
 #include "Gear.h"
 #include "GearMaker.h"
 #include "GearFrei0r.h"
@@ -26,17 +27,21 @@
 #include <qdir.h>
 #include <qdom.h>
 #include <iostream>
-
-class GearInfoControl;
+#include "GearInfo.h"
+#include "GearInfoStatic.h"
+#include "GearInfoControl.h"
+#include "GearInfoFrei0r.h"
+#include "GearInfoDrone.h"
+#include "GearInfoMeta.h"
 
 #if defined(Q_OS_MACX)
 #include <CFBundle.h>
 #endif
 
-QString GearMaker::DRONEGEARS_SUBPATH = "drone";
-QString GearMaker::CONTROLGEARS_SUBPATH = "controls";
-QString GearMaker::FREI0RGEARS_SUBPATH = "frei0r";
-QString GearMaker::METAGEARS_SUBPATH = "meta";
+const QString GearMaker::DRONEGEARS_SUBPATH = "drone";
+const QString GearMaker::CONTROLGEARS_SUBPATH = "controls";
+const QString GearMaker::FREI0RGEARS_SUBPATH = "frei0r";
+const QString GearMaker::METAGEARS_SUBPATH = "meta";
 
 
 GearMaker::GearMaker()
@@ -63,23 +68,27 @@ void GearMaker::emptyRegistry()
 }
 
 /**
- * Creates an instance of fullType gear, using all parsed gearInfos.
+ * Creates an instance of "type" gear, using all parsed gearInfos.
  * The init() method of gear is also called.
  */
-Gear* GearMaker::makeGear(QString fullType)
+Gear* GearMaker::makeGear(QString type)
 {
   Gear* thegear;
-  GearInfo *gearInfo = findGearInfo(fullType);
+  
+  //qDebug()<<"Trying to make gear of type : "<<type<<" with keys:"<<_registry.keys();
+  
+  GearInfo *gearInfo = findGearInfo(type);
 
   //be sure we have this gear
   if (!gearInfo)
   {
-    qCritical() << "[GearMaker::makeGear] gear type not found: " << fullType;
+    qCritical() << "[GearMaker::makeGear] gear type not found: " << type;
     return NULL;
   }
 
 	thegear = gearInfo->createGearInstance();
-	
+	thegear->setGearInfo(gearInfo);
+  thegear->setUUID(DroneCore::newUUID());
 	if (thegear)
 		thegear->init();
 		
@@ -91,17 +100,18 @@ Gear* GearMaker::makeGear(QString type, QString name)
 	return makeGear(type + ":" + name);
 }
 
+/*
 GearInfo* GearMaker::findGearInfo(QString type, QString name)
 {
 	return findGearInfo(type + ":" + name);
-}
+}*/
 
 /**
-* Find the gearInfo using the fullType (ex: Drone:Blur)
+* Find the gearInfo using the type (ex: Drone:Blur)
 **/
-GearInfo* GearMaker::findGearInfo(QString fullType)
+GearInfo* GearMaker::findGearInfo(QString type)
 {
-  QMap<QString, GearInfo*>::iterator it = _registry.find(fullType);
+  QMap<QString, GearInfo*>::iterator it = _registry.find(type);
 
 	if (it == _registry.end())
 		return NULL;
@@ -130,7 +140,8 @@ bool GearMaker::parse(QDir rootDir)
   }
 	
 	qDebug() << "parsing Gears in path: " << rootDir.path();
-	emptyRegistry();
+	// removed because we have static gears now that have already been registered
+  //emptyRegistry();
 	parseDroneGears(rootDir);
 	parseControlGears(rootDir);
 	parseFrei0rGears(rootDir);
@@ -162,11 +173,12 @@ QDir GearMaker::defaultGearsDir()
 #endif	
 }
 
-void GearMaker::registerStaticGear(QString type, GearInfo::GearCreator gear_creator)
+void GearMaker::registerStaticGear(GearCreator gear_creator)
 {
-		GearInfoStatic *gearInfo = new GearInfoStatic(type, gear_creator);
+		GearInfoStatic *gearInfo = new GearInfoStatic(gear_creator);
 		if(gearInfo->load())
-      _registry[gearInfo->fullType()]=gearInfo;
+      _registry[gearInfo->type()]=gearInfo;
+    qDebug()<<_registry.keys();
 }
 
 template<class T>
@@ -187,11 +199,8 @@ void GearMaker::parseGears(QDir dir, QString extension)
   foreach(QFileInfo fi,files)
   {		
 		T *gearInfo = new T(fi);
-		//add gearInfo to the registry
-		//the key will be unique since each gears type
-		//are in there own path and we use fullType as the key.
 		if (gearInfo->load())
-			_registry[gearInfo->fullType()]=gearInfo;
+			_registry[gearInfo->type()]=gearInfo;
 		else
 		  delete gearInfo;
   }

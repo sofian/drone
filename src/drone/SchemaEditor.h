@@ -145,7 +145,7 @@ private:
   qreal _maxZValue;
   
   // when true, ignore selectionChange signals
-  bool _selectionChangeBypass;
+  bool _selectionChangeNotificationBypass;
 
   PanelScrollView *_panelScrollView;
 };

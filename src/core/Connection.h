@@ -10,9 +10,9 @@
  *
  */
 #include <QtXml>
+#include <qdatastream>
 
 class Gear;
-
 
 class Connection
 {
@@ -26,14 +26,26 @@ public:
 	{
 	}
 
-	QString gearA(){return _gearA;};
-	QString input(){return _input;};
-	QString gearB(){return _gearB;};
-	QString output(){return _output;};
+	Connection(QString connStr)
+	{
+    QStringList ends(connStr.split(","));
+    QStringList endA(ends[0].split(':'));
+    QStringList endB(ends[1].split(':'));
+    _gearA=endA[0];
+    _gearB=endB[0];
+    _output=endA[1];
+    _input=endB[1];
+	}
+
+	QString gearA() const {return _gearA;};
+	QString input() const {return _input;};
+	QString gearB() const {return _gearB;};
+	QString output() const {return _output;};
 
 	void save(QDomDocument &doc, QDomElement &parent);
 	void load(QDomElement &connectionElem);
-	void updateWithRenameMapping(std::map<QString,QString> map);
+	void updateWithRenameMapping(QMap<QString,QString> map);
+  QString toString() const { return QString(gearA()+":"+output()+","+gearB()+":"+input()); }
 
 private:
 	QString _gearA;
@@ -41,5 +53,8 @@ private:
 	QString _gearB;
 	QString _output;
 };
+
+QDebug	operator<< ( QDebug out, const Connection & conn );  
+
 
 #endif

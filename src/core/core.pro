@@ -29,53 +29,39 @@ unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
 
 HEADERS += config.h \
 error.h \
+AbstractPlug.h \
 Array.h \
 Array2D.h \
+BaseGearGui.h \
 CircularBuffer.h \
 ColorSpace.h \
-Control.h \
 Connection.h \
+Control.h \
 DroneCore.h \
+DroneGlobal.h \
+DroneMath.h \
 Engine.h \
 Gear.h \
 GearControl.h \
 GearFrei0r.h \
-types/AbstractType.h \
-types/AreaArrayType.h \
-types/AreaType.h \
-types/FFTType.h \
-types/StringType.h \
-types/OscMessageType.h \
-types/ValueType.h \
-types/VideoRGBAType.h \
-types/SignalType.h \
-types/DisplaceGrid.h \
-types/ArrayType.h \
-types/Array2DType.h \
-types/VideoChannelType.h \
-types/VideoBinaryType.h \
-types/PaletteRGBAType.h \
-types/EnumType.h \
 GearConverter.h \
-GearInfo.h \
-GearMaker.h \
-ISchemaEventListener.h \
-DroneMath.h \
 Media.h \
 MediaPool.h \
 MediaMovie.h \
 MetaGear.h \
 MetaGearMaker.h \
-Node.h \
+Node.h \ 
 MidiEngine.h \
-AbstractPlug.h \
 Plug.h \
-Properties.h \
 Project.h \
-Rasterer.h \
+Properties.h \
 Random.h \
+Rasterer.h \
 SummedAreaTable.h \
 Schema.h \
+SchemaTopoSort.h \
+ScopedLock.h \
+SignalCircularBuffer.h \
 SignalInfo.h \
 StringUtils.h \
 TextureGl.h \
@@ -91,7 +77,26 @@ composite/Composite.h \
 composite/CompositeGeneric.h \
 composite/AlphaComposite.h
  
+HEADERS += types/AbstractType.h \
+types/AreaArrayType.h \
+types/AreaType.h \
+types/FFTType.h \
+types/StringType.h \
+types/OscMessageType.h \
+types/ValueType.h \
+types/VideoRGBAType.h \
+types/SignalType.h \
+types/DisplaceGrid.h \
+types/ArrayType.h \
+types/Array2DType.h \
+types/VideoChannelType.h \
+types/VideoBinaryType.h \
+types/PaletteRGBAType.h \
+types/EnumType.h
+
+
 SOURCES += error.cpp \
+BaseGearGui.cpp \
 Connection.cpp \
 Control.cpp \
 DroneCore.cpp \
@@ -105,8 +110,6 @@ types/VideoChannelType.cpp \
 types/VideoRGBAType.cpp \
 types/ValueType.cpp \
 types/StringType.cpp \
-GearInfo.cpp \
-GearMaker.cpp \
 Math.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
@@ -136,6 +139,28 @@ HEADERS += controlHosts/PushButton/Gear_PushButton.h
 
 SOURCES += controlHosts/PushButton/Gear_PushButton.cpp
 
+
+# gearFactory
+
+HEADERS += gearFactory/GearInfo.h \
+gearFactory/GearInfoPlugin.h \
+gearFactory/GearInfoDrone.h \
+gearFactory/GearInfoStatic.h \
+gearFactory/GearInfoControl.h \
+gearFactory/GearInfoFrei0r.h \
+gearFactory/GearInfoMeta.h \
+gearFactory/PlugInfo.h \
+gearFactory/GearMaker.h
+
+SOURCES += gearFactory/GearInfo.cpp \
+gearFactory/GearInfoPlugin.cpp \
+gearFactory/GearInfoDrone.cpp \
+gearFactory/GearInfoStatic.cpp \
+gearFactory/GearInfoControl.cpp \
+gearFactory/GearInfoFrei0r.cpp \
+gearFactory/GearInfoMeta.cpp \
+gearFactory/PlugInfo.cpp \
+gearFactory/GearMaker.cpp
 
 agg {
 

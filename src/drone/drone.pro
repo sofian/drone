@@ -34,6 +34,7 @@ unix:!macx:TARGET = ../../drone
 
 
 HEADERS += commands/CommandMoveItems.h \
+commands/CommandGeneric.h \
 config.h \
 ConnectionItem.h \
 GearGui.h \
@@ -65,6 +66,7 @@ Pause.xpm \
 splash.xpm
 
 SOURCES += commands/CommandMoveItems.cpp \
+commands/CommandGeneric.cpp \
 drone.cpp \
 GearGui.cpp \
 ControlPanel.cpp \ 

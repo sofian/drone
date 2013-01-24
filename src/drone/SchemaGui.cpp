@@ -22,17 +22,19 @@
 
 #include "Schema.h"
 #include "Gear.h"
+#include "Control.h"
 #include "GearControl.h"
 #include "MetaGear.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
 #include "GearGui.h"
 #include "PlugBox.h"
-//#include "commands/CommandMoveItems.h"
+#include "commands/CommandGeneric.h"
 #include "ConnectionItem.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QVarLengthArray>
 #include <q3filedialog>
 #include <qtextstream>
+#include "MainWindow.h"
 
 const int SchemaGui::DEFAULT_CANVAS_SIZE_X = 2048;
 const int SchemaGui::DEFAULT_CANVAS_SIZE_Y = 2048;
@@ -42,12 +44,14 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   QGraphicsScene(0,0,DEFAULT_CANVAS_SIZE_X, DEFAULT_CANVAS_SIZE_Y),
   _activeConnection(NULL),
   _connecting(false),
+  _pasteOffset(),
   _engine(engine),
   _maxZValue(0),
   _moving(No),
-  _selectionChangeBypass(false),
+  _selectionChangeNotificationBypass(false),
   _movingItems(),
-  _movingStartPos(0,0)
+  _movingStartPos(0,0),
+  _autoSelectNewElements(false)
 {
   QObject::connect(this,SIGNAL(selectionChanged()),this,SLOT(selectionHasChanged()));
   //QObject::connect(this, SIGNAL(itemMoved(DiagramItem*,QPntF)),
@@ -74,9 +78,40 @@ void SchemaGui::setSchema(Schema *schema)
 {
   clear(); 
   _schema = schema;
+  QObject::connect(schema,SIGNAL(gearAdded(Schema&,Gear&)),this,SLOT(slotGearAdded(Schema&,Gear&)));
+  QObject::connect(schema,SIGNAL(gearRemoved(Schema&,Gear&)),this,SLOT(slotGearRemoved(Schema&,Gear&)));
+  QObject::connect(schema,SIGNAL(connectionCreated(Schema&,Connection)),this,SLOT(slotConnectionCreated(Schema&,Connection)));
+  QObject::connect(schema,SIGNAL(connectionRemoved(Schema&,Connection)),this,SLOT(slotConnectionRemoved(Schema&,Connection)));
+  
   //_schema->add
   rebuildSchema();
 }
+
+void SchemaGui::slotGearAdded(Schema &schema,Gear &gear)
+{
+  GearControl* controlGear;
+  if (!gear.getGearGui())
+  {
+    // the GearGui constructor will take care of establishing the 
+    // GearGui<->Control relation in case we have a GearControl
+    GearGui* ggui = new GearGui(&gear);
+    gear.setGearGui(ggui);
+    addItem(ggui);
+    if(_autoSelectNewElements)
+      ggui->setSelected(true);
+  }
+}
+
+void SchemaGui::slotGearRemoved(Schema &schema,Gear &gear)
+{
+  if(gear.getGearGui())
+  {
+    // the GearGui destructor will take care of deleting the 
+    // control in case it has one
+    delete gear.getGearGui();
+  }
+}
+
 
 void SchemaGui::rebuildSchema()
 {
@@ -94,8 +129,7 @@ void SchemaGui::rebuildSchema()
  */
 	
   //add connectionItems
-  QList<Connection*> connections;
-  _schema->getAllConnections(connections);
+  QList<Connection*> connections(_schema->getAllConnections());
   
   //PlugBox *sourcePlugBox;
   //PlugBox *destPlugBox;
@@ -104,8 +138,8 @@ void SchemaGui::rebuildSchema()
 
   foreach(Connection* conn,connections)
   {   
-    gearA = _schema->getGearByName(conn->gearA());
-    gearB = _schema->getGearByName(conn->gearB());
+    gearA = _schema->getGearByUUID(conn->gearA());
+    gearB = _schema->getGearByUUID(conn->gearB());
 
     if (gearA && gearB)
 		{
@@ -126,41 +160,50 @@ void SchemaGui::rebuildSchema()
   void SchemaGui::drawBackground ( QPainter * painter, const QRectF & rect )
   {
     painter->fillRect(rect,QColor(50,50,50));
-    QVarLengthArray<QLineF, 36> lines;
+    QVarLengthArray<QLineF, 200> lines;
+        for (int i = 0; i <= 100; i ++) {
+          if(i%5!=0)
+          {
+            lines.append(QLineF(i*30+0.5,0,i*30+0.5,10000));
+            lines.append(QLineF(0,i*30+0.5,10000,i*30+0.5));
+          }
+        }
+    painter->setPen(QPen(QColor(60,60,60),0.5));
+    painter->drawLines(lines.data(), lines.size());
+    
+    QVarLengthArray<QLineF, 40> lines2;
         for (int i = 0; i <= 20; i ++) {
-            lines.append(QLineF(i*100+0.5,0,i*100+0.5,10000));
-            lines.append(QLineF(0,i*100+0.5,10000,i*100+0.5));
+            lines2.append(QLineF(i*150+0.5,0,i*150+0.5,10000));
+            lines2.append(QLineF(0,i*150+0.5,10000,i*150+0.5));
         }
     painter->setPen(QPen(QColor(70,70,70),0.5));
-    painter->drawLines(lines.data(), lines.size());
+    painter->drawLines(lines2.data(), lines2.size());
   }
+
+
+
 
   
 Gear* SchemaGui::addGear(QString fullname, QPointF pos)
-{ 
+{
+  CommandGeneric* com = new CommandGeneric();
   Gear* gear = GearMaker::instance()->makeGear(fullname);
   if (!gear)
     return NULL;
-
-  _schema->addGear(*gear);    
-  
-  /*GearInfo* gi = GearMaker::findGearInfo(fullname);
-  
-  if(!gi)
-  {
-    qDebug()<<"Can't find GearInfo in registry for gear type:"<<fullname;
-    return NULL;
-  }*/
-//  GearMaker::makeGear(fullname);
-  
-  
-  GearGui *gearGui = new GearGui(gear,this);    
-
+    
+  GearGui *gearGui = new GearGui(gear);    
+  gear->setGearGui(gearGui);
   addItem(gearGui);    
   gearGui->setPos(pos);    
   gearGui->setZValue(0);
   gearGui->update();
+  
+  _schema->addGear(*gear);
 
+  com->saveSnapshotAfter();
+  com->setText(QString("Added a gear"));
+  MainWindow::getInstance()->pushUndoCommand(com);
+  
   return gear;
  
 }
@@ -213,35 +256,34 @@ void SchemaGui::removeGear(GearGui* gearGui)
 {  
   Gear* gear = gearGui->gear();
 
-  delete gearGui;
-
   _schema->removeDeepGear(gear);
-
+  // let the "Schema" signal (gearRemoved) call carRemoved 
+  // to do the actual GearGui deletion
   update();
 }
 
 void SchemaGui::clear()
 {
   QList<QGraphicsItem *> l=items();
-  std::vector<GearGui*> gearGuis;
+  QList<GearGui*> gearGuis;
 
   //first fill a vector with only gearGuis
   //we have to make it this way because we cannot
   //iterate on QGraphicsItem while removing them at the sametime
   foreach(QGraphicsItem * it,l) { 
     if ( qgraphicsitem_cast<GearGui*>(it))    
-      gearGuis.push_back((GearGui*)(it));
+      gearGuis<<(GearGui*)(it);
   }
   
   //now remove gearGuis
-  for (std::vector<GearGui*>::iterator it=gearGuis.begin();it!=gearGuis.end();++it)  
-    removeGear((*it));
+  foreach(GearGui* ggui,gearGuis)  
+    removeGear(ggui);
 }
 
-bool SchemaGui::load(QDomElement& parent)
+bool SchemaGui::load(QDomElement& parent, Drone::LoadingModeFlags lmf)
 {
   clear();
-  if(_schema->load(parent))
+  if(_schema->load(parent, lmf))
   {
     setSchema(_schema);
     return true;
@@ -260,13 +302,12 @@ void SchemaGui::selectionHasChanged()
   QGraphicsItem* el;
   GearGui* selectedGear=0;
   qreal zOffset;
-  if(_selectionChangeBypass)
+  if(_selectionChangeNotificationBypass)
     return;
-  if(list.count()==0)
-    _maxZValue++;
+  _maxZValue++;
 
 
-  //std::cerr<<"Selected elements: "<<list.count()<<std::endl;
+  std::cerr<<"Selection has changed. New: "<<list.count()<<std::endl;
   foreach(el,list)
   {
     // create pseudo "layers" with slices of Z values so that comments
@@ -352,7 +393,7 @@ void SchemaGui::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
       gearGui = qgraphicsitem_cast<GearGui*>(el);
       if (gearGui)qDebug() << gearGui->gear()->name();
       if (gearGui && (el->flags() & QGraphicsItem::ItemIsMovable))
-        _movingItems << gearGui->gear()->name();
+        _movingItems << gearGui->gear()->getUUID();
     }
     //std::cerr << "mod"<<event->modifiers()<<" Looks like we're moving" << _movingItems.count()<<std::endl;
     _movingStartPos = event->scenePos();
@@ -375,8 +416,12 @@ void SchemaGui::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
     if ((ci = qgraphicsitem_cast<ConnectionItem*>(el)))
     {
       qDebug()<< "disconnect";
+      CommandGeneric* com = new CommandGeneric();
 
       disconnect(ci->sourcePlugBox(), ci->destPlugBox());
+          com->saveSnapshotAfter();
+          com->setText(QString("Disconnected gears"));
+          MainWindow::getInstance()->pushUndoCommand(com);
       return;
     }
   }
@@ -402,7 +447,13 @@ void SchemaGui::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
         if (destPlug)
         {
           _connecting = false;
+          CommandGeneric* com = new CommandGeneric();
+          
           connect(_activeConnection->sourcePlugBox(), destPlug);
+          
+          com->saveSnapshotAfter();
+          com->setText(QString("Connected gears"));
+          MainWindow::getInstance()->pushUndoCommand(com);
           delete _activeConnection;
           return;
         }
@@ -446,15 +497,62 @@ bool SchemaGui::connect(PlugBox *plugA, PlugBox *plugB)
     disconnectAll(plugB);
   }
    
-  //connect plugBox
-  plugA->connect(plugB);
-
-  //update the canvas
-  update();
-
-  //tell the schema to make the connection
+  // tell the schema to make the connection.
+  // the graphical connection will be made whn we receive back the signal 
   return _schema->connect(*plugA->plug(), *plugB->plug());
 }
+
+GearGui* SchemaGui::getGearGuiByUUID(QString uuid)
+{
+  Gear* g(_schema->getGearByUUID(uuid));
+  GearGui* ggui;
+  if(g && (ggui=g->getGearGui()))
+    return ggui;
+  else
+    return NULL;
+}
+
+// retrieves a pair of PlugBox* represented by  a connection
+QPair<PlugBox*, PlugBox*> SchemaGui::getPlugBoxesFromConnection(Connection c)
+{
+  GearGui* g1(getGearGuiByUUID(c.gearA()));
+  GearGui* g2(getGearGuiByUUID(c.gearB()));
+  QPair<PlugBox*,PlugBox*> nullPair(qMakePair(static_cast<PlugBox*>(NULL), static_cast<PlugBox*>(NULL)));
+
+  if (!g1 || !g2)
+    return nullPair;
+
+  PlugBox *pb1(g1->getPlugBox(c.output()));
+  PlugBox *pb2(g2->getPlugBox(c.input()));
+
+  if (!pb1 || !pb2)
+    return nullPair;
+
+  return qMakePair(pb1, pb2);
+}
+
+
+void SchemaGui::slotConnectionCreated(Schema &schema, Connection c)
+{
+  QPair<PlugBox*, PlugBox*> conn(getPlugBoxesFromConnection(c));
+  
+  ConnectionItem* ci(conn.first->connect(conn.second));
+  if(ci && _autoSelectNewElements)
+    ci->setSelected(true);
+  update();
+
+}
+
+
+void SchemaGui::slotConnectionRemoved(Schema &schema, Connection c)
+{
+  QPair<PlugBox*, PlugBox*> conn(getPlugBoxesFromConnection(c));
+  
+  conn.first->disconnect(conn.second);
+  update();
+
+}
+
 
 void SchemaGui::disconnect(PlugBox *plugA, PlugBox *plugB)
 {
@@ -479,7 +577,7 @@ void SchemaGui::disconnectAll(PlugBox *plugBox)
   plugBox->disconnectAll();
 
   update();
-
+  
   //tell the schema to disconnect all from this plug
   _schema->disconnectAll(*plugBox->plug());
 }
@@ -505,7 +603,7 @@ QList<GearGui*> SchemaGui::getSelectedGears()
 }
 
 // Warning : order is not preserved ! 
-QList<QGraphicsItem*> SchemaGui::getItemsByName(QList<QString>& list)
+QList<QGraphicsItem*> SchemaGui::getItemsByUUID(QList<QString>& list)
 {
   QList<QGraphicsItem*> all(items()),selection;
   GearGui* ggui;
@@ -514,7 +612,7 @@ QList<QGraphicsItem*> SchemaGui::getItemsByName(QList<QString>& list)
   {
     // forced to do this since all elements don't have a common interface with name()
     if((ggui=qgraphicsitem_cast<GearGui*>(el))
-            && list.contains(ggui->gear()->name()))
+            && list.contains(ggui->gear()->getUUID()))
       selection<<el;
   }
   return selection;
@@ -524,12 +622,12 @@ void SchemaGui::moveItemsBy(QList<QGraphicsItem*> list,QPointF delta)
 {
   QGraphicsItem* el;
   foreach(el,list)
-    el->moveBy(delta.x(),delta.y());
+  {
+    // don't move ConnectionItems because they move naturally with the gears
+    // they are connected to
+    if(!qgraphicsitem_cast<ConnectionItem*>(el))
+      el->moveBy(delta.x(),delta.y());
+  }
   update();
 }
 
-  void SchemaGui::onGearAdded(Schema *schema, Gear *gear)
-  {}
-  
-  void SchemaGui::onGearRemoved(Schema *schema, Gear *gear)
-  {}

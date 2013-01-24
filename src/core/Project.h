@@ -21,6 +21,7 @@
 #define PROJECT_INCLUDED
 
 #include <QString>
+#include "DroneGlobals.h"
 
 class QDomDocument;
 class QDomElement;
@@ -29,11 +30,15 @@ class Schema;
 class Project  
 {
 public:
+  
   Project(Schema* mainSchema);
+
 
   bool save();
   bool saveAs(QString filename);
-  bool load(QString filename);
+  bool load(const QDomDocument& filename, Drone::LoadingModeFlags lmf);
+  bool loadFromFile(QString filename);
+  QDomDocument getSnapshot();
   QString projectName(){return _projectName;}
         
   void newProject();

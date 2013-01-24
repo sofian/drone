@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_ColorQuantizeAlpha, Gear_ColorQuantizeAlpha, "ColorQuantizeAlpha")
 

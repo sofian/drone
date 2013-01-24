@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include "Gear_AudioInput.h"
-#include "GearMaker.h"
+
 #include "Engine.h"
 
 #include "ThreadUtil.h"

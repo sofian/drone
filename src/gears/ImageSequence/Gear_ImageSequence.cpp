@@ -24,7 +24,7 @@
 #include "Gear_ImageSequence.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 const QString Gear_ImageSequence::SETTING_FILENAME = "Filename";

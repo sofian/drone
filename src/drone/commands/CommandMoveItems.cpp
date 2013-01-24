@@ -13,7 +13,7 @@
 
 CommandMoveItems::CommandMoveItems(QList<QString> &itemList,QPointF delta):
   _itemList(itemList),
-  _delta(delta),
+  _delta(delta),  
   _skipFirstRedo(true)
 {
   qDebug()<<"created an commandMoveItem with"<<itemList.count()<<" elements";
@@ -27,7 +27,7 @@ void CommandMoveItems::undo()
 {
   qDebug()<<"undo! "<<_itemList<<" have been moved back "<<_delta;
   SchemaGui* schemaGui(MainWindow::getInstance()->getSchemaGui());
-  schemaGui->moveItemsBy(schemaGui->getItemsByName(_itemList),QPointF(-_delta.x(),-_delta.y()));
+  schemaGui->moveItemsBy(schemaGui->getItemsByUUID(_itemList),QPointF(-_delta.x(),-_delta.y()));
 }
 
 void CommandMoveItems::redo()
@@ -41,7 +41,7 @@ void CommandMoveItems::redo()
   }
   qDebug()<<"redo! "<<_itemList<<" have been moved again "<<_delta;
   SchemaGui* schemaGui(MainWindow::getInstance()->getSchemaGui());
-  schemaGui->moveItemsBy(schemaGui->getItemsByName(_itemList),_delta);
+  schemaGui->moveItemsBy(schemaGui->getItemsByUUID(_itemList),_delta);
 }
 
 

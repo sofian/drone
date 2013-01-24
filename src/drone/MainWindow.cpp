@@ -190,17 +190,18 @@ void MainWindow::finalize()
   schemaEditor->buildContextMenus();
   QObject::connect(schemaGui,SIGNAL(itemsMoved(QList<QString>&,QPointF)),this,SLOT(slotItemsMoved(QList<QString>&,QPointF)));
 }
+
 MainWindow::~MainWindow()
 {
 
 }
 
-void MainWindow::slotItemsMoved(QList<QString>&itemNames, QPointF dist)
+void MainWindow::slotItemsMoved(QList<QString>&itemUUIDs, QPointF dist)
 {
   CommandMoveItems* c;
   
-  c = new CommandMoveItems(itemNames,dist);
-  c->setText(QString("Moved %1 item").arg(itemNames.count())+QString(itemNames.count()>2?"s":""));
+  c = new CommandMoveItems(itemUUIDs,dist);
+  c->setText(QString("Moved %1 item").arg(itemUUIDs.count())+QString(itemUUIDs.count()>2?"s":""));
   _undoStack->push(c);
 }
 
@@ -287,7 +288,7 @@ void MainWindow::load(QString filename)
   //stop before loading
   slotPlay(false);
 
-  _project->load(filename);
+  _project->loadFromFile(filename);
   _actSave->setDisabled(false);
   
   //save the last load path
@@ -333,6 +334,11 @@ void MainWindow::slotMenuPreferences()
 //  PreferencesDialog pd(this, _engine);
 //  pd.exec();
   
+}
+
+void MainWindow::pushUndoCommand(QUndoCommand* c)
+{
+  _undoStack->push(c);
 }
 
 void MainWindow::addToRecentSchema(QString filename)

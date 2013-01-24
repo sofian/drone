@@ -202,10 +202,10 @@ bool PlugBox::canConnectWith(PlugBox *plugBox)
 
 }
 
-bool PlugBox::connect(PlugBox *plugBox)
+ConnectionItem* PlugBox::connect(PlugBox *plugBox)
 {
   if (!plugBox)
-    return false;
+    return static_cast<ConnectionItem*>(NULL);
 
   //create a connection item to represent this connection in the schemaGui
   ConnectionItem *connectionItem = new ConnectionItem();
@@ -215,10 +215,10 @@ bool PlugBox::connect(PlugBox *plugBox)
   _gearGui->scene()->addItem(connectionItem);
 
   //give the new connection item to both plugBox
-  _connectionItems.push_back(connectionItem);
-  plugBox->_connectionItems.push_back(connectionItem);
+  _connectionItems<<connectionItem;
+  plugBox->_connectionItems<<connectionItem;
 
-  return true;
+  return connectionItem;
 }
 
 QPointF PlugBox::scenePos()
@@ -230,12 +230,12 @@ void PlugBox::disconnect(PlugBox *plugBox)
 {  
   //find the corresponding connectionItem
   ConnectionItem *connectionItem=0;
-  for (std::vector<ConnectionItem*>::iterator it=_connectionItems.begin(); it!=_connectionItems.end();++it)
+  foreach(ConnectionItem* ci,_connectionItems)
   {
-    if ( (((*it)->sourcePlugBox()==this) && ((*it)->destPlugBox()==plugBox)) ||
-        (((*it)->sourcePlugBox()==plugBox) && ((*it)->destPlugBox()==this)))
+    if ( ((ci->sourcePlugBox()==this) && (ci->destPlugBox()==plugBox)) ||
+        ((ci->sourcePlugBox()==plugBox) && (ci->destPlugBox()==this)))
     {
-      connectionItem=(*it);
+      connectionItem=ci;
       break;
     }
   }
@@ -245,14 +245,11 @@ void PlugBox::disconnect(PlugBox *plugBox)
   if (!connectionItem)
     return;
   
-  //remove connectionItems from both plugboxes
-  std::vector<ConnectionItem*> *srcConnectionItems = &(_connectionItems);
-  std::vector<ConnectionItem*> *dstConnectionItems = &(plugBox->_connectionItems);
+  //remove connectionItems from both plugboxes QLists
+  _connectionItems.removeAll(connectionItem);
+  plugBox->_connectionItems.removeAll(connectionItem);;
 
-  srcConnectionItems->erase(std::remove(srcConnectionItems->begin(), srcConnectionItems->end(), connectionItem), srcConnectionItems->end());
-  dstConnectionItems->erase(std::remove(dstConnectionItems->begin(), dstConnectionItems->end(), connectionItem), dstConnectionItems->end());
-
-  //delete the connectionItem
+  //now actually delete the connectionItem
   delete connectionItem;
 }
 

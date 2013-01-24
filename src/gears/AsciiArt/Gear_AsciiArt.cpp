@@ -23,7 +23,7 @@
 #include "Gear_AsciiArt.h"                       
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 aa_context *_aaContext;

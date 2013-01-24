@@ -357,7 +357,7 @@ unsigned parse_lion(agg::path_storage& path, agg::rgba8* colors, unsigned* path_
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

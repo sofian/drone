@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 // Coefficient table.
 const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {

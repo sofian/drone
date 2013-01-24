@@ -9,6 +9,15 @@
 
 #include "Connection.h"
 
+// c.f. http://harmattan-dev.nokia.com/docs/library/html/qt4/debug.html#providing-support-for-the-qdebug-stream-operator
+QDebug	operator<< ( QDebug out, const Connection & conn )
+{
+
+  out<<"Connection from :"<<conn.gearA()<<"("<<conn.input()<<") to "<<conn.gearB()<<"("<<conn.output()<<")";
+  return out.space();
+}
+ 
+
 void Connection::save(QDomDocument &doc, QDomElement &parent)
 {
   QDomElement connectionElem = doc.createElement("Connection");
@@ -40,12 +49,12 @@ void Connection::load(QDomElement &connectionElem)
   _output = connectionElem.attribute("Output","");
 }
 
-void Connection::updateWithRenameMapping(std::map<QString,QString> map)
+void Connection::updateWithRenameMapping(QMap<QString,QString> map)
 {
-  std::map<QString,QString>::iterator renA(map.find(_gearA));
-  std::map<QString,QString>::iterator renB(map.find(_gearB));
-  if(renA!=map.end())
+  QString renA(map[_gearA]);
+  QString renB(map[_gearB]);
+  if(!renA.isEmpty())
     _gearA = map[_gearA];
-  if(renB!=map.end())
+  if(!renB.isEmpty())
     _gearB = map[_gearB];
 }

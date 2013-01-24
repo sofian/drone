@@ -20,20 +20,23 @@
 #include "Gear.h"
 
 #include "Schema.h"
-#include "GearInfo.h"
+#include "gearFactory/GearInfo.h"
 #include <QtXml>
 
 #include "XMLHelper.h"
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include "BaseGearGui.h"
 
 const QString Gear::XML_TAGNAME = "Gear";
 
 Gear::Gear(QString type) : 
 _parentSchema(NULL), 
-_Type(type), 
-_name(type),
+_subType(type), 
+_instanceName(type),
+_gearGui(NULL),
+_gearInfo(NULL),
 _ready(false)
 {
 }
@@ -52,17 +55,23 @@ void Gear::parentSchema(Schema &parentSchema)
 /**
  * Sets the name for the gear. If the gear is in a schema, unique naming is done via Schema::rename()
  */
-void Gear::name(QString vname)
+void Gear::setInstanceName(QString vname)
 {
-	if (vname == _name)
+	if (vname == _instanceName)
 		return;
 
-	_name=vname;
+	_instanceName=vname;
 	
 	if (_parentSchema)
 		_parentSchema->renameGear(*this, vname);				
 }
 
+QString Gear::type()
+{
+  if(_gearInfo!=NULL)
+    return _gearInfo->type();
+  else return QString();
+}
 
 void Gear::unSynch()
 {
@@ -82,7 +91,7 @@ void Gear::postPlay()
 
 void Gear::init()
 {
-  qDebug() << "init gear: " << _Type;
+//  qDebug() << "init gear: " << _subType;
 
   //call the virtual method
   internalInit();
@@ -210,12 +219,19 @@ void Gear::save(QDomDocument &doc, QDomElement &parent)
   parent.appendChild(gearElem);
 
   QDomAttr gearType = doc.createAttribute("Type");
-  gearType.setValue(_Type);
+  gearType.setValue(type());
   gearElem.setAttributeNode(gearType);
 
+  QDomAttr gearUUID = doc.createAttribute("UUID");
+  gearUUID.setValue(getUUID());
+  gearElem.setAttributeNode(gearUUID);
+
   QDomAttr gearName = doc.createAttribute("Name");
-  gearName.setValue(_name);
+  gearName.setValue(_instanceName);
   gearElem.setAttributeNode(gearName);
+
+  _gearGui->save(doc, gearElem);
+  _settings.save(doc, gearElem);
 
   //save plugs
   QDomElement plugElem = doc.createElement("Plugs");
@@ -226,11 +242,19 @@ void Gear::save(QDomDocument &doc, QDomElement &parent)
   internalSave(doc, gearElem);
 }
 
-void Gear::load(QDomElement &gearElem)
-{
-  _name = gearElem.attribute("Name","");
+void Gear::load(QDomElement &gearElem, Drone::LoadingModeFlags lmf, bool loadUUID)               
+{            
+  _instanceName = gearElem.attribute("Name","");
+  if(loadUUID)
+    _uuid = gearElem.attribute("UUID","");
+
+  _settings.load(gearElem);  
+  //updateSettings();
 
   internalLoad(gearElem);
+
+  if(_gearGui)
+    _gearGui->load(gearElem);
 
   //load plugs attributes
   QDomNode plugsNode = XMLHelper::findChildNode(gearElem, "Plugs");

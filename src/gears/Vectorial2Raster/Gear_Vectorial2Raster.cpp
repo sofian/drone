@@ -27,7 +27,7 @@ enum { flip_y = true };
 #include <iostream>
 #include <fstream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

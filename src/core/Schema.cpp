@@ -1,16 +1,18 @@
 #include "Schema.h"
 #include "Gear.h"
 #include "MetaGear.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
 //#include "SchemaTopoSort.h"
 #include "Connection.h"
-
+#include "BaseGearGui.h"
+#include "DroneCore.h"
 
 #include <QtXml>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
 #include "XMLHelper.h"
+#include "Project.h"
 
 const QString Schema::XML_TAGNAME = "Schema";
 
@@ -26,10 +28,24 @@ Schema::~Schema()
   clear();
 }
 
-Gear* Schema::getGearByName(QString name) const
+Gear* Schema::getGearByUUID(QString uuid) const
 {
-  return _gears.value(name, NULL);
+  return _gears.value(uuid, NULL);
 }
+
+QList<Gear*> Schema::getGearsByUUID(QList<QString> uuids) const
+{
+  QList<Gear*> ret;
+  Gear* gear;
+  foreach(QString uuid,uuids)
+  {
+    gear = _gears.value(uuid, NULL);
+    if(gear)
+      ret<<gear;
+  }
+  return ret;
+}
+
 
 QList<Gear*> Schema::getDeepOrderedReadyGears()
 {
@@ -98,29 +114,6 @@ QList<Gear*> Schema::getDeepGears() const
   return deepGears;
 }
 
-/**
- * Mangles a unique gear name by adding a number after the name in this schema only.
- * 
- * @param originalName
- * 
- * @return 
- */
-QString Schema::mangleUniqueGearName(QString originalName)
-{
-  if (!_gears.contains(originalName))
-		return originalName;
-
-	int i=1;
-	QString mangledName = originalName + QString::number(i);
-	
-	while(_gears.contains(mangledName))
-	{
-		i++;
-		mangledName = originalName + QString::number(i);
-	}
-	
-	return mangledName;
-}
 
 bool Schema::needSynch()
 {
@@ -177,11 +170,11 @@ bool Schema::removeDeepGear(Gear* &gear)
   }
 
   // if the gear to be removed is at the current schema level, remove it here
-  if (_gears.contains(gear->name()))
+  if (_gears.contains(gear->getUUID()))
   {   
     emit gearRemoved(*this,*gear);
     
-    _gears.remove(gear->name());
+    _gears.remove(gear->getUUID());
             
     delete gear;
 		gear=NULL;
@@ -201,52 +194,50 @@ void Schema::renameGear(Gear& gear, QString newName)
 {  
 	if (gear.name() == newName)
 		return;
-	
-  gear.name(mangleUniqueGearName(newName));
 }
 
 bool Schema::addGear(Gear& gear)
 {		
-	//make unique naming
-	gear.name(mangleUniqueGearName(gear.name()));
-	
 	//add to the schema
-	_gears.insert(gear.name(), &gear);
+	_gears.insert(gear.getUUID(), &gear);
 	gear.parentSchema(*this);
-
 	emit gearAdded(*this, gear);
   return true;
 }
 
-//not deep
-void Schema::getAllConnections(QList<Connection*> &connections)
+//does not go "deep" into gears: returns only this schema's connections
+// *** NOTE: the caller is responsible to delete these "dummy" helper objects
+// once finished
+QList<Connection*> Schema::getAllConnections()
 {
   QList<AbstractPlug*> outputs;
   QList<AbstractPlug*> connectedPlugs;
-
-  connections.clear();
+  QList<Connection*> connections;
 
 	foreach(Gear *gear, _gears)  
-	{
+	{ 
     gear->getOutputs(outputs);
-    for (QList<AbstractPlug*>::Iterator itOutput = outputs.begin(); itOutput != outputs.end(); ++itOutput)
+    foreach (AbstractPlug* sourcePlug,outputs)
     {
-      (*itOutput)->connectedPlugs(connectedPlugs);
+      sourcePlug->connectedPlugs(connectedPlugs);
 
-      for (QList<AbstractPlug*>::iterator itConnectedPlug = connectedPlugs.begin(); itConnectedPlug != connectedPlugs.end(); ++itConnectedPlug)
+      foreach(AbstractPlug* destPlug, connectedPlugs)
       {
         
         //in the case of an exposed plug, 
         //just be sure that the destination gear is really in our schema
-        if ( (!(*itOutput)->exposed()) || 
-             ((*itOutput)->exposed() && (getGearByName((*itConnectedPlug)->parent()->name()))) )
-          connections.push_back( new Connection(gear->name(), (*itOutput)->name(), 
-                                                (*itConnectedPlug)->parent()->name(), 
-                                                (*itConnectedPlug)->name()));
+        if ( (!sourcePlug->exposed()) || 
+             (sourcePlug->exposed() && getGearByUUID(destPlug->parent()->getUUID())) )
+          connections<< new Connection(gear->getUUID(), sourcePlug->name(), 
+                                                destPlug->parent()->getUUID(), 
+                                                destPlug->name());
       }            
     }
   }
+  return connections;
+
 }
+
 
 
 /**
@@ -266,7 +257,14 @@ bool Schema::connect(AbstractPlug &plugA, AbstractPlug &plugB)
     return true;
   }
   else
-    return plugA.connect(&plugB);  
+  {
+    bool ret = plugA.connect(&plugB);
+    if(!ret)
+      return false;
+    Connection c(plugA.parent()->getUUID(),plugA.name(),plugB.parent()->getUUID(),plugB.name());
+    emit connectionCreated(*this,c);
+    return true;
+  }
 }
 
 /**
@@ -278,7 +276,7 @@ bool Schema::connect(AbstractPlug &plugA, AbstractPlug &plugB)
  * 
  * @return 
  */
-void Schema::disconnect(AbstractPlug &plugA, AbstractPlug &plugB)
+bool Schema::disconnect(AbstractPlug &plugA, AbstractPlug &plugB)
 {
   
   if (_locked)
@@ -286,7 +284,14 @@ void Schema::disconnect(AbstractPlug &plugA, AbstractPlug &plugB)
     _scheduledDisconnections.push_back(ScheduledConnection(plugA, plugB));
   }
   else
-    plugA.disconnect(&plugB);
+  {
+    bool ret = plugA.disconnect(&plugB);
+    if(!ret)
+      return false;
+    Connection c(plugA.parent()->getUUID(),plugA.name(),plugB.parent()->getUUID(),plugB.name());
+    emit connectionRemoved(*this,c);
+    return true;
+  }
 }
 
 void Schema::disconnectAll(AbstractPlug &plug)
@@ -295,6 +300,7 @@ void Schema::disconnectAll(AbstractPlug &plug)
   plug.disconnectAll();
 }
 
+// this function redirects to Schema::connectin(AbstractPlug,AbstractPlug)
 bool Schema::connect(Connection &connection)
 {
    Gear *gearA;                                                                             
@@ -302,13 +308,13 @@ bool Schema::connect(Connection &connection)
    AbstractPlug *input;                                                                     
    AbstractPlug *output;                                                                    
                                                                                             
-   if ( (gearA=getGearByName(connection.gearA())) == NULL)                                        
+   if ( (gearA=getGearByUUID(connection.gearA())) == NULL)                                        
    {                                                                                        
      qCritical() << "connectPlugs fail: " + connection.gearA() + " not found!";  
      return false;                                                                                
    }                                                                                        
                                                                                                                                                                                         
-   if ( (gearB=getGearByName(connection.gearB())) == NULL)                                        
+   if ( (gearB=getGearByUUID(connection.gearB())) == NULL)                                        
    {                                                                                        
      qCritical() << "connectPlugs fail: " + connection.gearB() + " not found!";  
      return false;                                                                                
@@ -326,7 +332,7 @@ bool Schema::connect(Connection &connection)
      return false;                                                                                
    }                                                                                        
                                                                                             
-   return output->connect(input);
+   return connect(*input, *output);
 }
 
 bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
@@ -337,103 +343,144 @@ bool Schema::save(QDomDocument& doc, QDomElement &parent, bool onlySelected)
   //save all gears
   QDomElement gearsElem = doc.createElement("Gears");
   rootElem.appendChild(gearsElem);
-
+  
+  
 	foreach(Gear *gear, _gears)
   {
-    Q_UNUSED(onlySelected);
-//    if( onlySelected && ( ggui==NULL || !( ggui->isSelected() ) ))
-//      continue;
-    std::cerr<<"About to save!"<<std::endl;
+    if( onlySelected && ( gear->getGearGui()==NULL || !( gear->getGearGui()->getIsSelected() ) ))
+      continue;
+//    std::cerr<<"About to save!"<<std::endl;
     gear->save(doc, gearsElem);            
   }
-	
-
 
   //save all connections
   QDomElement connectionsElem = doc.createElement("Connections");
   rootElem.appendChild(connectionsElem);
 
-  QList<Connection*> connections;
-  getAllConnections(connections);
+  QList<Connection*> connections(getAllConnections());
 
   foreach(Connection* conn,connections)
   {
-    Gear * gA = getGearByName(conn->gearA());
-    Gear * gB = getGearByName(conn->gearB());
-    //mute waringn for now
-    gA=gB;
-/*
+    Gear * gA = getGearByUUID(conn->gearA());
+    Gear * gB = getGearByUUID(conn->gearB());
+    if(!gA)qCritical()<<"connection save : gear not found : "<<conn->gearA();
+    if(!gB)qCritical()<<"connection save : gear not found : "<<conn->gearB();
+    //mute warning for now
     if(onlySelected 
-       && (ggA == NULL || !ggA->isSelected() || ggB == NULL || !ggB->isSelected()))
+       && (gA->getGearGui() == NULL || gB->getGearGui() == NULL || !gA->getGearGui()->getIsSelected()  || !gB->getGearGui()->getIsSelected()))
       continue;
-*/       
     conn->save(doc, connectionsElem);
 
-
-    // JK : WHY DO WE DELETE THIS ? I DONT GET IT 
-    // *******************************************
-    
+    // delete connection because "Connection" is just a temporary helper object
     delete conn;//free
   }
     
   return true;
 }
 
-bool Schema::load(QDomElement& parent, bool onlySelected)
+bool Schema::load(QDomElement& parent, Drone::LoadingModeFlags lmf)
 {    
-  Q_UNUSED(onlySelected);
-  std::vector<Gear*> addedGears;
+  QSet<QString> visitedGears;
+  QSet<QString> visitedConnections;
+  QList<Connection*> existingConnectionsPtr(getAllConnections());
+  QSet<QString> existingConnections;
   QDomNode gearsNode = XMLHelper::findChildNode(parent, "Gears");
-  // when pasting, gears have to be renamed
-  std::map<QString,QString> renameMap;
+  // if we're not merging (when pasting, gears have to be renamed
+  QMap<QString,QString> renameMap;
+ 
+  foreach(Connection* c, existingConnectionsPtr)
+  {
+    existingConnections<<c->toString();
+    delete c;
+  }
+  //qDebug()<<existingConnections;
+  
   if (gearsNode.isNull())
   {
-    std::cout << "Bad DroneSchema : <Gears> tag not found!" << std::endl;
+    qDebug()<< "Schema::load: Bad DroneSchema : <Gears> tag not found!";
     return false;
   }
 
   QDomNode gearNode = gearsNode.firstChild();
-  Gear *pgear=NULL;
+
+  //qDebug()<<"GEARS:"<<_gears.keys();
   while (!gearNode.isNull())
-  {
+  { 
     QDomElement gearElem = gearNode.toElement();
     if (!gearElem.isNull())
     {
-			pgear = GearMaker::instance()->makeGear(gearElem.attribute("Type",""));
-			/*
-      if (type == MetaGear::TYPE)        
-        //we default the name to metagear, but the name will be overwrited in the load of the metagear itself
-        pgear = addMetaGear("MetaGear", gearElem.attribute("Name",""));          
-      else                   
-        pgear = addGear(type, gearElem.attribute("Name",""));
-      */
-      if (pgear!=NULL)
+      Gear* existingGear = getGearByUUID(gearElem.attribute("UUID", ""));
+      
+      // If we can UPDATE and the gear already EXISTS in schema
+      if(lmf & Drone::UpdateWhenPossible && existingGear)
       {
-				addGear(*pgear);
-        pgear->load(gearElem);                                
-      }              
-                  
-      addedGears.push_back(pgear);
+        existingGear->load(gearElem, lmf);
+        qDebug()<<"GEARS:"<<_gears.keys();
+        visitedGears<<existingGear->getUUID();
+      }
+      else
+      {
+        //we create a new gear, and change it's UUID afterwards
+        Gear* newGear = GearMaker::instance()->makeGear(gearElem.attribute("Type", ""));
+        if (newGear != NULL) 
+        {
+          QString newUUID = newGear->getUUID();
+          QString oldUUID = gearElem.attribute("UUID", "");
+          //addGear to schema with UUID "newUUID"
+          addGear(*newGear);
+          qDebug()<<"GEARS:"<<_gears.keys();
+
+          newGear->load(gearElem,lmf);
+          
+          // if the gear exists and we don't update (eg: when pasting)
+          // we must give it a unique UUID
+          if(existingGear && !lmf.testFlag(Drone::UpdateWhenPossible))
+          {
+            // the gear UUID must be newUUID. It currently has oldUUID because
+            // of the previous call to "load". Change this and note it in the rename map
+            newGear->setUUID(newUUID);
+            renameMap[oldUUID] = newUUID;
+          }
+          else
+          {
+            // the gear UUID will be oldUUID. It's already attributed to the gear
+            // by the previous call to "load". Last thing, we must correct the _gears registry
+            // because newGear has been added to it with it's initial "newUUID"
+            _gears.remove(newUUID);
+            _gears[newGear->getUUID()]=newGear;
+          }
+          visitedGears<<newGear->getUUID();
+        }
+
+      }
 
     }
     gearNode = gearNode.nextSibling();
-  }                
-  /*
-  if(pasting)
-    for(unsigned int i=0;i<addedGears.size();++i)
+  }
+  
+  // delete untouched gears
+  if(lmf & Drone::DeleteUnvisitedElements)
+  {
+    QSet<QString> allGears(QSet<QString>::fromList(getGearsUUID()));
+    //qDebug()<<"allGears:"<<allGears;
+    //qDebug()<<"visitedGears:"<<visitedGears;
+    QList<QString> uuidsToDelete(allGears.subtract(visitedGears).toList());
+    QList<Gear*> gearsToDelete(getGearsByUUID(uuidsToDelete));
+    //qDebug()<<"gears to delete"<<uuidsToDelete;
+    foreach(Gear* g, gearsToDelete)
     {
-      QString newname = getUniqueGearName(addedGears[i]->type());
-      renameMap[addedGears[i]->name()] = getUniqueGearName(addedGears[i]->type());
-
-      addedGears[i]->name(renameMap[addedGears[i]->name()]);
+      removeDeepGear(g);
     }
-  */  
+  }
+   
+  
+    
   //load connections    
   QDomNode connectionsNode = XMLHelper::findChildNode(parent, "Connections");
 
   if (connectionsNode.isNull())
   {
-    std::cout << "Bad DroneSchema : <Connections> tag not found!" << std::endl;
+    qDebug() << "Bad DroneSchema : <Connections> tag not found!"  ;
     return false;
   }
 
@@ -446,19 +493,47 @@ bool Schema::load(QDomElement& parent, bool onlySelected)
 
     if (!connectionElem.isNull())
     {
-      connection.load(connectionElem);            
-	/*
-      if(pasting)
+      connection.load(connectionElem);
+      
+      visitedConnections<<connection.toString();
+
+      // if we're remapping uuids, account for that change in connection targets
+      if(!(lmf & Drone::UpdateWhenPossible))
         connection.updateWithRenameMapping(renameMap);
-  */
-			    connect(connection);
+      
+      //qDebug()<<"after:"<<connection;
+      if(!connect(connection))
+        qCritical()<<"Could not connect!:"<<connection;
     }
 
     connectionNode = connectionNode.nextSibling();
   }               
+
+
+  // delete untouched connections
+  if(lmf & Drone::DeleteUnvisitedElements)
+  {
+    QSet<QString> connectionsToDisconnect(existingConnections.subtract(visitedConnections));
   
-  return true;
+    //qDebug()<<"Connections to disconnect: "<<connectionsToDisconnect;
+
+    foreach(QString cstr, connectionsToDisconnect)
+    {
+      Connection c(cstr);
+      Gear * g1(getGearByUUID(c.gearA()));
+      Gear * g2(getGearByUUID(c.gearB()));
+      if(!g1 || !g2)
+        qCritical()<<"Can't unconnect "<<c;
+      else
+      {
+        if(!disconnect(*(g1->getPlug(c.output())),*(g2->getPlug(c.input()))))
+          qDebug()<<"!!!Could not Delete connection:"<<c;
+      }
+      // delete temporaryObject
+    }
+  }
 }
+
 
 /**
  * unlock the schema and perform all scheduled operations

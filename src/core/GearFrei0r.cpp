@@ -25,7 +25,7 @@
 #include <iostream>
 #include <dlfcn.h>
 
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
 
 GearFrei0r::GearFrei0r(void* handle) : 
   Gear("Frei0r"),//exact type set when the frei0r plugin is loaded 
@@ -58,7 +58,7 @@ GearFrei0r::GearFrei0r(void* handle) :
   //set type
   char str[1000];
   sprintf(str, "f0r::%s", _pluginInfo.name);
-  _Type = str;
+  _subType = str;
 
   // Set all plugs.
 

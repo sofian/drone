@@ -23,7 +23,7 @@
 #include "Gear_VideoSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {           
   Gear* makeGear()

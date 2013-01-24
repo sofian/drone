@@ -21,7 +21,7 @@
 #include "Gear_AffineTransform.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

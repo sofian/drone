@@ -23,10 +23,10 @@
 #include <qobject.h>
 #include "Properties.h"
 #include "Engine.h"
+#include "Project.h"
 
 #include "Timing.h"
 #include "Plug.h"
-#include "GearInfo.h"
 #include "Node.h"
 #include <QVector>
 #include <QList>
@@ -37,6 +37,8 @@ class QDomElement;
 class QGraphicsScene;
 class Schema;
 class GearMaker;
+class BaseGearGui;
+class GearInfo;
 
 /**
  * Gear is the atomic processing unit of the dataflow and the base class for all gears.
@@ -67,15 +69,19 @@ public:
   AbstractPlug* getOutput(QString name) const;
 	AbstractPlug *getPlug(QString name) const;
 
+  BaseGearGui* getGearGui(){return _gearGui;}
+  void setGearGui(BaseGearGui* bggui){_gearGui=bggui;}
   //Node
 	void getDependencies(QList<Node*> & dependencies) const;
 
   virtual Schema* getInternalSchema(){return NULL;}
 
-  void name(QString vname);
+  void setInstanceName(QString vname);
 
-  const QString& type() const {return _Type;};  
-  const QString& name() const {return _name;}
+  QString type();  
+  // returns the last type element. Ex : For type Gear:Drone:PushButton, it returns PushButton
+  const QString& subType() const {return _subType;};  
+  const QString& instanceName() const {return _instanceName;}
 
   bool ready(){return _ready;}
 
@@ -84,7 +90,7 @@ public:
 
   //todo make bool
   void save(QDomDocument &, QDomElement &);
-  void load(QDomElement &);
+  void load(QDomElement &, Drone::LoadingModeFlags lmf, bool loadUUID=true);
  
   virtual bool canConvert(const AbstractType& , const AbstractType& ,
                           std::pair<const AbstractPlug*, const AbstractPlug*>& plugs) const
@@ -97,7 +103,12 @@ public:
 
   Schema *parentSchema(){return _parentSchema;}
 	void parentSchema(Schema &parentSchema);
-  //GearInfo* getGearInfo_(){return _gearInfo;}
+  GearInfo* getGearInfo(){return _gearInfo;}
+  void setGearInfo(GearInfo * gi){_gearInfo=gi;}
+
+  void setUUID(QString uuid){_uuid=uuid;}
+  QString getUUID(){return _uuid;}
+  
 
 signals:
   void readyStatusChanged();
@@ -116,6 +127,7 @@ protected:
   friend bool AbstractPlug::connect(AbstractPlug *plug);
   friend bool AbstractPlug::disconnect(AbstractPlug *plug);
 
+  
   AbstractPlug* addPlug(AbstractPlug* plug);
   //void addBypassChannel(std::string in, std::string out);
   //TODO: more flexible way of defining this
@@ -131,10 +143,11 @@ protected:
 
 protected:
 
-  QString _Type;
-  QString _name;//! unique name of this gear in a schema
-
-  //GearInfo * _gearInfo;
+  QString _subType;
+  QString _instanceName;//! unique name of this gear in a schema
+  BaseGearGui * _gearGui;
+  GearInfo * _gearInfo;
+  QString _uuid;
 
 private:
 

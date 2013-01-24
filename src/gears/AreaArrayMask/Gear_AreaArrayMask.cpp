@@ -21,7 +21,7 @@
 #include "Gear_AreaArrayMask.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {

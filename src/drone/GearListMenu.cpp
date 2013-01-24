@@ -1,5 +1,6 @@
 #include "GearListMenu.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
+#include "gearFactory/GearInfo.h"
 //Added by qt3to4:
 #include <qmenu>
 
@@ -36,7 +37,7 @@ void GearListMenu::create()
      }*/
 
      //insert the gear name in the correct menu
-     menu->addAction(new QAction(gi->fullType(),this));
+     menu->addAction(new QAction(gi->type(),this));
   }
 }
 

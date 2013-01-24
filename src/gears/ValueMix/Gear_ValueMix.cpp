@@ -21,7 +21,7 @@
 #include "Gear_ValueMix.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

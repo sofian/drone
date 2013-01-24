@@ -35,7 +35,7 @@
 #include "Gear_VideoInput.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 #include "ThreadUtil.h"
 

@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_MedianFilter, Gear_MedianFilter, "MedianFilter")
 

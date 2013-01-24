@@ -50,7 +50,7 @@ public:
   void hilight(bool hiLight);
   static qreal plugNameWidth(QString name);
 
-  bool connect(PlugBox *plugBox);  
+  ConnectionItem* connect(PlugBox *plugBox);  
   bool canConnectWith(PlugBox *plugBox);    
   void disconnect(PlugBox *plugBox);
   void disconnectAll();
@@ -79,7 +79,7 @@ private:
   int _hilightScaling;
   QColor _extrudedRoundBoxColor;
 
-  std::vector<ConnectionItem*> _connectionItems;
+  QList<ConnectionItem*> _connectionItems;
 
   static const int CONNECTION_HANDLE_OFFSETX;
   static const int CONNECTION_HANDLE_OFFSETY;

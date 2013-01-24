@@ -18,7 +18,7 @@
  */
 
 #include "Gear_Slider.h"
-#include "GearMaker.h"
+
 #include "GearGui_Slider.h"
 #include "ControlSlider.h"
 #include "DroneMath.h"

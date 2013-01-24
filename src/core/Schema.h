@@ -5,7 +5,8 @@
 #include <QObject>
 #include <QMap>
 #include "Connection.h"
-
+#include "Project.h"
+#include <qpair>
 class MetaGear;
 class Gear;
 class AbstractPlug;
@@ -33,13 +34,15 @@ public:
   //serialization 
 	/////////////////////////////////////////////////////////////////////////////
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
-	bool load(QDomElement& doc, bool onlySelected=false);
+	bool load(QDomElement& doc, Drone::LoadingModeFlags lmf);
   
 	///////////////////////////////////////////////////////////////////////////// 
 	//Gears operations
 	/////////////////////////////////////////////////////////////////////////////
   //! Returns a list of unordered gears, but not expanded. Metagears are left as is.
   QList<Gear*> getGears(){return _gears.values();}  
+  //! Returns a list of unordered gears, but not expanded. Metagears are left as is.
+  QList<QString> getGearsUUID(){return _gears.keys();}  
   //! Returns a list of expanded gears, as GetGears, but where metagears are replaced by their internal schema.
   QList<Gear*> getDeepGears() const;
   //! Returns a list of ordered gears
@@ -47,18 +50,19 @@ public:
   void renameGear(Gear &gear, QString newName);
   bool addGear(Gear &gear);  
   bool removeDeepGear(Gear* &gear);
-  Gear* getGearByName(QString name) const;
+  Gear* getGearByUUID(QString uuid) const;
+  QList<Gear*> getGearsByUUID(QList<QString> uuids) const;
   void clear();
 
 	///////////////////////////////////////////////////////////////////////////// 
 	//Connections
 	/////////////////////////////////////////////////////////////////////////////
-  void getAllConnections(QList<Connection*> &connections);
+  QList<Connection*> getAllConnections();
   bool connect(AbstractPlug &plugA, AbstractPlug &plugB);
   bool connect(Connection &connection);
-  void disconnect(AbstractPlug &plugA, AbstractPlug &plugB);
+  bool disconnect(AbstractPlug &plugA, AbstractPlug &plugB);
   void disconnectAll(AbstractPlug &plugA);
-
+  
 	///////////////////////////////////////////////////////////////////////////// 
 	//Schema/Sub-Schema operations
 	/////////////////////////////////////////////////////////////////////////////  
@@ -79,10 +83,9 @@ signals:
 	void gearRemoved(Schema &schema,Gear &gear);
 	void gearRenamed(Schema &schema,Gear &gear);
 	void connectionCreated(Schema &schema, Connection connection);
-	void connectionDeleted(Schema &schema, Connection connection);
+	void connectionRemoved(Schema &schema, Connection connection);
 					
 private:
-  QString mangleUniqueGearName(QString originalName);
 
 //	void onGearAdded(Gear &gear);
 //	void onGearRemoved(Gear &gear);
@@ -91,6 +94,7 @@ private:
   void synch();
   bool _needSynch;
 
+  // maps UUIDs with Gear*
 	QMap<QString, Gear*> _gears;
   QList<Gear*> _lastDeepOrderedReadyGears;
   MetaGear *_parentMetaGear;

@@ -24,7 +24,6 @@
 #include <QFileInfo>
 #include <QMenu>
 #include "Schema.h"
-#include "ISchemaEventListener.h"
 
 class GearGui;
 class PlugBox;
@@ -35,7 +34,7 @@ class GearListMenu;
 class MetaGearListMenu;
 class SchemaEditor;
 
-class SchemaGui : public QGraphicsScene, public ISchemaEventListener
+class SchemaGui : public QGraphicsScene
 {
   Q_OBJECT
   
@@ -51,10 +50,6 @@ public:
   void renameGear(GearGui *gearGui, QString newName);
   void removeGear(GearGui* gearGui);
     
-  
-  void onGearAdded(Schema *schema, Gear *gear);
-  void onGearRemoved(Schema *schema, Gear *gear);
-
   void setSchemaEditor(SchemaEditor* se);
   SchemaEditor* getSchemaEditor() const;
   bool connect(PlugBox *plugA, PlugBox *plugB);
@@ -62,17 +57,25 @@ public:
   void disconnectAll(PlugBox *plugBox);
 
   void clear();
-  bool load(QDomElement& parent);
+  bool load(QDomElement& parent, Drone::LoadingModeFlags lmf);
   bool save(QDomDocument& doc, QDomElement &parent, bool onlySelected=false);
 
   QList<GearGui*> getAllGears();
   QList<GearGui*> getSelectedGears();
+  GearGui* getGearGuiByUUID(QString uuid);
+  QPair<PlugBox*, PlugBox*> getPlugBoxesFromConnection(Connection c);
+
+  void setSelectionChangeNotificationBypass(bool v){_selectionChangeNotificationBypass=v;}
+  void setAutoSelectNewElements(bool p){_autoSelectNewElements=p;}
+
+  QPointF getPasteOffset(){return _pasteOffset+=QPointF(20,20);}
+  QPointF resetPasteOffset(){_pasteOffset=QPointF(0,0);}
+  
 
   Schema * getSchema(){return _schema;}
   void rebuildSchema();
 
-  void setSelectionChangeBypass(bool v){_selectionChangeBypass=v;}
-  QList<QGraphicsItem*> getItemsByName(QList<QString>& list);
+  QList<QGraphicsItem*> getItemsByUUID(QList<QString>& list);
   
   void moveItemsBy(QList<QGraphicsItem*> list,QPointF delta);
   
@@ -82,6 +85,10 @@ signals:
 
 public slots:
   void selectionHasChanged();
+  void slotGearAdded(Schema &schema,Gear &gear);
+  void slotGearRemoved(Schema &schema,Gear &gear);
+  void slotConnectionCreated(Schema &schema, Connection conn);
+  void slotConnectionRemoved(Schema &schema, Connection conn);
 
 protected:
 
@@ -109,18 +116,19 @@ private:
   ConnectionItem* _activeConnection;
   bool _connecting;
 
-  
+  QPointF _pasteOffset;
   Schema *_schema;
   Engine *_engine;
   qreal _maxZValue;
 
   // when selecting all items, used to bypass all single selectionChange signals but one 
-  bool _selectionChangeBypass;
+  bool _selectionChangeNotificationBypass;
 
   // all this stuff is to manually save item move info for the undo stack
   MovingState _moving;
   QList<QString> _movingItems;
   QPointF _movingStartPos;
+  bool _autoSelectNewElements;
 };
 
 #endif

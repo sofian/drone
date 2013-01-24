@@ -24,7 +24,7 @@
 #include "Gear_ImageCapture.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 #include <qfile.h>

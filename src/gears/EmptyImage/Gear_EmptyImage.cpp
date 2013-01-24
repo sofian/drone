@@ -23,7 +23,7 @@
 #include "Gear_EmptyImage.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 extern "C" {

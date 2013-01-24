@@ -28,6 +28,7 @@
 #include <QKeyEvent>
 #include <QLinearGradient>
 #include <QColor>
+#include "BaseGearGui.h"
 
 class Control;
 class Gear;
@@ -36,7 +37,7 @@ class Engine;
 class QDomElement;
 class QDomDocument;
 
-class GearGui : public QObject, public QGraphicsRectItem
+class GearGui : public QObject, public QGraphicsRectItem, public BaseGearGui
 {
 Q_OBJECT	
 public:
@@ -86,10 +87,12 @@ public:
   int renderingStartX();
   int renderingStartY();	
   
+  bool getIsSelected(){return isSelected();}
   
   QRectF boundingRect() const;
   QPainterPath shape() const;
 
+  PlugBox* getPlugBox(QString name) const;
   PlugBox* getInputPlugBox(QString name) const;
   PlugBox* getOutputPlugBox(QString name) const;
 

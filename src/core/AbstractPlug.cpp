@@ -28,6 +28,20 @@
 const QString AbstractPlug::XML_TAGNAME = "Plug";
 const QString AbstractPlug::XML_TAGNAME_TYPE_ELEM = "Type";
 
+// see http://harmattan-dev.nokia.com/docs/library/html/qt4/debug.html#providing-support-for-the-qdebug-stream-operator
+QDebug	operator<< ( QDebug out, const AbstractPlug & ap )
+{
+  QList<AbstractPlug*> connectedPlugs;
+  ap.connectedPlugs(connectedPlugs);
+  out << "AbstractPlug:" << ap.fullName() << " connected to ";
+  foreach(AbstractPlug*p,connectedPlugs)
+    out << p->fullName()<<";";
+  return out.space();
+  
+}
+ 
+
+
 AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractType* type, bool mandatory) :
   _abstractType(type),
   _abstractDefaultType(type),
@@ -108,14 +122,13 @@ bool AbstractPlug::connect(AbstractPlug *plug)
   if(deepestOtherPlug != plug)
     deepestOtherPlug->_connectedPlugs.push_back(this);
 
-  //ajouter la nouvelle plug a nos connections
   _connectedPlugs.push_back(plug);
   plug->_connectedPlugs.push_back(this);
 
   _parent->onPlugConnected(this, plug);
   plug->_parent->onPlugConnected(plug, this);
 
-  //laisser la chance au class derive d'executer leur logique supplementaire
+  // let inherited classes do their custom logic
   onConnection(plug);
   plug->onConnection(this);
 
@@ -136,8 +149,10 @@ bool AbstractPlug::disconnect(AbstractPlug *plug)
 
   //on ne peut pas deconnecter une plug qui n'est pas connecte a nous
   if (!_connectedPlugs.contains(plug))
+  {
+    qDebug()<<*this<<" has no connection to "<<*plug;
     return false;
-
+  }
   _parent->onPlugDisconnected(this, plug);
   plug->_parent->onPlugDisconnected(plug, this);
 
@@ -182,7 +197,7 @@ void AbstractPlug::connectedPlugs(QList<AbstractPlug*> &connectedPlugs) const
 
 QString AbstractPlug::fullName() const
 {
-  return _parent->name()+"/"+_name;
+  return _parent->getUUID()+"/"+_name;
 }
 
 QString AbstractPlug::shortName(int nbChars) const

@@ -1,5 +1,5 @@
 #include "MetaGear.h"
-#include "GearInfo.h"
+#include "gearFactory/GearInfo.h"
 #include "XMLHelper.h"
 
 #include <qfileinfo.h>
@@ -27,7 +27,7 @@ void MetaGear::internalSave(QDomDocument &doc, QDomElement &parent)
   _schema->save(doc, parent);
 }
 
-void MetaGear::internalLoad(QDomElement &parent)
+void MetaGear::internalLoad(QDomElement &parent, Drone::LoadingModeFlags lmf)
 {
 
   //find the schema node under the metagear
@@ -40,7 +40,7 @@ void MetaGear::internalLoad(QDomElement &parent)
   }
 
   QDomElement schemaElem = schemaNode.toElement();
-  _schema->load(schemaElem);
+  _schema->load(schemaElem, lmf);
 
   createPlugs();
 }
@@ -148,7 +148,9 @@ bool MetaGear::load(QString filename)
   _fullPath = filename;
   
   //load
-  Gear::load(metagearElem);
+  
+  //JK: huh ? static method ? why ?
+//  Gear::load(metagearElem);
 
   return true;
 }

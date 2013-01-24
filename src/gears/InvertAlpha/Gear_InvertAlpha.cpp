@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 extern "C" {

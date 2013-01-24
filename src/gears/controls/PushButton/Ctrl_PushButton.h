@@ -38,7 +38,7 @@ public:
   Ctrl_PushButton();
   ~Ctrl_PushButton(){};
   
-  QString getGearType(){return "Gear_PushButton";}
+  QString getGearType(){return "Gear:Drone:PushButton";}
 
 protected:
   Gear_PushButton* getGear(){return (static_cast<Gear_PushButton*>(_parentGear));}

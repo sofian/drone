@@ -3,6 +3,7 @@
 
 #include "Gear.h"
 #include "Schema.h"
+#include "Project.h"
 
 #include <QMap>
 
@@ -28,7 +29,7 @@ public:
 protected:
   
   void internalSave(QDomDocument &doc, QDomElement &parent);
-  void internalLoad(QDomElement &parent);
+  void internalLoad(QDomElement &parent, Drone::LoadingModeFlags lmf);
     	
   Schema *_schema;
   

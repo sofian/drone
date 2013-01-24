@@ -21,7 +21,7 @@
 #include "Gear_TapTempo.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include <iomanip>
 
 using namespace std;

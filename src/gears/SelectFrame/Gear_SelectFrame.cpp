@@ -23,7 +23,7 @@
 #include "Gear_SelectFrame.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {           
   Gear* makeGear()

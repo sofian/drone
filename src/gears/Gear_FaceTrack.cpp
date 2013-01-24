@@ -26,7 +26,7 @@
 #include <cmath>
 //#include <process.h>
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_FaceTrack, Gear_FaceTrack, "FaceTrack")
 

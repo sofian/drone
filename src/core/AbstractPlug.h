@@ -21,6 +21,7 @@
 #define __ABSTRACTPLUG_INCLUDED
 
 #include "AbstractType.h"
+#include "qdebug"
 
 #include <QList>
 
@@ -102,5 +103,7 @@ private:
   bool _exposed;//! the plug is exposed outside of a metagear
 
 };
+
+QDebug	operator<< ( QDebug out, const AbstractPlug & ap );
 
 #endif //__ABSTRACTPLUG_INCLUDED

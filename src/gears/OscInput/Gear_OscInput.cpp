@@ -21,7 +21,7 @@
 #include "Gear_OscInput.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

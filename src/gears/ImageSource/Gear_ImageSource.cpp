@@ -23,7 +23,7 @@
 #include "Gear_ImageSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 const QString Gear_ImageSource::SETTING_FILENAME = "Filename";

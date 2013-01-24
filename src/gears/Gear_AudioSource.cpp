@@ -21,7 +21,7 @@
 #include "Gear_AudioSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 Register_Gear(MAKERGear_AudioSource, Gear_AudioSource, "AudioSource");

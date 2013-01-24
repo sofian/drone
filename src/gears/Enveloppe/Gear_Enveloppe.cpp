@@ -24,7 +24,7 @@
 #include "Gear_Enveloppe.h"
 #include "Engine.h"
 #include <cmath>
-#include "GearMaker.h"
+
 
 extern "C" {
 Gear* makeGear()

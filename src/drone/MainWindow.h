@@ -60,7 +60,8 @@ public:
   
   void pushUndoCommand(QUndoCommand* c);
   SchemaGui* getSchemaGui() const {return _mainSchemaGui;}
-
+  Project* getProject(){return _project;}
+  
 public slots:
   void slotPlay(bool);
   void slotItemsMoved(QList<QString> &itemNames, QPointF dist);

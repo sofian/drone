@@ -7,7 +7,8 @@
  *
  */
 #include "GearTreeView.h"
-#include "GearMaker.h"
+#include "gearFactory/GearMaker.h"
+#include "gearFactory/GearInfo.h"
 #include <q3dragobject.h>
 #include <qmouseevent>
 #include <qtreewidgetitem>
@@ -102,7 +103,7 @@ void GearTreeView::create()
   QList<QTreeWidgetItem *> items;
   foreach(GearInfo* gi, gearsInfo)
   {        
-    qDebug()<<"looking at" <<gi->fullType()<<" : "<<gi->getClassification();
+    qDebug()<<"looking at" <<gi->type()<<" : "<<gi->getClassification();
     if(!gi->instanciableFromGUI())
     {
     qDebug()<<"not shown!";
@@ -111,7 +112,7 @@ void GearTreeView::create()
     QTreeWidgetItem* parentItem = findClassificationItem(gi->getClassification(),invisibleRootItem());
     
     QTreeWidgetItem* child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(gi->type()));
-    child->setData(1,Qt::UserRole, gi->fullType());
+    child->setData(1,Qt::UserRole, gi->type());
     parentItem->addChild(child);
   }
   expandAll();  
