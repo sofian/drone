@@ -34,7 +34,7 @@ QDomDocument Project::getSnapshot()
 
   if(!_mainSchema->save(doc, projectElem))
     return QDomDocument();
-  qDebug()<<"Just serialized this:"<<doc.toString();
+//  qDebug()<<"Just serialized this:"<<doc.toString();
   return doc;
   
 }

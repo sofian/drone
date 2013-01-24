@@ -68,7 +68,7 @@ public:
   void setSelectionChangeNotificationBypass(bool v){_selectionChangeNotificationBypass=v;}
   void setAutoSelectNewElements(bool p){_autoSelectNewElements=p;}
 
-  QPointF getPasteOffset(){return _pasteOffset+=QPointF(20,20);}
+  QPointF getPasteOffset(){return _pasteOffset+=QPointF(100,100);}
   QPointF resetPasteOffset(){_pasteOffset=QPointF(0,0);}
   
 

@@ -94,7 +94,7 @@ _boxNameColor(color)
   //not needed for now
   //setAcceptsHoverEvents(true);
   
-  //setCacheMode(DeviceCoordinateCache);
+//  setCacheMode(ItemCoordinateCache);
   // specify an update rate to periodically refresh gear control (ex : GearTV)  
   //if (updateRate>=0)
   //  startTimer(updateRate);
@@ -481,17 +481,17 @@ void GearGui::save(QDomDocument &doc, QDomElement &gearElem)
   gearElem.setAttributeNode(sel);
 
   QDomAttr z = doc.createAttribute("Z");
-  z.setValue(QString('%1').arg(zValue()));
+  QString tmpStr(QString("%1").arg((int)zValue()));
+  z.setValue(tmpStr);
   gearElem.setAttributeNode(z);
 }                                                                                                                       
 
 void GearGui::load(QDomElement &gearElem)                        
 {
-  setX(gearElem.attribute("PosX","").toInt());
-  setY(gearElem.attribute("PosY","").toInt());
+  setX(gearElem.attribute("PosX","").toFloat());
+  setY(gearElem.attribute("PosY","").toFloat());
   setSelected(gearElem.attribute("Sel","").toInt());
   setZValue(gearElem.attribute("Z","").toInt());
-  
   
   //load plugs attributes
   QDomNode gearGuiNode = XMLHelper::findChildNode(gearElem, "GearGui");

@@ -17,7 +17,7 @@ namespace Drone
         EmitSignals = 0x4
     };
     Q_DECLARE_FLAGS(LoadingModeFlags, LoadingModeFlag)    
-
+    
     extern LoadingModeFlags LoadFromFile; 
     extern LoadingModeFlags PasteFromClipboard;
     extern LoadingModeFlags RestoreSnapshot;

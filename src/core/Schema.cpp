@@ -415,7 +415,7 @@ bool Schema::load(QDomElement& parent, Drone::LoadingModeFlags lmf)
       if(lmf & Drone::UpdateWhenPossible && existingGear)
       {
         existingGear->load(gearElem, lmf);
-        qDebug()<<"GEARS:"<<_gears.keys();
+        //qDebug()<<"GEARS:"<<_gears.keys();
         visitedGears<<existingGear->getUUID();
       }
       else
@@ -428,7 +428,7 @@ bool Schema::load(QDomElement& parent, Drone::LoadingModeFlags lmf)
           QString oldUUID = gearElem.attribute("UUID", "");
           //addGear to schema with UUID "newUUID"
           addGear(*newGear);
-          qDebug()<<"GEARS:"<<_gears.keys();
+          //qDebug()<<"GEARS:"<<_gears.keys();
 
           newGear->load(gearElem,lmf);
           
