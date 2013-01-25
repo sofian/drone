@@ -32,7 +32,7 @@
  * The code could be found on the author's personal web page: 
  * http://www.iro.umontreal.ca/~ostrom/
  *
- * @author Jean-Sébastien Senécal, Victor Ostromoukhov
+ * @author Jean-Sï¿½bastien Senï¿½cal, Victor Ostromoukhov
  * @version %I% %G%
  */
 class Gear_HalfToning : public Gear
@@ -49,7 +49,7 @@ class Gear_HalfToning : public Gear
   
 public:
   //! Default constructor.
-  Gear_HalfToning(Schema *schema, std::string uniqueName);
+  Gear_HalfToning();
 
   // Destructor.
   virtual ~Gear_HalfToning();

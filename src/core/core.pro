@@ -29,19 +29,60 @@ unix:!macx:QMAKE_CXXFLAGS += -D__LINUX_ALSASEQ__
 
 HEADERS += config.h \
 error.h \
+AbstractPlug.h \
 Array.h \
 Array2D.h \
+BaseGearGui.h \
 CircularBuffer.h \
 ColorSpace.h \
-ConnectionItem.h \
-ControlPanel.h \
+Connection.h \
 Control.h \
 DroneCore.h \
+DroneGlobal.h \
+DroneMath.h \
 Engine.h \
 Gear.h \
 GearControl.h \
 GearFrei0r.h \
-types/AbstractType.h \
+GearClassification.h \
+GearGui.h \
+GearConverter.h \
+GearMaker.h \
+ISchemaEventListener.h \
+Media.h \
+MediaPool.h \
+MediaMovie.h \
+MetaGear.h \
+MetaGearMaker.h \
+Node.h \ 
+MidiEngine.h \
+Plug.h \
+PlugBox.h \
+Properties.h \
+Project.h \
+Rasterer.h \
+Random.h \
+SummedAreaTable.h \
+Schema.h \
+SchemaTopoSort.h \
+ScopedLock.h \
+SignalCircularBuffer.h \
+SignalInfo.h \
+StringUtils.h \
+TextureGl.h \
+ThreadUtil.h \
+Timing.h \
+Typedefs.h \
+Utils.h \
+VideoInfo.h \
+XMLHelper.h \
+RtMidi/RtMidi.h \
+RtMidi/RtError.h \
+composite/Composite.h \
+composite/CompositeGeneric.h \
+composite/AlphaComposite.h
+ 
+HEADERS += types/AbstractType.h \
 types/AreaArrayType.h \
 types/AreaType.h \
 types/FFTType.h \
@@ -56,53 +97,24 @@ types/Array2DType.h \
 types/VideoChannelType.h \
 types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
-types/EnumType.h \
-types/TextureType.h \
-GearClassification.h \
-GearGui.h \
-GearConverter.h \
-GearMaker.h \
-ISchemaEventListener.h \
-DroneMath.h \
-Media.h \
-MediaPool.h \
-MediaMovie.h \
-MetaGear.h \
-MetaGearMaker.h \
-MidiEngine.h \
-AbstractPlug.h \
-Plug.h \
-PlugBox.h \
-Properties.h \
-Project.h \
-Rasterer.h \
-Random.h \
-SummedAreaTable.h \
-Schema.h \
-SchemaGui.h \
-SignalInfo.h \
-StringUtils.h \
-ThreadUtil.h \
-Timing.h \
-Typedefs.h \
-Utils.h \
-VideoInfo.h \
-XMLHelper.h \
-RtMidi/RtMidi.h \
-RtMidi/RtError.h \
-composite/Composite.h \
-composite/CompositeGeneric.h \
-composite/AlphaComposite.h
- 
+types/EnumType.h
+
+
 SOURCES += error.cpp \
-ConnectionItem.cpp \
-ControlPanel.cpp \
+BaseGearGui.cpp \
+Connection.cpp \
 Control.cpp \
 DroneCore.cpp \
 Engine.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
+types/AreaType.cpp \
+types/EnumType.cpp \
+types/VideoChannelType.cpp \
+types/VideoRGBAType.cpp \
+types/ValueType.cpp \
+types/StringType.cpp \
 GearGui.cpp \
 GearMaker.cpp \
 Math.cpp \
@@ -111,25 +123,55 @@ MediaMovie.cpp \
 MetaGear.cpp \
 MetaGearMaker.cpp \
 MidiEngine.cpp \
+Node.cpp \
 AbstractPlug.cpp \
 PlugBox.cpp \
 Properties.cpp \
 Project.cpp \
 Rasterer.cpp \
 Random.cpp \
+Properties.cpp \
 Schema.cpp \
 SchemaGui.cpp \
 SignalInfo.cpp \
 StringUtils.cpp \
+TextureGl.cpp \
 Timing.cpp \
-types/VideoRGBAType.cpp \
-types/TextureType.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
 composite/Composite.cpp \
 composite/CompositeGeneric.cpp \
 composite/AlphaComposite.cpp
+
+
+# controlHosts
+HEADERS += controlHosts/PushButton/Gear_PushButton.h
+
+SOURCES += controlHosts/PushButton/Gear_PushButton.cpp
+
+
+# gearFactory
+
+HEADERS += gearFactory/GearInfo.h \
+gearFactory/GearInfoPlugin.h \
+gearFactory/GearInfoDrone.h \
+gearFactory/GearInfoStatic.h \
+gearFactory/GearInfoControl.h \
+gearFactory/GearInfoFrei0r.h \
+gearFactory/GearInfoMeta.h \
+gearFactory/PlugInfo.h \
+gearFactory/GearMaker.h
+
+SOURCES += gearFactory/GearInfo.cpp \
+gearFactory/GearInfoPlugin.cpp \
+gearFactory/GearInfoDrone.cpp \
+gearFactory/GearInfoStatic.cpp \
+gearFactory/GearInfoControl.cpp \
+gearFactory/GearInfoFrei0r.cpp \
+gearFactory/GearInfoMeta.cpp \
+gearFactory/PlugInfo.cpp \
+gearFactory/GearMaker.cpp
 
 agg {
 
@@ -141,4 +183,4 @@ SOURCES += AggWrapper.cpp types/VectorialType.cpp
 }
   
 #The following line was inserted by qt3to4
-QT += xml opengl qt3support 
+QT += xml  qt3support 

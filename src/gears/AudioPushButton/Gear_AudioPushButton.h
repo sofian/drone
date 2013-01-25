@@ -30,11 +30,11 @@ class Gear_AudioPushButton : public Gear
 public:
   static const float  DEFAULT_VALUE;
 
-  static const std::string SETTING_OFFVALUE;
-  static const std::string SETTING_ONVALUE;
-  static const std::string SETTING_ONESHOT;
+  static const QString SETTING_OFFVALUE;
+  static const QString SETTING_ONVALUE;
+  static const QString SETTING_ONESHOT;
 
-  Gear_AudioPushButton(Schema *schema, std::string uniqueName);
+  Gear_AudioPushButton();
   virtual ~Gear_AudioPushButton();
 
   void runAudio();
@@ -44,7 +44,6 @@ public:
   float getValue(){return _VALUE_OUT->type()->value();}
 
 protected:
-  GearGui* createGearGui(QCanvas *canvas);//we want a AudioPushButton so we overload
   void onUpdateSettings();
   void onPlugConnected(AbstractPlug *plug, AbstractPlug*);
   void onPlugDisconnected(AbstractPlug* plug, AbstractPlug*);

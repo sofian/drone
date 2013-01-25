@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_FlatSignal
+unix:!macx:TARGET=../../../gears/drone/Gear_FlatSignal
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_FlatSignal
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_FlatSignal
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

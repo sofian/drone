@@ -20,25 +20,19 @@
 #include "Gear_SignalStat.h"
 #include "DroneMath.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_SignalStat(schema, uniqueName);
+  return new Gear_SignalStat();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "SignalStat";
-  gearInfo.classification = GearClassifications::signal().transform().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_SignalStat::Gear_SignalStat(Schema *schema, std::string uniqueName)
-  : GearConverter<SignalType, ValueType>(schema, "SignalStat", uniqueName)
+Gear_SignalStat::Gear_SignalStat()
+  : GearConverter<SignalType, ValueType>(schema, "SignalStat")
 {
   addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", false, new ValueType(0, 0, 6)));
 

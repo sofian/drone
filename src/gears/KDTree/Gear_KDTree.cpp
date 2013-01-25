@@ -22,25 +22,19 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_KDTree(schema, uniqueName);
+  return new Gear_KDTree();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "KDTree";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
-: Gear(schema, "KDTree", uniqueName)
+Gear_KDTree::Gear_KDTree()
+: Gear("KDTree")
 {
   // Inputs.
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
@@ -55,7 +49,7 @@ Gear_KDTree::Gear_KDTree(Schema *schema, std::string uniqueName)
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", false));
   addPlug(_AREA_OUT = new PlugOut<AreaArrayType>(this, "Segm", false));
   
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
   atLeastOneOfThem.push_back(_AREA_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);

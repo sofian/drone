@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 // Coefficient table.
 const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {
@@ -284,26 +284,19 @@ const Gear_HalfToning::ThreeCoefficients Gear_HalfToning::COEFS_TABLE[256] = {
 0.722222222222,     0.0};                //    255
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_HalfToning(schema, uniqueName);
+  return new Gear_HalfToning();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "HalfToning";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
 }
 
-Gear_HalfToning::Gear_HalfToning(Schema *schema, std::string uniqueName)
-: Gear(schema, "HalfToning", uniqueName), _carryLine0(0), _carryLine1(0)
+Gear_HalfToning::Gear_HalfToning()
+: Gear("HalfToning"), _carryLine0(0), _carryLine1(0)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
-  NOTICE("Pour le moment les coeffs tables ne sont pas pré-calculées... à corriger un jour.");
+  NOTICE("Pour le moment les coeffs tables ne sont pas prï¿½-calculï¿½es... ï¿½ corriger un jour.");
 }
 
 Gear_HalfToning::~Gear_HalfToning()

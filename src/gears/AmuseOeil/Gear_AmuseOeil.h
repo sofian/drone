@@ -55,7 +55,7 @@ class Gear_AmuseOeil : public Gear
 {
 public:
 
-  Gear_AmuseOeil(Schema *schema, std::string name);
+  Gear_AmuseOeil(Schema *schema, QString name);
   virtual ~Gear_AmuseOeil();
 
   void runVideo();  

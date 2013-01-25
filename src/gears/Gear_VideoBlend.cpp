@@ -22,12 +22,12 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 Register_Gear(MAKERGear_VideoBlend, Gear_VideoBlend, "VideoBlend")
 
-Gear_VideoBlend::Gear_VideoBlend(Schema *schema, std::string uniqueName) : Gear(schema, "VideoBlend", uniqueName)
+Gear_VideoBlend::Gear_VideoBlend() : Gear("VideoBlend")
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB"));

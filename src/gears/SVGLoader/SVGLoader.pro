@@ -1,4 +1,4 @@
-include (../config.pro)
+include (../../../config.pro)
 
 TEMPLATE=lib
 #SOURCES+=Gear_SVGLoader.cpp \
@@ -11,10 +11,10 @@ INCLUDEPATH+=../../core/ ../../core/types ../../../lib/agg23/include ../../../li
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore -L../../../lib/agg23/src/ -lagg
-unix:!macx:TARGET=../../../gears/Gear_SVGLoader
+unix:!macx:TARGET=../../../gears/drone/Gear_SVGLoader
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_SVGLoader
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_SVGLoader
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

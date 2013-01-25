@@ -18,8 +18,7 @@
  */
 
 #include "Gear_AudioPushButton.h"
-#include "GearMaker.h"
-#include "GearGui_AudioPushButton.h"
+
 #include "DroneMath.h"
 
 #include "Engine.h"
@@ -29,25 +28,19 @@
 #include <sstream>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AudioPushButton(schema, uniqueName);
+  return new Gear_AudioPushButton();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AudioPushButton";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
-const std::string Gear_AudioPushButton::SETTING_OFFVALUE = "Off Value";
-const std::string Gear_AudioPushButton::SETTING_ONVALUE = "On Value";
-const std::string Gear_AudioPushButton::SETTING_ONESHOT = "One Shot";
+const QString Gear_AudioPushButton::SETTING_OFFVALUE = "Off Value";
+const QString Gear_AudioPushButton::SETTING_ONVALUE = "On Value";
+const QString Gear_AudioPushButton::SETTING_ONESHOT = "One Shot";
 
-Gear_AudioPushButton::Gear_AudioPushButton(Schema *schema, std::string uniqueName) : Gear(schema, "AudioPushButton", uniqueName),_acceptHint(true)
+Gear_AudioPushButton::Gear_AudioPushButton() : Gear("AudioPushButton"),_acceptHint(true)
 {
 
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Value", true));
@@ -69,7 +62,7 @@ Gear_AudioPushButton::~Gear_AudioPushButton()
 void Gear_AudioPushButton::onUpdateSettings()
 {
   //then we need to redraw the gearGui
-  getGearGui()->reDraw();
+  //getGearGui()->rebuildLayout();
 }
 
 void Gear_AudioPushButton::onPlugConnected(AbstractPlug *plug, AbstractPlug*)
@@ -117,9 +110,4 @@ void Gear_AudioPushButton::runAudio()
   _haveUnconsumedClick=false;
   if(_havePendingRelease)
     setState(OFF);
-}
-
-GearGui *Gear_AudioPushButton::createGearGui(QCanvas *canvas)
-{                
-  return new GearGui_AudioPushButton(this, canvas);
 }

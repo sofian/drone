@@ -357,24 +357,17 @@ unsigned parse_lion(agg::path_storage& path, agg::rgba8* colors, unsigned* path_
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AggTest(schema, uniqueName);
+  return new Gear_AggTest();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AggTest";
-  gearInfo.classification = GearClassifications::video().vectorial().instance();
-  return gearInfo;
-}
 }
 
-Gear_AggTest::Gear_AggTest(Schema *schema, std::string uniqueName) : Gear(schema, "AggTest", uniqueName)
+Gear_AggTest::Gear_AggTest() : Gear("AggTest")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN"));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT"));

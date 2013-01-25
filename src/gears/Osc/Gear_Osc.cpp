@@ -19,14 +19,14 @@
 
 #include "Gear_Osc.h"
 #include "Engine.h"
-#include "GearMaker.h"
 #include "DroneMath.h"
 #include "Engine.h"
 
+
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Osc(schema, uniqueName);
+  return new Gear_Osc();
 }
 
 GearInfo getGearInfo()
@@ -38,8 +38,8 @@ GearInfo getGearInfo()
 }
 }
 
-Gear_Osc::Gear_Osc(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "Osc", uniqueName),
+Gear_Osc::Gear_Osc() : 
+  Gear("Osc"),
   _phaseCorrection(0.0f),
   _currentOscTime(0.0f)
 {

@@ -24,7 +24,7 @@
 #include "Gear_DataOut.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_DataOut, Gear_DataOut, "DataOut")
 
@@ -32,7 +32,7 @@ Register_Gear(MAKERGear_DataOut, Gear_DataOut, "DataOut")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_DataOut::Gear_DataOut(Schema *schema, std::string uniqueName) : Gear(schema, "DataOut", uniqueName)
+Gear_DataOut::Gear_DataOut() : Gear("DataOut")
 {
 
   _FileOut.open("dataout.txt");

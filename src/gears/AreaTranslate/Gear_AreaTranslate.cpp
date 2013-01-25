@@ -22,24 +22,18 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaTranslate(schema, uniqueName);
+  return new Gear_AreaTranslate();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaTranslate";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaTranslate::Gear_AreaTranslate(Schema *schema, std::string uniqueName) : Gear(schema, "AreaTranslate", uniqueName)
+Gear_AreaTranslate::Gear_AreaTranslate() : Gear("AreaTranslate")
 {
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 

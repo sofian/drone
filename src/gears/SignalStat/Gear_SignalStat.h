@@ -27,7 +27,7 @@
 class Gear_SignalStat : public GearConverter<SignalType, ValueType>
 {
 public:
-  Gear_SignalStat(Schema *schema, std::string uniqueName);
+  Gear_SignalStat();
   virtual ~Gear_SignalStat() {}
 
   void convert();

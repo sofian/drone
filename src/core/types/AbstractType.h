@@ -20,19 +20,17 @@
 #ifndef __ABSTRACTTYPE_INCLUDED
 #define __ABSTRACTTYPE_INCLUDED
 
+#include "DroneGlobals.h"
 #include <qcolor.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
-// TYPE_BASE_METHODS(ClassName [, RGB) implementation
-//
-// Usage:
-// TYPE_BASE_METHODS(MyType, (red, green, blue))
-// TYPE_BASE_METHODS(MyType) // --> no color() definition, will use that of parent
+class QDomDocument;
+class QDomElement;
 
 #define __TYPE_BASE_METHODS_1_ARGS(ClassName) \
-    virtual std::string typeName() const { return #ClassName; } \
+    virtual QString typeName() const { return #ClassName; } \
     virtual void copyFrom(const AbstractType& t) { (*this) = *(static_cast<const ClassName*>(&t)); } \
     virtual bool isSuperClassOf(const AbstractType& t) const { return (dynamic_cast<const ClassName*>(&t)) != NULL; } \
     virtual AbstractType* clone() const { return new ClassName(*this); }
@@ -74,10 +72,12 @@ public:
   // DEPRECATED: Use: isClassOf()
   /*bool isTypeOf(AbstractType &other) const
   {
-    return other.typeName() == typeName();
-  }*/
-
-
+      return other.typeName() == typeName();
+  }
+  
+	virtual void save(QDomDocument &, QDomElement &) const {};
+	virtual void load(QDomElement &) {};
+	
 protected:
   std::vector<const AbstractType*> _subTypes;
 	

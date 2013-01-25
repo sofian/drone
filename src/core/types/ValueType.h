@@ -29,7 +29,7 @@ public:
             float minValue=-1.0f,
             float maxValue=1.0f)
     : AbstractType(),
-      _value(defaultValue),
+	  _value(defaultValue),
       _minValue(minValue),
       _maxValue(maxValue)
     {}
@@ -37,7 +37,10 @@ public:
   virtual ~ValueType() {}
     
   TYPE_BASE_METHODS(ValueType, (157, 208, 50))
-  
+
+	void save(QDomDocument &doc, QDomElement &parent) const;
+	void load(QDomElement &typeElem);
+	  
   void setValue(float value) { _value = value; }
   float value() const { return _value; }
   int intValue() const { return (int)_value; }

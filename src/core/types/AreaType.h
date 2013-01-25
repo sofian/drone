@@ -34,6 +34,7 @@
 class AreaType : public AbstractType
 {
 public:
+  static const QString TYPENAME;
   
   /**
    * Default constructor

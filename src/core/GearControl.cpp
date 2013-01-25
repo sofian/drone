@@ -1,14 +1,13 @@
 #include "GearControl.h"
 
-GearControl::GearControl(Schema *parentSchema, std::string type, std::string uniqueName) :
-  Gear(parentSchema,type,uniqueName),
+GearControl::GearControl(QString type) :
+  Gear(type),
   _control(NULL)
 {
 
 }
 
-Control* GearControl::createControl(ControlPanel* parent)
+void GearControl::setControl(Control* control)
 {
-  _control = internalCreateControl(parent);
-  return _control;
+  _control=control;
 }

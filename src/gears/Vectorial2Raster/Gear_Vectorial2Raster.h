@@ -41,7 +41,7 @@ class Gear_Vectorial2Raster : public Gear
 {
 public:
 
-  Gear_Vectorial2Raster(Schema *schema, std::string uniqueName);
+  Gear_Vectorial2Raster();
   virtual ~Gear_Vectorial2Raster();
 
   void runVideo();

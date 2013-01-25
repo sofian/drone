@@ -21,25 +21,19 @@
 #include "Gear_AreaVideoReplace.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaVideoReplace(schema, uniqueName);
+  return new Gear_AreaVideoReplace();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaVideoReplace";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaVideoReplace::Gear_AreaVideoReplace(Schema *schema, std::string uniqueName) : Gear(schema, "AreaVideoReplace", uniqueName)
+Gear_AreaVideoReplace::Gear_AreaVideoReplace() : Gear("AreaVideoReplace")
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoOut", true));
 

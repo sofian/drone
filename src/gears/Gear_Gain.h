@@ -29,7 +29,7 @@ class PlugSignal;
 class Gear_Gain : public Gear  
 {
 public:
-  Gear_Gain(Schema *schema, std::string uniqueName);
+  Gear_Gain();
   virtual ~Gear_Gain();
 
   void runAudio();

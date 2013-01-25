@@ -26,7 +26,7 @@ PanelScrollView::~PanelScrollView()
 ControlPanel *PanelScrollView::addControlPanel(MetaGear *metaGear)
 {
   ControlPanel *controlPanel = new ControlPanel(_mainVBox, metaGear);
-  metaGear->associateControlPanel(controlPanel);
+  //metaGear->associateControlPanel(controlPanel);
   
   controlPanel->show();
     

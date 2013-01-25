@@ -23,27 +23,21 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VideoOffset(schema, uniqueName);
+  return new Gear_VideoOffset();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoOffset";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_VideoOffset::Gear_VideoOffset(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "VideoOffset", uniqueName)
+Gear_VideoOffset::Gear_VideoOffset() : 
+  Gear("VideoOffset")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

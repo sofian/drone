@@ -29,7 +29,7 @@ class Gear_Sobel : public Gear
 {
 public:
 
-  Gear_Sobel(Schema *schema, std::string uniqueName);
+  Gear_Sobel();
   virtual ~Gear_Sobel();
 
   void runVideo();

@@ -1,11 +1,10 @@
 include (../../../config.pro)
 
 TEMPLATE=lib
-
 SOURCES+=Gear_VideoInput.cpp
 HEADERS+=Gear_VideoInput.h
-
-INCLUDEPATH+=../../core/ ../../core/types /opt/local/include
+INCLUDEPATH+=../../core/ ../../core/types
+#INCLUDEPATH+=../../core/ ../../core/types /opt/local/include
 
 QMAKE_CXXFLAGS+=-D__STDC_CONSTANT_MACROS
 

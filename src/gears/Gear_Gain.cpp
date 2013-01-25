@@ -24,7 +24,7 @@
 #include "Gear_Gain.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_Gain, Gear_Gain, "Gain")
 
@@ -32,7 +32,7 @@ Register_Gear(MAKERGear_Gain, Gear_Gain, "Gain")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_Gain::Gear_Gain(Schema *schema, std::string uniqueName) : Gear(schema, "Gain", uniqueName)
+Gear_Gain::Gear_Gain() : Gear("Gain")
 {
 
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", true, new SignalType(0.0f)));

@@ -21,14 +21,14 @@
 #include "Gear_AudioSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 Register_Gear(MAKERGear_AudioSource, Gear_AudioSource, "AudioSource");
 
-const std::string Gear_AudioSource::SETTING_FILENAME = "Filename";
+const QString Gear_AudioSource::SETTING_FILENAME = "Filename";
 
-Gear_AudioSource::Gear_AudioSource(Schema *schema, std::string uniqueName) : Gear(schema, "AudioSource", uniqueName),
+Gear_AudioSource::Gear_AudioSource() : Gear("AudioSource"),
 _File(NULL)
 {        
   addPlug(_AUDIO_OUT = new PlugOut<SignalType>(this, "Out", true));       

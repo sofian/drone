@@ -5,8 +5,17 @@ then
     mkdir drone.app
     mkdir drone.app/Contents
     mkdir drone.app/Contents/Frameworks
+    mkdir drone.app/Contents/PlugIns
+    mkdir drone.app/Contents/PlugIns/drone
+    mkdir drone.app/Contents/PlugIns/controls
+    mkdir drone.app/Contents/PlugIns/frei0r
+    mkdir drone.app/Contents/PlugIns/metagear
 fi
 
-cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
+#cp lib/liblo/src/.libs/liblo.dylib drone.app/Contents/Frameworks
+cp src/gears/*.xml drone.app/Contents/PlugIns/drone
+cp src/gears/*/*.xml drone.app/Contents/PlugIns/drone
+cp src/gears/control/*.xml drone.app/Contents/PlugIns/drone
+cp src/gears/control/*/*.xml drone.app/Contents/PlugIns/drone
 
-install_name_tool -id @executable_path/../Frameworks/liblo.dylib drone.app/Contents/Frameworks/liblo.dylib
+#install_name_tool -id @executable_path/../Frameworks/liblo.dylib drone.app/Contents/Frameworks/liblo.dylib

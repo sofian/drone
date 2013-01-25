@@ -10,10 +10,11 @@ INCLUDEPATH+=../../core/ ../../core/types
 SOURCES+=Gear_VideoOutput.cpp DroneQGLWidget.cpp
 HEADERS+=Gear_VideoOutput.h DroneQGLWidget.h DroneGLWindow.h
 
-
+#linux
 unix:!macx:LIBS+= -L../../../lib/ -ldroneCore -lGL
 unix:!macx:TARGET=../../../gears/Gear_VideoOutput
 
+# osx
 macx:INCLUDEPATH+= /Developer/Headers/FlatCarbon
 macx:LIBS += /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
 macx:LIBS += /System/Library/Frameworks/Carbon.framework/Carbon

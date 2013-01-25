@@ -1,5 +1,5 @@
-/* Gear_ImageToTexture.h
- * Copyright (C) 2012 Mathieu Guindon
+/* VideoChannelType.cpp
+ * Copyright (C) 2004 Mathieu Guindon, Julien Keable, Jean-Sebastien Senecal
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+#include "VideoChannelType.h"
 
 #ifndef GEAR_IMAGE_TO_TEXTURE_INCLUDED
 #define GEAR_IMAGE_TO_TEXTURE_INCLUDED

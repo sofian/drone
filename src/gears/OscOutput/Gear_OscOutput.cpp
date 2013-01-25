@@ -21,25 +21,19 @@
 #include "Gear_OscOutput.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_OscOutput(schema, uniqueName);
+  return new Gear_OscOutput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "OscOutput";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_OscOutput::Gear_OscOutput(Schema *schema, std::string uniqueName) : 
-	Gear(schema, "OscOutput", uniqueName)
+Gear_OscOutput::Gear_OscOutput() : 
+	Gear("OscOutput")
 {
 
   addPlug(_PORT = new PlugIn<StringType>(this, "Port", false, new StringType("7770")));

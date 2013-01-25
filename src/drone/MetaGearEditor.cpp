@@ -3,7 +3,7 @@
 #include "MetaGear.h"
 #include "SchemaEditor.h"
 #include "PanelScrollView.h"
-#include "GearListView.h"
+#include "GearTreeView.h"
 #include "PlugPropertiesTable.h"
 
 #include <qsplitter.h>
@@ -40,8 +40,8 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   
   //_panelScrollView = new PanelScrollView(_horizontalSplitter);
   _panelScrollView = NULL;
-  _gearListView = new GearListView(_verticalSplitter);
-  _gearListView->create();
+  _gearTreeView = new GearTreeView(_verticalSplitter);
+  _gearTreeView->create();
   _plugPropertiesTable = new PlugPropertiesTable(_verticalSplitter);
   _schemaEditor = new SchemaEditor(_horizontalSplitter, _schemaGui, engine, _panelScrollView);  
   
@@ -52,7 +52,7 @@ MetaGearEditor::MetaGearEditor(QWidget *parent, MetaGear *metaGear, Engine *engi
   //add the edited metagear to the panelScrollView
   //_panelScrollView->addControlPanel(metaGear);
 	
-  QObject::connect(_schemaEditor, SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
+  QObject::connect(_schemaEditor->scene(), SIGNAL(gearSelected(GearGui*)), _plugPropertiesTable, SLOT(slotGearSelected(GearGui*)));
   
 }
 
@@ -60,12 +60,3 @@ MetaGearEditor::~MetaGearEditor()
 {
 }
 
-void MetaGearEditor::zoomInSchema()
-{
-	_schemaEditor->zoomIn();
-}
-
-void MetaGearEditor::zoomOutSchema()
-{
-	_schemaEditor->zoomOut();
-}

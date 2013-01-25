@@ -13,7 +13,7 @@ public:
   
   
   QPixmap *thumbNail();
-  void load(std::string filename);
+  void load(QString filename);
 
 private:
   QPixmap *_thumbnail;

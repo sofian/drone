@@ -22,27 +22,21 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ColorQuantize(schema, uniqueName);
+  return new Gear_ColorQuantize();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ColorQuantize";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
 const int Gear_ColorQuantize::MAX_COLOR = 256;
 
-Gear_ColorQuantize::Gear_ColorQuantize(Schema *schema, std::string uniqueName)
-  : Gear(schema, "ColorQuantize", uniqueName), _nColors(),
+Gear_ColorQuantize::Gear_ColorQuantize()
+  : Gear("ColorQuantize"), _nColors(),
     Ir(0), Ig(0), Ib(0), Qadd(0)
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));

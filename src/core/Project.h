@@ -20,30 +20,33 @@
 #ifndef PROJECT_INCLUDED
 #define PROJECT_INCLUDED
 
-#include <string>
+#include <QString>
+#include "DroneGlobals.h"
 
 class QDomDocument;
 class QDomElement;
-class SchemaGui;
+class Schema;
 
 class Project  
 {
-
 public:
+  
+  Project(Schema* mainSchema);
 
-  Project(SchemaGui* mainSchemaGui);
 
   bool save();
-  bool saveAs(std::string filename);
-  bool load(std::string filename);
-  std::string projectName(){return _projectName;}
+  bool saveAs(QString filename);
+  bool load(const QDomDocument& filename, Drone::LoadingModeFlags lmf);
+  bool loadFromFile(QString filename);
+  QDomDocument getSnapshot();
+  QString projectName(){return _projectName;}
         
   void newProject();
 
 protected:
 
-  SchemaGui* _mainSchemaGui;
-  std::string _projectName;
+  Schema* _mainSchema;
+  QString _projectName;
   
 };
 

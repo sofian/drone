@@ -29,11 +29,11 @@
 class Gear_ImageCapture : public Gear
 {
 public:
-  static const std::string SETTING_FILENAME;
-  static const std::string FORMAT_EXTENSION;
-  static const std::string DEFAULT_FILENAME;
+  static const QString SETTING_FILENAME;
+  static const QString FORMAT_EXTENSION;
+  static const QString DEFAULT_FILENAME;
 
-  Gear_ImageCapture(Schema *schema, std::string name);
+  Gear_ImageCapture(Schema *schema, QString name);
   virtual ~Gear_ImageCapture();
 
   void runVideo();
@@ -45,7 +45,7 @@ private:
   PlugIn<VideoRGBAType> *_VIDEO_IN;
   
   // Functions.
-  void saveImage(const std::string& filename, const VideoRGBAType *image);
+  void saveImage(const QString& filename, const VideoRGBAType *image);
 
 };
 

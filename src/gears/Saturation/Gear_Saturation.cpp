@@ -24,24 +24,18 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Saturation(schema, uniqueName);
+  return new Gear_Saturation();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Saturation";
-  gearInfo.classification = GearClassifications::video().color().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Saturation::Gear_Saturation(Schema *schema, std::string uniqueName) : Gear(schema, "Saturation", uniqueName)
+Gear_Saturation::Gear_Saturation() : Gear("Saturation")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

@@ -24,33 +24,27 @@
 #include "Gear_ImageCapture.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
 #include <qfile.h>
 
 
-const std::string Gear_ImageCapture::SETTING_FILENAME = "Filename";
-const std::string Gear_ImageCapture::FORMAT_EXTENSION = "png";
-const std::string Gear_ImageCapture::DEFAULT_FILENAME = "droneImgCapture";
+const QString Gear_ImageCapture::SETTING_FILENAME = "Filename";
+const QString Gear_ImageCapture::FORMAT_EXTENSION = "png";
+const QString Gear_ImageCapture::DEFAULT_FILENAME = "droneImgCapture";
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageCapture(schema, uniqueName);
+  return new Gear_ImageCapture();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageCapture";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ImageCapture::Gear_ImageCapture(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "ImageCapture", uniqueName)  
+Gear_ImageCapture::Gear_ImageCapture() : 
+  Gear("ImageCapture")  
 {
   // Inputs.
   addPlug(_CAPTURE_IN = new PlugIn<ValueType>(this, "Go", false, new ValueType(0, 0, 0)));
@@ -64,7 +58,7 @@ Gear_ImageCapture::~Gear_ImageCapture()
 {
 }
 
-void Gear_ImageCapture::saveImage(const std::string& filename, const VideoRGBAType *image)
+void Gear_ImageCapture::saveImage(const QString& filename, const VideoRGBAType *image)
 {  
   QImage img(QSize(image->width(), image->height()), 32);
   
@@ -77,14 +71,14 @@ void Gear_ImageCapture::saveImage(const std::string& filename, const VideoRGBATy
     }
 
   
-  std::string baseFilename = filename;
-  std::string filenameWithExtension;  
+  QString baseFilename = filename;
+  QString filenameWithExtension;  
   //empty filename
   if (baseFilename.size()<=0)  
     baseFilename = DEFAULT_FILENAME;
    
   //remove extension from basefilename if already there
-  if (baseFilename.find(FORMAT_EXTENSION.c_str(), baseFilename.size()-FORMAT_EXTENSION.size())!=std::string::npos)  
+  if (baseFilename.find(FORMAT_EXTENSION, baseFilename.size()-FORMAT_EXTENSION.size())!=QString::npos)  
     baseFilename = baseFilename.substr(baseFilename.size()-FORMAT_EXTENSION.size(), baseFilename.size());
         
   //already exist? find unique name
@@ -92,7 +86,7 @@ void Gear_ImageCapture::saveImage(const std::string& filename, const VideoRGBATy
   
   std::ostringstream oss;
   oss << baseFilename << "." << FORMAT_EXTENSION;
-  while(QFile::exists(oss.str().c_str()))
+  while(QFile::exists(oss.str()))
   {    
     oss.seekp(0);
     oss.str("");
@@ -101,7 +95,7 @@ void Gear_ImageCapture::saveImage(const std::string& filename, const VideoRGBATy
   }
     
   //save at best quality
-  std::string extensionUpperCase = FORMAT_EXTENSION;
+  QString extensionUpperCase = FORMAT_EXTENSION;
   std::transform(extensionUpperCase.begin(), extensionUpperCase.end(), extensionUpperCase.begin(), toupper);
   img.save(oss.str().c_str(), extensionUpperCase.c_str(), 100);
 }

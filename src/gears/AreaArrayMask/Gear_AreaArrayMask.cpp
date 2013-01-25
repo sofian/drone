@@ -21,25 +21,19 @@
 #include "Gear_AreaArrayMask.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaArrayMask(schema, uniqueName);
+  return new Gear_AreaArrayMask();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaArrayMask";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaArrayMask::Gear_AreaArrayMask(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayMask", uniqueName)
+Gear_AreaArrayMask::Gear_AreaArrayMask() : Gear("AreaArrayMask")
 {    
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));
   addPlug(_WIDTH_IN = new PlugIn<ValueType>(this, "Width", false, new ValueType(352, 1, 1024)));

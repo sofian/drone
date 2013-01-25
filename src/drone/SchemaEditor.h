@@ -30,7 +30,7 @@ react properly
 #define SCHEMAEDITOR_INCLUDED
 
 #include <qrect.h>
-#include <q3popupmenu.h>
+#include <qmenu>
 #include <qfileinfo.h>
 //Added by qt3to4:
 #include <QWheelEvent>
@@ -41,7 +41,7 @@ react properly
 #include <QKeyEvent>
 #include <string>
 #include <vector>
-
+#include <QGraphicsView>
 #include "SchemaGui.h"
 
 class GearGui;
@@ -55,116 +55,99 @@ class PanelScrollView;
 /**
  * SchemaEditor maintain synchronization between Schema and SchemaGui
  */ 
-class SchemaEditor : public Q3CanvasView
+class SchemaEditor : public QGraphicsView
 {
   Q_OBJECT
 
 public:
 
-  enum eStatus
-  {
-    IDLE, MOVING_GEAR, CONNECTING, DRAGGING_SELECT_BOX
-  };
-
   SchemaEditor(QWidget *parent, SchemaGui *schemaGui, Engine * engine, PanelScrollView *panelScrollView);
   ~SchemaEditor();
+  void buildContextMenus();
 
   void zoom(float factor);
 
-  void addGear(std::string name, int posX, int posY);
-  void addMetaGear(std::string filename, int posX, int posY);
-  void addNewMetaGear(int posX, int posY);
-  void removeGear(GearGui *gear);
+  void addGear(QString name, QPoint pos);
+  void addMetaGear(QString filename, QPoint pos);
+  void addNewMetaGear(QPoint pos);
 
+  void setContextGear(GearGui* gui){_contextGear = gui;}
+  void setContextPlug(PlugBox* pb){_contextPlug = pb;}
+  QMenu* getGearContextMenu() const {return _gearContextMenu;}
+  QMenu* getMetaGearContextMenu() const {return _metaGearContextMenu;}
+  QMenu* getPlugContextMenu() const {return _plugContextMenu;}
+  SchemaGui* getSchemaGui() const {return _schemaGui;}
 public slots:
+
+  //common slots  
+  void slotZoomIn();
+  void slotZoomOut();
+
   void slotMenuGearSelected(QString name);
   void slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo);
-  
-  //common slots  
-  void zoomIn();
-  void zoomOut();
-
   void slotGearProperties();
-  void slotGearDelete();
-  void slotGearSelectAll();
+  void slotDeleteSelected();
+  void slotSelectAll();
   void slotGearCopy();
   void slotGearPaste();
   void slotNewMetaGear();
 
   //plug editing slots
-  void slotPlugExpose();
-  void slotPlugUnexpose();
+  void slotPlugToggleExpose();
   
   //metagear editing slots
   void slotSaveMetaGear();
 
-signals:
-		void gearSelected(GearGui *gearGui);
+  
 
 protected:
 
-  void keyPressEvent ( QKeyEvent * e );
-  void keyReleaseEvent ( QKeyEvent * e );
-
-  void contentsMousePressEvent(QMouseEvent *mouseEvent);
-  void contentsMouseMoveEvent(QMouseEvent *mouseEvent);       
-  void contentsMouseReleaseEvent(QMouseEvent *mouseEvent);
-  void contentsWheelEvent(QWheelEvent *wheelEvent);    
-  void contentsMouseDoubleClickEvent(QMouseEvent *mouseEvent);
+  void keyPressEvent(QKeyEvent *keyEvent);
   void contextMenuEvent(QContextMenuEvent *contextMenuEvent);
-  void dropEvent(QDropEvent* event);
   void dragEnterEvent(QDragEnterEvent* event);
+  void dragMoveEvent(QDragMoveEvent * event);
+  void dropEvent(QDropEvent* event);
 
-  void deleteSelectedGears();
-  void unselectAllGears();
-  void selectAllGears();
-  void selectOneGear(GearGui* gear);
-  void selectGearsInRectangle(QRect rect);
-  QRect getBoundingBoxOfAllSelectedGears();
-  // of all selected gears, returns the one that is at the top left of the bounding rect of all gears
-  Gear* getTopLeftSelectedGear();
-  void moveSelectedGearsBy(int x, int y);
-  void toggleGearSelection(GearGui* gear);
+  void setupMatrix();
+  void deleteSelected();
+  
+  void selectAll();
 
+
+  QMenu *_contextMenu; 
+  GearListMenu *_gearListMenu; 
+  MetaGearListMenu *_metaGearListMenu; 
+ 
+  
+  // position of right click in Canvas coordinates
+  QPoint _contextMenuPos;  
+  QMenu *_gearContextMenu;
+  QMenu *_metaGearContextMenu;
+  QMenu *_plugContextMenu;
+  QAction *_exposePlugAction;
+  GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
+  PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
+
+  
+  
+  
 private:
   
   void associateControlPanelWithMetaGear(MetaGear *metaGear);
 
-  static const std::string NAME;
+  static const QString NAME;
   static const double ZOOM_FACTOR;
   
-  enum ePlugContextItemId
-  {
-    EXPOSE, UNEXPOSE
-  };
 
   Engine *_engine;
   SchemaGui *_schemaGui;
-  eStatus _state;
-  GearGui *_movingGear;
-  QPoint _movingGearStartPos;
-  QPoint _selectBoxStartPos;
-  double _zoom;
-
-  ConnectionItem* _activeConnection;
+  double _scale;
+  qreal _maxZValue;
   
-  //popupmenus  
-  Q3PopupMenu *_contextMenu; 
-  GearListMenu *_gearListMenu; 
-  MetaGearListMenu *_metaGearListMenu; 
-  
-  // position of right click in Canvas coordinates
-  QPoint _contextMenuPos;  
-  Q3PopupMenu *_gearContextMenu;
-  Q3PopupMenu *_metaGearContextMenu;
-  Q3PopupMenu *_plugContextMenu;
-  GearGui *_contextGear;//when the context menu of a gear is pop, this is the gear that make the menu pop
-  PlugBox *_contextPlug; // when the context menu of a plug is pop, this is the plug that make the menu pop
+  // when true, ignore selectionChange signals
+  bool _selectionChangeNotificationBypass;
 
   PanelScrollView *_panelScrollView;
-
-
-  Q3CanvasRectangle *_selectBox;
 };
 
 #endif

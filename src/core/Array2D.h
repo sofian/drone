@@ -30,7 +30,7 @@
  * The main advantage of using a <code>Array2D</code> over an <code>Array</code>
  * is that it offers a nice interface for accessing data in a "by-row" fashion.
  *
- * @author Jean-S�bastien Sen�cal, Mathieu Guindon
+ * @author Jean-Sébastien Senécal, Mathieu Guindon
  * @version %I% %G%
  */
 template <class T>
@@ -48,7 +48,8 @@ public:
   // using (as suggested by Norm)
   using Array<T>::data;
   using Array<T>::size;
-
+	using Array<T>::end;
+	using Array<T>::begin;
   /**
    * Default constructor.
    */

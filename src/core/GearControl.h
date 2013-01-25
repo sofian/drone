@@ -4,28 +4,23 @@
 #include "Gear.h"
 
 class Control;
-class ControlPanel;
 
 
 class GearControl : public Gear
 {
+  Q_OBJECT
+
 public:
 
-  GearControl(Schema *parentSchema, std::string type, std::string uniqueName);
+  GearControl(QString type);
 
   virtual ~GearControl(){}
-  
-  virtual GearKind kind() const {return CONTROL;}
-     
-  Control* createControl(ControlPanel* parent);
-
+  void setControl(Control* control);
   Control* getControl(){return _control;}
   
 protected:
+  Control* _control;
   
-  virtual Control* internalCreateControl(ControlPanel*)=0;
-
-  Control *_control;
 };
 
 #endif

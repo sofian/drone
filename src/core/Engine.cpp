@@ -18,11 +18,10 @@
  */
 
 #include "Engine.h"
- #include "MidiEngine.h"
+#include "MidiEngine.h"
 #include "Gear.h"
-#include "Plug.h"
-#include "GearMaker.h"
 #include "MetaGear.h"
+#include "Schema.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -37,8 +36,10 @@ Engine::Engine(int hwnd) :
   _graphSynched(false),
   _playing(false)
 {  
-  _mainMetaGear = new MetaGear(NULL, "Main", "Main");  
-  _mainMetaGear->getInternalSchema()->addSchemaEventListener(this);
+  _mainMetaGear = new MetaGear();  
+  QObject::connect(_mainMetaGear->getInternalSchema(), SIGNAL(gearAdded(Schema&, Gear&)), this, SLOT(onGearAdded(Schema&, Gear&)));
+  QObject::connect(_mainMetaGear->getInternalSchema(), SIGNAL(gearRemoved(Schema&, Gear&)), this, SLOT(onGearRemoved(Schema&, Gear&)));
+
 }
 
 Engine::~Engine()
@@ -102,10 +103,9 @@ void *Engine::playThread(void *parent)
   engine->_averageLoad=0.0f;
 
   int currentFrame = 0;
-
 #ifndef SINGLE_THREADED_PLAYBACK
-  std::list<Gear*> allGears = mainSchema->getDeepGears();
-  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
+  QList<Gear*> allGears = mainSchema->getDeepGears();
+  for (QList<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPrePlay();
 
   while (engine->_playing)
@@ -117,8 +117,9 @@ void *Engine::playThread(void *parent)
 
     engine->_orderedGears = mainSchema->getDeepOrderedReadyGears();
 
+   
     //process audio
-    for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
+    for (QList<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       (*it)->runAudio();
 
     //process video
@@ -127,7 +128,7 @@ void *Engine::playThread(void *parent)
     {
       //MidiEngine::getInstance().purgeAndGetNew();
 
-      for (std::list<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
+      for (QList<Gear*>::iterator it=engine->_orderedGears.begin();it!=engine->_orderedGears.end();++it)
       {
         (*it)->runVideo();
       }
@@ -169,7 +170,7 @@ void *Engine::playThread(void *parent)
 #ifndef SINGLE_THREADED_PLAYBACK
   }
   allGears = mainSchema->getDeepGears();
-  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
+  for (QList<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
     (*it)->internalPostPlay();
 
 #endif
@@ -183,17 +184,17 @@ void *Engine::playThread(void *parent)
 void Engine::debugStartPlay()
 {
   _playing=true;
-  std::list<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
-  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
-    (*it)->internalPrePlay();
+  QList<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
+  foreach(Gear* g,allGears)
+    g->prePlay();
 }
 
 void Engine::debugStopPlay()
 {
   _playing=false;
-  std::list<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
-  for (std::list<Gear*>::iterator it=allGears.begin();it!=allGears.end();++it)
-    (*it)->internalPostPlay();
+  QList<Gear*> allGears = _mainMetaGear->getInternalSchema()->getDeepGears();
+  foreach(Gear* g,allGears)
+    g->postPlay();
 }
 #endif
 
@@ -209,20 +210,19 @@ void Engine::performScheduledGearUpdateSettings()
 {
   for (std::vector<Gear*>::iterator it=_scheduledsGearUpdateSettings.begin(); it!=_scheduledsGearUpdateSettings.end(); ++it)
   {    
-    (*it)->updateSettings();
+//    (*it)->updateSettings();
   }
   _scheduledsGearUpdateSettings.clear();
 }
 
-void Engine::onGearAdded(Schema *, Gear *gear)
+void Engine::onGearAdded(Schema&, Gear &gear)
 {  
   if (_playing)
-    gear->prePlay();  
+    gear.prePlay();  
 }
 
-void Engine::onGearRemoved(Schema *, Gear *gear)
+void Engine::onGearRemoved(Schema&, Gear &gear)
 {
   if (_playing)
-    gear->postPlay();
+    gear.postPlay();
 }
-

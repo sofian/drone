@@ -21,25 +21,19 @@
 #include "Gear_AreaArrayVideoSelect.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaArrayVideoSelect(schema, uniqueName);
+  return new Gear_AreaArrayVideoSelect();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaArrayVideoSelect";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaArrayVideoSelect::Gear_AreaArrayVideoSelect(Schema *schema, std::string uniqueName) : Gear(schema, "AreaArrayVideoSelect", uniqueName)
+Gear_AreaArrayVideoSelect::Gear_AreaArrayVideoSelect() : Gear("AreaArrayVideoSelect")
 {    
   addPlug(_VIDEO_LIST_OUT = new PlugOut<ListType>(this, "VideoList", true));
   addPlug(_SELECT_IN = new PlugIn<AreaArrayType>(this, "Select", true));

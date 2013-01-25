@@ -22,24 +22,18 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaScale(schema, uniqueName);
+  return new Gear_AreaScale();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaScale";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaScale::Gear_AreaScale(Schema *schema, std::string uniqueName) : Gear(schema, "AreaScale", uniqueName)
+Gear_AreaScale::Gear_AreaScale() : Gear("AreaScale")
 {
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
 

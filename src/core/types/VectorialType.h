@@ -34,7 +34,7 @@
 #include <vector>
 //#include <pair>
 
-
+ 
 class VectorialType : public AbstractType
 {
 
@@ -52,8 +52,8 @@ public:
 
   void setPath(agg::svg::path_renderer *path) const {m_path=path;}
   agg::svg::path_renderer *path() const {return m_path;}
-
-private:
+ 
+  private:
 
   mutable agg::svg::path_renderer *m_path;
 };

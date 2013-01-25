@@ -20,17 +20,18 @@
 #ifndef MAINWINDOW_INCLUDED
 #define MAINWINDOW_INCLUDED
 
-#include <q3mainwindow.h>
-#include <q3toolbar.h>
-#include <qtoolbutton.h>
-#include <q3popupmenu.h>
+#include <qmainwindow.h>
+#include <qtoolbar>
+#include <qtoolbutton>
+#include <qaction>
+#include <qmenu.h>
 #include <qmenubar.h>
 #include <qsplitter.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QTimerEvent>
 #include <list>
-
+#include <qundostack>
 #include "Engine.h"
 #include "Project.h"
 
@@ -40,7 +41,7 @@ class SchemaGui;
 class MetaGearEditor;
 class MetaGear;
 
-class MainWindow : public Q3MainWindow
+class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
@@ -49,16 +50,21 @@ class MainWindow : public Q3MainWindow
 public:
 
   //! loads the specified schema file
-  void load(std::string filename);
+  void load(QString filename);
   //void play(bool pl);
+  static MainWindow* getInstance();
 
   MainWindow();
   ~MainWindow();
-
+  void finalize();
+  
+  void pushUndoCommand(QUndoCommand* c);
+  SchemaGui* getSchemaGui() const {return _mainSchemaGui;}
+  Project* getProject(){return _project;}
+  
 public slots:
   void slotPlay(bool);
-	void slotZoomIn();
-	void slotZoomOut();
+  void slotItemsMoved(QList<QString> &itemNames, QPointF dist);
 
 
   void slotMenuNew();
@@ -74,41 +80,77 @@ public slots:
 
   void slotMenuItemSelected(int id);
 
-protected:
+  // place me somewhere else when you have time.
+  // Not really the job of the main window
+  void initFonts();
+  
+  
+ protected:
+
+  static MainWindow* instance;
   void timerEvent(QTimerEvent*);
 
 private:
 
   static const unsigned int MAX_RECENT_SCHEMAS;
-  static const std::string SCHEMA_EXTENSION;
+  static const QString SCHEMA_EXTENSION;
 
-  void addToRecentSchema(std::string filename);
+  void addToRecentSchema(QString filename);
   
 
   Engine* _engine;
-  Q3Frame* _frame;
+  QFrame* _frame;
   SchemaGui* _mainSchemaGui;
   
   MetaGearEditor *_metaGearEditor;
   
-  Q3ToolBar *_toolBar;
-  QToolButton *_playPause;
-  QToolButton *_zoomIn;
-  QToolButton *_zoomOut;
-
+  QToolBar *_toolBar;
   
-  int _menuSaveItemId;
-  int _menuPrefsItemId;
-  Q3PopupMenu *_fileMenu;
-  Q3PopupMenu *_toolsMenu;
-  Q3PopupMenu *_viewMenu;
+  // toolbar buttons
+  //QToolButton* _tbPlayPause;
+  
+  
+  
+  // ugly but we'll fix that when isolating CORE from GUI
+public :
+  // QActions
+  QAction *_actPlayPause;
+  QAction *_actZoomIn;
+  QAction *_actZoomOut;
+  QAction *_actNew;
+  QAction *_actLoad;
+  QAction *_actSave;
+  QAction *_actSaveAs;
+  QAction *_actQuit;
+  QAction *_actPreferences; 
+  
+  QAction *_actSelectAll;
+  QAction *_actDeleteSelected;
+  QAction *_actCopy;
+  QAction *_actPaste;
+  QAction *_actUndo;
+  QAction *_actRedo;
+  
+  
+protected:
+  
+  
+  QMenu *_fileMenu;
+  QMenu *_editMenu;
+  QMenu *_toolsMenu;
+  QMenu *_viewMenu;
 
+  QUndoStack *_undoStack;
+  
+  
+  
+  
   Project* _project;
   
   std::string _currentSchemaFilename;  
   QString _lastLoadPath;
   QString _lastSavePath;
-  std::list<std::string> _recentSchemas;
+  QList<QString> _recentSchemas;
   int _menuFirstRecentSchemaId;
 	int _menuShowSmallGearsId;
 	bool _showSmallGears;

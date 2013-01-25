@@ -3,53 +3,42 @@
 
 #include "Gear.h"
 #include "Schema.h"
-#include "ISchemaEventListener.h"
+#include "Project.h"
 
-#include <map>
+#include <QMap>
 
-class ControlPanel;
-
-class MetaGear : public Gear, public ISchemaEventListener
+class MetaGear : public Gear
 {
 public:  
-  MetaGear(Schema *parentSchema, std::string name, std::string uniqueName);
+  MetaGear();
   virtual ~MetaGear();
   virtual Schema* getInternalSchema(){return _schema;}
   
-  GearKind kind() const {return METAGEAR;}
+//  GearKind kind() const {return METAGEAR;}
 
-  static const std::string TYPE;
-  static const std::string EXTENSION;
+  static const QString TYPE;
+  static const QString EXTENSION;
   
-  void save(std::string filename);
-  bool load(std::string filename);
+  void save(QString filename);
+  bool load(QString filename);
   
   void createPlugs();
 
-  std::string fullPath(){return _fullPath;}
-  
-  void onGearAdded(Schema *schema, Gear *gear);
-  void onGearRemoved(Schema *schema, Gear *gear);
-
-  void associateControlPanel(ControlPanel *controlPanel) {_associatedControlPanel = controlPanel;}
+  QString fullPath(){return _fullPath;}
   
 protected:
   
   void internalSave(QDomDocument &doc, QDomElement &parent);
-  void internalLoad(QDomElement &parent);
-  
-  GearGui* createGearGui(Q3Canvas *canvas);
-  	
+  void internalLoad(QDomElement &parent, Drone::LoadingModeFlags lmf);
+    	
   Schema *_schema;
   
-  std::string _metaGearName;
-  std::string _fullPath;
-
-  ControlPanel *_associatedControlPanel;
+  QString _metaGearName;
+  QString _fullPath;
 
   static const QColor METAGEAR_COLOR;
 	
-  std::map<AbstractPlug*, AbstractPlug*> _plugMapping;//!mapping between our exposed cloned plug and the real internal plug
+  QMap<AbstractPlug*, AbstractPlug*> _plugMapping;//!mapping between our exposed cloned plug and the real internal plug
 };
 
 #endif

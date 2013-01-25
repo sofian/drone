@@ -21,25 +21,19 @@
 #include "Gear_OscMessage.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_OscMessage(schema, uniqueName);
+  return new Gear_OscMessage();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "OscMessage";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_OscMessage::Gear_OscMessage(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "OscMessage", uniqueName)
+Gear_OscMessage::Gear_OscMessage() : 
+  Gear("OscMessage")
 {
 
   addPlug(_path = new PlugIn<StringType>(this, "Path", false, new StringType("/")));

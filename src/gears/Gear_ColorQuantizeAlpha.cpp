@@ -22,12 +22,12 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 Register_Gear(MAKERGear_ColorQuantizeAlpha, Gear_ColorQuantizeAlpha, "ColorQuantizeAlpha")
 
-Gear_ColorQuantizeAlpha::Gear_ColorQuantizeAlpha(Schema *schema, std::string uniqueName)
-: Gear(schema, "ColorQuantizeAlpha", uniqueName), _nColors(DEFAULT_N_COLORS), _clusters(0)
+Gear_ColorQuantizeAlpha::Gear_ColorQuantizeAlpha()
+: Gear("ColorQuantizeAlpha"), _nColors(DEFAULT_N_COLORS), _clusters(0)
 {
   _VIDEO_IN = addPlugVideoIn("ImgIN", true);
   _VIDEO_OUT = addPlugVideoOut("ImgOUT", true);
@@ -66,8 +66,8 @@ void Gear_ColorQuantizeAlpha::runVideo()
 {
   // init
 
-  _image = _VIDEO_IN->canvas();
-  _outImage = _VIDEO_OUT->canvas();
+  _image = _VIDEO_IN->scene();
+  _outImage = _VIDEO_OUT->scene();
   _outImage->allocate(_image->width(), _image->height());
 
   _iterSizeX = _image->width();

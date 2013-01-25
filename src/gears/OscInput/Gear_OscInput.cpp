@@ -1,5 +1,6 @@
 /* Gear_OscInput.cpp
- * Copyright (C) 2004 Mathieu Guindon, Julien Keable
+ * Copyright (C) 2012 Jean-Sebastien Senecal
+ *               2004 Mathieu Guindon, Julien Keable
  * This file is part of Drone.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,25 +22,19 @@
 #include "Gear_OscInput.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_OscInput(schema, uniqueName);
+  return new Gear_OscInput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "OscInput";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_OscInput::Gear_OscInput(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "OscInput", uniqueName),
+Gear_OscInput::Gear_OscInput() : 
+  Gear("OscInput"),
   _forceOscServerInit(true),
   _currentPort(""),
   _loServerThread(NULL)
@@ -95,7 +90,7 @@ void Gear_OscInput::internalPostPlay()
 	_forceOscServerInit=true;//for the next startup
 }
 
-void Gear_OscInput::startOscServer(std::string port)
+void Gear_OscInput::startOscServer(QString port)
 {
 	stopOscServer();
 	
@@ -131,8 +126,8 @@ int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_
   OscMessageType message;
   ListType *list = (ListType*)message.getSubType(1);
 
-  message.setPath(std::string(path));
-
+  message.setPath(QString(path));
+ 
 	for (int i=0; i<argc; i++) 
 	{
 		if (types[i]==LO_FLOAT) 
@@ -158,6 +153,8 @@ int Gear_OscInput::configuredOscHandler(const char *path, const char *types, lo_
 		}	
 	}	
 	
+	message.setArgs(list);
+
 	ScopedLock scopedLock(gearOscInput->_mutex);
 	gearOscInput->_messages.push_back(message);	
 	

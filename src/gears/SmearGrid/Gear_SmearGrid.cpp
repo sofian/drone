@@ -22,25 +22,19 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_SmearGrid(schema, uniqueName);
+  return new Gear_SmearGrid();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "SmearGrid";
-  gearInfo.classification = GearClassifications::video().distortion().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_SmearGrid::Gear_SmearGrid(Schema *schema, std::string uniqueName) : Gear(schema, "SmearGrid", uniqueName)
+Gear_SmearGrid::Gear_SmearGrid() : Gear("SmearGrid")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_GRID_OUT = new PlugOut<DisplaceGrid>(this, "GRID", true));

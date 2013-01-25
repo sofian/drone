@@ -35,27 +35,18 @@ extern "C" {
   #include <gst/base/gstadapter.h>
 }
 
+
 class Gear_VideoSource : public Gear
 {
 public:
-  /*
-  enum ePlaybackMode
-  {
-    NORMAL,
-    LOOP,
-    N_PLAYBACK_MODE
-  };*/
-  
-  //static const std::string SETTING_FILENAME;
-
-  Gear_VideoSource(Schema *schema, std::string uniqueName);
+  Gear_VideoSource();
   virtual ~Gear_VideoSource();
 
   void runVideo();
   void runAudio();
 
 protected:
-  bool loadMovie(std::string filename);
+  bool loadMovie(QString filename);
   void unloadMovie();
   void freeResources();
   void resetMovie();
@@ -119,7 +110,7 @@ private:
   VideoRGBAType *_imageOut;
 
   //locals
-  std::string _currentMovie;  
+  QString _currentMovie;  
 	
   // gstreamer
   GstBus *_bus;

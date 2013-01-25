@@ -30,7 +30,7 @@ MetaGearListMenu::~MetaGearListMenu()
  */
 void MetaGearListMenu::create()
 {
-  std::vector<QFileInfo*> metaGearsPath;
+/*  std::vector<QFileInfo*> metaGearsPath;
 
   //get all metaGearsPath from the MetaGearMaker
   metaGearsPath = MetaGearMaker::getAllMetaGearsPath();
@@ -55,6 +55,7 @@ void MetaGearListMenu::create()
      //populate the map
      (*_menuItemIndexfileInfoMap)[itemIndex] = (*it);     
   }
+ */
 }
 
 /**

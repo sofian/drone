@@ -27,24 +27,18 @@ enum { flip_y = true };
 #include <iostream>
 #include <fstream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VecAffineTrans(schema, uniqueName);
+  return new Gear_VecAffineTrans();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VecAffineTrans";
-  gearInfo.classification = GearClassifications::video().vectorial().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_VecAffineTrans::Gear_VecAffineTrans(Schema *schema, std::string uniqueName) : Gear(schema, "VecAffineTrans", uniqueName),
+Gear_VecAffineTrans::Gear_VecAffineTrans() : Gear("VecAffineTrans"),
                                                                          m_min_x(0.0),
                                                                          m_min_y(0.0),
                                                                          m_max_x(0.0),

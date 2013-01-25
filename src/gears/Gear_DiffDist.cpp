@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 Register_Gear(MAKERGear_DiffDist, Gear_DiffDist, "DiffDist")
@@ -34,7 +34,7 @@ unsigned long xcng(void){  // takes 60 nanosecs, passes all tests
   if (y<w) y=y+17;
   return( y );}
 
-Gear_DiffDist::Gear_DiffDist(Schema *schema, std::string uniqueName) : Gear(schema, "DiffDist", uniqueName)
+Gear_DiffDist::Gear_DiffDist() : Gear("DiffDist")
 {
   addPlug(_FACTOR_IN = new PlugIn<ValueType>(this, "Factor"));
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA"));

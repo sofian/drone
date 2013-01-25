@@ -5,9 +5,10 @@ SUBDIRS= Osc \
 TV \
 Oscilloscope \
 VideoOutput \
-#AudioPushButton \
+AudioPushButton \
 AlphaMix \
 Blur \
+VideoSource \
 Slider \
 KDTree\ 
 VideoMix \
@@ -52,10 +53,13 @@ Invert \
 InvertAlpha \
 PackList \
 UnpackList \
+#OscMessage \
+#OscInput \
+#OscOutput \
+#OscFilter \
 Saturation \
-#SelectFrame \
+SelectFrame \
 SetAlpha \
-ShaderTest \
 SignalStat \
 SmearGrid \
 Sobel \
@@ -67,7 +71,7 @@ RandomValue \
 Tempo \
 ValueClamp \
 VideoDelay \
-VideoInput \
+#VideoInput \
 VideoRecord \
 VideoSource \
 VideoOffset \
@@ -80,16 +84,11 @@ Vectorial2Raster \
 VecAffineTrans
 }
 
-#linux specific gears
-unix:!macx {
-#SUBDIRS += VideoInput AudioInput
-SUBDIRS += \
-#AudioInput \
-OscMessage \
-OscInput \
-OscOutput \
-OscFilter \
-OscExtract
-}
+#Controls
 
+SUBDIRS+= controls/PushButton
+
+#linux specific gears
+#unix:!macx:SUBDIRS += VideoInput AudioInput
+unix:!macx:SUBDIRS += VideoInput
 

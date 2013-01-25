@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_Rescale
+unix:!macx:TARGET=../../../gears/drone/Gear_Rescale
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_Rescale
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_Rescale
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

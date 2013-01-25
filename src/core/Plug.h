@@ -30,7 +30,7 @@ template <class T>
 class PlugOut : public AbstractPlug
 {
 public:
-  PlugOut(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  PlugOut(Gear* parent, QString name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, OUT, name, type, mandatory)
   {    
     _forwardPlug = 0;
@@ -40,10 +40,15 @@ public:
   {
   }
 
-  // Types returned by PlugOut are read-write (non-const).
-  T* type() const { return static_cast<T*>(_abstractType);}
-  T* defaultType() const { return static_cast<T*>(_abstractDefaultType);}
-  T* hintType() const { return static_cast<T*>(_abstractDefaultType);}
+  T* type() { return static_cast<T*>(_abstractType);}
+
+  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
+  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
+
+  const T* type() const { return static_cast<const T*>(_abstractType);}
+  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
+  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
+
 
   virtual bool ready() const
   {
@@ -68,7 +73,7 @@ template <class T>
 class PlugIn : public AbstractPlug
 {
 public:
-  PlugIn(Gear* parent, std::string name, bool mandatory, T* type = new T())
+  PlugIn(Gear* parent, QString name, bool mandatory, T* type = new T())
   : AbstractPlug(parent, IN, name, type, mandatory)
   {
     _forwardPlug = 0;
@@ -124,17 +129,17 @@ public:
 
   void init() {}
 
-  // Types returned by PlugIn are read-only (const).
-  const T* type() const { return static_cast<const T*>(_abstractType);}
-  T* defaultType() const { return static_cast<T*>(_abstractDefaultType);}
-  T* hintType() const { return static_cast<T*>(_abstractDefaultType);}
+  T* defaultType() { return static_cast<T*>(_abstractDefaultType);}
+  T* hintType() { return static_cast<T*>(_abstractDefaultType);}
 
-  //! Returns a clone of the type.
-  T* cloneType() const { return _abstractType->clone(); }
+  T* type() const { return static_cast<T*>(_abstractType);}
+  const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
+  const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
   AbstractPlug *clone(Gear* parent)
   {
-    return new PlugIn<T>(parent, name(), _mandatory);
+    PlugIn<T>* clonePlug = new PlugIn<T>(parent, name(), _mandatory);
+    return clonePlug;
   }
 
 

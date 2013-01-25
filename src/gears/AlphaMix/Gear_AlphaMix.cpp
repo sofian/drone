@@ -22,25 +22,18 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AlphaMix(schema, uniqueName);
+  return new Gear_AlphaMix();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AlphaMix";
-  gearInfo.classification = GearClassifications::video().composition().instance();
-  return gearInfo;
-}
 }
 
-Gear_AlphaMix::Gear_AlphaMix(Schema *schema, std::string uniqueName) : Gear(schema, "AlphaMix", uniqueName)
+Gear_AlphaMix::Gear_AlphaMix() : Gear("AlphaMix")
 {
   addPlug(_VIDEO_IN_A = new PlugIn<VideoRGBAType>(this, "ImgA", true));
   addPlug(_VIDEO_IN_B = new PlugIn<VideoRGBAType>(this, "ImgB", true));

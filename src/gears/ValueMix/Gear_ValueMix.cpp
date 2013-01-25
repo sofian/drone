@@ -21,24 +21,17 @@
 #include "Gear_ValueMix.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ValueMix(schema, uniqueName);
+  return new Gear_ValueMix();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ValueMix";
-  gearInfo.classification = GearClassifications::signal().transform().instance();
-  return gearInfo;
-}
 }
 
-Gear_ValueMix::Gear_ValueMix(Schema *schema, std::string uniqueName) : Gear(schema, "ValueMix", uniqueName)
+Gear_ValueMix::Gear_ValueMix() : Gear("ValueMix")
 {
 
   addPlug(_VALUE_IN1 = new PlugIn<ValueType>(this, "In1", true, new ValueType(0.0f)));

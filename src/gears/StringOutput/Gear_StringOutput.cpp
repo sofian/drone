@@ -23,26 +23,20 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_StringOutput(schema, uniqueName);
+  return new Gear_StringOutput();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "StringOutput";
-  gearInfo.classification = GearClassifications::control().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_StringOutput::Gear_StringOutput(Schema *schema, std::string uniqueName) : 
-	Gear(schema, "StringOutput", uniqueName)
+Gear_StringOutput::Gear_StringOutput() : 
+	Gear("StringOutput")
 {
   addPlug(_STRING_IN = new PlugIn<StringType>(this, "String", true));
   addPlug(_VALUE_IN = new PlugIn<ValueType>(this, "Value", true));
@@ -62,7 +56,7 @@ void Gear_StringOutput::runVideo()
 {    
 }
 
-std::string Gear_StringOutput::getString()
+QString Gear_StringOutput::getString()
 {
   if (_VALUE_IN->connected())
   {
@@ -74,9 +68,4 @@ std::string Gear_StringOutput::getString()
     return _STRING_IN->type()->value();
 }
 
-
-GearGui *Gear_StringOutput::createGearGui(Q3Canvas *canvas)
-{    
-  return new GearGui_StringOutput(this, canvas);
-}
 

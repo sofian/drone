@@ -21,8 +21,6 @@
 #define CircBuf_included
 
 #include "error.h"
-#include <list>
-#include <string>
 
 // code to cycle over samples from 'from' to 'to' 
 // (relative to this->_current) of CircularBufferSignal object 'obj

@@ -1,12 +1,12 @@
 #include "GearListMenu.h"
-#include "GearMaker.h"
-#include "GearClassification.h"
+#include "gearFactory/GearMaker.h"
+#include "gearFactory/GearInfo.h"
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <qmenu>
 
 
 GearListMenu::GearListMenu(QWidget *parent) : 
-  Q3PopupMenu(parent)
+  QMenu(parent)
 {
   //transform the activated(int) signal into a gearSelected(QString) signal via slotMenuItemSelected
   QObject::connect(this, SIGNAL(activated(int)), this, SLOT(slotMenuItemSelected(int)));   
@@ -17,27 +17,27 @@ GearListMenu::GearListMenu(QWidget *parent) :
  */
 void GearListMenu::create()
 {
-  std::vector<const GearInfo*> gearsInfo;
+  QList<GearInfo*> gearsInfo;
 
   //get all gearsInfo from the GearMaker
-  GearMaker::getAllGearsInfo(gearsInfo);
+  GearMaker::instance()->getAllGearsInfo(gearsInfo);
  
-  for (std::vector<const GearInfo*>::iterator it = gearsInfo.begin(); it != gearsInfo.end(); ++it)
+  foreach(GearInfo* gi, gearsInfo)
   {
      GearListMenu *menu=this;
      
-     if ((*it)->classification)
+     /*if (gi->classification)
      {     
-       std::vector<std::string> path = (*it)->classification->path();
+       QList<QString> path = gi->classification->path();
                                  
        //create subMenu path for this gear
-       for (std::vector<std::string>::iterator it2 = path.begin(); it2!=path.end();++it2)       
-         menu = menu->addSubMenu((*it2));
+       foreach(QString str,path)       
+         menu = menu->addSubMenu(str);
        
-     }
+     }*/
 
      //insert the gear name in the correct menu
-     menu->insertItem((*it)->name.c_str());
+     menu->addAction(new QAction(gi->type(),this));
   }
 }
 
@@ -58,7 +58,7 @@ GearListMenu *GearListMenu::addSubMenu(std::string name)
   if (it == _subMenus.end())
   {
     //create it
-    GearListMenu *subMenu = new GearListMenu((QWidget*)parent());
+    GearListMenu *subMenu = new GearListMenu(this);
     
     //foward of gear selection signal to parent menu
     QObject::connect(subMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotGearSelected(QString)));   
@@ -67,8 +67,9 @@ GearListMenu *GearListMenu::addSubMenu(std::string name)
     _subMenus[name] = subMenu;
 
     //insert in the menu
-    insertItem(name.c_str(), subMenu);
-
+    QAction* subMenuAction = addMenu(subMenu);
+    subMenuAction->setText(name.c_str());
+            
     //return the newly created subMenu
     return subMenu;
   }

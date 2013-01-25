@@ -21,25 +21,31 @@
 #define __StringType_INCLUDED
 
 #include "AbstractType.h"
-#include <string>
+
 
 class StringType : public AbstractType
 {
 public:
-  StringType(std::string defaultValue="")
+  StringType(QString defaultValue="", bool isAFilename=false)
 	: AbstractType(),
-	_value(defaultValue)
-  {}
+	_value(defaultValue),
+	_isAFilename(isAFilename)
+{}
   
   virtual ~StringType() {}
-  
+
   TYPE_BASE_METHODS(StringType, (123, 173, 241))
 
-  void setValue(std::string value) { _value = value; }
-  std::string value() const { return _value; }
-
+	void save(QDomDocument &doc, QDomElement &parent) const;
+	void load(QDomElement &typeElem, Drone::LoadingModeFlags lmf);
+	  
+	bool isAFilename(){return _isAFilename;}
+  void setValue(const QString& value) { _value = value; }
+	const QString& value() const { return _value; }
+  
 private:
-	std::string _value;
+	QString _value;
+	bool _isAFilename;
 };
 
 #endif

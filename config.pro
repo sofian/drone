@@ -1,11 +1,11 @@
-#CONFIG = qt warn_on thread debug agg
-CONFIG = qt warn_on thread debug
+CONFIG = qt warn_on thread debug resources
 
 QT += qt3support xml 
 
 message(Gears : Builing Makefile with the following config flags : $$CONFIG)
 
 macx:QMAKE_CXXFLAGS += -fpermissive  
+
 
 # Debug settings
 debug {
@@ -46,7 +46,7 @@ release {
 
 }
 
-INCLUDEPATH += ../contrib/frei0r
+INCLUDEPATH += ../../contrib/frei0r/spec
 #disable prebinding
 macx:QMAKE_LFLAGS_SHLIB -= -prebind
 

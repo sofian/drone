@@ -24,12 +24,12 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 Register_Gear(MAKERGear_Rescale, Gear_Rescale, "Rescale")
 
-Gear_Rescale::Gear_Rescale(Schema *schema, std::string uniqueName) : Gear(schema, "Rescale", uniqueName)
+Gear_Rescale::Gear_Rescale() : Gear("Rescale")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

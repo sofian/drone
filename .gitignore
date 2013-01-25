@@ -13,6 +13,10 @@
 *.dll
 *.dylib
 
+#emacs backups
+*~
+.*~ 
+
 # Make
 debug/
 release/
@@ -35,3 +39,5 @@ Makefile
 
 # Drone schemas
 *.drn
+
+.DS_Store

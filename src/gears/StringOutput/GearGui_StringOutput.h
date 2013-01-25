@@ -20,7 +20,7 @@
 #ifndef GearGui_StringOutput_INCLUDED
 #define GearGui_StringOutput_INCLUDED
 
-#include <q3canvas.h>
+#include <QGraphicsScene.h>
 #include <vector>
 #include <qimage.h>
 
@@ -32,9 +32,9 @@
 class GearGui_StringOutput : public GearGui
 {
 public:
-  GearGui_StringOutput(Gear_StringOutput *gear, Q3Canvas *canvas);
+  GearGui_StringOutput(Gear_StringOutput *gear, QGraphicsScene *scene);
 	
-	void drawShape(QPainter &painter);
+void paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
 protected:
   static const int UPDATE_RATE_MS;

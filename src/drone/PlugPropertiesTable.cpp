@@ -66,14 +66,14 @@ void PlugPropertiesTable::refresh(Gear *gear)
   setNumRows(0);
   _gear=gear;
 
-  std::list<AbstractPlug*> inputs;
+  QList<AbstractPlug*> inputs;
   _gear->getInputs(inputs);
-  setNumRows(inputs.size());
+  setNumRows(inputs.count());
   int row=0;
-  for (std::list<AbstractPlug*>::iterator it = inputs.begin(); it != inputs.end(); ++it,row++)
+  foreach (AbstractPlug* ap,inputs)
   {
-    if (!(*it)->connected())
-    	insertPlug(*it,row);    
+    if (!ap->connected())
+    	insertPlug(ap,row);    
   }
 }
 
@@ -85,13 +85,13 @@ void PlugPropertiesTable::insertPlug(AbstractPlug *plug, int row)
   if (plug->abstractType()->typeName() == ValueType().typeName())
   {
     PlugPropertiesTableItemValue *valueItem = new PlugPropertiesTableItemValue(plug, this, Q3TableItem::WhenCurrent);
-    setText(row,0,plug->name().c_str());
+    setText(row,0,plug->name());
     setItem(row,1,valueItem);
   } 
   else if (plug->abstractType()->typeName() == StringType().typeName())
   {
     PlugPropertiesTableItemString *stringItem = new PlugPropertiesTableItemString(plug, this, Q3TableItem::WhenCurrent);
-    setText(row,0,plug->name().c_str());
+    setText(row,0,plug->name());
     setItem(row,1,stringItem);  
   }
 }

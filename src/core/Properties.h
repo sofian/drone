@@ -20,9 +20,9 @@
 #ifndef PROPERTIES_INCLUDED
 #define PROPERTIES_INCLUDED
 
-#include <map>
-#include <string>
-#include <vector>
+#include <qmap>
+#include <qstring>
+#include <qlist>
 #include "error.h"
 
 class QDomDocument;
@@ -41,53 +41,53 @@ public:
     _value.push_back("");
   }
 
-  Property(eType type, std::string name) : _type(type), _name(name)
+  Property(eType type, QString name) : _type(type), _name(name)
   {
     _value.push_back("");
   }
 
-  void valueStr(std::string value);
-  void valueStrList(const std::vector<std::string> &value);
+  void valueStr(QString value);
+  void valueStrList(const QList<QString> &value);
   void valueInt(int value);
   void valueFloat(float value);
   void valueBool(bool value);
 
-  std::string valueStr() {return _value[0];};
-  std::vector<std::string> valueStrList() {return _value;};
+  QString valueStr() {return _value[0];};
+  QList<QString> valueStrList() {return _value;};
   int valueInt();
   float valueFloat();
   bool valueBool();
 
   eType type(){return _type;};
-  std::string name(){return _name;};
-  void name(std::string name){_name = name;};
+  QString name(){return _name;};
+  void name(QString name){_name = name;};
 
 
 
 private:
   eType _type;
-  std::string _name;
-  std::vector<std::string> _value;
+  QString _name;
+  QList<QString> _value;
 
 };
 
 class Properties
 {
 public:
-  static const std::string XML_TAGNAME;
+  static const QString XML_TAGNAME;
 
-  Property* add(Property::eType type, std::string name);
+  Property* add(Property::eType type, QString name);
 
-  Property* get(const std::string& name);
+  Property* get(QString name);
 
-  void getAll(std::vector<Property*> *properties);
+  void getAll(QList<Property*> *properties);
 
   void save(QDomDocument &doc, QDomElement &parent);
   void load(QDomElement &parentElem);
 
 private:
   static const char WHITESPACE_REPLACEMENT;
-  std::map<std::string, Property*> _properties;
+  QMap<QString, Property*> _properties;
 
 
 };

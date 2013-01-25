@@ -29,24 +29,25 @@
 
 const int GearGui_StringOutput::UPDATE_RATE_MS = 83;
 
-GearGui_StringOutput::GearGui_StringOutput(Gear_StringOutput *gear, Q3Canvas *canvas) : 
-GearGui(gear, canvas, GearGui::BOXNAME_COLOR, GearGui::DEFAULT_SIZEX, 0, UPDATE_RATE_MS)
+GearGui_StringOutput::GearGui_StringOutput(Gear_StringOutput *gear, QGraphicsScene *scene) : 
+GearGui(gear, scene, GearGui::BOXNAME_COLOR, 100, 0, UPDATE_RATE_MS)
 {            
 }
 
-void GearGui_StringOutput::drawShape(QPainter &painter)
+void GearGui_StringOutput::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  GearGui::drawShape(painter);
+    Q_UNUSED(widget);
+  GearGui::paint(painter,option,widget);
 	
 	int x, y, sizeX, sizeY;      
   getDrawableArea(&x, &y, &sizeX, &sizeY);
 	
-  painter.setPen(Qt::black);
-  painter.setBrush(BOXNAME_COLOR);
-  painter.drawRect(x,y,sizeX,sizeY);
+  painter->setPen(Qt::black);
+  painter->setBrush(BOXNAME_COLOR);
+  painter->drawRect(x,y,sizeX,sizeY);
 
-  painter.setFont(GearGui::NAME_FONT);
-  painter.setPen(Qt::white);
-  painter.drawText(x, y, sizeX, sizeY, Qt::AlignHCenter | Qt::AlignVCenter, ((Gear_StringOutput*)_gear)->getString().c_str());
+  painter->setFont(GearGui::NAME_FONT);
+  painter->setPen(Qt::white);
+  painter->drawText(x, y, sizeX, sizeY, Qt::AlignHCenter | Qt::AlignVCenter, ((Gear_StringOutput*)_gear)->getString().c_str());
 	
 }

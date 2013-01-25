@@ -31,19 +31,20 @@ const QColor GearGui_AudioPushButton::PUSHBUTTON_COLOR(249, 169, 7);
 const QColor GearGui_AudioPushButton::PUSHBUTTON_BOX_COLOR(105, 122, 125);
 const QColor GearGui_AudioPushButton::PUSHBUTTON_BOX_COLORON(185, 115, 25);
 
-GearGui_AudioPushButton::GearGui_AudioPushButton(Gear_AudioPushButton *gear, QCanvas *canvas) : 
-GearGui(gear, canvas, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
+GearGui_AudioPushButton::GearGui_AudioPushButton(Gear_AudioPushButton *gear, QGraphicsScene *scene) : 
+GearGui(gear, scene, GearGui::BOXNAME_COLOR, PUSHBUTTON_SIZEX, PUSHBUTTON_SIZEY)    
 {        
 }
 
-void GearGui_AudioPushButton::drawShape(QPainter &painter)
-{    
+void GearGui_AudioPushButton::paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(widget);   
   //make the title bar show the value
   std::ostringstream sstream;
   sstream << ((Gear_AudioPushButton*)_gear)->getValue();
   setTitle(sstream.str());
 
-  GearGui::drawShape(painter);    
+  GearGui::paint(painter,option,widget);    
 
   int AudioPushButtonStartX, AudioPushButtonStartY, sizeX, sizeY;
   getDrawableArea(&AudioPushButtonStartX, &AudioPushButtonStartY, &sizeX , &sizeY);
@@ -68,14 +69,14 @@ void GearGui_AudioPushButton::drawShape(QPainter &painter)
 
 
   //box                      
-  painter.setPen(border1);
-  painter.setBrush(box);
-  painter.drawRect(AudioPushButtonStartX, AudioPushButtonStartY, sizeX, sizeY);
+  painter->setPen(border1);
+  painter->setBrush(box);
+  painter->drawRect(AudioPushButtonStartX, AudioPushButtonStartY, sizeX, sizeY);
 
   //3d
-  painter.setPen(border2);
-  painter.drawRect(AudioPushButtonStartX, AudioPushButtonStartY + sizeY - 1, sizeX, 1);
-  painter.drawRect(AudioPushButtonStartX + sizeX - 1, AudioPushButtonStartY, 1, sizeY);
+  painter->setPen(border2);
+  painter->drawRect(AudioPushButtonStartX, AudioPushButtonStartY + sizeY - 1, sizeX, 1);
+  painter->drawRect(AudioPushButtonStartX + sizeX - 1, AudioPushButtonStartY, 1, sizeY);
 
 }
 
@@ -107,7 +108,7 @@ if (((Gear_AudioPushButton*)_gear)->getState()==ON && button == Qt::NoButton)
     }
   }
   update();
-  canvas()->update();
+  scene()->update();   
   return ret;
 }
 

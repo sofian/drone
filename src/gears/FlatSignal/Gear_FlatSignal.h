@@ -28,14 +28,14 @@
  * Generates a flat signal, that is, a signal with a constant value. Can be used more
  * generally as a converter from <code>ValueType</code> to <code>SignalType</code>.
  * 
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sï¿½bastien Senï¿½cal
  * @version %I% %G%
  */
 class Gear_FlatSignal : public GearConverter<ValueType, SignalType>
 {
 public:
   //! Default constructor.
-  Gear_FlatSignal(Schema *schema, std::string uniqueName);
+  Gear_FlatSignal();
 
   // Destructor.
   virtual ~Gear_FlatSignal() {}

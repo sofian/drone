@@ -30,7 +30,7 @@ class Gear_AreaCreate : public Gear
 {
 public:
 
-  Gear_AreaCreate(Schema *schema, std::string uniqueName);
+  Gear_AreaCreate();
   virtual ~Gear_AreaCreate();
 
   void runVideo();

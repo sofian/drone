@@ -22,26 +22,20 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 #include "DroneMath.h"
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_Tempo(schema, uniqueName);
+  return new Gear_Tempo();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Tempo";
-  gearInfo.classification = GearClassifications::signal().generator().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_Tempo::Gear_Tempo(Schema *schema, std::string uniqueName) : Gear(schema, "Tempo", uniqueName)
+Gear_Tempo::Gear_Tempo() : Gear("Tempo")
 {
   // Inputs.
   addPlug(_FREQUENCY_IN = new PlugIn<ValueType>(this, "Freq", false, new ValueType(1, 0, 1)));

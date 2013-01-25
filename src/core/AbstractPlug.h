@@ -20,13 +20,10 @@
 #ifndef __ABSTRACTPLUG_INCLUDED
 #define __ABSTRACTPLUG_INCLUDED
 
-#include "Engine.h"
 #include "AbstractType.h"
-#include <iostream> // XXX debug
-#include <vector>
-#include <string>
-#include <list>
+#include "qdebug"
 
+#include <QList>
 
 enum eInOut
 {
@@ -38,10 +35,12 @@ class Gear;
 class AbstractPlug
 {
 public:
-  static const std::string XML_TAGNAME;
+  static const QString XML_TAGNAME;
+	static const QString XML_TAGNAME_TYPE_ELEM;
 
-  AbstractPlug(Gear* parent, eInOut inOut, std::string name, AbstractType* type, bool mandatory);
+  AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractType* type, bool mandatory);
   virtual ~AbstractPlug();
+
 
   virtual void init(){};
   bool canStartConnection();
@@ -70,16 +69,15 @@ public:
   AbstractType* abstractHintType() const { return _abstractDefaultType;}
   eInOut inOut() const {return _inOut;};
 
-  int connectedPlugs(std::list<AbstractPlug*> &connectedplugs) const;
+  void connectedPlugs(QList<AbstractPlug*> &connectedPlugs) const;
   AbstractPlug* firstConnectedPlug() const {return _connectedPlugs.front();}
   int nbConnectedPlugs() const {return _connectedPlugs.size();};
   Gear* parent() const {return _parent;};
 
-  std::string fullName() const;
-  std::string shortName(int nbChars) const;
-  std::string name() const {return _name;};
-  bool name(std::string newName);
-
+  QString fullName() const;
+  QString shortName(int nbChars) const;
+  const QString& name() const {return _name;};
+  bool name(QString newName);
   bool exposed() const {return _exposed;}
   void exposed(bool exp);
 
@@ -89,22 +87,23 @@ public:
   virtual AbstractPlug* clone(Gear* parent)=0;
 
 protected:
-  std::list<AbstractPlug*> _connectedPlugs;
+   QList<AbstractPlug*> _connectedPlugs;
   AbstractType *_abstractType;
   AbstractType *_abstractDefaultType;
   AbstractPlug* _forwardPlug;
 	
-  Gear *_parent;
   //! if true, this plug is not absolutly needed (connected,ready) for the parent gear to be ready.
   bool _mandatory;
+  Gear *_parent;
   bool _sleeping;
 	
 private:
   eInOut _inOut;
-  std::string _name;
-
+  QString _name;
   bool _exposed;//! the plug is exposed outside of a metagear
 
 };
+
+QDebug	operator<< ( QDebug out, const AbstractPlug & ap );
 
 #endif //__ABSTRACTPLUG_INCLUDED

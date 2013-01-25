@@ -21,26 +21,19 @@
 #include "Gear_PackList.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_PackList(schema, uniqueName);
+  return new Gear_PackList();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "PackList";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-#include "Array2DType.h"
-Gear_PackList::Gear_PackList(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "PackList", uniqueName)
+Gear_PackList::Gear_PackList() : 
+  Gear("PackList")
 {
 
   addPlug(_ELEM_IN = new PlugIn<AbstractType>(this, "Elem", true));

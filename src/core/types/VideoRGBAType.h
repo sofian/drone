@@ -56,6 +56,7 @@ public:
 //   void transparent();
 //   void opacity(unsigned char a);
   
+	
 protected:
 //   // GetAAPixel related functions ////////////////////
 //   // fractionnary part of coords for getAAPixel

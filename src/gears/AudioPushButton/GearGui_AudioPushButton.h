@@ -20,7 +20,6 @@
 #ifndef GEARGUI_PUSHBUTTON_INCLUDED
 #define GEARGUI_PUSHBUTTON_INCLUDED
 
-#include "GearGui.h"
 
 
 #include <qcanvas.h>
@@ -37,14 +36,14 @@ public:
   static const QColor PUSHBUTTON_BOX_COLOR;
   static const QColor PUSHBUTTON_BOX_COLORON;
 
-  GearGui_AudioPushButton(Gear_AudioPushButton *gear, QCanvas *canvas);
+  GearGui_AudioPushButton(Gear_AudioPushButton *gear, QGraphicsScene *scene);
 
   bool mouseEvent(const QPoint& p, Qt::ButtonState button);
   bool keyEvent(QKeyEvent *e);
   
 protected:
 
-  void drawShape(QPainter &painter);
+  void paint(QPainter* painter,const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 
 };

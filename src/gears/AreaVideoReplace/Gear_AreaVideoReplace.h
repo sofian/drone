@@ -34,14 +34,14 @@
  * (white) wherever lies an area.
  *
  * @see AreaType
- * @author Jean-Sébastien Senécal
+ * @author Jean-Sï¿½bastien Senï¿½cal
  * @version %I% %G%
  */
 class Gear_AreaVideoReplace : public Gear
 {
 public:
   //! Default constructor.
-  Gear_AreaVideoReplace(Schema *schema, std::string uniqueName);
+  Gear_AreaVideoReplace();
 
   //! Destructor.
   virtual ~Gear_AreaVideoReplace();

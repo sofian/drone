@@ -49,12 +49,11 @@
 #ifndef stringutils_INC
 #define stringutils_INC
  
-#include <string>
+
 #include <vector>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <cstdlib>
 //#include <plearn/io/PStream.h>
 // #include "TMat.h"
 #include "error.h"

@@ -7,10 +7,10 @@ INCLUDEPATH+=../../core/ ../../core/types
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -ldroneCore
-unix:!macx:TARGET=../../../gears/Gear_Gamma
+unix:!macx:TARGET=../../../gears/drone/Gear_Gamma
 
 #osx
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_Gamma
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_Gamma
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 

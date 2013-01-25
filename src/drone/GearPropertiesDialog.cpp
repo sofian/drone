@@ -42,7 +42,7 @@ GearPropertiesDialog::GearPropertiesDialog(QWidget *parent, Gear *gear, Engine *
   _verticalLayout = new Q3VBoxLayout(this, 12, 12, "layout");
 
   std::vector<Property*> properties;
-  _gear->settings().getAll(&properties);
+  //_gear->settings().getAll(&properties);
 
 
   //create all PropertieControls for the gear

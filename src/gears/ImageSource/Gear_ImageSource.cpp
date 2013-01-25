@@ -23,28 +23,22 @@
 #include "Gear_ImageSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 #include "DroneMath.h"
 
-const std::string Gear_ImageSource::SETTING_FILENAME = "Filename";
+const QString Gear_ImageSource::SETTING_FILENAME = "Filename";
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageSource(schema, uniqueName);
+  return new Gear_ImageSource();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageSource";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_ImageSource::Gear_ImageSource(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "ImageSource", uniqueName),
+Gear_ImageSource::Gear_ImageSource() : 
+  Gear("ImageSource"),
   _current(0)
 {
   // Inputs.
@@ -65,7 +59,7 @@ void Gear_ImageSource::onUpdateSettings()
 {
   _imageBuffers.clear();
     
-  std::vector<std::string> filenames = _settings.get(SETTING_FILENAME)->valueStrList();
+  std::vector<QString> filenames = _settings.get(SETTING_FILENAME)->valueStrList();
   
   for (int i=0; i<(int)filenames.size(); ++i)
   {
@@ -77,7 +71,7 @@ void Gear_ImageSource::onUpdateSettings()
   
 }
 
-void Gear_ImageSource::loadImage(const std::string& filename, Array2D<RGBA>& image)
+void Gear_ImageSource::loadImage(const QString& filename, Array2D<RGBA>& image)
 {
   QImage img(filename.c_str());
     

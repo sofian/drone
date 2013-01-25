@@ -23,25 +23,19 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VideoLoop(schema, uniqueName);
+  return new Gear_VideoLoop();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoLoop";
-  gearInfo.classification = GearClassifications::video().time().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_VideoLoop::Gear_VideoLoop(Schema *schema, std::string uniqueName) : Gear(schema, "VideoLoop", uniqueName)
+Gear_VideoLoop::Gear_VideoLoop() : Gear("VideoLoop")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "ImgOUT", true));

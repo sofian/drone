@@ -21,27 +21,21 @@
 #include "Gear_StringFormat.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
+
 
 #include <stdio.h>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_StringFormat(schema, uniqueName);
+  return new Gear_StringFormat();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "StringFormat";
-  gearInfo.classification = GearClassifications::protocol().osc().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_StringFormat::Gear_StringFormat(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "StringFormat", uniqueName)
+Gear_StringFormat::Gear_StringFormat() : 
+  Gear("StringFormat")
 {
   addPlug(_FORMAT = new PlugIn<StringType>(this, "Format", true));
   addPlug(_PARAMS = new PlugIn<ListType>(this, "Params", false));
@@ -57,9 +51,9 @@ Gear_StringFormat::~Gear_StringFormat()
 void Gear_StringFormat::runVideo()
 {
   const ListType *listType = _PARAMS->type();
-  std::string format = _FORMAT->type()->value();
+  QString format = _FORMAT->type()->value();
   
-  std::string outputString = "";
+  QString outputString = "";
 
   for (ListType::const_iterator it = listType->begin(); it != listType->end(); ++it)
   {

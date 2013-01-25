@@ -22,24 +22,18 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
+
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-	return new Gear_VideoSwitch(schema, uniqueName);
+	return new Gear_VideoSwitch();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoSwitch";
-  gearInfo.classification = GearClassifications::video().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_VideoSwitch::Gear_VideoSwitch(Schema *schema, std::string uniqueName) : Gear(schema, "VideoSwitch", uniqueName)
+Gear_VideoSwitch::Gear_VideoSwitch() : Gear("VideoSwitch")
 {
   addPlug(_VIDEO_OUT_A = new PlugOut<VideoRGBAType>(this, "ImgA", false));
   addPlug(_VIDEO_OUT_B = new PlugOut<VideoRGBAType>(this, "ImgB", false));

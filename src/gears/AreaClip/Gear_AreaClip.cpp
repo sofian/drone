@@ -22,25 +22,19 @@
 #include "Engine.h"
 #include "DroneMath.h"
 
-#include "GearMaker.h"
+
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AreaClip(schema, uniqueName);
+  return new Gear_AreaClip();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AreaClip";
-  gearInfo.classification = GearClassifications::video().mask().instance();
-  return gearInfo;
-}
+
 }
 
-Gear_AreaClip::Gear_AreaClip(Schema *schema, std::string uniqueName) : Gear(schema, "AreaClip", uniqueName)
+Gear_AreaClip::Gear_AreaClip() : Gear("AreaClip")
 {    
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaOut", true));
   addPlug(_AREA_IN = new PlugIn<AreaType>(this, "AreaIn", true));

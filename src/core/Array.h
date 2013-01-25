@@ -28,7 +28,7 @@
  * This class is a wrapper around the <code>vector<code>, with
  * some added functionalities.
  *
- * @author Jean-Sï¿½bastien Senï¿½cal
+ * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
 template <class T>
@@ -48,7 +48,7 @@ public:
   using std::vector<T>::end;
   using std::vector<T>::begin;
   using std::vector<T>::front;
-
+	using std::vector<T>::empty;
   /**
    * Default constructor.
    */
@@ -60,7 +60,7 @@ public:
    * @param size the size of the vector
    */
   Array(size_type size) : std::vector<T>(size) {}
-  
+
   //! Destructor.
   virtual ~Array() {}
 
@@ -89,7 +89,7 @@ public:
   pointer data() { return &front(); }
 
   // DEPRECATED : use std::vector::empty() method instead.
-  bool isNull() const { return std::vector<T>::empty(); }
+  bool isNull() const { return empty(); }
 };
 
 #endif

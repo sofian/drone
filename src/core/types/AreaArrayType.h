@@ -47,7 +47,7 @@ struct Area
  * areas are represented as rectangles (sub-windows).
  *
  * @see Area
- * @author Jean-Sï¿½bastien Senï¿½cal
+ * @author Jean-Sébastien Senécal
  * @version %I% %G%
  */
 class AreaArrayType : public ArrayType<Area>

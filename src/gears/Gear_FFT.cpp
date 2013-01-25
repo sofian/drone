@@ -3,7 +3,7 @@
 
 #include "CircularBuffer.h"
 
-#include "GearMaker.h"
+
 
 #include <math.h>
 
@@ -16,8 +16,8 @@ Register_Gear(MAKERGear_FFT, Gear_FFT, "FFT")
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Gear_FFT::Gear_FFT(Schema *schema, std::string uniqueName) : 
-Gear(schema, "FFT", uniqueName)                                                                        
+Gear_FFT::Gear_FFT() : 
+Gear("FFT")                                                                        
 {    
   addPlug(_AUDIO_IN = new PlugIn<SignalType>(this, "In", new SignalType(0.0f)));
   addPlug(_FFT_OUT = new PlugOut<FFTType>(this, "Out", new FFTType(DEFAULT_FFT_SIZE)));  

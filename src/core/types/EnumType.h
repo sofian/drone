@@ -23,11 +23,11 @@
 #include "AbstractType.h"
 #include "ArrayType.h"
 
-class EnumType : public ArrayType<std::string>
+class EnumType : public ArrayType<QString>
 {
 public:  
   EnumType(int size = 1, int defaultValue=0)
-    : ArrayType<std::string>(size)
+    : ArrayType<QString>(size)
   {
     setValue(defaultValue);
   }
@@ -43,11 +43,11 @@ public:
   int value() const { return _value; }
   //operator int () const { return _value; }
   
-  const std::string& label() const { return operator[](_value); }
+  const QString& label() const { return operator[](_value); }
   
-  void setLabel(int value, const std::string& label) { operator[](value) = label; }
-  const std::string& label(int value) const { return operator[](value); }
-
+  void setLabel(int value, const QString& label) { operator[](value) = label; }
+  const QString& label(int value) const { return operator[](value); }
+  
 private:
   int _value;
 };

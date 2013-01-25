@@ -31,11 +31,11 @@ class Gear_AudioInput : public Gear
 public:
 
 //CONFIG PARAMETERS
-  static const std::string SETTING_FRAMES_PER_BUFFER;
-  static const std::string SETTING_NB_BUFFERS;
+  static const QString SETTING_FRAMES_PER_BUFFER;
+  static const QString SETTING_NB_BUFFERS;
 //
 
-  Gear_AudioInput(Schema *schema, std::string uniqueName);
+  Gear_AudioInput();
   virtual ~Gear_AudioInput();
 
   void runAudio();

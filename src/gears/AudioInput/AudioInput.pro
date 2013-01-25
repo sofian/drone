@@ -10,11 +10,11 @@ QMAKE_LFLAGS_RPATH = -Wl,-rpath,lib/portaudio,-rpath,
 
 #linux
 unix:!macx:LIBS+=-L../../../lib/ -L../../../lib/portaudio -ldroneCore -lportaudio
-unix:!macx:TARGET=../../../gears/Gear_AudioInput
+unix:!macx:TARGET=../../../gears/drone/Gear_AudioInput
 
 #osx
 #todo add portaudio
-macx:TARGET=../../../drone.app/Contents/PlugIns/Gear_AudioInput
+macx:TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_AudioInput
 macx:LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore
 
 
