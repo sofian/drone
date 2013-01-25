@@ -105,7 +105,7 @@ _menuShowSmallGearsId(false)
 	
   QObject::connect(_actPlayPause, SIGNAL(toggled(bool)), this, SLOT(slotPlay(bool)));
 	
-	QMenuBar* menuBar = new QMenuBar(0);
+	QMenuBar* menuBar = QMainWindow::menuBar();
   
   //menu    
   _fileMenu = menuBar->addMenu("&File");
