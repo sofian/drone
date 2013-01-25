@@ -8,7 +8,7 @@
  */
 
 #include "DroneCore.h"
-#include <quuid>
+#include <QUuid>
 #include "gearFactory/GearMaker.h"
 #include "DroneMath.h"
 #include "Utils.h"
@@ -24,14 +24,8 @@ namespace Drone{
 
 QString DroneCore::newUUID()
 {
-  return QUuid().toString();
+  return QUuid::createUuid().toString();
 }
-
-
-
-
-
-
 
 void DroneCore::init()
 {
@@ -40,11 +34,10 @@ void DroneCore::init()
   GearMaker::instance()->registerStaticGear(&makeGear_PushButton);
 	GearMaker::instance()->parse();
 	
-  
   initMath();
   paint_funcs_setup();
-	
 }
+
 void DroneCore::release()
 {
 	paint_funcs_free();
