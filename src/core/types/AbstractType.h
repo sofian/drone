@@ -30,7 +30,7 @@ class QDomDocument;
 class QDomElement;
 
 #define __TYPE_BASE_METHODS_1_ARGS(ClassName) \
-    virtual QString typeName() const { return #ClassName; } \
+    virtual QString typeName() const { return QString(#ClassName); } \
     virtual void copyFrom(const AbstractType& t) { (*this) = *(static_cast<const ClassName*>(&t)); } \
     virtual bool isSuperClassOf(const AbstractType& t) const { return (dynamic_cast<const ClassName*>(&t)) != NULL; } \
     virtual AbstractType* clone() const { return new ClassName(*this); }
@@ -70,7 +70,7 @@ public:
   }
 
   // DEPRECATED: Use: isClassOf()
-  /*bool isTypeOf(AbstractType &other) const
+  bool isTypeOf(AbstractType &other) const
   {
       return other.typeName() == typeName();
   }

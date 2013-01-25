@@ -19,35 +19,26 @@
 
 #include <iostream>
 #include "Gear_AudioOutput.h"
-#include "GearMaker.h"
 #include "Engine.h"
 
 #include "ThreadUtil.h"
 
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_AudioOutput(schema, uniqueName);
-}
-
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "AudioOutput";
-  gearInfo.classification = GearClassifications::signal().IO().instance();
-  return gearInfo;
+  return new Gear_AudioOutput();
 }
 }
 
 const int Gear_AudioOutput::DEFAULT_FRAMES_PER_BUFFER=512;
 const int Gear_AudioOutput::DEFAULT_NB_BUFFERS=0;
 
-const std::string Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
-const std::string Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
+const QString Gear_AudioOutput::SETTING_FRAMES_PER_BUFFER = "FramesPerBuffer";
+const QString Gear_AudioOutput::SETTING_NB_BUFFERS = "NbBuffers";
 
-Gear_AudioOutput::Gear_AudioOutput(Schema *schema, std::string uniqueName) : 
-Gear(schema, "AudioOutput", uniqueName),
+Gear_AudioOutput::Gear_AudioOutput() :
+Gear("AudioOutput"),
 _bus(NULL),
 _pipeline(NULL),
 _audioSource(NULL),
@@ -56,7 +47,7 @@ _audioSink(NULL)
   addPlug(_AUDIO_IN_LEFT = new PlugIn<SignalType>(this, "Left", false, new SignalType(0.0f)));    
   addPlug(_AUDIO_IN_RIGHT = new PlugIn<SignalType>(this, "Right", false, new SignalType(0.0f)));    
 
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_AUDIO_IN_LEFT);
   atLeastOneOfThem.push_back(_AUDIO_IN_RIGHT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);

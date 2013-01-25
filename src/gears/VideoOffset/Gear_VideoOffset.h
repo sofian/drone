@@ -28,7 +28,7 @@ class Gear_VideoOffset : public Gear
 {
 public:
 
-  Gear_VideoOffset(Schema *schema, QString name);
+  Gear_VideoOffset();
   virtual ~Gear_VideoOffset();
 
   void runVideo();  

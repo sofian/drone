@@ -21,7 +21,6 @@
 #include "DroneQGLWidget.h"
 #include "DroneGLWindow.h"
 
-#include "GearMaker.h"
 #include "Engine.h"
 
 
@@ -35,17 +34,9 @@
 #include <QPaintEvent>
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_VideoOutput(schema, uniqueName);
-}
-
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "VideoOutput";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
+  return new Gear_VideoOutput();
 }
 }
   
@@ -56,17 +47,17 @@ const int Gear_VideoOutput::DEFAULT_YPOS = 0;
 
 const bool Gear_VideoOutput::DEFAULT_FULLSCREEN = false; 
 
-const std::string Gear_VideoOutput::SETTING_XRES = "XRes";
-const std::string Gear_VideoOutput::SETTING_YRES = "YRes";
+const QString Gear_VideoOutput::SETTING_XRES = "XRes";
+const QString Gear_VideoOutput::SETTING_YRES = "YRes";
 
-const std::string Gear_VideoOutput::SETTING_XPOS = "XPos";
-const std::string Gear_VideoOutput::SETTING_YPOS = "YPos";
+const QString Gear_VideoOutput::SETTING_XPOS = "XPos";
+const QString Gear_VideoOutput::SETTING_YPOS = "YPos";
 
-const std::string Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
+const QString Gear_VideoOutput::SETTING_FULLSCREEN = "FullScreen";
 
 
-Gear_VideoOutput::Gear_VideoOutput(Schema *schema, std::string uniqueName) : 
-  Gear(schema, "VideoOutput", uniqueName),
+Gear_VideoOutput::Gear_VideoOutput() :
+  Gear("VideoOutput"),
   _droneQGLWidget(NULL),
   _window(NULL)
 {

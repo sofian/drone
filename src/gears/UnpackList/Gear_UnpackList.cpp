@@ -44,7 +44,7 @@ Gear_UnpackList::Gear_UnpackList() :
   addPlug(_VIDEO_OUT = new PlugOut<VideoRGBAType>(this, "VideoO", false));
   addPlug(_AREA_OUT = new PlugOut<AreaType>(this, "AreaO", false));
   
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_STR_OUT);
   atLeastOneOfThem.push_back(_VAL_OUT);
   atLeastOneOfThem.push_back(_ENUM_OUT);

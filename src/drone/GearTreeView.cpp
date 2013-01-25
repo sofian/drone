@@ -9,16 +9,17 @@
 #include "GearTreeView.h"
 #include "gearFactory/GearMaker.h"
 #include "gearFactory/GearInfo.h"
-#include <q3dragobject.h>
-#include <qmouseevent>
-#include <qtreewidgetitem>
+#include <Q3DragObject>
+#include <QMouseEvent>
+#include <QTreeWidgetItem>
 #include <QMimeData>
-#include <qdatastream>
-#include <qbytearray>
+#include <QDataStream>
+#include <QByteArray>
 //Added by qt3to4:
 #include <QPixmap>
+#include <QHeaderView>
+
 #include "draggear.xpm"
-#include <qheaderview>
 
 GearTreeView::GearTreeView(QWidget *parent) :
   QTreeWidget(parent)

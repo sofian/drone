@@ -32,8 +32,8 @@
 #include "ConnectionItem.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QVarLengthArray>
-#include <q3filedialog>
-#include <qtextstream>
+#include <Q3FileDialog>
+#include <QTextStream>
 #include "MainWindow.h"
 
 const int SchemaGui::DEFAULT_CANVAS_SIZE_X = 2048;
@@ -506,7 +506,7 @@ GearGui* SchemaGui::getGearGuiByUUID(QString uuid)
 {
   Gear* g(_schema->getGearByUUID(uuid));
   GearGui* ggui;
-  if(g && (ggui=g->getGearGui()))
+  if(g && (ggui=(GearGui*)g->getGearGui()))
     return ggui;
   else
     return NULL;

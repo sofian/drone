@@ -51,7 +51,7 @@ Gear_AudioInput::Gear_AudioInput() :
   addPlug(_AUDIO_OUT_LEFT = new PlugOut<SignalType>(this, "Left", false));    
   addPlug(_AUDIO_OUT_RIGHT = new PlugOut<SignalType>(this, "Right", false));    
 
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_AUDIO_OUT_LEFT);
   atLeastOneOfThem.push_back(_AUDIO_OUT_RIGHT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);

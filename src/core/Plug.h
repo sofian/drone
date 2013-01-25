@@ -136,6 +136,8 @@ public:
   const T* defaultType() const { return static_cast<const T*>(_abstractDefaultType);}
   const T* hintType() const { return static_cast<const T*>(_abstractDefaultType);}
 
+  T* cloneType() const { return static_cast<T*>(_abstractType->clone()); }
+
   AbstractPlug *clone(Gear* parent)
   {
     PlugIn<T>* clonePlug = new PlugIn<T>(parent, name(), _mandatory);
@@ -146,6 +148,8 @@ public:
 protected:
   void setType(AbstractType *type)
   {
+    if (type == NULL)
+      qCritical() << Q_FUNC_INFO << " called with type = NULL";
     _abstractType = type;
   }
 

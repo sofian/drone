@@ -107,10 +107,8 @@ Property* Properties::get(QString name)
 
 void Properties::getAll(QList<Property*> *properties)
 {
-  
-   QMap<QString, Property*>::const_iterator i = _properties.constBegin();
+ QMap<QString, Property*>::const_iterator i = _properties.constBegin();
  while (i != _properties.constEnd()) {
-    
     properties->push_back(i.value());
   }
 }

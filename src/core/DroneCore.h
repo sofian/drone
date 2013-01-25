@@ -10,7 +10,7 @@
 #ifndef DRONE_CORE_INC
 #define DRONE_CORE_INC
 
-#include <qstring>
+#include <QString>
 
 class DroneCore 
 {

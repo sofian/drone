@@ -32,7 +32,7 @@ Gear* makeGear()
 }
 
 Gear_SignalStat::Gear_SignalStat()
-  : GearConverter<SignalType, ValueType>(schema, "SignalStat")
+  : GearConverter<SignalType, ValueType>("SignalStat")
 {
   addPlug(_FUNC = new PlugIn<ValueType>(this, "Func", false, new ValueType(0, 0, 6)));
 

@@ -47,7 +47,6 @@ GearFrei0r.h \
 GearClassification.h \
 GearGui.h \
 GearConverter.h \
-GearMaker.h \
 ISchemaEventListener.h \
 Media.h \
 MediaPool.h \
@@ -57,7 +56,6 @@ MetaGearMaker.h \
 Node.h \ 
 MidiEngine.h \
 Plug.h \
-PlugBox.h \
 Properties.h \
 Project.h \
 Rasterer.h \
@@ -68,8 +66,6 @@ SchemaTopoSort.h \
 ScopedLock.h \
 SignalCircularBuffer.h \
 SignalInfo.h \
-StringUtils.h \
-TextureGl.h \
 ThreadUtil.h \
 Timing.h \
 Typedefs.h \
@@ -109,14 +105,6 @@ Engine.cpp \
 Gear.cpp \
 GearControl.cpp \
 GearFrei0r.cpp \
-types/AreaType.cpp \
-types/EnumType.cpp \
-types/VideoChannelType.cpp \
-types/VideoRGBAType.cpp \
-types/ValueType.cpp \
-types/StringType.cpp \
-GearGui.cpp \
-GearMaker.cpp \
 Math.cpp \
 MediaPool.cpp \
 MediaMovie.cpp \
@@ -125,24 +113,23 @@ MetaGearMaker.cpp \
 MidiEngine.cpp \
 Node.cpp \
 AbstractPlug.cpp \
-PlugBox.cpp \
 Properties.cpp \
 Project.cpp \
 Rasterer.cpp \
 Random.cpp \
-Properties.cpp \
 Schema.cpp \
-SchemaGui.cpp \
 SignalInfo.cpp \
-StringUtils.cpp \
-TextureGl.cpp \
 Timing.cpp \
 VideoInfo.cpp \
 XMLHelper.cpp  \
 RtMidi/RtMidi.cpp \
 composite/Composite.cpp \
 composite/CompositeGeneric.cpp \
-composite/AlphaComposite.cpp
+composite/AlphaComposite.cpp \
+types/AreaType.cpp \
+types/VideoRGBAType.cpp \
+types/ValueType.cpp \
+types/StringType.cpp \
 
 
 # controlHosts

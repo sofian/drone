@@ -20,9 +20,9 @@
 #ifndef PROPERTIES_INCLUDED
 #define PROPERTIES_INCLUDED
 
-#include <qmap>
-#include <qstring>
-#include <qlist>
+#include <QMap>
+#include <QString>
+#include <QList>
 #include "error.h"
 
 class QDomDocument;

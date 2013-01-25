@@ -5,8 +5,9 @@
  * Created on January 20, 2013, 8:35 PM
  */
 
+#include <QtXml>
+
 #include "PlugInfo.h"
-#include <qtxml>
 #include "XMLHelper.h"
 #include "Project.h"
 

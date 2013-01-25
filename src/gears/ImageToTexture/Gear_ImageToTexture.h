@@ -31,7 +31,7 @@ class Gear_ImageToTexture : public Gear
 {
 public:
 
-  Gear_ImageToTexture(Schema *schema, std::string uniqueName);
+  Gear_ImageToTexture();
   virtual ~Gear_ImageToTexture();
 
   void runVideo();

@@ -3,9 +3,6 @@
 #include <QtXml>
 
 
-const QString StringType::TYPENAME="String";
-
-
 void StringType::save(QDomDocument &doc, QDomElement &parent) const
 {
   QDomAttr valAttr;

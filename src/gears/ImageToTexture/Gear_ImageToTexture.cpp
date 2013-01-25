@@ -23,25 +23,17 @@
 
 #include <iostream>
 
-#include "GearMaker.h"
-
 
 extern "C" {
-Gear* makeGear(Schema *schema, std::string uniqueName)
+Gear* makeGear()
 {
-  return new Gear_ImageToTexture(schema, uniqueName);
+  return new Gear_ImageToTexture();
 }
 
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "ImageToTexture";
-  gearInfo.classification = GearClassifications::video().IO().instance();
-  return gearInfo;
-}
 }
 
-Gear_ImageToTexture::Gear_ImageToTexture(Schema *schema, std::string uniqueName) : Gear(schema, "ImageToTexture", uniqueName)
+Gear_ImageToTexture::Gear_ImageToTexture()
+: Gear("ImageToTexture")
 {
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));
   addPlug(_TEXTURE_OUT = new PlugOut<TextureType>(this, "TexOUT", true));

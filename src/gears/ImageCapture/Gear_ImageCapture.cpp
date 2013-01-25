@@ -78,26 +78,25 @@ void Gear_ImageCapture::saveImage(const QString& filename, const VideoRGBAType *
     baseFilename = DEFAULT_FILENAME;
    
   //remove extension from basefilename if already there
-  if (baseFilename.find(FORMAT_EXTENSION, baseFilename.size()-FORMAT_EXTENSION.size())!=QString::npos)  
-    baseFilename = baseFilename.substr(baseFilename.size()-FORMAT_EXTENSION.size(), baseFilename.size());
-        
+  if (baseFilename.endsWith(FORMAT_EXTENSION))
+    baseFilename.remove(baseFilename.size()-FORMAT_EXTENSION.size(), baseFilename.size()-1);
+
   //already exist? find unique name
   int counter=1;
   
   std::ostringstream oss;
-  oss << baseFilename << "." << FORMAT_EXTENSION;
-  while(QFile::exists(oss.str()))
+  oss << baseFilename.toStdString() << "." << FORMAT_EXTENSION.toStdString();
+  while(QFile::exists(QString::fromStdString(oss.str())))
   {    
     oss.seekp(0);
     oss.str("");
-    oss << baseFilename << counter << "." << FORMAT_EXTENSION;
+    oss << baseFilename.toStdString() << counter << "." << FORMAT_EXTENSION.toStdString();
     counter++;
   }
     
   //save at best quality
-  QString extensionUpperCase = FORMAT_EXTENSION;
-  std::transform(extensionUpperCase.begin(), extensionUpperCase.end(), extensionUpperCase.begin(), toupper);
-  img.save(oss.str().c_str(), extensionUpperCase.c_str(), 100);
+  QString extensionUpperCase = FORMAT_EXTENSION.toUpper();
+  img.save(oss.str().c_str(), extensionUpperCase.toAscii(), 100);
 }
 
 void Gear_ImageCapture::runVideo()

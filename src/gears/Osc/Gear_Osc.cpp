@@ -28,14 +28,6 @@ Gear* makeGear()
 {
   return new Gear_Osc();
 }
-
-GearInfo getGearInfo()
-{
-  GearInfo gearInfo;
-  gearInfo.name = "Osc";
-  gearInfo.classification = GearClassifications::signal().generator().instance();
-  return gearInfo;
-}
 }
 
 Gear_Osc::Gear_Osc() : 
@@ -51,7 +43,7 @@ Gear_Osc::Gear_Osc() :
   addPlug(_VALUE_OUT = new PlugOut<ValueType>(this, "Out", true));
   addPlug(_SIGNAL_OUT = new PlugOut<SignalType>(this, "SigOut", true));
 
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VALUE_OUT);
   atLeastOneOfThem.push_back(_SIGNAL_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);

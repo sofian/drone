@@ -7,7 +7,7 @@
 
 #ifndef BASEGEARGUI_H
 #define	BASEGEARGUI_H
-#include <qtxml>
+#include <QtXml>
 
 class BaseGearGui {
 public:

@@ -20,7 +20,7 @@
 #ifndef SCHEMAEGUI_INCLUDED
 #define SCHEMAEGUI_INCLUDED
 
-#include <QGraphicsScene.h>
+#include <QGraphicsScene>
 #include <QFileInfo>
 #include <QMenu>
 #include "Schema.h"
@@ -69,7 +69,7 @@ public:
   void setAutoSelectNewElements(bool p){_autoSelectNewElements=p;}
 
   QPointF getPasteOffset(){return _pasteOffset+=QPointF(100,100);}
-  QPointF resetPasteOffset(){_pasteOffset=QPointF(0,0);}
+  QPointF resetPasteOffset(){return (_pasteOffset=QPointF(0,0));}
   
 
   Schema * getSchema(){return _schema;}

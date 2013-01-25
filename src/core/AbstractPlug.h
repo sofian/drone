@@ -21,8 +21,8 @@
 #define __ABSTRACTPLUG_INCLUDED
 
 #include "AbstractType.h"
-#include "qdebug"
 
+#include <QDebug>
 #include <QList>
 
 enum eInOut

@@ -29,9 +29,9 @@ react properly
 #ifndef SCHEMAEDITOR_INCLUDED
 #define SCHEMAEDITOR_INCLUDED
 
-#include <qrect.h>
-#include <qmenu>
-#include <qfileinfo.h>
+#include <QRect>
+#include <QMenu>
+#include <QFileInfo>
 //Added by qt3to4:
 #include <QWheelEvent>
 #include <QDragEnterEvent>
@@ -39,9 +39,11 @@ react properly
 #include <QMouseEvent>
 #include <QContextMenuEvent>
 #include <QKeyEvent>
+
+#include <QGraphicsView>
+
 #include <string>
 #include <vector>
-#include <QGraphicsView>
 #include "SchemaGui.h"
 
 class GearGui;

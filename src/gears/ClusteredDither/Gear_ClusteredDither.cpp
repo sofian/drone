@@ -35,7 +35,8 @@ Gear* makeGear()
 }
 
 Gear_ClusteredDither::Gear_ClusteredDither()
-: Gear("ClusteredDither"), _sizeX(0), _sizeY(0), _clusterSize(0),_width(0), _threshold(0), _order(0), _spotType(ROUND)
+: Gear("ClusteredDither"),
+  _sizeX(0), _sizeY(0), _clusterSize(0), _clusterWidth(0), _threshold(0), _order(0), _spotType(ROUND)
 {
   // Video I/O
   addPlug(_VIDEO_IN = new PlugIn<VideoRGBAType>(this, "ImgIN", true));

@@ -1,13 +1,13 @@
 #ifndef CONTROLPANEL_INCLUDED
 #define CONTROLPANEL_INCLUDED
 
-#include <qwidget.h>
-#include <qgridlayout>
-#include <list>
-#include <qframe.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QWidget>
+#include <QGridLayout>
+#include <QFrame>
+#include <QLayout>
+#include <QLabel>
 
+#include <list>
 
 class Control;
 class MetaGear;

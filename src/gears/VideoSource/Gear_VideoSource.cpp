@@ -27,23 +27,15 @@
 #include "Gear_VideoSource.h"
 #include "Engine.h"
 
-#include "GearMaker.h"
 
 extern "C" {           
-  Gear* makeGear(Schema *schema, std::string uniqueName)
+  Gear* makeGear()
   {
-    return new Gear_VideoSource(schema, uniqueName);
-  }  
-  GearInfo getGearInfo()
-  {
-    GearInfo gearInfo;
-    gearInfo.name = "VideoSource";
-    gearInfo.classification = GearClassifications::video().IO().instance();
-    return gearInfo;
+    return new Gear_VideoSource();
   }
 }
 
-//const std::string Gear_VideoSource::SETTING_FILENAME = "Filename";
+//const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 bool Gear_VideoSource::_videoPull()
 {
@@ -145,8 +137,8 @@ void Gear_VideoSource::gstNewBufferCallback(GstElement*, int *newBufferCounter)
   (*newBufferCounter)++;
 }
 
-Gear_VideoSource::Gear_VideoSource(Schema *schema, std::string uniqueName) : 
-Gear(schema, "VideoSource", uniqueName),
+Gear_VideoSource::Gear_VideoSource() :
+Gear("VideoSource"),
 _currentMovie(""),
 _bus(NULL),
 _pipeline(NULL),
@@ -170,7 +162,7 @@ _movieReady(false)
 
   addPlug(_FINISH_OUT = new PlugOut<ValueType>(this, "FinishOut", false));
   
-  std::vector<AbstractPlug*> atLeastOneOfThem;
+  QList<AbstractPlug*> atLeastOneOfThem;
   atLeastOneOfThem.push_back(_VIDEO_OUT);
   atLeastOneOfThem.push_back(_AUDIO_OUT);
   setPlugAtLeastOneNeeded(atLeastOneOfThem);
@@ -262,9 +254,9 @@ void Gear_VideoSource::resetMovie()
   }
 }
 
-bool Gear_VideoSource::loadMovie(std::string filename)
+bool Gear_VideoSource::loadMovie(QString filename)
 {
-  std::cout << "Opening movie : " << filename << std::endl;
+  qDebug() << "Opening movie: " << filename << ".";
 
   // Free previously allocated structures
   unloadMovie();
@@ -325,12 +317,12 @@ bool Gear_VideoSource::loadMovie(std::string filename)
   }
 
   // Process URI.
-  gchar* uri = (gchar*) filename.c_str();
+  gchar* uri = (gchar*) filename.ascii();
   if (!gst_uri_is_valid(uri))
   {
     // Try to convert filename to URI.
     GError* error = NULL;
-    uri = gst_filename_to_uri(filename.c_str(), &error);
+    uri = gst_filename_to_uri(filename.ascii(), &error);
     if (error) {
       std::cout << "Filename to URI error: " << error->message << std::endl;
       g_error_free(error);
@@ -419,7 +411,7 @@ void Gear_VideoSource::runAudio() {
   if (!_preRun())
     return;
 
-  int blockByteSize = Engine::signalInfo().blockSize()*sizeof(Signal_T);
+  unsigned int blockByteSize = Engine::signalInfo().blockSize()*sizeof(Signal_T);
   if (gst_adapter_available(_audioBufferAdapter) >= blockByteSize )
   {
     // Copy block of data to audio output.
@@ -509,7 +501,7 @@ void Gear_VideoSource::_postRun()
           gst_message_parse_state_changed(msg, &oldState, &newState,
               &pendingState);
           g_print("Pipeline state for movie %s changed from %s to %s:\n",
-              _currentMovie.c_str(),
+              _currentMovie.ascii(),
               gst_element_state_get_name(oldState),
               gst_element_state_get_name(newState));
 

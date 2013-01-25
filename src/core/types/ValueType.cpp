@@ -2,9 +2,6 @@
 
 #include <QtXml>
 
-const QString ValueType::TYPENAME = "Value";
-
-
 void ValueType::save(QDomDocument &doc, QDomElement &parent) const
 {
   QDomAttr valAttr;

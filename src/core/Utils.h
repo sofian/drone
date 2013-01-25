@@ -24,10 +24,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <inttypes.h>
+#include <string.h>
 
 #include "ColorSpace.h"
 #include "error.h"
-#include <inttypes.h>
 
 // # RGB to grayscale operations ############################################
 

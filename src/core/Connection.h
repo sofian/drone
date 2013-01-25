@@ -10,7 +10,7 @@
  *
  */
 #include <QtXml>
-#include <qdatastream>
+#include <QDataStream>
 
 class Gear;
 

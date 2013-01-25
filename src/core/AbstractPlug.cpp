@@ -55,6 +55,9 @@ AbstractPlug::AbstractPlug(Gear* parent, eInOut inOut, QString name, AbstractTyp
   //une plug a besoin d'un parent
   ASSERT_ERROR(parent!=NULL);
 
+  if (type == NULL)
+    qCritical() << Q_FUNC_INFO << " was provided with type = NULL";
+
   forwardPlug(0);
 }
 

@@ -20,9 +20,10 @@
 #ifndef GEARGUI_PUSHBUTTON_INCLUDED
 #define GEARGUI_PUSHBUTTON_INCLUDED
 
-#include <QGraphicsScene.h>
-//Added by qt3to4:
 #include "controlHosts/PushButton/Gear_PushButton.h"
+
+#include <QGraphicsScene>
+//Added by qt3to4:
 #include <QKeyEvent>
 #include <vector>
 

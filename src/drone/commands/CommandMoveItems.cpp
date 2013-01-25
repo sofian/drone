@@ -8,8 +8,8 @@
 #include "CommandMoveItems.h"
 #include "MainWindow.h"
 #include "SchemaGui.h"
-#include <qdebug>
-#include <qgraphicsitem.h>
+#include <QDebug>
+#include <QGraphicsItem>
 
 CommandMoveItems::CommandMoveItems(QList<QString> &itemList,QPointF delta):
   _itemList(itemList),

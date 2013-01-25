@@ -37,22 +37,20 @@
 #include "gearFactory/GearMaker.h"
 #include "MetaGearMaker.h"
 
-#include <q3mainwindow.h>
-#include <q3filedialog.h>
-#include <iostream>
-#include <q3dragobject>
+#include <Q3MainWindow>
+#include <Q3FileDialog>
+#include <Q3DragObject>
 
-#include <qcursor.h>
-#include <qlayout.h>
+#include <iostream>
+
+#include <QCursor>
+#include <QLayout>
 //Added by qt3to4:
 #include <Q3VBoxLayout>
 #include <QGLWidget>
 #include <iostream>
-#include <qpainter.h>
-#include <qmatrix.h>
-#include <qmath.h>
-
-#include <qdom.h>
+#include <QPainter>
+#include <QMatrix>
 
 const QString SchemaEditor::NAME = "SchemaEditor";
 const double SchemaEditor::ZOOM_FACTOR = 1.4;

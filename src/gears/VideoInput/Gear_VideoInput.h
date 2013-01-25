@@ -33,7 +33,7 @@ extern "C" {
 class Gear_VideoInput : public Gear
 {
 public:
-  Gear_VideoInput(Schema *schema, std::string uniqueName);
+  Gear_VideoInput();
   virtual ~Gear_VideoInput();
 
   void runVideo();

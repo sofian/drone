@@ -7,9 +7,9 @@
 
 #ifndef COMMANDGENERIC_H
 #define	COMMANDGENERIC_H
-#include <qundocommand>
-#include <qstring>
-#include <qtxml>
+#include <QUndoCommand>
+#include <QString>
+#include <QtXml>
 
 class CommandGeneric :public QUndoCommand {
 public:

@@ -32,8 +32,6 @@ Gear* makeGear()
 {
   return new Gear_VideoOffset();
 }
-
-
 }
 
 Gear_VideoOffset::Gear_VideoOffset() : 

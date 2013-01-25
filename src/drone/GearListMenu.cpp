@@ -2,7 +2,8 @@
 #include "gearFactory/GearMaker.h"
 #include "gearFactory/GearInfo.h"
 //Added by qt3to4:
-#include <qmenu>
+
+#include <QMenu>
 
 
 GearListMenu::GearListMenu(QWidget *parent) : 

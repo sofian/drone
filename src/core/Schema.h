@@ -4,9 +4,11 @@
 #include <QtXml>
 #include <QObject>
 #include <QMap>
+#include <QPair>
+
 #include "Connection.h"
 #include "Project.h"
-#include <qpair>
+
 class MetaGear;
 class Gear;
 class AbstractPlug;

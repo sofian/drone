@@ -8,10 +8,10 @@
 #ifndef COMMANDMOVEITEMS_H
 #define	COMMANDMOVEITEMS_H
 
-#include <qundocommand>
-#include <qlist>
-#include <qstring>
-#include <qpointf>
+#include <QUndoCommand>
+#include <QList>
+#include <QString>
+#include <QPointF>
 
 class CommandMoveItems: public QUndoCommand {
 public:

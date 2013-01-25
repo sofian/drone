@@ -29,7 +29,7 @@ public:
             float minValue=-1.0f,
             float maxValue=1.0f)
     : AbstractType(),
-	  _value(defaultValue),
+	    _value(defaultValue),
       _minValue(minValue),
       _maxValue(maxValue)
     {}

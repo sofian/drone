@@ -9,8 +9,9 @@
 
 #include "DroneCore.h"
 
+#include <QString>
+
 #include "gearFactory/GearMaker.h"
-#include "QString.h"
 #include "DroneMath.h"
 #include "Utils.h"
 
@@ -21,7 +22,7 @@ extern "C"
 #ifdef WIN32
 #include <Rpc.h>
 #else
-#include <uuid/uuid.h>
+#include <linux/uuid.h>
 #endif
 }
 
@@ -44,10 +45,10 @@ QString DroneCore::newUUID()
 
     RpcStringFreeA ( &str );
 #else
-    uuid_t uuid;
-    uuid_generate_random ( uuid );
+//    uuid_t uuid;
+//    uuid_generate_random ( uuid );
     char s[37];
-    uuid_unparse ( uuid, s );
+//    uuid_unparse ( uuid, s );
 #endif
     return s;
 }

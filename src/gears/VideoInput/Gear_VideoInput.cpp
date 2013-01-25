@@ -33,8 +33,6 @@ extern "C" {
   {
     return new Gear_VideoInput();
   }
-
-  
 }
 
 bool Gear_VideoInput::_videoPull()
@@ -93,8 +91,8 @@ void Gear_VideoInput::gstNewBufferCallback(GstElement*, bool *newBuffer)
   *newBuffer = true;
 }
 
-Gear_VideoInput::Gear_VideoInput(Schema *schema, std::string uniqueName) : 
-Gear(schema, "VideoInput", uniqueName),
+Gear_VideoInput::Gear_VideoInput() :
+Gear("VideoInput"),
 _bus(NULL),
 _pipeline(NULL),
 _source(NULL),

@@ -43,11 +43,11 @@
 #include "MediaMovie.h"
 #include "MediaPoolDialog.h"
 
-#include <qstringlist>
-#include <qfontdatabase>
-#include <qmessagebox>
-#include <qfile>
-#include <qtoolbutton>
+#include <QStringList>
+#include <QFontDatabase>
+#include <QMessageBox>
+#include <QFile>
+#include <QToolButton>
 
 
 //#include "PreferencesDialog.h"
@@ -389,8 +389,8 @@ void MainWindow::slotMenuQuit()
 
 void MainWindow::slotMenuViewMediaPool()
 {
-  MediaPoolDialog mediaPoolDialog(this);
-  mediaPoolDialog.exec();
+//  MediaPoolDialog mediaPoolDialog(this);
+//  mediaPoolDialog.exec();
 }
 
 void MainWindow::slotMenuViewSmallGears()

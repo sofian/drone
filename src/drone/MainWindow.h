@@ -20,18 +20,20 @@
 #ifndef MAINWINDOW_INCLUDED
 #define MAINWINDOW_INCLUDED
 
-#include <qmainwindow.h>
-#include <qtoolbar>
-#include <qtoolbutton>
-#include <qaction>
-#include <qmenu.h>
-#include <qmenubar.h>
-#include <qsplitter.h>
+#include <QMainWindow>
+#include <QToolBar>
+#include <QToolButton>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QSplitter>
 //Added by qt3to4:
 #include <QFrame>
 #include <QTimerEvent>
+#include <QUndoStack>
+
 #include <list>
-#include <qundostack>
+
 #include "Engine.h"
 #include "Project.h"
 

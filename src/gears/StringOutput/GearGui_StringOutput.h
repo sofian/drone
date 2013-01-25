@@ -20,9 +20,10 @@
 #ifndef GearGui_StringOutput_INCLUDED
 #define GearGui_StringOutput_INCLUDED
 
-#include <QGraphicsScene.h>
+#include <QGraphicsScene>
+#include <QImage>
+
 #include <vector>
-#include <qimage.h>
 
 
 #include "GearGui.h"

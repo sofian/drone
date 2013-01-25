@@ -32,8 +32,6 @@ Gear* makeGear()
 {
   return new Gear_Invert();
 }
-
-
 }
 
 Gear_Invert::Gear_Invert() : 
