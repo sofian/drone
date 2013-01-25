@@ -229,16 +229,17 @@ void SchemaEditor::onSaveMetaGear()
 
 void SchemaEditor::deleteSelected()
 {
-    CommandGeneric* com = new CommandGeneric();
+  CommandGeneric* com = new CommandGeneric();
   QList<GearGui*> allGears = _schemaGui->getSelectedGears();
+
   foreach(GearGui* gg,allGears)
     _schemaGui->removeGear(gg);
   _contextGear = NULL;
+
   com->saveSnapshotAfter();
   com->setText(QString("Deleted selected items"));
+
   MainWindow::getInstance()->pushUndoCommand(com);
-
-
 }
 
 
