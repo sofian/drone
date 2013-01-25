@@ -36,8 +36,6 @@ extern "C" {
   
 }
 
-const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
-
 bool Gear_VideoSource::_videoPull()
 {
   GstBuffer *buffer;
