@@ -96,11 +96,11 @@ void Gear_AreaVideoReplace::runVideo()
   // Copy the subwindow.
   for (int j=0, y=_replaceArea->y0(); j<(int)_replaceArea->height(); ++j, ++y)
   {
-     if (0 <= y && y < _imageIn->height()) // inside image
+     if (0 <= y && y < (int)_imageIn->height()) // inside image
      {
-       for (int i=0, x=_replaceArea->x0(); i<(int)_replaceArea->width(); ++i, ++x)
+       for (int i=0, x=(int)_replaceArea->x0(); i<(int)_replaceArea->width(); ++i, ++x)
        {
-         if (0 <= x && x < _imageOut->width()) // inside image
+         if (0 <= x && x < (int)_imageOut->width()) // inside image
            alpha_over((unsigned char*)&_imageOut->operator()(x,y),
                       (const unsigned char*)&_imageReplaceIn->operator()(i,j),
                       (const unsigned char*)&_imageIn->operator()(x,y), SIZE_RGBA);

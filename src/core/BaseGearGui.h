@@ -16,8 +16,8 @@ public:
   virtual ~BaseGearGui();
   virtual bool getIsSelected(){return false;}
   
-  virtual void save(QDomDocument &doc, QDomElement &gearElem){};
-  virtual void load(QDomElement &gearElem){};
+  virtual void save(QDomDocument &doc, QDomElement &gearElem);
+  virtual void load(QDomElement &gearElem);
 
   
 private:

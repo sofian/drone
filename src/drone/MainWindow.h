@@ -94,7 +94,7 @@ public slots:
 
 private:
 
-  static const unsigned int MAX_RECENT_SCHEMAS;
+  static const int MAX_RECENT_SCHEMAS;
   static const QString SCHEMA_EXTENSION;
 
   void addToRecentSchema(QString filename);

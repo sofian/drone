@@ -14,5 +14,6 @@ void StringType::save(QDomDocument &doc, QDomElement &parent) const
 
 void StringType::load(QDomElement &typeElem, Drone::LoadingModeFlags lmf)
 {
+  Q_UNUSED(lmf);
   _value = typeElem.attribute("Value","");
 }

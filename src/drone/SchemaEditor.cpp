@@ -97,7 +97,7 @@ void SchemaEditor::buildContextMenus()
   QAction * sub = newGearMenu->addMenu(_gearListMenu);
   sub->setText("Gears");
   
-  QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(slotMenuGearSelected(QString)));
+  QObject::connect(_gearListMenu, SIGNAL(gearSelected(QString)), this, SLOT(onMenuGearSelected(QString)));
 
   _metaGearListMenu = new MetaGearListMenu(_contextMenu);    
   _metaGearListMenu->create();
@@ -105,9 +105,9 @@ void SchemaEditor::buildContextMenus()
   QAction* mgSubAction = newGearMenu->addMenu(_metaGearListMenu);
   mgSubAction->setText("MetaGears");
   
-  QObject::connect(_metaGearListMenu, SIGNAL(metaGearSelected(QFileInfo*)), this, SLOT(slotMenuMetaGearSelected(QFileInfo*)));
+  QObject::connect(_metaGearListMenu, SIGNAL(metaGearSelected(QFileInfo*)), this, SLOT(onMenuMetaGearSelected(QFileInfo*)));
 
-  _contextMenu->addAction("New MetaGear", this, SLOT(slotNewMetaGear()));
+  _contextMenu->addAction("New MetaGear", this, SLOT(onNewMetaGear()));
   _contextMenu->addAction(mainWindow->_actZoomIn);  
 	_contextMenu->addAction(mainWindow->_actZoomOut);  
   _contextMenu->addAction(mainWindow->_actSelectAll);
@@ -117,20 +117,20 @@ void SchemaEditor::buildContextMenus()
 	
   
   _gearContextMenu = new QMenu();
-  _gearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));
+  _gearContextMenu->addAction("Properties", this, SLOT(onGearProperties()));
 
   _gearContextMenu->addAction("About");    
   
   _metaGearContextMenu = new QMenu();
-  _metaGearContextMenu->addAction("Properties", this, SLOT(slotGearProperties()));  
+  _metaGearContextMenu->addAction("Properties", this, SLOT(onGearProperties()));  
   _metaGearContextMenu->addAction("About");    
   _metaGearContextMenu->addSeparator();
-  _metaGearContextMenu->addAction("Save MetaGear",  this, SLOT(slotSaveMetaGear()));
+  _metaGearContextMenu->addAction("Save MetaGear",  this, SLOT(onSaveMetaGear()));
 
 
   // plug context menu initialization
   _plugContextMenu = new QMenu();
-  _exposePlugAction = _plugContextMenu->addAction("Expose", this, SLOT(slotPlugToggleExpose()));
+  _exposePlugAction = _plugContextMenu->addAction("Expose", this, SLOT(onPlugToggleExpose()));
 
 }
 
@@ -138,17 +138,17 @@ void SchemaEditor::buildContextMenus()
 
 
 
-void SchemaEditor::slotMenuGearSelected(QString name)
+void SchemaEditor::onMenuGearSelected(QString name)
 {        
   addGear(name.ascii(), _contextMenuPos);    
 }
 
-void SchemaEditor::slotMenuMetaGearSelected(QFileInfo* metaGearFileInfo)
+void SchemaEditor::onMenuMetaGearSelected(QFileInfo* metaGearFileInfo)
 {  
   addMetaGear(metaGearFileInfo->filePath().ascii(), _contextMenuPos);    
 }
 
-void SchemaEditor::slotGearProperties()
+void SchemaEditor::onGearProperties()
 {
   if (_contextGear == NULL)
     return;
@@ -170,7 +170,7 @@ void SchemaEditor::keyPressEvent(QKeyEvent *e)
 }
 
 
-void SchemaEditor::slotDeleteSelected()
+void SchemaEditor::onDeleteSelected()
 {
   deleteSelected();
 }
@@ -178,7 +178,7 @@ void SchemaEditor::slotDeleteSelected()
 /**
  * React on Expose selection in the plug context menu
  */
-void SchemaEditor::slotPlugToggleExpose()
+void SchemaEditor::onPlugToggleExpose()
 {
   _contextPlug->plug()->exposed(!_contextPlug->plug()->exposed());
   _contextPlug->getGearGui()->update();
@@ -186,12 +186,12 @@ void SchemaEditor::slotPlugToggleExpose()
 } 
 
 
-void SchemaEditor::slotNewMetaGear()
+void SchemaEditor::onNewMetaGear()
 {
   _schemaGui->newMetaGear(_contextMenuPos);
 }
 
-void SchemaEditor::slotSaveMetaGear()
+void SchemaEditor::onSaveMetaGear()
 {
   /*
   if (!_contextGear->gear()->kind() == Gear::METAGEAR)
@@ -244,7 +244,7 @@ void SchemaEditor::deleteSelected()
 
 
 
-void SchemaEditor::slotGearCopy()
+void SchemaEditor::onGearCopy()
 {
   _schemaGui->resetPasteOffset();
   QDomDocument doc("Clipboard");
@@ -264,7 +264,7 @@ void SchemaEditor::slotGearCopy()
   
 }
 
-void SchemaEditor::slotGearPaste()
+void SchemaEditor::onGearPaste()
 {
   
   CommandGeneric* com = new CommandGeneric();
@@ -322,7 +322,7 @@ void SchemaEditor::slotGearPaste()
 
 }
 
-void SchemaEditor::slotSelectAll()
+void SchemaEditor::onSelectAll()
 {
   QList<QGraphicsItem*> all = _schemaGui->items();
   QGraphicsItem* el=NULL;
@@ -398,12 +398,12 @@ SchemaEditor::~SchemaEditor()
 
 }
 
-void SchemaEditor::slotZoomIn()
+void SchemaEditor::onZoomIn()
 {
   zoom(qMin(_scale*ZOOM_FACTOR,3.0));
 }
 
-void SchemaEditor::slotZoomOut()
+void SchemaEditor::onZoomOut()
 {
   zoom(qMax(_scale/ZOOM_FACTOR,0.25));
 }
@@ -452,6 +452,7 @@ void SchemaEditor::addMetaGear(QString filename, QPoint pos)
 
 void SchemaEditor::associateControlPanelWithMetaGear(MetaGear *metaGear)
 {
+  Q_UNUSED(metaGear);
   //create and associate a control panel with this metagear
   //_panelScrollView->addControlPanel(metaGear);    
 }

@@ -290,8 +290,8 @@ bool Schema::disconnect(AbstractPlug &plugA, AbstractPlug &plugB)
       return false;
     Connection c(plugA.parent()->getUUID(),plugA.name(),plugB.parent()->getUUID(),plugB.name());
     emit connectionRemoved(*this,c);
-    return true;
   }
+  return true;
 }
 
 void Schema::disconnectAll(AbstractPlug &plug)
@@ -532,6 +532,7 @@ bool Schema::load(QDomElement& parent, Drone::LoadingModeFlags lmf)
       // delete temporaryObject
     }
   }
+  return true;
 }
 
 

@@ -47,8 +47,8 @@ SchemaGui::SchemaGui(Schema *schema, Engine *engine) :
   _pasteOffset(),
   _engine(engine),
   _maxZValue(0),
-  _moving(No),
   _selectionChangeNotificationBypass(false),
+  _moving(No),
   _movingItems(),
   _movingStartPos(0,0),
   _autoSelectNewElements(false)
@@ -78,18 +78,19 @@ void SchemaGui::setSchema(Schema *schema)
 {
   clear(); 
   _schema = schema;
-  QObject::connect(schema,SIGNAL(gearAdded(Schema&,Gear&)),this,SLOT(slotGearAdded(Schema&,Gear&)));
+  QObject::connect(schema,SIGNAL(gearAdded(Schema&,Gear&)),this,SLOT(onGearAdded(Schema&,Gear&)));
   QObject::connect(schema,SIGNAL(gearRemoved(Schema&,Gear&)),this,SLOT(slotGearRemoved(Schema&,Gear&)));
-  QObject::connect(schema,SIGNAL(connectionCreated(Schema&,Connection)),this,SLOT(slotConnectionCreated(Schema&,Connection)));
-  QObject::connect(schema,SIGNAL(connectionRemoved(Schema&,Connection)),this,SLOT(slotConnectionRemoved(Schema&,Connection)));
+  QObject::connect(schema,SIGNAL(connectionCreated(Schema&,Connection)),this,SLOT(onConnectionCreated(Schema&,Connection)));
+  QObject::connect(schema,SIGNAL(connectionRemoved(Schema&,Connection)),this,SLOT(onConnectionRemoved(Schema&,Connection)));
   
   //_schema->add
   rebuildSchema();
 }
 
-void SchemaGui::slotGearAdded(Schema &schema,Gear &gear)
+void SchemaGui::onGearAdded(Schema &schema,Gear &gear)
 {
-  GearControl* controlGear;
+  Q_UNUSED(schema);
+  //GearControl* controlGear;
   if (!gear.getGearGui())
   {
     // the GearGui constructor will take care of establishing the 
@@ -104,6 +105,7 @@ void SchemaGui::slotGearAdded(Schema &schema,Gear &gear)
 
 void SchemaGui::slotGearRemoved(Schema &schema,Gear &gear)
 {
+  Q_UNUSED(schema);
   if(gear.getGearGui())
   {
     // the GearGui destructor will take care of deleting the 
@@ -238,6 +240,7 @@ void SchemaGui::renameGear(GearGui *gearGui, QString newName)
 
 MetaGear* SchemaGui::newMetaGear(QPointF pos)
 { 
+  Q_UNUSED(pos);
   /*
   MetaGear *metaGear = _schema->newMetaGear();    
   GearGui *gearGui = metaGear->getGearGui();    
@@ -505,9 +508,9 @@ bool SchemaGui::connect(PlugBox *plugA, PlugBox *plugB)
 GearGui* SchemaGui::getGearGuiByUUID(QString uuid)
 {
   Gear* g(_schema->getGearByUUID(uuid));
-  GearGui* ggui;
-  if(g && (ggui=(GearGui*)g->getGearGui()))
-    return ggui;
+  BaseGearGui* ggui;
+  if(g && (ggui=g->getGearGui()))
+    return static_cast<GearGui*>(ggui);
   else
     return NULL;
 }
@@ -532,9 +535,10 @@ QPair<PlugBox*, PlugBox*> SchemaGui::getPlugBoxesFromConnection(Connection c)
 }
 
 
-void SchemaGui::slotConnectionCreated(Schema &schema, Connection c)
+void SchemaGui::onConnectionCreated(Schema &schema, Connection c)
 {
   QPair<PlugBox*, PlugBox*> conn(getPlugBoxesFromConnection(c));
+  Q_UNUSED(schema);
   
   ConnectionItem* ci(conn.first->connect(conn.second));
   if(ci && _autoSelectNewElements)
@@ -544,8 +548,9 @@ void SchemaGui::slotConnectionCreated(Schema &schema, Connection c)
 }
 
 
-void SchemaGui::slotConnectionRemoved(Schema &schema, Connection c)
+void SchemaGui::onConnectionRemoved(Schema &schema, Connection c)
 {
+  Q_UNUSED(schema);
   QPair<PlugBox*, PlugBox*> conn(getPlugBoxesFromConnection(c));
   
   conn.first->disconnect(conn.second);

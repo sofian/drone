@@ -69,7 +69,7 @@ public:
   void setAutoSelectNewElements(bool p){_autoSelectNewElements=p;}
 
   QPointF getPasteOffset(){return _pasteOffset+=QPointF(100,100);}
-  QPointF resetPasteOffset(){return (_pasteOffset=QPointF(0,0));}
+  void resetPasteOffset(){_pasteOffset=QPointF(0,0);}
   
 
   Schema * getSchema(){return _schema;}
@@ -85,10 +85,10 @@ signals:
 
 public slots:
   void selectionHasChanged();
-  void slotGearAdded(Schema &schema,Gear &gear);
+  void onGearAdded(Schema &schema,Gear &gear);
   void slotGearRemoved(Schema &schema,Gear &gear);
-  void slotConnectionCreated(Schema &schema, Connection conn);
-  void slotConnectionRemoved(Schema &schema, Connection conn);
+  void onConnectionCreated(Schema &schema, Connection conn);
+  void onConnectionRemoved(Schema &schema, Connection conn);
 
 protected:
 

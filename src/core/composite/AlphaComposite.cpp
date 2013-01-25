@@ -74,7 +74,7 @@ void alpha_fill(unsigned char *src,
 void alpha_invert(unsigned char *src,
                   unsigned int n)                  
 {
-  unsigned int b;
+  //unsigned int b;
   unsigned  alpha;
   while (n--)
   {

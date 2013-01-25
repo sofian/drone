@@ -99,15 +99,15 @@
 void
 gimp_composite_convert_any_any_any_generic (GimpCompositeContext *ctx)
 {
-  int i;
-  int j;
+  unsigned int i;
+  unsigned int j;
   unsigned char *D = ctx->D;
   unsigned char *A = ctx->A;
   int bpp_A = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_A];
   int bpp_D = 4;//gimp_composite_pixel_bpp[ctx->pixelformat_D];
 
   for (i = 0; i < ctx->n_pixels; i++) {
-    for (j = 0; j < bpp_A; j++) {
+    for (j = 0; j < (unsigned int)bpp_A; j++) {
       D[j] = A[j];
     }
     D[j] = GIMP_COMPOSITE_ALPHA_OPAQUE;

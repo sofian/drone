@@ -13,9 +13,21 @@ BaseGearGui::BaseGearGui()
 
 BaseGearGui::BaseGearGui(const BaseGearGui& orig)
 {
+  Q_UNUSED(orig);
 }
 
 BaseGearGui::~BaseGearGui()
 {
 }
 
+void BaseGearGui::save(QDomDocument &doc, QDomElement &gearElem)
+{
+  Q_UNUSED(doc);
+  Q_UNUSED(gearElem);
+};
+
+void BaseGearGui::load(QDomElement &gearElem)
+{
+  Q_UNUSED(gearElem);
+
+};

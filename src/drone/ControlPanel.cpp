@@ -30,6 +30,7 @@ ControlPanel::~ControlPanel()
 
 Control *ControlPanel::addControl(GearControl* gear)
 {
+  Q_UNUSED(gear);
 //  if (!gear)
     return NULL;
   /*

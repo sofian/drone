@@ -194,7 +194,6 @@ void GearMaker::parseGears(QDir dir, QString extension)
   dir.setNameFilters(QStringList(extension));
 
   const QFileInfoList files = dir.entryInfoList();
-  const char* error;
 
   foreach(QFileInfo fi,files)
   {		

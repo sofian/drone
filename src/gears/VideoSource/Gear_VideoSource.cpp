@@ -20,7 +20,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-//inspired from Using libavformat and libavcodec by Martin Boehme (boehme@inb.uni-luebeckREMOVETHIS.de)
 
 
 #include <iostream>
@@ -28,14 +27,16 @@
 #include "Engine.h"
 
 
+
 extern "C" {           
   Gear* makeGear()
   {
     return new Gear_VideoSource();
-  }
+  }  
+  
 }
 
-//const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
+const QString Gear_VideoSource::SETTING_FILENAME = "Filename";
 
 bool Gear_VideoSource::_videoPull()
 {

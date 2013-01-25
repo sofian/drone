@@ -52,7 +52,7 @@
 
 //#include "PreferencesDialog.h"
 
-const unsigned int MainWindow::MAX_RECENT_SCHEMAS = 5;
+const int MainWindow::MAX_RECENT_SCHEMAS = 5;
 const QString MainWindow::SCHEMA_EXTENSION = ".drn";
 
 #include <qsettings.h>
@@ -121,10 +121,10 @@ _menuShowSmallGearsId(false)
 
   
   _editMenu = menuBar->addMenu("&Edit");
-	_actSelectAll=_editMenu->addAction("Select all", schemaEditor, SLOT(slotSelectAll()),  QKeySequence::SelectAll);
-  _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(slotDeleteSelected()), QKeySequence::Delete);
-	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(slotGearCopy()), QKeySequence::Copy);
-	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(slotGearPaste()), QKeySequence::Paste);
+	_actSelectAll=_editMenu->addAction("Select all", schemaEditor, SLOT(onSelectAll()),  QKeySequence::SelectAll);
+  _actDeleteSelected=_editMenu->addAction("Delete selected", schemaEditor, SLOT(onDeleteSelected()), QKeySequence::Delete);
+	_actCopy=_editMenu->addAction("Copy", schemaEditor, SLOT(onGearCopy()), QKeySequence::Copy);
+	_actPaste=_editMenu->addAction("Paste", schemaEditor, SLOT(onGearPaste()), QKeySequence::Paste);
 	_editMenu->addSeparator();
   _actUndo =_editMenu->addAction("Undo", schemaEditor, SLOT(slotUndo()), QKeySequence::Undo);
 	_actRedo =_editMenu->addAction("Redo", schemaEditor, SLOT(slotRedo()), QKeySequence::Redo);
@@ -132,8 +132,8 @@ _menuShowSmallGearsId(false)
   _viewMenu = menuBar->addMenu("&View");
 	_viewMenu->setCheckable(true);
   
-  _actZoomIn = _viewMenu->addAction("Zoom in", schemaEditor, SLOT(slotZoomIn()), Qt::CTRL+Qt::Key_Plus);
-  _actZoomOut = _viewMenu->addAction("Zoom out", schemaEditor, SLOT(slotZoomOut()), Qt::CTRL+Qt::Key_Minus);
+  _actZoomIn = _viewMenu->addAction("Zoom in", schemaEditor, SLOT(onZoomIn()), Qt::CTRL+Qt::Key_Plus);
+  _actZoomOut = _viewMenu->addAction("Zoom out", schemaEditor, SLOT(onZoomOut()), Qt::CTRL+Qt::Key_Minus);
 
 
   _toolsMenu = menuBar->addMenu("&Tools");
@@ -344,7 +344,7 @@ void MainWindow::pushUndoCommand(QUndoCommand* c)
 void MainWindow::addToRecentSchema(QString filename)
 {  
   //clean recent menu and settings first
-  for (unsigned int j=0; j<_recentSchemas.size();++j)  
+  for (int j=0; j<_recentSchemas.size();++j)  
   {
     _fileMenu->removeItem(j);  
     std::ostringstream oss;

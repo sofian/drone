@@ -68,11 +68,11 @@ void Gear_AreaVideoSelect::runVideo()
   //  RGBA val;
   for (int j=0, y=_area->y0(); j<(int)_imageOut->height(); ++j, ++y)
   {
-    if (0 <= y && y < _imageIn->height()) // inside image
+    if (0 <= y && y < (int)_imageIn->height()) // inside image
     {
       for (int i=0, x=_area->x0(); i<(int)_imageOut->width(); ++i, ++x)
       {
-        if (0 <= x && x < _imageIn->width()) // inside image
+        if (0 <= x && x < (int)_imageIn->width()) // inside image
           _imageOut->operator()(i,j) = _imageIn->get(x,y);
         else
           _imageOut->operator()(i,j) = CLEAR_RGBA;

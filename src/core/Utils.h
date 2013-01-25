@@ -115,9 +115,6 @@ inline void rgb2rgba(RGBA *dst, const RGB *src, size_t size, unsigned char alpha
 inline void rescale_image(RGBA *dst, const RGBA *src, int dstWidth, int dstHeight, int srcWidth, int srcHeight)
 {
   NOTICE("%d %d %d %d", dstWidth, dstHeight, srcWidth, srcHeight);
-  ASSERT_ERROR(dst != NULL);
-  ASSERT_ERROR(src != NULL);
-  ASSERT_ERROR(dstWidth >= 0 && dstHeight >= 0 && srcWidth >= 0 && srcHeight >= 0)
   if (dstWidth == srcWidth && dstHeight == srcHeight)
   {
     // Same dimensions, just copy the data.
