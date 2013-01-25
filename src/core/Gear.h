@@ -49,7 +49,6 @@ class Gear : public QObject, public Node
 {
   Q_OBJECT
 public:
-
   static const QString XML_TAGNAME;
 
   Gear(QString type);
@@ -113,7 +112,11 @@ public:
 signals:
   void readyStatusChanged();
 
+#ifdef SINGLE_THREADED_PLAYBACK
 protected:
+#else
+public:
+#endif
 
   virtual void internalInit(){}
   virtual void internalSave(QDomDocument&, QDomElement&){}
@@ -121,7 +124,8 @@ protected:
   
   virtual void internalPrePlay(){}  
   virtual void internalPostPlay(){}    
-    
+
+protected:
   virtual void onPlugConnected(AbstractPlug*, AbstractPlug*){};//!connection from one of our plug to other plug
   virtual void onPlugDisconnected(AbstractPlug*, AbstractPlug*){};//!disconnection form one of our plug from other plug
   friend bool AbstractPlug::connect(AbstractPlug *plug);
