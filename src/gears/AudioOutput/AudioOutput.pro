@@ -15,7 +15,7 @@ unix:!macx {
 
 	LIBS+=-L../../../lib/ -ldroneCore
 
-	TARGET=../../../gears/Gear_AudioOutput
+	TARGET=../../../gears/drone/Gear_AudioOutput
 }
 
 #osx
@@ -23,7 +23,7 @@ macx {
 	INCLUDEPATH += /Library/Frameworks/GStreamer.framework/Headers
 #	LIBS+=-L../../../drone.app/Contents/Frameworks -ldroneCore -L/opt/local/lib -lavformat -lavcodec -lavutil -lswscale -lz
 	LIBS+=-framework GStreamer
-	TARGET=../../../drone.app/Contents/PlugIns/Gear_VideoSource
+	TARGET=../../../drone.app/Contents/PlugIns/drone/Gear_VideoSource
 	QMAKE_LFLAGS+=-read_only_relocs suppress
 }
 
