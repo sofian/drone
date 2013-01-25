@@ -93,7 +93,8 @@ types/Array2DType.h \
 types/VideoChannelType.h \
 types/VideoBinaryType.h \
 types/PaletteRGBAType.h \
-types/EnumType.h
+types/EnumType.h \
+types/TextureType.h
 
 
 SOURCES += error.cpp \
@@ -130,6 +131,7 @@ types/AreaType.cpp \
 types/VideoRGBAType.cpp \
 types/ValueType.cpp \
 types/StringType.cpp \
+types/TextureType.cpp
 
 
 # controlHosts
