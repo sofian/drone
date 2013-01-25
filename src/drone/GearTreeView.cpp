@@ -19,8 +19,6 @@
 #include <QPixmap>
 #include <QHeaderView>
 
-#include "draggear.xpm"
-
 GearTreeView::GearTreeView(QWidget *parent) :
   QTreeWidget(parent)
 {
